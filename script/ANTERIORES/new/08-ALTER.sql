@@ -1,0 +1,1 @@
+INSERT INTO `precios` (`id_precio`, `nombre_precio`, `descuento_precio`, `mostrar_precio`, `estatus_precio`) VALUES ('3', 'Precio Unitario', '0', '1', '1');

@@ -1,0 +1,153 @@
+.table-selected{
+    background-color: #f39c12 !important;
+}
+
+.table-proyeccion th{
+    background-color: #f39c12;
+}
+
+.table-proyeccion tr{
+    background-color: #f7be64;
+    color: #ffffff;
+}
+
+.table-proyeccion tr:hover{
+    background-color: #f39c12;
+    color: #ffffff !important;
+}
+
+.table-cuotas tr{
+    background-color: #39B147 !important;
+    color: #ffffff !important;
+    font-weight: bold;
+}
+
+.table-cuotas tr:hover{
+    background-color: #39B147 !important;
+    color: #ffffff !important;
+}
+
+.precio-selected{
+    border-color: #f7be64;
+    background-color: #f39c12;
+    color: #ffffff;
+}
+
+.precio-input:focus{
+    border-color: #f7be64 !important;
+}
+
+.help-key{
+    display: block;
+    float: left;
+    position: absolute;
+    margin-top: -7px;
+    margin-left: -7px;
+    z-index: 10;
+}
+
+.help-key-side{
+
+}
+
+.venta_input input{
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+.venta_input .input-group-addon {
+    padding-left: 2px;
+    padding-right: 2px;
+    min-width: 20px;
+}
+
+.venta_input select{
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+.venta-right .row {
+    margin-bottom: 10px !important;
+}
+
+.venta-right .row .label-title {
+    padding: 1px;
+}
+
+.venta-right .row .control-label {
+    padding: 2px;
+    padding-top: 5px;
+}
+
+.hr-margin-10{
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.hr-margin-5{
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.panel-admin-text {
+    margin-top: 8px;
+    text-align: right;
+    padding-right: 0px;
+}
+
+.panel-venta-left .row {
+    margin-bottom: 10px !important;
+}
+
+.loading-icon {
+    background: url("../img/loading.gif") no-repeat;
+    width: 192px;
+    height: 24px;
+    margin: 0 auto;
+}
+
+.loading-circle {
+    background: url("../img/loading_circle.gif") no-repeat;
+    width: 192px;
+    height: 24px;
+    margin: 0 auto;
+}
+
+.section-border{
+    border: 1px solid #31708f;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 30px auto;
+}
+
+.section-text-header{
+    z-index:5;
+    position: relative;
+    top: -20px;
+    background-color: #FFFFFF;
+    width: auto;
+    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 300;
+    font-size: 18px;
+    padding-left: 3px;
+    padding-right: 3px;
+    margin-left: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    line-height: 1.1;
+    -webkit-margin-before: 1.33em;
+    -webkit-margin-after: 1.33em;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+}
+
+.tableStyle th {
+    font-size: 12px !important;
+    padding: 2px 2px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.tableStyle td {
+    font-size: 11px !important;
+}

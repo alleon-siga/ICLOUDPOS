@@ -1,0 +1,2 @@
+UPDATE opcion SET cOpcionDescripcion="cuentasporcobrar", cOpcionNombre="Cuentas por Cobrar" WHERE cOpcionDescripcion="pagospendiente";
+UPDATE opcion SET nOpcionClase=22 WHERE cOpcionDescripcion="cuentasporcobrar";

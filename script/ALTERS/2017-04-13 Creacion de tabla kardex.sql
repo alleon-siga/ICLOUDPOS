@@ -1,0 +1,17 @@
+CREATE  TABLE `kardex` (
+  `id` BIGINT(20) NOT NULL AUTO_INCREMENT ,
+  `fecha` DATETIME NOT NULL ,
+  `usuario_id` BIGINT(20) NOT NULL ,
+  `local_id` BIGINT(20) NOT NULL ,
+  `producto_id` BIGINT(20) NOT NULL ,
+  `unidad_id` BIGINT(20) NOT NULL ,
+  `cantidad` BIGINT NOT NULL DEFAULT 0 ,
+  `cantidad_saldo` BIGINT NULL DEFAULT 0 ,
+  `io` VARCHAR(45) NOT NULL ,
+  `tipo` INT NOT NULL ,
+  `operacion` INT NOT NULL ,
+  `serie` VARCHAR(45) NULL ,
+  `numero` VARCHAR(45) NULL ,
+  `ref_id` VARCHAR(45) NULL ,
+  `ref_val` VARCHAR(45) NULL ,
+  PRIMARY KEY (`id`) );
