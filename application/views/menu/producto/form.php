@@ -802,8 +802,8 @@
 
                             <table class="table block table-striped dataTable table-bordered">
                                 <thead>
-                                <th>Descripci&oacute;n</th>
-                                <th>Unidades</th>
+                                <th>Presentación</th>
+                                <th>Cantidad</th>
                                 <?php foreach ($precios as $precio):
                                     if ($precio['mostrar_precio']):?>
                                         <th><?= $precio['nombre_precio'] ?></th>
@@ -824,19 +824,13 @@
                                                 <select name='medida[<?= $countunidad ?>]'
                                                         id='medida<?= $countunidad ?>'
                                                         class='form-control'
-                                                        style="display: <?= $operaciones == TRUE ? 'block':'none'?>;">
+                                                        >
                                                     <?php foreach ($unidades as $unidad2):
                                                         ?>
                                                         <option
                                                             value='<?= $unidad2['id_unidad'] ?>' <?php if ($unidad2['id_unidad'] == $unidad['id_unidad']) echo 'selected' ?>><?= $unidad2['nombre_unidad'] ?></option>"
 
                                                     <?php endforeach ?></select>
-                                                <?php if($operaciones == FALSE):?>
-                                                    <?php foreach ($unidades as $unidad2):?>
-                                                        <?php if ($unidad2['id_unidad'] == $unidad['id_unidad']) echo $unidad2['nombre_unidad'] ?>
-                                                    <?php endforeach; ?>
-                                                <?php endif;?>
-
                                             </td>
                                             <td><input type="number" class="form-control unidades" required
                                                        min="1"
@@ -844,8 +838,7 @@
                                                        value='<?= $unidad['unidades'] ?>'
                                                        data-row="<?php echo $countunidad ?>"
                                                        name="unidad[<?= $countunidad ?>]"
-                                                       id="unidad[<?= $countunidad ?>]"
-                                                       <?= $operaciones == FALSE ? 'readonly' : ''?>>
+                                                       id="unidad[<?= $countunidad ?>]">
                                             </td>
                                             <?php
                                             $countproducto = 0;
