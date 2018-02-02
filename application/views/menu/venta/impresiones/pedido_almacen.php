@@ -29,6 +29,20 @@
 
 </style>
 <div>
+    <table style="border: 0px;" cellpadding="0" cellspacing="0">
+        <tr>
+            <td style="text-transform: uppercase; text-align: left;"><?= $venta->local_nombre ?></td>
+        </tr>
+        <tr>
+            <td style="text-transform: uppercase; text-align: left;"><?= $venta->local_direccion ?></td>
+        </tr>
+    </table>
+    <table style="border: 0px;" cellpadding="0" cellspacing="0">
+        <tr>
+            <td style="text-transform: uppercase; text-align: center;">NOTA DE ALMACEN</td>
+        </tr>
+    </table>
+
     <table style="border: 0px;"
            cellpadding="0" cellspacing="0">
         <tr>
@@ -91,6 +105,18 @@
     <div style="text-align: right">
         Total a Pagar:
         <?= $venta->moneda_simbolo . ' ' . $venta->total ?>
+    </div>
+    <div style="text-align: right">
+        Pagado:
+        <?= $venta->moneda_simbolo . ' ' . $venta->venta_pagado ?>
+    </div>
+    <div style="text-align: right">
+        Vuelto:
+        <?= $venta->moneda_simbolo . ' ' . $venta->venta_vuelto ?>
+    </div>
+    <div style="text-align: right;">
+        Total a Pagar Con Letra:
+        <span style="text-transform: uppercase;"><?= $totalLetras; ?></span>
     </div>
 </div>
 <script>

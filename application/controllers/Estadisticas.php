@@ -6,12 +6,13 @@ class estadisticas extends MY_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->login_model->verify_session();
-        
-        $this->load->model('venta/venta_model');
-        $this->load->model('condicionespago/condiciones_pago_model');
-        $this->load->model('ingreso/ingreso_model');
-
+        if ($this->login_model->verify_session()) {        
+            $this->load->model('venta/venta_model');
+            $this->load->model('condicionespago/condiciones_pago_model');
+            $this->load->model('ingreso/ingreso_model');
+        }else{
+            redirect(base_url(), 'refresh');
+        }  
     }
 
 

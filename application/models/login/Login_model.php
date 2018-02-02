@@ -39,6 +39,14 @@ class login_model extends CI_Model
 
     public function verify_session()
     {
+        $session=$this->session->userdata('activo');
+        //print_r($session);
+        //die();
+        if (isset($session) and $session=='1') {
+            return true;
+        }else{
+            return false;
+        }
         /*if(!$this->input->is_ajax_request()) {
             if ($this->session->userdata('nUsuCodigo')) {
                 //$this->refresh_session($this->session->userdata('nUsuCodigo'));

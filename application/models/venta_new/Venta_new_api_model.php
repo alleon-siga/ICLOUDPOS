@@ -142,8 +142,7 @@ class Venta_new_api_model extends CI_Model
             detalle_venta.unidad_medida as unidad_id,
             unidades.nombre_unidad as unidad_nombre,
             unidades.abreviatura as unidad_abr,
-            detalle_venta.detalle_importe as importe
-            ')
+            detalle_venta.detalle_importe as importe            ')
             ->from('detalle_venta')
             ->join('producto', 'producto.producto_id=detalle_venta.id_producto')
             ->join('unidades', 'unidades.id_unidad=detalle_venta.unidad_medida')

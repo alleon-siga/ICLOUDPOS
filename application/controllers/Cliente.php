@@ -6,24 +6,23 @@ class cliente extends MY_Controller
     function __construct()
     {
         parent::__construct();
-        $this->login_model->verify_session();
-
-
-        $this->load->model('cliente/cliente_model');
-        $this->load->model('clientesgrupos/clientes_grupos_model');
-        $this->load->model('pais/pais_model');
-        $this->load->model('estado/estado_model');
-        $this->load->model('ciudad/ciudad_model');
-        $this->load->model('distrito/distrito_model');
-        $this->load->model('usuario/usuario_model');
-        $this->load->model('cliente_tipo_campo_padre/cliente_tipo_campo_padre_model');
-        $this->load->model('cliente_tipo_campo/cliente_tipo_campo_model');
-        $this->load->model('cliente_campo_valor/cliente_campo_valor_model');
-        $this->load->model('precio/precios_model');
-
-        $this->load->library('Pdf');
-        $this->load->library('phpExcel/PHPExcel.php');
-
+        if ($this->login_model->verify_session()) {
+            $this->load->model('cliente/cliente_model');
+            $this->load->model('clientesgrupos/clientes_grupos_model');
+            $this->load->model('pais/pais_model');
+            $this->load->model('estado/estado_model');
+            $this->load->model('ciudad/ciudad_model');
+            $this->load->model('distrito/distrito_model');
+            $this->load->model('usuario/usuario_model');
+            $this->load->model('cliente_tipo_campo_padre/cliente_tipo_campo_padre_model');
+            $this->load->model('cliente_tipo_campo/cliente_tipo_campo_model');
+            $this->load->model('cliente_campo_valor/cliente_campo_valor_model');
+            $this->load->model('precio/precios_model');
+            $this->load->library('Pdf');
+            $this->load->library('phpExcel/PHPExcel.php');
+        }else{
+            redirect(base_url(), 'refresh');
+        }
     }
 
 

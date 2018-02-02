@@ -4,12 +4,12 @@ class unidades extends MY_Controller {
 
     function __construct() {
         parent::__construct();
-        $this->login_model->verify_session();
-
-        //$this->load->model('caja/caja_model','c');
-        $this->load->model('unidades/unidades_model');
-        $this->load->helper('form');
-
+        if ($this->login_model->verify_session()) {        
+            $this->load->model('unidades/unidades_model');
+            $this->load->helper('form');
+        }else{
+            redirect(base_url(), 'refresh');
+        }
     }
 
     function index(){

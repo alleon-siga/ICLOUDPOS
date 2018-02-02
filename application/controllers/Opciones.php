@@ -6,9 +6,11 @@ class opciones extends MY_Controller
     function __construct()
     {
         parent::__construct();
-        $this->login_model->verify_session();
-
+        if ($this->login_model->verify_session()) {
         $this->load->model('opciones/opciones_model');
+        }else{
+            redirect(base_url(), 'refresh');
+        }
     }
     
 

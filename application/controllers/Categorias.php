@@ -5,7 +5,11 @@ class Categorias extends CI_Controller
 	function __construct()
 	{
 		parent::__construct();
-		$this->load->model('categoria/categoria_model');
+        if ($this->login_model->verify_session()) {
+			$this->load->model('categoria/categoria_model');
+        }else{
+            redirect(base_url(), 'refresh');
+        }
 	}
 
 	function index()

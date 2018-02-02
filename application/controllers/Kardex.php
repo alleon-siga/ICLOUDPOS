@@ -6,10 +6,14 @@ class kardex extends MY_Controller
     function __construct()
     {
         parent::__construct();
-        $this->load->model('kardex/kardex_model');
-        $this->load->model('local/local_model');
-        $this->load->model('producto/producto_model');
-        $this->load->model('unidades/unidades_model');
+        if ($this->login_model->verify_session()) {
+            $this->load->model('kardex/kardex_model');
+            $this->load->model('local/local_model');
+            $this->load->model('producto/producto_model');
+            $this->load->model('unidades/unidades_model');
+        }else{
+            redirect(base_url(), 'refresh');
+        }
     }
 
 

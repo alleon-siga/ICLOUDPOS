@@ -24,8 +24,11 @@ class venta_new_model extends CI_Model
         $this->db->select('
             venta.venta_id as venta_id,
             venta.fecha as venta_fecha,
+            venta.pagado as venta_pagado,
+            venta.vuelto as venta_vuelto,
             venta.local_id as local_id,
             local.local_nombre as local_nombre,
+            local.direccion as local_direccion,
             venta.id_documento as documento_id,
             documentos.des_doc as documento_nombre,
             correlativos.serie as serie_documento,

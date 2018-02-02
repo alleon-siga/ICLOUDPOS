@@ -7,38 +7,37 @@ class inventario extends MY_Controller
     function __construct()
     {
         parent::__construct();
-        $this->login_model->verify_session();
+        if ($this->login_model->verify_session()) {
+            $this->load->model('inventario/inventario_model');
+            $this->load->model('unidades/unidades_model');
+            $this->load->model('producto/producto_model');
+            $this->load->model('ajusteinventario/ajusteinventario_model');
+            $this->load->model('ajustedetalle/ajustedetalle_model');
+            $this->load->model('local/local_model');
+            $this->load->model('marca/marcas_model');
+            $this->load->model('grupos/grupos_model');
+            $this->load->model('linea/lineas_model');
+            $this->load->model('familia/familias_model');
+            $this->load->model('unidades/unidades_model');
+            $this->load->model('columnas/columnas_model');
+            $this->load->model('venta/venta_model');
+            $this->load->model('detalle_ingreso/detalle_ingreso_model');
+            $this->load->model('precio/precios_model');
+            $this->load->model('cliente/cliente_model');
+            $this->load->model('unidades_has_precio/unidades_has_precio_model');
+            $this->load->model('ingreso/ingreso_model');
+            $this->load->model('proveedor/proveedor_model');
+            $this->load->model('usuario/usuario_model');
+            $this->load->model('monedas/monedas_model');
+            $this->load->model('producto_costo_unitario/producto_costo_unitario_model');
+            $this->load->helper('form');
+            $this->columnas = $this->columnas_model->get_by('tabla', 'producto');
+            $this->load->library('Pdf');
+            $this->load->library('phpExcel/PHPExcel.php');
+        }else{
+            redirect(base_url(), 'refresh');
+        }
 
-        $this->load->model('inventario/inventario_model');
-        $this->load->model('unidades/unidades_model');
-        $this->load->model('producto/producto_model');
-        $this->load->model('ajusteinventario/ajusteinventario_model');
-        $this->load->model('ajustedetalle/ajustedetalle_model');
-        $this->load->model('local/local_model');
-        $this->load->model('marca/marcas_model');
-        $this->load->model('grupos/grupos_model');
-        $this->load->model('linea/lineas_model');
-        $this->load->model('familia/familias_model');
-        $this->load->model('unidades/unidades_model');
-        $this->load->model('columnas/columnas_model');
-        $this->load->model('venta/venta_model');
-        $this->load->model('detalle_ingreso/detalle_ingreso_model');
-        $this->load->model('precio/precios_model');
-        $this->load->model('cliente/cliente_model');
-        $this->load->model('unidades_has_precio/unidades_has_precio_model');
-        $this->load->model('ingreso/ingreso_model');
-        $this->load->model('proveedor/proveedor_model');
-        $this->load->model('usuario/usuario_model');
-        $this->load->model('monedas/monedas_model');
-        $this->load->model('producto_costo_unitario/producto_costo_unitario_model');
-
-
-        $this->load->helper('form');
-
-        $this->columnas = $this->columnas_model->get_by('tabla', 'producto');
-        $this->load->library('Pdf');
-       // $this->load->library('mpdf53/mpdf');
-        $this->load->library('phpExcel/PHPExcel.php');
 
     }
 

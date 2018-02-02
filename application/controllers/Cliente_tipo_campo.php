@@ -6,14 +6,15 @@ class cliente_tipo_campo extends MY_Controller
     function __construct()
     {
         parent::__construct();
-        $this->login_model->verify_session();
-
-        $this->load->model('cliente_tipo_campo/cliente_tipo_campo_model');
-        $this->load->model('cliente_campo_valor/cliente_campo_valor_model');
-        $this->load->model('distrito/distrito_model');
-        $this->load->model('ciudad/ciudad_model');
-        $this->load->model('estado/estado_model');
-        //$this->load->model('pais/pais_model');
+        if ($this->login_model->verify_session()) {
+            $this->load->model('cliente_tipo_campo/cliente_tipo_campo_model');
+            $this->load->model('cliente_campo_valor/cliente_campo_valor_model');
+            $this->load->model('distrito/distrito_model');
+            $this->load->model('ciudad/ciudad_model');
+            $this->load->model('estado/estado_model');
+        }else{
+            redirect(base_url(), 'refresh');
+        }    
     }
 
 

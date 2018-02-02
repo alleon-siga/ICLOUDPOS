@@ -6,9 +6,11 @@ class condicionespago extends MY_Controller
     function __construct()
     {
         parent::__construct();
-        $this->login_model->verify_session();
-
-        $this->load->model('condicionespago/condiciones_pago_model');
+        if ($this->login_model->verify_session()) {
+            $this->load->model('condicionespago/condiciones_pago_model');
+        }else{
+            redirect(base_url(), 'refresh');
+        }  
     }
 
     

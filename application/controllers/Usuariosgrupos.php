@@ -6,8 +6,11 @@ class usuariosgrupos extends MY_Controller
     function __construct()
     {
         parent::__construct();
-        $this->login_model->verify_session();
+        if ($this->login_model->verify_session()) {        
 
+        }else{
+            redirect(base_url(), 'refresh');
+        }
     }
 
     

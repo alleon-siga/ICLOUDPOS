@@ -6,7 +6,11 @@ class banco extends MY_Controller
     function __construct()
     {
         parent::__construct();
-        $this->load->model('banco/banco_model');
+        if ($this->login_model->verify_session()) {
+            $this->load->model('banco/banco_model');
+        }else{
+            redirect(base_url(), 'refresh');
+        }
     }
 
 

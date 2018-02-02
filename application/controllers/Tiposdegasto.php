@@ -6,12 +6,12 @@ class tiposdegasto extends MY_Controller
     function __construct()
     {
         parent::__construct();
-        $this->login_model->verify_session();
-
-        $this->load->model('tiposdegasto/tipos_gasto_model');
+        if ($this->login_model->verify_session()) {        
+            $this->load->model('tiposdegasto/tipos_gasto_model');
+        }else{
+            redirect(base_url(), 'refresh');
+        }
     }
-
-    
 
     function index()
     {

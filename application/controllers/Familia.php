@@ -4,14 +4,13 @@ class familia extends MY_Controller {
 
     function __construct() {
         parent::__construct();
-        $this->login_model->verify_session();
-
-
-        $this->load->model('familia/familias_model');
-        $this->load->library('Pdf');
-        $this->load->library('phpExcel/PHPExcel.php');
-
-
+        if ($this->login_model->verify_session()) {   
+            $this->load->model('familia/familias_model');
+            $this->load->library('Pdf');
+            $this->load->library('phpExcel/PHPExcel.php');
+        }else{
+            redirect(base_url(), 'refresh');
+        }  
     }
 
     function index(){

@@ -7,20 +7,22 @@ class ingresos extends MY_Controller
     function __construct()
     {
         parent::__construct();
-        $this->login_model->verify_session();
-
-        $this->load->model('cliente/cliente_model', 'cl');
-        $this->load->model('local/local_model');
-        $this->load->model('producto/producto_model');
-        $this->load->model('precio/precios_model', 'precios');
-        $this->load->model('proveedor/proveedor_model');
-        $this->load->model('unidades/unidades_model');
-        $this->load->model('ingreso/ingreso_model');
-        $this->load->model('impuesto/impuestos_model');
-        $this->load->model('detalle_ingreso/detalle_ingreso_model');
-        $this->load->model('pagos_ingreso/pagos_ingreso_model');
-        $this->load->model('monedas/monedas_model');
-        $this->load->model('producto_costo_unitario/producto_costo_unitario_model');
+        if ($this->login_model->verify_session()) {   
+            $this->load->model('cliente/cliente_model', 'cl');
+            $this->load->model('local/local_model');
+            $this->load->model('producto/producto_model');
+            $this->load->model('precio/precios_model', 'precios');
+            $this->load->model('proveedor/proveedor_model');
+            $this->load->model('unidades/unidades_model');
+            $this->load->model('ingreso/ingreso_model');
+            $this->load->model('impuesto/impuestos_model');
+            $this->load->model('detalle_ingreso/detalle_ingreso_model');
+            $this->load->model('pagos_ingreso/pagos_ingreso_model');
+            $this->load->model('monedas/monedas_model');
+            $this->load->model('producto_costo_unitario/producto_costo_unitario_model');
+        }else{
+            redirect(base_url(), 'refresh');
+        }  
 
         //$this->load->library('mpdf53/mpdf');
 

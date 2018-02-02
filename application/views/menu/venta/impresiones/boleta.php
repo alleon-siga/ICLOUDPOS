@@ -19,9 +19,9 @@
             </tr>
 
             <tr>
-                <td style="text-transform: uppercase;">Empresa: <?= $this->session->userdata('EMPRESA_NOMBRE') ?></td>
+                <td style="text-transform: uppercase;">Empresa: <?= $venta->local_nombre ?></td>
                 <td style="text-transform: uppercase; text-align: right;">
-                    Ubicaci&oacute;n: <?= $venta->local_nombre ?></td>
+                    Ubicaci&oacute;n: <?= $venta->local_direccion ?></td>
             </tr>
 
             <tr>
@@ -78,7 +78,15 @@
             </tbody>
 
         </table>
-
+        <table style="border: 0px; font-size: 16px; width: 100%; font-family: Tahoma; font-weight: bold;"
+               cellpadding="1" cellspacing="0">
+            <tr>
+                <td style="text-transform: uppercase;">Pagado: <?= $venta->venta_pagado ?></td>
+            </tr>
+            <tr>
+                <td style="text-transform: uppercase;">Vuelto: <?= $venta->venta_vuelto ?></td>
+            </tr>
+        </table>
     <?php elseif ($section == 'footer'): ?>
         <table
             style="border: 0px; font-size: 16px; text-transform: uppercase; width: 100%; font-family: Tahoma; font-weight: bold;">
@@ -89,6 +97,10 @@
                 <td style="text-transform: uppercase; text-align: right;">
                     Total a Pagar:
                     <?= $venta->moneda_simbolo . ' ' . $venta->total ?>
+                </td>
+                <td style="text-transform: uppercase; text-align: right;">
+                    Total a Pagar Con Letra:
+                    <?= $totalLetras; ?>
                 </td>
             </tr>
         </table>

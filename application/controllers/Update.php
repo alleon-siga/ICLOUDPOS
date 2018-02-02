@@ -7,9 +7,11 @@ class update extends MY_Controller
     function __construct()
     {
         parent::__construct();
-        $this->login_model->verify_session();
-
-        $this->load->model('update/updatehistorico_model');
+        if ($this->login_model->verify_session()) {        
+            $this->load->model('update/updatehistorico_model');
+        }else{
+            redirect(base_url(), 'refresh');
+        }
     }
 
 

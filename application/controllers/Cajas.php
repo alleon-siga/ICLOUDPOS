@@ -6,11 +6,14 @@ class cajas extends MY_Controller
     function __construct()
     {
         parent::__construct();
-
-        $this->load->model('cajas/cajas_model');
-        $this->load->model('cajas/cajas_mov_model');
-        $this->load->model('local/local_model');
-        $this->load->model('usuario/usuario_model');
+        if ($this->login_model->verify_session()) {
+            $this->load->model('cajas/cajas_model');
+            $this->load->model('cajas/cajas_mov_model');
+            $this->load->model('local/local_model');
+            $this->load->model('usuario/usuario_model');
+        }else{
+            redirect(base_url(), 'refresh');
+        }
     }
 
     function index($local_id = false)

@@ -6,19 +6,17 @@ class local extends MY_Controller
     function __construct()
     {
         parent::__construct();
-        $this->login_model->verify_session();
-
-        $this->load->model('distrito/distrito_model');
-        $this->load->model('ciudad/ciudad_model');
-        $this->load->model('estado/estado_model');
-        $this->load->model('pais/pais_model');
-
-        $this->load->model('local/local_model');
-        $this->load->model('usuario/usuario_model');
-
-        $this->load->model('correlativos/correlativos_model');
-
-
+        if ($this->login_model->verify_session()) {
+            $this->load->model('distrito/distrito_model');
+            $this->load->model('ciudad/ciudad_model');
+            $this->load->model('estado/estado_model');
+            $this->load->model('pais/pais_model');
+            $this->load->model('local/local_model');
+            $this->load->model('usuario/usuario_model');
+            $this->load->model('correlativos/correlativos_model');
+        }else{
+            redirect(base_url(), 'refresh');
+        }
     }
 
 

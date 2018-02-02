@@ -6,12 +6,14 @@ class usuario extends MY_Controller
     function __construct()
     {
         parent::__construct();
-        $this->login_model->verify_session();
-
-        $this->load->model('usuario/usuario_model');
-        $this->load->model('usuariosgrupos/usuarios_grupos_model');
-        $this->load->model('local/local_model');
-        $this->load->library('session');
+        if ($this->login_model->verify_session()) {        
+            $this->load->model('usuario/usuario_model');
+            $this->load->model('usuariosgrupos/usuarios_grupos_model');
+            $this->load->model('local/local_model');
+            $this->load->library('session');
+        }else{
+            redirect(base_url(), 'refresh');
+        }
     }
     
 

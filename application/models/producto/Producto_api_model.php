@@ -16,9 +16,8 @@ class Producto_api_model extends CI_Model
             ->where('producto.producto_estatus', '1')
             ->where('producto.producto_estado', '1')
             ->where('unidades_has_precio.id_precio', 3)
-            ->like('producto_nombre', $str_producto)
-            ->or_like('producto_codigo_interno', $str_producto)
             ->distinct('producto_id')
+            ->like('producto_nombre', $str_producto)
             ->limit(100)
             ->get()->result_array();
 

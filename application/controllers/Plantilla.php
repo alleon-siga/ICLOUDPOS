@@ -5,7 +5,11 @@ class plantilla extends MY_Controller
 {
 	function __construct(){
 		parent::__construct();
-		$this->load->model('plantilla/plantilla_model');
+        if ($this->login_model->verify_session()) {        
+			$this->load->model('plantilla/plantilla_model');
+        }else{
+            redirect(base_url(), 'refresh');
+        }
 	}
 
 	public function index()

@@ -7,17 +7,16 @@ class ingresosYsalidas extends MY_Controller
     function __construct()
     {
         parent::__construct();
-        $this->login_model->verify_session();
-
-        $this->load->model('ingresosYventas/ingresosYventas_model');
-        $this->load->model('ingreso/ingreso_model');
-        $this->load->model('local/local_model');
-
-        $this->load->library('mpdf53/mpdf');
-
-//pd producto pv proveedor
-        $this->load->library('Pdf');
-        $this->load->library('phpExcel/PHPExcel.php');
+        if ($this->login_model->verify_session()) {   
+            $this->load->model('ingresosYventas/ingresosYventas_model');
+            $this->load->model('ingreso/ingreso_model');
+            $this->load->model('local/local_model');
+            $this->load->library('mpdf53/mpdf');
+            $this->load->library('Pdf');
+            $this->load->library('phpExcel/PHPExcel.php');
+        }else{
+            redirect(base_url(), 'refresh');
+        } 
     }
     
 

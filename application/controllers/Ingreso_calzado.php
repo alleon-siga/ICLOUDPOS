@@ -6,10 +6,14 @@ class ingreso_calzado extends MY_Controller
     function __construct()
     {
         parent::__construct();
-        $this->load->model('ingreso/ingreso_calzado_model');
-        $this->load->model('plantilla/plantilla_model');
-        $this->load->model('local/local_model');
-        $this->load->model('monedas/monedas_model');
+        if ($this->login_model->verify_session()) {   
+            $this->load->model('ingreso/ingreso_calzado_model');
+            $this->load->model('plantilla/plantilla_model');
+            $this->load->model('local/local_model');
+            $this->load->model('monedas/monedas_model');
+        }else{
+            redirect(base_url(), 'refresh');
+        }  
     }
 
     public function index()

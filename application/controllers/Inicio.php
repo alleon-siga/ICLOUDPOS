@@ -94,7 +94,6 @@ class inicio extends MY_Controller
                 $data = array(
                     'username' => $this->input->post('user', true),
                     'password' => $password
-
                 );
                 $rs = $this->login_model->verificar_usuario($data);
 

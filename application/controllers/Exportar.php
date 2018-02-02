@@ -6,20 +6,22 @@ class exportar extends MY_Controller
     public function exportar()
     {
         parent::__construct();
-        $this->login_model->verify_session();
-
-        $this->load->model('cliente/cliente_model', 'cl');
-        $this->load->model('producto/producto_model', 'pd');
-        $this->load->model('ingreso/ingreso_model');
-        $this->load->model('local/local_model', 'l');
-        $this->load->model('venta/venta_model', 'v');
-        $this->load->model('usuario/usuario_model');
-        $this->load->model('gastos/gastos_model');
-        $this->load->model('condicionespago/condiciones_pago_model');
-        $this->load->model('credito_cuotas_abono/credito_cuotas_abono_model');
-        $this->load->model('detalle_ingreso/detalle_ingreso_model');
-        $this->load->model('monedas/monedas_model');
-        $this->load->library('mpdf53/mpdf');
+        if ($this->login_model->verify_session()) {        
+            $this->load->model('cliente/cliente_model', 'cl');
+            $this->load->model('producto/producto_model', 'pd');
+            $this->load->model('ingreso/ingreso_model');
+            $this->load->model('local/local_model', 'l');
+            $this->load->model('venta/venta_model', 'v');
+            $this->load->model('usuario/usuario_model');
+            $this->load->model('gastos/gastos_model');
+            $this->load->model('condicionespago/condiciones_pago_model');
+            $this->load->model('credito_cuotas_abono/credito_cuotas_abono_model');
+            $this->load->model('detalle_ingreso/detalle_ingreso_model');
+            $this->load->model('monedas/monedas_model');
+            $this->load->library('mpdf53/mpdf');
+        }else{
+            redirect(base_url(), 'refresh');
+        }  
     }
 
     

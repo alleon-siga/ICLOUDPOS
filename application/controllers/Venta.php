@@ -6,35 +6,36 @@ class venta extends MY_Controller
     function __construct()
     {
         parent::__construct();
-        $this->login_model->verify_session();
+        if ($this->login_model->verify_session()) {        
+            $this->load->model('venta/venta_model');
+            $this->load->model('cronograma/cronograma_model');
+            $this->load->model('local/local_model');
+            $this->load->model('cliente/cliente_model');
+            $this->load->model('producto/producto_model', 'pd');
+            $this->load->model('precio/precios_model', 'precios');
+            $this->load->model('proveedor/proveedor_model', 'pv');
+            $this->load->model('condicionespago/condiciones_pago_model');
+            $this->load->model('metodosdepago/metodos_pago_model');
+            $this->load->model('historial_cronograma/historial_cronograma_model');
+            $this->load->model('unidades/unidades_model');
+            $this->load->model('monedas/monedas_model');
+            $this->load->model('opciones/opciones_model');
+            $this->load->model('correlativos/correlativos_model');
+            $this->load->model('documentos/documentos_model');
+            $this->load->model('venta_devolucion/venta_devolucion_model');
+            $this->load->model('credito_cuotas/credito_cuotas_model');
+            $this->load->model('credito/credito_model');
+            $this->load->model('credito_cuotas_abono/credito_cuotas_abono_model');
+            $this->load->model('banco/banco_model');
+            $this->load->helper('form');
+            $this->load->library('mpdf53/mpdf');
+            $this->load->library('Pdf');
+            $this->load->library('session');
+            $this->load->library('phpExcel/PHPExcel.php');
+        }else{
+            redirect(base_url(), 'refresh');
+        }
 
-        $this->load->model('venta/venta_model');
-        $this->load->model('cronograma/cronograma_model');
-        $this->load->model('local/local_model');
-        $this->load->model('cliente/cliente_model');
-        $this->load->model('producto/producto_model', 'pd');
-        $this->load->model('precio/precios_model', 'precios');
-        $this->load->model('proveedor/proveedor_model', 'pv');
-        $this->load->model('condicionespago/condiciones_pago_model');
-        $this->load->model('metodosdepago/metodos_pago_model');
-        $this->load->model('historial_cronograma/historial_cronograma_model');
-        $this->load->model('unidades/unidades_model');
-        $this->load->model('monedas/monedas_model');
-        $this->load->model('opciones/opciones_model');
-        $this->load->model('correlativos/correlativos_model');
-        $this->load->model('documentos/documentos_model');
-        $this->load->model('venta_devolucion/venta_devolucion_model');
-        $this->load->model('credito_cuotas/credito_cuotas_model');
-        $this->load->model('credito/credito_model');
-        $this->load->model('credito_cuotas_abono/credito_cuotas_abono_model');
-        $this->load->model('banco/banco_model');
-
-        $this->load->helper('form');
-        $this->load->library('mpdf53/mpdf');
-        $this->load->library('Pdf');
-        $this->load->library('session');
-        $this->load->library('phpExcel/PHPExcel.php');
-        //$this->load->library('numero_letras');
     }
 
     function saveGuardar()

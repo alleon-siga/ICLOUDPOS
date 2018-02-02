@@ -38,7 +38,7 @@
             <div class="row" id="totApagar2div">
                 <div class="form-group">
                     <div class="col-md-3">
-                        <label for="totApagar2" class="control-label panel-admin-text">Total a Pagar:</label>
+                        <label for="totApagar2" class="control-label panel-admin-text">Total a Pagarzzzzzz:</label>
                     </div>
                     <div class="col-md-9">
                         <div class="input-prepend input-append input-group">

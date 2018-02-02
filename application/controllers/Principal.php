@@ -6,14 +6,15 @@ class principal extends MY_Controller
     function __construct()
     {
         parent::__construct();
-        $this->login_model->verify_session();
-
-
-        $this->load->model('venta/venta_model');
-        $this->load->model('ingreso/ingreso_model');
-        $this->load->model('cliente/cliente_model');
-        $this->load->model('usuario/usuario_model');
-        $this->load->model('local/local_model');
+        if ($this->login_model->verify_session()) {        
+            $this->load->model('venta/venta_model');
+            $this->load->model('ingreso/ingreso_model');
+            $this->load->model('cliente/cliente_model');
+            $this->load->model('usuario/usuario_model');
+            $this->load->model('local/local_model');
+        }else{
+            redirect(base_url(), 'refresh');
+        }
 
     }
 

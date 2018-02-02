@@ -8,30 +8,30 @@ class traspaso extends MY_Controller
     function __construct()
     {
         parent::__construct();
-        $this->login_model->verify_session();
-
-        $this->load->model('traspaso/traspaso_model');
-        $this->load->model('columnas/columnas_model');
-        $this->load->model('producto/producto_model');
-        $this->load->model('marca/marcas_model');
-        $this->load->model('linea/lineas_model');
-        $this->load->model('familia/familias_model');
-        $this->load->model('grupos/grupos_model');
-        $this->load->model('proveedor/proveedor_model');
-        $this->load->model('impuesto/impuestos_model');
-        $this->load->model('inventario/inventario_model');
-        $this->load->model('producto/producto_model');
-        $this->load->model('cliente/cliente_model');
-
-        $this->load->model('detalle_ingreso/detalle_ingreso_model');
-        $this->load->model('unidades/unidades_model');
-        $this->load->model('columnas/columnas_model');
-        $this->load->model('precio/precios_model');
-        $this->load->model('local/local_model');
-        $this->load->model('unidades_has_precio/unidades_has_precio_model');
-        $this->load->library('Pdf');
-        $this->load->library('phpExcel/PHPExcel.php');
-
+        if ($this->login_model->verify_session()) {        
+            $this->load->model('traspaso/traspaso_model');
+            $this->load->model('columnas/columnas_model');
+            $this->load->model('producto/producto_model');
+            $this->load->model('marca/marcas_model');
+            $this->load->model('linea/lineas_model');
+            $this->load->model('familia/familias_model');
+            $this->load->model('grupos/grupos_model');
+            $this->load->model('proveedor/proveedor_model');
+            $this->load->model('impuesto/impuestos_model');
+            $this->load->model('inventario/inventario_model');
+            $this->load->model('producto/producto_model');
+            $this->load->model('cliente/cliente_model');
+            $this->load->model('detalle_ingreso/detalle_ingreso_model');
+            $this->load->model('unidades/unidades_model');
+            $this->load->model('columnas/columnas_model');
+            $this->load->model('precio/precios_model');
+            $this->load->model('local/local_model');
+            $this->load->model('unidades_has_precio/unidades_has_precio_model');
+            $this->load->library('Pdf');
+            $this->load->library('phpExcel/PHPExcel.php');
+        }else{
+            redirect(base_url(), 'refresh');
+        }
 
         $this->columnas = $this->columnas_model->get_by('tabla', 'producto');
     }

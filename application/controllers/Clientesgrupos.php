@@ -6,11 +6,13 @@ class clientesgrupos extends MY_Controller
     function __construct()
     {
         parent::__construct();
-        $this->login_model->verify_session();
-
-        $this->load->model('clientesgrupos/clientes_grupos_model');
+        if ($this->login_model->verify_session()) {
+            $this->load->model('clientesgrupos/clientes_grupos_model');
+        }else{
+            redirect(base_url(), 'refresh');
+        }  
     }
-    
+
 
     function index()
     {
