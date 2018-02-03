@@ -824,18 +824,13 @@
                                                 <select name='medida[<?= $countunidad ?>]'
                                                         id='medida<?= $countunidad ?>'
                                                         class='form-control'
-                                                        style="display: <?= $operaciones == TRUE ? 'block':'none'?>;">
+                                                        >
                                                     <?php foreach ($unidades as $unidad2):
                                                         ?>
                                                         <option
                                                             value='<?= $unidad2['id_unidad'] ?>' <?php if ($unidad2['id_unidad'] == $unidad['id_unidad']) echo 'selected' ?>><?= $unidad2['nombre_unidad'] ?></option>"
 
                                                     <?php endforeach ?></select>
-                                                <?php if($operaciones == FALSE):?>
-                                                    <?php foreach ($unidades as $unidad2):?>
-                                                        <?php if ($unidad2['id_unidad'] == $unidad['id_unidad']) echo $unidad2['nombre_unidad'] ?>
-                                                    <?php endforeach; ?>
-                                                <?php endif;?>
 
                                             </td>
                                             <td><input type="number" class="form-control unidades" required
@@ -845,7 +840,7 @@
                                                        data-row="<?php echo $countunidad ?>"
                                                        name="unidad[<?= $countunidad ?>]"
                                                        id="unidad[<?= $countunidad ?>]"
-                                                       <?= $operaciones == FALSE ? 'readonly' : ''?>>
+                                                       >
                                             </td>
                                             <?php
                                             $countproducto = 0;
