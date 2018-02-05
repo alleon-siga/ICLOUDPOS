@@ -1,7 +1,5 @@
-
+.idea/
 application/config/database.php
 .htaccess
-uploads/23/1.png
-application/config/config.php
-application/config/database.php
+uploads/
 application/config/config.php
