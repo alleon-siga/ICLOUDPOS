@@ -16,8 +16,12 @@ class opciones extends MY_Controller
 
     function index($action = 'get')
     {
+
         $keys = array(
             'EMPRESA_NOMBRE',
+            'EMPRESA_CORREO',
+            'EMPRESA_CONTACTO',
+            'EMPRESA_TELEFONO',
             'CODIGO_DEFAULT',
             'VALOR_UNICO',
             'PRECIO_INGRESO',

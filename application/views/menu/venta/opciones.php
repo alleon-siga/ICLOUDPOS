@@ -126,6 +126,46 @@
         </div>
     <?php endif; ?>
 
+    <h3>Cotizaci&oacute;n</h3>
+    <div class="row form-group">
+        <div class="col-md-4">
+            <label class="control-label panel-admin-text">Informacion de interes:</label>
+        </div>
+
+        <div class="col-md-8">
+            <input type="text" name="COTIZACION_INFORMACION" required="true" id="COTIZACION_INFORMACION"
+                   class='form-control'
+                   maxlength="100"
+                   value="<?= valueOption("COTIZACION_INFORMACION", '') ?>">
+        </div>
+    </div>
+
+    <div class="row form-group">
+        <div class="col-md-4">
+            <label class="control-label panel-admin-text">Condiciones de Cotizacion:</label>
+        </div>
+
+        <div class="col-md-8">
+            <input type="text" name="COTIZACION_CONDICION" required="true" id="COTIZACION_CONDICION"
+                   class='form-control'
+                   maxlength="100"
+                   value="<?= valueOption("COTIZACION_CONDICION", '') ?>">
+        </div>
+    </div>
+
+    <div class="row form-group">
+        <div class="col-md-4">
+            <label class="control-label panel-admin-text">Informacion pie de pagina:</label>
+        </div>
+
+        <div class="col-md-8">
+            <input type="text" name="COTIZACION_PIE_PAGINA" required="true" id="COTIZACION_PIE_PAGINA"
+                   class='form-control'
+                   maxlength="100"
+                   value="<?= valueOption("COTIZACION_PIE_PAGINA", '') ?>">
+        </div>
+    </div>
+
 
     <?= form_close() ?>
 </div>

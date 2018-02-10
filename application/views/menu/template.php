@@ -265,6 +265,12 @@ $primary_nav = array(
                 'slug' => 'generarventa'
             ),
             array(
+                'name' => 'Cotizaciones',
+                'url' => $ruta . 'cotizar/historial',
+                'icon' => 'fa fa-share',
+                'slug' => 'generarventa'
+            ),
+            array(
                 'name' => 'Registro de Ventas',
                 'url' => $ruta . 'venta_new/historial',
                 'icon' => 'fa fa-history',

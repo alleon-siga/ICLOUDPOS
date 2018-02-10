@@ -42,6 +42,58 @@
 
     <div class="row form-group">
         <div class="col-md-4">
+            <label class="control-label panel-admin-text">Correo de la empresa:</label>
+        </div>
+
+        <div class="col-md-8">
+            <input type="text" name="EMPRESA_CORREO" required="true" id="EMPRESA_CORREO"
+                   class='form-control'
+                   maxlength="100"
+                   value="<?= valueOption("EMPRESA_CORREO", '') ?>">
+        </div>
+    </div>
+
+    <div class="row form-group">
+        <div class="col-md-4">
+            <label class="control-label panel-admin-text">Contacto de la empresa:</label>
+        </div>
+
+        <div class="col-md-8">
+            <input type="text" name="EMPRESA_CONTACTO" required="true" id="EMPRESA_CONTACTO"
+                   class='form-control'
+                   maxlength="100"
+                   value="<?= valueOption("EMPRESA_CONTACTO", '') ?>">
+        </div>
+    </div>
+
+    <div class="row form-group">
+        <div class="col-md-4">
+            <label class="control-label panel-admin-text">Telefono de la empresa:</label>
+        </div>
+
+        <div class="col-md-8">
+            <input type="text" name="EMPRESA_TELEFONO" required="true" id="EMPRESA_TELEFONO"
+                   class='form-control'
+                   maxlength="100"
+                   value="<?= valueOption("EMPRESA_TELEFONO", '') ?>">
+        </div>
+    </div>
+
+<!--    -->
+<!--    <div class="row form-group">-->
+<!--        <div class="col-md-4">-->
+<!--            <label class="control-label panel-admin-text">Empresa logo:</label>-->
+<!--        </div>-->
+<!---->
+<!--        <div class="col-md-8">-->
+<!--            <input type="file" name="EMPRESA_LOGO" required="true" id="EMPRESA_LOGO"-->
+<!--                   class='form-control'-->
+<!--                   value="">-->
+<!--        </div>-->
+<!--    </div>-->
+
+    <div class="row form-group">
+        <div class="col-md-4">
             <label class="control-label panel-admin-text">Código Identificativo:</label>
         </div>
         <div class="col-md-8">

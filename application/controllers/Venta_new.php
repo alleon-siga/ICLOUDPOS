@@ -443,7 +443,10 @@ class venta_new extends MY_Controller
             'VISTA_CREDITO',
             'COSTO_AUMENTO',
             'INCORPORAR_IGV',
-            'COBRAR_CAJA'
+            'COBRAR_CAJA',
+            'COTIZACION_INFORMACION',
+            'COTIZACION_CONDICION',
+            'COTIZACION_PIE_PAGINA'
         );
 
         if ($action == 'get') {
