@@ -5,8 +5,9 @@
     <label id="save_venta_load" style="font-size: 12px; float: right; display: none;"
            class="control-label badge label-primary">Guardando la Venta...</label>
 </ul>
-<?php $md = get_moneda_defecto()?>
+<?php $md = get_moneda_defecto() ?>
 <form id="form_venta" method="POST" action="<?= base_url('venta_new/save') ?>">
+    <input type="hidden" name="cot_id" id="cot_id" value="<?= isset($cotizacion) ? $cotizacion->id : '-1'?>">
     <div class="block">
 
         <!--CAMPOS HIDDEN PARA GUARDAR OPCIONES NECESARIAS-->
@@ -77,8 +78,8 @@
                             <option value=""></option>
                             <?php foreach ($productos as $producto): ?>
                                 <option value="<?= $producto->producto_id ?>">
-                                    <?php $barra = $barra_activa->activo == 1 && $producto->barra != "" ? "CB: ".$producto->barra : ""?>
-                                    <?= getCodigoValue($producto->producto_id, $producto->codigo) . ' - ' . $producto->producto_nombre . " ". $barra ?>
+                                    <?php $barra = $barra_activa->activo == 1 && $producto->barra != "" ? "CB: " . $producto->barra : "" ?>
+                                    <?= getCodigoValue($producto->producto_id, $producto->codigo) . ' - ' . $producto->producto_nombre . " " . $barra ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
@@ -577,5 +578,127 @@
 <script src="<?php echo base_url('recursos/js/Validacion.js') ?>"></script>
 <script src="<?php echo base_url('recursos/js/venta.js') ?>"></script>
 <script>
+    var cotizacion = [];
+    $(function () {
+
+        <?php if($cotizacion != NULL):?>
+
+        cotizacion.cliente_id = <?= $cotizacion->cliente_id ?>;
+        cotizacion.documento_id = <?= $cotizacion->documento_id ?>;
+        cotizacion.condicion_id = <?= $cotizacion->condicion_id ?>;
+        cotizacion.moneda_id = <?= $cotizacion->moneda_id ?>;
+        cotizacion.moneda_tasa = <?= $cotizacion->moneda_tasa ?>;
+        cotizacion.detalles = [];
+
+        <?php foreach ($cotizacion->detalles as $detalle):?>
+        var temp = {
+            producto_id: <?= $detalle->producto_id ?>,
+            producto_nombre: '<?= $detalle->producto_nombre ?>',
+            precio: <?= $detalle->precio ?>,
+            um_min: '<?= $detalle->um_min ?>',
+            um_min_abr: '<?= $detalle->um_min_abr ?>',
+            total_min: <?= $detalle->total_min ?>,
+            unidades: []
+        };
+        <?php foreach ($detalle->unidades as $unidad):?>
+        var uni = {
+            unidad_id: <?= $unidad->unidad_id?>,
+            unidad_nombre: '<?= $unidad->unidad_nombre?>',
+            unidad_abr: '<?= $unidad->unidad_abr?>',
+            cantidad: <?= $unidad->cantidad?>,
+            unidades: <?= $unidad->unidades?>,
+            orden: <?= $unidad->orden?>
+        };
+        temp.unidades.push(uni);
+        <?php endforeach;?>
+        cotizacion.detalles.push(temp);
+        <?php endforeach;?>
+
+        $("#cliente_id").val(cotizacion.cliente_id).trigger("chosen:updated");
+        $("#cliente_id").change();
+
+        $("#tipo_documento").val(cotizacion.documento_id).trigger("chosen:updated");
+        $("#tipo_documento").change();
+
+        $("#tipo_pago").val(cotizacion.condicion_id).trigger("chosen:updated");
+        $("#tipo_pago").change();
+
+        $("#moneda_id").val(cotizacion.moneda_id).trigger("chosen:updated");
+        $("#moneda_id").change();
+
+        $('#tasa').val(cotizacion.moneda_tasa);
+
+        for (var i = 0; i < cotizacion.detalles.length; i++) {
+            var prod = cotizacion.detalles[i];
+            add_producto_from_cotizacion(
+                prod.producto_id,
+                prod.producto_nombre,
+                prod.precio,
+                prod.um_min,
+                prod.um_min_abr,
+                prod.total_min,
+                prod.unidades
+            );
+        }
+
+        <?php endif;?>
+
+
+    });
+
+
+    function add_producto_from_cotizacion(producto_id, producto_nombre, precio, um_min, um_min_abr, total_min, unidades) {
+
+        var local_id = $("#local_id").val();
+        var precio_id = $("#precio_id").val();
+
+
+        //AGREGO EL PRODUCTO E INICIALIZO SUS VALORES
+        var producto = {};
+        producto.index = lst_producto.length;
+        producto.producto_id = producto_id;
+        producto.producto_nombre = encodeURIComponent(producto_nombre);
+        producto.precio_id = precio_id;
+        producto.precio_unitario = parseFloat(precio);
+
+        producto.um_min = um_min;
+        producto.um_min_abr = um_min_abr;
+
+        producto.total_local = {};
+        producto.detalles = [];
+
+        producto.total_local['local' + local_id] = parseFloat(total_min);
+
+
+        for (var i = 0; i < unidades.length; i++) {
+            var input = unidades[i];
+            var detalle = {};
+
+            detalle.local_id = local_id;
+            detalle.local_nombre = encodeURIComponent($('#local_id option:selected').text());
+            detalle.cantidad = parseFloat(input.cantidad);
+            detalle.unidad = input.unidad_id;
+            detalle.unidad_nombre = input.unidad_nombre;
+            detalle.unidad_abr = input.unidad_abr;
+            detalle.unidades = input.unidades;
+            detalle.orden = input.orden;
+
+            producto.detalles.push(detalle);
+        }
+
+
+        producto.total_minimo = 0;
+        for (var local_index in producto.total_local)
+            producto.total_minimo += parseFloat(producto.total_local[local_index]);
+
+        producto.subtotal = parseFloat(producto.total_minimo * producto.precio_unitario);
+
+        lst_producto.push(producto);
+
+        update_view(get_active_view());
+
+        refresh_right_panel();
+
+    }
 
 </script>

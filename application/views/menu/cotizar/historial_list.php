@@ -21,7 +21,6 @@
             <th>Fecha</th>
             <th>Doc</th>
             <th>Num Doc</th>
-            <th>RUC - DNI</th>
             <th>Cliente</th>
             <th>Vendedor</th>
             <th>Condici&oacute;n</th>
@@ -42,7 +41,7 @@
                 <tr>
                     <td>
                         <span style="display: none;"><?= date('YmdHis', strtotime($detalle->fecha)) ?></span>
-                        <?= date('d/m/Y H:i:s', strtotime($detalle->fecha)) ?>
+                        <?= date('d/m/Y', strtotime($detalle->fecha)) ?>
                     </td>
 
                     <td style="text-align: center;"><?php
@@ -55,7 +54,6 @@
                         ?>
                     </td>
                     <td><?= sumCod($detalle->id, 4) ?></td>
-                    <td><?= $detalle->ruc ?></td>
                     <td><?= $detalle->cliente_nombre ?></td>
                     <td><?= $detalle->vendedor_nombre ?></td>
                     <td><?= $detalle->condicion_nombre ?></td>
@@ -65,27 +63,37 @@
                     <td style="text-align: right;"><?= $detalle->moneda_simbolo ?> <?= number_format($detalle->impuesto, 2) ?></td>
                     <td style="text-align: right;"><?= $detalle->moneda_simbolo ?> <?= number_format($detalle->total, 2) ?></td>
                     <td style="text-align: center;">
+                        <?php if ($detalle->estado == 'PENDIENTE'): ?>
+                            <a class="btn btn-sm btn-default" data-toggle="tooltip" style="margin-right: 5px;"
+                               title="Ver" data-original-title="Ver"
+                               href="#"
+                               onclick="cotizar('<?= $detalle->id ?>');">
+                                <i class="fa fa-dollar"></i>
+                            </a>
+                        <?php endif; ?>
 
-                        <a class="btn btn-default" data-toggle="tooltip" style="margin-right: 5px;"
+                        <a class="btn btn-sm btn-default" data-toggle="tooltip" style="margin-right: 5px;"
                            title="Ver" data-original-title="Ver"
                            href="#"
                            onclick="ver('<?= $detalle->id ?>');">
                             <i class="fa fa-search"></i>
                         </a>
 
-                        <a class="btn btn-default" data-toggle="tooltip" style="margin-right: 5px;"
+                        <a class="btn btn-sm btn-default" data-toggle="tooltip" style="margin-right: 5px;"
                            title="Exportar" data-original-title="Exportar"
                            href="#"
                            onclick="exportar_pdf('<?= $detalle->id ?>');">
                             <i class="fa fa-file-pdf-o"></i>
                         </a>
 
-                        <a class="btn btn-danger" data-toggle="tooltip"
-                           title="Eliminar" data-original-title="Eliminar"
-                           href="#"
-                           onclick="anular('<?= $detalle->id ?>', '<?= sumCod($detalle->id, 6) ?>');">
-                            <i class="fa fa-remove"></i>
-                        </a>
+                        <?php if ($detalle->estado == 'PENDIENTE'): ?>
+                            <a class="btn btn-sm btn-danger" data-toggle="tooltip"
+                               title="Eliminar" data-original-title="Eliminar"
+                               href="#"
+                               onclick="anular('<?= $detalle->id ?>', '<?= sumCod($detalle->id, 6) ?>');">
+                                <i class="fa fa-remove"></i>
+                            </a>
+                        <?php endif; ?>
                     </td>
                 </tr>
             <?php endforeach ?>
@@ -109,6 +117,24 @@
         TablesDatatables.init(2);
 
     });
+
+    function cotizar(id) {
+        $("#dialog_cotizar_detalle").html($("#loading").html());
+        $("#dialog_cotizar_detalle").modal('show');
+
+        $.ajax({
+            url: '<?php echo $ruta . 'cotizar/get_cotizar_validar/'?>',
+            type: 'POST',
+            data: {'id': id},
+
+            success: function (data) {
+                $("#dialog_cotizar_detalle").html(data);
+            },
+            error: function () {
+                alert('Error inesperado')
+            }
+        });
+    }
 
 
     function ver(id) {
@@ -136,13 +162,9 @@
     }
 
 
-
-
-
-
     function anular(id) {
 
-        if(!window.confirm("Estas seguro de eliminar esta cotizacion"))
+        if (!window.confirm("Estas seguro de eliminar esta cotizacion"))
             return false;
 
         $("#confirm_venta_text").html($("#loading").html());
@@ -161,7 +183,7 @@
                 get_cotizaciones();
             },
             error: function () {
-               alert('Error inesperado');
+                alert('Error inesperado');
             }
         });
     }

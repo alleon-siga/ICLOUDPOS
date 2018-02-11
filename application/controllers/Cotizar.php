@@ -67,6 +67,22 @@ class cotizar extends MY_Controller
         $this->load->view('menu/cotizar/historial_list_detalle', $data);
     }
 
+    function get_cotizar_validar()
+    {
+        $id = $this->input->post('id');
+        $locales = $this->local_model->get_local_by_user($this->session->userdata('nUsuCodigo'));
+        $local = $locales[0];
+        foreach ($locales as $l) {
+            if ($l->local_id == $l->local_defecto) {
+                $local = $l;
+                break;
+            }
+        }
+        $data['cotizar'] = $this->cotizar_model->get_cotizar_validar($id, $local);
+        $data['local'] = $local;
+        $this->load->view('menu/cotizar/historial_cotizar_detalle', $data);
+    }
+
     function exportar_pdf($id){
         $data['cotizar'] = $this->cotizar_model->get_cotizar_detalle($id);
 

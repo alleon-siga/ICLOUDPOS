@@ -10,6 +10,8 @@ class cotizar_model extends CI_Model
     public function __construct()
     {
         $this->load->database();
+        $this->load->model('local/local_model');
+        $this->load->model('unidades/unidades_model');
     }
 
     function get_cotizaciones($where = array())
@@ -117,8 +119,75 @@ class cotizar_model extends CI_Model
             cd.producto_id as producto_id,
             producto.producto_codigo_interno as producto_codigo_interno,
             producto.producto_nombre as producto_nombre,
+            (cd.precio * uhp.unidades) as precio,
+            cd.cantidad as cantidad,
+            cd.unidad_id as unidad_id,
+            unidades.nombre_unidad as unidad_nombre,
+            unidades.abreviatura as unidad_abr,
+            SUM(cd.precio * uhp.unidades * cd.cantidad) as importe
+            ')
+            ->from('cotizacion_detalles as cd')
+            ->join('producto', 'producto.producto_id=cd.producto_id')
+            ->join('unidades', 'unidades.id_unidad=cd.unidad_id')
+            ->join('unidades_has_producto as uhp', 'uhp.producto_id=cd.producto_id AND uhp.id_unidad=cd.unidad_id')
+            ->where('cd.cotizacion_id', $cotizacion->id)
+            ->group_by('cd.id')
+            ->get()->result();
+
+        return $cotizacion;
+    }
+
+    function get_cotizar_validar($id, $local)
+    {
+
+        $cotizacion = $this->get_cotizaciones(array('id' => $id));
+
+        $cotizacion->detalles = $this->db->select('
+            cd.id as detalle_id,
+            cd.producto_id as producto_id,
+            producto.producto_codigo_interno as producto_codigo_interno,
+            producto.producto_nombre as producto_nombre,
+            (cd.precio * uhp.unidades) as precio,
+            cd.cantidad as cantidad,
+            (SELECT cantidad FROM producto_almacen WHERE id_producto = cd.producto_id AND id_local = ' . $local->local_id . ' LIMIT 1) AS cantidad_almacen,
+            (SELECT fraccion FROM producto_almacen WHERE id_producto = cd.producto_id AND id_local = ' . $local->local_id . ' LIMIT 1) AS fraccion_almacen,
+            cd.unidad_id as unidad_id,
+            unidades.nombre_unidad as unidad_nombre,
+            unidades.abreviatura as unidad_abr,
+            SUM(cd.precio * uhp.unidades * cd.cantidad) as importe
+            ')
+            ->from('cotizacion_detalles as cd')
+            ->join('producto', 'producto.producto_id=cd.producto_id')
+            ->join('unidades', 'unidades.id_unidad=cd.unidad_id')
+            ->join('unidades_has_producto as uhp', 'uhp.producto_id=cd.producto_id AND uhp.id_unidad=cd.unidad_id')
+            ->where('cd.cotizacion_id', $cotizacion->id)
+            ->group_by('cd.id')
+            ->get()->result();
+
+        foreach ($cotizacion->detalles as $detalle) {
+            $detalle->cantidad_minima = $this->unidades_model->convert_minimo_by_um($detalle->producto_id, $detalle->unidad_id, $detalle->cantidad);
+            $detalle->cantidad_almacen_minima = $this->unidades_model->convert_minimo_um($detalle->producto_id, $detalle->cantidad_almacen, $detalle->fraccion_almacen);
+            $detalle->um_min = $this->unidades_model->get_um_min_by_producto($detalle->producto_id);
+            $detalle->um_min_abr = $this->unidades_model->get_um_min_by_producto_abr($detalle->producto_id);
+        }
+
+        return $cotizacion;
+    }
+
+    function prepare_cotizacion($id, $local_id)
+    {
+
+        $cotizacion = $this->get_cotizaciones(array('id' => $id));
+
+        $cotizacion->detalles = $this->db->select('
+            cd.id as detalle_id,
+            cd.producto_id as producto_id,
+            producto.producto_codigo_interno as producto_codigo_interno,
+            producto.producto_nombre as producto_nombre,
             cd.precio as precio,
             cd.cantidad as cantidad,
+            (SELECT cantidad FROM producto_almacen WHERE id_producto = cd.producto_id AND id_local = ' . $local_id . ' LIMIT 1) AS cantidad_almacen,
+            (SELECT fraccion FROM producto_almacen WHERE id_producto = cd.producto_id AND id_local = ' . $local_id . ' LIMIT 1) AS fraccion_almacen,
             cd.unidad_id as unidad_id,
             unidades.nombre_unidad as unidad_nombre,
             unidades.abreviatura as unidad_abr,
@@ -128,8 +197,39 @@ class cotizar_model extends CI_Model
             ->join('producto', 'producto.producto_id=cd.producto_id')
             ->join('unidades', 'unidades.id_unidad=cd.unidad_id')
             ->where('cd.cotizacion_id', $cotizacion->id)
+            ->group_by('cd.id')
             ->get()->result();
 
+        $result = array();
+
+        foreach ($cotizacion->detalles as $detalle) {
+
+            if (!isset($result[$detalle->producto_id])) {
+                $result[$detalle->producto_id] = new stdClass();
+                $result[$detalle->producto_id]->producto_nombre = $detalle->producto_nombre;
+                $result[$detalle->producto_id]->producto_id = $detalle->producto_id;
+                $result[$detalle->producto_id]->precio = $detalle->precio;
+                $result[$detalle->producto_id]->um_min = $this->unidades_model->get_um_min_by_producto($detalle->producto_id);
+                $result[$detalle->producto_id]->um_min_abr = $this->unidades_model->get_um_min_by_producto_abr($detalle->producto_id);
+                $result[$detalle->producto_id]->total_min = 0;
+                $result[$detalle->producto_id]->unidades = array();
+                $unidades = $this->unidades_model->get_unidades_precios($detalle->producto_id, 3);
+                foreach ($unidades as $unidad) {
+                    $result[$detalle->producto_id]->unidades[$unidad->id_unidad] = new stdClass();
+                    $result[$detalle->producto_id]->unidades[$unidad->id_unidad]->unidad_id = $unidad->id_unidad;
+                    $result[$detalle->producto_id]->unidades[$unidad->id_unidad]->unidad_nombre = $unidad->nombre_unidad;
+                    $result[$detalle->producto_id]->unidades[$unidad->id_unidad]->unidad_abr = $unidad->abr;
+                    $result[$detalle->producto_id]->unidades[$unidad->id_unidad]->cantidad = 0;
+                    $result[$detalle->producto_id]->unidades[$unidad->id_unidad]->unidades = $unidad->unidades;
+                    $result[$detalle->producto_id]->unidades[$unidad->id_unidad]->orden = $unidad->orden;
+                }
+            }
+            $result[$detalle->producto_id]->unidades[$detalle->unidad_id]->cantidad = $detalle->cantidad;
+            $result[$detalle->producto_id]->total_min += $this->unidades_model->convert_minimo_by_um($detalle->producto_id, $detalle->unidad_id, $detalle->cantidad);
+
+        }
+
+        $cotizacion->detalles = $result;
         return $cotizacion;
     }
 

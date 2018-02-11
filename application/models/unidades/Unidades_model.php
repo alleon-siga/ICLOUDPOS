@@ -180,6 +180,19 @@ class unidades_model extends CI_Model
         return $temp['nombre_unidad'];
     }
 
+    function get_um_min_by_producto_abr($producto_id)
+    {
+        $orden_max = $this->db->select_max('orden', 'orden')
+            ->where('producto_id', $producto_id)->get('unidades_has_producto')->row();
+
+        $minima_unidad = $this->db->select('id_unidad as um_id')
+            ->where('producto_id', $producto_id)
+            ->where('orden', $orden_max->orden)
+            ->get('unidades_has_producto')->row();
+
+        return $this->get_abreviatura($minima_unidad->um_id);
+    }
+
     function get_abreviatura($id)
     {
         $temp = $this->get_by('id_unidad', $id);

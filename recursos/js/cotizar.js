@@ -478,7 +478,7 @@ function prepare_detalles_productos() {
             if (cantidades[unidad] != 0) {
                 var producto = {};
                 producto.id_producto = lst_producto[i].producto_id;
-                producto.precio = precios[unidad] * lst_producto[i].precio_unitario;
+                producto.precio = lst_producto[i].precio_unitario;
                 producto.unidad_medida = unidad;
                 producto.cantidad = cantidades[unidad];
                 producto.detalle_importe = producto.cantidad * producto.precio;
