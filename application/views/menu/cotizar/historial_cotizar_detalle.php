@@ -16,7 +16,7 @@
                         <div class="col-md-2"><?= sumCod($cotizar->id, 6) ?></div>
 
                         <div class="col-md-2"><label class="control-label">Almacen:</label></div>
-                        <div class="col-md-2"><?= $local->local_nombre ?></div>
+                        <div class="col-md-2"><?= $cotizar->local_nombre ?></div>
                     </div>
 
                     <hr class="hr-margin-5">
@@ -32,7 +32,7 @@
                             <th>Subtotal</th>
                             <th>Cantidad Minima</th>
                             <th>En Almacen Min</th>
-                            <th>Validado (<?= $local->local_nombre ?>)</th>
+                            <th>Validado (<?= $cotizar->local_nombre ?>)</th>
                         </tr>
                         </thead>
                         <tbody>

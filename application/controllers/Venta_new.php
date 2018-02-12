@@ -132,8 +132,7 @@ class venta_new extends MY_Controller
         $local_id = $local == "" || $local == '-' ? $this->session->userdata('id_local') : $local;
 
 
-        $data['cotizacion'] = $cot_id != FALSE ? $this->cotizar_model->prepare_cotizacion($cot_id, $local_id) : NULL;
-//        var_dump($data['cotizacion']);
+        $data['cotizacion'] = $cot_id != FALSE ? $this->cotizar_model->prepare_cotizacion($cot_id) : NULL;
 
         $data['locales'] = $this->local_model->get_local_by_user($this->session->userdata('nUsuCodigo'));
         $data['productos'] = $this->producto_model->get_productos_list();
@@ -225,11 +224,11 @@ class venta_new extends MY_Controller
             }
 
             if ($venta_id) {
-                $cot_id = $this->input->post('cot_id');
-                if ($cot_id != "-1") {
-                    $this->db->where('id', $cot_id);
-                    $this->db->update('cotizacion', array('estado' => 'COMPLETADO'));
-                }
+//                $cot_id = $this->input->post('cot_id');
+//                if ($cot_id != "-1") {
+//                    $this->db->where('id', $cot_id);
+//                    $this->db->update('cotizacion', array('estado' => 'COMPLETADO'));
+//                }
                 $data['success'] = '1';
                 $data['venta'] = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
             } else

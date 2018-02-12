@@ -133,10 +133,10 @@
         </div>
 
         <div class="col-md-8">
-            <input type="text" name="COTIZACION_INFORMACION" required="true" id="COTIZACION_INFORMACION"
-                   class='form-control'
-                   maxlength="100"
-                   value="<?= valueOption("COTIZACION_INFORMACION", '') ?>">
+            <textarea type="text" name="COTIZACION_INFORMACION" rows="5" id="COTIZACION_INFORMACION"
+                      class='form-control textarea-editor'>
+                <?= valueOption("COTIZACION_INFORMACION", '') ?>
+            </textarea>
         </div>
     </div>
 
@@ -146,10 +146,10 @@
         </div>
 
         <div class="col-md-8">
-            <input type="text" name="COTIZACION_CONDICION" required="true" id="COTIZACION_CONDICION"
-                   class='form-control'
-                   maxlength="100"
-                   value="<?= valueOption("COTIZACION_CONDICION", '') ?>">
+            <textarea type="text" name="COTIZACION_CONDICION" rows="5" id="COTIZACION_CONDICION"
+                      class='form-control textarea-editor'>
+                <?= valueOption("COTIZACION_CONDICION", '') ?>
+            </textarea>
         </div>
     </div>
 
@@ -159,10 +159,10 @@
         </div>
 
         <div class="col-md-8">
-            <input type="text" name="COTIZACION_PIE_PAGINA" required="true" id="COTIZACION_PIE_PAGINA"
-                   class='form-control'
-                   maxlength="100"
-                   value="<?= valueOption("COTIZACION_PIE_PAGINA", '') ?>">
+            <textarea type="text" name="COTIZACION_PIE_PAGINA" rows="5" id="COTIZACION_PIE_PAGINA"
+                      class='form-control textarea-editor'>
+                <?= valueOption("COTIZACION_PIE_PAGINA", '') ?>
+            </textarea>
         </div>
     </div>
 
@@ -194,4 +194,16 @@
             window.location.href = '<?= base_url()?>venta_new/opciones';
         }
     }
+
+    $(function () {
+        $('.textarea-editor').wysihtml5({
+            "font-styles": true, //Font styling, e.g. h1, h2, etc. Default true
+            "emphasis": true, //Italics, bold, etc. Default true
+            "lists": false, //(Un)ordered lists, e.g. Bullets, Numbers. Default true
+            "html": true, //Button which allows you to edit the generated HTML. Default false
+            "link": false, //Button to insert a link. Default true
+            "image": false, //Button to insert an image. Default true,
+            "color": true //Button to change color of font
+        });
+    })
 </script>

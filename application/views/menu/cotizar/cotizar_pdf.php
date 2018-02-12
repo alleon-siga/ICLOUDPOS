@@ -115,7 +115,7 @@
 </table>
 <br>
 <div style="text-align: center;">
-    CONDICIONES: <?= valueOption('COTIZACION_CONDICION', '')?>
+    <?= valueOption('COTIZACION_CONDICION', '')?>
 </div>
 <br>
 <div style="text-align: center; font-size: 9px;">

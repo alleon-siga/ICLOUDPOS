@@ -5,6 +5,7 @@
     <li><a href="">Cotizaciones</a></li>
 </ul>
 <link rel="stylesheet" href="<?= $ruta ?>recursos/css/plugins.css">
+<link rel="stylesheet" href="<?= $ruta ?>recursos/js/datepicker-range/daterangepicker.css">
 <div class="row-fluid">
     <div class="span12">
         <div class="block">
@@ -12,89 +13,34 @@
             <!-- Progress Bars Wizard Title -->
             <div class="row">
                 <div class="form-group">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
+                        <select name="local_id" id="local_id" class='form-control'>
+                            <?php foreach ($locales as $local): ?>
+                                <option <?= $local->local_id == $local->local_defecto ? 'selected="selected"' : '' ?>
+                                        value="<?= $local->local_id ?>"><?= $local->local_nombre ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" id="date_range" class="form-control" readonly style="cursor: pointer;" name="daterange" value="<?= date('01/m/Y')?> - <?= date('d/m/Y')?>" />
+
+                    </div>
+                    <div class="col-md-1">
+
+                        <button id="btn_buscar" class="btn btn-default">
+                            <i class="fa fa-search"></i> Buscar
+                        </button>
+                    </div>
+                    <div class="col-md-offset-3 col-md-2 text-right">
                         <button type="button" id="new_cotizacion" class="btn btn-primary">Nueva Cotizacion</button>
                     </div>
 
-                    <div class="col-md-1">
 
-                    </div>
-
-
-                    <div class="col-md-1">
-                        <label class="control-label panel-admin-text">Estado:</label>
-                    </div>
-                    <div class="col-md-3">
-                        <select
-                                id="cotizacion_estado"
-                                class="form-control filter-input" name="cotizacion_estado">
-                            <option value="PENDIENTE">PENDIENTE</option>
-                            <option value="COMPLETADO">COMPLETADO</option>
-                        </select>
-
-                    </div>
-
-                    <div class="col-md-1"></div>
-
-                    <div class="col-md-2">
-
-                        <button id="btn_buscar" class="btn btn-default">
-                            <i class="fa fa-search"></i>
-                        </button>
-                    </div>
 
                 </div>
             </div>
             <br>
 
-            <div class="row">
-
-                <div class="col-md-1">
-                    <label class="control-label panel-admin-text">Periodo:</label>
-                </div>
-
-                <div class="col-md-2">
-                    <select
-                            id="mes"
-                            class="form-control filter-input" name="mes">
-                        <option value="01" <?= date('m') == '01' ? 'selected' : '' ?>>Enero</option>
-                        <option value="02" <?= date('m') == '02' ? 'selected' : '' ?>>Febrero</option>
-                        <option value="03" <?= date('m') == '03' ? 'selected' : '' ?>>Marzo</option>
-                        <option value="04" <?= date('m') == '04' ? 'selected' : '' ?>>Abril</option>
-                        <option value="05" <?= date('m') == '05' ? 'selected' : '' ?>>Mayo</option>
-                        <option value="06" <?= date('m') == '06' ? 'selected' : '' ?>>Junio</option>
-                        <option value="07" <?= date('m') == '07' ? 'selected' : '' ?>>Julio</option>
-                        <option value="08" <?= date('m') == '08' ? 'selected' : '' ?>>Agosto</option>
-                        <option value="09" <?= date('m') == '09' ? 'selected' : '' ?>>Septiembre</option>
-                        <option value="10" <?= date('m') == '10' ? 'selected' : '' ?>>Octubre</option>
-                        <option value="11" <?= date('m') == '11' ? 'selected' : '' ?>>Noviembre</option>
-                        <option value="12" <?= date('m') == '12' ? 'selected' : '' ?>>Diciembre</option>
-                    </select>
-                </div>
-
-                <div class="col-md-2">
-                    <input type="number" id="year" name="year" value="<?= date('Y') ?>" class="form-control">
-                </div>
-
-                <div class="col-md-2">
-
-                </div>
-
-
-                <div class="col-md-2">
-                    <label class="control-label panel-admin-text">Rango de Dias</label>
-                </div>
-                <div class="col-md-1">
-                    <input type="number" min="1" id="dia_min" name="dia_min" value="1" class="form-control">
-                </div>
-
-                <div class="col-md-1">
-                    <input type="number" min="1" id="dia_max" name="dia_max" value="31" class="form-control">
-                </div>
-
-
-            </div>
-            <br>
 
 
             <div class="row-fluid">
@@ -113,11 +59,49 @@
             </div>
 
 
+            <script src="<?php echo $ruta; ?>recursos/js/datepicker-range/moment.min.js"></script>
+            <script src="<?php echo $ruta; ?>recursos/js/datepicker-range/daterangepicker.js"></script>
             <script src="<?php echo $ruta; ?>recursos/js/Validacion.js"></script>
             <!-- /.modal-dialog -->
             <script type="text/javascript">
 
                 $(function () {
+
+                    $('input[name="daterange"]').daterangepicker({
+                        "locale": {
+                            "format": "DD/MM/YYYY",
+                            "separator": " - ",
+                            "applyLabel": "Aplicar",
+                            "cancelLabel": "Cancelar",
+                            "fromLabel": "De",
+                            "toLabel": "A",
+                            "customRangeLabel": "Personalizado",
+                            "daysOfWeek": [
+                                "Do",
+                                "Lu",
+                                "Ma",
+                                "Mi",
+                                "Ju",
+                                "Vi",
+                                "Sa"
+                            ],
+                            "monthNames": [
+                                "Enero",
+                                "Febrero",
+                                "Marzo",
+                                "Abril",
+                                "Mayo",
+                                "Junio",
+                                "Julio",
+                                "Agosto",
+                                "Septiembre",
+                                "Octubre",
+                                "Noviembre",
+                                "Diciembre"
+                            ],
+                            "firstDay": 1
+                        }
+                    });
 
                     $('select').chosen();
 
@@ -154,21 +138,15 @@
 
                     $("#historial_list").html($("#loading").html());
 
-                    var estado = $("#cotizacion_estado").val();
-                    var mes = $("#mes").val();
-                    var year = $("#year").val();
-                    var dia_min = $("#dia_min").val();
-                    var dia_max = $("#dia_max").val();
+                    var date_range = $("#date_range").val();
+                    var local_id = $("#local_id").val();
 
 
                     $.ajax({
                         url: '<?= base_url()?>cotizar/get_cotizaciones',
                         data: {
-                            'mes': mes,
-                            'year': year,
-                            'dia_min': dia_min,
-                            'dia_max': dia_max,
-                            'estado': estado
+                            'date_range': date_range,
+                            'local_id': local_id
                         },
                         type: 'POST',
                         success: function (data) {
@@ -188,16 +166,6 @@
                         }
                     });
 
-                }
-
-
-                function generar_reporte_excel() {
-
-                    document.getElementById("frmExcel").submit();
-                }
-
-                function generar_reporte_pdf() {
-                    document.getElementById("frmPDF").submit();
                 }
 
 

@@ -583,6 +583,7 @@
 
         <?php if($cotizacion != NULL):?>
 
+        cotizacion.local_id = <?= $cotizacion->local_id ?>;
         cotizacion.cliente_id = <?= $cotizacion->cliente_id ?>;
         cotizacion.documento_id = <?= $cotizacion->documento_id ?>;
         cotizacion.condicion_id = <?= $cotizacion->condicion_id ?>;
@@ -625,6 +626,12 @@
 
         $("#moneda_id").val(cotizacion.moneda_id).trigger("chosen:updated");
         $("#moneda_id").change();
+
+        $("#local_venta_id").val(cotizacion.local_id).trigger("chosen:updated");
+        $("#local_venta_id").change();
+
+        $("#local_id").val(cotizacion.local_id).trigger("chosen:updated");
+        $("#local_id").change();
 
         $('#tasa').val(cotizacion.moneda_tasa);
 

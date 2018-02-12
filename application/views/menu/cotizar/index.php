@@ -21,10 +21,15 @@
                 <!-- SELECCION DEL LOCAL DE LA VENTA -->
                 <div class="row">
                     <div class="col-md-2">
-                        <label class="control-label panel-admin-text">Cliente:</label>
+                        <label class="control-label panel-admin-text">Local:</label>
                     </div>
                     <div class="col-md-3">
-
+                        <select name="local_venta_id" id="local_venta_id" class='form-control'>
+                            <?php foreach ($locales as $local): ?>
+                                <option <?= $local->local_id == $local->local_defecto ? 'selected="selected"' : '' ?>
+                                        value="<?= $local->local_id ?>"><?= $local->local_nombre ?></option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
 
                     <div class="col-md-7">

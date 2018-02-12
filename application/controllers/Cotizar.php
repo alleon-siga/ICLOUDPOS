@@ -26,8 +26,7 @@ class cotizar extends MY_Controller
 
     function historial()
     {
-
-        $data = array();
+        $data['locales'] = $this->local_model->get_local_by_user($this->session->userdata('nUsuCodigo'));
 
         $dataCuerpo['cuerpo'] = $this->load->view('menu/cotizar/historial', $data, true);
         if ($this->input->is_ajax_request()) {
@@ -39,19 +38,18 @@ class cotizar extends MY_Controller
 
     function get_cotizaciones($action = "")
     {
-        $estado = $this->input->post('estado');
-        $mes = $this->input->post('mes');
-        $year = $this->input->post('year');
-        $dia_min = $this->input->post('dia_min');
-        $dia_max = $this->input->post('dia_max');
+        $estado = 'PENDIENTE';
+        $local_id = $this->input->post('local_id');
+        $date_range = explode(" - ", $this->input->post('date_range'));
+        $fecha_ini = str_replace("/", "-", $date_range[0]);
+        $fecha_fin = str_replace("/", "-", $date_range[1]);
 
 
         $params = array(
             'estado' => $estado,
-            'mes' => $mes,
-            'year' => $year,
-            'dia_min' => $dia_min,
-            'dia_max' => $dia_max
+            'local_id' => $local_id,
+            'fecha_ini' => $fecha_ini,
+            'fecha_fin' => $fecha_fin
         );
 
         $data['cotizaciones'] = $this->cotizar_model->get_cotizaciones($params);
@@ -70,16 +68,8 @@ class cotizar extends MY_Controller
     function get_cotizar_validar()
     {
         $id = $this->input->post('id');
-        $locales = $this->local_model->get_local_by_user($this->session->userdata('nUsuCodigo'));
-        $local = $locales[0];
-        foreach ($locales as $l) {
-            if ($l->local_id == $l->local_defecto) {
-                $local = $l;
-                break;
-            }
-        }
-        $data['cotizar'] = $this->cotizar_model->get_cotizar_validar($id, $local);
-        $data['local'] = $local;
+
+        $data['cotizar'] = $this->cotizar_model->get_cotizar_validar($id);
         $this->load->view('menu/cotizar/historial_cotizar_detalle', $data);
     }
 
@@ -97,11 +87,8 @@ class cotizar extends MY_Controller
     function eliminar(){
         $id = $this->input->post('id');
 
-        $this->db->where('cotizacion_id', $id);
-        $this->db->delete('cotizacion_detalles');
-
         $this->db->where('id', $id);
-        $this->db->delete('cotizacion');
+        $this->db->update('cotizacion', array('estado'=>'ANULADO'));
 
         echo 'ok';
     }
@@ -138,6 +125,7 @@ class cotizar extends MY_Controller
         header('Content-Type: application/json');
 
         $cotizar['fecha'] = date('Y-m-d', strtotime(str_replace('/', '-', $this->input->post('fecha_venta'))));
+        $cotizar['local_id'] = $this->input->post('local_venta_id');
         $cotizar['cliente_id'] = $this->input->post('cliente_id');
         $cotizar['vendedor_id'] = $this->session->userdata('nUsuCodigo');
         $cotizar['documento_id'] = $this->input->post('tipo_documento');

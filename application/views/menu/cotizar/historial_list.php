@@ -175,7 +175,7 @@
             data: {'id': id},
 
             success: function (data) {
-                $.bootstrapGrowl('<h4>Correcto.</h4> <p>Cotizacion eliminada con exito.</p>', {
+                $.bootstrapGrowl('<h4>Correcto.</h4> <p>Cotizacion anulada con exito.</p>', {
                     type: 'success',
                     delay: 5000,
                     allow_dismiss: true

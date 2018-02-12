@@ -19,6 +19,8 @@ class cotizar_model extends CI_Model
         $this->db->select('
             c.id as id,
             c.fecha as fecha,
+            c.local_id AS local_id,
+            local.local_nombre AS local_nombre,
             c.documento_id as documento_id,
             documentos.des_doc as documento_nombre,
             c.cliente_id as cliente_id,
@@ -43,6 +45,7 @@ class cotizar_model extends CI_Model
             ')
             ->from('cotizacion AS c')
             ->join('documentos', 'c.documento_id=documentos.id_doc')
+            ->join('local', 'local.int_local_id=c.local_id')
             ->join('condiciones_pago', 'c.tipo_pago_id=condiciones_pago.id_condiciones')
             ->join('cliente', 'c.cliente_id=cliente.id_cliente')
             ->join('usuario', 'c.vendedor_id=usuario.nUsuCodigo')
@@ -56,6 +59,9 @@ class cotizar_model extends CI_Model
 
         if (isset($where['estado']))
             $this->db->where('c.estado', $where['estado']);
+
+        if (isset($where['local_id']))
+            $this->db->where('c.local_id', $where['local_id']);
 
         if (isset($where['fecha_ini']) && isset($where['fecha_fin'])) {
             $this->db->where('c.fecha >=', date('Y-m-d H:i:s', strtotime($where['fecha_ini'] . " 00:00:00")));
@@ -93,6 +99,9 @@ class cotizar_model extends CI_Model
         if (isset($where['estado']))
             $this->db->where('c.estado', $where['estado']);
 
+        if (isset($where['local_id']))
+            $this->db->where('c.local_id', $where['local_id']);
+
         if (isset($where['fecha_ini']) && isset($where['fecha_fin'])) {
             $this->db->where('c.fecha >=', date('Y-m-d H:i:s', strtotime($where['fecha_ini'] . " 00:00:00")));
             $this->db->where('c.fecha <=', date('Y-m-d H:i:s', strtotime($where['fecha_fin'] . " 23:59:59")));
@@ -116,6 +125,8 @@ class cotizar_model extends CI_Model
 
         $cotizacion->detalles = $this->db->select('
             cd.id as detalle_id,
+            c.local_id AS local_id,
+            local.local_nombre AS local_nombre,
             cd.producto_id as producto_id,
             producto.producto_codigo_interno as producto_codigo_interno,
             producto.producto_nombre as producto_nombre,
@@ -127,6 +138,8 @@ class cotizar_model extends CI_Model
             SUM(cd.precio * uhp.unidades * cd.cantidad) as importe
             ')
             ->from('cotizacion_detalles as cd')
+            ->join('cotizacion as c', 'c.id=cd.cotizacion_id')
+            ->join('local', 'local.int_local_id=c.local_id')
             ->join('producto', 'producto.producto_id=cd.producto_id')
             ->join('unidades', 'unidades.id_unidad=cd.unidad_id')
             ->join('unidades_has_producto as uhp', 'uhp.producto_id=cd.producto_id AND uhp.id_unidad=cd.unidad_id')
@@ -137,26 +150,30 @@ class cotizar_model extends CI_Model
         return $cotizacion;
     }
 
-    function get_cotizar_validar($id, $local)
+    function get_cotizar_validar($id)
     {
 
         $cotizacion = $this->get_cotizaciones(array('id' => $id));
 
         $cotizacion->detalles = $this->db->select('
             cd.id as detalle_id,
+            c.local_id AS local_id,
+            local.local_nombre AS local_nombre,
             cd.producto_id as producto_id,
             producto.producto_codigo_interno as producto_codigo_interno,
             producto.producto_nombre as producto_nombre,
             (cd.precio * uhp.unidades) as precio,
             cd.cantidad as cantidad,
-            (SELECT cantidad FROM producto_almacen WHERE id_producto = cd.producto_id AND id_local = ' . $local->local_id . ' LIMIT 1) AS cantidad_almacen,
-            (SELECT fraccion FROM producto_almacen WHERE id_producto = cd.producto_id AND id_local = ' . $local->local_id . ' LIMIT 1) AS fraccion_almacen,
+            (SELECT cantidad FROM producto_almacen WHERE id_producto = cd.producto_id AND id_local = c.local_id LIMIT 1) AS cantidad_almacen,
+            (SELECT fraccion FROM producto_almacen WHERE id_producto = cd.producto_id AND id_local = c.local_id LIMIT 1) AS fraccion_almacen,
             cd.unidad_id as unidad_id,
             unidades.nombre_unidad as unidad_nombre,
             unidades.abreviatura as unidad_abr,
             SUM(cd.precio * uhp.unidades * cd.cantidad) as importe
             ')
             ->from('cotizacion_detalles as cd')
+            ->join('cotizacion as c', 'c.id=cd.cotizacion_id')
+            ->join('local', 'local.int_local_id=c.local_id')
             ->join('producto', 'producto.producto_id=cd.producto_id')
             ->join('unidades', 'unidades.id_unidad=cd.unidad_id')
             ->join('unidades_has_producto as uhp', 'uhp.producto_id=cd.producto_id AND uhp.id_unidad=cd.unidad_id')
@@ -174,26 +191,30 @@ class cotizar_model extends CI_Model
         return $cotizacion;
     }
 
-    function prepare_cotizacion($id, $local_id)
+    function prepare_cotizacion($id)
     {
 
         $cotizacion = $this->get_cotizaciones(array('id' => $id));
 
         $cotizacion->detalles = $this->db->select('
             cd.id as detalle_id,
+            c.local_id AS local_id,
+            local.local_nombre AS local_nombre,
             cd.producto_id as producto_id,
             producto.producto_codigo_interno as producto_codigo_interno,
             producto.producto_nombre as producto_nombre,
             cd.precio as precio,
             cd.cantidad as cantidad,
-            (SELECT cantidad FROM producto_almacen WHERE id_producto = cd.producto_id AND id_local = ' . $local_id . ' LIMIT 1) AS cantidad_almacen,
-            (SELECT fraccion FROM producto_almacen WHERE id_producto = cd.producto_id AND id_local = ' . $local_id . ' LIMIT 1) AS fraccion_almacen,
+            (SELECT cantidad FROM producto_almacen WHERE id_producto = cd.producto_id AND id_local = c.local_id LIMIT 1) AS cantidad_almacen,
+            (SELECT fraccion FROM producto_almacen WHERE id_producto = cd.producto_id AND id_local = c.local_id LIMIT 1) AS fraccion_almacen,
             cd.unidad_id as unidad_id,
             unidades.nombre_unidad as unidad_nombre,
             unidades.abreviatura as unidad_abr,
             SUM(cd.precio * cd.cantidad) as importe
             ')
             ->from('cotizacion_detalles as cd')
+            ->join('cotizacion as c', 'c.id=cd.cotizacion_id')
+            ->join('local', 'local.int_local_id=c.local_id')
             ->join('producto', 'producto.producto_id=cd.producto_id')
             ->join('unidades', 'unidades.id_unidad=cd.unidad_id')
             ->where('cd.cotizacion_id', $cotizacion->id)
