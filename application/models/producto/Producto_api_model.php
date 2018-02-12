@@ -13,12 +13,19 @@ class Producto_api_model extends CI_Model
         $result = $this->db->select('producto_id, producto_codigo_interno as codigo, producto_nombre, producto_codigo_barra as barra')
             ->from('producto')
             ->join('unidades_has_precio', 'unidades_has_precio.id_producto = producto.producto_id')
+            ->like('producto_nombre', $str_producto)
+            ->or_like('producto_codigo_interno', $str_producto)
             ->where('producto.producto_estatus', '1')
             ->where('producto.producto_estado', '1')
             ->where('unidades_has_precio.id_precio', 3)
+<<<<<<< Updated upstream
             ->distinct('producto_id')
             ->like('producto_nombre', $str_producto)
             ->limit(100)
+=======
+            ->group_by('producto.producto_id')
+            ->limit(500)
+>>>>>>> Stashed changes
             ->get()->result_array();
 
         return $result;

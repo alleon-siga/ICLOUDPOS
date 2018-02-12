@@ -55,7 +55,7 @@ $db['default'] = array(
     'hostname' => 'localhost',
     'username' => 'root',
     'password' => '',
-    'database' => 'icloudpos_dev',  // 'database' => 'bdicloudpos_prica' icloudpos_dev ,
+    'database' => 'icloudpos',  // 'database' => 'bdicloudpos_prica' icloudpos_dev ,
     'dbdriver' => 'mysqli',
     'dbprefix' => '',
     'pconnect' => FALSE,
