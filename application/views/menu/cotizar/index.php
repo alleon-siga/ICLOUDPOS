@@ -424,7 +424,7 @@
                 <!--FECHA DE LA VENTA-->
                 <div class="row">
                     <div class="col-md-5 label-title">
-                        <label class="control-label">Fecha:</label>
+                        <label class="control-label">Fecha Vencimiento:</label>
                     </div>
 
                     <div class="col-md-7">

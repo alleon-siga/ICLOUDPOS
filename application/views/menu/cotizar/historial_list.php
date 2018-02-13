@@ -18,16 +18,14 @@
     <table class='table table-striped dataTable table-bordered no-footer tableStyle' style="overflow:scroll">
         <thead>
         <tr>
-            <th>Fecha</th>
-            <th>Doc</th>
-            <th>Num Doc</th>
+            <th>Fecha Emisi&oacute;n</th>
+            <th>Fecha Vencimiento</th>
+            <th>Documento</th>
+            <th>Num Documento</th>
             <th>Cliente</th>
             <th>Vendedor</th>
-            <th>Condici&oacute;n</th>
             <th>Moneda</th>
             <th>Tip. Cam.</th>
-            <th>SubTotal</th>
-            <th>IGV</th>
             <th>Total</th>
             <th>Acciones</th>
 
@@ -40,27 +38,20 @@
             <?php foreach ($cotizaciones as $detalle): ?>
                 <tr>
                     <td>
+                        <span style="display: none;"><?= date('YmdHis', strtotime($detalle->created)) ?></span>
+                        <?= date('d/m/Y', strtotime($detalle->created)) ?>
+                    </td>
+                    <td>
                         <span style="display: none;"><?= date('YmdHis', strtotime($detalle->fecha)) ?></span>
                         <?= date('d/m/Y', strtotime($detalle->fecha)) ?>
                     </td>
 
-                    <td style="text-align: center;"><?php
-                        if ($detalle->documento_id == 1) echo "FA";
-                        if ($detalle->documento_id == 2) echo "NC";
-                        if ($detalle->documento_id == 3) echo "BO";
-                        if ($detalle->documento_id == 4) echo "GR";
-                        if ($detalle->documento_id == 5) echo "PCV";
-                        if ($detalle->documento_id == 6) echo "NP";
-                        ?>
-                    </td>
-                    <td><?= sumCod($detalle->id, 4) ?></td>
+                    <td style="text-align: center;"><?= $detalle->tipo_cliente == '2' ? 'RUC' : 'DNI' ?></td>
+                    <td><?= $detalle->ruc ?></td>
                     <td><?= $detalle->cliente_nombre ?></td>
                     <td><?= $detalle->vendedor_nombre ?></td>
-                    <td><?= $detalle->condicion_nombre ?></td>
                     <td><?= $detalle->moneda_nombre ?></td>
                     <td><?= $detalle->moneda_tasa ?></td>
-                    <td style="text-align: right;"><?= $detalle->moneda_simbolo ?> <?= number_format($detalle->subtotal, 2) ?></td>
-                    <td style="text-align: right;"><?= $detalle->moneda_simbolo ?> <?= number_format($detalle->impuesto, 2) ?></td>
                     <td style="text-align: right;"><?= $detalle->moneda_simbolo ?> <?= number_format($detalle->total, 2) ?></td>
                     <td style="text-align: center;">
                         <?php if ($detalle->estado == 'PENDIENTE'): ?>
@@ -114,7 +105,7 @@
 <script type="text/javascript">
     $(function () {
 
-        TablesDatatables.init(2);
+        TablesDatatables.init(0);
 
     });
 

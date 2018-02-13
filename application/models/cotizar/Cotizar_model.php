@@ -19,6 +19,7 @@ class cotizar_model extends CI_Model
         $this->db->select('
             c.id as id,
             c.fecha as fecha,
+            c.created_at as created,
             c.local_id AS local_id,
             local.local_nombre AS local_nombre,
             c.documento_id as documento_id,
@@ -26,6 +27,7 @@ class cotizar_model extends CI_Model
             c.cliente_id as cliente_id,
             cliente.razon_social as cliente_nombre,
             cliente.identificacion as ruc,
+            cliente.ruc as tipo_cliente,
             cliente.direccion as cliente_direccion,
             cliente.telefono1 as telefono,
             c.vendedor_id as vendedor_id,
