@@ -10,6 +10,26 @@ class cajas_model extends CI_Model
         $this->load->model('cajas/cajas_mov_model');
     }
 
+    function sync_cajas()
+    {
+
+        $locales = $this->db->get_where('local', array('local_status' => 1))->result();
+        $monedas = $this->db->get_where('moneda', array('status_moneda' => 1))->result();
+
+        foreach ($locales as $local) {
+            foreach ($monedas as $moneda) {
+                $caja = $this->db->get_where('caja', array(
+                    'local_id' => $local->int_local_id,
+                    'moneda_id' => $moneda->id_moneda
+                ))->row();
+
+//                if($caja == NULL){
+//                    $this->db->
+//                }
+            }
+        }
+    }
+
     function get_all($local = false)
     {
         $this->db->select('caja.*, moneda.*, usuario.nombre AS usuario_nombre, usuario.nUsuCodigo AS nUsuCodigo')

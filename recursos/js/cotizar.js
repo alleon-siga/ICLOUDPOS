@@ -365,8 +365,13 @@ $(document).ready(function () {
     $("#terminar_cotizar").click('on', function (e) {
 
         if (lst_producto.length == 0) {
-            show_msg('warning', '<h4>Error. </h4><p>Debe agregar al menos un producto para realizar la venta.</p>');
+            show_msg('warning', '<h4>Error. </h4><p>Debe agregar al menos un producto para realizar la cotizacion.</p>');
             select_productos(51);
+            return false;
+        }
+
+        if ($('#lugar_entrega').val() == '') {
+            show_msg('warning', '<h4>Error. </h4><p>Inserte un lugar de entrega.</p>');
             return false;
         }
 

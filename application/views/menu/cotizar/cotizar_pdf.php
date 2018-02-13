@@ -64,7 +64,6 @@
         <th>Cantidad</th>
         <th>UND</th>
         <th>P. UNIT</th>
-        <th>% DTO</th>
         <th>TOTAL</th>
     </tr>
     </thead>
@@ -76,7 +75,6 @@
             <td style="border: #111 0.5px solid; text-align: center;"><?= $detalle->cantidad ?></td>
             <td style="border: #111 0.5px solid; text-align: center;"><?= $detalle->unidad_nombre ?></td>
             <td style="border: #111 0.5px solid; text-align: center;"><?= $detalle->precio ?></td>
-            <td style="border: #111 0.5px solid; text-align: center;"></td>
             <td style="border: #111 0.5px solid; text-align: right;"><?= number_format($detalle->importe, 2) ?></td>
         </tr>
     <?php endforeach; ?>
@@ -88,28 +86,22 @@
             <td style="border: #111 0.5px solid; text-align: center;"></td>
             <td style="border: #111 0.5px solid; text-align: center;"></td>
             <td style="border: #111 0.5px solid; text-align: center;"></td>
-            <td style="border: #111 0.5px solid; text-align: right;"></td>
         </tr>
     <?php endfor; ?>
     <?php if ($cotizar->documento_id == 1): ?>
         <tr>
-            <td colspan="5"></td>
+            <td colspan="4"></td>
             <th style="text-align: left;">SUBTOTAL</th>
             <td style="border: #111 0.5px solid; text-align: right;"><?= $cotizar->subtotal ?></td>
         </tr>
         <tr>
-            <td colspan="5"></td>
+            <td colspan="4"></td>
             <th style="text-align: left;">IMPUESTOS</th>
             <td style="border: #111 0.5px solid; text-align: right;"><?= $cotizar->impuesto ?></td>
         </tr>
-        <tr>
-            <td colspan="5"></td>
-            <th style="text-align: left;">DESCUENTOS</th>
-            <td style="border: #111 0.5px solid; text-align: right;"></td>
-        </tr>
     <?php endif; ?>
     <tr>
-        <td colspan="5"></td>
+        <td colspan="4"></td>
         <th style="text-align: left;">TOTAL</th>
         <td style="border: #111 0.5px solid; text-align: right;"><?= $cotizar->total ?></td>
     </tr>
