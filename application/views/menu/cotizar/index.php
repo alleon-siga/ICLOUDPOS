@@ -433,6 +433,27 @@
                     </div>
                 </div>
 
+                <div class="row">
+                    <div class="col-md-5 label-title">
+                        <label class="control-label">Fecha Entrega:</label>
+                    </div>
+
+                    <div class="col-md-7">
+                        <input type="text" class="form-control date-picker" name="fecha_entrega" id="fecha_entrega"
+                               value="<?= date('d/m/Y') ?>" readonly>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-5 label-title">
+                        <label class="control-label">Lugar Entrega:</label>
+                    </div>
+
+                    <div class="col-md-7">
+                        <input type="text" class="form-control" name="lugar_entrega" id="lugar_entrega" value="">
+                    </div>
+                </div>
+
                 <!--TOTAL DE PRODUCTOS-->
                 <div class="row">
                     <div class="col-md-5 label-title">

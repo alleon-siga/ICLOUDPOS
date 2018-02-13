@@ -125,6 +125,7 @@ class cotizar extends MY_Controller
         header('Content-Type: application/json');
 
         $cotizar['fecha'] = date('Y-m-d', strtotime(str_replace('/', '-', $this->input->post('fecha_venta'))));
+        $cotizar['fecha_entrega'] = date('Y-m-d', strtotime(str_replace('/', '-', $this->input->post('fecha_entrega'))));
         $cotizar['local_id'] = $this->input->post('local_venta_id');
         $cotizar['cliente_id'] = $this->input->post('cliente_id');
         $cotizar['vendedor_id'] = $this->session->userdata('nUsuCodigo');
@@ -138,6 +139,7 @@ class cotizar extends MY_Controller
         $cotizar['tasa_cambio'] = $this->input->post('tasa');
         $cotizar['credito_periodo'] = $this->input->post('c_pago_periodo');
         $cotizar['periodo_per'] = $this->input->post('periodo_per');
+        $cotizar['lugar_entrega'] = $this->input->post('lugar_entrega');
 
         $detalles_productos = json_decode($this->input->post('detalles_productos', true));
 

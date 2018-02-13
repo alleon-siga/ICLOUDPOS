@@ -14,8 +14,8 @@
 
 <table>
     <tr>
-        <td><img height="100" src="<?= base_url('recursos/img/punto_de_venta_v2.jpg')?>"></td>
-        <td style="height: 100px; text-align: center; width: 50%;"><?= valueOption('COTIZACION_INFORMACION', '')?></td>
+        <td><img height="100" src="<?= base_url('recursos/img/punto_de_venta_v2.jpg') ?>"></td>
+        <td style="height: 100px; text-align: center; width: 50%;"><?= valueOption('COTIZACION_INFORMACION', '') ?></td>
         <td style="text-align: right;"><?= date('d/m/Y', strtotime($cotizar->fecha)) ?></td>
     </tr>
 </table>
@@ -41,16 +41,16 @@
 
 <table>
     <tr>
-        <td>LUGAR DE ENTREGA: -</td>
-        <td>CONTACTO: <?= valueOption('EMPRESA_CONTACTO', '-')?></td>
+        <td>LUGAR DE ENTREGA: <?= $cotizar->lugar_entrega ?></td>
+        <td>CONTACTO: <?= valueOption('EMPRESA_CONTACTO', '-') ?></td>
     </tr>
     <tr>
-        <td>FECHA DE ENTREGA: -</td>
-        <td>CORREO: <?= valueOption('EMPRESA_CORREO', '-')?></td>
+        <td>FECHA DE ENTREGA: <?= date('d/m/Y', strtotime($cotizar->fecha_entrega)) ?></td>
+        <td>CORREO: <?= valueOption('EMPRESA_CORREO', '-') ?></td>
     </tr>
     <tr>
         <td>FORMA DE PAGO: <?= $cotizar->condicion_nombre ?></td>
-        <td>N<sup>o</sup> CELULAR: <?= valueOption('EMPRESA_TELEFONO', '-')?></td>
+        <td>N<sup>o</sup> CELULAR: <?= valueOption('EMPRESA_TELEFONO', '-') ?></td>
     </tr>
 </table>
 
@@ -81,31 +81,33 @@
         </tr>
     <?php endforeach; ?>
     <?php for ($i = 0; $i < (20 - count($cotizar->detalles)); $i++): ?>
-    <tr>
-        <td style="border: #111 0.5px solid; color: #fff;">-</td>
-        <td style="border: #111 0.5px solid;"></td>
-        <td style="border: #111 0.5px solid; text-align: center;"></td>
-        <td style="border: #111 0.5px solid; text-align: center;"></td>
-        <td style="border: #111 0.5px solid; text-align: center;"></td>
-        <td style="border: #111 0.5px solid; text-align: center;"></td>
-        <td style="border: #111 0.5px solid; text-align: right;"></td>
-    </tr>
+        <tr>
+            <td style="border: #111 0.5px solid; color: #fff;">-</td>
+            <td style="border: #111 0.5px solid;"></td>
+            <td style="border: #111 0.5px solid; text-align: center;"></td>
+            <td style="border: #111 0.5px solid; text-align: center;"></td>
+            <td style="border: #111 0.5px solid; text-align: center;"></td>
+            <td style="border: #111 0.5px solid; text-align: center;"></td>
+            <td style="border: #111 0.5px solid; text-align: right;"></td>
+        </tr>
     <?php endfor; ?>
-    <tr>
-        <td colspan="5"></td>
-        <th style="text-align: left;">SUBTOTAL</th>
-        <td style="border: #111 0.5px solid; text-align: right;"><?= $cotizar->subtotal ?></td>
-    </tr>
-    <tr>
-        <td colspan="5"></td>
-        <th style="text-align: left;">IMPUESTOS</th>
-        <td style="border: #111 0.5px solid; text-align: right;"><?= $cotizar->impuesto ?></td>
-    </tr>
-    <tr>
-        <td colspan="5"></td>
-        <th style="text-align: left;">DESCUENTOS</th>
-        <td style="border: #111 0.5px solid; text-align: right;"></td>
-    </tr>
+    <?php if ($cotizar->documento_id == 1): ?>
+        <tr>
+            <td colspan="5"></td>
+            <th style="text-align: left;">SUBTOTAL</th>
+            <td style="border: #111 0.5px solid; text-align: right;"><?= $cotizar->subtotal ?></td>
+        </tr>
+        <tr>
+            <td colspan="5"></td>
+            <th style="text-align: left;">IMPUESTOS</th>
+            <td style="border: #111 0.5px solid; text-align: right;"><?= $cotizar->impuesto ?></td>
+        </tr>
+        <tr>
+            <td colspan="5"></td>
+            <th style="text-align: left;">DESCUENTOS</th>
+            <td style="border: #111 0.5px solid; text-align: right;"></td>
+        </tr>
+    <?php endif; ?>
     <tr>
         <td colspan="5"></td>
         <th style="text-align: left;">TOTAL</th>
@@ -115,11 +117,11 @@
 </table>
 <br>
 <div style="text-align: center;">
-    <?= valueOption('COTIZACION_CONDICION', '')?>
+    <?= valueOption('COTIZACION_CONDICION', '') ?>
 </div>
 <br>
 <div style="text-align: center; font-size: 9px;">
-   <?= valueOption('COTIZACION_PIE_PAGINA', 'fsfd')?>
+    <?= valueOption('COTIZACION_PIE_PAGINA', 'fsfd') ?>
 </div>
 
 

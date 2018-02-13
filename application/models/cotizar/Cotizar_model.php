@@ -41,7 +41,9 @@ class cotizar_model extends CI_Model
             c.impuesto as impuesto,
             c.subtotal as subtotal,
             c.credito_periodo as credito_periodo,
-            c.periodo_per as periodo_per
+            c.periodo_per as periodo_per,
+            c.fecha_entrega as fecha_entrega,
+            c.lugar_entrega as lugar_entrega
             ')
             ->from('cotizacion AS c')
             ->join('documentos', 'c.documento_id=documentos.id_doc')
