@@ -74,8 +74,8 @@
             <td style="border: #111 0.5px solid;"><?= $detalle->producto_nombre ?></td>
             <td style="border: #111 0.5px solid; text-align: center;"><?= $detalle->cantidad ?></td>
             <td style="border: #111 0.5px solid; text-align: center;"><?= $detalle->unidad_nombre ?></td>
-            <td style="border: #111 0.5px solid; text-align: center;"><?= $detalle->precio ?></td>
-            <td style="border: #111 0.5px solid; text-align: right;"><?= number_format($detalle->importe, 2) ?></td>
+            <td style="border: #111 0.5px solid; text-align: center;"><?= $cotizar->moneda_simbolo . " " .$detalle->precio ?></td>
+            <td style="border: #111 0.5px solid; text-align: right;"><?= $cotizar->moneda_simbolo . " " .number_format($detalle->importe, 2) ?></td>
         </tr>
     <?php endforeach; ?>
     <?php for ($i = 0; $i < (20 - count($cotizar->detalles)); $i++): ?>
@@ -103,7 +103,7 @@
     <tr>
         <td colspan="4"></td>
         <th style="text-align: left;">TOTAL</th>
-        <td style="border: #111 0.5px solid; text-align: right;"><?= $cotizar->total ?></td>
+        <td style="border: #111 0.5px solid; text-align: right;"><?= $cotizar->moneda_simbolo . " " . $cotizar->total ?></td>
     </tr>
     </tbody>
 </table>

@@ -118,7 +118,7 @@
                                 <td><?= $detalle->producto_nombre ?></td>
                                 <td><?= $detalle->cantidad ?></td>
                                 <td><?= $detalle->unidad_nombre ?></td>
-                                <td style="text-align: right"><?= $detalle->precio ?></td>
+                                <td style="text-align: right"><?= $cotizar->moneda_simbolo . " " . $detalle->precio ?></td>
                                 <td style="text-align: right"><?= $cotizar->moneda_simbolo . " " . number_format($detalle->importe, 2) ?></td>
                             </tr>
                         <?php endforeach; ?>
