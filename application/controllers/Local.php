@@ -14,6 +14,7 @@ class local extends MY_Controller
             $this->load->model('local/local_model');
             $this->load->model('usuario/usuario_model');
             $this->load->model('correlativos/correlativos_model');
+            $this->load->model('cajas/cajas_model');
         }else{
             redirect(base_url(), 'refresh');
         }
@@ -58,7 +59,7 @@ class local extends MY_Controller
     function save_correlativos($local_id){
         $correlativos = json_decode($this->input->post('correlativos'));
 
-
+        $this->cajas_model->sync_cajas();
         header('Content-Type: application/json');
         if($this->correlativos_model->save_correlativos($local_id, $correlativos))
             echo json_encode(array('success'=>'1'));
@@ -114,7 +115,7 @@ class local extends MY_Controller
             //  $this->session->set_flashdata('error', NOMBRE_EXISTE);
             $json['error'] = NOMBRE_EXISTE;
         }
-
+        $this->cajas_model->sync_cajas();
         echo json_encode($json);
 
     }

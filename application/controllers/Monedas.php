@@ -10,6 +10,7 @@ class monedas extends MY_Controller
         parent::__construct();
         if ($this->login_model->verify_session()) {
             $this->load->model('monedas/monedas_model');
+            $this->load->model('cajas/cajas_model');
         }else{
             redirect(base_url(), 'refresh');
         }
@@ -62,7 +63,7 @@ class monedas extends MY_Controller
             //  $this->session->set_flashdata('error', NOMBRE_EXISTE);
             $json['error'] = NOMBRE_EXISTE;
         }
-
+        $this->cajas_model->sync_cajas();
         echo json_encode($json);
 
     }

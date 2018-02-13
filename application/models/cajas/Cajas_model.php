@@ -23,9 +23,14 @@ class cajas_model extends CI_Model
                     'moneda_id' => $moneda->id_moneda
                 ))->row();
 
-//                if($caja == NULL){
-//                    $this->db->
-//                }
+                if ($caja == NULL) {
+                    $this->db->insert('caja', array(
+                        'local_id' => $local->int_local_id,
+                        'moneda_id' => $moneda->id_moneda,
+                        'responsable_id' => $this->session->userdata('nUsuCodigo'),
+                        'estado' => 1
+                    ));
+                }
             }
         }
     }
@@ -44,7 +49,7 @@ class cajas_model extends CI_Model
         $this->db->where('moneda.status_moneda', '1');
 
 
-        $result = $this->db->get('caja')->result();
+        $result = $this->db->order_by('caja.moneda_id')->get('caja')->result();
 
         foreach ($result as $desglose) {
             $desglose->desgloses = $this->db->where('caja_id', $desglose->id)
