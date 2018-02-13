@@ -505,17 +505,23 @@ function save_cotizar(imprimir) {
 
     var form = $('#form_venta').serialize();
     var detalles_productos = prepare_detalles_productos();
-
+    var success = false;
     $.ajax({
         url: ruta + 'cotizar/save_cotizar',
         type: 'POST',
         dataType: 'json',
+        async: false,
         data: form + '&detalles_productos=' + detalles_productos,
         success: function (data) {
 
             if (data.success == '1') {
                 show_msg('success', '<h4>Correcto. </h4><p>La cotizacion se ha guardado con exito.</p>');
-                cancel_cotizar();
+
+                if (imprimir == 1)
+                    success = data.id;
+                else{
+                    cancel_cotizar();
+                }
             }
             else {
                 show_msg('danger', '<h4>Error. </h4><p>Ha ocurrido un error insperado al guardar la cotizacion.</p>');
@@ -528,8 +534,14 @@ function save_cotizar(imprimir) {
         complete: function (data) {
             $('.save_venta_contado').removeAttr('disabled');
             $("#loading_save_venta").modal('hide');
+
         }
     });
+
+    if (success != false) {
+        var win = window.open(ruta + '/cotizar/exportar_pdf/' + success, '_blank');
+        cancel_cotizar();
+    }
 }
 
 

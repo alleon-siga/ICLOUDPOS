@@ -52,6 +52,10 @@
                             onclick="$('#dialog_cotizar').modal('hide');"><i
                                 class="fa fa-close"></i> Cancelar
                     </button>
+                    <div style="display: none">
+
+                        <input type="button" id="impr" value="imprimir">
+                    </div>
                 </div>
             </div>
         </div>
@@ -64,6 +68,11 @@
         $(".save_venta_contado").on('click', function () {
             save_cotizar($(this).attr('data-imprimir'));
         });
+
+        $('#impr').on('click', function(){
+            alert('<?= base_url()?>' + '/cotizar/exportar_pdf/' + $(this).attr('data-id'))
+
+        })
 
     });
 

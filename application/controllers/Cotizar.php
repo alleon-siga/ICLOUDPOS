@@ -143,8 +143,10 @@ class cotizar extends MY_Controller
 
         $detalles_productos = json_decode($this->input->post('detalles_productos', true));
 
-        if ($this->cotizar_model->save($cotizar, $detalles_productos)) {
+        $id = $this->cotizar_model->save($cotizar, $detalles_productos);
+        if ($id != FALSE) {
             $data['success'] = 1;
+            $data['id'] = $id;
         } else {
             $data['success'] = 0;
             $data['msg'] = 'El cotizacion no ha podido ser guardada';

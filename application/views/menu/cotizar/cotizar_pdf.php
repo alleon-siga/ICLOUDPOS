@@ -14,7 +14,7 @@
 
 <table>
     <tr>
-        <td><img height="100" src="<?= base_url('recursos/img/punto_de_venta_v2.jpg') ?>"></td>
+        <td><img height="100" src="<?= base_url('recursos/img/logo/logo.jpg') ?>"></td>
         <td style="height: 100px; text-align: center; width: 50%;"><?= valueOption('COTIZACION_INFORMACION', '') ?></td>
         <td style="text-align: right;"><?= date('d/m/Y', strtotime($cotizar->fecha)) ?></td>
     </tr>

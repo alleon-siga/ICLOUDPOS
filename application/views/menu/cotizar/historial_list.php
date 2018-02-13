@@ -1,15 +1,8 @@
 <?php $ruta = base_url(); ?>
 <?php $md = get_moneda_defecto() ?>
 <div class="row">
-    <div class="col-md-6"></div>
-    <div class="col-md-2">
-        <label>Subtotal: <?= $md->simbolo ?> <span
-                    id="subtotal"><?= number_format($cotizaciones_totales->subtotal, 2) ?></span></label>
-    </div>
-    <div class="col-md-2">
-        <label>IGV: <?= $md->simbolo ?> <span
-                    id="impuesto"><?= number_format($cotizaciones_totales->impuesto, 2) ?></span></label>
-    </div>
+    <div class="col-md-10"></div>
+
     <div class="col-md-2">
         <label>Total: <?= $md->simbolo ?> <span id="total"><?= number_format($cotizaciones_totales->total, 2) ?></span></label>
     </div>

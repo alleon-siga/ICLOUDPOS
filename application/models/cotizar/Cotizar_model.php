@@ -289,7 +289,7 @@ class cotizar_model extends CI_Model
             return false;
         } else {
             $this->db->trans_off();
-            return true;
+            return $id;
         }
     }
 
