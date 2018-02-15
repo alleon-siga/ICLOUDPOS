@@ -210,6 +210,8 @@ class producto_model extends CI_Model
 
         }
 
+
+
         if ($validar == 0) {
             $this->db->trans_start();
 

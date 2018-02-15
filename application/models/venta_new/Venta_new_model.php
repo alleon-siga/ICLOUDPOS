@@ -152,6 +152,7 @@ class venta_new_model extends CI_Model
             ->join('producto', 'producto.producto_id=detalle_venta.id_producto')
             ->join('unidades', 'unidades.id_unidad=detalle_venta.unidad_medida')
             ->where('detalle_venta.id_venta', $venta->venta_id)
+            ->group_by('detalle_venta.id_detalle')
             ->get()->result();
 
         return $venta;

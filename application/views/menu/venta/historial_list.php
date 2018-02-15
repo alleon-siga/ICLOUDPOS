@@ -1,13 +1,13 @@
 <?php $ruta = base_url(); ?>
 <?php $md = get_moneda_defecto()?>
     <div class="row">
-        <div class="col-md-6"></div>
-        <div class="col-md-2">
-            <label>Subtotal: <?= $md->simbolo ?> <span id="subtotal"><?=number_format($venta_totales->subtotal, 2)?></span></label>
-        </div>
-        <div class="col-md-2">
-            <label>IGV: <?= $md->simbolo ?> <span id="impuesto"><?=number_format($venta_totales->impuesto, 2)?></span></label>
-        </div>
+        <div class="col-md-10"></div>
+<!--        <div class="col-md-2">-->
+<!--            <label>Subtotal: --><?//= $md->simbolo ?><!-- <span id="subtotal">--><?//=number_format($venta_totales->subtotal, 2)?><!--</span></label>-->
+<!--        </div>-->
+<!--        <div class="col-md-2">-->
+<!--            <label>IGV: --><?//= $md->simbolo ?><!-- <span id="impuesto">--><?//=number_format($venta_totales->impuesto, 2)?><!--</span></label>-->
+<!--        </div>-->
         <div class="col-md-2">
             <label>Total: <?= $md->simbolo ?> <span id="total"><?=number_format($venta_totales->total, 2)?></span></label>
         </div>
@@ -25,8 +25,6 @@
         <th>Condici&oacute;n</th>
         <th>Moneda</th>
         <th>Tip. Cam.</th>
-        <th>SubTotal</th>
-        <th>IGV</th>
         <th>Total <?= $venta_action == 'caja' ? 'a Pagar' : '' ?></th>
         <th>Acciones</th>
 
@@ -59,8 +57,6 @@
                 <td><?= $venta->condicion_nombre ?></td>
                 <td><?= $venta->moneda_nombre ?></td>
                 <td><?= $venta->moneda_tasa ?></td>
-                <td style="text-align: right;"><?= $venta->moneda_simbolo ?> <?= number_format($venta->subtotal, 2) ?></td>
-                <td style="text-align: right;"><?= $venta->moneda_simbolo ?> <?= number_format($venta->impuesto, 2) ?></td>
                 <td style="text-align: right;"><?= $venta->moneda_simbolo ?> <?=number_format( $venta->total, 2) ?></td>
                 <td style="text-align: center;">
 

@@ -10,6 +10,7 @@
         </a></li>
 </ul>
 <link rel="stylesheet" href="<?= $ruta ?>recursos/css/plugins.css">
+<link rel="stylesheet" href="<?= $ruta ?>recursos/js/datepicker-range/daterangepicker.css">
 <div class="row-fluid">
     <div class="span12">
         <div class="block">
@@ -36,11 +37,17 @@
 
                     </div>
 
+                    <div class="col-md-3" style="display: <?= $venta_action != 'caja' ? 'block' : 'none' ?>">
+                        <input type="text" id="date_range" class="form-control" readonly style="cursor: pointer;"
+                               name="daterange" value="<?= date('01/m/Y') ?> - <?= date('d/m/Y') ?>"/>
 
-                    <div class="col-md-1">
+                    </div>
+
+
+                    <div class="col-md-1" style="display: none;">
                         <label class="control-label panel-admin-text">Estado:</label>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-3" style="display: none;">
                         <select
                                 id="venta_estado" <?= $venta_action == 'caja' ? 'disabled' : '' ?>
                                 class="form-control filter-input" name="venta_estado">
@@ -68,61 +75,13 @@
                             </button>
                         <?php else: ?>
                             <button id="btn_buscar" class="btn btn-default">
-                                <i id="caja_class" class="fa fa-search"></i> <span id="total_caja" class="badge label-primary"></span>
+                                <i id="caja_class" class="fa fa-search"></i> <span id="total_caja"
+                                                                                   class="badge label-primary"></span>
                             </button>
                         <?php endif; ?>
                     </div>
 
                 </div>
-            </div>
-            <br>
-
-            <div class="row" style="display: <?= $venta_action == 'caja' ? 'none' : 'block' ?>;">
-
-                <div class="col-md-1">
-                    <label class="control-label panel-admin-text">Periodo:</label>
-                </div>
-
-                <div class="col-md-2">
-                    <select
-                            id="mes"
-                            class="form-control filter-input" name="mes">
-                        <option value="01" <?= date('m') == '01' ? 'selected' : '' ?>>Enero</option>
-                        <option value="02" <?= date('m') == '02' ? 'selected' : '' ?>>Febrero</option>
-                        <option value="03" <?= date('m') == '03' ? 'selected' : '' ?>>Marzo</option>
-                        <option value="04" <?= date('m') == '04' ? 'selected' : '' ?>>Abril</option>
-                        <option value="05" <?= date('m') == '05' ? 'selected' : '' ?>>Mayo</option>
-                        <option value="06" <?= date('m') == '06' ? 'selected' : '' ?>>Junio</option>
-                        <option value="07" <?= date('m') == '07' ? 'selected' : '' ?>>Julio</option>
-                        <option value="08" <?= date('m') == '08' ? 'selected' : '' ?>>Agosto</option>
-                        <option value="09" <?= date('m') == '09' ? 'selected' : '' ?>>Septiembre</option>
-                        <option value="10" <?= date('m') == '10' ? 'selected' : '' ?>>Octubre</option>
-                        <option value="11" <?= date('m') == '11' ? 'selected' : '' ?>>Noviembre</option>
-                        <option value="12" <?= date('m') == '12' ? 'selected' : '' ?>>Diciembre</option>
-                    </select>
-                </div>
-
-                <div class="col-md-2">
-                    <input type="number" id="year" name="year" value="<?= date('Y') ?>" class="form-control">
-                </div>
-
-                <div class="col-md-2">
-
-                </div>
-
-
-                <div class="col-md-2">
-                    <label class="control-label panel-admin-text">Rango de Dias</label>
-                </div>
-                <div class="col-md-1">
-                    <input type="number" min="1" id="dia_min" name="dia_min" value="1" class="form-control">
-                </div>
-
-                <div class="col-md-1">
-                    <input type="number" min="1" id="dia_max" name="dia_max" value="31" class="form-control">
-                </div>
-
-
             </div>
             <br>
 
@@ -193,12 +152,51 @@
                 <?php echo isset($dialog_venta_contado) ? $dialog_venta_contado : '' ?>
 
             </div>
-
+            <script src="<?php echo $ruta; ?>recursos/js/datepicker-range/moment.min.js"></script>
+            <script src="<?php echo $ruta; ?>recursos/js/datepicker-range/daterangepicker.js"></script>
             <script src="<?php echo $ruta; ?>recursos/js/Validacion.js"></script>
             <!-- /.modal-dialog -->
             <script type="text/javascript">
 
                 $(function () {
+
+                    <?php if($venta_action != 'caja'):?>
+                    $('input[name="daterange"]').daterangepicker({
+                        "locale": {
+                            "format": "DD/MM/YYYY",
+                            "separator": " - ",
+                            "applyLabel": "Aplicar",
+                            "cancelLabel": "Cancelar",
+                            "fromLabel": "De",
+                            "toLabel": "A",
+                            "customRangeLabel": "Personalizado",
+                            "daysOfWeek": [
+                                "Do",
+                                "Lu",
+                                "Ma",
+                                "Mi",
+                                "Ju",
+                                "Vi",
+                                "Sa"
+                            ],
+                            "monthNames": [
+                                "Enero",
+                                "Febrero",
+                                "Marzo",
+                                "Abril",
+                                "Mayo",
+                                "Junio",
+                                "Julio",
+                                "Agosto",
+                                "Septiembre",
+                                "Octubre",
+                                "Noviembre",
+                                "Diciembre"
+                            ],
+                            "firstDay": 1
+                        }
+                    });
+                    <?php endif;?>
 
                     <?php if($venta_action == 'caja'):?>
                     var myVar = setInterval(get_pendientes, 2000);
@@ -207,20 +205,12 @@
                         if ($('#venta_action').val() == 'caja') {
                             var local_id = $("#venta_local").val();
                             var estado = $("#venta_estado").val();
-                            var mes = $("#mes").val();
-                            var year = $("#year").val();
-                            var dia_min = $("#dia_min").val();
-                            var dia_max = $("#dia_max").val();
 
 
                             $.ajax({
                                 url: '<?= base_url()?>venta_new/get_pendientes',
                                 data: {
                                     'local_id': local_id,
-                                    'mes': mes,
-                                    'year': year,
-                                    'dia_min': dia_min,
-                                    'dia_max': dia_max,
                                     'estado': estado
                                 },
                                 type: 'POST',
@@ -229,12 +219,12 @@
                                     var caja_r = parseInt(data);
                                     var caja_actual = parseInt($('#tabla_caja > tbody > tr').length)
 
-                                    if(caja_actual < caja_r){
+                                    if (caja_actual < caja_r) {
                                         $('#caja_class').removeClass('fa-search');
                                         $('#caja_class').addClass('fa-refresh');
                                         $('#total_caja').html(caja_r - caja_actual);
                                     }
-                                    else{
+                                    else {
                                         $('#caja_class').removeClass('fa-refresh');
                                         $('#caja_class').addClass('fa-search');
                                         $('#total_caja').html('');
@@ -280,20 +270,14 @@
 
                     var local_id = $("#venta_local").val();
                     var estado = $("#venta_estado").val();
-                    var mes = $("#mes").val();
-                    var year = $("#year").val();
-                    var dia_min = $("#dia_min").val();
-                    var dia_max = $("#dia_max").val();
+                    var fecha = $('#date_range').val();
 
 
                     $.ajax({
                         url: '<?= base_url()?>venta_new/get_ventas/<?=$venta_action?>',
                         data: {
                             'local_id': local_id,
-                            'mes': mes,
-                            'year': year,
-                            'dia_min': dia_min,
-                            'dia_max': dia_max,
+                            'fecha': fecha,
                             'estado': estado
                         },
                         type: 'POST',

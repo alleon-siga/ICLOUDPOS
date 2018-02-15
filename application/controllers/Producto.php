@@ -8,7 +8,7 @@ class producto extends MY_Controller
     function __construct()
     {
         parent::__construct();
-        if ($this->login_model->verify_session()) {        
+        if ($this->login_model->verify_session()) {
             $this->load->model('producto/producto_model');
             $this->load->model('marca/marcas_model');
             $this->load->model('linea/lineas_model');
@@ -29,7 +29,7 @@ class producto extends MY_Controller
             $this->load->model('producto_costo_unitario/producto_costo_unitario_model');
             $this->load->library('Pdf');
             $this->load->library('phpExcel/PHPExcel.php');
-        }else{
+        } else {
             redirect(base_url(), 'refresh');
         }
 
@@ -77,9 +77,9 @@ class producto extends MY_Controller
         $fraccion = 0;
         $cantidad_minima = 0;
         $temp = array();
-        for($i = 0; $i < count($productos); $i++){
-            if($i > 0){
-                if($productos[$i]['producto_id'] != $productos[$i - 1]['producto_id']){
+        for ($i = 0; $i < count($productos); $i++) {
+            if ($i > 0) {
+                if ($productos[$i]['producto_id'] != $productos[$i - 1]['producto_id']) {
                     $cantidad_maxima = $this->unidades_model->get_cantidad_fraccion($productos[$i - 1]['producto_id'], $cantidad_minima);
                     $productos[$i - 1]['cantidad'] = $cantidad_maxima['cantidad'];
                     $productos[$i - 1]['fraccion'] = $cantidad_maxima['fraccion'];
@@ -89,30 +89,27 @@ class producto extends MY_Controller
                         $productos[$i]['producto_id'], $productos[$i]['cantidad'], $productos[$i]['fraccion']
                     );
 
-                    if($i == count($productos) - 1){
+                    if ($i == count($productos) - 1) {
                         $cantidad_maxima = $this->unidades_model->get_cantidad_fraccion($productos[$i]['producto_id'], $cantidad_minima);
                         $productos[$i]['cantidad'] = $cantidad_maxima['cantidad'];
                         $productos[$i]['fraccion'] = $cantidad_maxima['fraccion'];
                         $temp[] = $productos[$i];
                     }
-                }
-                else{
+                } else {
                     $cantidad_minima += $this->unidades_model->convert_minimo_um(
                         $productos[$i]['producto_id'], $productos[$i]['cantidad'], $productos[$i]['fraccion']
                     );
-                    if($i == count($productos) - 1){
+                    if ($i == count($productos) - 1) {
                         $cantidad_maxima = $this->unidades_model->get_cantidad_fraccion($productos[$i]['producto_id'], $cantidad_minima);
                         $productos[$i]['cantidad'] = $cantidad_maxima['cantidad'];
                         $productos[$i]['fraccion'] = $cantidad_maxima['fraccion'];
                         $temp[] = $productos[$i];
                     }
                 }
-            }
-            else{
-                if(count($productos) == 1){
+            } else {
+                if (count($productos) == 1) {
                     $temp[] = $productos[$i];
-                }
-                else{
+                } else {
                     $cantidad_minima = $this->unidades_model->convert_minimo_um(
                         $productos[$i]['producto_id'], $productos[$i]['cantidad'], $productos[$i]['fraccion']
                     );
@@ -175,7 +172,7 @@ class producto extends MY_Controller
             $local = false;
 
         $data["lstProducto"] = $this->producto_model->get_stock_productos($local);
-        if($local == false && $detalle == 0){
+        if ($local == false && $detalle == 0) {
             $data["lstProducto"] = $this->_sinDetalles($data["lstProducto"]);
         }
         $data['columnas'] = $this->columnas;
@@ -338,7 +335,7 @@ class producto extends MY_Controller
 
 
             $data['producto'] = $this->producto_model->get_by_id($id);
-            $data['operaciones'] = $this->producto_model->check_operaciones(array('producto_id'=>$id));
+            $data['operaciones'] = $this->producto_model->check_operaciones(array('producto_id' => $id));
 
             $data['unidades_producto'] = $this->unidades_model->get_by_producto($id);
 
@@ -508,6 +505,28 @@ class producto extends MY_Controller
         $producto_codigo_interno = $this->input->post('producto_codigo_interno');
         $producto_vencimiento = $this->input->post('producto_vencimiento');
 
+        if ($codigo_barra != "") {
+            if (empty($id)){
+                $val = $this->db->get_where('producto', array(
+                    'producto_codigo_barra' => $codigo_barra,
+                    'producto_estatus' => 1
+                ))->result();
+            }
+            else{
+                $val = $this->db->get_where('producto', array(
+                    'producto_codigo_barra' => $codigo_barra,
+                    'producto_estatus' => 1,
+                    'producto_id !=' => $id
+                ))->result();
+            }
+
+            if(sizeof($val) > 0){
+                $json['error'] = 'El codigo de barra ya existe';
+                echo json_encode($json);
+                return false;
+            }
+        }
+
         $producto = array(
             'producto_codigo_barra' => !empty($codigo_barra) ? $codigo_barra : null,
             'producto_nombre' => $this->input->post('producto_nombre'),
@@ -675,11 +694,11 @@ class producto extends MY_Controller
 
     function eliminar()
     {
-        $id=$this->input->post("id");
+        $id = $this->input->post("id");
         $product = $this->producto_model->get_by_id($id);
         $nombre = $product['producto_nombre'];
-        $operaciones = $this->producto_model->check_operaciones(array('producto_id'=>$id));
-        if($operaciones == TRUE){
+        $operaciones = $this->producto_model->check_operaciones(array('producto_id' => $id));
+        if ($operaciones == TRUE) {
 
             $producto = array(
                 'producto_id' => $id,
@@ -700,8 +719,7 @@ class producto extends MY_Controller
             } else {
                 $json['error'] = 'ha ocurrido un error al eliminar el producto';
             }
-        }
-        else{
+        } else {
             $json['error'] = 'Este producto tiene operaciones asociadas y no puede ser eliminado';
         }
 
@@ -766,11 +784,11 @@ class producto extends MY_Controller
     function listaprecios()
     {
         $data['locales'] = $this->local_model->get_all();
-        $data['marcas'] = $this->db->get_where('marcas', array('estatus_marca'=>1))->result();
-        $data['grupos'] = $this->db->get_where('grupos', array('estatus_grupo'=>1))->result();
-        $data['familias'] = $this->db->get_where('familia', array('estatus_familia'=>1))->result();
-        $data['lineas'] = $this->db->get_where('lineas', array('estatus_linea'=>1))->result();
-        $data['proveedores'] = $this->db->get_where('proveedor', array('proveedor_status'=>1))->result();
+        $data['marcas'] = $this->db->get_where('marcas', array('estatus_marca' => 1))->result();
+        $data['grupos'] = $this->db->get_where('grupos', array('estatus_grupo' => 1))->result();
+        $data['familias'] = $this->db->get_where('familia', array('estatus_familia' => 1))->result();
+        $data['lineas'] = $this->db->get_where('lineas', array('estatus_linea' => 1))->result();
+        $data['proveedores'] = $this->db->get_where('proveedor', array('proveedor_status' => 1))->result();
 
         $dataCuerpo['cuerpo'] = $this->load->view('menu/producto/listaprecios', $data, true);
         if ($this->input->is_ajax_request()) {
@@ -784,14 +802,14 @@ class producto extends MY_Controller
     {
         $data['barra_activa'] = $this->db->get_where('columnas', array('id_columna' => 36))->row();
         $data['lstProducto'] = $this->producto_model->get_producto_lista_precios(array(
-            'filter'=>$this->input->post('filter'),
-            'limit'=>$this->input->post('limit'),
-            'marca_id'=>$this->input->post('marca_id'),
-            'grupo_id'=>$this->input->post('grupo_id'),
-            'familia_id'=>$this->input->post('familia_id'),
-            'linea_id'=>$this->input->post('linea_id'),
-            'proveedor_id'=>$this->input->post('proveedor_id'),
-            'con_stock'=>$this->input->post('con_stock')
+            'filter' => $this->input->post('filter'),
+            'limit' => $this->input->post('limit'),
+            'marca_id' => $this->input->post('marca_id'),
+            'grupo_id' => $this->input->post('grupo_id'),
+            'familia_id' => $this->input->post('familia_id'),
+            'linea_id' => $this->input->post('linea_id'),
+            'proveedor_id' => $this->input->post('proveedor_id'),
+            'con_stock' => $this->input->post('con_stock')
         ));
         $this->load->view('menu/producto/listaprecios_list', $data);
     }
@@ -933,26 +951,26 @@ class producto extends MY_Controller
     function pdf_stock($local = 0, $detalle = 0)
     {
 
-            $this->load->library('mpdf53/mpdf');
+        $this->load->library('mpdf53/mpdf');
 
-            if ($local == 0)
-                $local = false;
+        if ($local == 0)
+            $local = false;
 
-            $data["lstProducto"] = $this->producto_model->get_stock_productos($local);
-            if($local == false && $detalle == 0){
-                $data["lstProducto"] = $this->_sinDetalles($data["lstProducto"]);
-            }
-            $data['columnas'] = $this->columnas;
-            $data["lstProducto"] = $this->_getUnidades($data['lstProducto'], false);
-            $data["local"] = $this->local_model->get_by('int_local_id', $local);
-            $data['local_selected'] = $local;
-            $data['detalle_checked'] = $detalle;
+        $data["lstProducto"] = $this->producto_model->get_stock_productos($local);
+        if ($local == false && $detalle == 0) {
+            $data["lstProducto"] = $this->_sinDetalles($data["lstProducto"]);
+        }
+        $data['columnas'] = $this->columnas;
+        $data["lstProducto"] = $this->_getUnidades($data['lstProducto'], false);
+        $data["local"] = $this->local_model->get_by('int_local_id', $local);
+        $data['local_selected'] = $local;
+        $data['detalle_checked'] = $detalle;
 
-            $mpdf = new mPDF('utf-8', 'A4-L');
-            $condicion = null;
+        $mpdf = new mPDF('utf-8', 'A4-L');
+        $condicion = null;
 
-            $mpdf->WriteHTML($this->load->view('menu/producto/reporte_stock', $data, true));
-            $mpdf->Output("stock.pdf", "I");
+        $mpdf->WriteHTML($this->load->view('menu/producto/reporte_stock', $data, true));
+        $mpdf->Output("stock.pdf", "I");
 
 
     }
@@ -975,104 +993,104 @@ class producto extends MY_Controller
         if ($local == 0)
             $local = false;
 
-            $lstProducto = $this->producto_model->get_stock_productos($local);
-            if($local == false && $detalle == 0){
-                $lstProducto = $this->_sinDetalles($lstProducto);
+        $lstProducto = $this->producto_model->get_stock_productos($local);
+        if ($local == false && $detalle == 0) {
+            $lstProducto = $this->_sinDetalles($lstProducto);
+        }
+
+        $columnas = $this->columnas;
+        $lstProducto = $this->_getUnidades($lstProducto, false);
+
+
+        // configuramos las propiedades del documento
+
+        $this->phpexcel->getProperties()
+            //->setCreator("Arkos Noem Arenom")
+            //->setLastModifiedBy("Arkos Noem Arenom")
+
+            ->
+            setTitle("STOCK")
+            ->setSubject("STOCK")
+            ->setDescription("STOCK")
+            ->setKeywords("STOCK")
+            ->setCategory("STOCK");
+
+
+        $i = 0;
+
+        if (canShowCodigo())
+            $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($i++, 1, getCodigoNombre());
+
+
+        foreach ($columnas as $col) {
+            if ($col->mostrar == TRUE && $col->nombre_columna != 'producto_estado' && $col->nombre_columna != 'producto_codigo_interno' && $col->nombre_columna != 'producto_id') {
+
+                $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($i++, 1, $col->nombre_mostrar);
             }
+        }
 
-            $columnas = $this->columnas;
-            $lstProducto = $this->_getUnidades($lstProducto, false);
+        $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($i++, 1, "UM");
 
+        $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($i++, 1, "CANTIDAD");
 
-            // configuramos las propiedades del documento
+        $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($i++, 1, "FRACCION");
 
-            $this->phpexcel->getProperties()
-                //->setCreator("Arkos Noem Arenom")
-                //->setLastModifiedBy("Arkos Noem Arenom")
+        if ($local == false && $detalle == 1)
+            $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($i++, 1, "LOCAL");
 
-                ->
-                setTitle("STOCK")
-                ->setSubject("STOCK")
-                ->setDescription("STOCK")
-                ->setKeywords("STOCK")
-                ->setCategory("STOCK");
+        $row = 2;
+        // var_dump($columnas);
+        if (count($lstProducto) > 0) {
+            foreach ($lstProducto as $pd) {
+                $col = 0;
+                if (canShowCodigo())
+                    $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($col++, $row, getCodigoValue(sumCod($pd['producto_id']), $pd['producto_codigo_interno']));
 
-
-            $i = 0;
-
-            if (canShowCodigo())
-                $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($i++, 1, getCodigoNombre());
-
-
-            foreach ($columnas as $col) {
-                if ($col->mostrar == TRUE && $col->nombre_columna != 'producto_estado' && $col->nombre_columna != 'producto_codigo_interno' && $col->nombre_columna != 'producto_id') {
-
-                    $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($i++, 1, $col->nombre_mostrar);
-                }
-            }
-
-            $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($i++, 1, "UM");
-
-            $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($i++, 1, "CANTIDAD");
-
-            $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($i++, 1, "FRACCION");
-
-            if($local == false && $detalle == 1)
-                $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($i++, 1, "LOCAL");
-
-            $row = 2;
-            // var_dump($columnas);
-            if (count($lstProducto) > 0) {
-                foreach ($lstProducto as $pd) {
-                    $col = 0;
-                    if (canShowCodigo())
-                        $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($col++, $row, getCodigoValue(sumCod($pd['producto_id']), $pd['producto_codigo_interno']));
-
-                    foreach ($columnas as $colum):
-                        if (array_key_exists($colum->nombre_columna, $pd) and $colum->mostrar == TRUE) {
-                            if ($colum->nombre_columna != 'producto_estado' && $colum->nombre_columna != 'producto_codigo_interno' && $colum->nombre_columna != 'producto_id')
-                                $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($col++, $row, $pd[$colum->nombre_join]);
-                        }
-
-                    endforeach;
-                    $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($col++, $row, $pd['nombre_unidad']);
-
-                    $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($col++, $row, $pd['cantidad']);
-
-
-                    if ($pd['fraccion'] != null) {
-
-                        if ($pd['nombre_fraccion'] != "") {
-
-                            $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($col++, $row, $pd['fraccion'] . " " . $pd['nombre_fraccion']);
-                        } else {
-                            $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($col++, $row, $pd['fraccion']);
-                        }
+                foreach ($columnas as $colum):
+                    if (array_key_exists($colum->nombre_columna, $pd) and $colum->mostrar == TRUE) {
+                        if ($colum->nombre_columna != 'producto_estado' && $colum->nombre_columna != 'producto_codigo_interno' && $colum->nombre_columna != 'producto_id')
+                            $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($col++, $row, $pd[$colum->nombre_join]);
                     }
 
-                    if($local == false && $detalle == 1)
-                        $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($col++, $row, $pd['local_nombre']);
+                endforeach;
+                $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($col++, $row, $pd['nombre_unidad']);
 
-                    $row++;
+                $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($col++, $row, $pd['cantidad']);
+
+
+                if ($pd['fraccion'] != null) {
+
+                    if ($pd['nombre_fraccion'] != "") {
+
+                        $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($col++, $row, $pd['fraccion'] . " " . $pd['nombre_fraccion']);
+                    } else {
+                        $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($col++, $row, $pd['fraccion']);
+                    }
                 }
+
+                if ($local == false && $detalle == 1)
+                    $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($col++, $row, $pd['local_nombre']);
+
+                $row++;
             }
+        }
 // Renombramos la hoja de trabajo
-            $this->phpexcel->getActiveSheet()->setTitle('STOCK');
+        $this->phpexcel->getActiveSheet()->setTitle('STOCK');
 
 
 // configuramos el documento para que la hoja
 // de trabajo nÃºmero 0 sera la primera en mostrarse
 // al abrir el documento
-            $this->phpexcel->setActiveSheetIndex(0);
+        $this->phpexcel->setActiveSheetIndex(0);
 
 
 // redireccionamos la salida al navegador del cliente (Excel2007)
-            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-            header('Content-Disposition: attachment;filename="STOCK.xlsx"');
-            header('Cache-Control: max-age=0');
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="STOCK.xlsx"');
+        header('Cache-Control: max-age=0');
 
-            $objWriter = PHPExcel_IOFactory::createWriter($this->phpexcel, 'Excel2007');
-            $objWriter->save('php://output');
+        $objWriter = PHPExcel_IOFactory::createWriter($this->phpexcel, 'Excel2007');
+        $objWriter->save('php://output');
 
 
     }

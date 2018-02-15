@@ -53,20 +53,17 @@ class venta_new extends MY_Controller
     {
         $local_id = $this->input->post('local_id');
         $estado = $this->input->post('estado');
-        $mes = $this->input->post('mes');
-        $year = $this->input->post('year');
-        $dia_min = $this->input->post('dia_min');
-        $dia_max = $this->input->post('dia_max');
+        $date_range = explode(" - ", $this->input->post('fecha'));
+        $fecha_ini = str_replace("/", "-", $date_range[0]);
+        $fecha_fin = str_replace("/", "-", $date_range[1]);
 
 
         if ($action != 'caja') {
             $params = array(
                 'local_id' => $local_id,
                 'estado' => $estado,
-                'mes' => $mes,
-                'year' => $year,
-                'dia_min' => $dia_min,
-                'dia_max' => $dia_max
+                'fecha_ini' => $fecha_ini,
+                'fecha_fin' => $fecha_fin
             );
         } else {
             $params = array(
@@ -90,10 +87,6 @@ class venta_new extends MY_Controller
     {
         $local_id = $this->input->post('local_id');
         $estado = $this->input->post('estado');
-        $mes = $this->input->post('mes');
-        $year = $this->input->post('year');
-        $dia_min = $this->input->post('dia_min');
-        $dia_max = $this->input->post('dia_max');
 
         $params = array(
             'local_id' => $local_id,

@@ -1878,50 +1878,6 @@
             UiDraggable.init();
             //$("select[id^='medida']").chosen({ allow_single_deselect: true, disable_search_threshold: 5, width:"100%" });
 
-            $("#codigodebarra").keyup(function () {
-                // var that = this,
-
-                var value = $(this).val();
-                $.ajax({
-                    type: "POST",
-                    url: ruta + 'producto/validar_codigo_de_barra',
-                    data: {
-                        'codigo': value
-                    },
-                    dataType: 'JSON',
-                    error: function () {
-
-                        var growlType = 'danger';
-                        $.bootstrapGrowl('<h4>Error</h4> <p><h5>Por favor comuniquese con soporte</h5></p>', {
-                            type: growlType,
-                            delay: 2500,
-                            allow_dismiss: true
-                        });
-                        return false;
-                    },
-                    success: function (data) {
-
-
-                        if (data.success == true) {
-
-                            $("#btnGuardar").attr('disabled', 'disabled');
-                            var growlType = 'danger';
-                            $.bootstrapGrowl('<h5>El C&oacute;digo de barra ya esta asignado</h5>', {
-                                type: growlType,
-                                delay: 2500,
-                                allow_dismiss: true
-                            });
-                            return false;
-
-                        } else {
-                            $("#btnGuardar").removeAttr('disabled');
-                        }
-
-
-                    }
-                });
-
-            });
 
 
 
