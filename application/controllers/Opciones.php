@@ -74,4 +74,83 @@ class opciones extends MY_Controller
 
     }
 
+    function upload_image(){
+        var_dump($_FILES);
+
+        if (!empty($_FILES) and $_FILES['userfile']['size'] != '0') {
+
+            $this->load->library('upload');
+            $files = $_FILES;
+            $contador = 1;
+            $mayor = 0;
+
+            $directorio = './recursos/img/logo/';
+
+            if (is_dir($directorio)) {
+                $arreglo_img = scandir($directorio);
+                natsort($arreglo_img);
+                $mayor = array_pop($arreglo_img);
+                $mayor = substr($mayor, 0, -4);
+            } else {
+                $arreglo_img[0] = ".";
+            }
+            $sumando = 1;
+            for ($j = 0; $j < count($files['userfile']['name']); $j++) {
+
+                if ($files['userfile']['name'][$j] != "") {
+
+                    if ($arreglo_img[0] == ".") {
+                        $contador = $mayor + ($sumando);
+                        $sumando++;
+                    }
+                    $_FILES ['userfile'] ['name'] = $files ['userfile'] ['name'][$j];
+                    $_FILES ['userfile'] ['type'] = $files ['userfile'] ['type'][$j];
+                    $_FILES ['userfile'] ['tmp_name'] = $files ['userfile'] ['tmp_name'][$j];
+                    $_FILES ['userfile'] ['error'] = $files ['userfile'] ['error'][$j];
+                    $_FILES ['userfile'] ['size'] = $files ['userfile'] ['size'][$j];
+
+                    $size = getimagesize($_FILES ['userfile'] ['tmp_name']);
+
+                    switch ($size['mime']) {
+                        case "image/jpeg":
+                            $extension = "jpg";
+                            break;
+                        case "image/png":
+                            $extension = "png";
+                            break;
+                        case "image/bmp":
+                            $extension = "bmp";
+                            break;
+                    }
+
+                    $this->upload->initialize($this->set_upload_options('logo', $contador, $extension));
+                    $this->upload->do_upload();
+                    $contador++;
+                } else {
+
+                }
+            }
+        }
+    }
+
+    function set_upload_options($id, $contador, $extension)
+    {
+        // upload an image options
+        $this->load->helper('path');
+        $dir = './recursos/img/logo/' . $id . '/';
+
+        if (!is_dir($dir)) {
+            mkdir($dir, 0755);
+        }
+        $config = array();
+        $config ['upload_path'] = $dir;
+        //$config ['file_path'] = './prueba/';
+        $config ['allowed_types'] = $extension;
+        $config ['max_size'] = '0';
+        $config ['overwrite'] = TRUE;
+        $config ['file_name'] = $contador;
+
+        return $config;
+    }
+
 }

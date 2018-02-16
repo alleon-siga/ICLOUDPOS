@@ -54,6 +54,8 @@ define('MEDIBLE',		'MEDIBLE');
 define('MONEDA_DEFECTO', '1029');
 //define('MONEDA',		'S/.');
 //define('DOLAR',		'$');
+
+define('IMPUESTO', 18);
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */
 

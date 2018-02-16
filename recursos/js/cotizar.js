@@ -862,16 +862,17 @@ function refresh_right_panel() {
     var index = $('.precio-input').length - 1;
     $('.precio-input[data-index="' + index + '"]').first().trigger('click');
 
+    var imp = parseFloat((100 + parseFloat($('#IMPUESTO').val())) / 100);
     var subtotal = 0, impuesto = 0, total_importe = 0;
     if ($("#incorporar_igv").val() == '1') {
-        subtotal = total;
-        impuesto = (total * 18) / 100;
-        total_importe = subtotal + impuesto;
+        subtotal = parseFloat(total);
+        impuesto = parseFloat(subtotal - parseFloat(total / imp));
+        total_importe = parseFloat(subtotal + impuesto);
     }
     else {
         total_importe = total;
-        impuesto = (total * 18) / 100;
-        subtotal = total - impuesto;
+        subtotal = total_importe / imp;
+        impuesto = total_importe - subtotal;
     }
 
 

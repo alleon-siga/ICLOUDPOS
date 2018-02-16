@@ -141,14 +141,14 @@ class producto_model extends CI_Model
 
     public function hasCodigo($id)
     {
-        $query = $this->db->get_where($this->tabla, array('producto_id' => $id))->row(0);
+        $query = $this->db->get_where($this->tabla, array('producto_id' => $id))->row();
         if ($query->producto_codigo_interno == "") return FALSE;
         else return TRUE;
     }
 
     public function calcCodigo($id)
     {
-        return sumCod($id);
+        return sumCod($id, 4);
     }
 
     public function get_all_producto_almacen($where)
@@ -313,7 +313,6 @@ class producto_model extends CI_Model
         $this->load->model('columnas/columnas_model');
         $col = $this->columnas_model->getColumn('producto_modelo');
         $valor = getValorUnico();
-
 
         $produc_exite = $this->get_by('producto_codigo_interno', $producto['producto_codigo_interno'], true);
 

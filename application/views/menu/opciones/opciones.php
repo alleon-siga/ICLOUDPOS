@@ -25,7 +25,7 @@
 </div>
 <div class="row block">
 
-    <?= form_open_multipart(base_url() . 'opciones/index/save', array('id' => 'formguardar')) ?>
+    <?= form_open_multipart(base_url() . 'opciones/index/save', array('id' => 'formguardar', 'method' => 'post')) ?>
     <h3>Generales</h3>
     <div class="row form-group">
         <div class="col-md-4">
@@ -76,6 +76,27 @@
                    class='form-control'
                    maxlength="100"
                    value="<?= valueOption("EMPRESA_TELEFONO", '') ?>">
+        </div>
+    </div>
+
+    <div class="row form-group">
+        <div class="col-md-4">
+            <label class="control-label panel-admin-text">Logo de la empresa:</label>
+        </div>
+
+        <div class="col-md-6">
+            <div class="input-prepend input-append input-group">
+                <span class="input-group-addon"><i class="fa fa-folder"></i> </span>
+                <input type="file" onchange="asignar_imagen(0)" class="form-control input_imagen"
+                       data-count="0" name="userfile[]" accept="image/*"
+                       id="input_imagen0">
+
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <img id="imgSalida0" data-count="0" src="" height="100" width="100">
+
         </div>
     </div>
 
@@ -256,6 +277,56 @@
 
 </div>
 <script>
+
+    $(function(){
+        var formData = new FormData($("#formguardar")[0]);
+        $.ajax({
+            url: '<?= base_url()?>opciones/upload_image',
+            type: "post",
+            dataType: "json",
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                alert('asd')
+
+
+            },
+            error: function (response) {
+                alert('asdasd');
+
+            }
+
+        });
+    });
+
+    var contador_img = 0
+    var identificador = 0
+
+    function asignar_identificador(identif) {
+        identificador = identif;
+    }
+
+    function fileOnload(e) {
+        var result = e.target.result;
+        $('#imgSalida' + identificador).attr("src", result);
+
+    }
+
+    function asignar_imagen(con) {
+        var input = $("#input_imagen" + con)
+        if (input[0].files[0] && input[0].files[0]) {
+
+            asignar_identificador(con)
+            var reader = new FileReader();
+            reader.onload = fileOnload;
+
+            reader.readAsDataURL(input[0].files[0]);
+        }
+
+    }
+
     var grupo = {
         ajaxgrupo: function () {
             return $.ajax({

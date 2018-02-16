@@ -506,13 +506,12 @@ class producto extends MY_Controller
         $producto_vencimiento = $this->input->post('producto_vencimiento');
 
         if ($codigo_barra != "") {
-            if (empty($id)){
+            if (empty($id)) {
                 $val = $this->db->get_where('producto', array(
                     'producto_codigo_barra' => $codigo_barra,
                     'producto_estatus' => 1
                 ))->result();
-            }
-            else{
+            } else {
                 $val = $this->db->get_where('producto', array(
                     'producto_codigo_barra' => $codigo_barra,
                     'producto_estatus' => 1,
@@ -520,7 +519,7 @@ class producto extends MY_Controller
                 ))->result();
             }
 
-            if(sizeof($val) > 0){
+            if (sizeof($val) > 0) {
                 $json['error'] = 'El codigo de barra ya existe';
                 echo json_encode($json);
                 return false;
@@ -581,8 +580,9 @@ class producto extends MY_Controller
 
             if ($cod == "INTERNO")
                 $producto['producto_codigo_interno'] = !empty($producto_codigo_interno) ? $producto_codigo_interno : $this->producto_model->calcCodigo($id);
-            if ($cod == "AUTO" && $this->producto_model->hasCodigo($id) == FALSE)
+            if ($cod == "AUTO") {
                 $producto['producto_codigo_interno'] = $this->producto_model->calcCodigo($id);
+            }
 
             $rs = $this->producto_model->update($producto, $medidas, $unidades);
         }
