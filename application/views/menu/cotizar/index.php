@@ -258,7 +258,7 @@
                         <label class="control-label">Moneda:</label>
                     </div>
                     <div class="col-md-7" id="moneda_block_text" style="display: none;">
-                        <label class="control-label" id="moneda_text">Soles</label>
+                        <label class="control-label" id="moneda_text"><?= $monedas[0]['nombre']?></label>
                     </div>
                     <div class="col-md-7" id="moneda_block_input" style="display: block;">
                         <div class="help-key badge label-success" style="display: none;">5</div>

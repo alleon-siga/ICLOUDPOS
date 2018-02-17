@@ -121,18 +121,19 @@ $(document).ready(function () {
     $("#moneda_id").on('change', function () {
         var tasa = $('#moneda_id option:selected').attr('data-tasa');
         var simbolo = $('#moneda_id option:selected').attr('data-simbolo');
+        var nombre = $('#moneda_id option:selected').attr('data-nombre');
 
         $("#tasa").val(tasa);
         $('.tipo_moneda').html(simbolo);
 
-        if (tasa != 0.00) {
+        if ($(this).val() != $('#MONEDA_DEFECTO_ID').val()) {
             $('#block_tasa').show();
             $("#tasa").trigger('focus');
         }
         else {
             $('#block_tasa').hide();
         }
-        $("#moneda_text").html($('#moneda_id option:selected').text());
+        $("#moneda_text").html(nombre);
         refresh_right_panel();
 
     });

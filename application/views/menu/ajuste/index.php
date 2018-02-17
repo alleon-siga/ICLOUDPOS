@@ -206,7 +206,7 @@
                         <label class="control-label">Moneda:</label>
                     </div>
                     <div class="col-md-7" id="moneda_block_text" style="display: none;">
-                        <label class="control-label" id="moneda_text">Soles</label>
+                        <label class="control-label" id="moneda_text"><?= $monedas[0]['nombre']?></label>
                     </div>
                     <div class="col-md-7" id="moneda_block_input" style="display: block;">
                         <div class="help-key badge label-success" style="display: none;">5</div>
@@ -214,6 +214,7 @@
                             <?php foreach ($monedas as $moneda): ?>
                                 <option
                                     data-tasa="<?php echo $moneda['tasa_soles'] ?>"
+                                    data-nombre="<?php echo $moneda['nombre'] ?>"
                                     data-simbolo="<?php echo $moneda['simbolo'] ?>"
                                     data-oper="<?php echo $moneda['ope_tasa'] ?>"
                                     value="<?= $moneda['id_moneda'] ?>"><?= $moneda['nombre'] ?></option>

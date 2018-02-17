@@ -40,7 +40,7 @@
                         <td><?= $gastos['nombre_tipos_gasto'] ?></td>
                         <td><?= $gastos['proveedor_id'] != NULL ? $gastos['proveedor_nombre'] : $gastos['trabajador'] ?></td>
                         <td><?= $gastos['descripcion'] ?></td>
-                        <td>Soles</td>
+                        <td><?= $gastos['moneda_nombre'] ?></td>
                         <td><?= number_format($gastos['total'], 2) ?></td>
                         <td><?= $gastos['responsable'] ?></td>
                         <td><?= date("d/m/Y", strtotime($gastos['fecha_registro'] ))?></td>

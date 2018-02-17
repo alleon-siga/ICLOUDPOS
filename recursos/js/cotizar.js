@@ -266,7 +266,7 @@ $(document).ready(function () {
         $("#tasa").val(tasa);
         $('.tipo_moneda').html(simbolo);
 
-        if ($('#moneda_id option:selected').val() != $('#MONEDA_DEFECTO_ID').val()) {
+        if ($(this).val() != $('#MONEDA_DEFECTO_ID').val()) {
             $('#block_tasa').show();
             $("#tasa").trigger('focus');
         }

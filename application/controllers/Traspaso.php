@@ -167,7 +167,7 @@ class traspaso extends MY_Controller
             $this->load->model('kardex/kardex_model');
 
             $condicion = array(
-                'movimiento_historico.tipo_movimiento' => "TRASPASO"
+                'smovimiento_historico.tipo_movimiento' => "TRASPASO"
             );
 
             if ($this->input->post('locales') != "TODOS") {
