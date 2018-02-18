@@ -285,4 +285,46 @@
         }
 
     }
+
+$( "input#proveedor_nrofax" ).keyup(function() {
+    RUC_DNI=$(this).val();
+    if (RUC_DNI.length==8 || RUC_DNI.length==11) {
+        var formData = new FormData();
+        formData.append('RUC_DNI', RUC_DNI);
+        $.ajax({
+            url: '<?= base_url()?>proveedor/getDatosFromAPI_RUC_DNI',
+            type: 'POST',
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function(data){
+                if (data=='No existe') {
+                    $('input#proveedor_nombre').val('');
+                    $('input#proveedor_direccion1').val('');
+                }else{
+                    var obj = $.parseJSON(data);
+                        var ruc = obj['ruc'];
+                        var razon_social = obj['razon_social'];
+                        var direccion = obj['direccion'];
+                        $('input#proveedor_nombre').val(razon_social);
+                        $('input#proveedor_direccion1').val(direccion);
+                }
+              console.log(data);
+            },
+            error: function(data){
+              console.log('Error Ajax Peticion');
+              console.log(data);
+            }
+        });
+    }else{
+        $('input#proveedor_nombre').val('');
+        $('input#proveedor_direccion1').val('');
+    }
+});
+/*
+$( "input#proveedor_nrofax" ).change(function() {
+
+});
+*/
     </script>
