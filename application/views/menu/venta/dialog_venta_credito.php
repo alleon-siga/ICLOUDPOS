@@ -97,7 +97,7 @@
                                         <table id="table_rango" class="table table-bordered" style="display: none;">
                                             <thead>
                                             <tr>
-                                                <th>Rango</th>
+                                                <th>Dias</th>
                                             </tr>
                                             <tr>
                                             </tr>
@@ -679,7 +679,7 @@
             for (var i = 0; i < numero_cuotas; i++) {
                 if ($('#c_rango_' + i).html() == undefined) {
                     var template = '<tr style="background-color: #39B147 !important">';
-                    template += '<td style="padding: 0 !important; height: 28px; text-align: center;"><input  id="c_rango_' + i + '" class="c_rango_input" type="text" value="30" style="width: 40px;"></td>';
+                    template += '<td style="padding: 0 !important; height: 28px; text-align: center;"><input  id="c_rango_' + i + '" class="c_rango_input" type="text" value="' + (30 * (i + 1)) + '" style="width: 40px;"></td>';
                     template += '</tr>';
 
                     body.append(template);
@@ -691,7 +691,7 @@
             $('.c_rango_input').on('focus', function () {
                 $(this).select();
             });
-            $('.c_rango_input').on('keyup', function(){
+            $('.c_rango_input').on('keyup', function () {
                 refresh_credito_window(1);
             });
         }
@@ -749,9 +749,15 @@
                     break;
                 }
                 case '6': {
+                    var fecha_rango = $('#c_fecha_giro').val().split('/');
+                    var next_rango = new Date(fecha_rango[2], fecha_rango[1] - 1, fecha_rango[0]);
                     var dia_mes = isNaN(parseInt($("#c_dia_pago").val())) ? 1 : parseInt($("#c_rango_" + index).val());
-                    next.setDate(next.getDate() + dia_mes);
-                    break;
+                    next_rango.setDate(next_rango.getDate() + dia_mes);
+                    if (next_rango.getDay() == 0) {
+                        next_rango.setDate(next_rango.getDate() + 1);
+                    }
+                    var last_fecha_r = get_numero_dia(next_rango.getDate()) + '/' + get_numero_mes(next_rango.getMonth()) + '/' + next_rango.getFullYear();
+                    return last_fecha_r;
                 }
             }
 
