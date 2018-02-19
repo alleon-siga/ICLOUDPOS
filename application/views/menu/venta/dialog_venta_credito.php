@@ -5,9 +5,9 @@
 <input type="hidden" id="periodo_pago" value="4">
 <input type="hidden" id="proyeccion_rango" value="1">
 <input type="hidden" id="c_venta_estado" value="COMPLETADO">
-<?php $md = get_moneda_defecto()?>
+<?php $md = get_moneda_defecto() ?>
 <?php if (validOption("VISTA_CREDITO", 'AVANZADO', 'SIMPLE')): ?>
-<div class="modal-dialog" style="width: 75%;">
+<div class="modal-dialog" style="width: 85%;">
     <div class="modal-content">
         <div class="modal-header">
             <h4>Venta al Cr&eacute;dito</h4>
@@ -75,22 +75,41 @@
                                 </div>
 
                                 <br>
+                                <div class="row">
+                                    <div class="col-md-10" style="padding-right: 0;">
+                                        <table class="table table-bordered table-cuotas">
+                                            <thead>
+                                            <tr>
+                                                <th>Nro Letra</th>
+                                                <th>Fecha Vencimiento</th>
+                                                <th>Monto a Pagar</th>
+                                            </tr>
+                                            <tr>
+                                            </tr>
+                                            </thead>
+                                            <tbody id="body_cuotas">
 
-                                <table class="table table-bordered table-cuotas">
-                                    <thead>
-                                    <tr>
-                                        <th>Nro Letra</th>
-                                        <th>Fecha Vencimiento</th>
-                                        <th>Monto a Pagar</th>
-                                    </tr>
-                                    <tr>
-                                    </tr>
-                                    </thead>
-                                    <tbody id="body_cuotas">
+                                            </tbody>
 
-                                    </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="col-md-2" style="padding: 0">
+                                        <table id="table_rango" class="table table-bordered" style="display: none;">
+                                            <thead>
+                                            <tr>
+                                                <th>Dias</th>
+                                            </tr>
+                                            <tr>
+                                            </tr>
+                                            </thead>
+                                            <tbody id="body_cuotas_rango">
 
-                                </table>
+                                            </tbody>
+
+                                        </table>
+                                    </div>
+                                </div>
+
 
                             </div>
                             <div class="col-md-5">
@@ -249,6 +268,7 @@
                                     <option value="3">Semanal</option>
                                     <option value="4">Mensual</option>
                                     <option value="5">Personalizado</option>
+                                    <option value="6">Rango Variados</option>
                                 </select>
                             </div>
                         </div>
@@ -280,11 +300,11 @@
                         <div class="row" style="text-align: left;">
                             <div class="col-md-6">
                                 <h4>Total Deuda: <span class="tipo_moneda"><?= $md->simbolo ?></span> <span
-                                        id="c_total_deuda">0</span></h4>
+                                            id="c_total_deuda">0</span></h4>
                             </div>
                             <div class="col-md-6">
                                 <h4>Total Saldo: <span class="tipo_moneda"><?= $md->simbolo ?></span> <span
-                                        id="c_total_saldo">0</span></h4>
+                                            id="c_total_saldo">0</span></h4>
                             </div>
                         </div>
                     </div>
@@ -292,18 +312,18 @@
                         <button class="btn btn-default save_venta_credito" data-imprimir="0"
                                 type="button"
                                 id="btn_venta_credito"><i
-                                class="fa fa-save"></i> Guardar
+                                    class="fa fa-save"></i> Guardar
 
 
                         </button>
                         <button type="button" class="btn btn-default save_venta_credito ocultar_caja" data-imprimir="1"
                                 id="btn_venta_credito_imprimir"
                         ><i
-                                class="fa fa-print"></i> (F6) Grabar e imprimir
+                                    class="fa fa-print"></i> (F6) Grabar e imprimir
                         </button>
                         <button type="button" class="btn btn-danger"
                                 onclick="$('#dialog_venta_credito').modal('hide');"><i
-                                class="fa fa-close"></i> Cancelar
+                                    class="fa fa-close"></i> Cancelar
                         </button>
                     </div>
                 </div>
@@ -328,15 +348,15 @@
                             <div class="col-md-9">
                                 <div class="input-prepend input-append input-group">
                                     <label class="input-group-addon tipo_moneda"><?= $md->simbolo ?></label><input
-                                        type="number"
-                                        class='input-square input-small form-control'
-                                        min="0.0"
-                                        step="0.1"
-                                        value="0.0"
-                                        id="c_precio_contado"
-                                        name="c_precio_contado"
-                                        readonly
-                                        onkeydown="return soloDecimal(this, event);">
+                                            type="number"
+                                            class='input-square input-small form-control'
+                                            min="0.0"
+                                            step="0.1"
+                                            value="0.0"
+                                            id="c_precio_contado"
+                                            name="c_precio_contado"
+                                            readonly
+                                            onkeydown="return soloDecimal(this, event);">
                                 </div>
                             </div>
                         </div>
@@ -348,14 +368,14 @@
                             <div class="col-md-9">
                                 <div class="input-prepend input-append input-group">
                                     <label class="input-group-addon tipo_moneda"><?= $md->simbolo ?></label><input
-                                        type="number"
-                                        class='input-square input-small form-control'
-                                        min="0.0"
-                                        step="0.1"
-                                        value="0.0"
-                                        id="c_pago_cuenta"
-                                        name="c_pago_cuenta"
-                                        onkeydown="return soloDecimal(this, event);">
+                                            type="number"
+                                            class='input-square input-small form-control'
+                                            min="0.0"
+                                            step="0.1"
+                                            value="0.0"
+                                            id="c_pago_cuenta"
+                                            name="c_pago_cuenta"
+                                            onkeydown="return soloDecimal(this, event);">
                                 </div>
                             </div>
                         </div>
@@ -367,15 +387,15 @@
                             <div class="col-md-9">
                                 <div class="input-prepend input-append input-group">
                                     <label class="input-group-addon tipo_moneda"><?= $md->simbolo ?></label><input
-                                        type="number"
-                                        class='input-square input-small form-control'
-                                        min="0.0"
-                                        step="0.1"
-                                        value="0.0"
-                                        id="c_deuda_restante"
-                                        name="c_deuda_restante"
-                                        readonly
-                                        onkeydown="return soloDecimal(this, event);">
+                                            type="number"
+                                            class='input-square input-small form-control'
+                                            min="0.0"
+                                            step="0.1"
+                                            value="0.0"
+                                            id="c_deuda_restante"
+                                            name="c_deuda_restante"
+                                            readonly
+                                            onkeydown="return soloDecimal(this, event);">
                                 </div>
                             </div>
                         </div>
@@ -388,17 +408,18 @@
                         <div class="col-md-12">
                             <button class="btn btn-default save_venta_credito" style="margin-bottom:5px" type="button"
                                     id="btn_venta_credito_simple" data-imprimir="0"><i
-                                    class="fa fa-save"></i>Guardar
+                                        class="fa fa-save"></i>Guardar
                             </button>
 
-                            <a href="#" class="btn btn-default save_venta_credito ocultar_caja" style="margin-bottom:5px"
+                            <a href="#" class="btn btn-default save_venta_credito ocultar_caja"
+                               style="margin-bottom:5px"
                                id="btn_venta_credito_simple_imprimir" data-imprimir="1" type="button"><i
-                                    class="fa fa-print"></i> (F6)Guardar e imprimir
+                                        class="fa fa-print"></i> (F6)Guardar e imprimir
                             </a>
                             <button class="btn btn-default" style="margin-bottom:5px"
                                     type="button"
                                     onclick="$('#dialog_venta_credito').modal('hide');"><i
-                                    class="fa fa-close"></i> Cancelar
+                                        class="fa fa-close"></i> Cancelar
                             </button>
                         </div>
                     </div>
@@ -535,35 +556,24 @@
             $("#c_pago_periodo").on('change', function () {
                 var pago_periodo = $(this).val();
 
+                $("#c_dia_pago_block").hide();
+                $("#table_rango").hide();
                 switch (pago_periodo) {
-                    case '1':
-                    {
-                        $("#c_dia_pago_block").hide();
-                        break;
-                    }
-                    case '2':
-                    {
-                        $("#c_dia_pago_block").hide();
-                        break;
-                    }
-                    case '3':
-                    {
-                        $("#c_dia_pago_block").hide();
-                        break;
-                    }
-                    case '4':
-                    {
+                    case '4': {
                         var dia = $("#c_fecha_giro").val().split('/');
                         $("#c_dia_pago_letra").html("D&iacute;as de Pago:");
                         $("#c_dia_pago").val(dia[0]);
                         $("#c_dia_pago_block").show();
                         break;
                     }
-                    case '5':
-                    {
+                    case '5': {
                         $("#c_dia_pago_letra").html("Periodos de D&iacute;as:");
                         $("#c_dia_pago").val("1");
                         $("#c_dia_pago_block").show();
+                        break;
+                    }
+                    case '6': {
+                        $("#table_rango").show();
                         break;
                     }
                 }
@@ -574,7 +584,8 @@
             $("#c_garante").on('change', function () {
                 $("#c_garante_nombre").html($("#c_garante option:selected").attr('data-nombre'));
             });
-        });
+        })
+        ;
 
         function credito_init(precio_contado, estado) {
             $("#c_precio_contado").val(precio_contado);
@@ -620,6 +631,9 @@
 
             generar_proyeccion(precio_credito - saldo_inicial);
 
+            if ($('#c_pago_periodo').val() == 6)
+                generar_rangos(parseInt($("#c_numero_cuotas").val()));
+
             generar_cuotas(parseInt($("#c_numero_cuotas").val()), precio_credito - saldo_inicial);
 
             $('#body_proyeccion_cuotas tr').removeClass('table-selected');
@@ -650,6 +664,38 @@
 
         }
 
+        function generar_rangos(numero_cuotas) {
+            var body = $("#body_cuotas_rango");
+
+            if ($("#body_cuotas_rango tr").length > numero_cuotas) {
+                var counter = 0;
+                $("#body_cuotas_rango tr").each(function () {
+                    if (++counter > numero_cuotas)
+                        $(this).remove();
+                });
+            }
+
+
+            for (var i = 0; i < numero_cuotas; i++) {
+                if ($('#c_rango_' + i).html() == undefined) {
+                    var template = '<tr style="background-color: #39B147 !important">';
+                    template += '<td style="padding: 0 !important; height: 28px; text-align: center;"><input  id="c_rango_' + i + '" class="c_rango_input" type="text" value="' + (30 * (i + 1)) + '" style="width: 40px;"></td>';
+                    template += '</tr>';
+
+                    body.append(template);
+                }
+
+            }
+
+            $('.c_rango_input').off('focus keyup');
+            $('.c_rango_input').on('focus', function () {
+                $(this).select();
+            });
+            $('.c_rango_input').on('keyup', function () {
+                refresh_credito_window(1);
+            });
+        }
+
         function generar_cuotas(numero_cuotas, saldo) {
             $('#last_fecha_giro').val($("#c_fecha_giro").val());
             var body = $("#body_cuotas");
@@ -661,12 +707,14 @@
 
                 var template = '<tr>';
                 template += '<td id="c_cuota_letra_' + i + '">' + (i + 1) + ' / ' + numero_cuotas + '</td>';
-                template += '<td id="c_cuota_fecha_' + i + '">' + get_fecha_vencimiento(i + 1, $("#c_pago_periodo").val()) + '</td>';
+                template += '<td style="height: 28px;"><span  id="c_cuota_fecha_' + i + '">' + get_fecha_vencimiento(i, $("#c_pago_periodo").val()) + '</span>'
+                template += '</td>';
                 template += '<td style="text-align: right;">' + $('.tipo_moneda').first().html() + ' <span id="c_cuota_monto_' + i + '">' + monto + '</span></td>';
                 template += '</tr>';
 
                 body.append(template);
             }
+
         }
 
         function get_fecha_vencimiento(index, type) {
@@ -674,40 +722,46 @@
             var next = new Date(fecha[2], fecha[1] - 1, fecha[0]);
 
             switch (type) {
-                case '1':
-                {
-                    
+                case '1': {
+
                     next.setDate(next.getDate() + 1);
                     break;
                 }
-                case '2':
-                {
+                case '2': {
 
                     next.setDate(next.getDate() + 2);
                     break;
                 }
-                case '3':
-                {
+                case '3': {
                     next.setDate(next.getDate() + 7);
                     break;
                 }
-                case '4':
-                {
+                case '4': {
 
                     next.setMonth(next.getMonth() + 1);
                     var dia_mes = isNaN(parseInt($("#c_dia_pago").val())) ? 1 : parseInt($("#c_dia_pago").val());
                     next.setDate(dia_mes);
                     break;
                 }
-                case '5':
-                {
+                case '5': {
                     var dia_mes = isNaN(parseInt($("#c_dia_pago").val())) ? 1 : parseInt($("#c_dia_pago").val());
                     next.setDate(next.getDate() + dia_mes);
                     break;
                 }
+                case '6': {
+                    var fecha_rango = $('#c_fecha_giro').val().split('/');
+                    var next_rango = new Date(fecha_rango[2], fecha_rango[1] - 1, fecha_rango[0]);
+                    var dia_mes = isNaN(parseInt($("#c_dia_pago").val())) ? 1 : parseInt($("#c_rango_" + index).val());
+                    next_rango.setDate(next_rango.getDate() + dia_mes);
+                    if (next_rango.getDay() == 0) {
+                        next_rango.setDate(next_rango.getDate() + 1);
+                    }
+                    var last_fecha_r = get_numero_dia(next_rango.getDate()) + '/' + get_numero_mes(next_rango.getMonth()) + '/' + next_rango.getFullYear();
+                    return last_fecha_r;
+                }
             }
 
-            if (next.getDay() == 0){
+            if (next.getDay() == 0) {
                 next.setDate(next.getDate() + 1);
             }
 

@@ -1243,15 +1243,16 @@ function calcular_pago() {
 
     }
     else {
+        var imp = parseFloat((100 + parseFloat($('#IMPUESTO').val())) / 100);
         if ($("#with_igv").prop('checked') == true) {
             sub_total = parseFloat(total_importe).toFixed(2);
-            total = parseFloat(sub_total * 1.18).toFixed(2);
+            total = parseFloat(sub_total * imp).toFixed(2);
             impuesto = parseFloat(total - sub_total).toFixed(2);
         }
         else {
             total = parseFloat(total_importe).toFixed(2);
-            impuesto = parseFloat(total * igv / 100).toFixed(2);
-            sub_total = parseFloat(total - impuesto).toFixed(2);
+            sub_total = parseFloat(total / imp).toFixed(2);
+            impuesto = parseFloat(total - sub_total).toFixed(2);
         }
     }
 
