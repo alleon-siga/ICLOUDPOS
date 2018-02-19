@@ -151,3 +151,7 @@
 .tableStyle td {
     font-size: 11px !important;
 }
+
+input.errorAPI{
+    border: 1px solid #e74c3c;
+}
