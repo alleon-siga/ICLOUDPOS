@@ -182,9 +182,9 @@
                 url: '<?php echo base_url('cajas/caja_form')?>',
                 type: 'post',
                 success: function (data) {
+                    $("#cargando_modal").modal("hide");
                     $("#dialog_form").html(data);
                     $("#dialog_form").modal('show');
-                    $("#cargando_modal").modal("hide");
                 }
             });
         });
@@ -195,9 +195,9 @@
                 url: '<?php echo base_url('cajas/caja_form')?>' + '/' + $(this).attr('data-id'),
                 type: 'post',
                 success: function (data) {
+                    $("#cargando_modal").modal("hide");
                     $("#dialog_form").html(data);
                     $("#dialog_form").modal('show');
-                    $("#cargando_modal").modal("hide");
                 }
             });
         });
@@ -208,9 +208,9 @@
                 url: '<?php echo base_url('cajas/caja_cuenta_form')?>' + '/' + $(this).attr('data-caja_id'),
                 type: 'post',
                 success: function (data) {
+                    $("#cargando_modal").modal("hide");
                     $("#dialog_form").html(data);
                     $("#dialog_form").modal('show');
-                    $("#cargando_modal").modal("hide");
                 }
             });
         });
@@ -221,9 +221,9 @@
                 url: '<?php echo base_url('cajas/caja_cuenta_form')?>' + '/' + $(this).attr('data-caja_id') + '/' + $(this).attr('data-id'),
                 type: 'post',
                 success: function (data) {
+                    $("#cargando_modal").modal("hide");
                     $("#dialog_form").html(data);
                     $("#dialog_form").modal('show');
-                    $("#cargando_modal").modal("hide");
                 }
             });
         });
@@ -234,9 +234,9 @@
                 url: '<?php echo base_url('cajas/caja_ajustar_form')?>' + '/' + $(this).attr('data-caja_id') + '/' + $(this).attr('data-id'),
                 type: 'post',
                 success: function (data) {
+                    $("#cargando_modal").modal("hide");
                     $("#dialog_form").html(data);
                     $("#dialog_form").modal('show');
-                    $("#cargando_modal").modal("hide");
                 }
             });
         });
@@ -247,9 +247,9 @@
                 url: '<?php echo base_url('cajas/caja_ajustar_retencion_form')?>' + '/' + $(this).attr('data-caja_id') + '/' + $(this).attr('data-id'),
                 type: 'post',
                 success: function (data) {
+                    $("#cargando_modal").modal("hide");
                     $("#dialog_form").html(data);
                     $("#dialog_form").modal('show');
-                    $("#cargando_modal").modal("hide");
                 }
             });
         });
@@ -262,9 +262,9 @@
                 type: 'post',
                 data: {fecha_ini: $("#fecha_ini").val(), fecha_fin: $("#fecha_fin").val()},
                 success: function (data) {
+                    $("#cargando_modal").modal("hide");
                     $("#dialog_form").html(data);
                     $("#dialog_form").modal('show');
-                    $("#cargando_modal").modal("hide");
                 }
             });
         });
@@ -275,9 +275,9 @@
                 url: '<?php echo base_url('cajas/caja_pendiente_form')?>' + '/' + $(this).attr('data-id'),
                 type: 'post',
                 success: function (data) {
+                    $("#cargando_modal").modal("hide");
                     $("#dialog_form_pendiente").html(data);
                     $("#dialog_form_pendiente").modal('show');
-                    $("#cargando_modal").modal("hide");
                 }
             });
         });
@@ -287,9 +287,9 @@
             $.ajax({
                 url: '<?php echo base_url('cajas/index')?>' + '/' + $("#local_id").val(),
                 success: function (data) {
+                    $("#cargando_modal").modal("hide");
                     $('#page-content').html(data);
                     $(".modal-backdrop").remove();
-                    $("#cargando_modal").modal("hide");
                 }
             });
         });
