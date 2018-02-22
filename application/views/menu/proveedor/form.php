@@ -300,9 +300,11 @@ $( "input#proveedor_nrofax" ).keyup(function() {
             processData: false,
             success: function(data){
                 if (data=='No existe') {
+                    $( "input#proveedor_nrofax" ).addClass('errorAPI');
                     $('input#proveedor_nombre').val('');
                     $('input#proveedor_direccion1').val('');
                 }else{
+                    $( "input#proveedor_nrofax" ).removeClass('errorAPI');
                     var obj = $.parseJSON(data);
                         var ruc = obj['ruc'];
                         var razon_social = obj['razon_social'];
@@ -318,6 +320,7 @@ $( "input#proveedor_nrofax" ).keyup(function() {
             }
         });
     }else{
+        $( "input#proveedor_nrofax" ).addClass('errorAPI');
         $('input#proveedor_nombre').val('');
         $('input#proveedor_direccion1').val('');
     }
