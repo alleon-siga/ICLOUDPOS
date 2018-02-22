@@ -222,7 +222,7 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                                                 <input type="text" class='input-mini required form-control'
                                                        name="doc_serie" id="doc_serie" autofocus="autofocus"
                                                        required="true"
-                                                       maxlength="3"
+                                                       maxlength="8"
                                                        value="<?php if (isset($ingreso->documento_serie) and
                                                            $ingreso->documento_serie != null and $ingreso->documento_serie != 0
                                                        ) echo $ingreso->documento_serie; ?>">

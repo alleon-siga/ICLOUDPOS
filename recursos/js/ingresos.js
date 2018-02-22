@@ -51,11 +51,13 @@ $(document).ready(function () {
 
             $("#local_hidden").val($(this).val())
         } else {
-            $("#local_hidden").val("")
+            $("#local_hidden").val()
         }
 
-    })
-    $("select").chosen({width: '100%'});
+    });
+    $("#local_hidden").val($('#local').val());
+
+    $("select").chosen({width: '100%'}).trigger("chosen:updated");
     $("#fecEmision").datepicker({format: 'dd-mm-yyyy'});
 
 
@@ -836,6 +838,8 @@ function validar_registro_existencia() {
 
 
 function guardaringreso() {
+    // console.log($('#frmCompra').serialize());
+    // return false;
     /*esta funcion carga el modal que indica que esta procesando, y ejecuta la funcion de guardar*/
     $("#botonconfirmar").addClass('disabled');
     $("#btn_compra_credito").addClass('disabled');
