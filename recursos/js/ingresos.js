@@ -64,7 +64,7 @@ $(document).ready(function () {
     $('body').on('keydown', function (e) {
         if (e.keyCode == 117) {
             e.preventDefault();
-            if($(".modal").is(":visible") == false){
+            if ($(".modal").is(":visible") == false) {
                 /*dependiendo de el valor de costo, se llama a la funcion que valida los campos*/
                 if ($("#costos").val() == 'true') {
                     validar_ingreso()
@@ -72,7 +72,7 @@ $(document).ready(function () {
                     validar_registro_existencia()
                 }
             }
-            else{
+            else {
                 guardaringreso();
             }
 
@@ -149,9 +149,11 @@ $(document).ready(function () {
             $("#cboProducto").prop('disabled', false).trigger("chosen:updated");
         }
 
+
         var tasa_val = $("#monedas option:selected").attr('data-tasa');
         var tasa_simbolo = $("#monedas option:selected").attr('data-simbolo');
 
+        $('.tipo_moneda').html(tasa_simbolo);
         $(".tipo_tasa").html(tasa_simbolo);
 
         if ($("#monedas option:selected").val() == $('#MONEDA_DEFECTO_ID').val())
@@ -246,14 +248,14 @@ $(document).ready(function () {
 
                         /*if (tasa != '0.00' && tasa != undefined) {
 
-                            if (oper == "/") {
-                                cost = ((parseFloat(cost) * parseFloat(tasa)) / parseFloat(tasa_per)).toFixed(2);
-                            }
-                            else if (oper == "*") {
-                                cost = ((parseFloat(cost) / parseFloat(tasa)) * parseFloat(tasa_per)).toFixed(2);
-                            }
-                            else return parseFloat(cost).toFixed(2);
-                        }*/
+                         if (oper == "/") {
+                         cost = ((parseFloat(cost) * parseFloat(tasa)) / parseFloat(tasa_per)).toFixed(2);
+                         }
+                         else if (oper == "*") {
+                         cost = ((parseFloat(cost) / parseFloat(tasa)) * parseFloat(tasa_per)).toFixed(2);
+                         }
+                         else return parseFloat(cost).toFixed(2);
+                         }*/
 
                     }
 
@@ -717,7 +719,7 @@ function validar_ingreso() {
         return false;
     }
 
-    if ($("#tasa_id").val() == "" || $("#tasa_id").val() < 0) {
+    if (($('#moneda_id').val() != $('#MONEDA_DEFECTO_ID').val() && $("#tasa_id").val() == "") || $("#tasa_id").val() < 0) {
 
         var growlType = 'warning';
         $.bootstrapGrowl('<h4>Debe ingresar una tasa válida</h4>', {
@@ -728,7 +730,14 @@ function validar_ingreso() {
         $(this).prop('disabled', true);
         return false;
     }
-    $("#confirmarmodal").modal('show');
+
+    if ($("#pago").val() == 'CONTADO')
+        $("#confirmarmodal").modal('show');
+    else {
+        credito_init(formatPrice($("#totApagar").val()), 'COMPLETADO');
+        refresh_credito_window();
+        $('#dialog_compra_credito').modal('show');
+    }
 }
 
 
@@ -829,6 +838,7 @@ function validar_registro_existencia() {
 function guardaringreso() {
     /*esta funcion carga el modal que indica que esta procesando, y ejecuta la funcion de guardar*/
     $("#botonconfirmar").addClass('disabled');
+    $("#btn_compra_credito").addClass('disabled');
     $("#barloadermodal").modal('show');
 
     accionGuardar();
@@ -897,7 +907,7 @@ function agregarProducto() {
                     producto.costo_unitario = 0.00;
                     producto.importe = 0.00;
                 } else {
-                    producto.costo_unitario =  parseFloat($("#total_precio").val() / $("#total_unidades").val() * input.attr('data-unidades'));
+                    producto.costo_unitario = parseFloat($("#total_precio").val() / $("#total_unidades").val() * input.attr('data-unidades'));
                     producto.importe = parseFloat(producto.cantidad * producto.costo_unitario);
                 }
 
@@ -1090,15 +1100,13 @@ function updateView(type) {
         '</tr>');
 
     switch (type) {
-        case 'detalle':
-        {
+        case 'detalle': {
             for (var i = 0; i < lst_producto.length; i++) {
                 addTable(lst_producto[i], type);
             }
             break;
         }
-        case 'general':
-        {
+        case 'general': {
 
             var new_view = [];
             var y = 0;
@@ -1459,10 +1467,13 @@ function accionGuardar() {
     }
     miJSON = JSON.stringify(miJSON);
 
+    var cuotas = [];
+    if($('#pago').val() == 'CREDITO')
+        cuotas = prepare_cuotas();
 
     $.ajax({
         type: 'POST',
-        data: $('#frmCompra').serialize() + '&lst_producto=' + miJSON + '',
+        data: $('#frmCompra').serialize() + '&lst_producto=' + miJSON + '&cuotas=' + cuotas,
         url: ruta + 'ingresos/registrar_ingreso',
         dataType: 'json',
         success: function (data) {
@@ -1471,6 +1482,7 @@ function accionGuardar() {
             if (data.success && data.error == undefined) {
 
                 $("#confirmarmodal").modal('hide');
+                $("#dialog_compra_credito").modal('hide');
                 if ($("#ingresomodal").length > 0) {
                     $("#ingresomodal").modal('hide');
                 }
@@ -1507,6 +1519,7 @@ function accionGuardar() {
             }
             else {
                 $("#botonconfirmar").removeClass('disabled');
+                $("#btn_compra_credito").removeClass('disabled');
                 var growlType = 'warning';
                 $.bootstrapGrowl('<h4>' + data.error + '</h4>', {
                     type: growlType,

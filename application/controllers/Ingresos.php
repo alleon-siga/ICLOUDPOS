@@ -7,7 +7,7 @@ class ingresos extends MY_Controller
     function __construct()
     {
         parent::__construct();
-        if ($this->login_model->verify_session()) {   
+        if ($this->login_model->verify_session()) {
             $this->load->model('cliente/cliente_model', 'cl');
             $this->load->model('local/local_model');
             $this->load->model('producto/producto_model');
@@ -20,9 +20,9 @@ class ingresos extends MY_Controller
             $this->load->model('pagos_ingreso/pagos_ingreso_model');
             $this->load->model('monedas/monedas_model');
             $this->load->model('producto_costo_unitario/producto_costo_unitario_model');
-        }else{
+        } else {
             redirect(base_url(), 'refresh');
-        }  
+        }
 
         //$this->load->library('mpdf53/mpdf');
 
@@ -62,6 +62,8 @@ class ingresos extends MY_Controller
         $data["lstProveedor"] = $this->proveedor_model->select_all_proveedor();
         $data["monedas"] = $this->monedas_model->get_all();
         $data['barra_activa'] = $this->db->get_where('columnas', array('id_columna' => 36))->row();
+
+        $data['dialog_compra_credito'] = $this->load->view('menu/ingreso/dialog_compra_credito', array(), true);
 
 
         /*declaro facturar en no, para que por defecto sea no, ahora los valores de si o no, vienen por post*/
@@ -142,7 +144,7 @@ class ingresos extends MY_Controller
             $fecha_emision = null;
             if ($this->input->post('fecEmision', true)) {
                 $this->form_validation->set_rules('fecEmision', 'fecEmision', 'required');
-                $fecha_emision = date("Y-m-d H:i:s", strtotime($this->input->post('fecEmision', true)." ".date("H:i:s")));
+                $fecha_emision = date("Y-m-d H:i:s", strtotime($this->input->post('fecEmision', true) . " " . date("H:i:s")));
             }
 
             //$this->form_validation->set_rules('doc_serie', 'doc_serie', 'required');
@@ -189,13 +191,22 @@ class ingresos extends MY_Controller
                     'facturar' => $this->input->post('facturar')
                 );
 
+                $credito['c_inicial'] = $this->input->post('c_saldo_inicial') != '' ? $this->input->post('c_saldo_inicial') : 0;
+                $credito['c_precio_contado'] = $this->input->post('c_precio_contado');
+                $credito['c_precio_credito'] = $this->input->post('c_precio_credito');
+                $credito['c_tasa_interes'] = $this->input->post('c_tasa_interes');
+                $credito['c_numero_cuotas'] = $this->input->post('c_numero_cuotas');
+                $credito['c_fecha_giro'] = $this->input->post('c_fecha_giro');
+                $credito['c_periodo_gracia'] = $this->input->post('c_periodo_gracia');
+                $cuotas = json_decode($this->input->post('cuotas', true));
+
                 $id = $this->input->post('id_ingreso', true);
 //                 var_dump($this->input->post('doc_serie', true));
 //                 var_dump( json_decode($this->input->post('lst_producto', true)));
 // return false;
                 if (empty($id)) {
 
-                    $rs = $this->ingreso_model->insertar_compra($comp_cab_pie, json_decode($this->input->post('lst_producto', true)));
+                    $rs = $this->ingreso_model->insertar_compra($comp_cab_pie, json_decode($this->input->post('lst_producto', true)), $credito, $cuotas);
 
 
                 } else {
@@ -209,7 +220,7 @@ class ingresos extends MY_Controller
                     } else {
                         $comp_cab_pie['status'] = "COMPLETADO";
                     }
-                    $rs = $this->ingreso_model->update_compra($comp_cab_pie, json_decode($this->input->post('lst_producto', true)));
+                    $rs = $this->ingreso_model->update_compra($comp_cab_pie, json_decode($this->input->post('lst_producto', true)), $credito, $cuotas);
                 }
 
                 if ($rs != false) {
@@ -263,6 +274,7 @@ class ingresos extends MY_Controller
     {
 
         $data['locales'] = $this->local_model->get_all();
+        $data['monedas'] = $this->db->get_where('moneda', array('status_moneda' => 1))->result();
         $dataCuerpo['cuerpo'] = $this->load->view('menu/ingreso/compras', $data, true);
         if ($this->input->is_ajax_request()) {
             echo $dataCuerpo['cuerpo'];
@@ -274,15 +286,19 @@ class ingresos extends MY_Controller
     function lista_compra()
     {
 
+        $date_range = explode(" - ", $this->input->post('fecha'));
+        $fecha_ini = str_replace("/", "-", $date_range[0]);
+        $fecha_fin = str_replace("/", "-", $date_range[1]);
+
         $params = array(
             'local_id' => $this->input->post('local_id'),
             'estado' => $this->input->post('estado'),
-            'mes' => $this->input->post('mes'),
-            'year' => $this->input->post('year'),
-            'dia_min' => $this->input->post('dia_min'),
-            'dia_max' => $this->input->post('dia_max')
+            'moneda_id' => $this->input->post('moneda_id'),
+            'fecha_ini' => $fecha_ini,
+            'fecha_fin' => $fecha_fin
         );
 
+        $data['moneda'] = $this->db->get_where('moneda', array('id_moneda' => $params['moneda_id']))->row();
         $data['ingresos'] = $this->ingreso_model->get_compras($params);
         $data['ingreso_totales'] = $this->ingreso_model->get_totales_compra($params);
 
@@ -294,22 +310,11 @@ class ingresos extends MY_Controller
     {
         if ($this->input->is_ajax_request()) {
 
-            $params = array();
-            if ($this->input->post('proveedor', true) != -1) {
-                $params['proveedor_id'] = $this->input->post('proveedor', true);
-            }
-
-            /*if ($this->input->post('documento', true) != -1) {
-                $params['documento'] = $this->input->post('documento', true);
-            }*/
-
-            if ($this->input->post('moneda', true) != -1) {
-                $params['moneda'] = $this->input->post('moneda', true);
-            }
-
-            if ($this->input->post('local_id', true) != -1) {
-                $params['local_id'] = $this->input->post('local_id', true);
-            }
+            $params = array(
+                'local_id' => $this->input->post('local_id'),
+                'proveedor_id' => $this->input->post('proveedor'),
+                'moneda_id' => $this->input->post('moneda'),
+            );
 
             $data["lstproveedor"] = $this->proveedor_model->get_cuentas_pagar($params);
             $data["ingreso_totales"] = $this->proveedor_model->get_cuentas_pagar_totales($params);
@@ -328,23 +333,76 @@ class ingresos extends MY_Controller
     public function ver_deuda()
     {
         $id_ingreso = $this->input->post('id_ingreso');
+        $this->load->model('metodosdepago/metodos_pago_model');
 
         if ($id_ingreso != FALSE) {
 
-            $result['ingreso'] = $this->ingreso_model->get_deuda_detalle($id_ingreso);
-            $result['metodos_pago'] = $this->db->get_where('metodos_pago', array('status_metodo' => 1))->result();
-            $result['bancos'] = $this->db->get_where('banco', array('banco_status' => 1))->result();
+            $dataresult['cronogramas'] = $this->ingreso_model->get_cronograma_by_cuotas($id_ingreso);
+
+            $dataresult['ingreso'] = $this->db->join('moneda', 'moneda.id_moneda=ingreso.id_moneda')
+                ->join('proveedor', 'proveedor.id_proveedor=ingreso.int_Proveedor_id')
+                ->get_where('ingreso', array('id_ingreso' => $id_ingreso))->row();
+
+            $dataresult['proveedor'] = $this->db->get_where('proveedor', array('id_proveedor' => $dataresult['ingreso']->int_Proveedor_id))->row();
+
+            $dataresult['ingreso_detalles'] = $this->db->join('producto', 'producto.producto_id=detalleingreso.id_producto')
+                ->get_where('detalleingreso', array('id_ingreso' => $id_ingreso))->result();
+
+            $dataresult['credito'] = $this->db->get_where('ingreso_credito', array('ingreso_id' => $id_ingreso))->row();
+
+            $dataresult['pagos_ingreso'] = $this->db->join('ingreso_credito_cuotas', 'ingreso_credito_cuotas.id=pagos_ingreso.pagoingreso_ingreso_id')
+                ->join('metodos_pago', 'metodos_pago.id_metodo=pagos_ingreso.medio_pago_id')
+                ->join('banco', 'banco.banco_id=pagos_ingreso.banco_id', 'left')
+                ->group_by('pagoingreso_id')
+                ->get_where('pagos_ingreso', array('ingreso_credito_cuotas.ingreso_id' => $id_ingreso))->result();
+
+            $dataresult['metodos'] = $this->metodos_pago_model->get_all();
+            $dataresult['bancos'] = $this->db->get_where('banco', array('banco_status' => 1))->result();
+            $dataresult['tarjetas'] = $this->db->get('tarjeta_pago')->result();
+            $dataresult['cajas'] = $this->db->join('caja_desglose', 'caja_desglose.caja_id=caja.id')
+                ->get_where('caja', array(
+                    'moneda_id' => $dataresult['ingreso']->id_moneda,
+                    'local_id' => $dataresult['ingreso']->local_id,
+                    'retencion' => 0,
+                    'caja_desglose.estado' => 1
+                ))->result();
 
 
-            $this->load->view('menu/proveedor/form_montoapagar', $result);
+            $this->load->view('menu/ingreso/tbl_ingreso_cronograma_pago', $dataresult);
+//            $this->load->view('menu/proveedor/form_montoapagar', $result);
         }
+    }
+
+    public function pagoCuotaCredito()
+    {
+        /*este metodo hace su funcion cuando se paga una cuota, bien sea pago anticipado o no*/
+
+        /*estos dos, siempre los recibo*/
+        $ingreso_id = $this->input->post('ingreso_id');
+
+        $metodo_pago = $this->input->post('metodo_pago');
+        $tipo_metodo = $this->input->post('tipo_metodo');
+        $numero_ope = $this->input->post('nro_operacion');
+        $banco = $this->input->post('banco');
+        $cuenta_id = $this->input->post('cuenta_id');
+
+        $idCuota = $this->input->post('cuota_id');
+        $montodescontar = $this->input->post('montodescontar');
+        $correlativo_cuota = $this->input->post('correlativo_cuota');
+        $anticipado = false;
+
+        $return = $this->ingreso_model->pagar_cuota($idCuota, $montodescontar, $metodo_pago, $ingreso_id, $anticipado, $numero_ope, $banco, $tipo_metodo, $cuenta_id);
+
+        $dataresul['success'] = "El pago se ha realizado satisfactoriamente";
+        echo json_encode($dataresul);
+
     }
 
     function guardarPago()
     {
         if ($this->input->is_ajax_request()) {
 
-            $ingreso = $this->db->get_where('ingreso', array('id_ingreso'=>$this->input->post('ingreso_id')))->row();
+            $ingreso = $this->db->get_where('ingreso', array('id_ingreso' => $this->input->post('ingreso_id')))->row();
             $detalle = array(
                 'pagoingreso_ingreso_id' => $this->input->post('ingreso_id'),
                 'pagoingreso_fecha' => date("Y-m-d H:i:s"),
@@ -547,71 +605,24 @@ class ingresos extends MY_Controller
     {
         $id_ingreso = $this->input->post('id_ingreso');
 
-        //echo "idventa " . $idventa;
         if ($id_ingreso != FALSE) {
 
+            $dataresult['cronogramas'] = $this->ingreso_model->get_cronograma_by_cuotas($id_ingreso);
 
-            $select = 'ingreso.documento_serie,ingreso.documento_numero, ingreso.fecha_registro,ingreso.id_ingreso, detalleingreso.cantidad,
-            detalleingreso.precio, detalleingreso.total_detalle,ingreso_status,
-            producto.producto_nombre, proveedor.proveedor_nombre,moneda.simbolo';
-            $from = "ingreso";
-            $join = array('detalleingreso', 'producto', 'proveedor', 'moneda');
-            $campos_join = array('detalleingreso.id_ingreso=ingreso.id_ingreso', 'detalleingreso.id_producto=producto.producto_id',
-                'proveedor.id_proveedor=ingreso.int_Proveedor_id', 'moneda.id_moneda = ingreso.id_moneda');
+            $dataresult['ingreso'] = $this->db->join('moneda', 'moneda.id_moneda=ingreso.id_moneda')
+                ->join('proveedor', 'proveedor.id_proveedor=ingreso.int_Proveedor_id')
+                ->get_where('ingreso', array('id_ingreso' => $id_ingreso))->row();
 
-            /* $tipo_join[0]="";
-             $tipo_join[1]="left";*/
+            $dataresult['ingreso_detalles'] = $this->db->join('producto', 'producto.producto_id=detalleingreso.id_producto')
+                ->get_where('detalleingreso', array('id_ingreso' => $id_ingreso))->result();
 
-            $where = array(
-                'ingreso.id_ingreso' => $id_ingreso,
-                'ingreso_status' => COMPLETADO
-            );
+            $dataresult['credito'] = $this->db->get_where('ingreso_credito', array('ingreso_id' => $id_ingreso))->row();
 
-            $dataresult['detalle'] = $this->ingreso_model->traer_by($select, $from, $join, $campos_join, false, $where, false, false, "RESULT_ARRAY");
-
-
-            $select = 'sum(pagoingreso_monto) as monto_abonado';
-            $from = "pagos_ingreso";
-            $where = array(
-                'pagoingreso_ingreso_id' => $id_ingreso
-            );
-            $dataresult['abonado'] = $this->ingreso_model->traer_by($select, $from, false, false, false, $where, false, false, "ROW_ARRAY");
-
-
-            $select = 'sum(total_detalle) as total_ingreso ';
-            $from = "ingreso";
-            $join = array('detalleingreso');
-            $campos_join = array('detalleingreso.id_ingreso=ingreso.id_ingreso');
-            $where = array(
-                'ingreso.id_ingreso' => $id_ingreso,
-                'ingreso_status' => COMPLETADO
-            );
-
-            $dataresult['total_ingreso'] = $this->ingreso_model->traer_by($select, $from, $join, $campos_join, false, $where, false, false, "ROW_ARRAY");
-
-
-            $select = 'pagos_ingreso.*, moneda.simbolo as simbolo, metodos_pago.nombre_metodo, banco.banco_nombre';
-            $from = "pagos_ingreso";
-            $join = array('moneda', 'banco', 'metodos_pago');
-            $campos_join = array(
-                'moneda.id_moneda = pagos_ingreso.id_moneda',
-                'banco.banco_id = pagos_ingreso.banco_id',
-                'metodos_pago.id_metodo = pagos_ingreso.medio_pago_id');
-            $tipo_join = array('', 'left', 'left');
-            $where = array(
-                'pagoingreso_ingreso_id' => $id_ingreso
-            );
-
-            $dataresult['cuentas'] = $data['pago_detalles'] = $this->db->select('*')
-                ->from('pagos_ingreso')
-                ->join('moneda', 'moneda.id_moneda = pagos_ingreso.id_moneda')
-                ->join('metodos_pago', 'metodos_pago.id_metodo=pagos_ingreso.medio_pago_id', 'left')
+            $dataresult['pagos_ingreso'] = $this->db->join('ingreso_credito_cuotas', 'ingreso_credito_cuotas.id=pagos_ingreso.pagoingreso_ingreso_id')
+                ->join('metodos_pago', 'metodos_pago.id_metodo=pagos_ingreso.medio_pago_id')
                 ->join('banco', 'banco.banco_id=pagos_ingreso.banco_id', 'left')
-                ->where('pagos_ingreso.pagoingreso_ingreso_id', $id_ingreso)
-                ->get()->result_array();
-
-            //$dataresult['cuentas'] = $this->ingreso_model->traer_by($select, $from, $join, $campos_join, $tipo_join, $where, false, false, "RESULT_ARRAY");
-
+                ->group_by('pagoingreso_id')
+                ->get_where('pagos_ingreso', array('ingreso_credito_cuotas.ingreso_id' => $id_ingreso))->result();
 
             $this->load->view('menu/ingreso/visualizar_detalle_ingreso', $dataresult);
         }

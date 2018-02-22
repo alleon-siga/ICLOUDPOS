@@ -59,9 +59,7 @@ class pagos_ingreso_model extends CI_Model {
         $id = $this->db->insert_id();
 
         if ($data['medio_pago_id'] != '6') {
-            $moneda_id = 2;
-            if($data['id_moneda'] == 1029)
-                $moneda_id = 1;
+            $moneda_id = $data['id_moneda'];
 
             $ingreso = $this->db->get_where('ingreso', array('id_ingreso'=>$data['pagoingreso_ingreso_id']))->row();
             $this->cajas_model->save_pendiente(array(

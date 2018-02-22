@@ -21,44 +21,33 @@ class proveedor_model extends CI_Model
                 ingreso.fecha_emision as fecha_emision,
                 ingreso.total_ingreso as monto_venta,
                 moneda.simbolo as simbolo, 
-                (SELECT 
-                        SUM(pagos_ingreso.pagoingreso_monto)
-                    FROM
-                        pagos_ingreso
-                    WHERE
-                        pagos_ingreso.pagoingreso_ingreso_id = ingreso.id_ingreso) AS monto_pagado,
-                DATEDIFF(CURDATE(), (ingreso.fecha_emision)) as atraso, 
-                ingreso.pago as pago
+                ingreso.total_ingreso as total_ingreso,
+                ingreso_credito.monto_cuota as monto_cuota,
+                ingreso_credito.monto_debito as monto_debito,
+                ingreso_credito.inicial as inicial, 
+                DATEDIFF(CURDATE(), ingreso.fecha_emision) as dias_transcurridos
             FROM
                 (ingreso)
                     JOIN
                 proveedor ON ingreso.int_Proveedor_id = proveedor.id_proveedor 
                     JOIN  
                 moneda ON moneda.id_moneda = ingreso.id_moneda 
-                    LEFT JOIN
-                pagos_ingreso ON pagos_ingreso.pagoingreso_ingreso_id = ingreso.id_ingreso
+                    JOIN
+                ingreso_credito ON ingreso_credito.ingreso_id = ingreso.id_ingreso
             WHERE
-                ingreso.ingreso_status = 'COMPLETADO'  
-                AND (SELECT 
-                        COUNT(pagos_ingreso.pagoingreso_id)
-                    FROM
-                        pagos_ingreso
-                    WHERE
-                        pagos_ingreso.pagoingreso_ingreso_id = ingreso.id_ingreso 
-                        AND pagos_ingreso.pagoingreso_restante = 0.00) <= 0 
-                        AND ingreso.pago = 'CREDITO' 
+                ingreso_credito.estado = 'PENDIENTE' 
         ";
 
-        if(isset($data['proveedor_id']))
+        if(isset($data['proveedor_id']) && $data['proveedor_id'] != "")
             $consulta .= " AND ingreso.int_Proveedor_id =".$data['proveedor_id'];
 
         if(isset($data['documento']))
             $consulta .= " AND ingreso.tipo_documento ='".$data['documento']."'";
 
-        if(isset($data['moneda']))
+        if(isset($data['moneda']) && $data['moneda'] != "")
             $consulta .= " AND ingreso.id_moneda =".$data['moneda']."";
 
-        if(isset($data['local_id']))
+        if(isset($data['local_id']) && $data['local_id'] != "")
             $consulta .= " AND ingreso.local_id =".$data['local_id']."";
 
 
@@ -71,37 +60,27 @@ class proveedor_model extends CI_Model
 
         $consulta = "
             SELECT 
-                SUM(ingreso.total_ingreso) as monto_venta,
-                SUM((SELECT 
-                        SUM(pagos_ingreso.pagoingreso_monto)
-                    FROM
-                        pagos_ingreso
-                    WHERE
-                        pagos_ingreso.pagoingreso_ingreso_id = ingreso.id_ingreso)) AS monto_pagado
+                SUM(ingreso.total_ingreso) as total_monto_venta,
+                SUM(ingreso_credito.monto_cuota) AS total_monto_cuota,
+                SUM(ingreso_credito.monto_debito) AS total_monto_debito
             FROM
                 (ingreso)
+            JOIN
+              ingreso_credito ON ingreso_credito.ingreso_id = ingreso.id_ingreso
             WHERE
-                ingreso.ingreso_status = 'COMPLETADO'  
-                AND (SELECT 
-                        COUNT(pagos_ingreso.pagoingreso_id)
-                    FROM
-                        pagos_ingreso
-                    WHERE
-                        pagos_ingreso.pagoingreso_ingreso_id = ingreso.id_ingreso 
-                        AND pagos_ingreso.pagoingreso_restante = 0.00) <= 0 
-                        AND ingreso.pago = 'CREDITO' 
+                ingreso_credito.estado = 'PENDIENTE' 
         ";
 
-        if(isset($data['proveedor_id']))
+        if(isset($data['proveedor_id']) && $data['proveedor_id'] != "")
             $consulta .= " AND ingreso.int_Proveedor_id =".$data['proveedor_id'];
 
         if(isset($data['documento']))
             $consulta .= " AND ingreso.tipo_documento ='".$data['documento']."'";
 
-        if(isset($data['moneda']))
+        if(isset($data['moneda']) && $data['moneda'] != "")
             $consulta .= " AND ingreso.id_moneda =".$data['moneda']."";
 
-        if(isset($data['local_id']))
+        if(isset($data['local_id']) && $data['local_id'] != "")
             $consulta .= " AND ingreso.local_id =".$data['local_id']."";
 
 

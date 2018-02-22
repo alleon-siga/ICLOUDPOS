@@ -100,6 +100,14 @@ class ingreso_model extends CI_Model
         if (isset($data['estado']))
             $this->db->where('ingreso.ingreso_status', $data['estado']);
 
+        if (isset($data['moneda_id']) && (isset($data['estado']) && $data['estado'] == 'COMPLETADO'))
+            $this->db->where('ingreso.id_moneda', $data['moneda_id']);
+
+        if (isset($data['fecha_ini']) && isset($data['fecha_fin'])) {
+            $this->db->where('ingreso.fecha_registro >=', date('Y-m-d H:i:s', strtotime($data['fecha_ini'] . " 00:00:00")));
+            $this->db->where('ingreso.fecha_registro <=', date('Y-m-d H:i:s', strtotime($data['fecha_fin'] . " 23:59:59")));
+        }
+
         if (isset($data['mes']) && isset($data['year']) && isset($data['dia_min']) && isset($data['dia_max'])) {
             $last_day = last_day($data['year'], sumCod($data['mes'], 2));
             if ($last_day > $data['dia_max'])
@@ -141,7 +149,7 @@ class ingreso_model extends CI_Model
     }
 
 
-    function insertar_compra($cab_pie, $detalle)
+    function insertar_compra($cab_pie, $detalle, $credito, $cuotas)
     {
 
         $this->load->model('unidades_has_precio/unidades_has_precio_model');
@@ -178,9 +186,7 @@ class ingreso_model extends CI_Model
         $insert_id = $this->db->insert_id();
 
         if ($compra['ingreso_status'] == 'COMPLETADO' && $compra['total_ingreso'] > 0 && $compra['pago'] == 'CONTADO') {
-            $moneda_id = 1;
-            if ($compra['id_moneda'] == 1030)
-                $moneda_id = 2;
+            $moneda_id = $compra['id_moneda'];
             $this->cajas_model->save_pendiente(array(
                 'monto' => $compra['total_ingreso'],
                 'tipo' => 'COMPRA',
@@ -189,6 +195,20 @@ class ingreso_model extends CI_Model
                 'moneda_id' => $moneda_id,
                 'local_id' => $compra['local_id']
             ));
+        } else if ($compra['ingreso_status'] == 'COMPLETADO' && $compra['total_ingreso'] > 0 && $compra['pago'] == 'CREDITO') {
+            if ($credito['c_inicial'] > 0) {
+                $moneda_id = $compra['id_moneda'];
+                $this->cajas_model->save_pendiente(array(
+                    'monto' => $credito['c_inicial'],
+                    'tipo' => 'COMPRA',
+                    'IO' => 2,
+                    'ref_id' => $insert_id,
+                    'moneda_id' => $moneda_id,
+                    'local_id' => $compra['local_id']
+                ));
+            }
+
+            $this->save_credito($insert_id, $credito, $cuotas);
         }
 
         $data = array();
@@ -446,6 +466,32 @@ class ingreso_model extends CI_Model
 
     }
 
+    function save_credito($compra_id, $credito, $cuotas)
+    {
+
+        $this->db->insert('ingreso_credito', array(
+            'ingreso_id' => $compra_id,
+            'numero_cuotas' => count($cuotas),
+            'monto_cuota' => $credito['c_precio_credito'],
+            'monto_debito' => 0,
+            'estado' => 'PENDIENTE',
+            'inicial' => $credito['c_inicial'],
+            'periodo_gracia' => $credito['c_periodo_gracia'],
+            'ultima_fecha_pago' => null
+        ));
+
+        foreach ($cuotas as $cuota) {
+            $this->db->insert('ingreso_credito_cuotas', array(
+                'ingreso_id' => $compra_id,
+                'monto' => $cuota->monto,
+                'letra' => $cuota->letra,
+                'fecha_vencimiento' => date('Y-m-d', strtotime(str_replace('/', '-', $cuota->fecha))),
+                'pagado' => 0,
+                'fecha_cancelada' => null
+            ));
+        }
+
+    }
 
     function guardar_detalle_contable($detalle, $ingreso_id)
     {
@@ -498,7 +544,7 @@ class ingreso_model extends CI_Model
 
     }
 
-    function update_compra($cab_pie, $detalle)
+    function update_compra($cab_pie, $detalle, $credito, $cuotas)
     {
 
         $this->db->trans_start();
@@ -531,9 +577,7 @@ class ingreso_model extends CI_Model
 
             $ingreso = $this->db->get_where('ingreso', array('id_ingreso' => $compra_id))->row();
             if ($compra['total_ingreso'] > 0 && $ingreso->pago == 'CONTADO') {
-                $moneda_id = 1;
-                if ($compra['id_moneda'] == 1030)
-                    $moneda_id = 2;
+                $moneda_id = $compra['id_moneda'];
                 $this->cajas_model->update_pendiente(array(
                     'monto' => $compra['total_ingreso'],
                     'tipo' => 'COMPRA',
@@ -541,6 +585,20 @@ class ingreso_model extends CI_Model
                     'moneda_id' => $moneda_id,
                     'local_id' => $ingreso->local_id
                 ));
+            } else if ($compra['total_ingreso'] > 0 && $ingreso->pago == 'CREDITO') {
+                if ($credito['c_inicial'] > 0) {
+                    $moneda_id = $compra['id_moneda'];
+                    $this->cajas_model->save_pendiente(array(
+                        'monto' => $credito['c_inicial'],
+                        'tipo' => 'COMPRA',
+                        'IO' => 2,
+                        'ref_id' => $compra_id,
+                        'moneda_id' => $moneda_id,
+                        'local_id' => $compra['local_id']
+                    ));
+                }
+
+                $this->save_credito($compra_id, $credito, $cuotas);
             }
 
             $local_id = $cab_pie['local_id'];
@@ -1130,5 +1188,92 @@ WHERE detalleingreso.id_ingreso='$compra_id'");
     {
         $sql = $this->db->query($query);
         return $sql->result_array();
+    }
+
+
+    function get_cronograma_by_cuotas($ingreso_id)
+    {
+        /*este metodo busca todas las cuotas, y el ultimo pago que se le realizo a una cuota*/
+        $query = "
+            SELECT
+                IF((d.pagado = 1), '-', (DATEDIFF((d.fecha_vencimiento), CURDATE()) * -1)) as atraso,
+                d.*,
+                IFNULL((SELECT SUM(pagoingreso_monto) FROM pagos_ingreso WHERE pagoingreso_ingreso_id = d.id), 0) as monto_pagado
+            FROM
+                ingreso_credito_cuotas d
+            WHERE
+                d.ingreso_id = " . $ingreso_id . " 
+            GROUP BY d.id
+        ";
+        return $this->db->query($query)->result();
+
+    }
+
+    public function pagar_cuota($idCuota, $montodescontar, $metodo_pago, $ingreso_id, $anticipado, $numero_ope, $banco, $tipo_metodo, $cuenta)
+    {
+
+        $this->load->model('cajas/cajas_model');
+        $this->load->model('cajas/cajas_mov_model');
+
+        $ingreso = $this->db->get_where('ingreso', array('id_ingreso' => $ingreso_id))->row();
+        $cuota = $this->db->get_where('ingreso_credito_cuotas', array('id' => $idCuota))->row();
+
+        if ($tipo_metodo == 'BANCO') {
+            $banco_selected = $this->db->get_where('banco', array('banco_id' => $banco))->row();
+            $cuenta_id = $banco_selected->cuenta_id;
+        } else {
+            $cuenta_id = $cuenta;
+        }
+
+        $this->db->insert('pagos_ingreso', array(
+            'pagoingreso_ingreso_id' => $idCuota,
+            'pagoingreso_fecha' => date('Y-m-d H:i:s'),
+            'pagoingreso_monto' => $montodescontar,
+            'pagoingreso_restante' => 0,
+            'pagoingreso_usuario' => $this->session->userdata('nUsuCodigo'),
+            'medio_pago_id' => $metodo_pago,
+            'banco_id' => $banco,
+            'operacion' => $numero_ope,
+            'estado' => 'PENDIENTE'
+        ));
+        $id = $this->db->insert_id();
+
+        $this->cajas_model->save_pendiente(array(
+            'monto' => $montodescontar,
+            'tipo' => 'PAGOS_CUOTAS',
+            'IO' => 2,
+            'ref_id' => $id,
+            'cuenta_id' => $cuenta_id
+        ));
+
+        $pagado = $this->db->select_sum('pagoingreso_monto', 'monto_total')
+            ->from('pagos_ingreso')
+            ->where('pagoingreso_ingreso_id', $cuota->id)
+            ->get()->row();
+
+        $restante = $cuota->monto - ($pagado->monto_total);
+        if ($restante <= 0) {
+            $this->db->where('id', $cuota->id);
+            $this->db->update('ingreso_credito_cuotas', array(
+                'fecha_cancelada' => date('Y-m-d H:i:s'),
+                'pagado' => 1
+            ));
+        }
+
+        $credito = $this->db->get_where('ingreso_credito', array('ingreso_id' => $ingreso_id))->row();
+        $this->db->where('ingreso_id', $ingreso_id);
+        if ($credito->monto_cuota > $credito->monto_debito + $montodescontar + 0.10) {
+            $this->db->update('ingreso_credito', array(
+                'monto_debito' => $credito->monto_debito + $montodescontar,
+                'ultima_fecha_pago' => date('Y-m-d H:i:s')
+            ));
+        } else {
+            $this->db->update('ingreso_credito', array(
+                'monto_debito' => $credito->monto_debito + $montodescontar,
+                'ultima_fecha_pago' => date('Y-m-d H:i:s'),
+                'estado' => 'CANCELADA'
+            ));
+        }
+
     }
 }

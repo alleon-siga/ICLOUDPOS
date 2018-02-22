@@ -278,8 +278,9 @@
     }*/
 
     function guardarPago() {
+        var tipo = $('#metodo option:selected').attr('data-tipo_metodo');
 
-        if($("#metodo").val()=="4" && $("#banco_id").val()==""){
+        if(tipo == 'BANCO' && $('#banco_id').val() == ""){
             $.bootstrapGrowl('<h4>Debe ingresar un banco</h4>', {
                 type: 'warning',
                 delay: 2500,
@@ -299,6 +300,15 @@
 
         if($("#metodo").val()!="3" && $("#num_oper").val()==""){
             $.bootstrapGrowl('<h4>Es necesario el numero de operacion</h4>', {
+                type: 'warning',
+                delay: 2500,
+                allow_dismiss: true
+            });
+            return false;
+        }
+
+        if(tipo == 'CAJA' && $('#caja_id').val() == ""){
+            $.bootstrapGrowl('<h4>Debe ingresar una cuenta</h4>', {
                 type: 'warning',
                 delay: 2500,
                 allow_dismiss: true
@@ -333,7 +343,9 @@
                 'montodescontar':$("#cantidad_a_pagar").val(),
                 'idCuota': $("#id_credito_cuota").val(),
                 'metodo_pago':$("#metodo").val(),
+                'tipo_metodo': tipo,
                 'banco':null,
+                'cuenta_id':null,
                 'nro_operacion':null
 
             };
@@ -341,9 +353,12 @@
         if($("#metodo").val()!="3")
             params['nro_operacion'] = $("#num_oper").val();
 
-        if($("#metodo").val()=="4")
+        if(tipo == 'BANCO')
             params['banco'] = $("#banco_id").val();
-        else if($("#metodo").val()=="7")
+        else
+            params['cuenta_id'] = $("#caja_id").val();
+
+        if($("#metodo").val()=="7")
             params['banco'] = $("#tipo_tarjeta").val();
 
 

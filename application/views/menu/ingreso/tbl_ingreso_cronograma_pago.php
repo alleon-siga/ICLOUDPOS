@@ -7,7 +7,7 @@
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close cerrar_pagar_venta">&times;</button>
-            <h3>Realizar Pago de Cuota - <?= $cliente->razon_social ?></h3>
+            <h3>Realizar Pago de Cuota - <?= $proveedor->proveedor_nombre ?></h3>
         </div>
         <div class="modal-body">
             <div class="row-fluid force-margin">
@@ -29,7 +29,6 @@
                                     $i = 1;
 
                                     /*esta variable para guardarla y utilizarla en caso de que se haga un pago anticipado*/
-                                    $id_venta = '';
 
                                     /*para mostrar el boton de pago anticipado y validar si ya pago la deuda */
                                     $validar_si_cancelo_total = true;
@@ -39,8 +38,8 @@
                                     $flag_pago = true;
 
                                     foreach ($cronogramas as $pago) {
-                                        $id_venta = $pago->id_venta;
-                                        $idletra = $pago->nro_letra;
+                                        $id = $pago->id;
+                                        $idletra = $pago->letra;
                                         ?>
 
                                         <tr>
@@ -48,17 +47,11 @@
                                                                                              id="val<?php echo $i; ?>"
                                                                                              value="<?php echo $idletra; ?>">
                                             </td>
-                                            <td align="center"><?= date("d-m-Y", strtotime($pago->fecha_vencimiento)) ?></td>
+                                            <td align="center"><?= date("d/m/Y", strtotime($pago->fecha_vencimiento)) ?></td>
                                             <td align="center"><?= $pago->atraso ?></td>
-                                            <td align="center"><?= $moneda[0]['simbolo'] . " " . number_format($pago->monto, 2) ?></td>
-                                            <td align="center"><?php if ($pago->monto_restante == null) {
-                                                    echo $moneda[0]['simbolo'] . " " . number_format($pago->monto, 2);
-                                                    $restante = number_format($pago->monto, 2);
-                                                } else {
-                                                    $restante = number_format($pago->monto_restante, 2);
-                                                    echo $moneda[0]['simbolo'] . " " . number_format($pago->monto_restante, 2);
-                                                } ?></td>
-                                            <?php if ($pago->ispagado): ?>
+                                            <td align="center"><?= $ingreso->simbolo . " " . number_format($pago->monto, 2) ?></td>
+                                            <td align="center"><?= $ingreso->simbolo . " " . number_format($pago->monto - $pago->monto_pagado, 2) ?></td>
+                                            <?php if ($pago->pagado): ?>
                                                 <td align="center">
                                                     PAGADO
                                                 </td>
@@ -67,7 +60,12 @@
                                                     <td align="center" id="botonPagar<?php echo $i; ?>">
 
                                                         <a class="btn btn-xs btn-default"
-                                                           onclick="abonar(<?= $pago->id_venta; ?>,<?= $i; ?>,'<?= str_replace(',', '', $pago->monto) ?>',<?= $pago->id_credito_cuota ?>,'<?= str_replace(',', '', $restante) ?>')">
+                                                           onclick="abonar(
+                                                            <?= $ingreso->id_ingreso; ?>,
+                                                            <?= $i; ?>,
+                                                            <?= $pago->id ?>,
+                                                            <?= $pago->monto ?>,
+                                                            <?= $pago->monto_pagado?>)">
                                                             <i class="fa fa-paypal"></i> Pagar</a>
                                                     </td>
                                                     <?php $flag_pago = false; ?>
@@ -82,15 +80,6 @@
 
                             </div>
                         </div>
-
-                        <?php if ($this->session->userdata('PAGOS_ANTICIPADOS') == "SI" and $validar_si_cancelo_total == false) { ?>
-                            <div class="form-group">
-                                <button id="pago_anticipado" class="btn btn-default"
-                                        onclick="pagoadelantado(<?= $id_venta ?>)">Pago Anticipado
-                                </button>
-
-                            </div>
-                        <?php } ?>
 
                     </div>
                 </div>
@@ -155,7 +144,7 @@
                                 <option value="">Seleccione</option>
                                 <?php foreach ($cajas as $caja): ?>
                                     <option
-                                            value="<?= $caja->id ?>" <?= $caja->principal == '1' ? 'selected' : ''?>><?= $caja->descripcion ?></option>
+                                            value="<?= $caja->id ?>" <?= $caja->principal == '1' ? 'selected' : '' ?>><?= $caja->descripcion ?></option>
                                 <?php endforeach ?>
                             </select>
                         </div>
@@ -212,7 +201,7 @@
                         </div>
                         <div class="col-md-6">
                             <input type="hidden" id="correlativo">
-                            <input type="hidden" id="venta_id">
+                            <input type="hidden" id="compra_id">
                             <input type="hidden" id="id_credito_cuota">
 
                             <input type="number" id="cantidad_a_pagar" name="cantidad_a_pagar" value=""
@@ -247,8 +236,197 @@
             buscar();
         });
 
+
     });
 
+    function verificar_banco_cuota() {
+
+        $("#banco_id").val("");
+        $("#tipo_tarjeta").val("");
+        $("#num_oper").val("");
+        $("#cantidad_a_pagar").val($("#total_cuota").val());
+        var tipo = $("#metodo option:selected").attr('data-tipo_metodo');
+        var metodo = $("#metodo").val();
+
+        $("#tipo_tarjeta_block").hide();
+        $("#banco_block").hide();
+        $("#operacion_block").show();
+        $(".caja_block").hide();
+
+        switch (tipo) {
+            case 'CAJA': {
+                $(".caja_block").show();
+                if (metodo == '3')
+                    $("#operacion_block").hide();
+
+                if (metodo == '7')
+                    $("#tipo_tarjeta_block").show();
+                break;
+            }
+            case 'BANCO': {
+                $("#banco_block").show();
+                $("#operacion_block").show();
+                break;
+            }
+        }
+    }
+
+    function guardarPago() {
+        var tipo = $('#metodo option:selected').attr('data-tipo_metodo');
+
+        if(tipo == 'BANCO' && $('#banco_id').val() == ""){
+            $.bootstrapGrowl('<h4>Debe ingresar un banco</h4>', {
+                type: 'warning',
+                delay: 2500,
+                allow_dismiss: true
+            });
+            return false;
+        }
+
+        if($("#metodo").val()=="7" && $("#tipo_tarjeta").val()==""){
+            $.bootstrapGrowl('<h4>Debe ingresar un tipo de tarjeta</h4>', {
+                type: 'warning',
+                delay: 2500,
+                allow_dismiss: true
+            });
+            return false;
+        }
+
+        if($("#metodo").val()!="3" && $("#num_oper").val()==""){
+            $.bootstrapGrowl('<h4>Es necesario el numero de operacion</h4>', {
+                type: 'warning',
+                delay: 2500,
+                allow_dismiss: true
+            });
+            return false;
+        }
+
+        if(tipo == 'CAJA' && $('#caja_id').val() == ""){
+            $.bootstrapGrowl('<h4>Debe ingresar una cuenta</h4>', {
+                type: 'warning',
+                delay: 2500,
+                allow_dismiss: true
+            });
+            return false;
+        }
+
+        var cantidad = parseFloat($("#cantidad_a_pagar").val());
+        var total = parseFloat($("#total_cuota").val());
+
+        if(isNaN(cantidad) || cantidad <= 0){
+            $.bootstrapGrowl('<h4>Cantidad no valida</h4>', {
+                type: 'warning',
+                delay: 2500,
+                allow_dismiss: true
+            });
+            return false;
+        }
+
+        if(cantidad > total){
+            $.bootstrapGrowl('<h4>Cantidad no puede ser mayor al total de la cuota</h4>', {
+                type: 'warning',
+                delay: 2500,
+                allow_dismiss: true
+            });
+            return false;
+        }
+
+        var params = {
+            'correlativo_cuota':  $("#correlativo").val(),
+            'ingreso_id':$("#compra_id").val(),
+            'montodescontar':$("#cantidad_a_pagar").val(),
+            'cuota_id': $("#id_credito_cuota").val(),
+            'metodo_pago':$("#metodo").val(),
+            'tipo_metodo': tipo,
+            'banco':null,
+            'cuenta_id':null,
+            'nro_operacion':null
+
+        };
+
+        if($("#metodo").val()!="3")
+            params['nro_operacion'] = $("#num_oper").val();
+
+        if(tipo == 'BANCO')
+            params['banco'] = $("#banco_id").val();
+        else
+            params['cuenta_id'] = $("#caja_id").val();
+
+        if($("#metodo").val()=="7")
+            params['banco'] = $("#tipo_tarjeta").val();
+
+
+        $("#guardarPago_pagospendiente").attr('disabled','disabled');
+        $('#cargando_modal').modal('show');
+
+        $.ajax({
+            url: '<?= base_url()?>ingresos/pagoCuotaCredito',
+            type: 'POST',
+            dataType:'json',
+            data: params,
+            success: function (data) {
+
+                if(data.success==undefined){
+                    $('#cargando_modal').modal('hide');
+                    $.bootstrapGrowl('<h4>'+data.error+'</h4>', {
+                        type: 'warning',
+                        delay: 2500,
+                        allow_dismiss: true
+                    });
+
+                }else{
+
+                    $.bootstrapGrowl('<h4>El pago se ha realizado satisfactoriamente</h4>', {
+                        type: 'success',
+                        delay: 2500,
+                        allow_dismiss: true
+                    });
+
+                    $('#pago_modal').modal('hide');
+
+                    $.ajax({
+                        url: '<?= base_url()?>ingresos/ver_deuda',
+                        type: 'post',
+                        data: {'id_ingreso': $("#compra_id").val()},
+                        success: function (data) {
+                            $("#pagar_venta").html(data);
+                        },
+                        complete: function(){
+                            $('#cargando_modal').modal('hide');
+                        }
+                    });
+
+                }
+
+            },
+            error : function(){
+                $('#cargando_modal').modal('hide');
+                $.bootstrapGrowl('<h4>Error al realizar la operacion</h4>', {
+                    type: 'warning',
+                    delay: 2500,
+                    allow_dismiss: true
+                });
+            },
+            complete: function(){
+                $("#guardarPago_pagospendiente").removeAttr('disabled');
+            }
+        });
+    }
+
+    function abonar(id, i, credito_cuota_id, monto, pagado) {
+        $('#cargando_modal').modal('show')
+        $("#abrir_bancos_cuota").html('')
+
+        /*asigno los valores a los input*/
+        $("#compra_id").val(id);
+        $("#correlativo").val(i);
+        $("#id_credito_cuota").val(credito_cuota_id);
+        $("#total_cuota").val(parseFloat(monto - pagado).toFixed(2));
+        $("#cantidad_a_pagar").val('');
+        $("#cantidad_a_pagar").focus();
+        $("#pago_modal").modal('show');
+        $('#cargando_modal').modal('hide')
+    }
 
 </script>
 

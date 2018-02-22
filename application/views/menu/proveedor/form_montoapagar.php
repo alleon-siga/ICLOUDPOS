@@ -154,7 +154,7 @@
     });
 
 
-    function guardarPago() {
+    function guardarPago1() {
 
         var cantidad_pagar = parseFloat($("#cantidad_a_pagar").val());
         var total_pendiente = parseFloat($("#total_pendiente").val());

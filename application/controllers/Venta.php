@@ -6,7 +6,7 @@ class venta extends MY_Controller
     function __construct()
     {
         parent::__construct();
-        if ($this->login_model->verify_session()) {        
+        if ($this->login_model->verify_session()) {
             $this->load->model('venta/venta_model');
             $this->load->model('cronograma/cronograma_model');
             $this->load->model('local/local_model');
@@ -32,7 +32,7 @@ class venta extends MY_Controller
             $this->load->library('Pdf');
             $this->load->library('session');
             $this->load->library('phpExcel/PHPExcel.php');
-        }else{
+        } else {
             redirect(base_url(), 'refresh');
         }
 
@@ -93,7 +93,8 @@ class venta extends MY_Controller
         }
     }
 
-    function load_dialog_terminar_venta_credito(){
+    function load_dialog_terminar_venta_credito()
+    {
 
         $data["inicial_por"] = $this->opciones_model->get_opcion('INICIAL_PORCENTAJE_VTA_CRED');
         $data["tasa_interes"] = $this->opciones_model->get_opcion('TASA_INTERES');
@@ -110,7 +111,8 @@ class venta extends MY_Controller
     }
 
     /*estos metodos load_dialog_ son los llamados a las vistas, que se van a hacer en su momento, para no cargarlas todas al inicio*/
-    function load_dialog_terminar_venta_contado(){
+    function load_dialog_terminar_venta_contado()
+    {
 
         $tarjetas = $this->db->get('tarjeta_pago')->result();
 
@@ -121,16 +123,18 @@ class venta extends MY_Controller
 
     }
 
-    function load_dialog_venta_caja(){
+    function load_dialog_venta_caja()
+    {
 
-        $html =  $this->load->view('menu/ventas/dialog_venta_caja', null, true);
+        $html = $this->load->view('menu/ventas/dialog_venta_caja', null, true);
         die($html);
 
 
     }
 
 
-    function load_dialog_nuevo_garante(){
+    function load_dialog_nuevo_garante()
+    {
 
         $html = $this->load->view('menu/ventas/dialog_nuevo_garante', null, true);
         die($html);
@@ -138,7 +142,8 @@ class venta extends MY_Controller
 
     }
 
-    function load_dialog_existencia_producto(){
+    function load_dialog_existencia_producto()
+    {
 
         if ($this->session->userdata('esSuper') == 1) {
             $data['locales'] = $this->local_model->get_all();
@@ -152,16 +157,15 @@ class venta extends MY_Controller
         $data['show_precio_new'] = isset($data['show_precio_new'][0]['config_value']) ? $data['show_precio_new'][0]['config_value'] : '';
 
 
-        $html =  $this->load->view('menu/ventas/dialog_existencia_producto', array(
+        $html = $this->load->view('menu/ventas/dialog_existencia_producto', array(
             'locales' => $data['locales'],
             'show_precio_new' => $data['show_precio_new']
         ), true);
         die($html);
     }
 
-    function generarventados($idventa="")
+    function generarventados($idventa = "")
     {
-
 
 
         $data["monedas"] = $this->monedas_model->get_all();
@@ -190,7 +194,7 @@ class venta extends MY_Controller
         $data['show_precio_new'] = $this->opciones_model->get_opcion("MODIFICADOR_PRECIO");
         $data['show_precio_new'] = isset($data['show_precio_new'][0]['config_value']) ? $data['show_precio_new'][0]['config_value'] : '';
 
-        $html =  $this->load->view('menu/ventas/generarventados', $data, true);
+        $html = $this->load->view('menu/ventas/generarventados', $data, true);
         die($html);
 
 
@@ -233,7 +237,7 @@ class venta extends MY_Controller
         //$data['show_precio_new'] = isset($data['show_precio_new'][0]['config_value']) ? $data['show_precio_new'][0]['config_value'] : '';
         $data['local_selected'] = $id_local;
 
-        $dataCuerpo['cuerpo'] = $this->load->view('menu/ventas/generarVenta', $data,true);
+        $dataCuerpo['cuerpo'] = $this->load->view('menu/ventas/generarVenta', $data, true);
         //$dataCuerpo['cuerpo2'] = $this->load->view('menu/ventas/generarventados', $data, true);
         if ($this->input->is_ajax_request()) {
             echo $dataCuerpo['cuerpo'];
@@ -352,7 +356,7 @@ class venta extends MY_Controller
 
 
             if ($this->form_validation->run() == false) {
-                echo "no guardo".validation_errors();;
+                echo "no guardo" . validation_errors();;
             } else {
 
                 if ($_POST['subTotal'] != "" && $_POST['montoigv'] != "" && $_POST['totApagar'] != "") {
@@ -814,17 +818,18 @@ class venta extends MY_Controller
         $this->load->view('menu/ventas/lista_ventas_status', $data);
 
     }
+
     function pdfVentasporCliente($cliente)
     {
 
-        $mpdf=new mPDF('utf-8','A4-L');
+        $mpdf = new mPDF('utf-8', 'A4-L');
         /*este es el pdf por cliente*/
-        $data['clientes']=array();
+        $data['clientes'] = array();
         if ($cliente != 0 and $cliente != "") {
             $condicion = array('venta.id_cliente' => $cliente);
             $data['clientes'] = $this->venta_model->get_ventas_by($condicion);
         }
-        $mpdf->WriteHTML($this->load->view('menu/reportes/pdfVentasporCliente',$data,true));
+        $mpdf->WriteHTML($this->load->view('menu/reportes/pdfVentasporCliente', $data, true));
         $mpdf->Output();
 
 
@@ -832,15 +837,15 @@ class venta extends MY_Controller
 
     function pdfVentasTodosCliente($totalventas)
     {
-        $data['total'] =array();
-        $mpdf=new mPDF('utf-8','A4-L');
+        $data['total'] = array();
+        $mpdf = new mPDF('utf-8', 'A4-L');
         if ($totalventas == "TODOS") {
 
             $condicion = array('a.id_cliente >=' => 0);
             $data['total'] = $this->venta_model->get_ventas_by_cliente($condicion);
 
         }
-        $mpdf->WriteHTML($this->load->view('menu/reportes/pdfVentasTodosCliente',$data,true));
+        $mpdf->WriteHTML($this->load->view('menu/reportes/pdfVentasTodosCliente', $data, true));
         $mpdf->Output();
 
 
@@ -849,7 +854,7 @@ class venta extends MY_Controller
     function pdfHistorialVentas($local, $fecha_desde, $fecha_hasta, $estatus, $totalventas)
     {
 
-        $mpdf=new mPDF('utf-8','A4-L');
+        $mpdf = new mPDF('utf-8', 'A4-L');
         if ($local != 0) {
             $condicion = array('local_id' => $local);
         }
@@ -884,7 +889,7 @@ class venta extends MY_Controller
 
         }
 
-        $mpdf->WriteHTML($this->load->view('menu/reportes/pdfHistorialVentas',$data,true));
+        $mpdf->WriteHTML($this->load->view('menu/reportes/pdfHistorialVentas', $data, true));
         $mpdf->Output();
 
 
@@ -1215,27 +1220,28 @@ JOIN detalleingreso ON detalleingreso.id_ingreso=ingreso.id_ingreso WHERE detall
     function excelVentasporCliente($cliente)
     {
         /*este es el excel por cliente*/
-        $data['clientes']=array();
+        $data['clientes'] = array();
         if ($cliente != 0 and $cliente != "") {
             $condicion = array('venta.id_cliente' => $cliente);
             $data['clientes'] = $this->venta_model->get_ventas_by($condicion);
         }
-        $this->load->view('menu/reportes/excelVentasporCliente',$data);
+        $this->load->view('menu/reportes/excelVentasporCliente', $data);
 
     }
 
     function excelVentasTodosCliente($totalventas)
     {
         /*este es el excel para todos los clientes*/
-        $data['total'] =array();
+        $data['total'] = array();
         if ($totalventas == "TODOS") {
 
             $condicion = array('a.id_cliente >=' => 0);
             $data['total'] = $this->venta_model->get_ventas_by_cliente($condicion);
         }
-        $this->load->view('menu/reportes/excelVentasTodosCliente',$data);
+        $this->load->view('menu/reportes/excelVentasTodosCliente', $data);
 
     }
+
     function excelHistorialVentas($local, $fecha_desde, $fecha_hasta, $estatus)
     {
         /*este es el excel para el historial de ventas*/
@@ -1255,7 +1261,7 @@ JOIN detalleingreso ON detalleingreso.id_ingreso=ingreso.id_ingreso WHERE detall
         }
 
         $data['ventas'] = $this->venta_model->get_ventas_by($condicion);
-        $this->load->view('menu/reportes/excelHistorialVentas',$data);
+        $this->load->view('menu/reportes/excelHistorialVentas', $data);
 
     }
 
@@ -1800,13 +1806,13 @@ JOIN detalleingreso ON detalleingreso.id_ingreso=ingreso.id_ingreso WHERE detall
 
 
             $proveedor = $this->pv->get_all();
-            $data['ventas']=array();
+            $data['ventas'] = array();
             if (count($proveedor) > 0) {
 
 
                 for ($i = 0; $i < count($proveedor); $i++) {
 
-                    $data['ventas'][$i]=new stdClass();
+                    $data['ventas'][$i] = new stdClass();
                     $prov = $proveedor[$i]['id_proveedor'];
                     $sql_detalle_ingreso = "SELECT SUM(pagos_ingreso.`pagoingreso_monto`) AS suma,
                   ingreso.`int_Proveedor_id`, pagoingreso_ingreso_id
@@ -1937,10 +1943,10 @@ JOIN detalleingreso ON detalleingreso.id_ingreso=ingreso.id_ingreso WHERE detall
             $data['cliente_id'] = $this->input->post("cliente_id", true);
 
             $params = array();
-            if($data['local'] != 'TODOS')
+            if ($data['local'] != 'TODOS')
                 $params['local_id'] = $data['local'];
 
-            if($data['cliente_id'] != '-1')
+            if ($data['cliente_id'] != '-1')
                 $params['cliente_id'] = $data['cliente_id'];
 
             //var_dump($this->input->post("vence_deuda", 2));
@@ -2964,12 +2970,19 @@ JOIN detalleingreso ON detalleingreso.id_ingreso=ingreso.id_ingreso WHERE detall
                 'venta.venta_id' => $idventa
             );
 
-            $venta = $this->db->get_where('venta', array('venta_id'=>$idventa))->row();
-            $result['cliente'] = $this->db->get_where('cliente', array('id_cliente'=>$venta->id_cliente))->row();
+            $venta = $this->db->get_where('venta', array('venta_id' => $idventa))->row();
+            $result['cliente'] = $this->db->get_where('cliente', array('id_cliente' => $venta->id_cliente))->row();
             $result['moneda'] = $this->credito_cuotas_abono_model->get_suma_cuotas($where);
 
             $result['bancos'] = $this->db->get_where('banco', array('banco_status' => 1))->result();
             $result['tarjetas'] = $this->db->get('tarjeta_pago')->result();
+            $result['cajas'] = $this->db->join('caja_desglose', 'caja_desglose.caja_id=caja.id')
+                ->get_where('caja', array(
+                    'moneda_id' => $venta->id_moneda,
+                    'local_id' => $venta->local_id,
+                    'retencion' => 0,
+                    'caja_desglose.estado' => 1
+                ))->result();
 
             $result['cronogramas'] = $this->credito_cuotas_model->get_cronograma_by_cuotas($idventa);
             $result['id_venta'] = $idventa;
@@ -2985,8 +2998,10 @@ JOIN detalleingreso ON detalleingreso.id_ingreso=ingreso.id_ingreso WHERE detall
         $idVenta = $this->input->post('idVenta');
 
         $metodo_pago = $this->input->post('metodo_pago');
+        $tipo_metodo = $this->input->post('tipo_metodo');
         $numero_ope = $this->input->post('nro_operacion');
         $banco = $this->input->post('banco');
+        $cuenta_id = $this->input->post('cuenta_id');
 
         if ($this->input->post('idCuota')) {
             $idCuota = $this->input->post('idCuota');
@@ -2999,7 +3014,7 @@ JOIN detalleingreso ON detalleingreso.id_ingreso=ingreso.id_ingreso WHERE detall
             $montodescontar = false;
         }
 
-        $return = $this->credito_cuotas_abono_model->registrar($idCuota, $montodescontar, $metodo_pago, $idVenta, $anticipado, $numero_ope, $banco);
+        $return = $this->credito_cuotas_abono_model->registrar($idCuota, $montodescontar, $metodo_pago, $idVenta, $anticipado, $numero_ope, $banco, $tipo_metodo, $cuenta_id);
 
         if ($return == true) {
             $dataresul['success'] = "El pago se ha realizado satisfactoriamente";
@@ -3035,6 +3050,17 @@ JOIN detalleingreso ON detalleingreso.id_ingreso=ingreso.id_ingreso WHERE detall
         $data['credito_cuotas'] = $this->credito_cuotas_model->get_cuotas_by_venta_id($this->input->post('idventa'));
         $data['numero_creditos'] = $this->credito_cuotas_model->get_numero_de_creditos_by_local_actual();
         $this->load->view('menu/ventas/vista_impresion_formatos', $data);
+    }
+
+    function update_numero_unico($id)
+    {
+        $numero = $this->input->post('numero');
+        $this->db->where('id_credito_cuota', $id);
+        $this->db->update('credito_cuotas', array('numero_unico' => $numero));
+        $data['success'] = 1;
+
+        header('Content-Type: application/json');
+        echo json_encode($data);
     }
 
 

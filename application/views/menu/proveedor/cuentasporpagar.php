@@ -16,11 +16,14 @@
                     <div class="col-md-3">
 
                         <select name="local_id" id="local_id" class='cho form-control'>
-                            <option value="-1">TODOS</option>
+                            <option value="">TODOS</option>
                             <?php if (count($locales) > 0): ?>
                                 <?php foreach ($locales as $local): ?>
                                     <option
-                                            value="<?= $local->local_id; ?>"><?= $local->local_nombre ?></option>
+                                        value="<?= $local->local_id; ?>"
+                                        <?= $local->local_id == $this->session->userdata('id_local') ? 'selected' : ''?>>
+                                        <?= $local->local_nombre ?>
+                                    </option>
                                 <?php endforeach; ?>
                             <?php else : ?>
                             <?php endif; ?>
@@ -33,7 +36,7 @@
                     <div class="col-md-3">
 
                         <select name="proveedor" id="proveedor" class='cho form-control'>
-                            <option value="-1">TODOS</option>
+                            <option value="">TODOS</option>
                             <?php if (count($lstproveedor) > 0): ?>
                                 <?php foreach ($lstproveedor as $cl): ?>
                                     <option
@@ -63,7 +66,7 @@
                     <div class="col-md-3" style="display:none;">
 
                         <select name="documento" id="documento" class='cho form-control'>
-                            <option value="-1">TODOS</option>
+                            <option value="">TODOS</option>
                             <option value="BOLETA DE VENTA">BOLETA DE VENTA</option>
                             <option value="FACTURA">FACTURA</option>
                             <option value="NOTA DE PEDIDO">NOTA DE PEDIDO</option>

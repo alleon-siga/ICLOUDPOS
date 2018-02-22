@@ -57,7 +57,7 @@ class credito_cuotas_abono_model extends CI_Model
         return $query->result_array();
     }
 
-    public function registrar($idCuota, $montodescontar, $metodo_pago, $idVenta, $anticipado, $numero_ope, $banco)
+    public function registrar($idCuota, $montodescontar, $metodo_pago, $idVenta, $anticipado, $numero_ope, $banco, $tipo_metodo, $cuenta)
     {
 
 
@@ -70,13 +70,11 @@ class credito_cuotas_abono_model extends CI_Model
         $venta = $this->db->get_where('venta', array('venta_id' => $idVenta))->row();
 
 
-        if ($metodo_pago == 4) {
+        if ($tipo_metodo == 'BANCO') {
             $banco_selected = $this->db->get_where('banco', array('banco_id' => $banco))->row();
             $cuenta_id = $banco_selected->cuenta_id;
         } else {
-            $cuenta_id = $this->cajas_model->get_cuenta_id(array(
-                'moneda_id' => $venta->id_moneda,
-                'local_id' => $venta->local_id));
+            $cuenta_id = $cuenta;
         }
 
         $cuenta_old = $this->cajas_model->get_cuenta($cuenta_id);

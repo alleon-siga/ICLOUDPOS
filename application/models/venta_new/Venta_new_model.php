@@ -383,6 +383,7 @@ function save_venta_credito($venta, $productos, $traspasos = array(), $cuotas)
         'dec_credito_montodebito' => 0.00,
         'id_moneda' => $venta['id_moneda'],
         'tasa_cambio' => $venta['tasa_cambio'],
+        'periodo_gracia' => $venta['c_periodo_gracia']
     ));
 
     foreach ($cuotas as $cuota) {

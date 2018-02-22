@@ -370,7 +370,7 @@ class cajas_model extends CI_Model
     {
 
         $this->db->insert('caja_pendiente', array(
-            'caja_desglose_id' => $this->get_valid_cuenta_id($data['moneda_id'], $data['local_id']),
+            'caja_desglose_id' => isset($data['cuenta_id']) ? $data['cuenta_id'] : $this->get_valid_cuenta_id($data['moneda_id'], $data['local_id']),
             'usuario_id' => $this->session->userdata('nUsuCodigo'),
             'tipo' => $data['tipo'],
             'monto' => $data['monto'],

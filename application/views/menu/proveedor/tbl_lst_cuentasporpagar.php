@@ -13,19 +13,22 @@
 </style>
 <!--<script src="<?php echo $ruta; ?>recursos/js/custom.js"></script>-->
 
-<?php if(count($lstproveedor) > 0):?>
+<?php if (count($lstproveedor) > 0): ?>
     <br>
     <div class="row">
         <div class="col-md-3"></div>
         <div class="col-md-3">
             <label>Total: <span class="tipo_moneda"></span> <span
-                        id="subtotal"><?= number_format($ingreso_totales->monto_venta, 2) ?></span></label>
+                        id="subtotal"><?= number_format($ingreso_totales->total_monto_venta, 2) ?></span></label>
         </div>
         <div class="col-md-3">
-            <label>Total Abonado: <span class="tipo_moneda"></span> <span id="impuesto"><?= number_format($ingreso_totales->monto_pagado, 2) ?></span></label>
+            <label>Total Abonado: <span class="tipo_moneda"></span> <span
+                        id="impuesto"><?= number_format($ingreso_totales->total_monto_debito, 2) ?></span></label>
         </div>
         <div class="col-md-3">
-            <label>Deuda Actual: <span class="tipo_moneda"></span> <span id="total"><?= number_format($ingreso_totales->monto_venta - $ingreso_totales->monto_pagado, 2) ?></span></label>
+            <label>Deuda Actual: <span class="tipo_moneda"></span> <span
+                        id="total">
+                    <?= number_format($ingreso_totales->total_monto_cuota - $ingreso_totales->total_monto_debito, 2) ?></span></label>
         </div>
     </div>
 
@@ -38,9 +41,10 @@
             <th>Proveedor</th>
             <th>Fecha Compra</th>
             <th>Monto Venta</th>
+            <th>Monto Inicial</th>
             <th>Monto Pagado</th>
             <th>Saldo Deuda</th>
-            <th>Días de atraso</th>
+            <th>Días Transcurridos</th>
             <th>Accion</th>
         </tr>
         </thead>
@@ -52,10 +56,11 @@
                 <td><?= $p->documento_serie . ' - ' . $p->documento_numero ?></td>
                 <td><?= $p->proveedor_nombre ?></td>
                 <td><?= date('d/m/Y', strtotime($p->fecha_emision)) ?></td>
-                <td><?= $p->simbolo.' '.number_format($p->monto_venta, 2) ?></td>
-                <td><?= $p->simbolo.' '.number_format($p->monto_pagado, 2) ?></td>
-                <td><?= $p->simbolo.' '.number_format($p->monto_venta - $p->monto_pagado, 2) ?></td>
-                <td><?= $p->atraso ?></td>
+                <td><?= $p->simbolo . ' ' . number_format($p->total_ingreso, 2) ?></td>
+                <td><?= $p->simbolo . ' ' . number_format($p->inicial, 2) ?></td>
+                <td><?= $p->simbolo . ' ' . number_format($p->monto_debito, 2) ?></td>
+                <td><?= $p->simbolo . ' ' . number_format($p->monto_cuota - $p->monto_debito, 2) ?></td>
+                <td><?= $p->dias_transcurridos ?></td>
                 <td>
                     <a class='btn btn-xs btn-default tip' title="Ver Venta"
                        onclick="visualizar(<?= $p->ingreso_id ?>)"><i
@@ -70,9 +75,9 @@
         <?php endforeach; ?>
         </tbody>
     </table>
-<?php else:?>
+<?php else: ?>
     <h4>No hay resultados</h4>
-<?php endif;?>
+<?php endif; ?>
 
 <!-- Seccion Visualizar -->
 <div class="modal fade" id="visualizar_venta" tabindex="-1" role="dialog"
@@ -111,9 +116,9 @@
             data: {'id_ingreso': id},
             success: function (data) {
 
+                $("#cargando_modal").modal('hide');
                 $("#pagar_venta").html(data);
                 $('#pagar_venta').modal('show');
-                $("#cargando_modal").modal('hide');
             }
 
         })
@@ -134,9 +139,9 @@
             data: {'id_ingreso': id},
             success: function (data) {
 
+                $("#cargando_modal").modal('hide');
                 $("#visualizar_venta").html(data);
                 $('#visualizar_venta').modal('show');
-                $("#cargando_modal").modal('hide');
             }
 
         })

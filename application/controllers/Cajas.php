@@ -251,6 +251,13 @@ class cajas extends MY_Controller
             $this->db->where('id', $caja_desglose->id);
             $this->db->update('caja_desglose', array('saldo' => $new_saldo));
 
+            if($caja_pendiente->tipo == 'PAGOS_CUOTAS'){
+                $this->db->where('pagoingreso_id', $caja_pendiente->ref_id);
+                $this->db->update('pagos_ingreso', array(
+                    'estado'=>'COMPLETADO'
+                ));
+            }
+
             if ($caja_pendiente->tipo == 'TRASPASO') {
 
                 $caja_desglose_d = $this->db->get_where('caja_desglose', array('id' => $caja_pendiente->ref_id))->row();

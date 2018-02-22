@@ -1,16 +1,16 @@
-<input type="hidden" id="tasa_interes" value="<?= valueOption('CREDITO_TASA', 0) ?>">
-<input type="hidden" id="saldo_porciento" value="<?= valueOption('CREDITO_INICIAL', 0) ?>">
-<input type="hidden" id="max_cuotas" value="<?= valueOption('CREDITO_CUOTAS', 10) ?>">
+<input type="hidden" id="tasa_interes" value="0">
+<input type="hidden" id="saldo_porciento" value="0">
+<input type="hidden" id="max_cuotas" value="50">
 <input type="hidden" id="numero_cuotas" value="1">
 <input type="hidden" id="periodo_pago" value="4">
 <input type="hidden" id="proyeccion_rango" value="1">
-<input type="hidden" id="c_venta_estado" value="COMPLETADO">
 <?php $md = get_moneda_defecto() ?>
-<?php if (validOption("VISTA_CREDITO", 'AVANZADO', 'SIMPLE')): ?>
+
+
 <div class="modal-dialog" style="width: 85%;">
     <div class="modal-content">
         <div class="modal-header">
-            <h4>Venta al Cr&eacute;dito</h4>
+            <h4>Compra al Cr&eacute;dito</h4>
         </div>
         <div class="modal-body">
             <div class="row">
@@ -18,37 +18,16 @@
                     <div class="block block-section">
                         <div class="row">
                             <div class="col-md-3">
-                                <label class="control-label panel-admin-text">Cliente:</label>
+                                <label class="control-label panel-admin-text">Proveedor:</label>
                             </div>
 
                             <div class="col-md-9">
                                 <input type="text"
                                        class='form-control'
-                                       name="c_cliente" id="c_cliente"
+                                       name="c_proveedor" id="c_proveedor"
                                        value="" readonly="">
 
                             </div>
-
-                            <!--<div class="col-md-1">
-                                <label class="control-label panel-admin-text">Garante:</label>
-                            </div>
-
-                            <div class="col-md-5">
-                                <div class="input-group">
-                                    <select id="c_garante" name="c_garante"
-                                            data-placeholder="Seleccione el Garante">
-                                        <option value=""></option>
-                                        <?php foreach ($garantes as $garante): ?>
-                                            <option value="<?= $garante->dni ?>"
-                                                    data-nombre="<?= $garante->nombre_full ?>"><?= $garante->dni ?></option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                    <a href="#" class="input-group-addon btn-default">
-                                        <i class="fa fa-plus-circle"></i>
-                                    </a>
-                                </div>
-                                <label class="control-label">Nombre:</label> <span id="c_garante_nombre"></span>
-                            </div>-->
                         </div>
 
                         <hr class="hr-margin-10">
@@ -125,7 +104,7 @@
                                             <div class="col-md-5">
                                                 <input type="number" style="text-align: center; padding: 0"
                                                        class='form-control'
-                                                       max="<?= valueOption('MAXIMO_CUOTAS_CREDITO', 10) - 4 ?>"
+                                                       max="<?= 50 - 4 ?>"
                                                        min="1"
                                                        name="c_rango_min" id="c_rango_min" value="1">
                                             </div>
@@ -214,7 +193,7 @@
                                         <input type="text"
                                                style=" text-align: right; width: 40px; height: 30px; margin: 0; margin-left: 5px; padding: 0; padding-right: 2px; border: 1px solid #fff;"
                                                name="c_saldo_inicial_por" id="c_saldo_inicial_por"
-                                               value="<?= valueOption('INICIAL_PORCENTAJE_VTA_CRED', 0) ?>">%
+                                               value="0">%
                                     </div>
                                 </div>
                             </div>
@@ -230,7 +209,7 @@
                                     <input type="text"
                                            class='form-control'
                                            name="c_tasa_interes" id="c_tasa_interes"
-                                           value="<?= valueOption('TASA_INTERES', 0) ?>"
+                                           value="0"
                                            onkeydown="return soloDecimal(this, event);">
                                     <div class="input-group-addon">%</div>
                                 </div>
@@ -245,13 +224,13 @@
                             <div class="col-md-7">
                                 <div class="input-group">
                                     <input type="number"
-                                           max="<?= valueOption('MAXIMO_CUOTAS_CREDITO', 10) ?>"
+                                           max="50"
                                            min="1"
                                            class='form-control'
                                            name="c_numero_cuotas" id="c_numero_cuotas"
                                            value="1">
                                     <div class="input-group-addon">
-                                        MAX: <?= valueOption('MAXIMO_CUOTAS_CREDITO', 10) ?></div>
+                                        MAX: 50</div>
                                 </div>
                             </div>
                         </div>
@@ -323,20 +302,15 @@
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <button class="btn btn-default save_venta_credito" data-imprimir="0"
+                        <button class="btn btn-primary save_compra_credito" data-imprimir="0"
                                 type="button"
-                                id="btn_venta_credito"><i
-                                    class="fa fa-save"></i> Guardar
+                                id="btn_compra_credito"><i
+                                    class="fa fa-save"></i> (F6) Guardar
 
 
-                        </button>
-                        <button type="button" class="btn btn-default save_venta_credito ocultar_caja" data-imprimir="1"
-                                id="btn_venta_credito_imprimir"
-                        ><i
-                                    class="fa fa-print"></i> (F6) Grabar e imprimir
                         </button>
                         <button type="button" class="btn btn-danger"
-                                onclick="$('#dialog_venta_credito').modal('hide');"><i
+                                onclick="$('#dialog_compra_credito').modal('hide');"><i
                                     class="fa fa-close"></i> Cancelar
                         </button>
                     </div>
@@ -345,170 +319,21 @@
         </div>
     </div>
 
-    <?php elseif (validOption("VISTA_CREDITO", 'SIMPLE', 'SIMPLE')): ?>
-        <div class="modal-dialog" style="width: 40%">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4>Venta al Credito Simple</h4>
-                </div>
-                <div class="modal-body panel-venta-left">
-
-
-                    <div class="row">
-                        <div class="form-group">
-                            <div class="col-md-3">
-                                <label for="totApagar2" class="control-label panel-admin-text">Total a Pagar:</label>
-                            </div>
-                            <div class="col-md-9">
-                                <div class="input-prepend input-append input-group">
-                                    <label class="input-group-addon tipo_moneda"><?= $md->simbolo ?></label><input
-                                            type="number"
-                                            class='input-square input-small form-control'
-                                            min="0.0"
-                                            step="0.1"
-                                            value="0.0"
-                                            id="c_precio_contado"
-                                            name="c_precio_contado"
-                                            readonly
-                                            onkeydown="return soloDecimal(this, event);">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="col-md-3">
-                                <label for="totApagar2" class="control-label panel-admin-text">Pago a cuenta:</label>
-                            </div>
-                            <div class="col-md-9">
-                                <div class="input-prepend input-append input-group">
-                                    <label class="input-group-addon tipo_moneda"><?= $md->simbolo ?></label><input
-                                            type="number"
-                                            class='input-square input-small form-control'
-                                            min="0.0"
-                                            step="0.1"
-                                            value="0.0"
-                                            id="c_pago_cuenta"
-                                            name="c_pago_cuenta"
-                                            onkeydown="return soloDecimal(this, event);">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="col-md-3">
-                                <label for="totApagar2" class="control-label panel-admin-text">Monto Restante:</label>
-                            </div>
-                            <div class="col-md-9">
-                                <div class="input-prepend input-append input-group">
-                                    <label class="input-group-addon tipo_moneda"><?= $md->simbolo ?></label><input
-                                            type="number"
-                                            class='input-square input-small form-control'
-                                            min="0.0"
-                                            step="0.1"
-                                            value="0.0"
-                                            id="c_deuda_restante"
-                                            name="c_deuda_restante"
-                                            readonly
-                                            onkeydown="return soloDecimal(this, event);">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-                <div class="modal-footer">
-
-                    <div class="row">
-                        <div class="col-md-12">
-                            <button class="btn btn-default save_venta_credito" style="margin-bottom:5px" type="button"
-                                    id="btn_venta_credito_simple" data-imprimir="0"><i
-                                        class="fa fa-save"></i>Guardar
-                            </button>
-
-                            <a href="#" class="btn btn-default save_venta_credito ocultar_caja"
-                               style="margin-bottom:5px"
-                               id="btn_venta_credito_simple_imprimir" data-imprimir="1" type="button"><i
-                                        class="fa fa-print"></i> (F6)Guardar e imprimir
-                            </a>
-                            <button class="btn btn-default" style="margin-bottom:5px"
-                                    type="button"
-                                    onclick="$('#dialog_venta_credito').modal('hide');"><i
-                                        class="fa fa-close"></i> Cancelar
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-        <div class="modal fade" id="advertencia" tabindex="-1" role="dialog"
-             aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false"
-             aria-hidden="true">
-
-            <div class="modal-dialog" style="width: 40%">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4>Advertencia</h4>
-                    </div>
-                    <div class="modal-body panel-venta-left">
-
-                        <div class="row">
-                            <div class="col-md-12">
-                                <h4>La cuenta a pagar es igual o mayor que el total del importe. Le recomendamos
-                                    realizar
-                                    una venta al contado.</h4>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <input type="hidden" id="pago_cuenta_saved" value="">
-                                    <button class="btn btn-primary" style="margin-bottom:5px" type="button"
-                                            id="realizarventa_exec"
-                                            onclick="cambiar_contado();">Hacer Venta al Contado
-                                    </button>
-
-                                    <button class="btn btn-danger" style="margin-bottom:5px"
-                                            type="button"
-                                            onclick="$('#advertencia').modal('hide');">Cancelar
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-
-    <?php endif; ?>
-    <div style="display: none;" id="credito_vista"
-         data-vista="<?php echo validOption("VISTA_CREDITO", 'SIMPLE', 'SIMPLE') ? 'SIMPLE' : 'AVANZADO' ?>"></div>
     <script>
-
 
         $(document).ready(function () {
 
             $(document).keyup(function (e) {
 
-                if (e.keyCode == 117 && $("#dialog_venta_credito").is(":visible") == true && $("#venta_estado").val() == 'COMPLETADO') {
+                if (e.keyCode == 117 && $("#dialog_compra_credito").is(":visible") == true) {
                     e.preventDefault();
                     e.stopImmediatePropagation();
-                    $('.save_venta_credito[data-imprimir="1"]').first().click();
+                    $('#btn_compra_credito').click();
                 }
             });
 
-            $('.save_venta_credito').on('click', function () {
-                if ($("#c_venta_estado").val() == 'COMPLETADO')
-                    save_venta_credito($(this).attr('data-imprimir'));
-                else {
-                    $("#dialog_venta_credito").modal('hide');
-                    caja_init(formatPrice($("#c_saldo_inicial").val()));
-                }
-
+            $('#btn_compra_credito').on('click', function () {
+                guardaringreso();
             });
 
 
@@ -608,7 +433,8 @@
             $("#c_numero_cuotas").attr('max', $("#max_cuotas").val());
             $("#c_numero_cuotas").val($("#numero_cuotas").val());
             $("#c_rango_min").val($("#proyeccion_rango").val());
-            $("#c_venta_estado").val(estado);
+            $('#c_proveedor').val($('#cboProveedor option:selected').text());
+            $('#c_fecha_giro').val($('#fecEmision').val().replace(/-/g, '/'));
 
             //ojo
             setTimeout(function () {
@@ -799,7 +625,6 @@
 
                 cuotas.push(cuota);
             }
-
             return JSON.stringify(cuotas);
         }
 

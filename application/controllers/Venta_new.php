@@ -189,6 +189,7 @@ class venta_new extends MY_Controller
         $venta['c_tasa_interes'] = $this->input->post('c_tasa_interes');
         $venta['c_numero_cuotas'] = $this->input->post('c_numero_cuotas');
         $venta['c_fecha_giro'] = $this->input->post('c_fecha_giro');
+        $venta['c_periodo_gracia'] = $this->input->post('c_periodo_gracia');
 
         $venta['caja_total_pagar'] = $this->input->post('caja_total_pagar');;
 
