@@ -18,7 +18,6 @@
                                 <table class="table dataTable table-bordered table-striped tableStyle">
                                     <thead>
                                     <th>N° Cuota</th>
-                                    <th># Unico</th>
                                     <th>Vencimiento</th>
                                     <th>Dias atraso</th>
                                     <th>Total</th>
@@ -49,7 +48,6 @@
                                                                                              value="<?php echo $idletra; ?>">
                                             </td>
                                             <td align="center"><?= date("d/m/Y", strtotime($pago->fecha_vencimiento)) ?></td>
-                                            <td align="center"><?= $pago->numero_unico ?></td>
                                             <td align="center"><?= $pago->atraso ?></td>
                                             <td align="center"><?= $ingreso->simbolo . " " . number_format($pago->monto, 2) ?></td>
                                             <td align="center"><?= $ingreso->simbolo . " " . number_format($pago->monto - $pago->monto_pagado, 2) ?></td>
