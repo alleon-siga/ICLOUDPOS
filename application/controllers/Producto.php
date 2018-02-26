@@ -798,7 +798,7 @@ class producto extends MY_Controller
                 ->where('id_producto', $producto->producto_id)
                 ->where('id_precio', 3)
                 ->group_by('unidades.id_unidad')
-                ->order_by('unidades_has_producto.orden')
+                ->order_by('unidades_has_producto.unidades', 'DESC')
                 ->get()->result();
         }
 
@@ -851,8 +851,6 @@ class producto extends MY_Controller
 
     function preciosporproducto()
     {
-
-
         $producto = $this->input->post('producto');
         $precio = $this->input->post('precio');
 
