@@ -152,7 +152,7 @@
                     </div>
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-1">
                 </div>
 
                 <div class="col-md-2">
@@ -174,7 +174,7 @@
 
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <label style="padding: 5px;" class="control-label badge label-danger panel-admin-text">STOCK = 0</label>
 
                     <label style="padding: 5px;" class="control-label badge label-warning panel-admin-text">STOCK < MINIMO</label>
@@ -185,6 +185,12 @@
                 <div class="col-md-1">
                     <button type="button" class="btn btn-primary tcharm-trigger form-control">
                         <i class="fa fa-plus"></i>
+                    </button>
+                </div>
+
+                <div class="col-md-1">
+                    <button type="button" class="btn btn-default exportar_excel form-control">
+                        <i class="fa fa-file-excel-o"></i>
                     </button>
                 </div>
 
@@ -241,6 +247,11 @@
     }
 
     $(document).ready(function () {
+
+        $('.exportar_excel').on('click', function(){
+            var win = window.open('<?= base_url()?>producto/exportar_precios_excel', '_blank');
+            win.focus();
+        });
 
         //find_producto(true);
 

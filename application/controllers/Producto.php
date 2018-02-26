@@ -781,6 +781,31 @@ class producto extends MY_Controller
         $this->load->view('menu/producto/columnas', $data);
     }
 
+    function exportar_precios_excel()
+    {
+        $productos = $this->db
+            ->join('marcas', 'marcas.id_marca=producto.producto_marca', 'left')
+            ->join('lineas', 'lineas.id_linea=producto.producto_linea', 'left')
+            ->join('familia', 'familia.id_familia=producto.producto_familia', 'left')
+            ->join('grupos', 'grupos.id_grupo=producto.produto_grupo', 'left')
+            ->get_where('producto', array('producto_estatus' => 1))->result();
+        foreach ($productos as $producto) {
+            $producto->precios = $this->db->select('
+                unidades.*, unidades_has_precio.precio as precio, unidades_has_producto.unidades as unidades')
+                ->from('unidades_has_precio')
+                ->join('unidades', 'unidades.id_unidad=unidades_has_precio.id_unidad')
+                ->join('unidades_has_producto', 'unidades_has_producto.id_unidad=unidades_has_precio.id_unidad')
+                ->where('id_producto', $producto->producto_id)
+                ->where('id_precio', 3)
+                ->group_by('unidades.id_unidad')
+                ->order_by('unidades_has_producto.orden')
+                ->get()->result();
+        }
+
+        $data['productos'] = $productos;
+        echo $this->load->view('menu/producto/precios_excel', $data, true);
+    }
+
     function listaprecios()
     {
         $data['locales'] = $this->local_model->get_all();
