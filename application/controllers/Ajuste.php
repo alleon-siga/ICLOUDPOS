@@ -52,7 +52,7 @@ class Ajuste extends MY_Controller
         $ajuste['operacion'] = $this->input->post('tipo_operacion');
         $ajuste['io'] = $this->input->post('tipo_movimiento');
         
-        $ajuste['documento'] = $this->input->post('tipo_movimiento');
+        $ajuste['documento'] = $this->input->post('tipo_documento');
         $ajuste['serie'] = $this->input->post('serie_doc');
         $ajuste['numero'] = $this->input->post('numero_doc');
         
@@ -131,11 +131,16 @@ class Ajuste extends MY_Controller
     function get_productos_unidades()
     {
         $producto_id = $this->input->post('producto_id');
+        $moneda_id = $this->input->post('moneda_id');
 
         $data['unidades'] = $this->unidades_model->get_unidades_precios($producto_id, 3);
 
         $data['moneda'] = $this->unidades_model->get_moneda_default($producto_id);
 
+        $data['costo'] = $this->db->get_where('producto_costo_unitario', array(
+            'producto_id' => $producto_id,
+            'moneda_id' => $moneda_id
+        ))->row();
 
         header('Content-Type: application/json');
         echo json_encode($data);

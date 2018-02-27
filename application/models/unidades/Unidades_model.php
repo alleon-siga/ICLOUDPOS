@@ -294,7 +294,7 @@ class unidades_model extends CI_Model
 
     public function get_moneda_default($producto_id){
         $moneda = $this->db->get_where('producto_costo_unitario', array('producto_id' => $producto_id, 'activo' => '1'))->row();
-        $moneda_id = $moneda != null ? $moneda->moneda_id : '1029';
+        $moneda_id = $moneda != null ? $moneda->moneda_id : MONEDA_DEFECTO;
         return $this->db->get_where('moneda', array('id_moneda' => $moneda_id))->row();
     }
 

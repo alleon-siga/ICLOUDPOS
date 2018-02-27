@@ -29,6 +29,12 @@ function get_tipo_doc($cod)
         case 9: {
             return array('code' => $cod, 'value' => 'Gu&iacute;a de Remisi&oacute;n');
         }
+        case -2:{
+            return array('code' => $cod, 'value' => 'Nota de Pedido');
+        }
+        case -3:{
+            return array('code' => $cod, 'value' => 'Control Interno');
+        }
         default: {
             return array('code' => 0, 'value' => 'Otros');
         }

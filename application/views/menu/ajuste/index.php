@@ -168,7 +168,8 @@
                             <div class="col-md-3 text-right">
 
                                 <button type="button" id="add_producto" class="btn btn-primary">
-                                    Agregar</button>
+                                    Agregar <span class="help-key-side badge label-success"
+                                                  style="display: none;">[Enter]</span></button>
                             </div>
                         </div>
                     </div>

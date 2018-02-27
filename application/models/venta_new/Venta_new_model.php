@@ -528,6 +528,8 @@ function save_producto_detalles($venta_id, $doc_id, $local_id, $productos)
             $tipo = 1;
         if ($venta->documento_id == 3)
             $tipo = 3;
+        if ($venta->documento_id == 6)
+            $tipo = -2;
 
         $values = array(
             'local_id' => $local_id,

@@ -45,7 +45,7 @@
 
 <script>
     $(function () {
-        TablesDatatables.init();
+        TablesDatatables.init(0, 'desc');
     });
 
     function ver_detalle(producto_id) {

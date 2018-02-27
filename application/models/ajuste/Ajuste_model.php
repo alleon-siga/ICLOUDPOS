@@ -85,7 +85,7 @@ class ajuste_model extends CI_Model
                 'producto_id' => $key,
                 'cantidad' => $value,
                 'io' => $ajuste->io,
-                'tipo' => $ajuste->documento,
+                'tipo' => $ajuste->documento == 0 ? -3 : $ajuste->documento,
                 'operacion' => $ajuste->operacion,
                 'serie' => $ajuste->serie,
                 'numero' => $ajuste->numero,
