@@ -7,16 +7,16 @@ class opciones extends MY_Controller
     {
         parent::__construct();
         if ($this->login_model->verify_session()) {
-        $this->load->model('opciones/opciones_model');
-        }else{
+            $this->load->model('opciones/opciones_model');
+        } else {
             redirect(base_url(), 'refresh');
         }
     }
-    
+
 
     function index($action = 'get')
     {
-
+//        var_dump($_FILES['userfile']);
         $keys = array(
             'EMPRESA_NOMBRE',
             'EMPRESA_CORREO',
@@ -53,8 +53,16 @@ class opciones extends MY_Controller
                 );
             }
 
+            $logo = $this->upload_image();
+            if ($logo == 1) {
+                $configuraciones[] = array(
+                    'config_key' => 'EMPRESA_LOGO',
+                    'config_value' => $logo
+                );
+            }
             $result = $this->opciones_model->guardar_configuracion($configuraciones);
             $configuraciones = $this->opciones_model->get_opciones($keys);
+
 
             if (count($configuraciones) > 0) {
                 foreach ($configuraciones as $configuracion) {
@@ -74,8 +82,8 @@ class opciones extends MY_Controller
 
     }
 
-    function upload_image(){
-        var_dump($_FILES);
+    function upload_image()
+    {
 
         if (!empty($_FILES) and $_FILES['userfile']['size'] != '0') {
 
@@ -123,8 +131,9 @@ class opciones extends MY_Controller
                             break;
                     }
 
-                    $this->upload->initialize($this->set_upload_options('logo', $contador, $extension));
+                    $this->upload->initialize($this->set_upload_options($contador, $extension));
                     $this->upload->do_upload();
+                    return $contador . '.' . $extension;
                     $contador++;
                 } else {
 
@@ -133,11 +142,11 @@ class opciones extends MY_Controller
         }
     }
 
-    function set_upload_options($id, $contador, $extension)
+    function set_upload_options($name, $extension)
     {
         // upload an image options
         $this->load->helper('path');
-        $dir = './recursos/img/logo/' . $id . '/';
+        $dir = './recursos/img/logo/';
 
         if (!is_dir($dir)) {
             mkdir($dir, 0755);
@@ -148,7 +157,7 @@ class opciones extends MY_Controller
         $config ['allowed_types'] = $extension;
         $config ['max_size'] = '0';
         $config ['overwrite'] = TRUE;
-        $config ['file_name'] = $contador;
+        $config ['file_name'] = $name;
 
         return $config;
     }

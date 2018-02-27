@@ -95,23 +95,25 @@
         </div>
 
         <div class="col-md-2">
-            <img id="imgSalida0" data-count="0" src="" height="100" width="100">
+            <img id="imgSalida0" data-count="0"
+                 src="" height="100"
+                 width="100">
 
         </div>
     </div>
 
-<!--    -->
-<!--    <div class="row form-group">-->
-<!--        <div class="col-md-4">-->
-<!--            <label class="control-label panel-admin-text">Empresa logo:</label>-->
-<!--        </div>-->
-<!---->
-<!--        <div class="col-md-8">-->
-<!--            <input type="file" name="EMPRESA_LOGO" required="true" id="EMPRESA_LOGO"-->
-<!--                   class='form-control'-->
-<!--                   value="">-->
-<!--        </div>-->
-<!--    </div>-->
+    <!--    -->
+    <!--    <div class="row form-group">-->
+    <!--        <div class="col-md-4">-->
+    <!--            <label class="control-label panel-admin-text">Empresa logo:</label>-->
+    <!--        </div>-->
+    <!---->
+    <!--        <div class="col-md-8">-->
+    <!--            <input type="file" name="EMPRESA_LOGO" required="true" id="EMPRESA_LOGO"-->
+    <!--                   class='form-control'-->
+    <!--                   value="">-->
+    <!--        </div>-->
+    <!--    </div>-->
 
     <div class="row form-group">
         <div class="col-md-4">
@@ -278,10 +280,17 @@
 </div>
 <script>
 
-    $(function(){
+    $(function () {
+        $('#imgSalida0').attr('src', '<?= base_url('recursos/img/logo/' . valueOption("EMPRESA_LOGO", '')) ?>?' + new Date().getTime());
+    });
+
+    var contador_img = 0
+    var identificador = 0
+
+    function guardar_form() {
         var formData = new FormData($("#formguardar")[0]);
         $.ajax({
-            url: '<?= base_url()?>opciones/upload_image',
+            url: '<?= base_url()?>opciones/index/save',
             type: "post",
             dataType: "json",
             data: formData,
@@ -289,20 +298,29 @@
             contentType: false,
             processData: false,
             success: function (data) {
-                alert('asd')
+                show_msg('success', 'La configuracion se ha guardado correctamente');
 
+                $("#barloadermodal").modal('show');
+                $.ajax({
+                    url: '<?= base_url()?>opciones/index?' + new Date().getTime(),
+                    cache: false,
+                    success: function (data) {
+                        $("#barloadermodal").modal('hide');
+                        $(".modal-backdrop").remove();
+                        $('#page-content').html(data);
+                        $('#imgSalida0').attr('src', '<?= base_url('recursos/img/logo/' . valueOption("EMPRESA_LOGO", '')) ?>?' + new Date().getTime());
+                        $('#EMPRESA_NOMBRE').focus();
+                    }
+                });
 
             },
             error: function (response) {
-                alert('asdasd');
+                alert('Error inesperado');
 
             }
 
         });
-    });
-
-    var contador_img = 0
-    var identificador = 0
+    }
 
     function asignar_identificador(identif) {
         identificador = identif;
@@ -336,7 +354,9 @@
         },
         guardar: function () {
 
-            App.formSubmitAjax($("#formguardar").attr('action'), this.ajaxgrupo, null, 'formguardar');
+            guardar_form();
+
+//            App.formSubmitAjax($("#formguardar").attr('action'), this.ajaxgrupo, null, 'formguardar');
             //App.formSubmitAjax($("#formguardar").attr('action'), this.reloadOpciones, null, 'formguardar');
         },
         reloadOpciones: function () {

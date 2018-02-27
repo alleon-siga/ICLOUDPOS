@@ -774,7 +774,7 @@ class producto_model extends CI_Model
         if($local != false)
             $query .= 'GROUP BY `producto_id` ';
         else
-            $query .= 'ORDER BY `producto_id` ';
+            $query .= 'ORDER BY `producto_nombre` ';
 
 
         $result = $this->db->query($query);

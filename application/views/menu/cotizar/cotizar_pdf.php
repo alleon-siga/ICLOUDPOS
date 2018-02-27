@@ -14,9 +14,9 @@
 
 <table>
     <tr>
-        <td><img height="100" src="<?= base_url('recursos/img/logo/logo.jpg') ?>"></td>
+        <td><img height="100" src="<?= base_url('recursos/img/logo/' . valueOption("EMPRESA_LOGO", '')) ?>"></td>
         <td style="height: 100px; text-align: center; width: 50%;"><?= valueOption('COTIZACION_INFORMACION', '') ?></td>
-        <td style="text-align: right;"><?= date('d/m/Y', strtotime($cotizar->fecha)) ?></td>
+        <td style="text-align: right;"><?= date('d/m/Y H:i:s') ?></td>
     </tr>
 </table>
 
@@ -74,8 +74,8 @@
             <td style="border: #111 0.5px solid;"><?= $detalle->producto_nombre ?></td>
             <td style="border: #111 0.5px solid; text-align: center;"><?= $detalle->cantidad ?></td>
             <td style="border: #111 0.5px solid; text-align: center;"><?= $detalle->unidad_nombre ?></td>
-            <td style="border: #111 0.5px solid; text-align: center;"><?= $cotizar->moneda_simbolo . " " .$detalle->precio ?></td>
-            <td style="border: #111 0.5px solid; text-align: right;"><?= $cotizar->moneda_simbolo . " " .number_format($detalle->importe, 2) ?></td>
+            <td style="border: #111 0.5px solid; text-align: center;"><?= $cotizar->moneda_simbolo . " " . $detalle->precio ?></td>
+            <td style="border: #111 0.5px solid; text-align: right;"><?= $cotizar->moneda_simbolo . " " . number_format($detalle->importe, 2) ?></td>
         </tr>
     <?php endforeach; ?>
     <?php for ($i = 0; $i < (20 - count($cotizar->detalles)); $i++): ?>

@@ -68,8 +68,8 @@ class cotizar_model extends CI_Model
             $this->db->where('c.local_id', $where['local_id']);
 
         if (isset($where['fecha_ini']) && isset($where['fecha_fin'])) {
-            $this->db->where('c.fecha >=', date('Y-m-d H:i:s', strtotime($where['fecha_ini'] . " 00:00:00")));
-            $this->db->where('c.fecha <=', date('Y-m-d H:i:s', strtotime($where['fecha_fin'] . " 23:59:59")));
+            $this->db->where('c.created_at >=', date('Y-m-d H:i:s', strtotime($where['fecha_ini'] . " 00:00:00")));
+            $this->db->where('c.created_at <=', date('Y-m-d H:i:s', strtotime($where['fecha_fin'] . " 23:59:59")));
         }
 
         if (isset($where['mes']) && isset($where['year']) && isset($where['dia_min']) && isset($where['dia_max'])) {
@@ -77,8 +77,8 @@ class cotizar_model extends CI_Model
             if ($last_day > $where['dia_max'])
                 $last_day = $where['dia_max'];
 
-            $this->db->where('c.fecha >=', $where['year'] . '-' . sumCod($where['mes'], 2) . '-' . $where['dia_min'] . " 00:00:00");
-            $this->db->where('c.fecha <=', $where['year'] . '-' . sumCod($where['mes'], 2) . '-' . $last_day . " 23:59:59");
+            $this->db->where('c.created_at >=', $where['year'] . '-' . sumCod($where['mes'], 2) . '-' . $where['dia_min'] . " 00:00:00");
+            $this->db->where('c.created_at <=', $where['year'] . '-' . sumCod($where['mes'], 2) . '-' . $last_day . " 23:59:59");
         }
 
         return $this->db->get()->result();
@@ -107,8 +107,8 @@ class cotizar_model extends CI_Model
             $this->db->where('c.local_id', $where['local_id']);
 
         if (isset($where['fecha_ini']) && isset($where['fecha_fin'])) {
-            $this->db->where('c.fecha >=', date('Y-m-d H:i:s', strtotime($where['fecha_ini'] . " 00:00:00")));
-            $this->db->where('c.fecha <=', date('Y-m-d H:i:s', strtotime($where['fecha_fin'] . " 23:59:59")));
+            $this->db->where('c.created_at >=', date('Y-m-d H:i:s', strtotime($where['fecha_ini'] . " 00:00:00")));
+            $this->db->where('c.created_at <=', date('Y-m-d H:i:s', strtotime($where['fecha_fin'] . " 23:59:59")));
         }
 
         if (isset($where['mes']) && isset($where['year']) && isset($where['dia_min']) && isset($where['dia_max'])) {
@@ -116,8 +116,8 @@ class cotizar_model extends CI_Model
             if ($last_day > $where['dia_max'])
                 $last_day = $where['dia_max'];
 
-            $this->db->where('c.fecha >=', $where['year'] . '-' . sumCod($where['mes'], 2) . '-' . $where['dia_min']);
-            $this->db->where('c.fecha <=', $where['year'] . '-' . sumCod($where['mes'], 2) . '-' . $last_day);
+            $this->db->where('c.created_at >=', $where['year'] . '-' . sumCod($where['mes'], 2) . '-' . $where['dia_min']);
+            $this->db->where('c.created_at <=', $where['year'] . '-' . sumCod($where['mes'], 2) . '-' . $last_day);
         }
 
         return $this->db->get()->row();
