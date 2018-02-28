@@ -1,4 +1,3 @@
-
 <input type="hidden" id="local_selected" value="">
 <div class="table-responsive">
 
@@ -6,7 +5,7 @@
         <thead>
         <tr>
             <th><?= getCodigoNombre() ?></th>
-            <?= $barra_activa->activo == 1 ? '<th>Codigo Barra</th>' : ''?>
+            <?= $barra_activa->activo == 1 ? '<th>Codigo Barra</th>' : '' ?>
             <th>Nombre</th>
             <th>Cantidad</th>
             <th>Fracción</th>
@@ -21,7 +20,7 @@
         <?php foreach ($productos as $p): ?>
             <tr>
                 <td><?= getCodigoValue(sumCod($p->producto_id), $p->producto_ci) ?></td>
-                <td><?= $p->barra?></td>
+                <?= $barra_activa->activo == 1 ? '<td>' . $p->barra . '</td>' : '' ?>
                 <td><?= $p->producto_nombre ?></td>
                 <td><?= $p->cantidad . " " . $p->unidad_max_abr ?></td>
                 <td><?= $p->fraccion . " " . $p->unidad_min_abr ?></td>
@@ -39,8 +38,6 @@
         </tbody>
     </table>
 </div>
-
-
 
 
 <script>

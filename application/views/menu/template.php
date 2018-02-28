@@ -437,6 +437,12 @@ $primary_nav = array(
                 'icon' => 'fa fa-pie-chart',
                 'slug' => 'resumenventas'
             ),
+//            array(
+//                'name' => 'Entradas y Salidas',
+//                'url' => $ruta . 'ajuste/reporte',
+//                'icon' => 'fa fa-pie-chart',
+//                'slug' => 'resumenventas'
+//            ),
 
             /*
             array(

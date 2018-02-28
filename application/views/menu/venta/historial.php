@@ -43,6 +43,16 @@
 
                     </div>
 
+                    <div class="col-md-2">
+                        <select name="moneda_id" id="moneda_id" class='cho form-control'>
+                            <?php foreach ($monedas as $moneda): ?>
+                                <option value="<?= $moneda->id_moneda ?>"
+                                        data-simbolo="<?= $moneda->simbolo ?>"
+                                        <?= $moneda->id_moneda == MONEDA_DEFECTO ? 'selected' : ''?>><?= $moneda->nombre ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
 
                     <div class="col-md-1" style="display: none;">
                         <label class="control-label panel-admin-text">Estado:</label>
@@ -51,6 +61,7 @@
                         <select
                                 id="venta_estado" <?= $venta_action == 'caja' ? 'disabled' : '' ?>
                                 class="form-control filter-input" name="venta_estado">
+                            <option value="">TODOS</option>
                             <option value="COMPLETADO">COMPLETADO</option>
                             <?php if (validOption('ACTIVAR_SHADOW', 1) || validOption('ACTIVAR_FACTURACION_VENTA', 1)): ?>
                                 <option value="CERRADA">CERRADA</option>
@@ -205,13 +216,15 @@
                         if ($('#venta_action').val() == 'caja') {
                             var local_id = $("#venta_local").val();
                             var estado = $("#venta_estado").val();
+                            var moneda_id = $("#moneda_id").val();
 
 
                             $.ajax({
                                 url: '<?= base_url()?>venta_new/get_pendientes',
                                 data: {
                                     'local_id': local_id,
-                                    'estado': estado
+                                    'estado': estado,
+                                    'moneda_id': moneda_id
                                 },
                                 type: 'POST',
                                 success: function (data) {
@@ -271,6 +284,7 @@
                     var local_id = $("#venta_local").val();
                     var estado = $("#venta_estado").val();
                     var fecha = $('#date_range').val();
+                    var moneda_id = $("#moneda_id").val();
 
 
                     $.ajax({
@@ -278,7 +292,8 @@
                         data: {
                             'local_id': local_id,
                             'fecha': fecha,
-                            'estado': estado
+                            'estado': estado,
+                            'moneda_id': moneda_id
                         },
                         type: 'POST',
                         success: function (data) {

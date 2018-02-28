@@ -52,100 +52,100 @@
 
             <div class="row">
                 <div id="charm" class="tcharm">
-        <div class="tcharm-header">
+                    <div class="tcharm-header">
 
-            <h3><a href="#" class="fa fa-arrow-right tcharm-close"></a> <span>Filtros Avanzados</span></h3>
-        </div>
+                        <h3><a href="#" class="fa fa-arrow-right tcharm-close"></a> <span>Filtros Avanzados</span></h3>
+                    </div>
 
-        <div class="tcharm-body">
+                    <div class="tcharm-body">
 
-            <div class="row">
-                <div class="col-md-4" style="text-align: center;">
-                    <button type="button" class="btn btn-default btn_buscar">
-                        <i class="fa fa-search"></i>
-                    </button>
+                        <div class="row">
+                            <div class="col-md-4" style="text-align: center;">
+                                <button type="button" class="btn btn-default btn_buscar">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </div>
+                            <div class="col-md-4" style="text-align: center;">
+                                <button id="btn_filter_reset" type="button" class="btn btn-warning">
+                                    <i class="fa fa-refresh"></i>
+                                </button>
+                            </div>
+                            <div class="col-md-4" style="text-align: center;">
+                                <button type="button" class="btn btn-danger tcharm-trigger">
+                                    <i class="fa fa-remove"></i>
+                                </button>
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+                            <label class="control-label">Marca:</label>
+                            <select id="marca_id" name="marca_id" class="form-control">
+                                <option value="0">Todos</option>
+                                <?php foreach ($marcas as $marca): ?>
+                                    <option value="<?= $marca->id_marca ?>"><?= $marca->nombre_marca ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <div class="row">
+                            <label class="control-label">Grupo:</label>
+                            <select id="grupo_id" name="grupo_id" class="form-control">
+                                <option value="0">Todos</option>
+                                <?php foreach ($grupos as $grupo): ?>
+                                    <option value="<?= $grupo->id_grupo ?>"><?= $grupo->nombre_grupo ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <div class="row">
+                            <label class="control-label">Familia:</label>
+                            <select id="familia_id" name="familia_id" class="form-control">
+                                <option value="0">Todos</option>
+                                <?php foreach ($familias as $familia): ?>
+                                    <option value="<?= $familia->id_familia ?>"><?= $familia->nombre_familia ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <div class="row">
+                            <label class="control-label">Linea:</label>
+                            <select id="linea_id" name="linea_id" class="form-control">
+                                <option value="0">Todos</option>
+                                <?php foreach ($lineas as $linea): ?>
+                                    <option value="<?= $linea->id_linea ?>"><?= $linea->nombre_linea ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <div class="row">
+                            <label class="control-label">Proveedor:</label>
+                            <select id="proveedor_id" name="proveedor_id" class="form-control">
+                                <option value="0">Todos</option>
+                                <?php foreach ($proveedores as $proveedor): ?>
+                                    <option value="<?= $proveedor->id_proveedor ?>"><?= $proveedor->proveedor_nombre ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <div class="row" style="display: none;">
+                            <label class="control-label">Stock:</label>
+                            <select id="con_stock" name="con_stock" class="form-control">
+                                <option value="0">Todos</option>
+                                <option value="1" selected="">Con Stock</option>
+                                <option value="2">Sin Stock</option>
+                            </select>
+                        </div>
+
+                    </div>
                 </div>
-                <div class="col-md-4" style="text-align: center;">
-                    <button id="btn_filter_reset" type="button" class="btn btn-warning">
-                        <i class="fa fa-refresh"></i>
-                    </button>
-                </div>
-                <div class="col-md-4" style="text-align: center;">
-                    <button type="button" class="btn btn-danger tcharm-trigger">
-                        <i class="fa fa-remove"></i>
-                    </button>
-                </div>
-
-            </div>
-
-            <div class="row">
-                <label class="control-label">Marca:</label>
-                <select id="marca_id" name="marca_id" class="form-control">
-                    <option value="0">Todos</option>
-                    <?php foreach($marcas as $marca):?>
-                        <option value="<?=$marca->id_marca?>"><?=$marca->nombre_marca?></option>
-                    <?php endforeach;?>
-                </select>
-            </div>
-
-            <div class="row">
-                <label class="control-label">Grupo:</label>
-                <select id="grupo_id" name="grupo_id" class="form-control">
-                    <option value="0">Todos</option>
-                    <?php foreach($grupos as $grupo):?>
-                        <option value="<?=$grupo->id_grupo?>"><?=$grupo->nombre_grupo?></option>
-                    <?php endforeach;?>
-                </select>
-            </div>
-
-            <div class="row">
-                <label class="control-label">Familia:</label>
-                <select id="familia_id" name="familia_id" class="form-control">
-                    <option value="0">Todos</option>
-                    <?php foreach($familias as $familia):?>
-                        <option value="<?=$familia->id_familia?>"><?=$familia->nombre_familia?></option>
-                    <?php endforeach;?>
-                </select>
-            </div>
-
-            <div class="row">
-                <label class="control-label">Linea:</label>
-                <select id="linea_id" name="linea_id" class="form-control">
-                    <option value="0">Todos</option>
-                    <?php foreach($lineas as $linea):?>
-                        <option value="<?=$linea->id_linea?>"><?=$linea->nombre_linea?></option>
-                    <?php endforeach;?>
-                </select>
-            </div>
-
-            <div class="row">
-                <label class="control-label">Proveedor:</label>
-                <select id="proveedor_id" name="proveedor_id" class="form-control">
-                    <option value="0">Todos</option>
-                    <?php foreach($proveedores as $proveedor):?>
-                        <option value="<?=$proveedor->id_proveedor?>"><?=$proveedor->proveedor_nombre?></option>
-                    <?php endforeach;?>
-                </select>
-            </div>
-
-            <div class="row" style="display: none;">
-                <label class="control-label">Stock:</label>
-                <select id="con_stock" name="con_stock" class="form-control">
-                    <option value="0">Todos</option>
-                    <option value="1" selected="">Con Stock</option>
-                    <option value="2">Sin Stock</option>
-                </select>
-            </div>
-
-        </div>
-    </div>
 
                 <div class="col-md-3">
                     <div class="input-group">
                         <input
-                            id="buscar_filter"
-                            type="text" class="form-control"
-                            placeholder="">
+                                id="buscar_filter"
+                                type="text" class="form-control"
+                                placeholder="">
                         <a id="btn_filter" href="#" class="input-group-addon">
                             <i class="fa fa-search"></i>
                         </a>
@@ -175,12 +175,15 @@
                 </div>
 
                 <div class="col-md-4">
-                    <label style="padding: 5px;" class="control-label badge label-danger panel-admin-text">STOCK = 0</label>
+                    <label style="padding: 5px;" class="control-label badge label-danger panel-admin-text">STOCK =
+                        0</label>
 
-                    <label style="padding: 5px;" class="control-label badge label-warning panel-admin-text">STOCK < MINIMO</label>
+                    <label style="padding: 5px;" class="control-label badge label-warning panel-admin-text">STOCK <
+                        MINIMO</label>
 
-                    <label style="padding: 5px;" class="control-label badge label-success panel-admin-text">STOCK > MINIMO</label>
-            </div>
+                    <label style="padding: 5px;" class="control-label badge label-success panel-admin-text">STOCK >
+                        MINIMO</label>
+                </div>
 
                 <div class="col-md-1">
                     <button type="button" class="btn btn-primary tcharm-trigger form-control">
@@ -248,7 +251,7 @@
 
     $(document).ready(function () {
 
-        $('.exportar_excel').on('click', function(){
+        $('.exportar_excel').on('click', function () {
             var win = window.open('<?= base_url()?>producto/exportar_precios_excel', '_blank');
             win.focus();
         });

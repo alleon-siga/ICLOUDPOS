@@ -23,7 +23,7 @@
         <th>Cliente</th>
         <th>Vendedor</th>
         <th>Condici&oacute;n</th>
-        <th>Moneda</th>
+        <th>Estado</th>
         <th>Tip. Cam.</th>
         <th>Total <?= $venta_action == 'caja' ? 'a Pagar' : '' ?></th>
         <th>Acciones</th>
@@ -35,7 +35,7 @@
     <?php if (count($ventas) > 0): ?>
 
         <?php foreach ($ventas as $venta): ?>
-            <tr>
+            <tr <?= $venta->venta_estado == 'ANULADO' ? 'style="color: red;"' : ''?>>
                 <td>
                     <span style="display: none;"><?= date('YmdHis', strtotime($venta->venta_fecha)) ?></span>
                     <?= date('d/m/Y H:i:s', strtotime($venta->venta_fecha)) ?>
@@ -55,7 +55,7 @@
                 <td><?= $venta->cliente_nombre ?></td>
                 <td><?= $venta->vendedor_nombre ?></td>
                 <td><?= $venta->condicion_nombre ?></td>
-                <td><?= $venta->moneda_nombre ?></td>
+                <td><?= $venta->venta_estado ?></td>
                 <td><?= $venta->moneda_tasa ?></td>
                 <td style="text-align: right;"><?= $venta->moneda_simbolo ?> <?=number_format( $venta->total, 2) ?></td>
                 <td style="text-align: center;">

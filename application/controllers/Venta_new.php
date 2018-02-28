@@ -36,6 +36,7 @@ class venta_new extends MY_Controller
         }
 
         $data['venta_action'] = $action;
+        $data['monedas'] = $this->db->get_where('moneda', array('status_moneda' => 1))->result();
 
         $data['dialog_venta_contado'] = $this->load->view('menu/venta/dialog_venta_contado', array(
             'tarjetas' => $this->db->get('tarjeta_pago')->result()
@@ -53,6 +54,7 @@ class venta_new extends MY_Controller
     {
         $local_id = $this->input->post('local_id');
         $estado = $this->input->post('estado');
+
         $date_range = explode(" - ", $this->input->post('fecha'));
         $fecha_ini = str_replace("/", "-", $date_range[0]);
         $fecha_fin = str_replace("/", "-", $date_range[1]);
@@ -71,6 +73,8 @@ class venta_new extends MY_Controller
                 'estado' => $estado
             );
         }
+
+        $params['moneda_id'] = $this->input->post('moneda_id');
 
         $data['ventas'] = $this->venta->get_ventas($params);
 
