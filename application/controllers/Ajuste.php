@@ -146,4 +146,23 @@ class Ajuste extends MY_Controller
         echo json_encode($data);
     }
 
+    function reporte(){
+        $data['locales'] = $this->local_model->get_local_by_user($this->session->userdata('nUsuCodigo'));
+
+        $dataCuerpo['cuerpo'] = $this->load->view('menu/ajuste/reporte', $data, true);
+        if ($this->input->is_ajax_request()) {
+            echo $dataCuerpo['cuerpo'];
+        } else {
+            $this->load->view('menu/template', $dataCuerpo);
+        }
+    }
+
+    function reporte_lista($action = "")
+    {
+
+        $data = array();
+
+        $this->load->view('menu/ajuste/reporte_list', $data);
+    }
+
 }

@@ -15,6 +15,7 @@ $(document).ready(function () {
     });
     $('.chosen-container').css('width', '100%');
 
+
     $("#local_text").html($("#local_id option:selected").text());
 
     var ctrlPressed = false;
@@ -338,7 +339,7 @@ function save_ajuste() {
                         $("#loading_save_venta").modal('hide');
                         $(".modal-backdrop").remove();
                         $('#page-content').html(data);
-                        $('#producto_id').focus().trigger('chosen:update');
+                        $('#producto_id').trigger('chosen:open');
                     }
                 });
             }
@@ -362,7 +363,6 @@ function add_producto() {
 
     var producto_id = $("#producto_id").val();
     var local_id = $("#local_id").val();
-
 
     var index = get_index_producto(producto_id);
 
@@ -439,13 +439,21 @@ function add_producto() {
         });
     }
 
-
     $("#producto_id").val("").trigger("chosen:updated");
     $("#producto_id").change();
+
 
     update_view(get_active_view());
 
     refresh_right_panel();
+
+    setTimeout(function () {
+        $('#producto_id').trigger('chosen:open');
+        setTimeout(function () {
+            $('#producto_id_chosen .chosen-search input').trigger('focus');
+
+        }, 5)
+    }, 500);
 
 }
 
@@ -581,11 +589,11 @@ function cancel_ajuste() {
     $('#dialog_venta_confirm').modal('hide');
     $("#loading_save_venta").modal('show');
     $.ajax({
-        url: ruta + 'venta_new',
+        url: ruta + 'ajuste',
         success: function (data) {
-            $('#page-content').html(data);
             $("#loading_save_venta").modal('hide');
             $(".modal-backdrop").remove();
+            $('#page-content').html(data);
         }
     });
 }
@@ -784,6 +792,36 @@ function prepare_unidades_events() {
     //selecciona la cantidad cuando haces focus
     cantidad_input.on('focus', function () {
         $(this).select();
+    });
+
+    //implementacion para poder navegar con las flechas
+    var letra_left = 37, letra_right = 39;
+    var max_index = cantidad_input.length - 1;
+
+    cantidad_input.keydown(function (e) {
+        var input = $(this);
+        var index = input.attr('data-index');
+
+        switch (e.keyCode) {
+            //Moverse a travez de las unidades con la flecha de izquierda y derecha
+            case letra_right: {
+                e.preventDefault();
+                var next = 0;
+                if (index < max_index)
+                    next = ++index;
+                $('.cantidad-input[data-index="' + next + '"]').first().trigger('focus');
+                break;
+            }
+            case letra_left: {
+                e.preventDefault();
+                var prev = max_index;
+                if (index > 0)
+                    prev = --index;
+                $('.cantidad-input[data-index="' + prev + '"]').first().trigger('focus');
+                break;
+            }
+        }
+
     });
 
     //calculo del total y el importe cuando hay cambios en las cantidades
