@@ -7,7 +7,7 @@
 </ul>
 <?php $md = get_moneda_defecto() ?>
 <form id="form_venta" method="POST" action="<?= base_url('venta_new/save') ?>">
-    <input type="hidden" name="cot_id" id="cot_id" value="<?= isset($cotizacion) ? $cotizacion->id : '-1'?>">
+    <input type="hidden" name="cot_id" id="cot_id" value="<?= isset($cotizacion) ? $cotizacion->id : '-1' ?>">
     <div class="block">
 
         <!--CAMPOS HIDDEN PARA GUARDAR OPCIONES NECESARIAS-->
@@ -15,6 +15,8 @@
         <input type="hidden" id="generar_shadow_stock" value="<?= valueOption('ACTIVAR_SHADOW') ?>">
         <input type="hidden" id="incorporar_igv" value="<?= valueOption('INCORPORAR_IGV') ?>">
         <input type="hidden" id="moneda_simbolo" value="<?= $md->simbolo ?>">
+        <input type="hidden" id="barra_activa" value="<?= $barra_activa->activo ?>">
+        <input type="hidden" id="producto_what_codigo" value="<?= getCodigo() ?>">
 
         <div class="row">
 
@@ -72,17 +74,22 @@
                     </div>
 
                     <div class="col-md-7">
-                        <div class="help-key badge label-success" style="display: none;">3</div>
-                        <select name="producto_id" id="producto_id" class='form-control'
-                                data-placeholder="Seleccione el Producto">
-                            <option value=""></option>
-                            <?php foreach ($productos as $producto): ?>
-                                <option value="<?= $producto->producto_id ?>">
-                                    <?php $barra = $barra_activa->activo == 1 && $producto->barra != "" ? "CB: " . $producto->barra : "" ?>
-                                    <?= getCodigoValue($producto->producto_id, $producto->codigo) . ' - ' . $producto->producto_nombre . " " . $barra ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
+                        <div class="input-group">
+                            <div class="help-key badge label-success" style="display: none;">3</div>
+                            <select name="producto_id" id="producto_id" class='form-control'
+                                    data-placeholder="Seleccione el Producto">
+                                <option value=""></option>
+                                <?php foreach ($productos as $producto): ?>
+                                    <option value="<?= $producto->producto_id ?>">
+                                        <?php $barra = $barra_activa->activo == 1 && $producto->barra != "" ? "CB: " . $producto->barra : "" ?>
+                                        <?= getCodigoValue($producto->producto_id, $producto->codigo) . ' - ' . $producto->producto_nombre . " " . $barra ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <a id="refresh_productos" href="#" class="input-group-addon btn-default">
+                                <i class="fa fa-refresh"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
 
@@ -271,7 +278,7 @@
                         <label class="control-label">Moneda:</label>
                     </div>
                     <div class="col-md-7" id="moneda_block_text" style="display: none;">
-                        <label class="control-label" id="moneda_text"><?= $monedas[0]['nombre']?></label>
+                        <label class="control-label" id="moneda_text"><?= $monedas[0]['nombre'] ?></label>
                     </div>
                     <div class="col-md-7" id="moneda_block_input" style="display: block;">
                         <div class="help-key badge label-success" style="display: none;">5</div>
@@ -478,15 +485,7 @@
 
         </div>
 
-        <div class="modal fade" id="dialog_venta_contado" tabindex="-1" role="dialog"
-             aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false"
-             aria-hidden="true">
 
-            <!-- TERMINAR VENTA CONTADO -->
-
-            <?php echo isset($dialog_venta_contado) ? $dialog_venta_contado : '' ?>
-
-        </div>
 
         <div class="modal fade" id="dialog_venta_credito" tabindex="-1" role="dialog"
              aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false"
@@ -497,6 +496,17 @@
             <?php echo isset($dialog_venta_credito) ? $dialog_venta_credito : '' ?>
 
         </div>
+
+    </div>
+
+
+    <div class="modal fade" id="dialog_venta_contado" tabindex="-1" role="dialog"
+         aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false"
+         aria-hidden="true">
+
+        <!-- TERMINAR VENTA CONTADO -->
+
+        <?php echo isset($dialog_venta_contado) ? $dialog_venta_contado : '' ?>
 
     </div>
 </form>

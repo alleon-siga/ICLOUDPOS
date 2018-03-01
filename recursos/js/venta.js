@@ -23,6 +23,7 @@ $(document).ready(function () {
     $('#producto_id, #local_id, #local_venta_id, #cliente_id, #moneda_id, #precio_id, #tipo_pago, #tipo_documento, #venta_estado, #c_garante, #c_pago_periodo').chosen({
         search_contains: true
     });
+
     $('.chosen-container').css('width', '100%');
 
     //tecla_3 para mostrar los productos
@@ -98,6 +99,52 @@ $(document).ready(function () {
 
 
     // EVENTOS FUNCIONALES
+
+    $('#refresh_productos').on('click', function () {
+
+        $("#loading_save_venta").modal('show');
+        $.ajax({
+            url: ruta + 'venta_new/refresh_productos',
+            type: 'GET',
+            headers: {
+                Accept: 'application/json'
+            },
+            success: function (data) {
+                var select_producto = $('#producto_id');
+                var productos = data.productos;
+
+                select_producto.chosen('destroy');
+                select_producto.html('<option value=""></option>');
+                $('#close_add_producto').trigger('click');
+
+                for (var i = 0; i < productos.length; i++) {
+                    var temp = '<option value="' + productos[i].producto_id + '">';
+                    if ($('#producto_what_codigo').val() == 'AUTO')
+                        temp += productos[i].producto_id + ' - ' + productos[i].producto_nombre;
+                    else
+                        temp += productos[i].codigo + ' - ' + productos[i].producto_nombre;
+
+                    if ($('#barra_activa').val() == 1 && productos[i].barra != "")
+                        temp += ' CB: ' + productos[i].barra;
+
+                    temp += '</option>';
+
+                    select_producto.append(temp);
+                }
+
+                $('#producto_id').chosen({
+                    search_contains: true
+                });
+                $('.chosen-container').css('width', '100%');
+            },
+            complete: function (data) {
+                $("#loading_save_venta").modal('hide');
+            },
+            error: function (data) {
+                alert('not');
+            }
+        });
+    });
 
     $("#local_id").on('change', function () {
         $("#producto_id").change().trigger('chosen:update');
@@ -441,7 +488,7 @@ $(document).ready(function () {
                         if (dni == data.clientes[i].id_cliente)
                             selected = data.clientes[i].id_cliente;
 
-                        template += '<option value="' + data.clientes[i].id_cliente + '">' + data.clientes[i].razon_social + '</option>';
+                        template += '<option value="' + data.clientes[i].id_cliente + '" data-ruc="' + data.clientes[i].ruc + '">' + data.clientes[i].razon_social + '</option>';
                     }
                     $("#cliente_id").html(template);
 
@@ -489,15 +536,18 @@ function end_venta() {
         //Contado
         if (tipo_pago == '1') {
             flag = true;
+
             $("#vc_total_pagar").val(formatPrice($("#total_importe").val()));
             $("#vc_importe").val($("#vc_total_pagar").val());
             $("#vc_vuelto").val(0);
             $("#vc_num_oper").val('');
+            $('#contado_tipo_pago').val(tipo_pago);
+
 
             $("#dialog_venta_contado").modal('show');
 
             setTimeout(function () {
-                $("#vc_forma_pago").val('1').trigger("chosen:updated");
+                $("#vc_forma_pago").val('3').trigger("chosen:updated");
                 $("#vc_forma_pago").change();
             }, 500);
         }
@@ -605,17 +655,24 @@ function prepare_traspasos() {
 
 function save_venta_contado(imprimir) {
 
-    if ($("#vc_forma_pago").val() == '1' && $("#vc_vuelto").val() < 0) {
+    if ($("#vc_forma_pago").val() == '3' && $("#vc_vuelto").val() < 0) {
         show_msg('warning', '<h4>Error. </h4><p>El importe no puede ser menor que el total a pagar. Recomendamos una venta al Cr&eacute;dito.</p>');
         setTimeout(function () {
             $("#vc_importe").trigger('focus');
         }, 500);
         return false;
     }
-    if ($("#vc_forma_pago").val() == '2' && $("#vc_num_oper").val() == '') {
+    if ($("#vc_forma_pago").val() != '3' && $("#vc_num_oper").val() == '') {
         show_msg('warning', '<h4>Error. </h4><p>El campo Operaci&oacute;n # es obligatorio.</p>');
         setTimeout(function () {
             $("#vc_num_oper").trigger('focus');
+        }, 500);
+        return false;
+    }
+    if (($("#vc_forma_pago").val() == '4' || $("#vc_forma_pago").val() == '8' || $("#vc_forma_pago").val() == '9') && $("#vc_banco_id").val() == '') {
+        show_msg('warning', '<h4>Error. </h4><p>Debe seleccionar un Banco</p>');
+        setTimeout(function () {
+            $("#vc_banco_id").trigger('focus');
         }, 500);
         return false;
     }
@@ -656,9 +713,9 @@ function save_venta_contado(imprimir) {
                     $.ajax({
                         url: ruta + 'venta_new',
                         success: function (data) {
-                            $('#page-content').html(data);
                             $("#loading_save_venta").modal('hide');
                             $(".modal-backdrop").remove();
+                            $('#page-content').html(data);
                         }
                     });
                 }
@@ -714,6 +771,8 @@ function save_venta_credito(imprimir) {
     $("#loading_save_venta").modal('show');
     $("#dialog_venta_credito").modal('hide');
     $('.save_venta_credito').attr('disabled', 'disabled');
+    $("#dialog_venta_contado").modal('hide');
+    $('.save_venta_contado').attr('disabled', 'disabled');
 
     var form = $('#form_venta').serialize();
     var detalles_productos = prepare_detalles_productos();

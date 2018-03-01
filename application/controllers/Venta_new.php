@@ -19,6 +19,7 @@ class venta_new extends MY_Controller
             $this->load->model('precio/precios_model');
             $this->load->model('correlativos/correlativos_model');
             $this->load->model('cotizar/cotizar_model');
+            $this->load->model('metodosdepago/metodos_pago_model');
         } else {
             redirect(base_url(), 'refresh');
         }
@@ -39,7 +40,9 @@ class venta_new extends MY_Controller
         $data['monedas'] = $this->db->get_where('moneda', array('status_moneda' => 1))->result();
 
         $data['dialog_venta_contado'] = $this->load->view('menu/venta/dialog_venta_contado', array(
-            'tarjetas' => $this->db->get('tarjeta_pago')->result()
+            'tarjetas' => $this->db->get('tarjeta_pago')->result(),
+            'metodos' => $this->metodos_pago_model->get_all(),
+            'bancos' => $this->db->get_where('banco', array('banco_status' => 1))->result()
         ), true);
 
         $dataCuerpo['cuerpo'] = $this->load->view('menu/venta/historial', $data, true);
@@ -124,8 +127,15 @@ class venta_new extends MY_Controller
         $this->load->view('menu/venta/dialog_venta_previa', $data);
     }
 
+    function refresh_productos(){
+        $data['productos'] = $this->producto_model->get_productos_list();
+        header('Content-Type: application/json');
+        echo json_encode($data);
+    }
+
     function index($local = "", $cot_id = FALSE)
     {
+
         $local_id = $local == "" || $local == '-' ? $this->session->userdata('id_local') : $local;
 
 
@@ -142,7 +152,9 @@ class venta_new extends MY_Controller
 
 
         $data['dialog_venta_contado'] = $this->load->view('menu/venta/dialog_venta_contado', array(
-            'tarjetas' => $this->db->get('tarjeta_pago')->result()
+            'tarjetas' => $this->db->get('tarjeta_pago')->result(),
+            'metodos' => $this->metodos_pago_model->get_all(),
+            'bancos' => $this->db->get_where('banco', array('banco_status' => 1))->result()
         ), true);
 
         $data['dialog_venta_credito'] = $this->load->view('menu/venta/dialog_venta_credito', array(
@@ -184,6 +196,7 @@ class venta_new extends MY_Controller
         $venta['vc_forma_pago'] = $this->input->post('vc_forma_pago');
         $venta['vc_num_oper'] = $this->input->post('vc_num_oper');
         $venta['vc_tipo_tarjeta'] = $this->input->post('vc_tipo_tarjeta');
+        $venta['vc_banco_id'] = $this->input->post('vc_banco_id');
 
 
         $venta['c_dni_garante'] = $this->input->post('c_garante');
@@ -407,6 +420,7 @@ class venta_new extends MY_Controller
         $venta['vuelto'] = $this->input->post('vuelto');
         $venta['tarjeta'] = $this->input->post('tarjeta');
         $venta['num_oper'] = $this->input->post('num_oper');
+        $venta['banco_id'] = $this->input->post('banco');
 
 
         $result = $this->venta->save_venta_caja($venta);

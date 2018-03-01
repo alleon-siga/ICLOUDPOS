@@ -1,5 +1,6 @@
-<?php $md = get_moneda_defecto()?>
+<?php $md = get_moneda_defecto() ?>
 <input type="hidden" id="caja_venta_id" value="">
+<input type="hidden" id="contado_tipo_pago" value="">
 <div class="modal-dialog" style="width: 40%">
     <div class="modal-content">
         <div class="modal-header">
@@ -13,8 +14,9 @@
                     </div>
                     <div class="col-md-9">
                         <select class="form-control" id="vc_forma_pago" name="vc_forma_pago">
-                            <option value="1">Efectivo</option>
-                            <option value="2">Tarjeta</option>
+                            <?php foreach ($metodos as $metodo): ?>
+                                <option value="<?= $metodo['id_metodo'] ?>"><?= $metodo['nombre_metodo'] ?></option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                 </div>
@@ -29,10 +31,10 @@
                         <div class="input-prepend input-append input-group">
                             <label class="input-group-addon"><?= $md->simbolo ?></label>
                             <input
-                                type="text"
-                                class='input-square input-small form-control'
-                                id="vc_moneda_tasa_confirm"
-                                readonly>
+                                    type="text"
+                                    class='input-square input-small form-control'
+                                    id="vc_moneda_tasa_confirm"
+                                    readonly>
                         </div>
                     </div>
                 </div>
@@ -45,16 +47,16 @@
                     <div class="col-md-9">
                         <div class="input-prepend input-append input-group">
                             <label class="input-group-addon tipo_moneda"><?= $md->simbolo ?></label><input
-                                type="number"
-                                class='input-square input-small form-control'
-                                min="0.0"
-                                step="0.1"
-                                value="0.0"
-                                data-value="0.00"
-                                id="vc_total_pagar"
-                                name="vc_total_pagar"
-                                readonly
-                                onkeydown="return soloDecimal(this, event);">
+                                    type="number"
+                                    class='input-square input-small form-control'
+                                    min="0.0"
+                                    step="0.1"
+                                    value="0.0"
+                                    data-value="0.00"
+                                    id="vc_total_pagar"
+                                    name="vc_total_pagar"
+                                    readonly
+                                    onkeydown="return soloDecimal(this, event);">
                         </div>
                     </div>
                 </div>
@@ -69,15 +71,15 @@
                     <div class="col-md-9">
                         <div class="input-prepend input-append input-group">
                             <label class="input-group-addon tipo_moneda"><?= $md->simbolo ?></label><input
-                                type="number"
-                                tabindex="0"
-                                class='input-square input-small form-control'
-                                min="0.0"
-                                step="0.1"
-                                value="0.00"
-                                name="vc_importe"
-                                id="vc_importe"
-                                onkeydown="return soloDecimal(this, event);">
+                                    type="number"
+                                    tabindex="0"
+                                    class='input-square input-small form-control'
+                                    min="0.0"
+                                    step="0.1"
+                                    value="0.00"
+                                    name="vc_importe"
+                                    id="vc_importe"
+                                    onkeydown="return soloDecimal(this, event);">
 
                         </div>
                     </div>
@@ -91,14 +93,29 @@
                     <div class="col-md-9">
                         <div class="input-prepend input-append input-group">
                             <label class="input-group-addon tipo_moneda"><?= $md->simbolo ?></label><input
-                                type="text"
-                                class='input-square input-small form-control'
-                                value="0.00"
-                                name="vc_vuelto"
-                                id="vc_vuelto"
-                                readonly>
+                                    type="text"
+                                    class='input-square input-small form-control'
+                                    value="0.00"
+                                    name="vc_vuelto"
+                                    id="vc_vuelto"
+                                    readonly>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <div class="row" id="vc_banco_block" style="display: none;">
+                <div class="col-md-3">
+                    <label class="control-label panel-admin-text">Banco</label>
+                </div>
+                <div class="col-md-9">
+                    <select name="vc_banco_id" id="vc_banco_id" class="form-control">
+                        <option value="">Seleccione</option>
+                        <?php foreach ($bancos as $banco): ?>
+                            <option
+                                    value="<?= $banco->banco_id ?>"><?= $banco->banco_nombre ?></option>
+                        <?php endforeach ?>
+                    </select>
                 </div>
             </div>
 
@@ -109,11 +126,11 @@
                     </div>
                     <div class="col-md-9">
                         <input
-                            type="text"
-                            tabindex="0"
-                            class='input-square input-small form-control'
-                            name="vc_num_oper"
-                            id="vc_num_oper">
+                                type="text"
+                                tabindex="0"
+                                class='input-square input-small form-control'
+                                name="vc_num_oper"
+                                id="vc_num_oper">
 
                     </div>
                 </div>
@@ -143,19 +160,19 @@
                     <button class="btn btn-default save_venta_contado" data-imprimir="0"
                             type="button"
                             id="btn_venta_contado"><i
-                            class="fa fa-save"></i> Guardar
+                                class="fa fa-save"></i> Guardar
 
 
                     </button>
 
                     <a href="#" class="btn btn-default save_venta_contado ocultar_caja"
                        id="btn_venta_contado_imprimir" data-imprimir="1" type="button"><i
-                            class="fa fa-print"></i> (F6)Guardar e imprimir
+                                class="fa fa-print"></i> (F6)Guardar e imprimir
                     </a>
                     <button class="btn btn-danger"
                             type="button"
                             onclick="$('#dialog_venta_contado').modal('hide');"><i
-                            class="fa fa-close"></i> Cancelar
+                                class="fa fa-close"></i> Cancelar
                     </button>
                 </div>
             </div>
@@ -182,37 +199,80 @@
         });
 
         $(".save_venta_contado").on('click', function () {
-            save_venta_contado($(this).attr('data-imprimir'));
+            var tipo_pago = $("#contado_tipo_pago").val();
+
+            if (tipo_pago == '1'){
+                save_venta_contado($(this).attr('data-imprimir'));
+
+            } else if(tipo_pago == '2'){
+                if ($("#vc_forma_pago").val() == '3' && $("#vc_vuelto").val() < 0) {
+                    show_msg('warning', '<h4>Error. </h4><p>El importe no puede ser menor que el total a pagar. Recomendamos una venta al Cr&eacute;dito.</p>');
+                    setTimeout(function () {
+                        $("#vc_importe").trigger('focus');
+                    }, 500);
+                    return false;
+                }
+                if ($("#vc_forma_pago").val() != '3' && $("#vc_num_oper").val() == '') {
+                    show_msg('warning', '<h4>Error. </h4><p>El campo Operaci&oacute;n # es obligatorio.</p>');
+                    setTimeout(function () {
+                        $("#vc_num_oper").trigger('focus');
+                    }, 500);
+                    return false;
+                }
+                if (($("#vc_forma_pago").val() == '4' || $("#vc_forma_pago").val() == '8' || $("#vc_forma_pago").val() == '9') && $("#vc_banco_id").val() == '') {
+                    show_msg('warning', '<h4>Error. </h4><p>Debe seleccionar un Banco</p>');
+                    setTimeout(function () {
+                        $("#vc_banco_id").trigger('focus');
+                    }, 500);
+                    return false;
+                }
+
+                save_venta_credito($(this).attr('data-imprimir'));
+            }
         });
 
         $("#vc_forma_pago").on('change', function () {
             var forma_pago = $("#vc_forma_pago").val();
 
+            $("#vc_tipo_tarjeta_block").hide();
+            $("#vc_importe_block").hide();
+            $("#vc_vuelto_block").hide();
+            $("#vc_num_oper_block").hide();
+            $("#vc_banco_block").hide();
+            $("#vc_num_oper").val('');
+            $("#vc_vuelto").val('0.00');
+            $("#vc_importe").val($("#vc_total_pagar").val());
+
             //efectivo
-            if (forma_pago == '1') {
+            if (forma_pago == '3') {
                 $("#vc_importe_block").show();
                 $("#vc_vuelto_block").show();
-                $("#vc_num_oper_block").hide();
-                $("#vc_tipo_tarjeta_block").hide();
-
-                $("#vc_num_oper").val('');
-
                 setTimeout(function () {
                     $("#vc_importe").trigger('focus');
                 }, 500);
             }
             //tarjeta
-            else if (forma_pago == '2') {
+            else if (forma_pago == '7') {
                 $("#vc_num_oper_block").show();
                 $("#vc_tipo_tarjeta_block").show();
-                $("#vc_importe_block").hide();
-                $("#vc_vuelto_block").hide();
-
-                $("#vc_importe").val($("#vc_total_pagar").val());
-                $("#vc_vuelto").val('0.00');
                 setTimeout(function () {
                     $("#vc_num_oper").trigger('focus');
                 }, 500);
+            }
+            else if (forma_pago == '5' || forma_pago == '6') {
+                $("#vc_num_oper_block").show();
+                setTimeout(function () {
+                    $("#vc_num_oper").trigger('focus');
+                }, 500);
+            }
+
+            else if (forma_pago == '4' || forma_pago == '8' || forma_pago == '9') {
+                $("#vc_num_oper_block").show();
+                $("#vc_banco_block").show();
+                setTimeout(function () {
+                    $("#vc_banco_id").trigger('focus');
+                }, 500);
+
             }
         });
 
