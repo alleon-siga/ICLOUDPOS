@@ -317,7 +317,7 @@
                             ?>
                             <input type="hidden" id="producto_impuesto" name="producto_impuesto"
                                    value="<?= $impuesto_ivg ?>">
-                            <!-- <div class="form-group">
+                            <div class="form-group">
                                 <div class="col-md-3">
                                     <label for="impuesto" class="control-label">Impuesto:</label>
                                 </div>
@@ -332,7 +332,7 @@
                                         <?php endif; ?>
                                     </select>
                                 </div>
-                            </div> -->
+                            </div>
                         <?php } ?>
                         <?php if ($columna->nombre_columna == 'producto_largo' and $columna->activo == 1) { ?>
                             <div class="form-group">
