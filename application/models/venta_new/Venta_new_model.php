@@ -177,9 +177,14 @@ class venta_new_model extends CI_Model
 
         $moneda_id = $venta_actual->id_moneda;
 
-        $cuenta_id = $this->cajas_model->get_cuenta_id(array(
-            'moneda_id' => $moneda_id,
-            'local_id' => $venta_actual->local_id));
+        if ($venta['tipo_pago'] == 4 || $venta['tipo_pago'] == 8 || $venta['tipo_pago'] == 9) {
+            $banco = $this->db->get_where('banco', array('banco_id' => $venta['banco_id']))->row();
+            $cuenta_id = $banco->cuenta_id;
+        } else {
+            $cuenta_id = $this->cajas_model->get_cuenta_id(array(
+                'moneda_id' => $moneda_id,
+                'local_id' => $venta_actual->local_id));
+        }
 
         $cuenta_old = $this->cajas_model->get_cuenta($cuenta_id);
 
@@ -195,11 +200,11 @@ class venta_new_model extends CI_Model
             'fecha_mov' => date('Y-m-d H:i:s'),
             'movimiento' => 'INGRESO',
             'operacion' => 'VENTA',
-            'medio_pago' => '3',
+            'medio_pago' => $venta['tipo_pago'],
             'saldo' => $venta_total,
             'saldo_old' => $cuenta_old->saldo,
             'ref_id' => $venta_actual->venta_id,
-            'ref_val' => '',
+            'ref_val' => $venta['num_oper'],
         ));
 
 
@@ -271,9 +276,15 @@ class venta_new_model extends CI_Model
         if ($venta['venta_status'] != 'CAJA') {
             $moneda_id = $venta_contado['id_moneda'];
 
-            $cuenta_id = $this->cajas_model->get_cuenta_id(array(
-                'moneda_id' => $moneda_id,
-                'local_id' => $venta_contado['local_id']));
+            if ($venta['vc_forma_pago'] == 4 || $venta['vc_forma_pago'] == 8 || $venta['vc_forma_pago'] == 9) {
+                $banco = $this->db->get_where('banco', array('banco_id' => $venta['vc_banco_id']))->row();
+                $cuenta_id = $banco->cuenta_id;
+            } else {
+                $cuenta_id = $this->cajas_model->get_cuenta_id(array(
+                    'moneda_id' => $moneda_id,
+                    'local_id' => $venta_contado['local_id']));
+            }
+
 
             $cuenta_old = $this->cajas_model->get_cuenta($cuenta_id);
 
@@ -285,11 +296,11 @@ class venta_new_model extends CI_Model
                 'fecha_mov' => date('Y-m-d H:i:s'),
                 'movimiento' => 'INGRESO',
                 'operacion' => 'VENTA',
-                'medio_pago' => '3',
+                'medio_pago' => $venta['vc_forma_pago'],
                 'saldo' => $venta_contado['total'],
                 'saldo_old' => $cuenta_old->saldo,
                 'ref_id' => $venta_id,
-                'ref_val' => '',
+                'ref_val' => $venta['vc_num_oper']
             ));
         }
 
@@ -300,14 +311,14 @@ class venta_new_model extends CI_Model
 
         if ($venta['venta_status'] == 'COMPLETADO') {
             //guardo la relacion del modo de pago
-            if ($venta['vc_forma_pago'] == 1) {
+            if ($venta['vc_forma_pago'] != 7) {
                 $contado = array(
                     'id_venta' => $venta_id,
                     'status' => 'PagoCancelado',
                     'montopagado' => $venta['vc_total_pagar']
                 );
                 $this->db->insert('contado', $contado);
-            } elseif ($venta['vc_forma_pago'] == 2) {
+            } elseif ($venta['vc_forma_pago'] == 7) {
                 $tarjeta = array(
                     'venta_id' => $venta_id,
                     'tarjeta_pago_id' => $venta['vc_tipo_tarjeta'],
@@ -357,10 +368,16 @@ class venta_new_model extends CI_Model
         if ($venta['venta_status'] != 'CAJA' && $venta_contado['inicial'] > 0) {
             $moneda_id = $venta_contado['id_moneda'];
 
+            if ($venta['vc_forma_pago'] == 4 || $venta['vc_forma_pago'] == 8 || $venta['vc_forma_pago'] == 9) {
+                $banco = $this->db->get_where('banco', array('banco_id' => $venta['vc_banco_id']))->row();
+                $cuenta_id = $banco->cuenta_id;
+            }
+            else {
+                $cuenta_id = $this->cajas_model->get_cuenta_id(array(
+                    'moneda_id' => $moneda_id,
+                    'local_id' => $venta_contado['local_id']));
+            }
 
-            $cuenta_id = $this->cajas_model->get_cuenta_id(array(
-                'moneda_id' => $moneda_id,
-                'local_id' => $venta_contado['local_id']));
 
             $cuenta_old = $this->cajas_model->get_cuenta($cuenta_id);
 
@@ -372,11 +389,11 @@ class venta_new_model extends CI_Model
                 'fecha_mov' => date('Y-m-d H:i:s'),
                 'movimiento' => 'INGRESO',
                 'operacion' => 'VENTA',
-                'medio_pago' => '3',
+                'medio_pago' => $venta['vc_forma_pago'],
                 'saldo' => $venta_contado['inicial'],
                 'saldo_old' => $cuenta_old->saldo,
                 'ref_id' => $venta_id,
-                'ref_val' => '',
+                'ref_val' => $venta['vc_num_oper'],
             ));
         }
 
@@ -408,6 +425,25 @@ class venta_new_model extends CI_Model
                 'ispagado' => 0,
                 'isgiro' => 0
             ));
+        }
+
+        if ($venta['venta_status'] == 'COMPLETADO' && $venta_contado['inicial'] > 0) {
+            //guardo la relacion del modo de pago
+            if ($venta['vc_forma_pago'] != 7) {
+                $contado = array(
+                    'id_venta' => $venta_id,
+                    'status' => 'PagoCancelado',
+                    'montopagado' => $venta_contado['inicial']
+                );
+                $this->db->insert('contado', $contado);
+            } elseif ($venta['vc_forma_pago'] == 7) {
+                $tarjeta = array(
+                    'venta_id' => $venta_id,
+                    'tarjeta_pago_id' => $venta['vc_tipo_tarjeta'],
+                    'numero' => $venta['vc_num_oper']
+                );
+                $this->db->insert('venta_tarjeta', $tarjeta);
+            }
         }
 
         return $venta_id;

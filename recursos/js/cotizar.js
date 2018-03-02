@@ -415,7 +415,7 @@ $(document).ready(function () {
                         if (dni == data.clientes[i].id_cliente)
                             selected = data.clientes[i].id_cliente;
 
-                        template += '<option value="' + data.clientes[i].id_cliente + '">' + data.clientes[i].razon_social + '</option>';
+                        template += '<option value="' + data.clientes[i].id_cliente + '" data-ruc="' + data.clientes[i].ruc + '">' + data.clientes[i].razon_social + '</option>';
                     }
                     $("#cliente_id").html(template);
 

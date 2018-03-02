@@ -262,14 +262,6 @@
                         get_ventas();
                     });
 
-                    $("#year, #dia_min, #dia_max").bind('keyup change click', function () {
-                        $("#historial_list").html('');
-                    });
-
-                    $(".filter-input").bind('keyup change click', function () {
-                        $("#historial_list").html('');
-                    });
-
                     $('#vc_forma_pago').chosen({
                         search_contains: true
                     });
@@ -278,7 +270,6 @@
                 });
 
                 function get_ventas() {
-
                     $("#historial_list").html($("#loading").html());
 
                     var local_id = $("#venta_local").val();
@@ -299,8 +290,8 @@
                         success: function (data) {
                             $("#historial_list").html(data);
 
-                            $('#exportar_pdf').attr('href', $('#exportar_pdf').attr('data-href') + local_id + '/' + estado + '/' + mes + '/' + year + '/' + dia_min + '/' + dia_max);
-                            $('#exportar_excel').attr('href', $('#exportar_excel').attr('data-href') + local_id + '/' + estado + '/' + mes + '/' + year + '/' + dia_min + '/' + dia_max);
+                            $('#exportar_pdf').attr('href', $('#exportar_pdf').attr('data-href') + local_id + '/' + estado + '/' + fecha + '/' + moneda_id);
+                            $('#exportar_excel').attr('href', $('#exportar_excel').attr('data-href') + local_id + '/' + estado + '/' + fecha + '/' + moneda_id);
 
                         },
                         error: function () {
@@ -313,6 +304,248 @@
                         }
                     });
 
+                }
+
+                function ver(venta_id) {
+
+                    $("#dialog_venta_detalle").html($("#loading").html());
+                    $("#dialog_venta_detalle").modal('show');
+
+                    $.ajax({
+                        url: '<?php echo $ruta . 'venta_new/get_venta_detalle/' . $venta_action; ?>',
+                        type: 'POST',
+                        data: {'venta_id': venta_id},
+
+                        success: function (data) {
+                            $("#dialog_venta_detalle").html(data);
+                        },
+                        error: function () {
+                            alert('asd')
+                        }
+                    });
+                }
+
+                function cobrar(venta_id) {
+
+                    $("#dialog_venta_detalle").html($("#loading").html());
+                    $("#dialog_venta_detalle").modal('show');
+
+                    $.ajax({
+                        url: '<?php echo $ruta . 'venta_new/get_venta_cobro/' . $venta_action; ?>',
+                        type: 'POST',
+                        data: {'venta_id': venta_id},
+                        headers: {
+                            Accept: 'application/json'
+                        },
+
+                        success: function (data) {
+                            $("#caja_venta_id").val(venta_id);
+                            if (data.venta.condicion_id == '1')
+                                $("#vc_total_pagar").val(formatPrice(data.venta.total));
+                            else if (data.venta.condicion_id == '2')
+                                $("#vc_total_pagar").val(formatPrice(data.venta.inicial));
+
+                            $("#vc_importe").val(formatPrice($("#vc_total_pagar").val()));
+                            $("#vc_vuelto").val(0);
+                            $("#vc_num_oper").val('');
+
+                            //le paso el tipo de pago contado pq es un cobro en caja y simplemente lo trata como un importe contado
+                            $('#contado_tipo_pago').val('1');
+
+                            $("#dialog_venta_detalle").modal('hide');
+                            $("#dialog_venta_contado").modal('show');
+
+                            setTimeout(function () {
+                                $("#vc_forma_pago").val('3').trigger("chosen:updated");
+                                $("#vc_forma_pago").change();
+                            }, 500);
+
+
+                        }
+                    });
+                }
+
+                function save_venta_credito(){
+                    return false;
+                }
+
+                function save_venta_contado(imprimir) {
+
+                    if ($("#vc_forma_pago").val() == '3' && $("#vc_vuelto").val() < 0) {
+                        show_msg('warning', '<h4>Error. </h4><p>El importe no puede ser menor que el total a pagar. Recomendamos una venta al Cr&eacute;dito.</p>');
+                        setTimeout(function () {
+                            $("#vc_importe").trigger('focus');
+                        }, 500);
+                        return false;
+                    }
+                    if ($("#vc_forma_pago").val() != '3' && $("#vc_num_oper").val() == '') {
+                        show_msg('warning', '<h4>Error. </h4><p>El campo Operaci&oacute;n # es obligatorio.</p>');
+                        setTimeout(function () {
+                            $("#vc_num_oper").trigger('focus');
+                        }, 500);
+                        return false;
+                    }
+                    if (($("#vc_forma_pago").val() == '4' || $("#vc_forma_pago").val() == '8' || $("#vc_forma_pago").val() == '9') && $("#vc_banco_id").val() == '') {
+                        show_msg('warning', '<h4>Error. </h4><p>Debe seleccionar un Banco</p>');
+                        setTimeout(function () {
+                            $("#vc_banco_id").trigger('focus');
+                        }, 500);
+                        return false;
+                    }
+
+
+                    var data = {
+                        'venta_id': $("#caja_venta_id").val(),
+                        'tipo_pago': $("#vc_forma_pago").val(),
+                        'importe': $("#vc_importe").val(),
+                        'vuelto': $("#vc_vuelto").val(),
+                        'num_oper': $("#vc_num_oper").val(),
+                        'tarjeta': $("#vc_tipo_tarjeta").val(),
+                        'banco': $("#vc_banco_id").val()
+                    };
+
+                    $("#loading_save_venta").modal('show');
+                    $("#dialog_venta_contado").modal('hide');
+                    $('.save_venta_contado').attr('disabled', 'disabled');
+
+                    $.ajax({
+                        url: '<?php echo $ruta . 'venta_new/save_venta_caja/'; ?>',
+                        type: 'POST',
+                        dataType: 'json',
+                        data: data,
+                        success: function (data) {
+
+                            if (data.success == '1') {
+                                show_msg('success', '<h4>Correcto. </h4><p>La venta numero ' + data.venta.venta_id + ' se ha pagado con exito.</p>');
+                                if (imprimir == '1') {
+                                    $("#dialog_venta_imprimir").html('');
+                                    $("#dialog_venta_imprimir").modal('show');
+
+                                    $.ajax({
+                                        url: '<?php echo $ruta . 'venta_new/get_venta_previa'; ?>',
+                                        type: 'POST',
+                                        data: {'venta_id': data.venta.venta_id},
+
+                                        success: function (data) {
+                                            $("#dialog_venta_imprimir").html(data);
+                                            $("#loading_save_venta").modal('hide');
+                                        }
+                                    });
+                                } else {
+                                    get_ventas();
+                                }
+                            }
+                            else {
+                                show_msg('danger', '<h4>Error. </h4><p>Ha ocurrido un error insperado al guardar la venta.</p>');
+                                $("#dialog_venta_contado").modal('show');
+                                $('.save_venta_contado').removeAttr('disabled');
+                            }
+                        },
+                        error: function (data) {
+                            show_msg('danger', '<h4>Error. </h4><p>Ha ocurrido un error insperado al guardar la venta.</p>');
+                        },
+                        complete: function (data) {
+                            $('.save_venta_contado').removeAttr('disabled');
+                        }
+                    });
+                }
+
+
+
+                function previa(venta_id) {
+
+                    $("#dialog_venta_imprimir").html($("#loading").html());
+                    $("#dialog_venta_imprimir").modal('show');
+
+                    $.ajax({
+                        url: '<?php echo $ruta . 'venta_new/get_venta_previa'; ?>',
+                        type: 'POST',
+                        data: {'venta_id': venta_id},
+
+                        success: function (data) {
+                            $("#dialog_venta_imprimir").html(data);
+                        }
+                    });
+                }
+
+                function cerrar_venta(venta_id) {
+
+                    $("#dialog_venta_cerrar").html($("#loading").html());
+                    $("#dialog_venta_cerrar").modal('show');
+
+                    $.ajax({
+                        url: '<?php echo $ruta . 'venta_new/cerrar_venta'; ?>',
+                        type: 'POST',
+                        data: {'venta_id': venta_id},
+
+                        success: function (data) {
+                            $("#dialog_venta_cerrar").html(data);
+                        }
+                    });
+                }
+
+
+
+                function anular(venta_id, venta) {
+
+                    $('#confirm_venta_text').attr('data-venta', venta);
+                    $('#confirm_venta_text').html('Estas seguro que deseas anular la venta ' + $('#confirm_venta_text').attr('data-venta') + '?');
+                    $('#confirm_venta_button').attr('onclick', 'anular_venta("' + venta_id + '");');
+
+                    $("#documento_serie").val("");
+                    $("#documento_numero").val("");
+
+                    $('#dialog_venta_confirm').modal('show');
+                }
+
+                function anular_venta(venta_id) {
+
+                    if($("#documento_serie").val() == "" || $("#documento_numero").val() == ""){
+                        show_msg('warning', 'Complete la serie y numero del documento');
+                        return false;
+                    }
+
+                    $("#confirm_venta_text").html($("#loading").html());
+
+                    $.ajax({
+                        url: '<?php echo $ruta . 'venta_new/anular_venta'; ?>',
+                        type: 'POST',
+                        data: {'venta_id': venta_id, 'serie': $("#documento_serie").val(), 'numero': $("#documento_numero").val()},
+
+                        success: function (data) {
+                            $('#dialog_venta_confirm').modal('hide');
+                            $.bootstrapGrowl('<h4>Correcto.</h4> <p>Venta anulada con exito.</p>', {
+                                type: 'success',
+                                delay: 5000,
+                                allow_dismiss: true
+                            });
+                            get_ventas();
+                        },
+                        error: function () {
+                            $('#confirm_venta_text').html('Estas seguro que deseas anular la venta ' + $('#confirm_venta_text').attr('data-venta') + '?');
+                            $.bootstrapGrowl('<h4>Error.</h4> <p>Ha ocurrido un error en la operaci&oacute;n</p>', {
+                                type: 'danger',
+                                delay: 5000,
+                                allow_dismiss: true
+                            });
+                        }
+                    });
+                }
+
+                function devolver(venta_id) {
+
+                    $("#dialog_venta_detalle").html($("#loading").html());
+                    $("#dialog_venta_detalle").modal('show');
+
+                    $.ajax({
+                        url: '<?php echo $ruta . 'venta_new/devolver_detalle'; ?>',
+                        type: 'POST',
+                        data: {'venta_id': venta_id},
+
+                        success: function (data) {
+                            $("#dialog_venta_detalle").html(data);
+                        }
+                    });
                 }
 
 

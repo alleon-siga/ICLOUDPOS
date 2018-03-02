@@ -323,18 +323,26 @@
                         </div>
                     </div>
                     <div class="col-md-6">
+                        <span id="continuar_venta_block">
+                    <button class="btn btn-primary continuar_venta" data-imprimir="0"
+                            type="button"
+                            id="btn_continuar_credito"><i
+                                class="fa fa-arrow-right"></i> Continuar
+                    </button>
+                        </span>
+
+                        <span id="guardar_credito_block">
                         <button class="btn btn-default save_venta_credito" data-imprimir="0"
                                 type="button"
                                 id="btn_venta_credito"><i
                                     class="fa fa-save"></i> Guardar
-
-
                         </button>
                         <button type="button" class="btn btn-default save_venta_credito ocultar_caja" data-imprimir="1"
                                 id="btn_venta_credito_imprimir"
                         ><i
                                     class="fa fa-print"></i> (F6) Grabar e imprimir
                         </button>
+                        </span>
                         <button type="button" class="btn btn-danger"
                                 onclick="$('#dialog_venta_credito').modal('hide');"><i
                                     class="fa fa-close"></i> Cancelar
@@ -485,10 +493,10 @@
 
 
     <?php endif; ?>
+
     <div style="display: none;" id="credito_vista"
          data-vista="<?php echo validOption("VISTA_CREDITO", 'SIMPLE', 'SIMPLE') ? 'SIMPLE' : 'AVANZADO' ?>"></div>
     <script>
-
 
         $(document).ready(function () {
 
@@ -509,6 +517,20 @@
                     caja_init(formatPrice($("#c_saldo_inicial").val()));
                 }
 
+            });
+
+            $('#btn_continuar_credito').on('click', function () {
+                $("#vc_total_pagar").val(formatPrice($("#total_importe").val()));
+                $("#vc_importe").val($("#vc_total_pagar").val());
+                $("#vc_vuelto").val(0);
+                $("#vc_num_oper").val('');
+
+                $("#dialog_venta_contado").modal('show');
+
+                setTimeout(function () {
+                    $("#vc_forma_pago").val('3').trigger("chosen:updated");
+                    $("#vc_forma_pago").change();
+                }, 500);
             });
 
 
@@ -627,7 +649,6 @@
             var tasa_interes = isNaN(parseFloat($("#c_tasa_interes").val())) ? 0 : parseFloat($("#c_tasa_interes").val());
 
 
-
             if (trigger == 1 || trigger == undefined) {
                 var saldo_porciento = isNaN(parseFloat($("#c_saldo_inicial_por").val())) ? 0 : parseFloat($("#c_saldo_inicial_por").val());
                 var saldo_inicial = parseFloat((precio_contado * saldo_porciento) / 100);
@@ -654,6 +675,23 @@
 
             $('#body_proyeccion_cuotas tr').removeClass('table-selected');
             $('#body_proyeccion_cuotas tr[data-cuota="' + $("#c_numero_cuotas").val() + '"]').addClass('table-selected');
+
+            var estado = $("#venta_estado").val();
+
+            if(estado == 'COMPLETADO'){
+                if (saldo_inicial > 0) {
+                    $('#continuar_venta_block').show();
+                    $('#guardar_credito_block').hide();
+                }
+                else {
+                    $('#continuar_venta_block').hide();
+                    $('#guardar_credito_block').show();
+                }
+            } else if(estado == 'CAJA') {
+                $('#continuar_venta_block').hide();
+                $('#guardar_credito_block').show();
+            }
+
 
         }
 
