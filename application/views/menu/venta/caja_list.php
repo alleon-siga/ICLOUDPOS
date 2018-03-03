@@ -9,15 +9,15 @@
 <div class="row">
     <div class="col-md-9"></div>
     <!--<div class="col-md-2">
-        <label>Subtotal: <?= $md->simbolo ?> <span id="subtotal"><?= number_format($venta_totales->subtotal, 2) ?></span></label>
+        <label>Subtotal: <?= $moneda->simbolo ?> <span id="subtotal"><?= number_format($venta_totales->subtotal, 2) ?></span></label>
     </div>
     <div class="col-md-2">
-        <label>IGV: <?= $md->simbolo ?> <span id="impuesto"><?= number_format($venta_totales->impuesto, 2) ?></span></label>
+        <label>IGV: <?= $moneda->simbolo ?> <span id="impuesto"><?= number_format($venta_totales->impuesto, 2) ?></span></label>
     </div>-->
     <label>Total Pendiente:
         <label style="padding: 5px; font-size: 14px; margin: 0px;"
                class="control-label badge label-warning panel-admin-text">
-            <?= $md->simbolo ?> <span><?= number_format($venta_totales->total, 2) ?></span>
+            <?= $moneda->simbolo ?> <span><?= number_format($venta_totales->total, 2) ?></span>
         </label>
     </label>
 </div>

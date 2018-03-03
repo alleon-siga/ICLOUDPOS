@@ -259,7 +259,7 @@
                     $("#vc_num_oper").trigger('focus');
                 }, 500);
             }
-            else if (forma_pago == '5' || forma_pago == '6') {
+            else if (forma_pago == '5' || forma_pago == '6' || forma_pago == '10') {
                 $("#vc_num_oper_block").show();
                 setTimeout(function () {
                     $("#vc_num_oper").trigger('focus');
