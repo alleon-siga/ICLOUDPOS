@@ -101,9 +101,9 @@ class venta_new_model extends CI_Model
     function get_ventas_totales($where = array())
     {
         $this->db->select('
-            SUM(venta.total * IF(venta.tasa_cambio=0, 1 ,venta.tasa_cambio)) as total,
-            SUM(venta.total_impuesto * IF(venta.tasa_cambio=0, 1 ,venta.tasa_cambio)) as impuesto,
-            SUM(venta.subtotal * IF(venta.tasa_cambio=0, 1 ,venta.tasa_cambio)) as subtotal
+            SUM(venta.total) as total,
+            SUM(venta.total_impuesto) as impuesto,
+            SUM(venta.subtotal) as subtotal
             ')
             ->from('venta');
 
@@ -339,6 +339,10 @@ class venta_new_model extends CI_Model
         if ($venta['venta_status'] == 'CAJA' && $venta['c_inicial'] == 0)
             $venta['venta_status'] = 'COMPLETADO';
 
+        $imp = (100 + IMPUESTO) / 100;
+        $venta['subtotal'] = ($venta['c_precio_credito'] + $venta['c_inicial']) / $imp;
+        $venta['impuesto'] = ($venta['c_precio_credito'] + $venta['c_inicial']) - $venta['subtotal'];
+
         //preparo la venta
         $venta_contado = array(
             'local_id' => $venta['local_id'],
@@ -352,7 +356,7 @@ class venta_new_model extends CI_Model
             'factura_impresa' => 0,
             'subtotal' => $venta['subtotal'],
             'total_impuesto' => $venta['impuesto'],
-            'total' => $venta['c_precio_credito'],
+            'total' => $venta['c_precio_credito'] + $venta['c_inicial'],
             'pagado' => 0,
             'vuelto' => 0,
             'tasa_cambio' => $venta['tasa_cambio'],
@@ -407,12 +411,13 @@ class venta_new_model extends CI_Model
         $this->db->insert('credito', array(
             'id_venta' => $venta_id,
             'int_credito_nrocuota' => $venta['c_numero_cuotas'],
-            'dec_credito_montocuota' => $venta['c_precio_credito'] - $venta['c_inicial'],
+            'dec_credito_montocuota' => $venta['c_precio_credito'],
             'var_credito_estado' => 'PagoPendiente',
             'dec_credito_montodebito' => 0.00,
             'id_moneda' => $venta['id_moneda'],
             'tasa_cambio' => $venta['tasa_cambio'],
-            'periodo_gracia' => $venta['c_periodo_gracia']
+            'periodo_gracia' => $venta['c_periodo_gracia'],
+            'tasa_interes' => $venta['c_tasa_interes']
         ));
 
         foreach ($cuotas as $cuota) {

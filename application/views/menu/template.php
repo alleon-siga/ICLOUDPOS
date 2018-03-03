@@ -1481,7 +1481,7 @@ $primary_nav = array(
 <div id="cuadre_caja" class="modal fade" tabindex="-1" role="dialog"
      aria-labelledby="myModalLabel"
      aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog" style="width: 40%;">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -1491,26 +1491,63 @@ $primary_nav = array(
                   action="<?php echo $ruta; ?>exportar/toPDF_cuadre_caja">
                 <div class="modal-body">
                     <fieldset>
-                        <div class="control-group">
-                            <label for="fecha" class="control-label">Fecha:</label>
+                        <div class="control-group row">
+                            <div class="col-md-1"></div>
+                            <label for="fecha" class="control-label col-md-2">Fecha:</label>
 
-                            <div class="controls">
-                                <input type="text" name="fecha" id="fecha_cuadre_caja"
-                                       class='input-small input-datepicker form-control'
-                                       value="<?php echo date('d-m-Y') ?>"
+                            <div class="controls col-md-8">
+                                <input type="text" name="fecha" id="fecha_cuadre_caja" style="cursor:pointer;"
+                                       class='input-small form-control' readonly
+                                       value="<?php echo date('d/m/Y') ?>"
                                 >
                             </div>
                         </div>
-                        <div class="control-group">
-                            <label for="fecha" class="control-label">Locales:</label>
+                        <br>
+                        <div class="control-group row">
+                            <div class="col-md-1"></div>
+                            <label for="fecha" class="control-label col-md-2">Locales:</label>
 
-                            <div class="controls">
+                            <div class="controls col-md-8">
                                 <select class="form-control" id="locales" name="locales" class='cho form-control'
                                         required="true">
-
+                                        <option value="0">TODOS</option>
                                     <?php foreach ($locales as $local) { ?>
                                         <option
                                             value="<?= $local['int_local_id'] ?>"><?= $local['local_nombre'] ?></option>
+                                    <?php } ?>
+
+                                </select>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="control-group row">
+                            <div class="col-md-1"></div>
+                            <label for="fecha" class="control-label col-md-2">Usuarios:</label>
+
+                            <div class="controls col-md-8">
+                                <select class="form-control" id="usuarios" name="usuarios" class='cho form-control'
+                                        required="true">
+                                    <option value="0">TODOS</option>
+                                    <?php foreach ($usuarios as $usuario) { ?>
+                                        <option
+                                                value="<?= $usuario->nUsuCodigo ?>"><?= $usuario->nombre ?></option>
+                                    <?php } ?>
+
+                                </select>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="control-group row">
+                            <div class="col-md-1"></div>
+                            <label for="fecha" class="control-label col-md-2">Monedas:</label>
+
+                            <div class="controls col-md-8">
+                                <select class="form-control" id="monedas" name="monedas" class='cho form-control'
+                                        required="true">
+                                    <option value="0">TODOS</option>
+                                    <?php foreach ($monedas as $moneda) { ?>
+                                        <option
+                                                value="<?= $moneda->id_moneda ?>"><?= $moneda->nombre ?></option>
                                     <?php } ?>
 
                                 </select>
@@ -1639,6 +1676,9 @@ $primary_nav = array(
 
     $(document).ready(function () {
 
+        $('#fecha_cuadre_caja').datepicker({
+            format: 'dd/mm/yyyy'
+        })
 
 
         /*este es el modal de Mi Perfil, cuando se ponga hide, se resetean algunos input*/

@@ -62,6 +62,10 @@
         background: #e7e6e6;
     }
 
+    td {
+        text-align: left;
+    }
+
     #header {
         width: 100%;
     }
@@ -76,14 +80,13 @@
         text-transform: uppercase;
     }
 </style>
-<div style="border: 2px solid #000;padding:5px; height: 98%; width: 98.5%;">
-    <?php foreach ($monedas as $moneda): ?>
-        <?php
-        $total_referencia = 0.0;
-        $total_ingresos = 0.0;
-        $total_salida = 0.0;
+<?php foreach ($monedas as $moneda): ?>
+    <?php
+    $total_ingresos = 0;
+    $total_egresos = 0;
 
-        ?>
+    ?>
+    <div style="padding-left: 10px; padding-right: 10px; height: 99%; width: 98.5%;">
         <table style="width: 100%;">
 
             <tr>
@@ -98,118 +101,55 @@
             </tr>
             <tr>
                 <td style="text-align:left; width: 100%;">
-                    <span>Almacen: </span><?php echo $local_nombre["local_nombre"] ?></td>
-            </tr>
-        </table>
-        <br>
-        <p><strong>REFERENCIA</strong></p>
-        <table style="border-collapse: collapse; text-align: center; border: 1px solid #000;">
-            <tr style="border: 1px solid #000;">
-                <td style="width:70%;">VENTAS POR CONTADO</td>
-                <td style="width:30%; text-align: right;">
-                    <?php $total = $ventas_contado[$moneda['id_moneda']]->total + $ventas_contado_tarjeta[$moneda['id_moneda']]->total; ?>
-                    <?php echo $moneda['simbolo'] . " " . number_format($total, 2) ?>
-                    <?php $total_referencia += $total ?>
-                </td>
-            </tr>
-            <tr style="border: 1px solid #000;">
-                <td>VENTAS POR CRÉDITO</td>
-                <td style="text-align: right;">
-                    <?php $total = $ventas_credito[$moneda['id_moneda']]->total; ?>
-                    <?php echo $moneda['simbolo'] . " " . number_format($total, 2) ?>
-                    <?php $total_referencia += $total ?>
+                    <span>Almacen: </span><?php echo $local_nombre ?>
                 </td>
             </tr>
             <tr>
-                <td>TOTAL</td>
-                <td style="text-align: right;"><?php echo $moneda['simbolo'] . " " . number_format($total_referencia, 2) ?></td>
-            </tr>
-        </table>
-        <p><strong>INGRESO</strong></p>
-        <table style="border-collapse: collapse; text-align: center; border: 1px solid #000;">
-            <tr style="border: 1px solid #000;">
-                <td style="width:70%;">VENTAS POR EFECTIVO</td>
-                <td style="width:30%; text-align: right;">
-                    <?php $total = $ventas_contado[$moneda['id_moneda']]->total; ?>
-                    <?php echo $moneda['simbolo'] . " " . number_format($total, 2) ?>
-                    <?php $total_ingresos += $total ?>
+                <td style="text-align:left; width: 100%;">
+                    <span>Usuario: </span><?php echo $usuario_nombre ?>
                 </td>
             </tr>
-
-            <tr style="border: 1px solid #000;">
-                <td style="width:70%;">VENTAS POR TARJETA</td>
-                <td style="width:30%; text-align: right;">
-                    <?php $total = $ventas_contado_tarjeta[$moneda['id_moneda']]->total; ?>
-                    <?php echo $moneda['simbolo'] . " " . number_format($total, 2) ?>
-                    <?php $total_referencia += $total ?>
-                </td>
-            </tr>
-
-            <tr style="border: 1px solid #000;">
-                <td>COBRO POR CUOTAS</td>
-                <td style="text-align: right;">
-                    <?php $total = $cobro_cuotas[$moneda['id_moneda']]->total; ?>
-                    <?php echo $moneda['simbolo'] . " " . number_format($total, 2) ?>
-                    <?php $total_ingresos += $total ?>
-                </td>
-            </tr>
-            <!--INGRESO DE CAJAS HAY QUE IMPLEMENTARLO-->
-            <!--
-            <tr style="border: 1px solid #000;">
-                <td>INGRESO DE CAJA</td>
-                <td style="text-align: right;">0.00</td>
-            </tr>-->
-            <tr style="border: 1px solid #000;">
-                <td style="width:70%;">TOTAL INGRESO</td>
-                <td style="width:30%; text-align: right;"><?php echo $moneda['simbolo'] . " " . number_format($total_ingresos, 2) ?></td>
-            </tr>
-        </table>
-        <p><strong>SALIDA</strong></p>
-        <table style="border-collapse: collapse; text-align: center; border: 1px solid #000;">
-            <tr style="border: 1px solid #000;">
-                <td style="width:70%;">GASTOS</td>
-                <td style="width:30%; text-align: right;">
-                    <?php $total = $gastos[$moneda['id_moneda']]->total; ?>
-                    <?php echo $moneda['simbolo'] . " " . number_format($total, 2) ?>
-                    <?php $total_salida += $total ?>
-                </td>
-            </tr>
-            <tr style="border: 1px solid #000;">
-                <td style="width:70%;">PAGOS A PROVEEDORES</td>
-                <td style="width:30%; text-align: right;">
-                    <?php $total = $pagos_proveedores[$moneda['id_moneda']]->total; ?>
-                    <?php echo $moneda['simbolo'] . " " . number_format($total, 2) ?>
-                    <?php $total_salida += $total ?>
-                </td>
-            </tr>
-
-            <tr style="border: 1px solid #000;">
-                <td style="width:70%;">COMPRAS AL CONTADO</td>
-                <td style="width:30%; text-align: right;">
-                    <?php $total = $compra_contado[$moneda['id_moneda']]->total; ?>
-                    <?php echo $moneda['simbolo'] . " " . number_format($total, 2) ?>
-                    <?php $total_salida += $total ?>
-                </td>
-            </tr>
-            <!--SALIDA DE CAJAS HAY QUE IMPLEMENTARLO-->
-            <!--
-            <tr style="border: 1px solid #000;">
-                <td>SALIDA DE CAJA</td>
-                <td style="text-align: right;">0.00</td>
-            </tr>-->
-            <tr style="border: 1px solid #000;">
-                <td style="width:70%;">TOTAL SALIDA</td>
-                <td style="width:30%; text-align: right;"><?php echo $moneda['simbolo'] . " " . number_format($total_salida, 2) ?></td>
-            </tr>
-        </table>
-        <br>
-        <table style="border-collapse: collapse; text-align: center; border: 1px solid #000;">
             <tr>
-                <td style="width:70%; text-align: center;"><strong>TOTAL DE CAJA</strong></td>
-                <td style="width:30%; padding-left: 0px; font-weight: bold; text-align: right;"><strong><?php echo $moneda['simbolo'] . " " . number_format($total_ingresos - $total_salida, 2) ?></strong></td>
+                <td style="text-align:left; width: 100%;">
+                    <span>Moneda: </span><?php echo $moneda_nombre ?>
+                </td>
             </tr>
         </table>
-        <br><br><br><br><br>
-        <br>
-    <?php endforeach; ?>
-</div>
+
+        <p><strong>INGRESOS</strong></p>
+        <table border="1" cellspacing="0" cellpadding="0">
+            <?php foreach ($ingresos[$moneda['id_moneda']] as $ingreso): ?>
+                <?php $total_ingresos += $ingreso['saldo']; ?>
+                <tr>
+                    <td style="width: 60%;"><?= $ingreso['metodo']['id_metodo'] == '9' ? 'TRANSF. BANCO' : $ingreso['metodo']['nombre_metodo'] ?></td>
+                    <td style="text-align: right;"><?= $moneda['simbolo'] . ' ' . ($ingreso['saldo']) ?></td>
+                </tr>
+            <?php endforeach; ?>
+            <tr>
+                <td style="width: 60%; font-weight: bold;">TOTAL</td>
+                <td style="text-align: right; font-weight: bold;"><?= $moneda['simbolo'] . ' ' . $total_ingresos ?></td>
+            </tr>
+        </table>
+        <p><strong>EGRESOS</strong></p>
+        <table border="1" cellspacing="0" cellpadding="0">
+            <?php foreach ($egresos[$moneda['id_moneda']] as $egreso): ?>
+                <?php $total_egresos += $egreso['saldo']; ?>
+                <tr>
+                    <td style="width: 60%;"><?= $egreso['metodo']['id_metodo'] == '9' ? 'TRANSF. BANCO' : $egreso['metodo']['nombre_metodo'] ?></td>
+                    <td style="text-align: right;"><?= $moneda['simbolo'] . ' ' . ($egreso['saldo']) ?></td>
+                </tr>
+            <?php endforeach; ?>
+            <tr>
+                <td style="width: 60%; font-weight: bold;">TOTAL</td>
+                <td style="text-align: right; font-weight: bold;"><?= $moneda['simbolo'] . ' ' . $total_egresos ?></td>
+            </tr>
+        </table>
+        <p><strong>RESUMEN</strong></p>
+        <table border="1" cellspacing="0" cellpadding="0">
+            <tr>
+                <td style="width: 60%; font-weight: bold;">SALDO DEL DIA</td>
+                <td style="text-align: right; font-weight: bold;"><?= $moneda['simbolo'] . ' ' . ($total_ingresos - $total_egresos) ?></td>
+            </tr>
+        </table>
+    </div>
+<?php endforeach; ?>

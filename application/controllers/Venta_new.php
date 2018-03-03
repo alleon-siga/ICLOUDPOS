@@ -78,8 +78,9 @@ class venta_new extends MY_Controller
         }
 
         $params['moneda_id'] = $this->input->post('moneda_id');
-
+        $data['moneda'] = $this->db->get_where('moneda', array('id_moneda' => $params['moneda_id']))->row();
         $data['ventas'] = $this->venta->get_ventas($params);
+
 
         $data['venta_totales'] = $this->venta->get_ventas_totales($params);
 
@@ -127,7 +128,8 @@ class venta_new extends MY_Controller
         $this->load->view('menu/venta/dialog_venta_previa', $data);
     }
 
-    function refresh_productos(){
+    function refresh_productos()
+    {
         $data['productos'] = $this->producto_model->get_productos_list();
         header('Content-Type: application/json');
         echo json_encode($data);
@@ -203,7 +205,7 @@ class venta_new extends MY_Controller
         $venta['c_inicial'] = $this->input->post('c_saldo_inicial') != '' ? $this->input->post('c_saldo_inicial') : 0;
         $venta['c_precio_contado'] = $this->input->post('c_precio_contado');
         $venta['c_precio_credito'] = $this->input->post('c_precio_credito');
-        $venta['c_tasa_interes'] = $this->input->post('c_tasa_interes');
+        $venta['c_tasa_interes'] = $this->input->post('c_tasa_interes') != '' ? $this->input->post('c_tasa_interes') : 0;
         $venta['c_numero_cuotas'] = $this->input->post('c_numero_cuotas');
         $venta['c_fecha_giro'] = $this->input->post('c_fecha_giro');
         $venta['c_periodo_gracia'] = $this->input->post('c_periodo_gracia');

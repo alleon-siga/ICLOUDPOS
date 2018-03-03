@@ -6,7 +6,7 @@ class exportar extends MY_Controller
     public function exportar()
     {
         parent::__construct();
-        if ($this->login_model->verify_session()) {        
+        if ($this->login_model->verify_session()) {
             $this->load->model('cliente/cliente_model', 'cl');
             $this->load->model('producto/producto_model', 'pd');
             $this->load->model('ingreso/ingreso_model');
@@ -18,13 +18,13 @@ class exportar extends MY_Controller
             $this->load->model('credito_cuotas_abono/credito_cuotas_abono_model');
             $this->load->model('detalle_ingreso/detalle_ingreso_model');
             $this->load->model('monedas/monedas_model');
+            $this->load->model('metodosdepago/metodos_pago_model');
             $this->load->library('mpdf53/mpdf');
-        }else{
+        } else {
             redirect(base_url(), 'refresh');
-        }  
+        }
     }
 
-    
 
     function index()
     {
@@ -108,127 +108,81 @@ class exportar extends MY_Controller
     function toPDF_cuadre_caja()
     {
 
-        $data['monedas'] = $this->ingreso_model->get_monedas();
         $id_local = $this->input->post('locales', true);
-        $data['local_nombre'] = $this->l->get_by('int_local_id', $id_local);
+        $id_usuario = $this->input->post('usuarios', true);
+        $id_moneda = $this->input->post('monedas', true);
 
-        foreach ($data['monedas'] as $mon) {
-            $fecha = date('Y-m-d', strtotime($this->input->post('fecha', true)));
-            $fechadespues = strtotime('+1 day', strtotime($fecha));
-
-            //REFERENCIAS
-
-            //ventas contado
-            $ventas_contado[$mon["id_moneda"]] = $this->db->select_sum('total', 'total')
-                ->from('venta')
-                ->join('contado', 'venta.venta_id=contado.id_venta')
-                ->where('fecha >=', $fecha)
-                ->where('fecha <', date('Y-m-d', $fechadespues))
-                ->where('local_id', $id_local)
-                ->where('venta.id_moneda', $mon["id_moneda"])
-                ->where('venta_status', 'COMPLETADO')
-                ->get()->row();
-
-            //ventas contado
-            $ventas_contado_tarjeta[$mon["id_moneda"]] = $this->db->select_sum('total', 'total')
-                ->from('venta')
-                ->join('venta_tarjeta', 'venta.venta_id=venta_tarjeta.venta_id')
-                ->where('fecha >=', $fecha)
-                ->where('fecha <', date('Y-m-d', $fechadespues))
-                ->where('local_id', $id_local)
-                ->where('venta.id_moneda', $mon["id_moneda"])
-                ->where('venta_status', 'COMPLETADO')
-                ->get()->row();
-
-
-            //ventaspor credito
-            $ventas_credito[$mon["id_moneda"]] = $this->db->select_sum('total', 'total')
-                ->from('venta')
-                ->join('credito', 'venta.venta_id=credito.id_venta')
-                ->where('fecha >=', $fecha)
-                ->where('fecha <', date('Y-m-d', $fechadespues))
-                ->where('local_id', $id_local)
-                ->where('venta.id_moneda', $mon["id_moneda"])
-                ->where('venta_status', 'COMPLETADO')
-                ->get()->row();
-
-            //INGRESO
-
-            //ventas por contado $ventas_contado[$mon["simbolo"]]
-
-            //cobro por cuotas
-            $cobro_cuotas[$mon["id_moneda"]] = $this->db->select_sum('monto_abono', 'total')
-                ->from('credito_cuotas_abono')
-                ->join('credito_cuotas', 'credito_cuotas.id_credito_cuota=credito_cuotas_abono.credito_cuota_id')
-                ->join('venta', 'credito_cuotas.id_venta=venta.venta_id')
-                ->where('fecha_abono >=', $fecha)
-                ->where('fecha_abono <', date('Y-m-d', $fechadespues))
-                ->where('venta.local_id', $id_local)
-                ->where('venta.id_moneda', $mon["id_moneda"])
-                ->get()->row();
-
-            $inicial = $this->db->select_sum('inicial', 'total')
-                ->from('venta')
-                ->join('credito', 'venta.venta_id=credito.id_venta')
-                ->where('fecha >=', $fecha)
-                ->where('fecha <', date('Y-m-d', $fechadespues))
-                ->where('local_id', $id_local)
-                ->where('venta.id_moneda', $mon["id_moneda"])
-                ->where('venta_status', 'COMPLETADO')
-                ->get()->row();
-
-            $cobro_cuotas[$mon["id_moneda"]]->total += $inicial->total;
-
-            //ingreso de caja. ESTA FUNCION AUN NO SE HA IMPLEMENTADO
-
-
-            //SALIDA
-
-            //gastos
-            $gastos[$mon["id_moneda"]] = $this->db->select_sum('total', 'total')
-                ->from('gastos')
-                ->where('fecha >=', $fecha)
-                ->where('fecha <', date('Y-m-d', $fechadespues))
-                ->where('local_id', $id_local)
-                ->where('id_moneda', $mon["id_moneda"])
-                ->get()->row();
-
-            //pago a proveedores
-            $pagos_proveedores[$mon["id_moneda"]] = $this->db->select_sum('pagoingreso_monto', 'total')
-                ->from('pagos_ingreso')
-                ->join('ingreso', 'ingreso.id_ingreso=pagos_ingreso.pagoingreso_ingreso_id')
-                ->where('pagoingreso_fecha >=', $fecha)
-                ->where('pagoingreso_fecha <', date('Y-m-d', $fechadespues))
-                ->where('ingreso.local_id', $id_local)
-                ->where('ingreso.id_moneda', $mon["id_moneda"])
-                ->get()->row();
-
-            //compras al contado
-            $compra_contado[$mon["id_moneda"]] = $this->db->select_sum('total_ingreso', 'total')
-                ->from('ingreso')
-                ->where('fecha_registro >=', $fecha)
-                ->where('fecha_registro <', date('Y-m-d', $fechadespues))
-                ->where('id_moneda', $mon["id_moneda"])
-                ->where('local_id', $id_local)
-                ->where('pago', 'CONTADO')
-                ->where('ingreso_status !=', 'PENDIENTE')
-                ->where('ingreso_status !=', 'ANULADO')
-                ->get()->row();
-
-
-            //salida de caja. ESTA FUNCION AUN NO SE HA IMPLEMENTADO
-
+        if ($id_moneda == '0') {
+            $data['moneda_nombre'] = 'Todos';
+            $data['monedas'] = $this->ingreso_model->get_monedas();
+        } else {
+            $data['monedas'] = array($this->ingreso_model->get_monedas($id_moneda));
+            $data['moneda_nombre'] = $data['monedas'][0]['nombre'];
         }
 
-        $data['ventas_contado'] = $ventas_contado;
-        $data['ventas_contado_tarjeta'] = $ventas_contado_tarjeta;
-        $data['ventas_credito'] = $ventas_credito;
+        if ($id_local == '0')
+            $data['local_nombre'] = 'Todos';
+        else {
+            $local = $this->l->get_by('int_local_id', $id_local);
+            $data['local_nombre'] = $local['local_nombre'];
+        }
 
-        $data['cobro_cuotas'] = $cobro_cuotas;
+        if ($id_usuario == '0') {
+            $data['usuario_nombre'] = 'Todos';
+        } else {
+            $usuario = $this->db->get_where('usuario', array('nUsuCodigo' => $id_usuario))->row();
+            $data['usuario_nombre'] = $usuario->nombre;
+        }
 
-        $data['gastos'] = $gastos;
-        $data['pagos_proveedores'] = $pagos_proveedores;
-        $data['compra_contado'] = $compra_contado;
+        $metodos = $this->metodos_pago_model->get_all();
+        $ingresos = array();
+        $egresos = array();
+
+        $fecha = date('Y-m-d', strtotime(str_replace('/', '-', $this->input->post('fecha', true))));
+        $fechadespues = date('Y-m-d', strtotime('+1 day', strtotime($fecha)));
+        foreach ($data['monedas'] as $mon) {
+            $ingresos[$mon["id_moneda"]] = array();
+            $egresos[$mon["id_moneda"]] = array();
+
+            foreach ($metodos as $metodo) {
+                //INGRESOS
+                $saldo = $this->db->select_sum('caja_movimiento.saldo', 'total')
+                    ->from('caja_movimiento')
+                    ->join('caja_desglose', 'caja_desglose.id = caja_movimiento.caja_desglose_id')
+                    ->join('caja', 'caja.id = caja_desglose.caja_id')
+                    ->where('medio_pago', $metodo['id_metodo'])
+                    ->where('moneda_id', $mon["id_moneda"])
+                    ->where('created_at >=', $fecha)
+                    ->where('created_at <', $fechadespues)
+                    ->where('movimiento', "INGRESO")
+                    ->get()->row();
+
+                $ingresos[$mon["id_moneda"]][] = array(
+                    'metodo' => $metodo,
+                    'saldo' => $saldo->total != NULL ? $saldo->total : 0
+                );
+
+                //ENGRESOS
+                $saldo = $this->db->select_sum('caja_movimiento.saldo', 'total')
+                    ->from('caja_movimiento')
+                    ->join('caja_desglose', 'caja_desglose.id = caja_movimiento.caja_desglose_id')
+                    ->join('caja', 'caja.id = caja_desglose.caja_id')
+                    ->where('medio_pago', $metodo['id_metodo'])
+                    ->where('moneda_id', $mon["id_moneda"])
+                    ->where('created_at >=', $fecha)
+                    ->where('created_at <', $fechadespues)
+                    ->where('movimiento', "EGRESO")
+                    ->get()->row();
+
+                $egresos[$mon["id_moneda"]][] = array(
+                    'metodo' => $metodo,
+                    'saldo' => $saldo->total != NULL ? $saldo->total : 0
+                );
+            }
+        }
+
+        $data['ingresos'] = $ingresos;
+        $data['egresos'] = $egresos;
 
         $mpdf = new mPDF('utf-8', array(80, 200));
         $mpdf->WriteHTML($this->load->view('menu/cajas/pdfCuadreCaja', $data, true));
@@ -438,7 +392,7 @@ class exportar extends MY_Controller
     function toPDF_ingresodetalle()
     {
 
-        $data['moneda_local']=$this->monedas_model->get_moneda_default();
+        $data['moneda_local'] = $this->monedas_model->get_moneda_default();
 
         $mpdf = new mPDF('utf-8', 'A4-L');
 
@@ -470,21 +424,20 @@ class exportar extends MY_Controller
             $data['proveedor'] = $this->input->post('proveedor2');
         }
 
-        $condicion['ingreso.id_ingreso > ']=0;
-        $order='detalleingreso.id_detalle_ingreso asc';
+        $condicion['ingreso.id_ingreso > '] = 0;
+        $order = 'detalleingreso.id_detalle_ingreso asc';
 
-        $data['ingresos'] = $this->detalle_ingreso_model->get_detalleingresodetallado($condicion,$order);
+        $data['ingresos'] = $this->detalle_ingreso_model->get_detalleingresodetallado($condicion, $order);
 
         $mpdf->WriteHTML($this->load->view('menu/reportes/pdfIngresoDetalle', $data, true));
         $mpdf->Output();
     }
 
 
-
     function toExcel_ingresodetalle()
     {
 
-        $data['moneda_local']=$this->monedas_model->get_moneda_default();
+        $data['moneda_local'] = $this->monedas_model->get_moneda_default();
 
         if ($this->session->userdata('esSuper') == 1) {
             $data['locales'] = $this->l->get_all();
@@ -501,19 +454,19 @@ class exportar extends MY_Controller
         if ($this->input->post('fecIni1') != "") {
 
             $condicion['fecha_registro >= '] = date('Y-m-d', strtotime($this->input->post('fecIni1'))) . " " . date('H:i:s', strtotime('0:0:0'));
-             }
+        }
         if ($this->input->post('fecFin1') != "") {
 
             $condicion['fecha_registro <='] = date('Y-m-d', strtotime($this->input->post('fecFin1'))) . " " . date('H:i:s', strtotime('23:59:59'));
-            }
+        }
         if ($this->input->post('proveedor1') != "TODOS") {
             $condicion['int_Proveedor_id'] = $this->input->post('proveedor1');
         }
 
-        $condicion['ingreso.id_ingreso > ']=0;
-        $order='detalleingreso.id_detalle_ingreso asc';
+        $condicion['ingreso.id_ingreso > '] = 0;
+        $order = 'detalleingreso.id_detalle_ingreso asc';
 
-        $data['ingresos'] = $this->detalle_ingreso_model->get_detalleingresodetallado($condicion,$order);
+        $data['ingresos'] = $this->detalle_ingreso_model->get_detalleingresodetallado($condicion, $order);
 
         $this->load->view('menu/reportes/excelIngresoDetalle', $data);
     }
@@ -524,33 +477,33 @@ class exportar extends MY_Controller
         $mpdf = new mPDF('utf-8', 'A4-L');
 
         $this->load->model('historico/historico_model');
-        $condicion=array(
-            'movimiento_historico.tipo_movimiento'=>"TRASPASO"
+        $condicion = array(
+            'movimiento_historico.tipo_movimiento' => "TRASPASO"
         );
 
-        if ($this->input->post('local') !="TODOS") {
-            $condicion['local_id']=$this->input->post('local');
+        if ($this->input->post('local') != "TODOS") {
+            $condicion['local_id'] = $this->input->post('local');
         }
-        $data['local']=$this->input->post('locales', true);
+        $data['local'] = $this->input->post('locales', true);
         if ($_POST['fecIni'] != "") {
-            $condicion['date >= ']= date('Y-m-d', strtotime($_POST['fecIni']));
+            $condicion['date >= '] = date('Y-m-d', strtotime($_POST['fecIni']));
         }
 
         if ($_POST['fecFin'] != "") {
             $fechadespues = strtotime('+1 day', strtotime($_POST['fecFin']));
 
-            $condicion['date <= ']= date('Y-m-d', $fechadespues);
+            $condicion['date <= '] = date('Y-m-d', $fechadespues);
         }
 
-        if ($this->input->post('productos', true) !="TODOS") {
-            $condicion['producto_id']=$this->input->post('productos', true);
+        if ($this->input->post('productos', true) != "TODOS") {
+            $condicion['producto_id'] = $this->input->post('productos', true);
         }
 
-        if ($this->input->post('tipo', true) !="TODOS") {
-            $condicion['tipo_operacion']=$this->input->post('tipo', true);
+        if ($this->input->post('tipo', true) != "TODOS") {
+            $condicion['tipo_operacion'] = $this->input->post('tipo', true);
         }
         //var_dump($condicion);
-        $data['movimientos']=$this->historico_model->get_historico($condicion);
+        $data['movimientos'] = $this->historico_model->get_historico($condicion);
 
         $mpdf->WriteHTML($this->load->view('menu/reportes/pdftraspaso', $data, true));
         $mpdf->Output();
@@ -561,38 +514,37 @@ class exportar extends MY_Controller
     {
 
         $this->load->model('historico/historico_model');
-        $condicion=array(
-            'movimiento_historico.tipo_movimiento'=>"TRASPASO"
+        $condicion = array(
+            'movimiento_historico.tipo_movimiento' => "TRASPASO"
         );
 
-        if ($this->input->post('local') !="TODOS") {
-            $condicion['local_id']=$this->input->post('local');
+        if ($this->input->post('local') != "TODOS") {
+            $condicion['local_id'] = $this->input->post('local');
         }
-        $data['local']=$this->input->post('locales', true);
+        $data['local'] = $this->input->post('locales', true);
         if ($_POST['fecIni'] != "") {
-            $condicion['date >= ']= date('Y-m-d', strtotime($_POST['fecIni']));
+            $condicion['date >= '] = date('Y-m-d', strtotime($_POST['fecIni']));
         }
 
         if ($_POST['fecFin'] != "") {
             $fechadespues = strtotime('+1 day', strtotime($_POST['fecFin']));
 
-            $condicion['date <= ']= date('Y-m-d', $fechadespues);
+            $condicion['date <= '] = date('Y-m-d', $fechadespues);
         }
 
-        if ($this->input->post('productos', true) !="TODOS") {
-            $condicion['producto_id']=$this->input->post('productos', true);
+        if ($this->input->post('productos', true) != "TODOS") {
+            $condicion['producto_id'] = $this->input->post('productos', true);
         }
 
-        if ($this->input->post('tipo', true) !="TODOS") {
-            $condicion['tipo_operacion']=$this->input->post('tipo', true);
+        if ($this->input->post('tipo', true) != "TODOS") {
+            $condicion['tipo_operacion'] = $this->input->post('tipo', true);
         }
         //var_dump($condicion);
-        $data['movimientos']=$this->historico_model->get_historico($condicion);
+        $data['movimientos'] = $this->historico_model->get_historico($condicion);
 
 
         $this->load->view('menu/reportes/excelTraspaso', $data);
     }
-
 
 
 }

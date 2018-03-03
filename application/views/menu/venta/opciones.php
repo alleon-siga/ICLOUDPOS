@@ -24,7 +24,7 @@
     </div>
 </div>
 <div class="row block">
-
+<!--    <button type="button" id="imprimir">Imprimir</button>-->
     <?= form_open_multipart(base_url() . 'venta_new/opciones/save', array('id' => 'formguardar')) ?>
     <h3>Cr&eacute;dito</h3>
     <div class="row form-group">
@@ -178,6 +178,8 @@
 
 </div>
 <script>
+
+
     var grupo = {
         ajaxgrupo: function () {
             return $.ajax({
@@ -196,6 +198,42 @@
     }
 
     $(function () {
+
+//        $('#imprimir').on('click', function () {
+//            $.ajax({
+//                url: '<?//= base_url()?>//impresion',
+//                type: 'GET',
+//                crossDomain : true,
+//                dataType: 'json',
+//                success: function (data) {
+//
+//                    //alert(data.mensaje);
+//
+//                    $.ajax({
+//                        url: 'http://localhost:8080/',
+//                        success: function (data) {
+//                            alert(data.mensaje);
+//                        },
+//                        error: function (data) {
+//                            console.log(data)
+//                        },
+//                        complete: function(){
+//
+//                        }
+//                    });
+//
+//
+//                },
+//                error: function (data) {
+//                    alert('error')
+//                },
+//                complete: function (data) {
+//
+//                }
+//            });
+//        });
+
+
         $('.textarea-editor').wysihtml5({
             "font-styles": true, //Font styling, e.g. h1, h2, etc. Default true
             "emphasis": true, //Italics, bold, etc. Default true

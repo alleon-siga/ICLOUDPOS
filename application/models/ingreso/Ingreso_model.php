@@ -118,11 +118,12 @@ class ingreso_model extends CI_Model
         }
     }
 
-    function get_monedas()
+    function get_monedas($id_moneda = false)
     {
-
-        $query = $this->db->get('vw_monedas_cajas');
-        return $query->result_array();
+        if ($id_moneda == false)
+            return $this->db->get('vw_monedas_cajas')->result_array();
+        else
+            return $this->db->get_where('vw_monedas_cajas', array('id_moneda' => $id_moneda))->row_array();
     }
 
     function get_all()
