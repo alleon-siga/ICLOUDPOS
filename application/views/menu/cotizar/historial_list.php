@@ -4,20 +4,20 @@
     <div class="col-md-10"></div>
 
     <div class="col-md-2">
-        <label>Total: <?= $md->simbolo ?> <span id="total"><?= number_format($cotizaciones_totales->total, 2) ?></span></label>
+        <label>Total: <?= $moneda->simbolo ?> <span id="total"><?= number_format($cotizaciones_totales->total, 2) ?></span></label>
     </div>
 </div>
 <div class="table-responsive">
     <table class='table table-striped dataTable table-bordered no-footer tableStyle' style="overflow:scroll">
         <thead>
         <tr>
+            <th>ID</th>
             <th>Fecha Emisi&oacute;n</th>
             <th>Fecha Vencimiento</th>
             <th>Documento</th>
             <th>Num Documento</th>
             <th>Cliente</th>
             <th>Vendedor</th>
-            <th>Moneda</th>
             <th>Tip. Cam.</th>
             <th>Total</th>
             <th>Acciones</th>
@@ -30,6 +30,7 @@
 
             <?php foreach ($cotizaciones as $detalle): ?>
                 <tr>
+                    <td><?= $detalle->id ?></td>
                     <td>
                         <span style="display: none;"><?= date('YmdHis', strtotime($detalle->created)) ?></span>
                         <?= date('d/m/Y', strtotime($detalle->created)) ?>
@@ -43,7 +44,6 @@
                     <td><?= $detalle->ruc ?></td>
                     <td><?= $detalle->cliente_nombre ?></td>
                     <td><?= $detalle->vendedor_nombre ?></td>
-                    <td><?= $detalle->moneda_nombre ?></td>
                     <td><?= $detalle->moneda_tasa ?></td>
                     <td style="text-align: right;"><?= $detalle->moneda_simbolo ?> <?= number_format($detalle->total, 2) ?></td>
                     <td style="text-align: center;">
@@ -98,7 +98,7 @@
 <script type="text/javascript">
     $(function () {
 
-        TablesDatatables.init(0);
+        TablesDatatables.init(1);
 
     });
 

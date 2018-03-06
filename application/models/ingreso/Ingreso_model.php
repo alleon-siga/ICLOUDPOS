@@ -268,6 +268,9 @@ class ingreso_model extends CI_Model
                     }
                 }
 
+                $p = $this->db
+                    ->join('impuestos', 'impuestos.id_impuesto=producto.producto_impuesto')
+                    ->get_where('producto', array('producto_id' => $row->producto_id))->row();
 
                 //INSERTO EL INGRESO EN DETALLE INGRESO (LO INSERTO TAL CUAL SE INSERTABA PARA EVITAR PROBLEMAS DE COMPATIBILIDAD)
                 $data = array(
@@ -278,7 +281,9 @@ class ingreso_model extends CI_Model
                     'unidad_medida' => $row->unidad,
                     'total_detalle' => (!isset($row->importe)) ? 0 : $row->importe,
                     'status' => 1,
-                    'precio_venta' => $precio_venta
+                    'precio_venta' => $precio_venta,
+                    'impuesto_id' => $p->id_impuesto,
+                    'impuesto_porciento' => $p->porcentaje_impuesto
                 );
                 $this->db->insert('detalleingreso', $data);
 

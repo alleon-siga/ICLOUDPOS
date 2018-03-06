@@ -27,6 +27,7 @@ class cotizar extends MY_Controller
     function historial()
     {
         $data['locales'] = $this->local_model->get_local_by_user($this->session->userdata('nUsuCodigo'));
+        $data['monedas'] = $this->db->get_where('moneda', array('status_moneda' => 1))->result();
 
         $dataCuerpo['cuerpo'] = $this->load->view('menu/cotizar/historial', $data, true);
         if ($this->input->is_ajax_request()) {
@@ -40,6 +41,7 @@ class cotizar extends MY_Controller
     {
         $estado = 'PENDIENTE';
         $local_id = $this->input->post('local_id');
+        $moneda_id = $this->input->post('moneda_id');
         $date_range = explode(" - ", $this->input->post('date_range'));
         $fecha_ini = str_replace("/", "-", $date_range[0]);
         $fecha_fin = str_replace("/", "-", $date_range[1]);
@@ -49,8 +51,11 @@ class cotizar extends MY_Controller
             'estado' => $estado,
             'local_id' => $local_id,
             'fecha_ini' => $fecha_ini,
-            'fecha_fin' => $fecha_fin
+            'fecha_fin' => $fecha_fin,
+            'moneda_id' => $moneda_id
         );
+
+        $data['moneda'] = $this->db->get_where('moneda', array('id_moneda' => $params['moneda_id']))->row();
 
         $data['cotizaciones'] = $this->cotizar_model->get_cotizaciones($params);
         $data['cotizaciones_totales'] = $this->cotizar_model->get_cotizaciones_totales($params);

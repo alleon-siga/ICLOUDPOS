@@ -25,13 +25,22 @@
                         <input type="text" id="date_range" class="form-control" readonly style="cursor: pointer;" name="daterange" value="<?= date('01/m/Y')?> - <?= date('d/m/Y')?>" />
 
                     </div>
+                    <div class="col-md-2">
+                        <select name="moneda_id" id="moneda_id" class='cho form-control'>
+                            <?php foreach ($monedas as $moneda): ?>
+                                <option value="<?= $moneda->id_moneda ?>"
+                                        data-simbolo="<?= $moneda->simbolo ?>"
+                                    <?= $moneda->id_moneda == MONEDA_DEFECTO ? 'selected' : ''?>><?= $moneda->nombre ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
                     <div class="col-md-1">
 
                         <button id="btn_buscar" class="btn btn-default">
                             <i class="fa fa-search"></i> Buscar
                         </button>
                     </div>
-                    <div class="col-md-offset-3 col-md-2 text-right">
+                    <div class="col-md-3 text-right">
                         <button type="button" id="new_cotizacion" class="btn btn-primary">Nueva Cotizacion</button>
                     </div>
 
@@ -140,13 +149,15 @@
 
                     var date_range = $("#date_range").val();
                     var local_id = $("#local_id").val();
+                    var moneda_id = $("#moneda_id").val();
 
 
                     $.ajax({
                         url: '<?= base_url()?>cotizar/get_cotizaciones',
                         data: {
                             'date_range': date_range,
-                            'local_id': local_id
+                            'local_id': local_id,
+                            'moneda_id': moneda_id
                         },
                         type: 'POST',
                         success: function (data) {

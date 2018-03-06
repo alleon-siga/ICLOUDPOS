@@ -19,6 +19,7 @@
 <table class='table table-striped dataTable table-bordered no-footer tableStyle' id="lstPagP" name="lstPagP">
     <thead>
     <tr>
+        <th>ID</th>
         <th class='tip' title="Fecha Venta">Fecha Venta</th>
         <th>Documento</th>
 
@@ -42,6 +43,7 @@
     <?php if (count($lstVenta) > 0): ?>
         <?php foreach ($lstVenta as $v): ?>
             <tr>
+                <td><?php echo $v->Venta_id; ?></td>
                 <td style="text-align: center;"><span style="display: none"><?= date('YmdHis', strtotime($v->FechaReg)) ?></span><?php echo date("d/m/Y", strtotime($v->FechaReg)) ?></td>
                 <td style="text-align: center;">
                     <?php

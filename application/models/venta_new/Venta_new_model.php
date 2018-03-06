@@ -19,7 +19,7 @@ class venta_new_model extends CI_Model
         $this->load->model('cajas/cajas_mov_model');
     }
 
-    function get_ventas($where = array())
+    function get_ventas($where = array(), $action = 'historial')
     {
         $this->db->select('
             venta.venta_id as venta_id,
@@ -51,7 +51,9 @@ class venta_new_model extends CI_Model
             venta.subtotal as subtotal,
             credito.dec_credito_montodebito as credito_pagado,
             credito.dec_credito_montocuota as credito_pendiente,
-            credito.var_credito_estado as credito_estado
+            credito.var_credito_estado as credito_estado,
+            venta.serie as serie,
+            venta.numero as numero,
             ')
             ->from('venta')
             ->join('documentos', 'venta.id_documento=documentos.id_doc')
@@ -78,8 +80,10 @@ class venta_new_model extends CI_Model
         if (isset($where['estado']))
             if ($where['estado'] != "")
                 $this->db->where('venta.venta_status', $where['estado']);
-            else
+            else if ($action == 'historial')
                 $this->db->where('(venta.venta_status = "COMPLETADO" OR venta.venta_status = "ANULADO")');
+            else if ($action == 'anular')
+                $this->db->where('venta.venta_status = "COMPLETADO"');
 
         if (isset($where['fecha_ini']) && isset($where['fecha_fin'])) {
             $this->db->where('venta.fecha >=', date('Y-m-d H:i:s', strtotime($where['fecha_ini'] . " 00:00:00")));
@@ -98,7 +102,7 @@ class venta_new_model extends CI_Model
         return $this->db->get()->result();
     }
 
-    function get_ventas_totales($where = array())
+    function get_ventas_totales($where = array(), $action = 'historial')
     {
         $this->db->select('
             SUM(venta.total) as total,
@@ -209,16 +213,16 @@ class venta_new_model extends CI_Model
 
 
         //guardo la relacion del modo de pago
-        if ($venta_actual->condicion_pago == 1) {
+        if ($venta_actual->condicion_pago == 1 || ($venta_actual->condicion_pago == 2 && $venta_actual->inicial > 0)) {
 
-            if ($venta['tipo_pago'] == 1) {
+            if ($venta['tipo_pago'] != 7) {
                 $contado = array(
                     'id_venta' => $venta_actual->venta_id,
                     'status' => 'PagoCancelado',
                     'montopagado' => $venta_total
                 );
                 $this->db->insert('contado', $contado);
-            } elseif ($venta['tipo_pago'] == 2) {
+            } elseif ($venta['tipo_pago'] == 7) {
                 $tarjeta = array(
                     'venta_id' => $venta_actual->venta_id,
                     'tarjeta_pago_id' => $venta['tarjeta'],
@@ -228,12 +232,22 @@ class venta_new_model extends CI_Model
             }
         }
 
-        $this->db->where('venta_id', $venta['venta_id']);
-        $this->db->update('venta', array(
+        $update_venta = array(
             'pagado' => $venta['importe'],
             'vuelto' => $venta['vuelto'],
             'venta_status' => 'COMPLETADO'
-        ));
+        );
+
+        if ($venta_actual->condicion_pago == 1) {
+            $correlativo = $this->correlativos_model->get_correlativo($venta_actual->local_id, $venta_actual->id_documento);
+            $update_venta['fecha_facturacion'] = $venta_actual->fecha;
+            $update_venta['serie'] = $correlativo->serie;
+            $update_venta['numero'] = $correlativo->correlativo;
+            $this->correlativos_model->sumar_correlativo($venta_actual->local_id, $venta_actual->id_documento);
+        }
+
+        $this->db->where('venta_id', $venta['venta_id']);
+        $this->db->update('venta', $update_venta);
 
         return true;
     }
@@ -261,11 +275,18 @@ class venta_new_model extends CI_Model
             'vuelto' => $venta['vc_vuelto'],
             'tasa_cambio' => $venta['tasa_cambio'],
             'dni_garante' => null,
-            'inicial' => null,
+            'inicial' => null
         );
 
         if ($venta['venta_status'] == 'CAJA') {
             $venta_contado['total'] = $venta['total_importe'];
+        } else {
+            $correlativo = $this->correlativos_model->get_correlativo($venta['local_id'], $venta['id_documento']);
+            $venta_contado['fecha_facturacion'] = date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $venta['fecha_venta']) . date(" H:i:s")));
+            $venta_contado['serie'] = $correlativo->serie;
+            $venta_contado['numero'] = $correlativo->correlativo;
+
+            $this->correlativos_model->sumar_correlativo($venta['local_id'], $venta['id_documento']);
         }
 
 
@@ -375,8 +396,7 @@ class venta_new_model extends CI_Model
             if ($venta['vc_forma_pago'] == 4 || $venta['vc_forma_pago'] == 8 || $venta['vc_forma_pago'] == 9) {
                 $banco = $this->db->get_where('banco', array('banco_id' => $venta['vc_banco_id']))->row();
                 $cuenta_id = $banco->cuenta_id;
-            }
-            else {
+            } else {
                 $cuenta_id = $this->cajas_model->get_cuenta_id(array(
                     'moneda_id' => $moneda_id,
                     'local_id' => $venta_contado['local_id']));
@@ -515,6 +535,9 @@ class venta_new_model extends CI_Model
                 $producto->cantidad
             );
 
+            $p = $this->db
+                ->join('impuestos', 'impuestos.id_impuesto=producto.producto_impuesto')
+                ->get_where('producto', array('producto_id' => $producto->id_producto))->row();
 
             //preparo el detalle de la venta
             $producto_detalle = array(
@@ -525,7 +548,9 @@ class venta_new_model extends CI_Model
                 'unidad_medida' => $producto->unidad_medida,
                 'detalle_importe' => $producto->detalle_importe,
                 'detalle_costo_promedio' => 0,
-                'detalle_utilidad' => 0
+                'detalle_utilidad' => 0,
+                'impuesto_id' => $p->id_impuesto,
+                'impuesto_porciento' => $p->porcentaje_impuesto
             );
             array_push($venta_detalle, $producto_detalle);
 
