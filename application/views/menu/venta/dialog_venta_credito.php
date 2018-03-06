@@ -520,8 +520,11 @@
             });
 
             $('#btn_continuar_credito').on('click', function () {
-                $("#vc_total_pagar").val(formatPrice($("#total_importe").val()));
-                $("#vc_importe").val($("#vc_total_pagar").val());
+                var tipo_pago = $("#tipo_pago").val();
+
+                $("#vc_total_pagar").val(formatPrice($("#c_saldo_inicial").val()));
+                $("#vc_importe").val($("#c_saldo_inicial").val());
+                $('#contado_tipo_pago').val(tipo_pago);
                 $("#vc_vuelto").val(0);
                 $("#vc_num_oper").val('');
 
