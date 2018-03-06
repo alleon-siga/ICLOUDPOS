@@ -8,7 +8,7 @@
                         id="subtotal"><?= number_format($ingreso_totales->subtotal, 2) ?></span></label>
         </div>
         <div class="col-md-2">
-            <label>IGV: <?= $moneda->simbolo ?> <span
+            <label>Impuesto: <?= $moneda->simbolo ?> <span
                         id="impuesto"><?= number_format($ingreso_totales->impuesto, 2) ?></span></label>
         </div>
         <div class="col-md-2">
