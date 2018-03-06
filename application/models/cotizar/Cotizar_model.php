@@ -67,6 +67,9 @@ class cotizar_model extends CI_Model
         if (isset($where['local_id']))
             $this->db->where('c.local_id', $where['local_id']);
 
+        if (isset($where['moneda_id']))
+            $this->db->where('c.moneda_id', $where['moneda_id']);
+
         if (isset($where['fecha_ini']) && isset($where['fecha_fin'])) {
             $this->db->where('c.created_at >=', date('Y-m-d H:i:s', strtotime($where['fecha_ini'] . " 00:00:00")));
             $this->db->where('c.created_at <=', date('Y-m-d H:i:s', strtotime($where['fecha_fin'] . " 23:59:59")));
@@ -87,9 +90,9 @@ class cotizar_model extends CI_Model
     function get_cotizaciones_totales($where = array())
     {
         $this->db->select('
-            SUM(c.total * IF(c.tasa_cambio=0, 1 ,c.tasa_cambio)) as total,
-            SUM(c.impuesto * IF(c.tasa_cambio=0, 1 ,c.tasa_cambio)) as impuesto,
-            SUM(c.subtotal * IF(c.tasa_cambio=0, 1 ,c.tasa_cambio)) as subtotal
+            SUM(c.total) as total,
+            SUM(c.impuesto) as impuesto,
+            SUM(c.subtotal) as subtotal
             ')
             ->from('cotizacion as c');
 
@@ -105,6 +108,9 @@ class cotizar_model extends CI_Model
 
         if (isset($where['local_id']))
             $this->db->where('c.local_id', $where['local_id']);
+
+        if (isset($where['moneda_id']))
+            $this->db->where('c.moneda_id', $where['moneda_id']);
 
         if (isset($where['fecha_ini']) && isset($where['fecha_fin'])) {
             $this->db->where('c.created_at >=', date('Y-m-d H:i:s', strtotime($where['fecha_ini'] . " 00:00:00")));

@@ -1503,8 +1503,8 @@ function accionGuardar() {
                     $.ajax({
                         url: ruta + 'ingresos?costos=' + $("#costos").val(),
                         success: function (data2) {
-                            $('#page-content').html(data2);
                             $('.modal-backdrop').remove();
+                            $('#page-content').html(data2);
                         }
 
                     })
@@ -1512,8 +1512,8 @@ function accionGuardar() {
                     $.ajax({
                         url: ruta + 'ingresos/consultar',
                         success: function (data2) {
-                            $('#page-content').html(data2);
                             $('.modal-backdrop').remove();
+                            $('#page-content').html(data2);
 
                         }
                     })

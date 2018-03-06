@@ -15,7 +15,6 @@
                     <tr>
 
                         <th>ID</th>
-                        <th><?php echo getCodigoNombre() ?></th>
                         <th>Producto</th>
                         <th>UM</th>
                         <th>Cantidad</th>
@@ -41,10 +40,7 @@
                                     <?= $detalle->id_detalle_ingreso ?>
                                 </td>
                                 <td align="center">
-                                    <?php echo getCodigoValue(sumCod($detalle->id_producto),$detalle->producto_codigo_interno) ?>
-                                </td>
-                                <td align="center">
-                                    <?= $detalle->producto_nombre ?>
+                                    <?= getCodigoValue(sumCod($detalle->id_producto),$detalle->producto_codigo_interno).' - '.$detalle->producto_nombre ?>
                                 </td>
                                 <td align="center">
                                     <?= $detalle->nombre_unidad ?>
@@ -87,14 +83,7 @@
                     <a href="#" onclick="generar_reporte_pdf(<?= $id_detalle ?>,'<?= $ingreso_tipo ?>');" class='btn btn-lg btn-default tip'
                         title="Exportar a PDF"><i class="fa fa-file-pdf-o"></i></a>
                 </div>
-
-                <div class="col-md-3">
-                    <label>Subtotal: <?= $simbolo ?> <span id="subtotal"><?=number_format($total - ($total * 18 / 100), 2)?></span></label>
-                </div>
-                <div class="col-md-3">
-                    <label>IGV: <?= $simbolo ?> <span id="impuesto"><?=number_format($total * 18 / 100, 2)?></span></label>
-                </div>
-                <div class="col-md-3">
+                <div class="col-md-offset-6 col-md-3">
                     <label>Total: <?= $simbolo ?> <span id="total"><?=number_format($total, 2)?></span></label>
                 </div>
             </div>

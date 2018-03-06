@@ -79,10 +79,10 @@ class venta_new extends MY_Controller
 
         $params['moneda_id'] = $this->input->post('moneda_id');
         $data['moneda'] = $this->db->get_where('moneda', array('id_moneda' => $params['moneda_id']))->row();
-        $data['ventas'] = $this->venta->get_ventas($params);
+        $data['ventas'] = $this->venta->get_ventas($params, $action);
 
 
-        $data['venta_totales'] = $this->venta->get_ventas_totales($params);
+        $data['venta_totales'] = $this->venta->get_ventas_totales($params, $action);
 
         $data['venta_action'] = $action;
         if ($action != 'caja')
