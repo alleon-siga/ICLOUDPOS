@@ -794,6 +794,7 @@ WHERE detalleingreso.id_ingreso='$compra_id'");
                 $this->db->where(array('producto_id' => $key));
                 $this->db->update('producto', array('producto_costo_unitario' => $new_costo_unitario));
 
+                var_dump($new_costo_unitario);
                 $this->producto_costo_unitario_model->save_costos(array(
                     'producto_id' => $key,
                     'moneda_id' => $compra['id_moneda'],
