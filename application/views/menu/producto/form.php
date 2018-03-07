@@ -315,22 +315,53 @@
                                 endforeach;
                             endif;
                             ?>
+<<<<<<< HEAD
                             <input type="hidden" id="producto_impuesto" name="producto_impuesto"
                                    value="<?= $impuesto_ivg ?>">
+=======
+>>>>>>> 4392afd4719e9056a5114f5b896abf0212885359
                             <div class="form-group">
                                 <div class="col-md-3">
                                     <label for="impuesto" class="control-label">Impuesto:</label>
                                 </div>
                                 <div class="col-md-8">
-                                    <select name="producto_impuesto" id="producto_impuesto" class='cho form-control'>
-                                        <option value="">Seleccione</option>
-                                        <?php if (count($impuestos) > 0): ?>
-                                            <?php foreach ($impuestos as $impuesto): ?>
-                                                <option
-                                                    value="<?php echo $impuesto['id_impuesto']; ?>" <?php if (isset($producto['producto_impuesto']) && $producto['producto_impuesto'] == $impuesto['id_impuesto']) echo 'selected'; elseif (strtoupper($impuesto['nombre_impuesto']) == "IGV") echo 'selected' ?>><?php echo $impuesto['nombre_impuesto']; ?></option>
-                                            <?php endforeach; ?>
-                                        <?php endif; ?>
-                                    </select>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <select name="producto_impuesto" id="producto_impuesto" class='cho form-control'>
+                                                <option value="">Seleccione</option>
+                                                <?php if (count($impuestos) > 0): ?>
+                                                    <?php foreach ($impuestos as $impuesto): ?>
+                                                        <option
+                                                                value="<?php echo $impuesto['id_impuesto']; ?>"
+                                                                data-impuesto="<?= $impuesto['porcentaje_impuesto']?>"
+                                                            <?php if (isset($producto['producto_impuesto']) && $producto['producto_impuesto'] == $impuesto['id_impuesto']) echo 'selected'; ?>>
+                                                            <?php echo $impuesto['nombre_impuesto']; ?>
+                                                        </option>
+                                                    <?php endforeach; ?>
+                                                <?php endif; ?>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="input-group">
+                                                <input
+                                                        type="text"
+                                                        style="text-align: right;"
+                                                        class="form-control"
+                                                        name="valor_importe"
+                                                        id="valor_importe"
+                                                        readonly>
+                                                <div class="input-group-addon tipo_moneda">%</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <input
+                                            type="checkbox"
+                                            id="incluir_precio"
+                                            name="incluir_precio"
+                                            <?= isset($producto['producto_impuesto_precio']) && $producto['producto_impuesto_precio'] == 1 ? 'checked' : ''?>>
+                                    <label for="incluir_precio" style="cursor:pointer;">Incluir impuesto al precio de venta</label>
+                                    <br>
+                                    <br>
                                 </div>
                             </div>
                         <?php } ?>
@@ -1121,6 +1152,20 @@
         <?php if ($columna->nombre_columna == 'producto_vencimiento' and $columna->activo == 1): ?>
         $(".my_datepicker").datepicker({format: 'dd-mm-yyyy'});
         <?php endif;?>
+        $(function(){
+            $('#producto_impuesto').on('change', function(){
+                if($(this).val() == ''){
+                    $('#valor_importe').val("");
+                    $('#incluir_precio').prop('checked', false);
+                }else{
+                    $('#valor_importe').val($('#producto_impuesto option:selected').attr('data-impuesto'));
+                }
+            });
+
+            $('#producto_impuesto').trigger('change');
+        })
+
+
 
         $("#cu_moneda").change(function (e) {
             $("#costo_unitario").val(parseFloat($("#cu_moneda option:selected").attr('data-costo')).toFixed(2));

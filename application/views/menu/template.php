@@ -549,15 +549,13 @@ $primary_nav = array(
                 'slug' => 'region'
 
             ),
-
-
-            /*array(
+            array(
                 'name' => 'Impuestos',
                 'url' => $ruta . 'impuesto',
                 'icon' => 'fa fa-money',
-                'slug' => 'impuestos'
+                'slug' => 'precios'
             ),
-            array(
+            /*array(
                 'name' => 'Condiciones de Pago',
                 'url' => $ruta . 'condicionespago',
                 'icon' => 'fa fa-ticket',

@@ -499,6 +499,7 @@ class producto extends MY_Controller
         $grupo = $this->input->post('produto_grupo');
         $proveedor = $this->input->post('producto_proveedor');
         $impuesto = $this->input->post('producto_impuesto');
+        $incluir_precio = $this->input->post('incluir_precio');
         $cualidad = $this->input->post('producto_cualidad');
         $codigo_barra = $this->input->post('producto_codigo_barra');
         $descripcion = $this->input->post('producto_descripcion');
@@ -537,6 +538,7 @@ class producto extends MY_Controller
             'producto_proveedor' => !empty($proveedor) ? $proveedor : null,
             'producto_stockminimo' => $this->input->post('producto_stockminimo') != "" ? $this->input->post('producto_stockminimo') : 0,
             'producto_impuesto' => !empty($impuesto) ? $impuesto : null,
+            'producto_impuesto_precio' => !empty($incluir_precio) ? $incluir_precio : 0,
             'producto_largo' => $this->input->post('producto_largo'),
             'producto_ancho' => $this->input->post('producto_ancho'),
             'producto_alto' => $this->input->post('producto_alto'),
