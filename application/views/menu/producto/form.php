@@ -315,11 +315,6 @@
                                 endforeach;
                             endif;
                             ?>
-<<<<<<< HEAD
-                            <input type="hidden" id="producto_impuesto" name="producto_impuesto"
-                                   value="<?= $impuesto_ivg ?>">
-=======
->>>>>>> 4392afd4719e9056a5114f5b896abf0212885359
                             <div class="form-group">
                                 <div class="col-md-3">
                                     <label for="impuesto" class="control-label">Impuesto:</label>
