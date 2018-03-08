@@ -659,7 +659,8 @@ class producto_model extends CI_Model
     function select_all_producto()
     {
         $this->db->select($this->tabla . '.* ,lineas.nombre_linea,
-		 marcas.nombre_marca, familia.nombre_familia, grupos.nombre_grupo, proveedor.proveedor_nombre, impuestos.nombre_impuesto');
+		 marcas.nombre_marca, familia.nombre_familia, grupos.nombre_grupo, proveedor.proveedor_nombre,
+		  impuestos.nombre_impuesto, impuestos.porcentaje_impuesto');
         $this->db->from($this->tabla);
         $this->db->join('lineas', 'lineas.id_linea=producto.' . $this->linea, 'left');
         $this->db->join('marcas', 'marcas.id_marca=producto.' . $this->marca, 'left');

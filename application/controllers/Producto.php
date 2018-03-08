@@ -538,7 +538,6 @@ class producto extends MY_Controller
             'producto_proveedor' => !empty($proveedor) ? $proveedor : null,
             'producto_stockminimo' => $this->input->post('producto_stockminimo') != "" ? $this->input->post('producto_stockminimo') : 0,
             'producto_impuesto' => !empty($impuesto) ? $impuesto : null,
-            'producto_impuesto_precio' => !empty($incluir_precio) ? $incluir_precio : 0,
             'producto_largo' => $this->input->post('producto_largo'),
             'producto_ancho' => $this->input->post('producto_ancho'),
             'producto_alto' => $this->input->post('producto_alto'),

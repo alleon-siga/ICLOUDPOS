@@ -32,6 +32,7 @@ class opciones extends MY_Controller
             'ACTIVAR_SHADOW',
             'INGRESO_COSTO',
             'INGRESO_UTILIDAD',
+            'IMPUESTO_PRODUCTO'
         );
 
         if ($action == 'get') {

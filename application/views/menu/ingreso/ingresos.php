@@ -397,7 +397,8 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                                                     <?php if (count($lstProducto) > 0): ?>
                                                         <?php foreach ($lstProducto as $pd): ?>
                                                             <option
-                                                                    value="<?php echo $pd['producto_id']; ?>">
+                                                                    value="<?php echo $pd['producto_id']; ?>"
+                                                                    data-impuesto="<?= $pd['porcentaje_impuesto'] ?>">
 
                                                                 <?php $barra = $barra_activa->activo == 1 && $pd['producto_codigo_barra'] != "" ? "CB: " . $pd['producto_codigo_barra'] : "" ?>
                                                                 <?php echo getCodigoValue(sumCod($pd['producto_id']), $pd['producto_codigo_interno']) . ' - ' . $pd['producto_nombre'] . ' ' . $barra; ?></option>
@@ -616,17 +617,18 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                                 </div>
 
                                 <?php if ($costos === 'true'): ?>
-                                    <div class="control-group">
+                                    <div class="control-group"
+                                         style="display: <?= validOption('IMPUESTO_PRODUCTO', 0) ? 'block' : 'none' ?>;">
                                         <div class="col-md-3">
 
                                             <input type="checkbox"
                                                    id="with_igv" value="1"
                                             /> <label for="with_igv" class="control-label">Considerar
-                                                IGV</label>
+                                                Impuesto</label>
 
                                         </div>
                                     </div>
-                                <?php endif ?>
+                                <?php endif; ?>
 
                             </div>
                         </div>

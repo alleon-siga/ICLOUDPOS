@@ -904,6 +904,7 @@ function agregarProducto() {
                 producto.index = lst_producto.length;
                 producto.producto_id = $("#cboProducto").val();
                 producto.producto_nombre = encodeURIComponent($("#cboProducto option:selected").text());
+                producto.producto_impuesto = $("#cboProducto option:selected").attr('data-impuesto');
                 producto.cantidad = input.val();
                 /*si costos es igual a false, es porque es unregistro de existencia, por lo tanto
                  * no lleva importe, ni costo unitario*/
@@ -1255,23 +1256,36 @@ function calcular_pago() {
 
     }
     else {
-        var imp = parseFloat((100 + parseFloat($('#IMPUESTO').val())) / 100);
-        if ($("#with_igv").prop('checked') == true) {
-            sub_total = parseFloat(total_importe).toFixed(2);
-            total = parseFloat(sub_total * imp).toFixed(2);
-            impuesto = parseFloat(total - sub_total).toFixed(2);
+
+        if ($('#IMPUESTO_PRODUCTO').val() != 1) {
+            if ($("#with_igv").prop('checked') == true) {
+                total = parseFloat(total_importe);
+                for (var i = 0; i < lst_producto.length; i++) {
+                    var factor = parseFloat((parseFloat(lst_producto[i].producto_impuesto) + 100) / 100);
+                    impuesto += parseFloat(total_importe - (total_importe / factor));
+                }
+                sub_total = parseFloat(total_importe - impuesto);
+            }
+            else {
+                total = parseFloat(total_importe);
+                sub_total = total;
+                impuesto = parseFloat(0);
+            }
         }
         else {
-            total = parseFloat(total_importe).toFixed(2);
-            sub_total = parseFloat(total / imp).toFixed(2);
-            impuesto = parseFloat(total - sub_total).toFixed(2);
+            total = parseFloat(total_importe);
+            for (var i = 0; i < lst_producto.length; i++) {
+                var factor = parseFloat((parseFloat(lst_producto[i].producto_impuesto) + 100) / 100);
+                impuesto += parseFloat(total_importe - (total_importe / factor));
+            }
+            sub_total = parseFloat(total_importe - impuesto);
         }
     }
 
 
     $('#totApagar').val(formatPrice(total));
-    $('#montoigv').val(impuesto);
-    $('#subTotal').val(sub_total);
+    $('#montoigv').val(impuesto.toFixed(2));
+    $('#subTotal').val(sub_total.toFixed(2));
 }
 
 //FUNCIONES PARA TRABAJAR CON LAS SERIES DE LOS PRODUCTOS
@@ -1472,7 +1486,7 @@ function accionGuardar() {
     miJSON = JSON.stringify(miJSON);
 
     var cuotas = [];
-    if($('#pago').val() == 'CREDITO')
+    if ($('#pago').val() == 'CREDITO')
         cuotas = prepare_cuotas();
 
     $.ajax({
