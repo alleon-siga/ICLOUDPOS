@@ -145,7 +145,7 @@ class unidades_model extends CI_Model
         $resto = $cantidad_minima;
         foreach ($unidades as $um) {
 
-            if($orden_max->orden == $um->orden){
+            if ($orden_max->orden == $um->orden) {
                 $result[$um->um_id] = $resto;
                 break;
             }
@@ -235,17 +235,24 @@ class unidades_model extends CI_Model
         $unidad = $this->db->get_where('unidades_has_producto',
             array('producto_id' => $producto_id, 'id_unidad' => $um_id))->row();
 
-        if ($unidad_min->orden == $unidad->orden) return $costo_unitario;
+        $factor = 1;
+        if(validOption('IMPUESTO_PRODUCTO', 1)){
+            $impuesto = $this->db->join('impuestos', 'impuestos.id_impuesto = producto.producto_impuesto')
+                ->get_where('producto', array('producto_id' => $producto_id))->row();
+            $factor = (100 + $impuesto->porcentaje_impuesto) / 100;
+        }
+
+
+        if ($unidad_min->orden == $unidad->orden) return $costo_unitario * $factor;
 
         if ($orden_max->orden == $unidad->orden)
-            return $costo_unitario * $unidad_min->unidades;
+            return $costo_unitario * $unidad_min->unidades * $factor;
 
-        return $costo_unitario * $unidad->unidades;
+        return $costo_unitario * $unidad->unidades * $factor;
     }
 
     public function get_unidades_costos($producto_id, $moneda_id = 0)
     {
-
         $result = $this->db->select('costo, unidades_has_producto.*, unidades.nombre_unidad, producto.producto_cualidad')
             ->from('producto')
             ->join('unidades_has_producto', 'producto.producto_id = unidades_has_producto.producto_id')
@@ -292,7 +299,8 @@ class unidades_model extends CI_Model
         return $result;
     }
 
-    public function get_moneda_default($producto_id){
+    public function get_moneda_default($producto_id)
+    {
         $moneda = $this->db->get_where('producto_costo_unitario', array('producto_id' => $producto_id, 'activo' => '1'))->row();
         $moneda_id = $moneda != null ? $moneda->moneda_id : MONEDA_DEFECTO;
         return $this->db->get_where('moneda', array('id_moneda' => $moneda_id))->row();
@@ -438,8 +446,8 @@ class unidades_model extends CI_Model
     {
         $this->db->select('unidades_has_producto.*,unidades.nombre_unidad, unidades.abreviatura');
         $this->db->from('unidades_has_producto');
-        $this->db->join('unidades','unidades.id_unidad=unidades_has_producto.id_unidad');
-        $this->db->order_by('orden','desc');
+        $this->db->join('unidades', 'unidades.id_unidad=unidades_has_producto.id_unidad');
+        $this->db->order_by('orden', 'desc');
         $query = $this->db->get();
         return $query->result_array();
     }
@@ -458,10 +466,10 @@ class unidades_model extends CI_Model
 
     function activarUnidad($unidad)
     {
-        $this->db->where('id_unidad',$unidad);
+        $this->db->where('id_unidad', $unidad);
         $this->db->update('unidades', array('estatus_unidad' => 1));
 
-        if($this->db->affected_rows()>0){
+        if ($this->db->affected_rows() > 0) {
             return true;
         } else {
             return false;

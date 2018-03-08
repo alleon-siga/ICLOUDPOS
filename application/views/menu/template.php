@@ -748,6 +748,7 @@ $primary_nav = array(
 <input type="hidden" id="MONEDA_DEFECTO_NOMBRE" value="<?= $md->nombre ?>">
 <input type="hidden" id="MONEDA_DEFECTO_SIMBOLO" value="<?= $md->simbolo ?>">
 <input type="hidden" id="IMPUESTO" value="<?= IMPUESTO ?>">
+<input type="hidden" id="IMPUESTO_PRODUCTO" value="<?= valueOptionDB('IMPUESTO_PRODUCTO', 0) ?>">
 
 <div id="page-wrapper"<?php if ($template['page_preloader']) {
     echo ' class="page-loading"';

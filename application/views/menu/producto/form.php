@@ -322,13 +322,14 @@
                                 <div class="col-md-8">
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <select name="producto_impuesto" id="producto_impuesto" class='cho form-control'>
+                                            <select name="producto_impuesto" id="producto_impuesto"
+                                                    class='cho form-control'>
                                                 <option value="">Seleccione</option>
                                                 <?php if (count($impuestos) > 0): ?>
                                                     <?php foreach ($impuestos as $impuesto): ?>
                                                         <option
                                                                 value="<?php echo $impuesto['id_impuesto']; ?>"
-                                                                data-impuesto="<?= $impuesto['porcentaje_impuesto']?>"
+                                                                data-impuesto="<?= $impuesto['porcentaje_impuesto'] ?>"
                                                             <?php if (isset($producto['producto_impuesto']) && $producto['producto_impuesto'] == $impuesto['id_impuesto']) echo 'selected'; ?>>
                                                             <?php echo $impuesto['nombre_impuesto']; ?>
                                                         </option>
@@ -349,14 +350,6 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <input
-                                            type="checkbox"
-                                            id="incluir_precio"
-                                            name="incluir_precio"
-                                            <?= isset($producto['producto_impuesto_precio']) && $producto['producto_impuesto_precio'] == 1 ? 'checked' : ''?>>
-                                    <label for="incluir_precio" style="cursor:pointer;">Incluir impuesto al precio de venta</label>
-                                    <br>
-                                    <br>
                                 </div>
                             </div>
                         <?php } ?>
@@ -848,7 +841,8 @@
                                             <td>
                                                 <select name='medida[<?= $countunidad ?>]'
                                                         id='medida<?= $countunidad ?>'
-                                                        class='form-control unidad_select' data-row="<?= $countunidad ?>"
+                                                        class='form-control unidad_select'
+                                                        data-row="<?= $countunidad ?>"
                                                 >
                                                     <?php foreach ($unidades as $unidad2):
                                                         ?>
@@ -955,6 +949,41 @@
 
                                 </tbody>
                             </table>
+                            <div style="display: <?= valueOption('IMPUESTO_PRODUCTO', 0) == 1 ? 'block' : 'none' ?>;">
+                                <br>
+                                <h4>Precios con impuesto incluido (<span id="impuesto_select">18</span>%)</h4>
+                                <div class="row" style="width: 90%;">
+                                    <div class="col-md-6">
+                                        <h5>Precios de Venta</h5>
+                                        <table class="table">
+                                            <thead>
+                                            <tr>
+                                                <th>Presentacion</th>
+                                                <th>Precio Unitario</th>
+                                                <th>Precio Venta</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody id="precio_venta_impuesto_body">
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <h5>Costo Unitario</h5>
+                                        <table class="table">
+                                            <thead>
+                                            <tr>
+                                                <th>Presentacion</th>
+                                                <th>Moneda</th>
+                                                <th>Costo Unitario</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody id="costo_compra_impuesto_body">
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1048,17 +1077,13 @@
             </div>
             <div class="modal-footer">
                 <div class="row">
-                    <div class="text-right">
-
-
-                        <div class="col-md-2">
-                            <button class="btn btn-default" type="button" onclick="confirm_save()" id="btnGuardar"><i
-                                        class="fa fa-save"></i> Guardar
-                            </button>
-                        </div>
-                        <div class="col-md-2">
-                            <input type="reset" class='btn btn-default' value="Cancelar" data-dismiss="modal">
-                        </div>
+                    <div class="col-md-offset-8 col-md-2">
+                        <button class="btn btn-default" type="button" onclick="confirm_save()" id="btnGuardar"><i
+                                    class="fa fa-save"></i> Guardar
+                        </button>
+                    </div>
+                    <div class="col-md-2">
+                        <input type="reset" class='btn btn-danger' value="Cancelar" data-dismiss="modal">
                     </div>
 
                 </div>
@@ -1147,33 +1172,92 @@
         <?php if ($columna->nombre_columna == 'producto_vencimiento' and $columna->activo == 1): ?>
         $(".my_datepicker").datepicker({format: 'dd-mm-yyyy'});
         <?php endif;?>
-        $(function(){
-            $('#producto_impuesto').on('change', function(){
-                if($(this).val() == ''){
+
+        function updateImpuestoTabla() {
+            var igv = parseFloat($('#producto_impuesto option:selected').attr('data-impuesto'));
+            var factor_impuesto = parseFloat((100 + igv) / 100);
+            var last_presentacion = '';
+            var moneda = $('#cu_moneda option:selected');
+            var venta_body = $('#precio_venta_impuesto_body');
+            var compra_body = $('#costo_compra_impuesto_body');
+            venta_body.html('');
+            compra_body.html('');
+
+            $('#impuesto_select').html(igv);
+
+            $('.unidad_select').each(function () {
+                var elem = $(this);
+                var row = elem.attr('data-row');
+                var temp = {
+                    presentacion: elem.find('option:selected').text(),
+                    precio_unitario: parseFloat($('#precio_unitario' + row).val() * factor_impuesto),
+                    precio_venta: parseFloat($('#precio_venta' + row).val() * factor_impuesto)
+                };
+
+                var template = '<tr>';
+                template += '<td>' + temp.presentacion + '</td>';
+                template += '<td>' + temp.precio_unitario.toFixed(2) + '</td>';
+                template += '<td>' + temp.precio_venta.toFixed(2) + '</td>';
+                template += '</tr>';
+
+                venta_body.append(template);
+                last_presentacion = temp.presentacion;
+            });
+
+            $('#cu_moneda option').each(function () {
+                var elem = $(this);
+                var temp = {
+                    presentacion: last_presentacion,
+                    moneda: elem.attr('data-simbolo'),
+                    costo: parseFloat(elem.attr('data-costo') * factor_impuesto)
+                };
+
+                var template = '<tr>';
+                template += '<td>' + temp.presentacion + '</td>';
+                template += '<td>' + temp.moneda + '</td>';
+                template += '<td id="costo_impuesto_select_' + elem.val() + '">' + temp.costo.toFixed(2) + '</td>';
+                template += '</tr>';
+
+                compra_body.append(template);
+            })
+
+            $('#costo_impuesto_select_' + moneda.val()).html(
+                parseFloat($('#costo_unitario').val() * factor_impuesto).toFixed(2)
+            );
+        }
+
+        //        updateImpuestoTabla();
+
+        $(function () {
+            $('#producto_impuesto').on('change', function () {
+                if ($(this).val() == '') {
                     $('#valor_importe').val("");
-                    $('#incluir_precio').prop('checked', false);
-                }else{
+                } else {
                     $('#valor_importe').val($('#producto_impuesto option:selected').attr('data-impuesto'));
+                    updateImpuestoTabla();
                 }
             });
 
             $('#producto_impuesto').trigger('change');
-        })
 
+            $('#costo_unitario').on('keyup', function () {
+                updateImpuestoTabla();
+            })
+        })
 
 
         $("#cu_moneda").change(function (e) {
             $("#costo_unitario").val(parseFloat($("#cu_moneda option:selected").attr('data-costo')).toFixed(2));
             $(".tipo_tasa").html($("#cu_moneda option:selected").attr('data-simbolo'));
             $("#tasa_convert").val($("#cu_moneda option:selected").attr('data-tasa'));
-
+            updateImpuestoTabla();
         });
 
         $("#cu_moneda_contable").change(function (e) {
             $("#contable_costo").val(parseFloat($("#cu_moneda_contable option:selected").attr('data-costo')).toFixed(2));
             $(".tipo_tasa_contable").html($("#cu_moneda_contable option:selected").attr('data-simbolo'));
             $("#tasa_convert_contable").val($("#cu_moneda_contable option:selected").attr('data-tasa'));
-
+            updateImpuestoTabla();
         });
 
         /*estos metodos lo que hacen es actualizar los select de los campos dinamicos, marca, familia, etc*/
@@ -1636,6 +1720,8 @@
 
             unidadcount++;
 
+            updateImpuestoTabla();
+
 
             $(".precio_unitario").keyup(function () {
                 var row = $(this).attr('data-row');
@@ -1643,6 +1729,7 @@
                 var unidades = $("#unidad\\[" + row + "\\]").val();
 
                 precio_venta.val(parseFloat(unidades * $(this).val()).toFixed(2));
+                updateImpuestoTabla();
             });
 
             $(".precio_venta").keyup(function () {
@@ -1652,6 +1739,7 @@
 
 
                 precio_unitario.val(parseFloat($(this).val() / unidades).toFixed(2));
+                updateImpuestoTabla();
             });
 
             $('.unidades').keyup(function () {
@@ -1662,6 +1750,8 @@
 
                 if (precio_unitario != 0 && !isNaN(precio_unitario) && unidades != 0)
                     precio_venta.val(parseFloat(unidades * precio_unitario).toFixed(2));
+
+                updateImpuestoTabla();
 
             });
         }
@@ -1699,6 +1789,8 @@
                 ?>
             }
 
+            updateImpuestoTabla();
+
             $('.unidad_select').off('change');
             $('.unidad_select').on('change', function () {
                 var nombre = $(this).find('option:selected').text();
@@ -1708,6 +1800,8 @@
                     $('input[id="unidad[' + id + ']"]').val(1);
                 if (nombre == 'DOCENA')
                     $('input[id="unidad[' + id + ']"]').val(12);
+
+                updateImpuestoTabla();
 
             });
 
@@ -1719,6 +1813,7 @@
                 var unidades = $("#unidad\\[" + row + "\\]").val();
 
                 precio_venta.val(parseFloat(unidades * $(this).val()).toFixed(2));
+                updateImpuestoTabla();
             });
 
             $(".precio_venta").keyup(function () {
@@ -1728,6 +1823,7 @@
 
 
                 precio_unitario.val(parseFloat($(this).val() / unidades).toFixed(2));
+                updateImpuestoTabla();
             });
 
             $('.unidades').keyup(function () {
@@ -1738,6 +1834,8 @@
 
                 if (precio_unitario != 0 && !isNaN(precio_unitario) && unidades != 0)
                     precio_venta.val(parseFloat(unidades * precio_unitario).toFixed(2));
+
+                updateImpuestoTabla();
 
             });
         }
@@ -1793,6 +1891,8 @@
                 count++;
             })
 
+            updateImpuestoTabla();
+
             $('.unidad_select').off('change');
             $('.unidad_select').on('change', function () {
                 var nombre = $(this).find('option:selected').text();
@@ -1802,6 +1902,8 @@
                     $('input[id="unidad[' + id + ']"]').val(1);
                 if (nombre == 'DOCENA')
                     $('input[id="unidad[' + id + ']"]').val(12);
+
+                updateImpuestoTabla();
 
             });
 
@@ -1813,6 +1915,7 @@
                 var unidades = $("#unidad\\[" + row + "\\]").val();
 
                 precio_venta.val(parseFloat(unidades * $(this).val()).toFixed(2));
+                updateImpuestoTabla();
             });
 
             $(".precio_venta").keyup(function () {
@@ -1822,6 +1925,7 @@
 
 
                 precio_unitario.val(parseFloat($(this).val() / unidades).toFixed(2));
+                updateImpuestoTabla();
             });
 
             $('.unidades').keyup(function () {
@@ -1832,6 +1936,8 @@
 
                 if (precio_unitario != 0 && !isNaN(precio_unitario) && unidades != 0)
                     precio_venta.val(parseFloat(unidades * precio_unitario).toFixed(2));
+
+                updateImpuestoTabla();
 
             });
         }
@@ -1872,6 +1978,8 @@
 
         $(document).ready(function () {
 
+            updateImpuestoTabla();
+
             $('.textarea-editor').wysihtml5({
                 "font-styles": true, //Font styling, e.g. h1, h2, etc. Default true
                 "emphasis": true, //Italics, bold, etc. Default true
@@ -1892,6 +2000,8 @@
                 if (nombre == 'DOCENA')
                     $('input[id="unidad[' + id + ']"]').val(12);
 
+                updateImpuestoTabla();
+
             });
 
             $('.unidad_select').trigger('change');
@@ -1902,6 +2012,7 @@
                 var unidades = $("#unidad\\[" + row + "\\]").val();
 
                 precio_venta.val(parseFloat(unidades * $(this).val()).toFixed(2));
+                updateImpuestoTabla();
             });
 
             $(".precio_venta").keyup(function () {
@@ -1911,6 +2022,7 @@
 
 
                 precio_unitario.val(parseFloat($(this).val() / unidades).toFixed(2));
+                updateImpuestoTabla();
             });
 
             $('.unidades').keyup(function () {
@@ -1921,6 +2033,8 @@
 
                 if (precio_unitario != 0 && !isNaN(precio_unitario) && unidades != 0)
                     precio_venta.val(parseFloat(unidades * precio_unitario).toFixed(2));
+
+                updateImpuestoTabla();
 
             });
 
