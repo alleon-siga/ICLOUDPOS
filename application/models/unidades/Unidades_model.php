@@ -235,20 +235,13 @@ class unidades_model extends CI_Model
         $unidad = $this->db->get_where('unidades_has_producto',
             array('producto_id' => $producto_id, 'id_unidad' => $um_id))->row();
 
-        $factor = 1;
-        if(validOption('IMPUESTO_PRODUCTO', 1)){
-            $impuesto = $this->db->join('impuestos', 'impuestos.id_impuesto = producto.producto_impuesto')
-                ->get_where('producto', array('producto_id' => $producto_id))->row();
-            $factor = (100 + $impuesto->porcentaje_impuesto) / 100;
-        }
 
-
-        if ($unidad_min->orden == $unidad->orden) return $costo_unitario * $factor;
+        if ($unidad_min->orden == $unidad->orden) return $costo_unitario;
 
         if ($orden_max->orden == $unidad->orden)
-            return $costo_unitario * $unidad_min->unidades * $factor;
+            return $costo_unitario * $unidad_min->unidades;
 
-        return $costo_unitario * $unidad->unidades * $factor;
+        return $costo_unitario * $unidad->unidades;
     }
 
     public function get_unidades_costos($producto_id, $moneda_id = 0)

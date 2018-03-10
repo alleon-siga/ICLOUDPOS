@@ -268,7 +268,17 @@
     function guardar() {
         if (lst_producto.length > 0) {
             $("#btn_confirmar").attr('disabled', 'disabled');
-            var miJSON = JSON.stringify(lst_producto);
+            var prods = [];
+            for(var i = 0; i< lst_producto.length;i++){
+                prods.push({
+                    local_id: lst_producto[i].local_id,
+                    index: lst_producto[i].index,
+                    producto_id: lst_producto[i].producto_id,
+                    cantidad: lst_producto[i].cantidad,
+                    fraccion: lst_producto[i].fraccion
+                });
+            }
+            var miJSON = JSON.stringify(prods);
 
             $.ajax({
                 url: '<?= $ruta?>traspaso/traspasar_productos',

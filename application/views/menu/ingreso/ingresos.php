@@ -617,14 +617,14 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                                 </div>
 
                                 <?php if ($costos === 'true'): ?>
-                                    <div class="control-group"
-                                         style="display: <?= validOption('IMPUESTO_PRODUCTO', 0) ? 'block' : 'none' ?>;">
+                                    <div class="control-group">
                                         <div class="col-md-3">
-
-                                            <input type="checkbox"
-                                                   id="with_igv" value="1"
-                                            /> <label for="with_igv" class="control-label">Considerar
-                                                Impuesto</label>
+                                            <label class="control-label">Calculo de Impuesto:</label>
+                                            <select id="tipo_impuesto" name="tipo_impuesto" class="form-control">
+                                                <option value="1">Incluye impuesto</option>
+                                                <option value="2">Agregar impuesto</option>
+                                                <option value="3">No considerar impuesto</option>
+                                            </select>
 
                                         </div>
                                     </div>

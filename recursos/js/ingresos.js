@@ -470,7 +470,7 @@ $(document).ready(function () {
         });
     });
 
-    $("#with_igv").click(function () {
+    $("#tipo_impuesto").on('change', function () {
         calcular_pago();
     });
 
@@ -1257,28 +1257,26 @@ function calcular_pago() {
     }
     else {
 
-        if ($('#IMPUESTO_PRODUCTO').val() != 1) {
-            if ($("#with_igv").prop('checked') == true) {
-                total = parseFloat(total_importe);
-                for (var i = 0; i < lst_producto.length; i++) {
-                    var factor = parseFloat((parseFloat(lst_producto[i].producto_impuesto) + 100) / 100);
-                    impuesto += parseFloat(total_importe - (total_importe / factor));
-                }
-                sub_total = parseFloat(total_importe - impuesto);
-            }
-            else {
-                total = parseFloat(total_importe);
-                sub_total = total;
-                impuesto = parseFloat(0);
-            }
-        }
-        else {
+        if ($("#tipo_impuesto").val() == 1) {
             total = parseFloat(total_importe);
             for (var i = 0; i < lst_producto.length; i++) {
                 var factor = parseFloat((parseFloat(lst_producto[i].producto_impuesto) + 100) / 100);
-                impuesto += parseFloat(total_importe - (total_importe / factor));
+                impuesto += parseFloat(lst_producto[i].importe - (lst_producto[i].importe / factor));
             }
             sub_total = parseFloat(total_importe - impuesto);
+        }
+        else if ($("#tipo_impuesto").val() == 2) {
+            sub_total = parseFloat(total_importe);
+            for (var i = 0; i < lst_producto.length; i++) {
+                var factor = parseFloat((parseFloat(lst_producto[i].producto_impuesto) + 100) / 100);
+                impuesto += parseFloat((lst_producto[i].importe * factor) - lst_producto[i].importe);
+            }
+            total = parseFloat(sub_total + impuesto);
+        }
+        else {
+            total = parseFloat(total_importe);
+            sub_total = total;
+            impuesto = parseFloat(0);
         }
     }
 
