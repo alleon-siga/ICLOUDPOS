@@ -188,8 +188,11 @@ class ingresos extends MY_Controller
                     'id_moneda' => $this->input->post('moneda_id', true),
                     'tasa_cambio' => $this->input->post('tasa_id', true),
                     'status' => $status,
-                    'facturar' => $this->input->post('facturar')
+                    'facturar' => $this->input->post('facturar'),
+                    'tipo_impuesto' => $this->input->post('tipo_impuesto')
                 );
+
+
 
                 $credito['c_inicial'] = $this->input->post('c_saldo_inicial') != '' ? $this->input->post('c_saldo_inicial') : 0;
                 $credito['c_precio_contado'] = $this->input->post('c_precio_contado');

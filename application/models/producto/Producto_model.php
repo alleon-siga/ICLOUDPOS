@@ -123,10 +123,12 @@ class producto_model extends CI_Model
     public function get_productos_list()
     {
         return $this->db->select(
-            'producto_id, producto_codigo_interno as codigo, producto_nombre, producto_codigo_barra as barra')
+            'producto_id, producto_codigo_interno as codigo, producto_nombre, producto_codigo_barra as barra, impuestos.porcentaje_impuesto')
             ->from('producto')
+            ->join('impuestos', 'impuestos.id_impuesto = producto.producto_impuesto')
             ->where('producto_estatus', '1')
             ->where('producto_estado', '1')
+            ->group_by('producto_id')
             ->get()->result();
     }
 

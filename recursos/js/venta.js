@@ -118,7 +118,7 @@ $(document).ready(function () {
                 $('#close_add_producto').trigger('click');
 
                 for (var i = 0; i < productos.length; i++) {
-                    var temp = '<option value="' + productos[i].producto_id + '">';
+                    var temp = '<option value="' + productos[i].producto_id + '" data-impuesto="' + productos[i].porcentaje_impuesto + '">';
                     if ($('#producto_what_codigo').val() == 'AUTO')
                         temp += productos[i].producto_id + ' - ' + productos[i].producto_nombre;
                     else
@@ -499,6 +499,10 @@ $(document).ready(function () {
         }
     });
 
+    $("#tipo_impuesto").on('change', function(){
+        refresh_right_panel();
+    });
+
     $("#reiniciar_venta").on('click', function () {
         $('#confirm_venta_text').html('Si reinicias la venta perderas todos los productos agregados. Estas seguro?');
         $('#confirm_venta_button').attr('onclick', 'reset_venta();');
@@ -866,6 +870,7 @@ function add_producto() {
         var producto = {};
         producto.index = lst_producto.length;
         producto.producto_id = producto_id;
+        producto.producto_impuesto = parseFloat($("#producto_id option:selected").attr('data-impuesto'));
         producto.producto_nombre = encodeURIComponent($("#producto_id option:selected").text());
         producto.precio_id = precio_id;
         producto.precio_unitario = parseFloat($("#precio_unitario").val());
@@ -1209,17 +1214,40 @@ function refresh_right_panel() {
     var index = $('.precio-input').length - 1;
     $('.precio-input[data-index="' + index + '"]').first().trigger('click');
 
-    var imp = parseFloat((100 + parseFloat($('#IMPUESTO').val())) / 100);
+    // var imp = parseFloat((100 + parseFloat($('#IMPUESTO').val())) / 100);
+    // var subtotal = 0, impuesto = 0, total_importe = 0;
+    // if ($("#incorporar_igv").val() == '1') {
+    //     subtotal = parseFloat(total);
+    //     impuesto = parseFloat(subtotal - parseFloat(total / imp));
+    //     total_importe = parseFloat(subtotal + impuesto);
+    // }
+    // else {
+    //     total_importe = total;
+    //     subtotal = total_importe / imp;
+    //     impuesto = total_importe - subtotal;
+    // }
+
     var subtotal = 0, impuesto = 0, total_importe = 0;
-    if ($("#incorporar_igv").val() == '1') {
+    if ($("#tipo_impuesto").val() == 1) {
+        total_importe = parseFloat(total);
+        for (var i = 0; i < lst_producto.length; i++) {
+            var factor = parseFloat((parseFloat(lst_producto[i].producto_impuesto) + 100) / 100);
+            impuesto += parseFloat(lst_producto[i].subtotal - (lst_producto[i].subtotal / factor));
+        }
+        subtotal = parseFloat(total_importe - impuesto);
+    }
+    else if ($("#tipo_impuesto").val() == 2) {
         subtotal = parseFloat(total);
-        impuesto = parseFloat(subtotal - parseFloat(total / imp));
+        for (var i = 0; i < lst_producto.length; i++) {
+            var factor = parseFloat((parseFloat(lst_producto[i].producto_impuesto) + 100) / 100);
+            impuesto += parseFloat((lst_producto[i].subtotal * factor) - lst_producto[i].subtotal);
+        }
         total_importe = parseFloat(subtotal + impuesto);
     }
     else {
-        total_importe = total;
-        subtotal = total_importe / imp;
-        impuesto = total_importe - subtotal;
+        total_importe = parseFloat(total);
+        subtotal = total;
+        impuesto = parseFloat(0);
     }
 
 

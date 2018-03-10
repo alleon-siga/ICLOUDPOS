@@ -180,7 +180,8 @@ class ingreso_model extends CI_Model
             'id_moneda' => $cab_pie['id_moneda'],
             'tasa_cambio' => $cab_pie['tasa_cambio'],
             'costo_por' => isset($cab_pie['costo_por']) ? $cab_pie['costo_por'] : 0,
-            'utilidad_por' => isset($cab_pie['utilidad_por']) ? $cab_pie['utilidad_por'] : 0
+            'utilidad_por' => isset($cab_pie['utilidad_por']) ? $cab_pie['utilidad_por'] : 0,
+            'tipo_impuesto' => $cab_pie['tipo_impuesto']
         );
 
         $this->db->insert('ingreso', $compra);
@@ -575,7 +576,9 @@ class ingreso_model extends CI_Model
                 'total_ingreso' => $cab_pie['totApagar'],
                 'id_moneda' => $cab_pie['id_moneda'],
                 'tasa_cambio' => $cab_pie['tasa_cambio'],
+                'tipo_impuesto' => $cab_pie['tipo_impuesto']
             );
+
 
             /*actualizo el ingreso*/
             $this->db->where('id_ingreso', $compra_id);
