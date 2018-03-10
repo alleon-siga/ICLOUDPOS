@@ -219,21 +219,6 @@
         </div>
     </div>
 
-    <div class="row form-group">
-        <div class="col-md-4">
-            <label class="control-label panel-admin-text">Incluir Impuesto al Producto:</label>
-        </div>
-        <div class="col-md-8">
-            <div class="form-control">
-                <input type="radio" name="IMPUESTO_PRODUCTO" id="" class='' value="1"
-                    <?php echo validOption("IMPUESTO_PRODUCTO", '1') ? 'checked' : '' ?>> Si
-                &nbsp;&nbsp;&nbsp;
-                <input type="radio" name="IMPUESTO_PRODUCTO" id="" class='' value="0"
-                    <?php echo validOption("IMPUESTO_PRODUCTO", '0') ? 'checked' : '' ?>> No
-            </div>
-        </div>
-    </div>
-
 
     <h3>Facturaci&oacute;n</h3>
     <div class="row form-group">
