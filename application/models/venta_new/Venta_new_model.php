@@ -275,7 +275,8 @@ class venta_new_model extends CI_Model
             'vuelto' => $venta['vc_vuelto'],
             'tasa_cambio' => $venta['tasa_cambio'],
             'dni_garante' => null,
-            'inicial' => null
+            'inicial' => null,
+            'tipo_impuesto' => $venta['tipo_impuesto']
         );
 
         if ($venta['venta_status'] == 'CAJA') {
@@ -383,6 +384,7 @@ class venta_new_model extends CI_Model
             'tasa_cambio' => $venta['tasa_cambio'],
             'dni_garante' => $venta['c_dni_garante'],
             'inicial' => $venta['c_inicial'],
+            'tipo_impuesto' => $venta['tipo_impuesto']
         );
 
 

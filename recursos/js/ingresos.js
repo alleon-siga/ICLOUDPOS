@@ -1487,6 +1487,10 @@ function accionGuardar() {
     if ($('#pago').val() == 'CREDITO')
         cuotas = prepare_cuotas();
 
+    // console.log($('#frmCompra').serialize())
+    // alert($('#tipo_impuesto').val())
+    // return false;
+
     $.ajax({
         type: 'POST',
         data: $('#frmCompra').serialize() + '&lst_producto=' + miJSON + '&cuotas=' + cuotas,

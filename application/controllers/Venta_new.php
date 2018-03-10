@@ -187,6 +187,7 @@ class venta_new extends MY_Controller
 
         $venta['venta_status'] = $this->input->post('venta_estado');
         $venta['fecha_venta'] = $this->input->post('fecha_venta');
+        $venta['tipo_impuesto'] = $this->input->post('tipo_impuesto');
 
         $venta['subtotal'] = $this->input->post('subtotal');
         $venta['impuesto'] = $this->input->post('impuesto');

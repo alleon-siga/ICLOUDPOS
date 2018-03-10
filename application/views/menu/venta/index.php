@@ -80,7 +80,8 @@
                                     data-placeholder="Seleccione el Producto">
                                 <option value=""></option>
                                 <?php foreach ($productos as $producto): ?>
-                                    <option value="<?= $producto->producto_id ?>">
+                                    <option value="<?= $producto->producto_id ?>"
+                                            data-impuesto="<?= $producto->porcentaje_impuesto ?>">
                                         <?php $barra = $barra_activa->activo == 1 && $producto->barra != "" ? "CB: " . $producto->barra : "" ?>
                                         <?= getCodigoValue($producto->producto_id, $producto->codigo) . ' - ' . $producto->producto_nombre . " " . $barra ?>
                                     </option>
@@ -456,6 +457,20 @@
                     </div>
                 </div>
 
+                <div class="row">
+                    <div class="col-md-5 label-title">
+                        <label class="control-label">Estado:</label>
+                    </div>
+
+                    <div class="col-md-7">
+                        <select name="tipo_impuesto" id="tipo_impuesto" class="form-control">
+                            <option value="1">Incluye impuesto</option>
+                            <option value="2">Agregar impuesto</option>
+                            <option value="3">No considerar impuesto</option>
+                        </select>
+                    </div>
+                </div>
+
 
             </div>
 
@@ -484,7 +499,6 @@
             <?php echo isset($dialog_venta_caja) ? $dialog_venta_caja : '' ?>
 
         </div>
-
 
 
         <div class="modal fade" id="dialog_venta_credito" tabindex="-1" role="dialog"
