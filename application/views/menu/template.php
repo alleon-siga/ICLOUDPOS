@@ -282,6 +282,12 @@ $primary_nav = array(
                 'icon' => 'gi gi-remove_2',
                 'slug' => 'anularventa'
             ),
+            array(
+                'name' => 'Comprobantes',
+                'url' => $ruta . 'comprobante',
+                'icon' => 'fa fa-cogs',
+                'slug' => 'anularventa'
+            ),
 
             array(
                 'name' => 'Configurar Venta',
@@ -477,6 +483,12 @@ $primary_nav = array(
                 'url' => $ruta . 'venta/estadocuenta',
                 'icon' => 'fa fa-credit-card',
                 'slug' => 'estadodecuenta'
+            ),
+            array(
+                'name' => 'Comision por vendedor',
+                'url' => $ruta . 'venta_new/reporte_comision',
+                'icon' => 'fa fa-pie-chart',
+                'slug' => 'resumenventas'
             ),
         ),
     ),

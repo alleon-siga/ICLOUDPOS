@@ -255,6 +255,11 @@ class credito_cuotas_abono_model extends CI_Model
         if ($pagadas[0]['pagadas'] < 1) {
             $data['var_credito_estado'] = "PagoCancelado";
             $data['fecha_cancelado'] = $fecha;
+            $this->load->model('venta_new/venta_new_model');
+            $venta = $this->venta_new_model->get_ventas(array('venta_id' => $idVenta));
+            if ($venta->comprobante_id > 0 && $venta->numero == null) {
+                $this->venta_new_model->facturar_venta($idVenta);
+            }
         }
 
         $where = array(

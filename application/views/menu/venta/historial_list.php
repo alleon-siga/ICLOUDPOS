@@ -75,6 +75,15 @@
                             <i class="fa fa-search"></i>
                         </a>
 
+                        <?php if($venta->numero == ''):?>
+                            <a class="btn btn-warning" data-toggle="tooltip" style="margin-right: 5px;"
+                               title="Ver" data-original-title="Facturar"
+                               href="#"
+                               onclick="facturar('<?= $venta->venta_id ?>');">
+                                <i class="fa fa-file-text"></i>
+                            </a>
+                        <?php endif;?>
+
                         <?php if ($venta_action != 'anular' && $venta_action != 'caja' && $venta->venta_estado != 'CERRADA'): ?>
                             <a class="btn btn-primary" data-toggle="tooltip" style="margin-right: 5px;"
                                title="Ver" data-original-title="Ver"
@@ -142,6 +151,12 @@
 
 
     <div class="modal fade" id="dialog_venta_imprimir" tabindex="-1" role="dialog"
+         aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false"
+         aria-hidden="true">
+
+    </div>
+
+    <div class="modal fade" id="dialog_venta_facturar" tabindex="-1" role="dialog"
          aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false"
          aria-hidden="true">
 

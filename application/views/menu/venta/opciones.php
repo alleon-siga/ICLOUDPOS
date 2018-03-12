@@ -83,15 +83,15 @@
 
     <div class="row form-group">
         <div class="col-md-4">
-            <label class="control-label panel-admin-text">Incorporar IGV:</label>
+            <label class="control-label panel-admin-text">Habilitar Uso de Comprobante:</label>
         </div>
         <div class="col-md-8">
             <div class="form-control">
-                <input type="radio" name="INCORPORAR_IGV" id="" class='' value="1"
-                    <?php echo validOption("INCORPORAR_IGV", '1', '0') ? 'checked' : '' ?>> SI
+                <input type="radio" name="COMPROBANTE" id="" class='' value="1"
+                    <?php echo validOption("COMPROBANTE", '1', '0') ? 'checked' : '' ?>> SI
                 &nbsp;&nbsp;&nbsp;
-                <input type="radio" name="INCORPORAR_IGV" id="" class='' value="0"
-                    <?php echo validOption("INCORPORAR_IGV", '0', '0') ? 'checked' : '' ?>> NO
+                <input type="radio" name="COMPROBANTE" id="" class='' value="0"
+                    <?php echo validOption("COMPROBANTE", '0', '0') ? 'checked' : '' ?>> NO
             </div>
         </div>
     </div>
