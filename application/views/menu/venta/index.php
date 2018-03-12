@@ -459,7 +459,7 @@
 
                 <div class="row">
                     <div class="col-md-5 label-title">
-                        <label class="control-label">Estado:</label>
+                        <label class="control-label">Impuesto:</label>
                     </div>
 
                     <div class="col-md-7">
@@ -611,6 +611,7 @@
         cotizacion.local_id = <?= $cotizacion->local_id ?>;
         cotizacion.cliente_id = <?= $cotizacion->cliente_id ?>;
         cotizacion.documento_id = <?= $cotizacion->documento_id ?>;
+        cotizacion.tipo_impuesto = <?= $cotizacion->tipo_impuesto ?>;
         cotizacion.condicion_id = <?= $cotizacion->condicion_id ?>;
         cotizacion.moneda_id = <?= $cotizacion->moneda_id ?>;
         cotizacion.moneda_tasa = <?= $cotizacion->moneda_tasa ?>;
@@ -619,6 +620,7 @@
         <?php foreach ($cotizacion->detalles as $detalle):?>
         var temp = {
             producto_id: <?= $detalle->producto_id ?>,
+            impuesto: <?= $detalle->impuesto?>,
             producto_nombre: '<?= $detalle->producto_nombre ?>',
             precio: <?= $detalle->precio ?>,
             um_min: '<?= $detalle->um_min ?>',
@@ -658,6 +660,8 @@
         $("#local_id").val(cotizacion.local_id).trigger("chosen:updated");
         $("#local_id").change();
 
+        $('#tipo_impuesto').val(cotizacion.tipo_impuesto);
+
         $('#tasa').val(cotizacion.moneda_tasa);
 
         for (var i = 0; i < cotizacion.detalles.length; i++) {
@@ -669,7 +673,8 @@
                 prod.um_min,
                 prod.um_min_abr,
                 prod.total_min,
-                prod.unidades
+                prod.unidades,
+                prod.impuesto
             );
         }
 
@@ -679,7 +684,7 @@
     });
 
 
-    function add_producto_from_cotizacion(producto_id, producto_nombre, precio, um_min, um_min_abr, total_min, unidades) {
+    function add_producto_from_cotizacion(producto_id, producto_nombre, precio, um_min, um_min_abr, total_min, unidades, impuesto) {
 
         var local_id = $("#local_id").val();
         var precio_id = $("#precio_id").val();
@@ -689,6 +694,7 @@
         var producto = {};
         producto.index = lst_producto.length;
         producto.producto_id = producto_id;
+        producto.producto_impuesto = impuesto;
         producto.producto_nombre = encodeURIComponent(producto_nombre);
         producto.precio_id = precio_id;
         producto.precio_unitario = parseFloat(precio);

@@ -63,17 +63,23 @@
                     </div>
 
                     <div class="col-md-7">
-                        <div class="help-key badge label-success" style="display: none;">3</div>
-                        <select name="producto_id" id="producto_id" class='form-control'
-                                data-placeholder="Seleccione el Producto">
-                            <option value=""></option>
-                            <?php foreach ($productos as $producto): ?>
-                                <option value="<?= $producto->producto_id ?>">
-                                    <?php $barra = $barra_activa->activo == 1 && $producto->barra != "" ? "CB: " . $producto->barra : "" ?>
-                                    <?= getCodigoValue($producto->producto_id, $producto->codigo) . ' - ' . $producto->producto_nombre . " " . $barra ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
+                        <div class="input-group">
+                            <div class="help-key badge label-success" style="display: none;">3</div>
+                            <select name="producto_id" id="producto_id" class='form-control'
+                                    data-placeholder="Seleccione el Producto">
+                                <option value=""></option>
+                                <?php foreach ($productos as $producto): ?>
+                                    <option value="<?= $producto->producto_id ?>"
+                                            data-impuesto="<?= $producto->porcentaje_impuesto ?>">
+                                        <?php $barra = $barra_activa->activo == 1 && $producto->barra != "" ? "CB: " . $producto->barra : "" ?>
+                                        <?= getCodigoValue($producto->producto_id, $producto->codigo) . ' - ' . $producto->producto_nombre . " " . $barra ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <a id="refresh_productos" href="#" class="input-group-addon btn-default">
+                                <i class="fa fa-refresh"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
 
@@ -463,6 +469,20 @@
                     <div class="col-md-7">
                         <input type="text" class="form-control" name="total_producto" id="total_producto" value="0"
                                readonly>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-5 label-title">
+                        <label class="control-label">Impuesto:</label>
+                    </div>
+
+                    <div class="col-md-7">
+                        <select name="tipo_impuesto" id="tipo_impuesto" class="form-control">
+                            <option value="1">Incluye impuesto</option>
+                            <option value="2">Agregar impuesto</option>
+                            <option value="3">No considerar impuesto</option>
+                        </select>
                     </div>
                 </div>
 
