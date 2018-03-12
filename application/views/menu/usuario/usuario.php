@@ -68,7 +68,7 @@
 
                                 } ?></td>
                             <td><?php echo $usu->nombre_grupos_usuarios; ?></td>
-                            
+
                             <td class='actions_big'>
                             <?php if ($usu->esSuper != 1)
                             { ?>
@@ -86,7 +86,7 @@
                                 </div>
                                 <?php } ?>
                             </td>
-                            
+
                         </tr>
                     <?php endforeach; ?>
                 <?php else : ?>
@@ -128,7 +128,7 @@
                 url:'<?= base_url()?>usuario'
 
             })
-        },                
+        },
 
 
         guardar : function () {
@@ -219,7 +219,21 @@
 
                 return false;
             }
-            
+
+            if ($("#comision").val() == '') {
+                var growlType = 'warning';
+
+                $.bootstrapGrowl('<h4>Debe seleccionar el % de comision</h4>', {
+                    type: growlType,
+                    delay: 2500,
+                    allow_dismiss: true
+                });
+
+                $(this).prop('disabled', true);
+
+                return false;
+            }
+
             App.formSubmitAjax($("#formagregar").attr('action'), this.ajaxgrupo, 'agregar', 'formagregar');
 
               setTimeout(function () {
@@ -249,7 +263,7 @@
         		  }
         }
     }
-    
+
 </script>
 
 

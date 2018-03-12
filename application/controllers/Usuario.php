@@ -6,7 +6,7 @@ class usuario extends MY_Controller
     function __construct()
     {
         parent::__construct();
-        if ($this->login_model->verify_session()) {        
+        if ($this->login_model->verify_session()) {
             $this->load->model('usuario/usuario_model');
             $this->load->model('usuariosgrupos/usuarios_grupos_model');
             $this->load->model('local/local_model');
@@ -15,7 +15,7 @@ class usuario extends MY_Controller
             redirect(base_url(), 'refresh');
         }
     }
-    
+
 
     function index()
     {
@@ -133,7 +133,8 @@ class usuario extends MY_Controller
             $identificacion = $this->input->post('identificacion', true);
             $activo = !empty($activo) ? true : false;
             $local_array = $this->input->post('chlocales', true);
-            
+            $comision_vendedor = $this->input->post('porcentaje_comision',true);
+
             if (!empty($local))
                 $usuario['id_local'] = $local;
             if (!empty($grupo))
@@ -146,7 +147,7 @@ class usuario extends MY_Controller
             if (!empty($password)) {
                 $usuario['var_usuario_clave'] = md5($password);
             }
-             
+
             if (empty($id)) {
                 $resultado = $this->usuario_model->insertar($usuario, $local_array);
             } else {
