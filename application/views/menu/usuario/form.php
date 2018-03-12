@@ -207,7 +207,7 @@
                           <div class="input-group">
                                 <input type="text"
                                      class='form-control'
-                                     name="comision" id="comision" value=""
+                                     name="comision" id="comision" value="<?php if(isset($usuario->porcentaje_comision)) echo $usuario->porcentaje_comision?>"
                                      onkeydown="return soloDecimal4(this, event);">
                                 <div class="input-group-addon">%</div>
                           </div>
