@@ -209,15 +209,15 @@
                             <div class="col-md-2">
                                 <label class="control-label panel-admin-text">Precio U. Venta:</label>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <div class="input-group">
-                                    <div class="input-group-addon tipo_moneda"><?= $md->simbolo ?></div>
+                                    <div class="input-group-addon tipo_moneda" style="padding: 0px; min-width: 25px;"><?= $md->simbolo ?></div>
                                     <input type="text" style="text-align: right;"
                                            class='form-control'
                                            data-index="0"
                                            name="precio_unitario" id="precio_unitario" value="0.00"
                                            onkeydown="return soloDecimal4(this, event);" readonly>
-                                    <a id="editar_pu" data-estado="0" href="#" class="input-group-addon"><i
+                                    <a id="editar_pu" data-estado="0" href="#" class="input-group-addon" style="padding: 0px; min-width: 25px;"><i
                                                 class="fa fa-edit"></i></a>
                                 </div>
                                 <h6 id="precio_unitario_um"
@@ -225,9 +225,23 @@
                             </div>
 
                             <div class="col-md-1 text-right" style="padding-right: 2px;">
+                                <label class="control-label panel-admin-text">Descuento:</label>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="input-group">
+                                    <input type="text"
+                                           class='form-control'
+                                           name="descuento" id="descuento" value=""
+                                           style="text-align: right; background-color: #ce8483 !important; color: #9c3428 !important; font-weight: bold;"
+                                           onkeydown="return soloDecimal4(this, event);">
+                                    <div class="input-group-addon">%</div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-1 text-right" style="padding-right: 2px;">
                                 <label class="control-label panel-admin-text">SubTotal:</label>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <div class="input-group">
                                     <div class="input-group-addon tipo_moneda"><?= $md->simbolo ?></div>
                                     <input type="text" style="text-align: right;"
@@ -237,7 +251,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-3 text-right">
+                            <div class="col-md-2 text-right">
 
                                 <button type="button" id="add_producto" class="btn btn-primary">
                                     Agregar <span class="help-key-side badge label-success"
@@ -272,6 +286,18 @@
 
             <!--SECCION DERECHA-->
             <div class="col-md-3 block block-section venta-right venta_input">
+
+                <!--FECHA DE LA VENTA-->
+                <div class="row">
+                    <div class="col-md-5 label-title">
+                        <label class="control-label">Fecha:</label>
+                    </div>
+
+                    <div class="col-md-7">
+                        <input type="text" class="form-control date-picker" name="fecha_venta" id="fecha_venta"
+                               value="<?= date('d/m/Y') ?>" readonly>
+                    </div>
+                </div>
 
                 <!--SELECCION MONEDA-->
                 <div class="row">
@@ -316,7 +342,7 @@
                 </div>
 
                 <!--SUBTOTAL-->
-                <div id="block_subtotal" style="display:none;" class="row">
+                <div id="block_subtotal" class="row">
                     <div class="col-md-5 label-title">
                         <label class="control-label">Sub-Total:</label>
                     </div>
@@ -332,8 +358,24 @@
                     </div>
                 </div>
 
+                <div id="block_subtotal" class="row">
+                    <div class="col-md-5 label-title">
+                        <label class="control-label">Descuento:</label>
+                    </div>
+
+                    <div class="col-md-7">
+                        <div class="input-group">
+                            <div class="input-group-addon tipo_moneda"><?= $md->simbolo ?></div>
+                            <input type="text" style="text-align: right; background-color: #ce8483 !important; color: #9c3428 !important;"
+                                   class='form-control'
+                                   name="total_descuento" id="total_descuento" value="0.00"
+                                   onkeydown="return soloDecimal4(this, event);" readonly>
+                        </div>
+                    </div>
+                </div>
+
                 <!--IMPUESTO-->
-                <div id="block_impuesto" style="display:none;" class="row">
+                <div id="block_impuesto" class="row">
                     <div class="col-md-5 label-title">
                         <label class="control-label">Impuesto:</label>
                     </div>
@@ -415,7 +457,7 @@
                 </div>
 
                 <!--ESTADO DE LA VENTA-->
-                <div class="row">
+                <div class="row" style="display: none;">
                     <div class="col-md-5 label-title">
                         <label class="control-label">Estado:</label>
                     </div>
@@ -433,18 +475,6 @@
                     </div>
                 </div>
 
-                <!--FECHA DE LA VENTA-->
-                <div class="row">
-                    <div class="col-md-5 label-title">
-                        <label class="control-label">Fecha:</label>
-                    </div>
-
-                    <div class="col-md-7">
-                        <input type="text" class="form-control date-picker" name="fecha_venta" id="fecha_venta"
-                               value="<?= date('d/m/Y') ?>" readonly>
-                    </div>
-                </div>
-
                 <!--TOTAL DE PRODUCTOS-->
                 <div class="row">
                     <div class="col-md-5 label-title">
@@ -459,7 +489,7 @@
 
                 <div class="row">
                     <div class="col-md-5 label-title">
-                        <label class="control-label">Estado:</label>
+                        <label class="control-label">Impuesto:</label>
                     </div>
 
                     <div class="col-md-7">
@@ -611,6 +641,7 @@
         cotizacion.local_id = <?= $cotizacion->local_id ?>;
         cotizacion.cliente_id = <?= $cotizacion->cliente_id ?>;
         cotizacion.documento_id = <?= $cotizacion->documento_id ?>;
+        cotizacion.tipo_impuesto = <?= $cotizacion->tipo_impuesto ?>;
         cotizacion.condicion_id = <?= $cotizacion->condicion_id ?>;
         cotizacion.moneda_id = <?= $cotizacion->moneda_id ?>;
         cotizacion.moneda_tasa = <?= $cotizacion->moneda_tasa ?>;
@@ -619,6 +650,7 @@
         <?php foreach ($cotizacion->detalles as $detalle):?>
         var temp = {
             producto_id: <?= $detalle->producto_id ?>,
+            impuesto: <?= $detalle->impuesto?>,
             producto_nombre: '<?= $detalle->producto_nombre ?>',
             precio: <?= $detalle->precio ?>,
             um_min: '<?= $detalle->um_min ?>',
@@ -658,6 +690,8 @@
         $("#local_id").val(cotizacion.local_id).trigger("chosen:updated");
         $("#local_id").change();
 
+        $('#tipo_impuesto').val(cotizacion.tipo_impuesto);
+
         $('#tasa').val(cotizacion.moneda_tasa);
 
         for (var i = 0; i < cotizacion.detalles.length; i++) {
@@ -669,7 +703,8 @@
                 prod.um_min,
                 prod.um_min_abr,
                 prod.total_min,
-                prod.unidades
+                prod.unidades,
+                prod.impuesto
             );
         }
 
@@ -679,7 +714,7 @@
     });
 
 
-    function add_producto_from_cotizacion(producto_id, producto_nombre, precio, um_min, um_min_abr, total_min, unidades) {
+    function add_producto_from_cotizacion(producto_id, producto_nombre, precio, um_min, um_min_abr, total_min, unidades, impuesto) {
 
         var local_id = $("#local_id").val();
         var precio_id = $("#precio_id").val();
@@ -689,6 +724,7 @@
         var producto = {};
         producto.index = lst_producto.length;
         producto.producto_id = producto_id;
+        producto.producto_impuesto = impuesto;
         producto.producto_nombre = encodeURIComponent(producto_nombre);
         producto.precio_id = precio_id;
         producto.precio_unitario = parseFloat(precio);

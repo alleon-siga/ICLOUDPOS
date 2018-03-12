@@ -91,6 +91,52 @@ $(document).ready(function () {
 
     // EVENTOS FUNCIONALES
 
+    $('#refresh_productos').on('click', function () {
+
+        $("#loading_save_venta").modal('show');
+        $.ajax({
+            url: ruta + 'venta_new/refresh_productos',
+            type: 'GET',
+            headers: {
+                Accept: 'application/json'
+            },
+            success: function (data) {
+                var select_producto = $('#producto_id');
+                var productos = data.productos;
+
+                select_producto.chosen('destroy');
+                select_producto.html('<option value=""></option>');
+                $('#close_add_producto').trigger('click');
+
+                for (var i = 0; i < productos.length; i++) {
+                    var temp = '<option value="' + productos[i].producto_id + '" data-impuesto="' + productos[i].porcentaje_impuesto + '">';
+                    if ($('#producto_what_codigo').val() == 'AUTO')
+                        temp += productos[i].producto_id + ' - ' + productos[i].producto_nombre;
+                    else
+                        temp += productos[i].codigo + ' - ' + productos[i].producto_nombre;
+
+                    if ($('#barra_activa').val() == 1 && productos[i].barra != "")
+                        temp += ' CB: ' + productos[i].barra;
+
+                    temp += '</option>';
+
+                    select_producto.append(temp);
+                }
+
+                $('#producto_id').chosen({
+                    search_contains: true
+                });
+                $('.chosen-container').css('width', '100%');
+            },
+            complete: function (data) {
+                $("#loading_save_venta").modal('hide');
+            },
+            error: function (data) {
+                alert('not');
+            }
+        });
+    });
+
 
     $("#producto_id").on('change', function (e) {
 
@@ -426,6 +472,10 @@ $(document).ready(function () {
         }
     });
 
+    $("#tipo_impuesto").on('change', function(){
+        refresh_right_panel();
+    });
+
     $("#reiniciar_cotizar").on('click', function () {
         $('#confirm_cotizar_text').html('Si reinicias la cotizacion perderas todos los productos agregados. Estas seguro?');
         $('#confirm_cotizar_button').attr('onclick', 'reset_cotizar();');
@@ -483,6 +533,7 @@ function prepare_detalles_productos() {
             if (cantidades[unidad] != 0) {
                 var producto = {};
                 producto.id_producto = lst_producto[i].producto_id;
+                producto.producto_impuesto = lst_producto[i].producto_impuesto;
                 producto.precio = lst_producto[i].precio_unitario;
                 producto.unidad_medida = unidad;
                 producto.cantidad = cantidades[unidad];
@@ -561,6 +612,7 @@ function add_producto() {
         var producto = {};
         producto.index = lst_producto.length;
         producto.producto_id = producto_id;
+        producto.producto_impuesto = parseFloat($("#producto_id option:selected").attr('data-impuesto'));
         producto.producto_nombre = encodeURIComponent($("#producto_id option:selected").text());
         producto.precio_id = precio_id;
         producto.precio_unitario = parseFloat($("#precio_unitario").val());
@@ -862,17 +914,27 @@ function refresh_right_panel() {
     var index = $('.precio-input').length - 1;
     $('.precio-input[data-index="' + index + '"]').first().trigger('click');
 
-    var imp = parseFloat((100 + parseFloat($('#IMPUESTO').val())) / 100);
     var subtotal = 0, impuesto = 0, total_importe = 0;
-    if ($("#incorporar_igv").val() == '1') {
+    if ($("#tipo_impuesto").val() == 1) {
+        total_importe = parseFloat(total);
+        for (var i = 0; i < lst_producto.length; i++) {
+            var factor = parseFloat((parseFloat(lst_producto[i].producto_impuesto) + 100) / 100);
+            impuesto += parseFloat(lst_producto[i].subtotal - (lst_producto[i].subtotal / factor));
+        }
+        subtotal = parseFloat(total_importe - impuesto);
+    }
+    else if ($("#tipo_impuesto").val() == 2) {
         subtotal = parseFloat(total);
-        impuesto = parseFloat(subtotal - parseFloat(total / imp));
+        for (var i = 0; i < lst_producto.length; i++) {
+            var factor = parseFloat((parseFloat(lst_producto[i].producto_impuesto) + 100) / 100);
+            impuesto += parseFloat((lst_producto[i].subtotal * factor) - lst_producto[i].subtotal);
+        }
         total_importe = parseFloat(subtotal + impuesto);
     }
     else {
-        total_importe = total;
-        subtotal = total_importe / imp;
-        impuesto = total_importe - subtotal;
+        total_importe = parseFloat(total);
+        subtotal = total;
+        impuesto = parseFloat(0);
     }
 
 

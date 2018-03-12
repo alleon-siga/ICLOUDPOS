@@ -23,6 +23,7 @@ class cotizar_model extends CI_Model
             c.local_id AS local_id,
             local.local_nombre AS local_nombre,
             c.documento_id as documento_id,
+            c.tipo_impuesto as tipo_impuesto,
             documentos.des_doc as documento_nombre,
             c.cliente_id as cliente_id,
             cliente.razon_social as cliente_nombre,
@@ -220,7 +221,8 @@ class cotizar_model extends CI_Model
             cd.unidad_id as unidad_id,
             unidades.nombre_unidad as unidad_nombre,
             unidades.abreviatura as unidad_abr,
-            SUM(cd.precio * cd.cantidad) as importe
+            SUM(cd.precio * cd.cantidad) as importe,
+            cd.impuesto as impuesto
             ')
             ->from('cotizacion_detalles as cd')
             ->join('cotizacion as c', 'c.id=cd.cotizacion_id')
@@ -239,6 +241,7 @@ class cotizar_model extends CI_Model
                 $result[$detalle->producto_id] = new stdClass();
                 $result[$detalle->producto_id]->producto_nombre = $detalle->producto_nombre;
                 $result[$detalle->producto_id]->producto_id = $detalle->producto_id;
+                $result[$detalle->producto_id]->impuesto = $detalle->impuesto;
                 $result[$detalle->producto_id]->precio = $detalle->precio;
                 $result[$detalle->producto_id]->um_min = $this->unidades_model->get_um_min_by_producto($detalle->producto_id);
                 $result[$detalle->producto_id]->um_min_abr = $this->unidades_model->get_um_min_by_producto_abr($detalle->producto_id);
@@ -274,13 +277,13 @@ class cotizar_model extends CI_Model
 
         $data = array();
         foreach ($detalles as $detalle) {
-
             $temp = array(
                 'cotizacion_id' => $id,
                 'producto_id' => $detalle->id_producto,
                 'unidad_id' => $detalle->unidad_medida,
                 'precio' => $detalle->precio,
                 'cantidad' => $detalle->cantidad,
+                'impuesto' => $detalle->producto_impuesto
             );
 
             array_push($data, $temp);

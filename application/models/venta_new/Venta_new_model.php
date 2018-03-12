@@ -552,7 +552,8 @@ class venta_new_model extends CI_Model
                 'detalle_costo_promedio' => 0,
                 'detalle_utilidad' => 0,
                 'impuesto_id' => $p->id_impuesto,
-                'impuesto_porciento' => $p->porcentaje_impuesto
+                'impuesto_porciento' => $p->porcentaje_impuesto,
+                'precio_venta' => $producto->precio_venta,
             );
             array_push($venta_detalle, $producto_detalle);
 

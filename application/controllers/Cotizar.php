@@ -135,6 +135,7 @@ class cotizar extends MY_Controller
         $cotizar['cliente_id'] = $this->input->post('cliente_id');
         $cotizar['vendedor_id'] = $this->session->userdata('nUsuCodigo');
         $cotizar['documento_id'] = $this->input->post('tipo_documento');
+        $cotizar['tipo_impuesto'] = $this->input->post('tipo_impuesto');
         $cotizar['tipo_pago_id'] = $this->input->post('tipo_pago');
         $cotizar['moneda_id'] = $this->input->post('moneda_id');
         $cotizar['estado'] = 'PENDIENTE';
