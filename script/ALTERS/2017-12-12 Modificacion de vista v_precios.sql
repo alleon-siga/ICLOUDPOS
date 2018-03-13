@@ -1,10 +1,8 @@
 
-CREATE 
-     OR REPLACE ALGORITHM = UNDEFINED 
-    DEFINER = `root`@`localhost` 
-    SQL SECURITY DEFINER
+CREATE
+
 VIEW `v_lista_precios` AS
-    SELECT 
+    SELECT
         `producto`.`producto_id` AS `producto_id`,
         `producto`.`producto_nombre` AS `producto_nombre`,
         `producto`.`producto_codigo_barra` AS `producto_codigo_barra`,

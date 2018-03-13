@@ -282,6 +282,12 @@ $primary_nav = array(
                 'icon' => 'gi gi-remove_2',
                 'slug' => 'anularventa'
             ),
+            array(
+                'name' => 'Comprobantes',
+                'url' => $ruta . 'comprobante',
+                'icon' => 'fa fa-cogs',
+                'slug' => 'anularventa'
+            ),
 
             array(
                 'name' => 'Configurar Venta',
@@ -479,10 +485,17 @@ $primary_nav = array(
                 'slug' => 'estadodecuenta'
             ),
             array(
+<<<<<<< HEAD
                 'name' => 'Productos más vendidos',
                 'url' => $ruta . 'reporte/productoVendido',
                 'icon' => 'fa fa-area-chart',
                 'slug' => 'productovendido'
+=======
+                'name' => 'Comision por vendedor',
+                'url' => $ruta . 'venta_new/reporte_comision',
+                'icon' => 'fa fa-pie-chart',
+                'slug' => 'resumenventas'
+>>>>>>> bf77e1d452f3515a873740084b93a0d1d477dedf
             ),
         ),
     ),

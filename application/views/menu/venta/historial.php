@@ -48,7 +48,7 @@
                             <?php foreach ($monedas as $moneda): ?>
                                 <option value="<?= $moneda->id_moneda ?>"
                                         data-simbolo="<?= $moneda->simbolo ?>"
-                                        <?= $moneda->id_moneda == MONEDA_DEFECTO ? 'selected' : ''?>><?= $moneda->nombre ?></option>
+                                    <?= $moneda->id_moneda == MONEDA_DEFECTO ? 'selected' : '' ?>><?= $moneda->nombre ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -306,6 +306,25 @@
 
                 }
 
+                function facturar(venta_id) {
+
+                    $("#dialog_venta_facturar").html($("#loading").html());
+                    $("#dialog_venta_facturar").modal('show');
+
+                    $.ajax({
+                        url: '<?php echo $ruta . 'venta_new/get_venta_facturar/' . $venta_action; ?>',
+                        type: 'POST',
+                        data: {'venta_id': venta_id},
+
+                        success: function (data) {
+                            $("#dialog_venta_facturar").html(data);
+                        },
+                        error: function () {
+                            alert('asd')
+                        }
+                    });
+                }
+
                 function ver(venta_id) {
 
                     $("#dialog_venta_detalle").html($("#loading").html());
@@ -365,7 +384,7 @@
                     });
                 }
 
-                function save_venta_credito(){
+                function save_venta_credito() {
                     return false;
                 }
 
@@ -451,7 +470,6 @@
                 }
 
 
-
                 function previa(venta_id) {
 
                     $("#dialog_venta_imprimir").html($("#loading").html());
@@ -485,7 +503,6 @@
                 }
 
 
-
                 function anular(venta_id, venta) {
 
                     $('#confirm_venta_text').attr('data-venta', venta);
@@ -500,7 +517,7 @@
 
                 function anular_venta(venta_id) {
 
-                    if($("#documento_serie").val() == "" || $("#documento_numero").val() == ""){
+                    if ($("#documento_serie").val() == "" || $("#documento_numero").val() == "") {
                         show_msg('warning', 'Complete la serie y numero del documento');
                         return false;
                     }
@@ -510,7 +527,11 @@
                     $.ajax({
                         url: '<?php echo $ruta . 'venta_new/anular_venta'; ?>',
                         type: 'POST',
-                        data: {'venta_id': venta_id, 'serie': $("#documento_serie").val(), 'numero': $("#documento_numero").val()},
+                        data: {
+                            'venta_id': venta_id,
+                            'serie': $("#documento_serie").val(),
+                            'numero': $("#documento_numero").val()
+                        },
 
                         success: function (data) {
                             $('#dialog_venta_confirm').modal('hide');

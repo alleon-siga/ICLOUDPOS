@@ -211,13 +211,15 @@
                             </div>
                             <div class="col-md-2">
                                 <div class="input-group">
-                                    <div class="input-group-addon tipo_moneda" style="padding: 0px; min-width: 25px;"><?= $md->simbolo ?></div>
+                                    <div class="input-group-addon tipo_moneda"
+                                         style="padding: 0px; min-width: 25px;"><?= $md->simbolo ?></div>
                                     <input type="text" style="text-align: right;"
                                            class='form-control'
                                            data-index="0"
                                            name="precio_unitario" id="precio_unitario" value="0.00"
                                            onkeydown="return soloDecimal4(this, event);" readonly>
-                                    <a id="editar_pu" data-estado="0" href="#" class="input-group-addon" style="padding: 0px; min-width: 25px;"><i
+                                    <a id="editar_pu" data-estado="0" href="#" class="input-group-addon"
+                                       style="padding: 0px; min-width: 25px;"><i
                                                 class="fa fa-edit"></i></a>
                                 </div>
                                 <h6 id="precio_unitario_um"
@@ -366,7 +368,8 @@
                     <div class="col-md-7">
                         <div class="input-group">
                             <div class="input-group-addon tipo_moneda"><?= $md->simbolo ?></div>
-                            <input type="text" style="text-align: right; background-color: #ce8483 !important; color: #9c3428 !important;"
+                            <input type="text"
+                                   style="text-align: right; background-color: #ce8483 !important; color: #9c3428 !important;"
                                    class='form-control'
                                    name="total_descuento" id="total_descuento" value="0.00"
                                    onkeydown="return soloDecimal4(this, event);" readonly>
@@ -451,6 +454,24 @@
 
                                 <?php endif; ?>
 
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+
+                <input type="hidden" id="COMPROBANTE" value="<?= valueOption('COMPROBANTE', 0) ?>">
+                <div class="row" style="display: <?= validOption('COMPROBANTE', '1') ? 'block' : 'none' ?>">
+                    <div class="col-md-5 label-title">
+                        <label class="control-label">Comprobante:</label>
+                    </div>
+
+                    <div class="col-md-7">
+                        <div class="help-key badge label-success" style="display: none;">6</div>
+                        <select name="comprobante_id" id="comprobante_id" class='form-control'>
+                            <option value="">Seleccione</option>
+                            <?php foreach ($comprobantes as $comprobante): ?>
+                                <option
+                                        value="<?= $comprobante->id ?>"><?= $comprobante->nombre ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>

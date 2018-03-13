@@ -24,6 +24,22 @@
 
                         <hr class="hr-margin-5">
 
+                        <?php if($venta->comprobante_id > 0):?>
+                            <div class="row">
+                                <div class="col-md-2"><label class="control-label">Comprobante:</label></div>
+                                <div class="col-md-3"><?= $venta->comprobante_nombre ?></div>
+
+                                <div class="col-md-1"></div>
+
+                                <div class="col-md-2"><label
+                                            class="control-label">Comp. Nro.:</label></div>
+                                <div
+                                        class="col-md-3"><?= $venta->comprobante ?></div>
+                            </div>
+
+                            <hr class="hr-margin-5">
+                        <?php endif;?>
+
                         <div class="row">
                             <div class="col-md-2"><label class="control-label">Fecha:</label></div>
                             <div class="col-md-3"><?= date('d/m/Y H:i:s', strtotime($venta->venta_fecha)) ?></div>

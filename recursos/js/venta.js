@@ -448,6 +448,11 @@ $(document).ready(function () {
             return false;
         }
 
+        if($('#COMPROBANTE').val() == 1 && $('#comprobante_id').val() == ''){
+            show_msg('warning', 'Debe seleccionar un comprobante');
+            return false;
+        }
+
         end_venta();
     });
 

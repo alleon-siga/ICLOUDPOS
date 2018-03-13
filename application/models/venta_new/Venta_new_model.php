@@ -17,12 +17,14 @@ class venta_new_model extends CI_Model
         $this->load->model('traspaso/traspaso_model');
         $this->load->model('cajas/cajas_model');
         $this->load->model('cajas/cajas_mov_model');
+        $this->load->model('comprobante/comprobante_model');
     }
 
-    function get_ventas($where = array(), $action = 'historial')
+    function get_ventas($where = array(), $action = '')
     {
         $this->db->select('
             venta.venta_id as venta_id,
+            venta.comprobante_id as comprobante_id,
             venta.fecha as venta_fecha,
             venta.pagado as venta_pagado,
             venta.vuelto as venta_vuelto,
@@ -68,7 +70,21 @@ class venta_new_model extends CI_Model
 
         if (isset($where['venta_id'])) {
             $this->db->where('venta.venta_id', $where['venta_id']);
-            return $this->db->get()->row();
+            $venta = $this->db->get()->row();
+            $venta->comprobante_nombre = '';
+            $venta->comprobante = '';
+            if ($venta->comprobante_id > 0) {
+                $comprobante = $this->db->join('comprobante_ventas', 'comprobante_ventas.comprobante_id = comprobantes.id')
+                    ->get_where('comprobantes', array(
+                        'comprobante_id' => $venta->comprobante_id,
+                        'venta_id' => $venta->venta_id
+                    ))->row();
+                if ($comprobante != NULL) {
+                    $venta->comprobante_nombre = $comprobante->nombre;
+                    $venta->comprobante = $comprobante->serie . sumCod($comprobante->numero, $comprobante->longitud);
+                }
+            }
+            return $venta;
         }
 
         if (isset($where['local_id']))
@@ -78,12 +94,12 @@ class venta_new_model extends CI_Model
             $this->db->where('venta.id_moneda', $where['moneda_id']);
 
         if (isset($where['estado']))
-            if ($where['estado'] != "")
-                $this->db->where('venta.venta_status', $where['estado']);
-            else if ($action == 'historial')
+            if ($action == '')
                 $this->db->where('(venta.venta_status = "COMPLETADO" OR venta.venta_status = "ANULADO")');
             else if ($action == 'anular')
                 $this->db->where('venta.venta_status = "COMPLETADO"');
+            else if ($where['estado'] != "")
+                $this->db->where('venta.venta_status', $where['estado']);
 
         if (isset($where['fecha_ini']) && isset($where['fecha_fin'])) {
             $this->db->where('venta.fecha >=', date('Y-m-d H:i:s', strtotime($where['fecha_ini'] . " 00:00:00")));
@@ -99,10 +115,12 @@ class venta_new_model extends CI_Model
             $this->db->where('venta.fecha <=', $where['year'] . '-' . sumCod($where['mes'], 2) . '-' . $last_day . " 23:59:59");
         }
 
-        return $this->db->get()->result();
+        $ventas = $this->db->get()->result();
+
+        return $ventas;
     }
 
-    function get_ventas_totales($where = array(), $action = 'historial')
+    function get_ventas_totales($where = array(), $action = '')
     {
         $this->db->select('
             SUM(venta.total) as total,
@@ -158,6 +176,7 @@ class venta_new_model extends CI_Model
             producto.producto_codigo_interno as producto_codigo_interno,
             producto.producto_nombre as producto_nombre,
             detalle_venta.precio as precio,
+            detalle_venta.precio_venta as precio_venta,
             detalle_venta.cantidad as cantidad,
             detalle_venta.unidad_medida as unidad_id,
             unidades.nombre_unidad as unidad_nombre,
@@ -171,7 +190,62 @@ class venta_new_model extends CI_Model
             ->group_by('detalle_venta.id_detalle')
             ->get()->result();
 
+        $venta->descuento = 0;
+        foreach($venta->detalles as $detalle){
+            if($detalle->precio < $detalle->precio_venta){
+                $venta->descuento += ($detalle->precio_venta * $detalle->cantidad) - $detalle->importe;
+            }
+
+        }
+
         return $venta;
+    }
+
+    function get_venta_facturar($venta_id)
+    {
+        $venta = $this->get_ventas(array('venta_id' => $venta_id));
+
+        $correlativo = $this->correlativos_model->get_correlativo($venta->local_id, $venta->documento_id);
+        $venta->next_correlativo = $correlativo->serie . ' - ' . sumCod($correlativo->correlativo, 6);
+
+        $venta->comprobante = 0;
+        $venta->comprobante_nombre = '';
+        if ($venta->comprobante_id > 0) {
+            $comprobante = $this->comprobante_model->get_comprobantes($venta->comprobante_id);
+            $cv = $this->db
+                ->order_by('id', 'desc')
+                ->get_where('comprobante_ventas', array(
+                    'comprobante_id' => $comprobante->id))
+                ->row();
+
+            if ($cv == NULL) {
+                $next_comprobante = $comprobante->desde;
+            } else {
+                $next_comprobante = $cv->numero + 1;
+            }
+
+            $venta->comprobante = $comprobante->serie . sumCod($next_comprobante, $comprobante->longitud);
+            $venta->comprobante_nombre = $comprobante->nombre;
+        }
+
+        return $venta;
+    }
+
+    function facturar_venta($venta_id)
+    {
+        $venta = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
+        $correlativo = $this->correlativos_model->get_correlativo($venta->local_id, $venta->id_documento);
+        $update_venta['fecha_facturacion'] = date('Y-m-d H:i:s');
+        $update_venta['serie'] = $correlativo->serie;
+        $update_venta['numero'] = $correlativo->correlativo;
+        $this->correlativos_model->sumar_correlativo($venta->local_id, $venta->id_documento);
+
+        // Hago la facturacion de comprobantes
+        if ($venta->comprobante_id > 0)
+            $this->comprobante_model->facturar($venta->venta_id, $venta->comprobante_id);
+
+        $this->db->where('venta_id', $venta_id);
+        $this->db->update('venta', $update_venta);
     }
 
     function save_venta_caja($venta)
@@ -244,6 +318,10 @@ class venta_new_model extends CI_Model
             $update_venta['serie'] = $correlativo->serie;
             $update_venta['numero'] = $correlativo->correlativo;
             $this->correlativos_model->sumar_correlativo($venta_actual->local_id, $venta_actual->id_documento);
+
+            // Hago la facturacion de comprobantes
+            if ($venta_actual->comprobante_id > 0)
+                $this->comprobante_model->facturar($venta_actual->venta_id, $venta_actual->comprobante_id);
         }
 
         $this->db->where('venta_id', $venta['venta_id']);
@@ -276,7 +354,8 @@ class venta_new_model extends CI_Model
             'tasa_cambio' => $venta['tasa_cambio'],
             'dni_garante' => null,
             'inicial' => null,
-            'tipo_impuesto' => $venta['tipo_impuesto']
+            'tipo_impuesto' => $venta['tipo_impuesto'],
+            'comprobante_id' => $venta['comprobante_id']
         );
 
         if ($venta['venta_status'] == 'CAJA') {
@@ -295,8 +374,13 @@ class venta_new_model extends CI_Model
         $this->db->insert('venta', $venta_contado);
         $venta_id = $this->db->insert_id();
 
+
         if ($venta['venta_status'] != 'CAJA') {
             $moneda_id = $venta_contado['id_moneda'];
+
+            // Hago la facturacion de comprobantes
+            if (validOption('COMPROBANTE', 1))
+                $this->comprobante_model->facturar($venta_id, $venta['comprobante_id']);
 
             if ($venta['vc_forma_pago'] == 4 || $venta['vc_forma_pago'] == 8 || $venta['vc_forma_pago'] == 9) {
                 $banco = $this->db->get_where('banco', array('banco_id' => $venta['vc_banco_id']))->row();
@@ -384,7 +468,8 @@ class venta_new_model extends CI_Model
             'tasa_cambio' => $venta['tasa_cambio'],
             'dni_garante' => $venta['c_dni_garante'],
             'inicial' => $venta['c_inicial'],
-            'tipo_impuesto' => $venta['tipo_impuesto']
+            'tipo_impuesto' => $venta['tipo_impuesto'],
+            'comprobante_id' => $venta['comprobante_id']
         );
 
 
