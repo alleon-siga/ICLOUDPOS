@@ -2,7 +2,7 @@
 
 <ul class="breadcrumb breadcrumb-top">
     <li>Reportes</li>
-    <li><a href="">Comision por vendedores</a></li>
+    <li><a href="">Ventas por Comprobantes</a></li>
 </ul>
 <link rel="stylesheet" href="<?= $ruta ?>recursos/css/plugins.css">
 <link rel="stylesheet" href="<?= $ruta ?>recursos/js/datepicker-range/daterangepicker.css">
@@ -71,13 +71,13 @@
 
             <div class="row-fluid">
                 <div class="span12">
-                    <div id="historial_list" class="block">
-
+                    <div id="historial_list">
 
                     </div>
 
                 </div>
             </div>
+
             <div class="row" id="loading" style="display: none;">
                 <div class="col-md-12 text-center">
                     <div class="loading-icon"></div>
@@ -145,19 +145,16 @@
                 function getReporte() {
                     $("#historial_list").html($("#loading").html());
 
-                    var local_id = $("#venta_local").val();
-                    var fecha = $('#date_range').val();
-                    var moneda_id = $("#moneda_id").val();
-                    var comprobante_id = $("#comprobante_id").val();
+                    var data = {
+                        local_id: $("#venta_local").val(),
+                        fecha: $("#date_range").val(),
+                        moneda_id: $("#moneda_id").val(),
+                        comprobante_id: $("#comprobante_id").val()
+                    };
 
                     $.ajax({
                         url: '<?= base_url()?>reporte_ventas/comprobante/filter',
-                        data: {
-                            'local_id': local_id,
-                            'fecha': fecha,
-                            'moneda_id': moneda_id,
-                            'comprobante_id': comprobante_id
-                        },
+                        data: data,
                         type: 'POST',
                         success: function (data) {
                             $("#historial_list").html(data);
