@@ -176,6 +176,7 @@ class venta_new_model extends CI_Model
             producto.producto_codigo_interno as producto_codigo_interno,
             producto.producto_nombre as producto_nombre,
             detalle_venta.precio as precio,
+            detalle_venta.precio_venta as precio_venta,
             detalle_venta.cantidad as cantidad,
             detalle_venta.unidad_medida as unidad_id,
             unidades.nombre_unidad as unidad_nombre,
@@ -188,6 +189,14 @@ class venta_new_model extends CI_Model
             ->where('detalle_venta.id_venta', $venta->venta_id)
             ->group_by('detalle_venta.id_detalle')
             ->get()->result();
+
+        $venta->descuento = 0;
+        foreach($venta->detalles as $detalle){
+            if($detalle->precio < $detalle->precio_venta){
+                $venta->descuento += ($detalle->precio_venta * $detalle->cantidad) - $detalle->importe;
+            }
+
+        }
 
         return $venta;
     }
