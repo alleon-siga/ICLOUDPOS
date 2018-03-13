@@ -486,7 +486,7 @@ $primary_nav = array(
             ),
             array(
                 'name' => 'Comision por vendedor',
-                'url' => $ruta . 'venta_new/reporte_comision',
+                'url' => $ruta . 'reporte_ventas/comision',
                 'icon' => 'fa fa-pie-chart',
                 'slug' => 'resumenventas'
             ),

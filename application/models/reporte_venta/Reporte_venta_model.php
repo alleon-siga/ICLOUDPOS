@@ -1,4 +1,4 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 class reporte_venta_model extends CI_Model
 {
@@ -9,7 +9,8 @@ class reporte_venta_model extends CI_Model
         $this->load->database();
     }
 
-    function getVentasComprobantes($params){
+    function getVentasComprobantes($params)
+    {
 
         $query = "
             SELECT 
@@ -36,11 +37,36 @@ class reporte_venta_model extends CI_Model
                     JOIN
                 comprobantes AS comp ON comp.id = comp_v.comprobante_id
             WHERE
-                comp.id = ".$params['comprobante_id']." AND v.local_id = ".$params['local_id']."
-                    AND v.id_moneda = ".$params['moneda_id']."
-                    AND v.fecha_facturacion >= '2018-03-01 00:00:00'
-                    AND v.fecha_facturacion <= '2018-03-31 23:59:59'
+                comp.id = " . $params['comprobante_id'] . " AND v.local_id = " . $params['local_id'] . "
+                    AND v.id_moneda = " . $params['moneda_id'] . "
+                    AND v.fecha_facturacion >= '".$params['fecha_ini']."'
+                    AND v.fecha_facturacion <= '".$params['fecha_fin']."'
         ";
+
+        return $this->db->query($query)->result();
+    }
+
+    function getVendedoresComision($params)
+    {
+        $query = "
+                SELECT
+                    v.id_vendedor AS vendedor_id,
+                    u.nombre AS vendedor_nombre,
+                    SUM(v.total) AS total_venta,
+                    IFNULL(u.porcentaje_comision, 0) AS comision,
+                    IFNULL((SUM(v.total) * u.porcentaje_comision) / 100,0) AS importe_comision
+                FROM
+                    venta v
+                INNER JOIN usuario u ON v.id_vendedor = u.nUsuCodigo
+                WHERE
+                    v.id_moneda = " . $params['moneda_id'] . " 
+                AND v.local_id = " . $params['local_id'] . "
+                AND v.venta_status = 'COMPLETADO' 
+                AND v.fecha >= '".$params['fecha_ini']."'
+                    AND v.fecha <= '".$params['fecha_fin']."'
+                GROUP BY
+                    v.id_vendedor;
+            ";
 
         return $this->db->query($query)->result();
     }
