@@ -490,6 +490,12 @@ $primary_nav = array(
                 'icon' => 'fa fa-pie-chart',
                 'slug' => 'resumenventas'
             ),
+            array(
+                'name' => 'Ventas por comprobantes',
+                'url' => $ruta . 'reporte_ventas/comprobante',
+                'icon' => 'fa fa-pie-chart',
+                'slug' => 'resumenventas'
+            ),
         ),
     ),
 
