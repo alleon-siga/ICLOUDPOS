@@ -478,6 +478,12 @@ $primary_nav = array(
                 'icon' => 'fa fa-credit-card',
                 'slug' => 'estadodecuenta'
             ),
+            array(
+                'name' => 'Productos más vendidos',
+                'url' => $ruta . 'reporte/productoVendido',
+                'icon' => 'fa fa-area-chart',
+                'slug' => 'productovendido'
+            ),
         ),
     ),
 
