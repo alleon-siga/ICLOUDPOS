@@ -485,13 +485,13 @@ $primary_nav = array(
                 'slug' => 'estadodecuenta'
             ),
             array(
-                'name' => 'Comision por vendedor',
+                'name' => 'Comision/Vendedor',
                 'url' => $ruta . 'reporte_ventas/comision',
                 'icon' => 'fa fa-pie-chart',
                 'slug' => 'resumenventas'
             ),
             array(
-                'name' => 'Ventas por comprobantes',
+                'name' => 'Ventas/Comprobantes',
                 'url' => $ruta . 'reporte_ventas/comprobante',
                 'icon' => 'fa fa-pie-chart',
                 'slug' => 'resumenventas'
