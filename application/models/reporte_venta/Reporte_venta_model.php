@@ -14,7 +14,8 @@ class reporte_venta_model extends CI_Model
         $query = "
             SELECT 
                 v.venta_id AS venta_id,
-                c.ruc AS ruc,
+                v.id_cliente AS cliente_id,
+                c.identificacion AS identificacion,
                 c.razon_social AS cliente_nombre,
                 v.id_documento AS documento_id,
                 d.des_doc AS documento_nombre,
