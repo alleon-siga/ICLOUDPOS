@@ -173,13 +173,13 @@ $primary_nav = array(
                   'name' => 'Ingreso Calzado',
                   'url' => $ruta . 'ingreso_calzado',
                   'icon' => 'fa fa-sort-amount-asc',
-                  'slug' => 'plantilla'
+                  'slug' => 'ingresocalzado'
               ),
             array(
                   'name' => 'Plantilla Producto',
                   'url' => $ruta . 'plantilla',
                   'icon' => 'fa fa-sort-amount-asc',
-                  'slug' => 'plantilla'
+                  'slug' => 'plantillaproducto'
               ),
             array(
                 'name' => 'Serie Calzado',
@@ -190,7 +190,7 @@ $primary_nav = array(
                 'name' => 'Reporte Calzado',
                 'url' => $ruta . 'ingreso_calzado/reporte',
                 'icon' => 'fa fa-sort-amount-asc',
-                'slug' => 'seriescalzado'
+                'slug' => 'reportecalzado'
             ),
         ),
     ),
@@ -262,13 +262,13 @@ $primary_nav = array(
                 'name' => 'Cobrar en Caja',
                 'url' => $ruta . 'venta_new/historial/caja',
                 'icon' => 'fa fa-share',
-                'slug' => 'generarventa'
+                'slug' => 'cobraencaja'
             ),
             array(
                 'name' => 'Cotizaciones',
                 'url' => $ruta . 'cotizar/historial',
                 'icon' => 'fa fa-share',
-                'slug' => 'generarventa'
+                'slug' => 'cotizaciones'
             ),
             array(
                 'name' => 'Registro de Ventas',
@@ -286,7 +286,7 @@ $primary_nav = array(
                 'name' => 'Comprobantes',
                 'url' => $ruta . 'comprobante',
                 'icon' => 'fa fa-cogs',
-                'slug' => 'anularventa'
+                'slug' => 'comprobantes'
             ),
 
             array(
@@ -407,14 +407,14 @@ $primary_nav = array(
                 'slug' => 'bancos'
             ),
 
-            /*
+
             array(
                 'name' => 'Cuadre de caja',
                 'url' => '#cuadre_caja',
                 'icon' => 'fa fa-money',
                 'slug' => 'cuadrecaja'
             ),
-            */
+
         ),
     ),
 
@@ -488,13 +488,13 @@ $primary_nav = array(
                 'name' => 'Comision por vendedor',
                 'url' => $ruta . 'reporte_ventas/comision',
                 'icon' => 'fa fa-pie-chart',
-                'slug' => 'resumenventas'
+                'slug' => 'comisionxvendedor'
             ),
             array(
                 'name' => 'Ventas por comprobantes',
                 'url' => $ruta . 'reporte_ventas/comprobante',
                 'icon' => 'fa fa-pie-chart',
-                'slug' => 'resumenventas'
+                'slug' => 'ventaxcomprobante'
             ),
         ),
     ),
@@ -571,7 +571,7 @@ $primary_nav = array(
                 'name' => 'Impuestos',
                 'url' => $ruta . 'impuesto',
                 'icon' => 'fa fa-money',
-                'slug' => 'precios'
+                'slug' => 'impuestos'
             ),
             /*array(
                 'name' => 'Condiciones de Pago',
