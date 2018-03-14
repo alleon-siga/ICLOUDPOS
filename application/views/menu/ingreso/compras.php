@@ -28,16 +28,6 @@
 
             </div>
 
-            <div class="col-md-2">
-                <select
-                        id="estado"
-                        class="form-control" name="estado">
-                    <option value="COMPLETADO">COMPLETADO</option>
-                    <option value="PENDIENTE">PENDIENTE</option>
-                </select>
-
-            </div>
-
             <div class="col-md-2" id="moneda_block">
                 <select
                         id="moneda_id"
@@ -51,6 +41,19 @@
                 </select>
 
             </div>
+
+            <div class="col-md-2"></div>
+            <!--            <div class="col-md-2">-->
+            <!--                <select-->
+            <!--                        id="estado"-->
+            <!--                        class="form-control" name="estado">-->
+            <!--                    <option value="COMPLETADO">COMPLETADO</option>-->
+            <!--                    <option value="PENDIENTE">PENDIENTE</option>-->
+            <!--                </select>-->
+            <!---->
+            <!--            </div>-->
+
+
 
             <div class="col-md-1">
                 <button id="btn_buscar" class="btn btn-default">
@@ -92,10 +95,10 @@
     $(document).ready(function () {
 
         $('#estado').on('change', function () {
-            if($(this).val() == 'PENDIENTE'){
+            if ($(this).val() == 'PENDIENTE') {
                 $('#moneda_block').hide();
             }
-            else{
+            else {
                 $('#moneda_block').show();
             }
         });

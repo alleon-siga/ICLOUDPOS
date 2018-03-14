@@ -13,7 +13,7 @@ class ingreso_model extends CI_Model
         $this->load->model('unidades/unidades_model');
         $this->load->model('producto_serie/producto_serie_model');
         $this->load->model('cajas/cajas_model');
-
+        $this->error = null;
     }
 
     function get_deuda_detalle($ingreso_id)
@@ -87,18 +87,24 @@ class ingreso_model extends CI_Model
             ")
             ->from('ingreso');
 
-        $this->set_where_compras($data);
+        $this->set_where_compras($data, true);
 
         return $this->db->get()->row();
     }
 
-    private function set_where_compras($data)
+    private function set_where_compras($data, $totales = false)
     {
         if (isset($data['local_id']))
             $this->db->where('ingreso.local_id', $data['local_id']);
 
         if (isset($data['estado']))
             $this->db->where('ingreso.ingreso_status', $data['estado']);
+        else {
+            if ($totales == false)
+                $this->db->where("(ingreso.ingreso_status = 'COMPLETADO' OR ingreso.ingreso_status = 'ANULADO')");
+            else
+                $this->db->where("(ingreso.ingreso_status = 'COMPLETADO')");
+        }
 
         if (isset($data['moneda_id']) && (isset($data['estado']) && $data['estado'] == 'COMPLETADO'))
             $this->db->where('ingreso.id_moneda', $data['moneda_id']);
@@ -155,6 +161,17 @@ class ingreso_model extends CI_Model
 
         $this->load->model('unidades_has_precio/unidades_has_precio_model');
         $this->load->model('precio/precios_model');
+
+        $valid_doc = $this->db->get_where('ingreso', array(
+            'tipo_documento' => $cab_pie['cboTipDoc'],
+            'documento_serie' => $cab_pie['doc_serie'],
+            'documento_numero' => $cab_pie['doc_numero'],
+        ))->row();
+
+        if ($valid_doc != NULL) {
+            $this->error = 'El numero de documento ya existe';
+            return false;
+        }
 
         $this->db->trans_start();
 
@@ -384,12 +401,10 @@ class ingreso_model extends CI_Model
 
         $this->db->trans_complete();
         if ($this->db->trans_status() === FALSE) {
-
             return false;
         } else {
             return $insert_id;
         }
-        $this->db->trans_off();
 
     }
 
@@ -463,12 +478,10 @@ class ingreso_model extends CI_Model
 
         $this->db->trans_complete();
         if ($this->db->trans_status() === FALSE) {
-
             return false;
         } else {
             return array($cantidad_minima, $costo_unitario);
         }
-        $this->db->trans_off();
 
 
     }

@@ -43,9 +43,9 @@
             </thead>
             <tbody>
             <?php foreach ($ingresos as $ingreso): ?>
-                <tr>
+                <tr <?= $ingreso->estado == 'ANULADO' ? 'style="color: red;"' : '' ?>>
                     <td><?= $ingreso->id ?></td>
-                    <td><?= $ingreso->estado == 'COMPLETADO' ? date('d/m/Y', strtotime($ingreso->fecha_emision)) : '' ?></td>
+                    <td><?= date('d/m/Y', strtotime($ingreso->fecha_emision)) ?></td>
                     <td><?= $ingreso->documento ?></td>
                     <td><?= $ingreso->documento_numero ?></td>
                     <td><?= $ingreso->proveedor_ruc ?></td>
