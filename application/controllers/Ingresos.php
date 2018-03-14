@@ -193,7 +193,6 @@ class ingresos extends MY_Controller
                 );
 
 
-
                 $credito['c_inicial'] = $this->input->post('c_saldo_inicial') != '' ? $this->input->post('c_saldo_inicial') : 0;
                 $credito['c_precio_contado'] = $this->input->post('c_precio_contado');
                 $credito['c_precio_credito'] = $this->input->post('c_precio_credito');
@@ -231,7 +230,10 @@ class ingresos extends MY_Controller
                     $json['id'] = $rs;
 
                 } else {
-                    $json['error'] = 'Ha ocurrido un error al procesar la solicitud';
+                    if ($this->ingreso_model->error != NULL)
+                        $json['error'] = $this->ingreso_model->error;
+                    else
+                        $json['error'] = 'Ha ocurrido un error al procesar la solicitud';
                 }
 
 
@@ -293,9 +295,9 @@ class ingresos extends MY_Controller
         $fecha_ini = str_replace("/", "-", $date_range[0]);
         $fecha_fin = str_replace("/", "-", $date_range[1]);
 
+//            'estado' => $this->input->post('estado'),
         $params = array(
             'local_id' => $this->input->post('local_id'),
-            'estado' => $this->input->post('estado'),
             'moneda_id' => $this->input->post('moneda_id'),
             'fecha_ini' => $fecha_ini,
             'fecha_fin' => $fecha_fin
@@ -640,7 +642,7 @@ class ingresos extends MY_Controller
             $usu = $this->session->userdata('nUsuCodigo');
             $data['locales'] = $this->local_model->get_all_usu($usu);
         }
-
+        $data['monedas'] = $this->db->get_where('moneda', array('status_moneda' => 1))->result();
         $dataCuerpo['cuerpo'] = $this->load->view('menu/ingreso/devolucion', $data, true);
         if ($this->input->is_ajax_request()) {
             echo $dataCuerpo['cuerpo'];
@@ -748,19 +750,24 @@ class ingresos extends MY_Controller
             $condicion = array('local_id' => $this->input->post('id_local'));
             $data['local_id'] = $this->input->post('id_local');
         }
-        if ($this->input->post('desde') != "") {
-            $fecha = date('Y-m-d', strtotime($this->input->post('desde', true)));
+
+        $date_range = explode(" - ", $this->input->post('fecha'));
+        $fecha_ini = str_replace("/", "-", $date_range[0]);
+        $fecha_fin = str_replace("/", "-", $date_range[1]);
+
+        if ($fecha_ini != "") {
+            $fecha = date('Y-m-d', strtotime($fecha_ini));
             $condicion['fecha_registro >= '] = $fecha;
 
             $data['fecha_desde'] = date('Y-m-d', strtotime($this->input->post('desde')));
         }
-        if ($this->input->post('hasta') != "") {
-            $fecha = date('Y-m-d', strtotime($this->input->post('hasta', true)));
+        if ($fecha_fin != "") {
+            $fecha = date('Y-m-d', strtotime($fecha_fin));
             $fechadespues = strtotime('+1 day', strtotime($fecha));
 
             $condicion['fecha_registro <'] = date('Y-m-d', $fechadespues);
 
-            $data['fecha_hasta'] = date('Y-m-d', strtotime($this->input->post('hasta')));
+            $data['fecha_hasta'] = date('Y-m-d', strtotime($fecha_fin));
         }
         $condicion['ingreso_status'] = "COMPLETADO";
         if ($this->input->post('anular') != 0) {
@@ -768,6 +775,12 @@ class ingresos extends MY_Controller
             $data['anular'] = 1;
         }
 
+        if ($this->input->post('moneda_id') != "seleccione") {
+            $condicion['ingreso.id_moneda'] = $this->input->post('moneda_id');
+            $data['moneda_id'] = $this->input->post('moneda_id');
+        }
+
+        $data['moneda'] = $this->db->get_where('moneda', array('id_moneda' => $this->input->post('moneda_id')))->row();
         $data['ingresos'] = $this->ingreso_model->get_ingresos_by($condicion);
 
 
@@ -781,6 +794,9 @@ class ingresos extends MY_Controller
         if ($id != FALSE) {
 
             $data['ingreso_tipo'] = $ingreso;
+
+            $data['ingreso'] = $this->db->get_where('ingreso', array('id_ingreso' => $id))->row();
+
             if ($ingreso == "INGRESOCONTABLE") {
                 $data['detalles'] = $this->detalle_ingreso_model->get_by_result_contable('detalleingreso_contable.id_ingreso', $id);
             } else {

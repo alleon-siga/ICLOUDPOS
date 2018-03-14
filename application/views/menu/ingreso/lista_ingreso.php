@@ -8,7 +8,6 @@
             <th>Tipo Documento</th>
             <th>Nro Documento</th>
             <th>Fecha Registro</th>
-            <th>Fecha Valorizaci&oacute;n</th>
             <th>Proveedor</th>
             <th>Responsable</th>
             <th>Local</th>
@@ -44,12 +43,6 @@
                     <td align="center"><span
                             style="display: none;"><?= date('YmdHis', strtotime($ingreso->fecha_registro)) ?></span><?= date('d-m-Y H:i:s', strtotime($ingreso->fecha_registro)) ?>
                     </td>
-                    <td align="center"><?php
-                        if ($ingreso->fecha_emision == null) {
-                            echo "--";
-                        } else {
-                            echo date('d-m-Y', strtotime($ingreso->fecha_emision));
-                        } ?></td>
                     <td align="center"><?= $ingreso->proveedor_nombre ?></td>
                     <td align="center"><?= $ingreso->username ?></td>
                     <td align="center"><?= $ingreso->local_nombre ?></td>

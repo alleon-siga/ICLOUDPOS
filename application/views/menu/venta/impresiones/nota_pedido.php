@@ -39,6 +39,10 @@
             <td style="text-transform: uppercase; text-align: left;">
                 Direcci&oacute;n: <?= $venta->local_direccion ?></td>
         </tr>
+        <tr>
+            <td style="text-transform: uppercase; text-align: left;">
+                T&eacute;lefono: <?= valueOption('EMPRESA_TELEFONO') ?></td>
+        </tr>
     </table>
     <hr>
     <table style="border: 0px;" cellpadding="0" cellspacing="0">
@@ -78,8 +82,8 @@
         <?php if ($venta->comprobante_id > 0): ?>
             <tr>
                 <td style="text-transform: uppercase; text-align: center; border-top: 1px solid #0b0b0b;">
-                    Nro Comprobante: <?= $venta->comprobante_nombre ?><br>
-                    <?= $venta->comprobante ?>
+                    <?= $venta->comprobante_nombre ?><br>
+                    NCF: <?= $venta->comprobante ?>
                 </td>
             </tr>
         <?php endif; ?>
@@ -94,9 +98,10 @@
             <td style="border-bottom: 1px solid #000000; border-top: 1px solid #000000; text-align: right;">Subtotal
             </td>
         </tr>
+        <?php $i = 0;?>
         <?php foreach ($venta->detalles as $detalle): ?>
             <tr>
-                <td colspan="3"><?= $detalle->producto_nombre ?></td>
+                <td colspan="3" style="<?= $i++ != 0 ? 'border-top: 1px dashed #0b0b0b;' : ''?>"><?= $detalle->producto_nombre ?></td>
             </tr>
             <tr>
                 <td><?= number_format($detalle->cantidad, 0) . " " . $detalle->unidad_abr ?></td>
@@ -104,32 +109,14 @@
                 <td style="text-align: right"><?= $venta->moneda_simbolo . ' ' . $detalle->importe ?></td>
             </tr>
         <?php endforeach; ?>
-        <!--
-        <?php for ($i = 0; $i < 20; $i++): ?>
-            <tr>
-                <td>asdasd</td>
-                <td>asdsad</td>
-                <td style="text-align: right"><?= $venta->moneda_simbolo . ' ' ?></td>
-                <td style="text-align: right"><?= $venta->moneda_simbolo . ' ' ?></td>
-            </tr>
-        <?php endfor; ?>
-        -->
         <tr>
             <td colspan="3">
-                <hr>
+                <hr style="color: #0b0b0b;">
             </td>
         </tr>
         <tr>
-            <td colspan="2">Total a Pagar:</td>
-            <td style="text-align: right;"><?= $venta->moneda_simbolo . ' ' . $venta->total ?></td>
-        </tr>
-        <tr>
-            <td colspan="2">Pagado:</td>
-            <td style="text-align: right;"><?= $venta->moneda_simbolo . ' ' . $venta->venta_pagado ?></td>
-        </tr>
-        <tr>
-            <td colspan="2">Vuelto:</td>
-            <td style="text-align: right;"><?= $venta->moneda_simbolo . ' ' . $venta->venta_vuelto ?></td>
+            <td colspan="2">Subtotal:</td>
+            <td style="text-align: right;"><?= $venta->moneda_simbolo . ' ' . $venta->subtotal ?></td>
         </tr>
         <?php if ($venta->descuento > 0): ?>
             <tr>
@@ -137,6 +124,28 @@
                 <td style="text-align: right;"><?= $venta->moneda_simbolo . ' ' . number_format($venta->descuento, 2) ?></td>
             </tr>
         <?php endif; ?>
+        <tr>
+            <td colspan="2">ITBIS:</td>
+            <td style="text-align: right;"><?= $venta->moneda_simbolo . ' ' . $venta->impuesto ?></td>
+        </tr>
+        <tr>
+            <td colspan="2">Total a Pagar:</td>
+            <td style="text-align: right;"><?= $venta->moneda_simbolo . ' ' . $venta->total ?></td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                <hr>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2"">Pagado:</td>
+            <td style="text-align: right;"><?= $venta->moneda_simbolo . ' ' . $venta->venta_pagado ?></td>
+        </tr>
+        <tr>
+            <td colspan="2">Vuelto:</td>
+            <td style="text-align: right;"><?= $venta->moneda_simbolo . ' ' . $venta->venta_vuelto ?></td>
+        </tr>
+
         </tbody>
 
     </table>
@@ -146,10 +155,10 @@
         <span style="text-transform: uppercase;"><?= $totalLetras; ?></span>
     </div>
     <br>
-    <div style="text-transform: uppercase; border-top: 1px dotted #0b0b0b; text-align: center;">
+    <div style="text-transform: uppercase; border-top: 1px dashed #0b0b0b; text-align: center;">
         GRACIAS POR LA COMPRA
     </div>
-    <div style="text-transform: uppercase; border-top: 1px dotted #0b0b0b; text-align: center;">
+    <div style="text-transform: uppercase; border-top: 1px dashed #0b0b0b; text-align: center;">
         CANJEAR POR BOLETA O FACTURA
     </div>
 </div>
