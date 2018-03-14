@@ -67,7 +67,6 @@
                     <td><?= $venta->moneda_tasa ?></td>
                     <td style="text-align: right;"><?= $venta->moneda_simbolo ?> <?= number_format($venta->total, 2) ?></td>
                     <td style="text-align: center;">
-
                         <a class="btn btn-default" data-toggle="tooltip" style="margin-right: 5px;"
                            title="Ver" data-original-title="Ver"
                            href="#"
@@ -104,7 +103,7 @@
 
                         <?php if ($venta_action == 'anular'): ?>
                             <?php if ($venta->condicion_id == '1'): ?>
-                                <a class="btn btn-warning" data-toggle="tooltip" style="margin-right: 5px;"
+                                <a class="btn btn-danger" data-toggle="tooltip" style="margin-right: 5px;"
                                    title="Devolver Venta" data-original-title="Devolver Venta"
                                    href="#"
                                    onclick="devolver('<?= $venta->venta_id ?>');">

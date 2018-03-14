@@ -38,6 +38,7 @@ class venta_new extends MY_Controller
 
         $data['venta_action'] = $action;
         $data['monedas'] = $this->db->get_where('moneda', array('status_moneda' => 1))->result();
+        $data['condiciones_pagos'] = $this->db->get_where('condiciones_pago', array('status_condiciones' => 1))->result();
 
         $data['dialog_venta_contado'] = $this->load->view('menu/venta/dialog_venta_contado', array(
             'tarjetas' => $this->db->get('tarjeta_pago')->result(),
@@ -57,6 +58,7 @@ class venta_new extends MY_Controller
     {
         $local_id = $this->input->post('local_id');
         $estado = $this->input->post('estado');
+        $condicion_pago_id = $this->input->post('condicion_pago_id');
 
         $date_range = explode(" - ", $this->input->post('fecha'));
         $fecha_ini = str_replace("/", "-", $date_range[0]);
@@ -67,6 +69,7 @@ class venta_new extends MY_Controller
             $params = array(
                 'local_id' => $local_id,
                 'estado' => $estado,
+                'condicion_id' => $condicion_pago_id,
                 'fecha_ini' => $fecha_ini,
                 'fecha_fin' => $fecha_fin
             );
@@ -230,6 +233,7 @@ class venta_new extends MY_Controller
 
         $venta['caja_total_pagar'] = $this->input->post('caja_total_pagar');
         $venta['comprobante_id'] = $this->input->post('comprobante_id') != "" ? $this->input->post('comprobante_id') : 0;
+        $venta['venta_nota'] = $this->input->post('venta_nota');
 
         $detalles_productos = json_decode($this->input->post('detalles_productos', true));
         $traspasos = json_decode($this->input->post('traspasos', true));
@@ -488,7 +492,9 @@ class venta_new extends MY_Controller
             'COTIZACION_INFORMACION',
             'COTIZACION_CONDICION',
             'COTIZACION_PIE_PAGINA',
-            'COMPROBANTE'
+            'COMPROBANTE',
+            'FECHA_VENTA_PROMO',
+            'VENTA_PROMO'
         );
 
         if ($action == 'get') {

@@ -5,6 +5,14 @@ function get_moneda_defecto()
     return $CI->db->get_where('moneda', array('id_moneda' => MONEDA_DEFECTO))->row();
 }
 
+function diff_date($ini, $fin){
+    // $datetime1 = new DateTime($ini);
+    $datetime1 = DateTime::createFromFormat('d/m/Y', $ini);
+    $datetime2 = DateTime::createFromFormat('d/m/Y', $fin);
+    $interval = $datetime1->diff($datetime2);
+    return $interval->format('%a');
+}
+
 function get_tipo_doc($cod)
 {
     switch ($cod) {

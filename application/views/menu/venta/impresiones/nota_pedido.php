@@ -98,10 +98,11 @@
             <td style="border-bottom: 1px solid #000000; border-top: 1px solid #000000; text-align: right;">Subtotal
             </td>
         </tr>
-        <?php $i = 0;?>
+        <?php $i = 0; ?>
         <?php foreach ($venta->detalles as $detalle): ?>
             <tr>
-                <td colspan="3" style="<?= $i++ != 0 ? 'border-top: 1px dashed #0b0b0b;' : ''?>"><?= $detalle->producto_nombre ?></td>
+                <td colspan="3"
+                    style="<?= $i++ != 0 ? 'border-top: 1px dashed #0b0b0b;' : '' ?>"><?= $detalle->producto_nombre ?></td>
             </tr>
             <tr>
                 <td><?= number_format($detalle->cantidad, 0) . " " . $detalle->unidad_abr ?></td>
@@ -138,7 +139,8 @@
             </td>
         </tr>
         <tr>
-            <td colspan="2"">Pagado:</td>
+            <td colspan="2"
+            ">Pagado:</td>
             <td style="text-align: right;"><?= $venta->moneda_simbolo . ' ' . $venta->venta_pagado ?></td>
         </tr>
         <tr>
@@ -154,13 +156,53 @@
         SON:
         <span style="text-transform: uppercase;"><?= $totalLetras; ?></span>
     </div>
+    <?php if (count($venta->cuotas) > 0): ?>
+        <table cellpadding="0" cellspacing="0">
+            <tbody>
+            <tr>
+                <td colspan="3" style="text-align: center; border-top: 1px solid #000000;">CUOTAS Y VENCIMIENTOS</td>
+            </tr>
+            <tr>
+                <td style="border-bottom: 1px solid #000000; border-top: 1px solid #000000;">LETRA</td>
+                <td style="border-bottom: 1px solid #000000; border-top: 1px solid #000000;">VENCE</td>
+                <td style="border-bottom: 1px solid #000000; border-top: 1px solid #000000;text-align: right;">MONTO
+                </td>
+            </tr>
+            <?php foreach ($venta->cuotas as $cuota): ?>
+                <tr>
+                    <td><?= $cuota->nro_letra ?></td>
+                    <td><?= date('d/m/Y', strtotime($cuota->fecha_vencimiento)) ?></td>
+                    <td style="text-align: right;"><?= $venta->moneda_simbolo . ' ' . number_format($cuota->monto, 2) ?></td>
+                </tr>
+            <?php endforeach; ?>
+            <tr>
+                <td colspan="2" style="border-top: 1px solid #000000;">INICIAL</td>
+                <td style="border-top: 1px solid #000000; text-align: right;"><?= $venta->moneda_simbolo . ' ' . number_format($venta->inicial, 2) ?></td>
+            </tr>
+            <tr>
+                <td colspan="2">DEUDA PENDIENTE</td>
+                <td style="text-align: right;"><?= $venta->moneda_simbolo . ' ' . number_format($venta->total - $venta->inicial, 2) ?></td>
+            </tr>
+            </tbody>
+        </table>
+    <?php endif; ?>
+
     <br>
+    <?= $venta->nota ?>
+    <br><br>
     <div style="text-transform: uppercase; border-top: 1px dashed #0b0b0b; text-align: center;">
         GRACIAS POR LA COMPRA
     </div>
     <div style="text-transform: uppercase; border-top: 1px dashed #0b0b0b; text-align: center;">
         CANJEAR POR BOLETA O FACTURA
     </div>
+    <br>
+    <?php
+    if (diff_date(date('d/m/Y'), valueOption('FECHA_VENTA_PROMO', date('d/m/Y'))) > 0) {
+        echo valueOption('VENTA_PROMO', '');
+    }
+    ?>
+
 </div>
 <script>
     this.print();

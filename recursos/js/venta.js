@@ -29,6 +29,16 @@ $(document).ready(function () {
     //tecla_3 para mostrar los productos
     select_productos(51);
 
+    $('.textarea-editor').wysihtml5({
+        "font-styles": true, //Font styling, e.g. h1, h2, etc. Default true
+        "emphasis": true, //Italics, bold, etc. Default true
+        "lists": true, //(Un)ordered lists, e.g. Bullets, Numbers. Default true
+        "html": true, //Button which allows you to edit the generated HTML. Default false
+        "link": false, //Button to insert a link. Default true
+        "image": false, //Button to insert an image. Default true,
+        "color": true //Button to change color of font
+    });
+
 
     //EVENTOS DEL TECLADO
     //CNTRL + 0 al 9 = Para seleccionar los select los numero son de 0(48) - 9(57)
@@ -144,6 +154,10 @@ $(document).ready(function () {
                 alert('not');
             }
         });
+    });
+
+    $('.add_nota').on('click', function(){
+       $('#dialog_venta_nota').modal('show');
     });
 
     $("#local_id").on('change', function () {
@@ -355,24 +369,18 @@ $(document).ready(function () {
 
     });
 
-    // $("#tipo_documento").on('change', function () {
-    //
-    //     if ($(this).val() == '1') {
-    //         $('#block_impuesto').show();
-    //         $('#block_subtotal').show();
-    //
-    //         if ($("#tipo_documento").val() == 1 && $("#cliente_id option:selected").attr('data-ruc') != 2) {
-    //             show_msg('warning', '<h4>Error. </h4><p>El Cliente no tiene ruc para realizar venta en factura.</p>');
-    //             select_productos(49);
-    //         }
-    //     }
-    //     else {
-    //         $('#block_impuesto').hide();
-    //         $('#block_subtotal').hide();
-    //     }
-    //
-    //     refresh_right_panel();
-    // });
+    $("#tipo_documento").on('change', function () {
+
+        if ($(this).val() == '1') {
+
+            if ($("#tipo_documento").val() == 1 && $("#cliente_id option:selected").attr('data-ruc') != 2) {
+                show_msg('warning', '<h4>Error. </h4><p>El Cliente no tiene ruc para realizar venta en factura.</p>');
+                select_productos(49);
+            }
+        }
+
+        refresh_right_panel();
+    });
 
     $("#add_producto").on('click', function () {
         var total = parseFloat($('#total_minimo').val());

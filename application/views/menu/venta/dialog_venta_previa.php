@@ -1,3 +1,14 @@
+<style>
+    .totales {
+        width: 100%;
+        text-align: right;
+    }
+
+    .totales tr td {
+        padding: 5px 0;
+        font-weight: bold;
+    }
+</style>
 <div class="modal-dialog" style="width: 60%">
     <div class="modal-content">
         <div class="modal-header">
@@ -71,21 +82,35 @@
 
                 <div class="row-fluid">
                     <div class="row">
-                        <div class="col-md-2"><label class="control-label">Documento:</label></div>
-                        <div class="col-md-3"><?= $venta->documento_nombre ?></div>
+                        <div class="col-md-2"><label class="control-label">Venta Nro:</label></div>
+                        <div class="col-md-3"><?= sumCod($venta->venta_id, 6) ?></div>
 
                         <div class="col-md-1"></div>
 
                         <div class="col-md-2"><label
-                                class="control-label"><?= 'Venta Nro' ?>
-                                :</label></div>
+                                    class="control-label">Documento:</label>
+                        </div>
                         <div
-                            class="col-md-3"><?= sumCod($venta->venta_id, 6) ?></div>
+                                class="col-md-3">
+                            <?php
+                            $doc = '';
+                            if ($venta->documento_id == 1) $doc = "FA";
+                            if ($venta->documento_id == 2) $doc = "NC";
+                            if ($venta->documento_id == 3) $doc = "BO";
+                            if ($venta->documento_id == 4) $doc = "GR";
+                            if ($venta->documento_id == 5) $doc = "PCV";
+                            if ($venta->documento_id == 6) $doc = "NP";
+                            if ($venta->numero != '')
+                                echo $doc . ' ' . $venta->serie . '-' . sumCod($venta->numero, 6);
+                            else
+                                echo '<span style="color: #0000FF">NO FACTURADO</span>';
+                            ?>
+                        </div>
                     </div>
 
                     <hr class="hr-margin-5">
 
-                    <?php if($venta->comprobante_id > 0):?>
+                    <?php if ($venta->comprobante_id > 0): ?>
                         <div class="row">
                             <div class="col-md-2"><label class="control-label">Comprobante:</label></div>
                             <div class="col-md-3"><?= $venta->comprobante_nombre ?></div>
@@ -99,7 +124,7 @@
                         </div>
 
                         <hr class="hr-margin-5">
-                    <?php endif;?>
+                    <?php endif; ?>
 
                     <div class="row">
                         <div class="col-md-2"><label class="control-label">Fecha:</label></div>
@@ -107,26 +132,9 @@
 
                         <div class="col-md-1"></div>
 
-                        <div class="col-md-2"><label class="control-label">Tipo de Pago:</label></div>
-                        <div class="col-md-3"><?= $venta->condicion_nombre ?></div>
+                        <div class="col-md-2"><label class="control-label">Moneda:</label></div>
+                        <div class="col-md-3"><?= $venta->moneda_nombre ?></div>
                     </div>
-
-
-                    <?php if ($venta->condicion_id == '2'): ?>
-                        <hr class="hr-margin-5">
-                        <div class="row">
-                            <div class="col-md-2"><label class="control-label">Cr&eacute;dito Deuda:</label></div>
-                            <div
-                                class="col-md-3">
-                                <?= $venta->moneda_simbolo ?> <?= $venta_action == 'caja' ? $venta->total : $venta->credito_pendiente ?>
-                            </div>
-
-                            <div class="col-md-1"></div>
-
-                            <div class="col-md-2"><label class="control-label">Cr&eacute;dito Pagado:</label></div>
-                            <div class="col-md-3"><?= $venta->moneda_simbolo . " " . $venta->credito_pagado ?></div>
-                        </div>
-                    <?php endif; ?>
 
                     <hr class="hr-margin-5">
 
@@ -136,19 +144,35 @@
 
                         <div class="col-md-1"></div>
 
-                        <div class="col-md-2"><label class="control-label">Vendedor:</label></div>
-                        <div class="col-md-3"><?= $venta->vendedor_nombre ?></div>
+                        <div class="col-md-2"><label class="control-label">Tipo de Pago:</label></div>
+                        <div class="col-md-3"><?= $venta->condicion_nombre ?></div>
                     </div>
+
+                    <?php if ($venta->condicion_id == '2'): ?>
+                        <hr class="hr-margin-5">
+                        <div class="row">
+                            <div class="col-md-2"><label class="control-label">Importe de Deuda:</label></div>
+                            <div
+                                    class="col-md-3">
+                                <?= $venta->moneda_simbolo ?> <?= $venta_action == 'caja' ? $venta->total : $venta->credito_pendiente ?>
+                            </div>
+
+                            <div class="col-md-1"></div>
+
+                            <div class="col-md-2"><label class="control-label">Importe Inicial:</label></div>
+                            <div class="col-md-3"><?= $venta->moneda_simbolo . " " . $venta->inicial ?></div>
+                        </div>
+                    <?php endif; ?>
 
                     <hr class="hr-margin-5">
 
                     <div class="row">
-                        <div class="col-md-2"><label class="control-label">Moneda:</label></div>
-                        <div class="col-md-3"><?= $venta->moneda_nombre ?></div>
+                        <div class="col-md-2"><label class="control-label">Vendedor:</label></div>
+                        <div class="col-md-3"><?= $venta->vendedor_nombre ?></div>
 
                         <div class="col-md-1"></div>
 
-                        <div class="col-md-2"><label class="control-label">Moneda Tasa:</label></div>
+                        <div class="col-md-2"><label class="control-label">Tipo de Cambio:</label></div>
                         <div class="col-md-3"><?= $venta->moneda_tasa ?></div>
                     </div>
 
@@ -164,7 +188,16 @@
                         <div class="col-md-3"><?= $venta->moneda_simbolo . " " . $venta->total ?></div>
                     </div>
 
-                    <hr class="hr-margin-5">
+                    <?php if ($venta->condicion_id == '2'): ?>
+                        <hr class="hr-margin-5">
+                        <div class="row">
+                            <h4 class="col-md-12">
+                                Dias de Gracia: <?= $venta->periodo_gracia ?> /
+                                Numero de Cuotas: <?= count($venta->cuotas) ?> /
+                                Tasa de Interes: <?= $venta->tasa_interes ?>%
+                            </h4>
+                        </div>
+                    <?php endif; ?>
 
                     <table class="table table-bordered">
                         <thead>
@@ -190,6 +223,54 @@
                         <?php endforeach; ?>
                         </tbody>
                     </table>
+                </div>
+
+                <br>
+                <div class="row">
+                    <div class="col-md-8">
+                        <?php if ($venta->condicion_id == '2'): ?>
+                            <h4>Cuotas y Vencimientos</h4>
+                            <table class="table table-condensed">
+                                <thead>
+                                <tr>
+                                    <th>Letra</th>
+                                    <th>Vence</th>
+                                    <th>Monto</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <?php foreach ($venta->cuotas as $cuota): ?>
+                                    <tr>
+                                        <td><?= $cuota->nro_letra ?></td>
+                                        <td><?= date('d/m/Y', strtotime($cuota->fecha_vencimiento)) ?></td>
+                                        <td><?= $venta->moneda_simbolo . ' ' . number_format($cuota->monto, 2) ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        <?php endif; ?>
+
+                        <?php if ($venta->nota != NULL): ?>
+                            Notas:<br>
+                            <?= $venta->nota ?>
+                        <?php endif; ?>
+                    </div>
+                    <div class="col-md-4 text-right">
+                        <table class="totales">
+                            <tr>
+                                <td>Subtotal:</td>
+                                <td><?= $venta->moneda_simbolo ?> <?= number_format($venta->subtotal, 2) ?></label></td>
+                            </tr>
+                            <tr>
+                                <td>Impuesto:</td>
+                                <td><?= $venta->moneda_simbolo ?> <?= number_format($venta->impuesto, 2) ?></label></td>
+                            </tr>
+                            <tr>
+                                <td>Total:</td>
+                                <td><?= $venta->moneda_simbolo ?> <?= number_format($venta->total, 2) ?></label></td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
 
             </div>

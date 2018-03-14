@@ -211,7 +211,7 @@
                             </div>
                             <div class="col-md-2">
                                 <div class="input-group">
-                                    <div class="input-group-addon tipo_moneda"
+                                    <div class="input-group-addon tipo_moneda" style="padding: 0px; min-width: 25px;"
                                          style="padding: 0px; min-width: 25px;"><?= $md->simbolo ?></div>
                                     <input type="text" style="text-align: right;"
                                            class='form-control'
@@ -438,18 +438,11 @@
                     <div class="col-md-7">
                         <div class="help-key badge label-success" style="display: none;">7</div>
                         <select name="tipo_documento" id="tipo_documento" class="form-control">
-                            <?php $facturacion = valueOption('ACTIVAR_FACTURACION_VENTA') ?>
-                            <?php $shadow_stock = valueOption('ACTIVAR_SHADOW') ?>
                             <?php foreach ($tipo_documentos as $key => $value): ?>
 
-                                <?php if (($facturacion == 1 || $shadow_stock == 1) && ($value->id_doc == 1 || $value->id_doc == 3 || $value->id_doc == 6)): ?>
+                                <?php if (($value->id_doc == 1 || $value->id_doc == 3 || $value->id_doc == 6)): ?>
 
                                     <option <?= $value->id_doc == 3 ? 'selected="selected"' : '' ?>
-                                            value="<?= $value->id_doc ?>"><?= $value->des_doc ?></option>
-
-                                <?php elseif (($facturacion == 0 || $shadow_stock == 0) && $value->id_doc == 6): ?>
-
-                                    <option <?= $value->id_doc == 6 ? 'selected="selected"' : '' ?>
                                             value="<?= $value->id_doc ?>"><?= $value->des_doc ?></option>
 
                                 <?php endif; ?>
@@ -522,6 +515,13 @@
                     </div>
                 </div>
 
+                <div class="row">
+                    <button type="button" class="btn btn-primary col-md-12 text-center add_nota">
+                        <i class="fa fa-plus"></i>
+                        Agregar Nota de Venta
+                    </button>
+                </div>
+
 
             </div>
 
@@ -572,6 +572,35 @@
         <!-- TERMINAR VENTA CONTADO -->
 
         <?php echo isset($dialog_venta_contado) ? $dialog_venta_contado : '' ?>
+
+    </div>
+
+    <div class="modal fade" id="dialog_venta_nota" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Agregar Nota a la Venta</h4>
+                </div>
+
+                <div class="modal-body ">
+                    <label class="control-label">Nota:</label>
+                    <textarea type="text" name="venta_nota" rows="5" id="venta_nota"
+                              class='form-control textarea-editor' >
+                    </textarea>
+                </div>
+
+                <div class="modal-footer">
+                    <button onclick="$('#dialog_venta_nota').modal('hide');" type="button" class="btn btn-primary">
+                        Aceptar
+                    </button>
+
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+
 
     </div>
 </form>

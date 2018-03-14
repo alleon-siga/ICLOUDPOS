@@ -102,6 +102,11 @@
     <?php endif; ?>
     <tr>
         <td colspan="4"></td>
+        <th style="text-align: left;">DESCUENTO</th>
+        <td style="border: #111 0.5px solid; text-align: right;"><?= $cotizar->moneda_simbolo . " " . number_format($cotizar->descuento, 2) ?></td>
+    </tr>
+    <tr>
+        <td colspan="4"></td>
         <th style="text-align: left;">TOTAL</th>
         <td style="border: #111 0.5px solid; text-align: right;"><?= $cotizar->moneda_simbolo . " " . $cotizar->total ?></td>
     </tr>
