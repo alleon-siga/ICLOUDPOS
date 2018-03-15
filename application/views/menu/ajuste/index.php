@@ -398,7 +398,7 @@
     <div class="form-actions">
 
         <button class="btn" id="terminar_ajuste" type="button"><i
-                class="fa fa-save fa-3x text-info fa-fw"></i> <br>Guardar
+                class="fa fa-save fa-3x text-info fa-fw"></i> <br>F6 Guardar
         </button>
 
 

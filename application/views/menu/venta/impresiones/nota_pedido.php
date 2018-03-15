@@ -187,9 +187,18 @@
         </table>
     <?php endif; ?>
 
-    <br>
-    <?= $venta->nota ?>
-    <br><br>
+
+    <?= $venta->nota != NULL ? '<br><span style="text-decoration: underline;">NOTA:</span><br>'.$venta->nota.'<br>' : ''?>
+
+    <?php
+    $hoy = new DateTime(date('Y-m-d'));
+    $vence = new DateTime(date('Y-m-d', strtotime(valueOption('FECHA_VENTA_PROMO', date('Y-m-d')))));
+    if ($hoy > $vence) {
+        echo '<br><div style="border-top: 2px dashed #0b0b0b; padding-top: 5px;">';
+        echo valueOption('VENTA_PROMO', '').'</div><br>';
+    }
+    ?>
+
     <div style="text-transform: uppercase; border-top: 1px dashed #0b0b0b; text-align: center;">
         GRACIAS POR LA COMPRA
     </div>
@@ -197,11 +206,7 @@
         CANJEAR POR BOLETA O FACTURA
     </div>
     <br>
-    <?php
-    if (diff_date(date('d/m/Y'), valueOption('FECHA_VENTA_PROMO', date('d/m/Y'))) > 0) {
-        echo valueOption('VENTA_PROMO', '');
-    }
-    ?>
+
 
 </div>
 <script>

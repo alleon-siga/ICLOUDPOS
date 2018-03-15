@@ -80,150 +80,270 @@
             </form>
             <div class="row-fluid force-margin">
 
-                <div class="row-fluid">
-                    <div class="row">
-                        <div class="col-md-2"><label class="control-label">Venta Nro:</label></div>
-                        <div class="col-md-3"><?= sumCod($venta->venta_id, 6) ?></div>
-
-                        <div class="col-md-1"></div>
-
-                        <div class="col-md-2"><label
-                                    class="control-label">Documento:</label>
-                        </div>
-                        <div
-                                class="col-md-3">
-                            <?php
-                            $doc = '';
-                            if ($venta->documento_id == 1) $doc = "FA";
-                            if ($venta->documento_id == 2) $doc = "NC";
-                            if ($venta->documento_id == 3) $doc = "BO";
-                            if ($venta->documento_id == 4) $doc = "GR";
-                            if ($venta->documento_id == 5) $doc = "PCV";
-                            if ($venta->documento_id == 6) $doc = "NP";
-                            if ($venta->numero != '')
-                                echo $doc . ' ' . $venta->serie . '-' . sumCod($venta->numero, 6);
-                            else
-                                echo '<span style="color: #0000FF">NO FACTURADO</span>';
-                            ?>
-                        </div>
-                    </div>
-
-                    <hr class="hr-margin-5">
-
-                    <?php if ($venta->comprobante_id > 0): ?>
+                <?php if ($venta->condicion_id == '1'): ?>
+                    <div class="row-fluid">
                         <div class="row">
-                            <div class="col-md-2"><label class="control-label">Comprobante:</label></div>
-                            <div class="col-md-3"><?= $venta->comprobante_nombre ?></div>
+                            <div class="col-md-2"><label class="control-label">Venta Nro:</label></div>
+                            <div class="col-md-3"><?= sumCod($venta->venta_id, 6) ?></div>
 
                             <div class="col-md-1"></div>
 
                             <div class="col-md-2"><label
-                                        class="control-label">Comp. Nro.:</label></div>
+                                        class="control-label">Documento:</label>
+                            </div>
                             <div
-                                    class="col-md-3"><?= $venta->comprobante ?></div>
+                                    class="col-md-3">
+                                <?php
+                                $doc = '';
+                                if ($venta->documento_id == 1) $doc = "FA";
+                                if ($venta->documento_id == 2) $doc = "NC";
+                                if ($venta->documento_id == 3) $doc = "BO";
+                                if ($venta->documento_id == 4) $doc = "GR";
+                                if ($venta->documento_id == 5) $doc = "PCV";
+                                if ($venta->documento_id == 6) $doc = "NP";
+                                if ($venta->numero != '')
+                                    echo $doc . ' ' . $venta->serie . '-' . sumCod($venta->numero, 6);
+                                else
+                                    echo '<span style="color: #0000FF">NO FACTURADO</span>';
+                                ?>
+                            </div>
                         </div>
 
                         <hr class="hr-margin-5">
-                    <?php endif; ?>
 
-                    <div class="row">
-                        <div class="col-md-2"><label class="control-label">Fecha:</label></div>
-                        <div class="col-md-3"><?= date('d/m/Y H:i:s', strtotime($venta->venta_fecha)) ?></div>
+                        <?php if ($venta->comprobante_id > 0): ?>
+                            <div class="row">
+                                <div class="col-md-2"><label class="control-label">Comprobante:</label></div>
+                                <div class="col-md-3"><?= $venta->comprobante_nombre ?></div>
 
-                        <div class="col-md-1"></div>
+                                <div class="col-md-1"></div>
 
-                        <div class="col-md-2"><label class="control-label">Moneda:</label></div>
-                        <div class="col-md-3"><?= $venta->moneda_nombre ?></div>
-                    </div>
+                                <div class="col-md-2"><label
+                                            class="control-label">Comp. Nro.:</label></div>
+                                <div
+                                        class="col-md-3"><?= $venta->comprobante ?></div>
+                            </div>
 
-                    <hr class="hr-margin-5">
+                            <hr class="hr-margin-5">
+                        <?php endif; ?>
 
-                    <div class="row">
-                        <div class="col-md-2"><label class="control-label">Cliente:</label></div>
-                        <div class="col-md-3"><?= $venta->cliente_nombre ?></div>
-
-                        <div class="col-md-1"></div>
-
-                        <div class="col-md-2"><label class="control-label">Tipo de Pago:</label></div>
-                        <div class="col-md-3"><?= $venta->condicion_nombre ?></div>
-                    </div>
-
-                    <?php if ($venta->condicion_id == '2'): ?>
-                        <hr class="hr-margin-5">
                         <div class="row">
+                            <div class="col-md-2"><label class="control-label">Fecha:</label></div>
+                            <div class="col-md-3"><?= date('d/m/Y H:i:s', strtotime($venta->venta_fecha)) ?></div>
+
+                            <div class="col-md-1"></div>
+
+                            <div class="col-md-2"><label class="control-label">Moneda:</label></div>
+                            <div class="col-md-3"><?= $venta->moneda_nombre ?></div>
+                        </div>
+
+                        <hr class="hr-margin-5">
+
+                        <div class="row">
+                            <div class="col-md-2"><label class="control-label">Cliente:</label></div>
+                            <div class="col-md-3"><?= $venta->cliente_nombre ?></div>
+
+                            <div class="col-md-1"></div>
+
+                            <div class="col-md-2"><label class="control-label">Tipo de Pago:</label></div>
+                            <div class="col-md-3"><?= $venta->condicion_nombre ?></div>
+                        </div>
+
+                        <hr class="hr-margin-5">
+
+                        <div class="row">
+                            <div class="col-md-2"><label class="control-label">Vendedor:</label></div>
+                            <div class="col-md-3"><?= $venta->vendedor_nombre ?></div>
+
+                            <div class="col-md-1"></div>
+
+                            <div class="col-md-2"><label class="control-label">Tipo de Cambio:</label></div>
+                            <div class="col-md-3"><?= $venta->moneda_tasa ?></div>
+                        </div>
+
+                        <hr class="hr-margin-5">
+
+                        <div class="row">
+                            <div class="col-md-2"><label class="control-label">Estado:</label></div>
+                            <div class="col-md-3"><?= $venta->venta_estado ?></div>
+
+                            <div class="col-md-1"></div>
+
+                            <div class="col-md-2"><label class="control-label">Venta Total:</label></div>
+                            <div class="col-md-3"><?= $venta->moneda_simbolo . " " . $venta->total ?></div>
+                        </div>
+
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th><?= getCodigoNombre() ?></th>
+                                <th>Producto</th>
+                                <th>Cantidad</th>
+                                <th>UM</th>
+                                <th>Precio</th>
+                                <th>Subtotal</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <?php foreach ($venta->detalles as $detalle): ?>
+                                <tr>
+                                    <td><?= getCodigoValue($detalle->producto_id, $detalle->producto_codigo_interno) ?></td>
+                                    <td><?= $detalle->producto_nombre ?></td>
+                                    <td><?= $detalle->cantidad ?></td>
+                                    <td><?= $detalle->unidad_nombre ?></td>
+                                    <td style="text-align: right"><?= $detalle->precio ?></td>
+                                    <td style="text-align: right"><?= $venta->moneda_simbolo . " " . $detalle->importe ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                <?php endif; ?>
+
+
+                <?php if ($venta->condicion_id == '2'): ?>
+                    <div class="row-fluid">
+
+                        <div class="row">
+                            <div class="col-md-2"><label class="control-label">Venta Nro:</label></div>
+                            <div class="col-md-3"><?= sumCod($venta->venta_id, 6) ?></div>
+
+                            <div class="col-md-1"></div>
+
+                            <div class="col-md-2"><label
+                                        class="control-label">Documento:</label>
+                            </div>
+                            <div
+                                    class="col-md-3">
+                                <?php
+                                $doc = '';
+                                if ($venta->documento_id == 1) $doc = "FA";
+                                if ($venta->documento_id == 2) $doc = "NC";
+                                if ($venta->documento_id == 3) $doc = "BO";
+                                if ($venta->documento_id == 4) $doc = "GR";
+                                if ($venta->documento_id == 5) $doc = "PCV";
+                                if ($venta->documento_id == 6) $doc = "NP";
+                                if ($venta->numero != '')
+                                    echo $doc . ' ' . $venta->serie . '-' . sumCod($venta->numero, 6);
+                                else
+                                    echo '<span style="color: #0000FF">NO FACTURADO</span>';
+                                ?>
+                            </div>
+                        </div>
+
+                        <hr class="hr-margin-5">
+
+                        <?php if ($venta->comprobante_id > 0): ?>
+                            <div class="row">
+                                <div class="col-md-2"><label class="control-label">Comprobante:</label></div>
+                                <div class="col-md-3"><?= $venta->comprobante_nombre ?></div>
+
+                                <div class="col-md-1"></div>
+
+                                <div class="col-md-2"><label
+                                            class="control-label">Comp. Nro.:</label></div>
+                                <div
+                                        class="col-md-3"><?= $venta->comprobante ?></div>
+                            </div>
+
+                            <hr class="hr-margin-5">
+                        <?php endif; ?>
+
+                        <div class="row">
+                            <div class="col-md-2"><label class="control-label">Fecha:</label></div>
+                            <div class="col-md-3"><?= date('d/m/Y H:i:s', strtotime($venta->venta_fecha)) ?></div>
+
+                            <div class="col-md-1"></div>
+
+                            <div class="col-md-2"><label class="control-label">Moneda:</label></div>
+                            <div class="col-md-3"><?= $venta->moneda_nombre ?></div>
+                        </div>
+
+                        <hr class="hr-margin-5">
+
+                        <div class="row">
+                            <div class="col-md-2"><label class="control-label">Tipo de Pago:</label></div>
+                            <div class="col-md-3"><?= $venta->condicion_nombre ?></div>
+
+                            <div class="col-md-1"></div>
+
                             <div class="col-md-2"><label class="control-label">Importe de Deuda:</label></div>
                             <div
                                     class="col-md-3">
                                 <?= $venta->moneda_simbolo ?> <?= $venta_action == 'caja' ? $venta->total : $venta->credito_pendiente ?>
                             </div>
+                        </div>
+
+                        <hr class="hr-margin-5">
+                        <div class="row">
+                            <div class="col-md-2"><label class="control-label">Cliente:</label></div>
+                            <div class="col-md-3"><?= $venta->cliente_nombre ?></div>
 
                             <div class="col-md-1"></div>
 
                             <div class="col-md-2"><label class="control-label">Importe Inicial:</label></div>
                             <div class="col-md-3"><?= $venta->moneda_simbolo . " " . $venta->inicial ?></div>
                         </div>
-                    <?php endif; ?>
 
-                    <hr class="hr-margin-5">
+                        <hr class="hr-margin-5">
 
-                    <div class="row">
-                        <div class="col-md-2"><label class="control-label">Vendedor:</label></div>
-                        <div class="col-md-3"><?= $venta->vendedor_nombre ?></div>
+                        <div class="row">
+                            <div class="col-md-2"><label class="control-label">Vendedor:</label></div>
+                            <div class="col-md-3"><?= $venta->vendedor_nombre ?></div>
 
-                        <div class="col-md-1"></div>
+                            <div class="col-md-1"></div>
 
-                        <div class="col-md-2"><label class="control-label">Tipo de Cambio:</label></div>
-                        <div class="col-md-3"><?= $venta->moneda_tasa ?></div>
-                    </div>
+                            <div class="col-md-2"><label class="control-label">Tipo de Cambio:</label></div>
+                            <div class="col-md-3"><?= $venta->moneda_tasa ?></div>
+                        </div>
 
-                    <hr class="hr-margin-5">
+                        <hr class="hr-margin-5">
 
-                    <div class="row">
-                        <div class="col-md-2"><label class="control-label">Estado:</label></div>
-                        <div class="col-md-3"><?= $venta->venta_estado ?></div>
+                        <div class="row">
+                            <div class="col-md-2"><label class="control-label">Estado:</label></div>
+                            <div class="col-md-3"><?= $venta->venta_estado ?></div>
 
-                        <div class="col-md-1"></div>
+                            <div class="col-md-1"></div>
 
-                        <div class="col-md-2"><label class="control-label">Venta Total:</label></div>
-                        <div class="col-md-3"><?= $venta->moneda_simbolo . " " . $venta->total ?></div>
-                    </div>
+                            <div class="col-md-2"><label class="control-label">Venta Total:</label></div>
+                            <div class="col-md-3"><?= $venta->moneda_simbolo . " " . $venta->total ?></div>
+                        </div>
 
-                    <?php if ($venta->condicion_id == '2'): ?>
                         <hr class="hr-margin-5">
                         <div class="row">
-                            <h4 class="col-md-12">
+                            <div class="col-md-12 text-center">
                                 Dias de Gracia: <?= $venta->periodo_gracia ?> /
                                 Numero de Cuotas: <?= count($venta->cuotas) ?> /
                                 Tasa de Interes: <?= $venta->tasa_interes ?>%
-                            </h4>
+                            </div>
                         </div>
-                    <?php endif; ?>
-
-                    <table class="table table-bordered">
-                        <thead>
-                        <tr>
-                            <th><?= getCodigoNombre() ?></th>
-                            <th>Producto</th>
-                            <th>Cantidad</th>
-                            <th>UM</th>
-                            <th>Precio</th>
-                            <th>Subtotal</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <?php foreach ($venta->detalles as $detalle): ?>
+<br>
+                        <table class="table table-bordered">
+                            <thead>
                             <tr>
-                                <td><?= getCodigoValue($detalle->producto_id, $detalle->producto_codigo_interno) ?></td>
-                                <td><?= $detalle->producto_nombre ?></td>
-                                <td><?= $detalle->cantidad ?></td>
-                                <td><?= $detalle->unidad_nombre ?></td>
-                                <td style="text-align: right"><?= $detalle->precio ?></td>
-                                <td style="text-align: right"><?= $venta->moneda_simbolo . " " . $detalle->importe ?></td>
+                                <th><?= getCodigoNombre() ?></th>
+                                <th>Producto</th>
+                                <th>Cantidad</th>
+                                <th>UM</th>
+                                <th>Precio</th>
+                                <th>Subtotal</th>
                             </tr>
-                        <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
+                            </thead>
+                            <tbody>
+                            <?php foreach ($venta->detalles as $detalle): ?>
+                                <tr>
+                                    <td><?= getCodigoValue($detalle->producto_id, $detalle->producto_codigo_interno) ?></td>
+                                    <td><?= $detalle->producto_nombre ?></td>
+                                    <td><?= $detalle->cantidad ?></td>
+                                    <td><?= $detalle->unidad_nombre ?></td>
+                                    <td style="text-align: right"><?= $detalle->precio ?></td>
+                                    <td style="text-align: right"><?= $venta->moneda_simbolo . " " . $detalle->importe ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                <?php endif; ?>
 
                 <br>
                 <div class="row">
@@ -251,7 +371,7 @@
                         <?php endif; ?>
 
                         <?php if ($venta->nota != NULL): ?>
-                            Notas:<br>
+                            <h4>Notas:</h4>
                             <?= $venta->nota ?>
                         <?php endif; ?>
                     </div>
@@ -260,6 +380,10 @@
                             <tr>
                                 <td>Subtotal:</td>
                                 <td><?= $venta->moneda_simbolo ?> <?= number_format($venta->subtotal, 2) ?></label></td>
+                            </tr>
+                            <tr>
+                                <td>Descuento:</td>
+                                <td><?= $venta->moneda_simbolo ?> <?= number_format($venta->descuento, 2) ?></label></td>
                             </tr>
                             <tr>
                                 <td>Impuesto:</td>
