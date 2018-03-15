@@ -132,7 +132,6 @@
 
 
         guardar : function () {
-            $('#load_div').show()
             if ($("#username").val() == '') {
                 var growlType = 'warning';
 
@@ -233,6 +232,8 @@
 
                 return false;
             }
+
+            $('#load_div').show()
 
             App.formSubmitAjax($("#formagregar").attr('action'), this.ajaxgrupo, 'agregar', 'formagregar');
 

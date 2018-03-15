@@ -194,7 +194,7 @@
                             <div class="col-md-2">
                                 <label class="control-label panel-admin-text">Precio U. Venta:</label>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <div class="input-group">
                                     <div class="input-group-addon tipo_moneda"><?= $md->simbolo ?></div>
                                     <input type="text" style="text-align: right;"
@@ -202,7 +202,8 @@
                                            data-index="0"
                                            name="precio_unitario" id="precio_unitario" value="0.00"
                                            onkeydown="return soloDecimal4(this, event);" readonly>
-                                    <a id="editar_pu" data-estado="0" href="#" class="input-group-addon"><i
+                                    <a id="editar_pu" data-estado="0" href="#" class="input-group-addon"
+                                       style="padding: 0px; min-width: 25px;"><i
                                                 class="fa fa-edit"></i></a>
                                 </div>
                                 <h6 id="precio_unitario_um"
@@ -210,9 +211,23 @@
                             </div>
 
                             <div class="col-md-1 text-right" style="padding-right: 2px;">
+                                <label class="control-label panel-admin-text">Descuento:</label>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="input-group">
+                                    <input type="text"
+                                           class='form-control'
+                                           name="descuento" id="descuento" value=""
+                                           style="text-align: right; background-color: #ce8483 !important; color: #9c3428 !important; font-weight: bold;"
+                                           onkeydown="return soloDecimal4(this, event);">
+                                    <div class="input-group-addon">%</div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-1 text-right" style="padding-right: 2px;">
                                 <label class="control-label panel-admin-text">SubTotal:</label>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <div class="input-group">
                                     <div class="input-group-addon tipo_moneda"><?= $md->simbolo ?></div>
                                     <input type="text" style="text-align: right;"
@@ -222,7 +237,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-3 text-right">
+                            <div class="col-md-2 text-right">
 
                                 <button type="button" id="add_producto" class="btn btn-primary">
                                     Agregar <span class="help-key-side badge label-success"
@@ -264,7 +279,7 @@
                         <label class="control-label">Moneda:</label>
                     </div>
                     <div class="col-md-7" id="moneda_block_text" style="display: none;">
-                        <label class="control-label" id="moneda_text"><?= $monedas[0]['nombre']?></label>
+                        <label class="control-label" id="moneda_text"><?= $monedas[0]['nombre'] ?></label>
                     </div>
                     <div class="col-md-7" id="moneda_block_input" style="display: block;">
                         <div class="help-key badge label-success" style="display: none;">5</div>
@@ -300,7 +315,7 @@
                 </div>
 
                 <!--SUBTOTAL-->
-                <div id="block_subtotal" style="display:none;" class="row">
+                <div id="block_subtotal" class="row">
                     <div class="col-md-5 label-title">
                         <label class="control-label">Sub-Total:</label>
                     </div>
@@ -316,8 +331,25 @@
                     </div>
                 </div>
 
+                <div id="block_subtotal" class="row">
+                    <div class="col-md-5 label-title">
+                        <label class="control-label">Descuento:</label>
+                    </div>
+
+                    <div class="col-md-7">
+                        <div class="input-group">
+                            <div class="input-group-addon tipo_moneda"><?= $md->simbolo ?></div>
+                            <input type="text"
+                                   style="text-align: right; background-color: #ce8483 !important; color: #9c3428 !important;"
+                                   class='form-control'
+                                   name="total_descuento" id="total_descuento" value="0.00"
+                                   onkeydown="return soloDecimal4(this, event);" readonly>
+                        </div>
+                    </div>
+                </div>
+
                 <!--IMPUESTO-->
-                <div id="block_impuesto" style="display:none;" class="row">
+                <div id="block_impuesto" class="row">
                     <div class="col-md-5 label-title">
                         <label class="control-label">Impuesto:</label>
                     </div>
@@ -405,18 +437,11 @@
                     <div class="col-md-7">
                         <div class="help-key badge label-success" style="display: none;">7</div>
                         <select name="tipo_documento" id="tipo_documento" class="form-control">
-                            <?php $facturacion = valueOption('ACTIVAR_FACTURACION_VENTA') ?>
-                            <?php $shadow_stock = valueOption('ACTIVAR_SHADOW') ?>
                             <?php foreach ($tipo_documentos as $key => $value): ?>
 
-                                <?php if (($facturacion == 1 || $shadow_stock == 1) && ($value->id_doc == 1 || $value->id_doc == 3 || $value->id_doc == 6)): ?>
+                                <?php if (($value->id_doc == 1 || $value->id_doc == 3 || $value->id_doc == 6)): ?>
 
                                     <option <?= $value->id_doc == 3 ? 'selected="selected"' : '' ?>
-                                            value="<?= $value->id_doc ?>"><?= $value->des_doc ?></option>
-
-                                <?php elseif (($facturacion == 0 || $shadow_stock == 0) && $value->id_doc == 6): ?>
-
-                                    <option <?= $value->id_doc == 6 ? 'selected="selected"' : '' ?>
                                             value="<?= $value->id_doc ?>"><?= $value->des_doc ?></option>
 
                                 <?php endif; ?>

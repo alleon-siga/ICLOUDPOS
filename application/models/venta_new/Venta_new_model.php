@@ -54,8 +54,11 @@ class venta_new_model extends CI_Model
             credito.dec_credito_montodebito as credito_pagado,
             credito.dec_credito_montocuota as credito_pendiente,
             credito.var_credito_estado as credito_estado,
+            credito.tasa_interes as tasa_interes,
+            credito.periodo_gracia as periodo_gracia,
             venta.serie as serie,
             venta.numero as numero,
+            venta.nota as nota
             ')
             ->from('venta')
             ->join('documentos', 'venta.id_documento=documentos.id_doc')
@@ -92,6 +95,9 @@ class venta_new_model extends CI_Model
 
         if (isset($where['moneda_id']))
             $this->db->where('venta.id_moneda', $where['moneda_id']);
+
+        if (isset($where['condicion_id']) && $where['condicion_id'] != "")
+            $this->db->where('venta.condicion_pago', $where['condicion_id']);
 
         if (isset($where['estado']))
             if ($action == '')
@@ -141,6 +147,9 @@ class venta_new_model extends CI_Model
         if (isset($where['moneda_id']))
             $this->db->where('venta.id_moneda', $where['moneda_id']);
 
+        if (isset($where['condicion_id']) && $where['condicion_id'] != "")
+            $this->db->where('venta.condicion_pago', $where['condicion_id']);
+
         if (isset($where['estado']))
             if ($where['estado'] != "")
                 $this->db->where('venta.venta_status', $where['estado']);
@@ -167,7 +176,10 @@ class venta_new_model extends CI_Model
     function get_venta_detalle($venta_id)
     {
         $venta = $this->get_ventas(array('venta_id' => $venta_id));
-
+        $venta->cuotas = array();
+        if ($venta->condicion_id == 2) {
+            $venta->cuotas = $this->db->get_where('credito_cuotas', array('id_venta' => $venta_id))->result();
+        }
         $venta->venta_documentos = $this->db->get_where('venta_documento', array('venta_id' => $venta_id))->result();
 
         $venta->detalles = $this->db->select('
@@ -191,8 +203,8 @@ class venta_new_model extends CI_Model
             ->get()->result();
 
         $venta->descuento = 0;
-        foreach($venta->detalles as $detalle){
-            if($detalle->precio < $detalle->precio_venta){
+        foreach ($venta->detalles as $detalle) {
+            if ($detalle->precio < $detalle->precio_venta) {
                 $venta->descuento += ($detalle->precio_venta * $detalle->cantidad) - $detalle->importe;
             }
 
@@ -355,7 +367,8 @@ class venta_new_model extends CI_Model
             'dni_garante' => null,
             'inicial' => null,
             'tipo_impuesto' => $venta['tipo_impuesto'],
-            'comprobante_id' => $venta['comprobante_id']
+            'comprobante_id' => $venta['comprobante_id'],
+            'nota' => $venta['venta_nota']
         );
 
         if ($venta['venta_status'] == 'CAJA') {
@@ -469,7 +482,8 @@ class venta_new_model extends CI_Model
             'dni_garante' => $venta['c_dni_garante'],
             'inicial' => $venta['c_inicial'],
             'tipo_impuesto' => $venta['tipo_impuesto'],
-            'comprobante_id' => $venta['comprobante_id']
+            'comprobante_id' => $venta['comprobante_id'],
+            'nota' => $venta['venta_nota']
         );
 
 

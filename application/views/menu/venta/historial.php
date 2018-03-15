@@ -18,11 +18,9 @@
             <!-- Progress Bars Wizard Title -->
             <div class="row">
                 <div class="form-group">
-                    <div class="col-md-1">
-                        <label class="control-label panel-admin-text">Ubicaci&oacute;n:</label>
-                    </div>
                     <div class="col-md-3">
                         <?php if (isset($locales)): ?>
+                            <label class="control-label panel-admin-text">Ubicaci&oacute;n</label>
                             <select id="venta_local" class="form-control filter-input">
                                 <?php foreach ($locales as $local): ?>
                                     <option <?php if ($this->session->userdata('id_local') == $local['int_local_id']) echo "selected"; ?>
@@ -33,17 +31,26 @@
 
                     </div>
 
-                    <div class="col-md-1">
-
-                    </div>
-
                     <div class="col-md-3" style="display: <?= $venta_action != 'caja' ? 'block' : 'none' ?>">
+                        <label class="control-label panel-admin-text">Fecha</label>
                         <input type="text" id="date_range" class="form-control" readonly style="cursor: pointer;"
                                name="daterange" value="<?= date('01/m/Y') ?> - <?= date('d/m/Y') ?>"/>
 
                     </div>
 
+                    <div class="col-md-2" style="display: <?= $venta_action != 'caja' ? 'block' : 'none' ?>">
+                        <label class="control-label panel-admin-text">Tipo de Pago</label>
+                        <select name="condicion_pago_id" id="condicion_pago_id" class='cho form-control'>
+                            <option value="">Todos</option>
+                            <?php foreach ($condiciones_pagos as $condicion): ?>
+                                <option value="<?= $condicion->id_condiciones ?>">
+                                    <?= $condicion->nombre_condiciones ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
                     <div class="col-md-2">
+                        <label class="control-label panel-admin-text">Moneda</label>
                         <select name="moneda_id" id="moneda_id" class='cho form-control'>
                             <?php foreach ($monedas as $moneda): ?>
                                 <option value="<?= $moneda->id_moneda ?>"
@@ -80,6 +87,7 @@
                     <div class="col-md-1"></div>
 
                     <div class="col-md-2">
+                        <label class="control-label panel-admin-text" style="color: #fff;">.</label><br>
                         <?php if ($venta_action != 'caja'): ?>
                             <button id="btn_buscar" class="btn btn-default">
                                 <i class="fa fa-search"></i>
@@ -276,6 +284,7 @@
                     var estado = $("#venta_estado").val();
                     var fecha = $('#date_range').val();
                     var moneda_id = $("#moneda_id").val();
+                    var condicion_pago_id = $("#condicion_pago_id").val();
 
 
                     $.ajax({
@@ -284,7 +293,8 @@
                             'local_id': local_id,
                             'fecha': fecha,
                             'estado': estado,
-                            'moneda_id': moneda_id
+                            'moneda_id': moneda_id,
+                            'condicion_pago_id': condicion_pago_id
                         },
                         type: 'POST',
                         success: function (data) {

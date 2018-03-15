@@ -24,7 +24,7 @@
     </div>
 </div>
 <div class="row block">
-<!--    <button type="button" id="imprimir">Imprimir</button>-->
+    <!--    <button type="button" id="imprimir">Imprimir</button>-->
     <?= form_open_multipart(base_url() . 'venta_new/opciones/save', array('id' => 'formguardar')) ?>
     <h3>Cr&eacute;dito</h3>
     <div class="row form-group">
@@ -126,6 +126,31 @@
         </div>
     <?php endif; ?>
 
+    <div class="row form-group">
+        <div class="col-md-4">
+            <label class="control-label panel-admin-text">Vencimiento de la Oferta de Venta:</label>
+        </div>
+
+        <div class="col-md-8">
+            <input type="text" id="FECHA_VENTA_PROMO"
+                   name="FECHA_VENTA_PROMO" class="form-control" readonly style="cursor: pointer;"
+                   value="<?= valueOption("FECHA_VENTA_PROMO", date('d/m/Y')) ?>">
+        </div>
+    </div>
+
+    <div class="row form-group">
+        <div class="col-md-4">
+            <label class="control-label panel-admin-text">Oferta de Ventas:</label>
+        </div>
+
+        <div class="col-md-8">
+            <textarea type="text" name="VENTA_PROMO" rows="5" id="VENTA_PROMO"
+                      class='form-control textarea-editor'>
+                <?= valueOption("VENTA_PROMO", '') ?>
+            </textarea>
+        </div>
+    </div>
+
     <h3>Cotizaci&oacute;n</h3>
     <div class="row form-group">
         <div class="col-md-4">
@@ -198,6 +223,10 @@
     }
 
     $(function () {
+
+        $('#FECHA_VENTA_PROMO').datepicker({
+            format: 'dd/mm/yyyy'
+        });
 
 //        $('#imprimir').on('click', function () {
 //            $.ajax({

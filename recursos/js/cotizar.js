@@ -365,17 +365,11 @@ $(document).ready(function () {
     $("#tipo_documento").on('change', function () {
 
         if ($(this).val() == '1') {
-            $('#block_impuesto').show();
-            $('#block_subtotal').show();
 
             if ($("#tipo_documento").val() == 1 && $("#cliente_id option:selected").attr('data-ruc') != 2) {
                 show_msg('warning', '<h4>Error. </h4><p>El Cliente no tiene ruc para realizar venta en factura.</p>');
                 select_productos(49);
             }
-        }
-        else {
-            $('#block_impuesto').hide();
-            $('#block_subtotal').hide();
         }
 
         refresh_right_panel();
@@ -476,6 +470,10 @@ $(document).ready(function () {
         refresh_right_panel();
     });
 
+    $('#descuento').on('keyup', function () {
+        refresh_totals();
+    });
+
     $("#reiniciar_cotizar").on('click', function () {
         $('#confirm_cotizar_text').html('Si reinicias la cotizacion perderas todos los productos agregados. Estas seguro?');
         $('#confirm_cotizar_button').attr('onclick', 'reset_cotizar();');
@@ -534,7 +532,8 @@ function prepare_detalles_productos() {
                 var producto = {};
                 producto.id_producto = lst_producto[i].producto_id;
                 producto.producto_impuesto = lst_producto[i].producto_impuesto;
-                producto.precio = lst_producto[i].precio_unitario;
+                producto.precio = precios[unidad] * lst_producto[i].precio_descuento;
+                producto.precio_venta = precios[unidad] * lst_producto[i].precio_unitario;
                 producto.unidad_medida = unidad;
                 producto.cantidad = cantidades[unidad];
                 producto.detalle_importe = producto.cantidad * producto.precio;
@@ -616,6 +615,8 @@ function add_producto() {
         producto.producto_nombre = encodeURIComponent($("#producto_id option:selected").text());
         producto.precio_id = precio_id;
         producto.precio_unitario = parseFloat($("#precio_unitario").val());
+        producto.descuento = isNaN(parseFloat($('#descuento').val())) ? 0 : parseFloat($('#descuento').val());
+        producto.precio_descuento = producto.descuento > 0 ? (producto.precio_unitario - (producto.precio_unitario * producto.descuento / 100)) : producto.precio_unitario;
 
         producto.um_min = $("#um_minimo").html().trim();
         producto.um_min_abr = $("#um_minimo").attr('data-abr');
@@ -641,13 +642,16 @@ function add_producto() {
 
         });
 
-        producto.subtotal = parseFloat(producto.total_minimo * producto.precio_unitario);
+        producto.subtotal = parseFloat(producto.total_minimo * producto.precio_descuento);
 
         lst_producto.push(producto);
     }
     else {
         //EDITO LA INFORMACION DETALLADA DEL PRODUCTO
         lst_producto[index].precio_id = precio_id;
+        lst_producto[index].precio_unitario = parseFloat($("#precio_unitario").val());
+        lst_producto[index].descuento = isNaN(parseFloat($('#descuento').val())) ? 0 : parseFloat($('#descuento').val());
+        lst_producto[index].precio_descuento = lst_producto[index].descuento > 0 ? (lst_producto[index].precio_unitario - (lst_producto[index].precio_unitario * lst_producto[index].descuento / 100)) : lst_producto[index].precio_unitario;
         lst_producto[index].precio_unitario = parseFloat($("#precio_unitario").val());
         lst_producto[index].total_minimo = 0;
 
@@ -662,7 +666,7 @@ function add_producto() {
 
         });
 
-        lst_producto[index].subtotal = parseFloat(lst_producto[index].total_minimo * lst_producto[index].precio_unitario);
+        lst_producto[index].subtotal = parseFloat(lst_producto[index].total_minimo * lst_producto[index].precio_descuento);
     }
 
 
@@ -727,6 +731,7 @@ function update_view(type) {
                     '<th>Producto</th>' +
                     '<th>Total Minimo</th>' +
                     '<th>Precio Unitario</th>' +
+                    '<th>Precio Descuento</th>' +
                     '<th>Subtotal</th>' +
                     '<th>Acciones</th>' +
                     '</tr>');
@@ -749,6 +754,7 @@ function addTable(producto, type) {
     if (type == 'general') {
         template += '<td style="text-align: center;">' + producto.total_minimo + ' (' + producto.um_min + ')</td>';
         template += '<td>' + producto.precio_unitario + '</td>';
+        template += '<td>' + (producto.precio_unitario > producto.precio_descuento ? producto.precio_descuento : '-')  + '</td>';
         template += '<td>' + parseFloat(producto.subtotal).toFixed(2) + '</td>';
     }
     if (type == 'detalle') {
@@ -864,9 +870,14 @@ function refresh_totals() {
         var input = $(this);
         if (input.val() != 0) {
             data_total += parseFloat(input.val() * input.attr('data-unidades'));
-
-            if ($("#precio_id").val() == '3')
-                importe_total += parseFloat($("#precio_unitario").val() * input.val() * input.attr('data-unidades'));
+            var precio_unitario = $("#precio_unitario").val();
+            var descuento = isNaN(parseFloat($('#descuento').val())) ? 0 : parseFloat($('#descuento').val());
+            if (descuento > 0) {
+                precio_unitario -= precio_unitario * descuento / 100;
+            }
+            if ($("#precio_id").val() == '3') {
+                importe_total += parseFloat(precio_unitario * input.val() * input.attr('data-unidades'));
+            }
             else
                 importe_total += parseFloat($("#precio_" + input.attr('data-unidad_id')).val() * input.val());
         }
@@ -914,7 +925,7 @@ function refresh_right_panel() {
     var index = $('.precio-input').length - 1;
     $('.precio-input[data-index="' + index + '"]').first().trigger('click');
 
-    var subtotal = 0, impuesto = 0, total_importe = 0;
+    var subtotal = 0, impuesto = 0, total_importe = 0, total_descuento = 0;
     if ($("#tipo_impuesto").val() == 1) {
         total_importe = parseFloat(total);
         for (var i = 0; i < lst_producto.length; i++) {
@@ -937,10 +948,15 @@ function refresh_right_panel() {
         impuesto = parseFloat(0);
     }
 
+    for (var i = 0; i < lst_producto.length; i++) {
+        total_descuento += parseFloat((lst_producto[i].total_minimo * lst_producto[i].precio_unitario) - (lst_producto[i].subtotal));
+    }
+
 
     $("#total_importe").val(parseFloat(total_importe).toFixed(2));
     $("#subtotal").val(parseFloat(subtotal).toFixed(2));
     $("#impuesto").val(parseFloat(impuesto).toFixed(2));
+    $("#total_descuento").val(parseFloat(total_descuento).toFixed(2));
     $("#total_producto").val(lst_producto.length);
 
 

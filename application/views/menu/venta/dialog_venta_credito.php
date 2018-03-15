@@ -301,6 +301,13 @@
                             </div>
                         </div>
 
+                        <div class="row">
+                            <button type="button" class="btn btn-primary col-md-12 text-center add_nota">
+                                <i class="fa fa-plus"></i>
+                                Agregar Nota de Venta
+                            </button>
+                        </div>
+
 
                     </div>
                 </div>

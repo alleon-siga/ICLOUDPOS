@@ -146,7 +146,8 @@ class cotizar_model extends CI_Model
             cd.unidad_id as unidad_id,
             unidades.nombre_unidad as unidad_nombre,
             unidades.abreviatura as unidad_abr,
-            SUM(cd.precio * uhp.unidades * cd.cantidad) as importe
+            SUM(cd.precio * uhp.unidades * cd.cantidad) as importe, 
+            cd.precio_venta as precio_venta
             ')
             ->from('cotizacion_detalles as cd')
             ->join('cotizacion as c', 'c.id=cd.cotizacion_id')
@@ -157,6 +158,14 @@ class cotizar_model extends CI_Model
             ->where('cd.cotizacion_id', $cotizacion->id)
             ->group_by('cd.id')
             ->get()->result();
+
+        $cotizacion->descuento = 0;
+        foreach ($cotizacion->detalles as $detalle) {
+            if ($detalle->precio < $detalle->precio_venta) {
+                $cotizacion->descuento += ($detalle->precio_venta * $detalle->cantidad) - ($detalle->precio * $detalle->cantidad);
+            }
+
+        }
 
         return $cotizacion;
     }
@@ -222,7 +231,8 @@ class cotizar_model extends CI_Model
             unidades.nombre_unidad as unidad_nombre,
             unidades.abreviatura as unidad_abr,
             SUM(cd.precio * cd.cantidad) as importe,
-            cd.impuesto as impuesto
+            cd.impuesto as impuesto,
+            cd.precio_venta as precio_venta
             ')
             ->from('cotizacion_detalles as cd')
             ->join('cotizacion as c', 'c.id=cd.cotizacion_id')
@@ -283,7 +293,8 @@ class cotizar_model extends CI_Model
                 'unidad_id' => $detalle->unidad_medida,
                 'precio' => $detalle->precio,
                 'cantidad' => $detalle->cantidad,
-                'impuesto' => $detalle->producto_impuesto
+                'impuesto' => $detalle->producto_impuesto,
+                'precio_venta' => $detalle->precio_venta
             );
 
             array_push($data, $temp);
