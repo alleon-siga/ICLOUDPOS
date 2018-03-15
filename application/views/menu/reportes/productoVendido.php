@@ -65,7 +65,7 @@
                         </div>
                         <div class="row">
                             <label class="control-label">Marca:</label>
-                            <select id="marca_id" name="marca_id" class="form-control">
+                            <select id="marca_id" name="marca_id" class="form-control ctrl">
                                 <option value="0">Todos</option>
                                 <?php foreach ($marcas as $marca): ?>
                                     <option value="<?= $marca->id_marca ?>"><?= $marca->nombre_marca ?></option>
@@ -74,7 +74,7 @@
                         </div>
                         <div class="row">
                             <label class="control-label">Grupo:</label>
-                            <select id="grupo_id" name="grupo_id" class="form-control">
+                            <select id="grupo_id" name="grupo_id" class="form-control ctrl">
                                 <option value="0">Todos</option>
                                 <?php foreach ($grupos as $grupo): ?>
                                     <option value="<?= $grupo->id_grupo ?>"><?= $grupo->nombre_grupo ?></option>
@@ -83,7 +83,7 @@
                         </div>
                         <div class="row">
                             <label class="control-label">Familia:</label>
-                            <select id="familia_id" name="familia_id" class="form-control">
+                            <select id="familia_id" name="familia_id" class="form-control ctrl">
                                 <option value="0">Todos</option>
                                 <?php foreach ($familias as $familia): ?>
                                     <option value="<?= $familia->id_familia ?>"><?= $familia->nombre_familia ?></option>
@@ -92,7 +92,7 @@
                         </div>
                         <div class="row">
                             <label class="control-label">Linea:</label>
-                            <select id="linea_id" name="linea_id" class="form-control">
+                            <select id="linea_id" name="linea_id" class="form-control ctrl">
                                 <option value="0">Todos</option>
                                 <?php foreach ($lineas as $linea): ?>
                                     <option value="<?= $linea->id_linea ?>"><?= $linea->nombre_linea ?></option>
@@ -109,14 +109,6 @@
                                         <?= getCodigoValue($producto->producto_id, $producto->codigo) . ' - ' . $producto->producto_nombre . " " . $barra ?>
                                     </option>
                                 <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <div class="row" style="display: none;">
-                            <label class="control-label">Stock:</label>
-                            <select id="con_stock" name="con_stock" class="form-control">
-                                <option value="0">Todos</option>
-                                <option value="1" selected="">Con Stock</option>
-                                <option value="2">Sin Stock</option>
                             </select>
                         </div>
                     </div>
@@ -174,20 +166,15 @@
             <script src="<?php echo $ruta; ?>recursos/js/Validacion.js"></script>
             <script src="<?= base_url('recursos/js/tcharm.js') ?>"></script>
             <script src="<?php echo $ruta; ?>recursos/js/multiple-select.js"></script>
-            <script src="<?php echo $ruta; ?>recursos/highcharts/highcharts.js"></script>
-            <script src="<?php echo $ruta; ?>recursos/highcharts/modules/exporting.js"></script>
             <!-- /.modal-dialog -->
             <script type="text/javascript">
                 // Filtro en select
                 $("#producto_id").multipleSelect({
                     filter: true,
-                    width: '94%'
+                    width: '100%'
                 });
-				$(document).ready(function () {
-                    $(".select-chosen").chosen({
-                        search_contains: true
-                    });
 
+                $(document).ready(function () {
                     $("#charm").tcharm({
                         'position': 'right',
                         'display': false,
@@ -230,7 +217,7 @@
                         }
                     });
 
-                    $('select').chosen();
+                    $('.ctrl').chosen();
 
                     getReporte();
 
@@ -253,6 +240,7 @@
 
                 function getReporte() {
                     $("#historial_list").html($("#loading").html());
+                    $("#charm").tcharm('hide');
 
                     var data = {
                         'local_id': $("#local_id").val(),
@@ -281,6 +269,5 @@
                             $("#historial_list").html('');
                         }
                     });
-
                 }
             </script>

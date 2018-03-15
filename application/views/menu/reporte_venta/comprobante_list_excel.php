@@ -1,12 +1,12 @@
 <?php
 header("Content-type: application/octet-stream");
-header("Content-Disposition: attachment; filename=utilidades_productos.xls");
+header("Content-Disposition: attachment; filename=venta_comprobantes.xls");
 header("Pragma: no-cache");
 header("Expires: 0");
 ?>
-<h4 style="text-align: center; margin: 0;">Reporte de ventas por comprobante e impuestos</h4>
-<h4 style="text-align: center; margin: 0;">Desde <?= date('m/d/Y', strtotime($fecha_ini)) ?>
-    al <?= date('m/d/Y', strtotime($fecha_fin)) ?></h4>
+<h4 style="text-align: center; margin: 0;">Reporte de comisi&oacute;n por vendedores</h4>
+<h4 style="text-align: center; margin: 0;">Desde <?= date('d/m/Y', strtotime($fecha_ini)) ?>
+    al <?= date('d/m/Y', strtotime($fecha_fin)) ?></h4>
 
 <h5 style="margin: 0;">EMPRESA: <?= valueOption('EMPRESA_NOMBRE') ?></h5>
 <h5 style="margin: 0;">DIRECCI&Oacute;N: <?= $local_direccion ?></h5>

@@ -475,60 +475,6 @@ class venta_new extends MY_Controller
         $this->venta->devolver_venta($venta_id, $total_importe, $devoluciones, $serie, $numero);
     }
 
-    function reporte_comision($action = '')
-    {
-
-        if ($action == 'filter') {
-            $params['local_id'] = $this->input->post('local_id');
-            $params['moneda_id'] = $this->input->post('moneda_id');
-
-            $date_range = explode(" - ", $this->input->post('fecha'));
-            $params['fecha_ini'] = str_replace("/", "-", $date_range[0]);
-            $params['fecha_fin'] = str_replace("/", "-", $date_range[1]);
-
-            $data['moneda'] = $this->db->get_where('moneda', array('id_moneda' => $params['moneda_id']))->row();
-
-            $query = "
-                SELECT
-                    v.id_vendedor AS vendedor_id,
-                    u.nombre AS vendedor_nombre,
-                    SUM(v.total) AS total_venta,
-                    IFNULL(u.porcentaje_comision, 0) AS comision,
-                    IFNULL((SUM(v.total) * u.porcentaje_comision) / 100,0) AS importe_comision
-                FROM
-                    venta v
-                INNER JOIN usuario u ON v.id_vendedor = u.nUsuCodigo
-                WHERE
-                    v.id_moneda = " . $params['moneda_id'] . " 
-                AND v.local_id = " . $params['local_id'] . "
-                AND v.venta_status = 'COMPLETADO' 
-                AND DATE_FORMAT(v.fecha,'%d-%m-%Y')
-                BETWEEN  '" . $params['fecha_ini'] . "' and  '" . $params['fecha_fin'] . "'
-                GROUP BY
-                    v.id_vendedor;
-            ";
-
-            $data['usuarios'] = $this->db->query($query)->result();
-
-            $this->load->view('menu/venta/reporte_comision_list', $data);
-
-        } else {
-            if ($this->session->userdata('esSuper') == 1) {
-                $data['locales'] = $this->local_model->get_all();
-            } else {
-                $usu = $this->session->userdata('nUsuCodigo');
-                $data['locales'] = $this->local_model->get_all_usu($usu);
-            }
-            $data['monedas'] = $this->db->get_where('moneda', array('status_moneda' => 1))->result();
-            $dataCuerpo['cuerpo'] = $this->load->view('menu/venta/reporte_comision', $data, true);
-            if ($this->input->is_ajax_request()) {
-                echo $dataCuerpo['cuerpo'];
-            } else {
-                $this->load->view('menu/template', $dataCuerpo);
-            }
-        }
-    }
-
     function opciones($action = 'get')
     {
         $this->load->model('opciones/opciones_model');

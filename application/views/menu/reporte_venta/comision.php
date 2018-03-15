@@ -63,7 +63,7 @@
 
             <div class="row-fluid">
                 <div class="span12">
-                    <div id="historial_list" class="block">
+                    <div id="historial_list">
 
 
                     </div>
@@ -142,7 +142,7 @@
                     var moneda_id = $("#moneda_id").val();
 
                     $.ajax({
-                        url: '<?= base_url()?>venta_new/reporte_comision/filter',
+                        url: '<?= base_url()?>reporte_ventas/comision/filter',
                         data: {
                             'local_id': local_id,
                             'fecha': fecha,
