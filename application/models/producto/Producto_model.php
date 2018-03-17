@@ -132,6 +132,26 @@ class producto_model extends CI_Model
             ->get()->result();
     }
 
+    public function get_productos_list2($params)
+    {
+        $this->db->select('producto_id, producto_codigo_interno as codigo, producto_nombre, producto_codigo_barra as barra, impuestos.porcentaje_impuesto');
+        $this->db->from('producto');
+        $this->db->join('impuestos', 'impuestos.id_impuesto = producto.producto_impuesto');
+        $this->db->where('producto_estatus', '1');
+        $this->db->where('producto_estado', '1');
+        if($params['marca_id']>0)
+            $this->db->where('producto_marca', $params['marca_id']);
+        if($params['grupo_id']>0)
+            $this->db->where('produto_grupo', $params['grupo_id']);
+        if($params['familia_id']>0)
+            $this->db->where('producto_familia', $params['familia_id']);
+        if($params['linea_id']>0)
+            $this->db->where('producto_linea', $params['linea_id']);
+
+        $this->db->group_by('producto_id');
+        return $this->db->get()->result();
+    }
+
     public function getCodigo($cod, $id)
     {
         $query = $this->get_where($this->tabla, array($this->id => $id))->row(0);

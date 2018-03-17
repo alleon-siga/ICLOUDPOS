@@ -9,7 +9,8 @@ class reporte_model extends CI_Model
         $this->load->database();
     }
 
-    function getProductoVendido($params){
+    function getProductoVendido($params)
+    {
         $marca_id = $grupo_id = $familia_id = $linea_id = $producto_id = '';
 
         $marca_id .= ($params['marca_id']>0)? " AND p.producto_marca=".$params['marca_id'] : "";
@@ -20,7 +21,8 @@ class reporte_model extends CI_Model
         $search = $marca_id.$grupo_id.$familia_id.$linea_id.$producto_id;
         $query = "
             SELECT 
-                dv.id_producto AS id_producto,
+                p.producto_id AS producto_id, 
+                p.producto_codigo_interno AS producto_codigo_interno, 
                 p.producto_nombre AS producto_nombre,
                 SUM(up.unidades * dv.cantidad) AS ventas, 
                 (
@@ -42,20 +44,20 @@ class reporte_model extends CI_Model
             WHERE 
                 v.venta_status='COMPLETADO'
                 AND v.local_id = ".$params['local_id']."
-                AND v.id_moneda = ".$params['moneda_id']."
                 AND v.fecha >= '".$params['fecha_ini']."'
                 AND v.fecha <= '".$params['fecha_fin']."'
                 $search
             GROUP BY 
                 dv.id_producto
             ORDER BY 
-                id_producto
+                ventas DESC
         ";
 
         return $this->db->query($query)->result();
     }
 
-    function getVentaSucursal($params){
+    function getVentaSucursal($params)
+    {
         $marca_id = $grupo_id = $familia_id = $linea_id = $producto_id = '';
 
         $marca_id .= ($params['marca_id']>0)? " AND p.producto_marca=".$params['marca_id'] : "";
@@ -64,43 +66,62 @@ class reporte_model extends CI_Model
         $linea_id .= ($params['linea_id']>0)? " AND p.producto_linea=".$params['linea_id'] : "";
         $producto_id .= ($params['producto_id']!='')? " AND p.producto_id IN(".implode(",", $params['producto_id']).")" : "";
         $search = $marca_id.$grupo_id.$familia_id.$linea_id.$producto_id;
-        $query = "
-            SELECT 
-                dv.id_producto AS id_producto, 
-                p.producto_nombre AS producto_nombre, 
-                SUM(up.unidades * dv.cantidad) AS ventas, 
+
+        $query = "SELECT p.producto_id, p.producto_codigo_interno, p.producto_nombre, u.nombre_unidad";
+        
+        $usu = $this->session->userdata('nUsuCodigo');
+        $sqlLocal = $this->db->select('`l`.`int_local_id` AS `int_local_id`,`l`.`local_nombre` AS `local_nombre`,`ua`.`usuario_id`  AS `usuario_id`');
+        $sqlLocal = $this->db->from('(`local` `l` LEFT JOIN `usuario_almacen` `ua`  ON ((`ua`.`local_id` = `l`.`int_local_id`)))');
+        $sqlLocal = $this->db->where('`l`.`local_status` = 1');
+        $sqlLocal = $this->db->where('usuario_id', $usu);
+        $sqlLocal = $this->db->get();
+        $x=1;
+        foreach ($sqlLocal->result() as $row)
+        {
+            $local = $row->int_local_id;
+            $query .= ",
                 (
-                    SELECT SUM((pa.cantidad * (SELECT unidades FROM unidades_has_producto WHERE producto_id=pa.id_producto AND orden=1)) + pa.fraccion) AS und
+                    SELECT 
+                        IF(SUM(up.unidades * dv.cantidad) IS NULL, '0', SUM(up.unidades * dv.cantidad))
+                    FROM venta v
+                    INNER JOIN detalle_venta dv ON v.venta_id=dv.id_venta 
+                    INNER JOIN unidades_has_producto up ON dv.id_producto=up.producto_id AND dv.unidad_medida=up.id_unidad
+                    WHERE v.venta_status='COMPLETADO' AND v.local_id='$local' AND dv.id_producto=p.producto_id
+                ) AS cantVend$x,
+                (
+                    SELECT 
+                        IF(SUM((pa.cantidad * (SELECT unidades FROM unidades_has_producto WHERE producto_id=pa.id_producto AND orden=1)) + pa.fraccion) IS NULL, 0, SUM((pa.cantidad * (SELECT unidades FROM unidades_has_producto WHERE producto_id=pa.id_producto AND orden=1)) + pa.fraccion))
                     FROM producto_almacen pa
-                    WHERE pa.id_producto=dv.id_producto
-                ) AS stock,
-                u.nombre_unidad AS nombre_unidad
+                    WHERE pa.id_local='$local' AND pa.id_producto=p.producto_id
+                ) AS stock$x
+            ";
+            $x++;
+        }
+
+        $query .= "
             FROM 
-                detalle_venta dv
-                INNER JOIN 
-                    venta v ON v.venta_id=dv.id_venta
-                INNER JOIN
-                    producto p ON dv.id_producto=p.producto_id
-                INNER JOIN
-                    unidades_has_producto up ON dv.id_producto=up.producto_id AND dv.unidad_medida=up.id_unidad
-                INNER JOIN 
-                    unidades u ON up.id_unidad=u.id_unidad
-                INNER JOIN 
-                    `local` l ON v.local_id=l.int_local_id
-                WHERE 
-                    v.venta_status='COMPLETADO'
-                    AND v.local_id = ".$params['local_id']."
-                    AND v.id_moneda = ".$params['moneda_id']."
-                    AND v.fecha >= '".$params['fecha_ini']."'
-                    AND v.fecha <= '".$params['fecha_fin']."'
-                    $search
-                GROUP BY
-                    dv.id_producto
-                ORDER BY 
-                    dv.id_producto
+                producto AS p
+            INNER JOIN 
+                detalle_venta dv ON p.producto_id=dv.id_producto
+            INNER JOIN 
+                venta v ON v.venta_id=dv.id_venta
+            INNER JOIN
+                unidades_has_producto up2 ON dv.id_producto=up2.producto_id AND dv.unidad_medida=up2.id_unidad
+            INNER JOIN
+                unidades u ON up2.id_unidad=u.id_unidad
+            WHERE 
+                p.producto_estado='1'
+                AND v.venta_status='COMPLETADO'
+                AND v.fecha >= '".$params['fecha_ini']."'
+                AND v.fecha <= '".$params['fecha_fin']."'
+                $search
+            GROUP BY
+                dv.id_producto
+            ORDER BY
+                p.producto_id
         ";
 
-        return $this->db->query($query)->result();
+        return $this->db->query($query)->result_array();
     }
 
     function getVentaEmpleado($params){
@@ -115,11 +136,12 @@ class reporte_model extends CI_Model
         $tipo = $params['tipo'];
         $query = "
             SELECT 
-                v.id_vendedor AS id_vendedor,
+                p.producto_id AS producto_id, 
+                v.id_vendedor AS id_vendedor, 
                 u.nombre AS nombre,
                 $tipo AS tipo,
                 SUM(up.unidades * dv.cantidad) AS cantidad, 
-                v.total AS total,
+                SUM(v.total) AS total,
                 (
                     SELECT COUNT(*) FROM venta WHERE venta_status='ANULADO' AND id_vendedor=u.nUsuCodigo
                 ) AS anulado
@@ -135,13 +157,15 @@ class reporte_model extends CI_Model
                     unidades_has_producto up ON dv.id_producto=up.producto_id AND dv.unidad_medida=up.id_unidad
                 WHERE
                     v.venta_status='COMPLETADO'
-                    AND v.local_id = ".$params['local_id']."
                     AND v.id_moneda = ".$params['moneda_id']."
+                    AND v.local_id = ".$params['local_id']."
                     AND v.fecha >= '".$params['fecha_ini']."'
                     AND v.fecha <= '".$params['fecha_fin']."'
                     $search
-                GROUP BY
+            GROUP BY
                 v.id_vendedor
+            ORDER BY 
+                cantidad DESC
         ";
 
         return $this->db->query($query)->result();

@@ -101,8 +101,9 @@
                         </div>
                         <div class="row">
                             <label class="control-label">Producto:</label>
-                            <select id="producto_id" name="producto_id" multiple="multiple">
-                             <?php foreach ($productos as $producto): ?>
+                            <div id="divSelect">
+                                <select id="producto_id" name="producto_id" multiple="multiple">
+                                <?php foreach ($productos as $producto): ?>
                                     <option value="<?= $producto->producto_id ?>"
                                             data-impuesto="<?= $producto->porcentaje_impuesto ?>">
                                         <?php $barra = $barra_activa->activo == 1 && $producto->barra != "" ? "CB: " . $producto->barra : "" ?>
@@ -110,6 +111,7 @@
                                     </option>
                                 <?php endforeach; ?>
                             </select>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -125,15 +127,6 @@
                 </div>
                 <div class="col-md-3">
                     <input type="text" id="fecha" class="form-control" readonly style="cursor: pointer;" name="fecha" value="<?= date('01/m/Y') ?> - <?= date('d/m/Y') ?>"/>
-                </div>
-                <div class="col-md-2">
-                    <select name="moneda_id" id="moneda_id" class='cho form-control'>
-                        <?php foreach ($monedas as $moneda): ?>
-                        <option value="<?= $moneda['id_moneda'] ?>"
-                        data-simbolo="<?= $moneda['simbolo'] ?>"
-                        <?= $moneda['id_moneda'] == MONEDA_DEFECTO ? 'selected' : ''?>><?= $moneda['nombre']; ?></option>
-                        <?php endforeach; ?>
-                    </select>
                 </div>
                 <div class="col-md-1">
                     <button id="btn_buscar" class="btn btn-default">
@@ -235,6 +228,11 @@
                         $('#producto_id').multipleSelect('uncheckAll');
                         $("#charm").tcharm('hide');
                         getReporte();
+                        filtro();
+                    });
+
+                    $('#marca_id, #grupo_id, #familia_id, #linea_id').on('change', function(){
+                        filtro();
                     });
 				});
 
@@ -245,7 +243,6 @@
                     var data = {
                         'local_id': $("#local_id").val(),
                         'fecha': $("#fecha").val(),
-                        'moneda_id': $("#moneda_id").val(),
                         'producto_id': $("#producto_id").val(),
                         'grupo_id': $("#grupo_id").val(),
                         'marca_id': $("#marca_id").val(),
@@ -267,6 +264,32 @@
                                 allow_dismiss: true
                             });
                             $("#historial_list").html('');
+                        }
+                    });
+                }
+
+                function filtro(){
+                    var data = {
+                        'grupo_id': $("#grupo_id").val(),
+                        'marca_id': $("#marca_id").val(),
+                        'linea_id': $("#linea_id").val(),
+                        'familia_id': $("#familia_id").val()
+                    };
+
+                    $.ajax({
+                        url: '<?= base_url()?>reporte/selectProducto',
+                        data: data,
+                        type: 'POST',
+                        success: function (data) {
+                            $("#divSelect").html(data);
+                        },
+                        error: function () {
+                            $.bootstrapGrowl('<h4>Error.</h4> <p>Ha ocurrido un error en la operaci&oacute;n</p>', {
+                                type: 'danger',
+                                delay: 5000,
+                                allow_dismiss: true
+                            });
+                            $("#divSelect").html('');
                         }
                     });
                 }
