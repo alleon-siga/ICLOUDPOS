@@ -129,9 +129,11 @@
     cursor: default; }
   .daterangepicker select.monthselect {
     margin-right: 2%;
-    width: 56%; }
+    width: 56%; 
+    color: #000; }
   .daterangepicker select.yearselect {
-    width: 40%; }
+    width: 40%; 
+    color: #000; }
   .daterangepicker select.hourselect, .daterangepicker select.minuteselect, .daterangepicker select.secondselect, .daterangepicker select.ampmselect {
     width: 50px;
     margin-bottom: 0; }

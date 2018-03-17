@@ -17,7 +17,6 @@ class Reporte_ventas extends MY_Controller
 
     function comprobante($action = '')
     {
-
         switch ($action) {
             case 'filter': {
                 $params['local_id'] = $this->input->post('local_id');

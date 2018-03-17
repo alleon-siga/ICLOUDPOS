@@ -502,6 +502,24 @@ $primary_nav = array(
                 'icon' => 'fa fa-pie-chart',
                 'slug' => 'ventaxcomprobante'
             ),
+            array(
+                'name' => 'Productos más vendidos',
+                'url' => $ruta . 'reporte/productoVendido',
+                'icon' => 'fa fa-area-chart',
+                'slug' => 'productovendido'
+            ),
+            array(
+                'name' => 'Ventas por sucursal',
+                'url' => $ruta . 'reporte/ventaSucursal',
+                'icon' => 'fa fa-area-chart',
+                'slug' => 'ventaSucursal'
+            ),
+            array(
+                'name' => 'Ventas por empleado',
+                'url' => $ruta . 'reporte/ventaEmpleado',
+                'icon' => 'fa fa-area-chart',
+                'slug' => 'ventaEmpleado'
+            ),
         ),
     ),
 
@@ -746,6 +764,8 @@ $primary_nav = array(
     <script src="<?php echo $ruta; ?>recursos/js/jquery.elevateZoom-3.0.8.min.js"></script>
 
     <script src="<?php echo $ruta ?>recursos/js/pages/tablesDatatables.js"></script>
+    <script src="<?php echo $ruta; ?>recursos/highcharts/highcharts.js"></script>
+    <script src="<?php echo $ruta; ?>recursos/highcharts/modules/exporting.js"></script>
     <script>
         var baseurl = '<?php echo base_url();?>';
         var ventas_credito = 0;
