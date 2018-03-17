@@ -12,10 +12,25 @@
                     <div class="col-md-9">
                         <input type="text"
                                class='input-square input-small form-control'
-                               value="<?= $next_id?>"
+                               value="<?= $next_id ?>"
                                id="caja_numero_venta"
                                name="caja_numero_venta"
                                readonly>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <div class="col-md-3">
+                        <label for="caja_nombre" class="control-label panel-admin-text">Nombre:</label>
+                    </div>
+                    <div class="col-md-9">
+                        <input type="text"
+                               class='input-square input-small form-control'
+                               value=""
+                               id="caja_nombre"
+                               name="caja_nombre">
                     </div>
                 </div>
             </div>
@@ -42,18 +57,18 @@
                     </div>
                     <div class="col-md-9">
                         <div class="input-prepend input-append input-group">
-                            <?php $md = get_moneda_defecto()?>
+                            <?php $md = get_moneda_defecto() ?>
                             <label class="input-group-addon tipo_moneda"><?= $md->simbolo ?></label><input
-                                type="number"
-                                class='input-square input-small form-control'
-                                min="0.0"
-                                step="0.1"
-                                value="0.0"
-                                data-value="0.00"
-                                id="caja_total_pagar"
-                                name="caja_total_pagar"
-                                readonly
-                                onkeydown="return soloDecimal(this, event);">
+                                    type="number"
+                                    class='input-square input-small form-control'
+                                    min="0.0"
+                                    step="0.1"
+                                    value="0.0"
+                                    data-value="0.00"
+                                    id="caja_total_pagar"
+                                    name="caja_total_pagar"
+                                    readonly
+                                    onkeydown="return soloDecimal(this, event);">
                         </div>
                     </div>
                 </div>
@@ -68,17 +83,17 @@
                     <button class="btn btn-default save_venta_caja" data-imprimir="0"
                             type="button"
                             id="btn_venta_caja"><i
-                            class="fa fa-save"></i> (F6)Guardar
+                                class="fa fa-save"></i> (F6)Guardar
                     </button>
 
                     <a href="#" class="btn btn-default save_venta_caja ocultar_caja"
                        id="btn_venta_caja_imprimir" data-imprimir="1" type="button"><i
-                            class="fa fa-print"></i> (F6)Guardar e imprimir
+                                class="fa fa-print"></i> (F6)Guardar e imprimir
                     </a>
                     <button class="btn btn-danger"
                             type="button"
                             onclick="$('#dialog_venta_caja').modal('hide');"><i
-                            class="fa fa-close"></i> Cancelar
+                                class="fa fa-close"></i> Cancelar
                     </button>
                 </div>
             </div>
@@ -89,14 +104,17 @@
 <script>
     $(document).ready(function () {
 
-
         $(".save_venta_caja").on('click', function () {
+            if ($('#caja_nombre').val() == '') {
+                show_msg('warning', 'El nombre de caja es requerido');
+                return false;
+            }
             save_venta_caja($(this).attr('data-imprimir'));
         });
 
     });
 
-    function caja_init(total){
+    function caja_init(total) {
 
         $("#caja_cliente").val($("#cliente_id option:selected").text().trim());
         $("#caja_total_pagar").val(total);

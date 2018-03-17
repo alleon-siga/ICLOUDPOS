@@ -58,7 +58,8 @@ class venta_new_model extends CI_Model
             credito.periodo_gracia as periodo_gracia,
             venta.serie as serie,
             venta.numero as numero,
-            venta.nota as nota
+            venta.nota as nota,
+            venta.dni_garante as nombre_caja
             ')
             ->from('venta')
             ->join('documentos', 'venta.id_documento=documentos.id_doc')
@@ -368,7 +369,8 @@ class venta_new_model extends CI_Model
             'inicial' => null,
             'tipo_impuesto' => $venta['tipo_impuesto'],
             'comprobante_id' => $venta['comprobante_id'],
-            'nota' => $venta['venta_nota']
+            'nota' => $venta['venta_nota'],
+            'dni_garante' => $venta['dni_garante']
         );
 
         if ($venta['venta_status'] == 'CAJA') {
@@ -483,7 +485,8 @@ class venta_new_model extends CI_Model
             'inicial' => $venta['c_inicial'],
             'tipo_impuesto' => $venta['tipo_impuesto'],
             'comprobante_id' => $venta['comprobante_id'],
-            'nota' => $venta['venta_nota']
+            'nota' => $venta['venta_nota'],
+            'dni_garante' => $venta['dni_garante']
         );
 
 

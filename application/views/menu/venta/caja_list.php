@@ -27,6 +27,7 @@
         <thead>
         <tr>
             <th>Fecha</th>
+            <th>Nombre</th>
             <th>Num Doc</th>
             <th>Cliente</th>
             <th>Vendedor</th>
@@ -46,6 +47,7 @@
                         <span style="display: none;"><?= date('YmdHis', strtotime($venta->venta_fecha)) ?></span>
                         <?= date('d/m/Y H:i:s', strtotime($venta->venta_fecha)) ?>
                     </td>
+                    <td><?= $venta->nombre_caja ?></td>
                     <td><?= sumCod($venta->venta_id, 4) ?></td>
                     <td><?= $venta->cliente_nombre ?></td>
                     <td><?= $venta->vendedor_nombre ?></td>

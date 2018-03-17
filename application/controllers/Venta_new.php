@@ -232,6 +232,7 @@ class venta_new extends MY_Controller
         $venta['c_periodo_gracia'] = $this->input->post('c_periodo_gracia');
 
         $venta['caja_total_pagar'] = $this->input->post('caja_total_pagar');
+        $venta['dni_garante'] = $this->input->post('caja_nombre');
         $venta['comprobante_id'] = $this->input->post('comprobante_id') != "" ? $this->input->post('comprobante_id') : 0;
         $venta['venta_nota'] = $this->input->post('venta_nota');
 
