@@ -39,4 +39,8 @@ DELETE FROM `opcion` WHERE `nOpcion`='707';
 -- SCRIPT OPCIONES
 INSERT INTO `opcion` (`nOpcion`, `nOpcionClase`, `cOpcionDescripcion`, `cOpcionNombre`) VALUES ('813', '8', 'impuestos', 'Impuestos');
 
+INSERT INTO `opcion` (`nOpcion`, `nOpcionClase`, `cOpcionDescripcion`, `cOpcionNombre`) VALUES ('707', '7', 'productovendido', 'Productos más vendidos');
+INSERT INTO `opcion` (`nOpcion`, `nOpcionClase`, `cOpcionDescripcion`, `cOpcionNombre`) VALUES ('708', '7', 'ventaSucursal', 'Ventas por sucursal');
+INSERT INTO `opcion` (`nOpcion`, `nOpcionClase`, `cOpcionDescripcion`, `cOpcionNombre`) VALUES ('709', '7', 'ventaEmpleado', 'Ventas por empleado');
 
+wfHu6~Skek4E
