@@ -195,14 +195,12 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                                                 <div class="controls">
                                                     <select name="cboTipDoc" id="cboTipDoc" class='cho form-control'
                                                             required="true">
-                                                        <?php if (valueOption('ACTIVAR_SHADOW') == 1 || valueOption('ACTIVAR_FACTURACION_INGRESO') == 1): ?>
-                                                            <option value="<?= BOLETAVENTA ?>"
-                                                                <?php if (isset($ingreso->tipo_documento) and $ingreso->tipo_documento == BOLETAVENTA)
-                                                                    echo "selected"; ?>><?= BOLETAVENTA ?></option>
-                                                            <option value="<?= FACTURA ?>"
-                                                                <?php if (isset($ingreso->tipo_documento) and $ingreso->tipo_documento == FACTURA)
-                                                                    echo "selected"; ?>><?= FACTURA ?></option>
-                                                        <?php endif; ?>
+                                                        <option value="<?= BOLETAVENTA ?>"
+                                                            <?php if (isset($ingreso->tipo_documento) and $ingreso->tipo_documento == BOLETAVENTA)
+                                                                echo "selected"; ?>><?= BOLETAVENTA ?></option>
+                                                        <option value="<?= FACTURA ?>"
+                                                            <?php if (isset($ingreso->tipo_documento) and $ingreso->tipo_documento == FACTURA)
+                                                                echo "selected"; ?>><?= FACTURA ?></option>
                                                         <option
                                                                 value="<?= NOTAVENTA ?>" <?php if (isset($ingreso->tipo_documento) and $ingreso->tipo_documento == NOTAVENTA)
                                                             echo "selected"; ?>><?= NOTAVENTA ?></option>
