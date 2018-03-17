@@ -7,6 +7,12 @@
 <input type="hidden" id="caja_imprimir" value="1">
 <?php $md = get_moneda_defecto() ?>
 <div class="row">
+    <?php
+        $total_pendiente = 0;
+        foreach ($ventas as $venta){
+            $total_pendiente += $venta->condicion_id == 1 ? $venta->total : $venta->inicial;
+        }
+    ?>
     <div class="col-md-9"></div>
     <!--<div class="col-md-2">
         <label>Subtotal: <?= $moneda->simbolo ?> <span id="subtotal"><?= number_format($venta_totales->subtotal, 2) ?></span></label>
@@ -17,7 +23,7 @@
     <label>Total Pendiente:
         <label style="padding: 5px; font-size: 14px; margin: 0px;"
                class="control-label badge label-warning panel-admin-text">
-            <?= $moneda->simbolo ?> <span><?= number_format($venta_totales->total, 2) ?></span>
+            <?= $moneda->simbolo ?> <span><?= number_format($total_pendiente, 2) ?></span>
         </label>
     </label>
 </div>
