@@ -283,6 +283,12 @@ $primary_nav = array(
                 'slug' => 'anularventa'
             ),
             array(
+                'name' => 'Ofertas',
+                'url' => $ruta . 'venta_new/ofertas',
+                'icon' => 'fa fa-money',
+                'slug' => 'generarventa'
+            ),
+            array(
                 'name' => 'Comprobantes',
                 'url' => $ruta . 'comprobante',
                 'icon' => 'fa fa-cogs',

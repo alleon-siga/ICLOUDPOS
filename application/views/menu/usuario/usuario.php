@@ -219,19 +219,6 @@
                 return false;
             }
 
-            if ($("#comision").val() == '') {
-                var growlType = 'warning';
-
-                $.bootstrapGrowl('<h4>Debe seleccionar el % de comision</h4>', {
-                    type: growlType,
-                    delay: 2500,
-                    allow_dismiss: true
-                });
-
-                $(this).prop('disabled', true);
-
-                return false;
-            }
 
             $('#load_div').show()
 

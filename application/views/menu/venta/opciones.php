@@ -126,31 +126,6 @@
         </div>
     <?php endif; ?>
 
-    <div class="row form-group">
-        <div class="col-md-4">
-            <label class="control-label panel-admin-text">Vencimiento de la Oferta de Venta:</label>
-        </div>
-
-        <div class="col-md-8">
-            <input type="text" id="FECHA_VENTA_PROMO"
-                   name="FECHA_VENTA_PROMO" class="form-control" readonly style="cursor: pointer;"
-                   value="<?= valueOption("FECHA_VENTA_PROMO", date('d/m/Y')) ?>">
-        </div>
-    </div>
-
-    <div class="row form-group">
-        <div class="col-md-4">
-            <label class="control-label panel-admin-text">Oferta de Ventas:</label>
-        </div>
-
-        <div class="col-md-8">
-            <textarea type="text" name="VENTA_PROMO" rows="5" id="VENTA_PROMO"
-                      class='form-control textarea-editor'>
-                <?= valueOption("VENTA_PROMO", '') ?>
-            </textarea>
-        </div>
-    </div>
-
     <h3>Cotizaci&oacute;n</h3>
     <div class="row form-group">
         <div class="col-md-4">
@@ -224,53 +199,15 @@
 
     $(function () {
 
-        $('#FECHA_VENTA_PROMO').datepicker({
-            format: 'dd/mm/yyyy'
-        });
-
-//        $('#imprimir').on('click', function () {
-//            $.ajax({
-//                url: '<?//= base_url()?>//impresion',
-//                type: 'GET',
-//                crossDomain : true,
-//                dataType: 'json',
-//                success: function (data) {
-//
-//                    //alert(data.mensaje);
-//
-//                    $.ajax({
-//                        url: 'http://localhost:8080/',
-//                        success: function (data) {
-//                            alert(data.mensaje);
-//                        },
-//                        error: function (data) {
-//                            console.log(data)
-//                        },
-//                        complete: function(){
-//
-//                        }
-//                    });
-//
-//
-//                },
-//                error: function (data) {
-//                    alert('error')
-//                },
-//                complete: function (data) {
-//
-//                }
-//            });
-//        });
-
 
         $('.textarea-editor').wysihtml5({
             "font-styles": true, //Font styling, e.g. h1, h2, etc. Default true
             "emphasis": true, //Italics, bold, etc. Default true
-            "lists": false, //(Un)ordered lists, e.g. Bullets, Numbers. Default true
-            "html": true, //Button which allows you to edit the generated HTML. Default false
+            "lists": true, //(Un)ordered lists, e.g. Bullets, Numbers. Default true
+            "html": false, //Button which allows you to edit the generated HTML. Default false
             "link": false, //Button to insert a link. Default true
             "image": false, //Button to insert an image. Default true,
-            "color": true //Button to change color of font
+            "color": false //Button to change color of font
         });
     })
 </script>

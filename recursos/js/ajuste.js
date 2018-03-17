@@ -22,11 +22,17 @@ $(document).ready(function () {
     var tecla_ctrl = 17;
     var tecla_enter = 13;
 
+    var F6 = 117;
+
     $(document).keydown(function (e) {
 
         if (e.keyCode == tecla_ctrl) {
             $('.help-key, .help-key-side').show();
             ctrlPressed = true;
+        }
+
+        if (e.keyCode == F6) {
+            e.preventDefault();
         }
     });
 
@@ -41,6 +47,18 @@ $(document).ready(function () {
                 e.stopImmediatePropagation();
                 $("#add_producto").trigger('click');
             }
+
+        if (e.keyCode == F6 && $(".modal").is(":visible") == false) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            $("#terminar_ajuste").click();
+        }
+
+        // if (e.keyCode == F6 && $("#dialog_cotizar").is(":visible") == true) {
+        //     e.preventDefault();
+        //     e.stopImmediatePropagation();
+        //     $('.save_venta_contado[data-imprimir="1"]').first().click();
+        // }
     });
 
     // EVENTOS FUNCIONALES
