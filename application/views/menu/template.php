@@ -520,6 +520,12 @@ $primary_nav = array(
                 'icon' => 'fa fa-area-chart',
                 'slug' => 'ventaEmpleado'
             ),
+            array(
+                'name' => 'Margen de utilidad',
+                'url' => $ruta . 'reporte/margenUtilidad',
+                'icon' => 'fa fa-area-chart',
+                'slug' => 'margenutilidad'
+            ),
         ),
     ),
 
