@@ -51,6 +51,8 @@ define('COMPRA',		'COMPRA');
 define('PESABLE',		'PESABLE');
 define('MEDIBLE',		'MEDIBLE');
 
+// DEV para desarrollo y PROD para produccion
+define('ENV', 'DEV');
 define('MONEDA_DEFECTO', '1029');
 //define('MONEDA',		'S/.');
 //define('DOLAR',		'$');

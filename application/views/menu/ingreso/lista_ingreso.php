@@ -508,6 +508,7 @@
                     $.ajax({
                         url: '<?php echo base_url()?>ingresos/devolucion',
                         success: function (data) {
+                            $(".modal-backdrop").remove();
                             $('#page-content').html(data);
                         }
 
@@ -530,7 +531,6 @@
                     delay: 2500,
                     allow_dismiss: true
                 });
-                return false;
             }
         })
     }

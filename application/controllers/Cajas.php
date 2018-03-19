@@ -231,7 +231,7 @@ class cajas extends MY_Controller
                 'usuario_id' => $this->session->userdata('nUsuCodigo'),
                 'fecha_mov' => date('Y-m-d H:i:s'),
                 'operacion' => $caja_pendiente->tipo,
-                'medio_pago' => 'INTERNO',
+                'medio_pago' => 3,
                 'saldo' => $caja_pendiente->monto,
                 'saldo_old' => $caja_desglose->saldo,
                 'ref_id' => $caja_pendiente->id

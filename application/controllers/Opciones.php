@@ -31,7 +31,8 @@ class opciones extends MY_Controller
             'ACTIVAR_FACTURACION_INGRESO',
             'ACTIVAR_SHADOW',
             'INGRESO_COSTO',
-            'INGRESO_UTILIDAD'
+            'INGRESO_UTILIDAD',
+            'HOST_IMPRESION'
         );
 
         if ($action == 'get') {

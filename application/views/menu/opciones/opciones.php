@@ -219,6 +219,19 @@
         </div>
     </div>
 
+    <div class="row form-group">
+        <div class="col-md-4">
+            <label class="control-label panel-admin-text">Host de impresion cliente:</label>
+        </div>
+
+        <div class="col-md-8">
+            <input type="text" name="HOST_IMPRESION" required="true" id="HOST_IMPRESION"
+                   class='form-control'
+                   maxlength="100"
+                   value="<?= valueOption("HOST_IMPRESION", 'http://localhost:8080') ?>">
+        </div>
+    </div>
+
 
     <h3>Facturaci&oacute;n</h3>
     <div class="row form-group">

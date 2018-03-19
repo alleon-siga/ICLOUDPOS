@@ -91,7 +91,13 @@
 
             <br>
             <div class="row">
-                <div class="col-md-4 col-md-offset-8 text-right">
+                <div class="col-md-8 ">
+                    <h5>Estado: <?= $ingreso->ingreso_status ?></h5>
+                    <?php if ($ingreso->ingreso_status == 'ANULADO'): ?>
+                        Nota de Credito: <?= $kardex->serie . ' - ' . $kardex->numero ?>
+                    <?php endif; ?>
+                </div>
+                <div class="col-md-4 text-right">
                     <table class="totales">
                         <tr>
                             <td>Subtotal:</td>

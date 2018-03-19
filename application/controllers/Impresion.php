@@ -9,11 +9,13 @@ class Impresion extends MY_Controller
         parent::__construct();
         $this->login_model->verify_session();
 
+        $this->load->model('impresion/impresion_model');
+
     }
 
-    function index()
+    function get_venta($id)
     {
-
+        echo $this->impresion_model->create_xml($this->impresion_model->getVenta($id));
     }
 
 }
