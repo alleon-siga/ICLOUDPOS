@@ -13,9 +13,7 @@ class Impresion extends MY_Controller
 
     function index()
     {
-        $data['mensaje'] = 'Hola desde el server';
-        header('Content-Type: application/json');
-        echo json_encode($data);
+
     }
 
 }
