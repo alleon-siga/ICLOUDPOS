@@ -24,7 +24,7 @@
     </div>
 </div>
 <div class="row block">
-    <!--    <button type="button" id="imprimir">Imprimir</button>-->
+
     <?= form_open_multipart(base_url() . 'venta_new/opciones/save', array('id' => 'formguardar')) ?>
     <h3>Cr&eacute;dito</h3>
     <div class="row form-group">
@@ -198,6 +198,7 @@
     }
 
     $(function () {
+
 
 
         $('.textarea-editor').wysihtml5({

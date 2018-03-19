@@ -1,4 +1,4 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 class proveedor_model extends CI_Model
 {
@@ -9,7 +9,8 @@ class proveedor_model extends CI_Model
         $this->load->database();
     }
 
-    function get_cuentas_pagar($data = array()){
+    function get_cuentas_pagar($data = array())
+    {
 
         $consulta = "
             SELECT 
@@ -38,17 +39,17 @@ class proveedor_model extends CI_Model
                 ingreso_credito.estado = 'PENDIENTE' 
         ";
 
-        if(isset($data['proveedor_id']) && $data['proveedor_id'] != "")
-            $consulta .= " AND ingreso.int_Proveedor_id =".$data['proveedor_id'];
+        if (isset($data['proveedor_id']) && $data['proveedor_id'] != "")
+            $consulta .= " AND ingreso.int_Proveedor_id =" . $data['proveedor_id'];
 
-        if(isset($data['documento']))
-            $consulta .= " AND ingreso.tipo_documento ='".$data['documento']."'";
+        if (isset($data['documento']))
+            $consulta .= " AND ingreso.tipo_documento ='" . $data['documento'] . "'";
 
-        if(isset($data['moneda']) && $data['moneda'] != "")
-            $consulta .= " AND ingreso.id_moneda =".$data['moneda']."";
+        if (isset($data['moneda_id']) && $data['moneda_id'] != "")
+            $consulta .= " AND ingreso.id_moneda =" . $data['moneda_id'] . "";
 
-        if(isset($data['local_id']) && $data['local_id'] != "")
-            $consulta .= " AND ingreso.local_id =".$data['local_id']."";
+        if (isset($data['local_id']) && $data['local_id'] != "")
+            $consulta .= " AND ingreso.local_id =" . $data['local_id'] . "";
 
 
         $consulta .= " GROUP BY ingreso.id_ingreso";
@@ -56,7 +57,8 @@ class proveedor_model extends CI_Model
         return $this->db->query($consulta)->result();
     }
 
-    function get_cuentas_pagar_totales($data = array()){
+    function get_cuentas_pagar_totales($data = array())
+    {
 
         $consulta = "
             SELECT 
@@ -71,17 +73,17 @@ class proveedor_model extends CI_Model
                 ingreso_credito.estado = 'PENDIENTE' 
         ";
 
-        if(isset($data['proveedor_id']) && $data['proveedor_id'] != "")
-            $consulta .= " AND ingreso.int_Proveedor_id =".$data['proveedor_id'];
+        if (isset($data['proveedor_id']) && $data['proveedor_id'] != "")
+            $consulta .= " AND ingreso.int_Proveedor_id =" . $data['proveedor_id'];
 
-        if(isset($data['documento']))
-            $consulta .= " AND ingreso.tipo_documento ='".$data['documento']."'";
+        if (isset($data['documento']))
+            $consulta .= " AND ingreso.tipo_documento ='" . $data['documento'] . "'";
 
-        if(isset($data['moneda']) && $data['moneda'] != "")
-            $consulta .= " AND ingreso.id_moneda =".$data['moneda']."";
+        if (isset($data['moneda_id']) && $data['moneda_id'] != "")
+            $consulta .= " AND ingreso.id_moneda =" . $data['moneda_id'] . "";
 
-        if(isset($data['local_id']) && $data['local_id'] != "")
-            $consulta .= " AND ingreso.local_id =".$data['local_id']."";
+        if (isset($data['local_id']) && $data['local_id'] != "")
+            $consulta .= " AND ingreso.local_id =" . $data['local_id'] . "";
 
 
         return $this->db->query($consulta)->row();
@@ -111,23 +113,23 @@ class proveedor_model extends CI_Model
         if ($validar_nombre < 1) {
             $this->db->trans_start();
             $this->db->insert('proveedor', $proveedor);
-            $id=$this->db->insert_id();
+            $id = $this->db->insert_id();
             $this->db->trans_complete();
 
             if ($this->db->trans_status() === FALSE)
                 return FALSE;
             else
                 return $id;
-        }else{
+        } else {
             return NOMBRE_EXISTE;
         }
     }
 
     function update($proveedor)
     {
-        $produc_exite=$this->get_by('proveedor_nombre', $proveedor['proveedor_nombre']);
+        $produc_exite = $this->get_by('proveedor_nombre', $proveedor['proveedor_nombre']);
         $validar_nombre = sizeof($produc_exite);
-        if ($validar_nombre < 1 or( $validar_nombre>0 and ($produc_exite ['id_proveedor']==$proveedor ['id_proveedor']))) {
+        if ($validar_nombre < 1 or ($validar_nombre > 0 and ($produc_exite ['id_proveedor'] == $proveedor ['id_proveedor']))) {
             $this->db->trans_start();
             $this->db->where('id_proveedor', $proveedor['id_proveedor']);
             $this->db->update('proveedor', $proveedor);
@@ -139,37 +141,39 @@ class proveedor_model extends CI_Model
                 return FALSE;
             else
                 return TRUE;
-        }else{
+        } else {
             return NOMBRE_EXISTE;
         }
     }
 
-    function select_all_proveedor(){
-        $this->db->where('proveedor_status !=','0');
+    function select_all_proveedor()
+    {
+        $this->db->where('proveedor_status !=', '0');
         $query = $this->db->get('proveedor');
         return $query->result();
     }
 
-   function verifProdIngr($proveedor){
+    function verifProdIngr($proveedor)
+    {
 
         $this->db->where('int_Proveedor_id', $proveedor['id_proveedor']);
         $sql = $this->db->get('ingreso');
         $data = $sql->result();
 
-        if(count($data) > 0){
+        if (count($data) > 0) {
             return 'ingreso';
-        }else{
+        } else {
 
             $this->db->where('producto_proveedor', $proveedor['id_proveedor']);
             $sql1 = $this->db->get('producto');
             $data1 = $sql1->result();
-            if(count($data1) > 0){
+            if (count($data1) > 0) {
                 return 'producto';
-            }else{
-                
-                return false;   
+            } else {
+
+                return false;
             }
 
-        }   
+        }
     }
 }
