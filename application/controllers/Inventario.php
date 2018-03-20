@@ -548,7 +548,7 @@ AND cantidad < producto_stockminimo + (producto_stockminimo * 30)/100 and cantid
         $from = "unidades";
         $join = array('unidades_has_producto');
         $campos_join = array('unidades_has_producto.id_unidad=unidades.id_unidad');
-        $order = "orden desc";
+        $order = "orden ASC";
 
         for ($i = 0; $i < count($temp); $i++) {
             $where = array('unidades_has_producto.producto_id' => $temp[$i]['producto_id']);
@@ -580,7 +580,7 @@ AND cantidad < producto_stockminimo + (producto_stockminimo * 30)/100 and cantid
                 }
 
                 $unidades_unidad_maxima = $buscar[0]['unidades'];
-                $total_unidades_minimas = $cantidad_unidad_maxima / $unidades_unidad_maxima;
+                $total_unidades_minimas = $cantidad_unidad_maxima * $unidades_unidad_maxima;
                 $total_unidades_minimas = $total_unidades_minimas + $cantidad_fraccion;
 
 
