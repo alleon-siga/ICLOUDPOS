@@ -75,7 +75,7 @@
                                 class="fa fa-search"></i> Ver</a>
                         <a onclick="pagar_venta(<?= $v->Venta_id; ?>)" class='btn btn-xs btn-default tip' title="Pagar"><i
                                 class="fa fa-paypal"></i>
-                            Pagar</a>
+                            Cobrar</a>
 
                     </div>
                 </td>

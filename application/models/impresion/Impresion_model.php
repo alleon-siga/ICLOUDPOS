@@ -42,15 +42,15 @@ class impresion_model extends CI_Model
             $page->addChild('estado', isset($doc->estado) ? $doc->estado : '');
             $page->addChild('moneda', isset($doc->moneda) ? $doc->moneda : '');
             $page->addChild('moneda_simbolo', isset($doc->moneda_simbolo) ? $doc->moneda_simbolo : '');
-            $page->addChild('importe', isset($doc->importe) ? $doc->importe : '');
-            $page->addChild('importe_deuda', isset($doc->inicial) ? $doc->inicial : '');
-            $page->addChild('subtotal', isset($doc->subtotal) ? $doc->subtotal : '');
-            $page->addChild('impuesto', isset($doc->impuesto) ? $doc->impuesto : '');
-            $page->addChild('descuento', isset($doc->descuento) ? $doc->descuento : '');
-            $page->addChild('vuelto', isset($doc->vuelto) ? $doc->vuelto : '');
-            $page->addChild('pagado', isset($doc->pagado) ? $doc->pagado : '');
-            $page->addChild('importe_letra', isset($doc->documento_nombre) ? $doc->importe_letra : '');
-            $page->addChild('inicial', isset($doc->inicial) ? $doc->inicial : '');
+            $page->addChild('importe', isset($doc->importe) ? $doc->moneda_simbolo . ' ' . $doc->importe : '');
+            $page->addChild('importe_deuda', isset($doc->importe_deuda) ? $doc->moneda_simbolo . ' ' . $doc->importe_deuda : '');
+            $page->addChild('subtotal', isset($doc->subtotal) ? $doc->moneda_simbolo . ' ' . $doc->subtotal : '0.00');
+            $page->addChild('impuesto', isset($doc->impuesto) ? $doc->moneda_simbolo . ' ' . $doc->impuesto : '');
+            $page->addChild('descuento', isset($doc->descuento) ? $doc->moneda_simbolo . ' ' . $doc->descuento : '');
+            $page->addChild('vuelto', isset($doc->vuelto) ? $doc->moneda_simbolo . ' ' . $doc->vuelto : '');
+            $page->addChild('pagado', isset($doc->pagado) ? $doc->moneda_simbolo . ' ' . $doc->pagado : '');
+            $page->addChild('importe_letra', isset($doc->importe_letra) ? $doc->importe_letra : '');
+            $page->addChild('inicial', isset($doc->inicial) ? $doc->moneda_simbolo . ' ' . $doc->inicial : '');
 
 
             $productos = $page->addChild('productos');
@@ -63,18 +63,20 @@ class impresion_model extends CI_Model
                 $producto->addChild('unidad', isset($prod->unidad) ? $prod->unidad : '');
                 $producto->addChild('unidad_abr', isset($prod->unidad_abr) ? $prod->unidad_abr : '');
                 $producto->addChild('cantidad', isset($prod->cantidad) ? $prod->cantidad : '');
-                $producto->addChild('precio', isset($prod->precio) ? $prod->precio : '');
-                $producto->addChild('importe', isset($prod->importe) ? $prod->importe : '');
-                $producto->addChild('precio_venta', isset($prod->precio_venta) ? $prod->precio_venta : '');
+                $producto->addChild('precio', isset($prod->precio) ? $doc->moneda_simbolo . ' ' . $prod->precio : '');
+                $producto->addChild('importe', isset($prod->importe) ? $doc->moneda_simbolo . ' ' . $prod->importe : '');
+                $producto->addChild('precio_venta', isset($prod->precio_venta) ? $doc->moneda_simbolo . ' ' . $prod->precio_venta : '');
             }
 
-            $cuotas = $page->addChild('cuotas');
-            foreach ($doc->cuotas as $c) {
-                $cuota = $cuotas->addChild('cuota');
-                $cuota->addAttribute('id', $c->id);
-                $cuota->addChild('letra', isset($c->letra) ? $prod->letra : '');
-                $cuota->addChild('fecha', isset($c->fecha) ? $prod->fecha : '');
-                $cuota->addChild('monto', isset($c->monto) ? $prod->monto : '');
+            if (isset($doc->cuotas)) {
+                $cuotas = $page->addChild('cuotas');
+                foreach ($doc->cuotas as $c) {
+                    $cuota = $cuotas->addChild('cuota');
+                    $cuota->addAttribute('id', $c->id);
+                    $cuota->addChild('letra', isset($c->letra) ? $prod->letra : '');
+                    $cuota->addChild('fecha', isset($c->fecha) ? $prod->fecha : '');
+                    $cuota->addChild('monto', isset($c->monto) ? $doc->moneda_simbolo . '' . $prod->monto : '');
+                }
             }
 
         }
@@ -84,7 +86,96 @@ class impresion_model extends CI_Model
     }
 
 
-    function getVenta($id){
+    function getVenta($id)
+    {
+        $query = "
+            SELECT 
+                c.razon_social AS cliente_nombre,
+                IF(c.tipo_cliente = 0,
+                    'Natural',
+                    'Juridico') AS cliente_tipo,
+                c.identificacion AS cliente_identificacion,
+                c.direccion AS cliente_direccion,
+                gc.nombre_grupos_cliente AS cliente_grupo,
+                u.nombre AS vendedor_nombre,
+                l.local_nombre AS local,
+                d.des_doc AS documento_nombre,
+                CONCAT(v.serie, ' - ', LPAD(v.numero, 6, '0')) AS numero,
+                DATE_FORMAT(v.fecha, '%d/%m/%Y') AS fecha_emision,
+                cp.nombre_condiciones AS tipo_pago,
+                v.venta_status AS estado,
+                m.nombre AS moneda,
+                m.simbolo AS moneda_simbolo,
+                FORMAT(v.total, 2) AS importe,
+                IF(v.condicion_pago = 2,
+                    FORMAT(v.total - IFNULL(v.inicial, 0),
+                        2),
+                    FORMAT(0, 2)) AS importe_deuda,
+                FORMAT(v.subtotal, 2) AS subtotal,
+                FORMAT(v.total_impuesto, 2) AS impuesto,
+                FORMAT(v.vuelto, 2) AS vuelto,
+                FORMAT(v.pagado, 2) AS pagado,
+                FORMAT(IFNULL(v.inicial, 0), 2) AS inicial
+            FROM
+                venta AS v
+                    JOIN
+                cliente AS c ON c.id_cliente = v.id_cliente
+                    JOIN
+                grupos_cliente AS gc ON gc.id_grupos_cliente = c.grupo_id
+                    JOIN
+                usuario AS u ON u.nUsuCodigo = v.id_vendedor
+                    JOIN
+                local AS l ON l.int_local_id = v.local_id
+                    JOIN
+                documentos AS d ON d.id_doc = v.id_documento
+                    JOIN
+                condiciones_pago AS cp ON cp.id_condiciones = v.condicion_pago
+                    JOIN
+                moneda AS m ON m.id_moneda = v.id_moneda
+            WHERE
+                v.venta_id = " . $id . "
+        ";
 
+        $venta = $this->db->query($query)->result();
+
+
+        foreach ($venta as $v) {
+
+            $v->importe_letra = numtoletras(number_format($v->importe, 2, '.', ''));
+
+            $query = "
+            SELECT 
+                dv.id_producto AS id,
+                IF((SELECT 
+                            COUNT(*)
+                        FROM
+                            configuraciones
+                        WHERE
+                            config_key = 'CODIGO_DEFAULT'
+                                AND config_value = 'AUTO'
+                        LIMIT 1) > 0,
+                    LPAD(dv.id_producto, 4, '0'),
+                    p.producto_codigo_interno) AS codigo,
+                p.producto_nombre AS nombre,
+                u.nombre_unidad AS unidad,
+                u.abreviatura AS unidad_abr,
+                FORMAT(dv.cantidad, 0) AS cantidad,
+                dv.precio AS precio,
+                dv.detalle_importe AS importe,
+                dv.precio_venta AS precio_venta
+            FROM
+                detalle_venta AS dv
+                    JOIN
+                producto AS p ON p.producto_id = dv.id_producto
+                    JOIN
+                unidades AS u ON u.id_unidad = dv.unidad_medida
+            WHERE
+                dv.id_venta = " . $id . "
+        ";
+
+            $v->productos = $this->db->query($query)->result();
+        }
+
+        return $venta;
     }
 }

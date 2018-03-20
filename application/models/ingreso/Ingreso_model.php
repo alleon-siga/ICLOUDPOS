@@ -61,9 +61,9 @@ class ingreso_model extends CI_Model
             ingreso.pago as tipo_pago,
             moneda.nombre as moneda_nombre,
             ingreso.tasa_cambio as tasa,
-            ingreso.sub_total_ingreso * IFNULL(ingreso.tasa_cambio, 1) as subtotal,
-            ingreso.impuesto_ingreso * IFNULL(ingreso.tasa_cambio, 1) as impuesto,
-            ingreso.total_ingreso * IFNULL(ingreso.tasa_cambio, 1) as total,
+            ingreso.sub_total_ingreso as subtotal,
+            ingreso.impuesto_ingreso as impuesto,
+            ingreso.total_ingreso as total,
             ingreso.ingreso_status as estado,
             usuario.username as usuario_nombre,
             ingreso.fecha_registro as fecha_registro,
@@ -81,9 +81,9 @@ class ingreso_model extends CI_Model
     function get_totales_compra($data)
     {
         $this->db->select("
-            SUM(ingreso.sub_total_ingreso * IFNULL(ingreso.tasa_cambio, 1)) as subtotal,
-            SUM(ingreso.impuesto_ingreso * IFNULL(ingreso.tasa_cambio, 1)) as impuesto,
-            SUM(ingreso.total_ingreso * IFNULL(ingreso.tasa_cambio, 1)) as total
+            SUM(ingreso.sub_total_ingreso) as subtotal,
+            SUM(ingreso.impuesto_ingreso) as impuesto,
+            SUM(ingreso.total_ingreso) as total
             ")
             ->from('ingreso');
 
@@ -106,7 +106,7 @@ class ingreso_model extends CI_Model
                 $this->db->where("(ingreso.ingreso_status = 'COMPLETADO')");
         }
 
-        if (isset($data['moneda_id']) && (isset($data['estado']) && $data['estado'] == 'COMPLETADO'))
+        if (isset($data['moneda_id']))
             $this->db->where('ingreso.id_moneda', $data['moneda_id']);
 
         if (isset($data['fecha_ini']) && isset($data['fecha_fin'])) {
@@ -977,18 +977,6 @@ WHERE detalleingreso.id_ingreso='$compra_id'");
 
 
             if ($old_cantidad != NULL && $result != NULL) {
-                //CREAR EL HISTORICO DE LA ANULACION DEL INGRESO *************************************
-                /*$values = array(
-                    'producto_id' => $key,
-                    'local_id' => $local,
-                    'cantidad' => $value,
-                    'cantidad_actual' => $this->unidades_model->convert_minimo_um($key, $result['cantidad'], $result['fraccion']),
-                    'tipo_movimiento' => "ANULACION",
-                    'tipo_operacion' => "SALIDA",
-                    'referencia_valor' => 'Se devolvió un Ingreso',
-                    'referencia_id' => $id,
-                );
-                $this->historico_model->set_historico($values);*/
 
                 $tipo = "NP";
                 if ($ingreso->tipo_documento == "BOLETA DE VENTA")
@@ -1024,9 +1012,7 @@ WHERE detalleingreso.id_ingreso='$compra_id'");
         $this->db->update('ingreso', $campos);
 
 
-        $moneda_id = 1;
-        if ($ingreso->id_moneda == 1030)
-            $moneda_id = 2;
+        $moneda_id = $ingreso->id_moneda;
         $this->cajas_model->delete_pendiente(array(
             'tipo' => 'COMPRA',
             'ref_id' => $ingreso->id_ingreso,
@@ -1035,10 +1021,6 @@ WHERE detalleingreso.id_ingreso='$compra_id'");
         ));
 
         return true;
-
-
-        $this->db->trans_off();
-
     }
 
     function select_compra($fecInicio, $fecFin)

@@ -295,7 +295,6 @@ class ingresos extends MY_Controller
         $fecha_ini = str_replace("/", "-", $date_range[0]);
         $fecha_fin = str_replace("/", "-", $date_range[1]);
 
-//            'estado' => $this->input->post('estado'),
         $params = array(
             'local_id' => $this->input->post('local_id'),
             'moneda_id' => $this->input->post('moneda_id'),
@@ -803,6 +802,16 @@ class ingresos extends MY_Controller
                 $data['detalles'] = $this->detalle_ingreso_model->get_by_result('detalleingreso.id_ingreso', $id);
             }
             $data['id_detalle'] = $id;
+
+            $data['kardex'] = null;
+            if ($data['ingreso']->ingreso_status == 'ANULADO') {
+                $data['kardex'] = $this->db->get_where('kardex', array(
+                    'ref_id' => $data['ingreso']->id_ingreso,
+                    'io' => 1,
+                    'tipo' => 7,
+                    'operacion' => 6
+                ))->row();
+            }
 
         }
 

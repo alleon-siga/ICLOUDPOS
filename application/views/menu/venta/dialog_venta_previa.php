@@ -22,38 +22,46 @@
                         <button class="btn btn-default btn_venta_imprimir_sc"
                                 type="button"
                                 id="btn_venta_imprimir_sc"><i
-                                class="fa fa-print"></i>
+                                    class="fa fa-print"></i>
                             Imprimir Contable
                         </button>
 
                         <button class="btn btn-default"
                                 type="button"
                                 id="edit_imprmir_sc"><i
-                                class="fa fa-edit"></i>
+                                    class="fa fa-edit"></i>
                         </button>
                     <?php endif; ?>
                 </div>
                 <div class="col-md-12">
+                    <?php if (ENV == 'DEV'): ?>
+                        <button class="btn btn-primary" data-id="<?= $venta->venta_id ?>"
+                                type="button"
+                                id="btn_venta_test"><i
+                                    class="fa fa-print"></i> IMPRIMIR TEST
+                        </button>
+                    <?php endif; ?>
+
                     <button class="btn btn-primary btn_venta_imprimir"
                             type="button"
                             id="btn_venta_imprimir_1"><i
-                            class="fa fa-print"></i> (F6) Pedido
+                                class="fa fa-print"></i> (F6) Pedido
                     </button>
                     <button class="btn btn-primary btn_venta_imprimir_almacen"
                             type="button"
                             id="btn_venta_imprimir_almacen_1"><i
                                 class="fa fa-print"></i> Almacen
                     </button>
-                    <?php $imprimir_doc = ($venta->condicion_id == 1 || $venta->condicion_id == 2 && $venta->credito_estado == 'PagoCancelado');?>
+                    <?php $imprimir_doc = ($venta->condicion_id == 1 || $venta->condicion_id == 2 && $venta->credito_estado == 'PagoCancelado'); ?>
                     <?php if (($venta->factura_impresa == 0) && ($venta->documento_id == 1 || $venta->documento_id == 3) && $imprimir_doc): ?>
                         <button class="btn btn-primary btn_venta_imprimir_doc"
                                 type="button"><i
-                                class="fa fa-print"></i> <?= $venta->documento_id == 1 ? 'Factura' : 'Boleta' ?>
+                                    class="fa fa-print"></i> <?= $venta->documento_id == 1 ? 'Factura' : 'Boleta' ?>
                         </button>
                     <?php elseif (($venta->factura_impresa != 0) && ($venta->documento_id == 1 || $venta->documento_id == 3) && $imprimir_doc): ?>
                         <button class="btn btn-warning btn_venta_imprimir_doc"
                                 type="button"><i
-                                class="fa fa-print"></i> <?= $venta->documento_id == 1 ? 'Factura' : 'Boleta' ?>
+                                    class="fa fa-print"></i> <?= $venta->documento_id == 1 ? 'Factura' : 'Boleta' ?>
                         </button>
                     <?php endif; ?>
 
@@ -65,7 +73,7 @@
                     <button class="btn btn-danger"
                             type="button"
                             onclick="$('#dialog_venta_imprimir').modal('hide');"><i
-                            class="fa fa-close"></i> Cancelar
+                                class="fa fa-close"></i> Cancelar
                     </button>
                 </div>
             </div>
@@ -317,7 +325,7 @@
                                 Tasa de Interes: <?= $venta->tasa_interes ?>%
                             </div>
                         </div>
-<br>
+                        <br>
                         <table class="table table-bordered">
                             <thead>
                             <tr>
@@ -410,7 +418,7 @@
                     <button class="btn btn-primary btn_venta_imprimir"
                             type="button"
                             id="btn_venta_imprimir_1"><i
-                            class="fa fa-print"></i> (F6) Pedido
+                                class="fa fa-print"></i> (F6) Pedido
                     </button>
 
                     <button class="btn btn-primary btn_venta_imprimir_almacen"
@@ -422,24 +430,24 @@
                     <?php if (($venta->factura_impresa == 0) && ($venta->documento_id == 1 || $venta->documento_id == 3) && $imprimir_doc): ?>
                         <button class="btn btn-primary btn_venta_imprimir_doc"
                                 type="button"><i
-                                class="fa fa-print"></i> <?= $venta->documento_id == 1 ? 'Factura' : 'Boleta' ?>
+                                    class="fa fa-print"></i> <?= $venta->documento_id == 1 ? 'Factura' : 'Boleta' ?>
                         </button>
                     <?php elseif (($venta->factura_impresa != 0) && ($venta->documento_id == 1 || $venta->documento_id == 3) && $imprimir_doc): ?>
-                       <button class="btn btn-warning btn_venta_imprimir_doc"
+                        <button class="btn btn-warning btn_venta_imprimir_doc"
                                 type="button"><i
-                                class="fa fa-print"></i> <?= $venta->documento_id == 1 ? 'Factura' : 'Boleta' ?>
+                                    class="fa fa-print"></i> <?= $venta->documento_id == 1 ? 'Factura' : 'Boleta' ?>
                         </button>
                     <?php endif; ?>
 
                     <button class="btn btn-default btn_venta_email_doc"
                             type="button"><i
-                            class="fa fa-mail-forward"></i> Enviar por Email
+                                class="fa fa-mail-forward"></i> Enviar por Email
                     </button>
 
                     <button class="btn btn-danger"
                             type="button"
                             onclick="$('#dialog_venta_imprimir').modal('hide');"><i
-                            class="fa fa-close"></i> Cancelar
+                                class="fa fa-close"></i> Cancelar
                     </button>
                 </div>
             </div>
@@ -456,6 +464,30 @@
 
 <script>
     $(document).ready(function () {
+
+        $('#btn_venta_test').on('click', function () {
+
+            $.ajax({
+                url: '<?= base_url()?>impresion/get_venta/' + $(this).attr('data-id'),
+                success: function (data) {
+                    console.log(data);
+                    $.ajax({
+                        url: '<?= valueOptionDB('HOST_IMPRESION', 'http://localhost:8080') ?>',
+                        method: 'POST',
+                        data: {
+                            documento: 'nota_pedido',
+                            dataset: data
+                        },
+                        success: function (data) {
+                            alert('Imprimiendo');
+                        },
+                        error: function (data) {
+                            alert('Error inesperado');
+                        }
+                    })
+                }
+            })
+        });
 
         $(document).keydown(function (e) {
 
