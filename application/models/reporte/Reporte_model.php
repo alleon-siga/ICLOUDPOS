@@ -193,7 +193,7 @@ class reporte_model extends CI_Model
         $search = $marca_id.$grupo_id.$familia_id.$linea_id.$producto_id;
 
         $query = "
-            SELECT dv.id_producto, p.producto_codigo_interno,
+            SELECT v.id_producto, p.producto_codigo_interno,
             p.producto_nombre,  p.producto_codigo_interno, 
             SUM(up.unidades * dv.cantidad) AS cantidad, 
             u.nombre_unidad, 

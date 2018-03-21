@@ -214,7 +214,6 @@ class Reporte extends MY_Controller
                 $mpdf->WriteHTML($html);
                 $mpdf->Output();
                 break;
-                break;
             }
             case 'excel': {
                 $params = json_decode($this->input->get('data'));
@@ -436,8 +435,8 @@ class Reporte extends MY_Controller
                 $data['fecha_fin'] = $input['fecha_fin'];
 
                 $this->load->library('mpdf53/mpdf');
-                $mpdf = new mPDF('utf-8', 'A4', 0, '', 5, 5, 5, 5, 5, 5);
-                $html = $this->load->view('menu/reportes/productoVendido_list_pdf', $data, true);
+                $mpdf = new mPDF('utf-8', 'A4-L', 0, '', 5, 5, 5, 5, 5, 5);
+                $html = $this->load->view('menu/reportes/margenUtilidad_list_pdf', $data, true);
                 $mpdf->WriteHTML($html);
                 $mpdf->Output();
                 break;
@@ -467,7 +466,7 @@ class Reporte extends MY_Controller
                 $data['fecha_ini'] = $input['fecha_ini'];
                 $data['fecha_fin'] = $input['fecha_fin'];
 
-                echo $this->load->view('menu/reportes/productoVendido_list_excel', $data, true);
+                echo $this->load->view('menu/reportes/margenUtilidad_list_excel', $data, true);
                 break;
             }
             default: {
