@@ -526,6 +526,12 @@ $primary_nav = array(
                 'icon' => 'fa fa-area-chart',
                 'slug' => 'margenutilidad'
             ),
+            array(
+                'name' => 'Stock y ventas',
+                'url' => $ruta . 'reporte/stockVentas',
+                'icon' => 'fa fa-area-chart',
+                'slug' => 'stockventas'
+            ),
         ),
     ),
 

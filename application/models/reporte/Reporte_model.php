@@ -193,7 +193,7 @@ class reporte_model extends CI_Model
         $search = $marca_id.$grupo_id.$familia_id.$linea_id.$producto_id;
 
         $query = "
-            SELECT v.id_producto, p.producto_codigo_interno,
+            SELECT dv.id_producto, p.producto_codigo_interno,
             p.producto_nombre,  p.producto_codigo_interno, 
             SUM(up.unidades * dv.cantidad) AS cantidad, 
             u.nombre_unidad, 
@@ -231,4 +231,115 @@ class reporte_model extends CI_Model
 
         return $this->db->query($query)->result();
     }
+
+    function getStockVentas($params)
+    {
+        $marca_id = $grupo_id = $familia_id = $linea_id = $producto_id = '';
+
+        $marca_id .= ($params['marca_id']>0)? " AND p.producto_marca=".$params['marca_id'] : "";
+        $grupo_id .= ($params['grupo_id']>0)? " AND p.produto_grupo=".$params['grupo_id'] : "";
+        $familia_id .= ($params['familia_id']>0)? " AND p.producto_familia=".$params['familia_id'] : "";
+        $linea_id .= ($params['linea_id']>0)? " AND p.producto_linea=".$params['linea_id'] : "";
+        $producto_id .= ($params['producto_id']!='')? " AND p.producto_id IN(".implode(",", $params['producto_id']).")" : "";
+        $search = $marca_id.$grupo_id.$familia_id.$linea_id.$producto_id;
+
+        $query = "SELECT p.producto_id, p.producto_codigo_interno, f.nombre_familia, p.producto_nombre, m.nombre_marca, l.nombre_linea";
+        $x=1;
+        foreach ($params['local_id'] as $local_id)
+        {
+            switch ($params['tipo_periodo']) {
+                case '1': //dia
+                    $rango = $params['rangos'];
+                    $ArrayFechaI =explode('/', $rango[0]);
+                    $fechaI = $ArrayFechaI[2] ."-".$ArrayFechaI[1] ."-".$ArrayFechaI[0];
+                    $fecha_ini = date('Y-m-d 00:00:00', strtotime($fechaI));
+
+                    $ArrayFechaF =explode('/', $rango[count($rango)-1]);
+                    $fechaF = $ArrayFechaF[2] ."-".$ArrayFechaF[1] ."-".$ArrayFechaF[0];
+                    $fecha_fin = date('Y-m-d 23:59:59', strtotime($fechaF));
+
+                    $where = "AND v.fecha >= '".$fecha_ini."' AND v.fecha <= '".$fecha_fin."'";
+                    break;
+                case '2': //mes
+                    $rango = $params['rangos'];
+                    $arr = explode('/', $rango[0]);
+                    $where = "AND MONTH(v.fecha)='".$arr[0]."' AND YEAR(v.fecha)='".$arr[1]."'";
+                    break;
+                case '3': //anio
+                    $where = "AND YEAR(v.fecha) IN(".implode(",", $params['rangos']).")";
+                    break;
+            }
+
+            $query .= ",
+                (
+                    SELECT 
+                        IF(SUM(up.unidades * dv.cantidad) IS NULL, '0', SUM(up.unidades * dv.cantidad))
+                    FROM venta v
+                    INNER JOIN detalle_venta dv ON v.venta_id=dv.id_venta 
+                    INNER JOIN unidades_has_producto up ON dv.id_producto=up.producto_id AND dv.unidad_medida=up.id_unidad
+                    WHERE v.venta_status='COMPLETADO' AND v.local_id='$local_id' AND dv.id_producto=p.producto_id AND v.id_moneda=".$params['moneda_id']." $where
+                ) AS cantVend". $x;
+            $x++;
+        }
+
+        $x=1;
+        foreach ($params['rangos'] as $rango)
+        {
+            switch ($params['tipo_periodo']) {
+                case '1': //dia
+                    $ArrayFecha =explode('/', $rango);
+                    $fecha = $ArrayFecha[2] ."-".$ArrayFecha[1] ."-".$ArrayFecha[0];
+                    $fecha_ini = date('Y-m-d 00:00:00', strtotime($fecha));
+                    $fecha_fin = date('Y-m-d 23:59:59', strtotime($fecha));
+                    $where = "AND v.fecha >= '".$fecha_ini."' AND v.fecha <= '".$fecha_fin."'";
+                    break;
+                case '2': //mes
+                    $arr = explode('/', $rango);
+                    $where = "AND MONTH(v.fecha)='".$arr[0]."' AND YEAR(v.fecha)='".$arr[1]."'";
+                    break;
+                case '3': //anio
+                    $where = "AND YEAR(v.fecha)='".$rango."'";
+                    break;
+            }
+
+            foreach ($params['local_id'] as $local_id){        
+                $query .= ", 
+                    (
+                        SELECT 
+                            IF(SUM(up.unidades * dv.cantidad) IS NULL, '0', SUM(up.unidades * dv.cantidad))
+                        FROM venta v
+                        INNER JOIN detalle_venta dv ON v.venta_id=dv.id_venta 
+                        INNER JOIN unidades_has_producto up ON dv.id_producto=up.producto_id AND dv.unidad_medida=up.id_unidad
+                        WHERE v.venta_status='COMPLETADO' AND v.local_id='$local_id' AND dv.id_producto=p.producto_id AND v.id_moneda=".$params['moneda_id']." $where
+                    ) AS periodo".$x."_".$local_id;
+            }
+            $x++;
+        }
+
+        $query .= "
+            FROM 
+                producto AS p
+            INNER JOIN 
+                detalle_venta dv ON p.producto_id=dv.id_producto
+            INNER JOIN 
+                venta v ON v.venta_id=dv.id_venta
+            LEFT JOIN 
+                familia f ON p.producto_familia = f.id_familia
+            LEFT JOIN 
+                marcas m ON p.producto_marca = m.id_marca
+            LEFT JOIN 
+                lineas l ON p.producto_linea = l.id_linea
+            WHERE 
+                p.producto_estado='1'
+                AND v.venta_status='COMPLETADO'
+                AND v.id_moneda = ".$params['moneda_id']."
+                $search
+            GROUP BY
+                dv.id_producto
+            ORDER BY
+                p.producto_id
+        ";
+
+        return $this->db->query($query)->result_array();
+    }    
 }

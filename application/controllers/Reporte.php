@@ -493,4 +493,149 @@ class Reporte extends MY_Controller
             }
         }
     }
+
+    function stockVentas($action = '')
+    {
+        switch ($action) {
+            case 'filter': {
+                $params['tipo_periodo'] = $this->input->post('tipo_periodo');
+                $params['marca_id'] = $this->input->post('marca_id');
+                $params['grupo_id'] = $this->input->post('grupo_id');
+                $params['familia_id'] = $this->input->post('familia_id');
+                $params['linea_id'] = $this->input->post('linea_id');
+                $params['producto_id'] = $this->input->post('producto_id');
+                $params['local_id'] = json_decode($this->input->post('local_id'));
+                $params['moneda_id'] = $this->input->post('moneda_id');
+                $params['rangos'] = json_decode($this->input->post('rangos'));
+
+                $this->db->select('local_nombre');
+                $this->db->where_in('int_local_id', $params['local_id']);
+                $sqlLocal = $this->db->get('local');
+                $data['locale'] = $sqlLocal->result_array();
+
+                $this->db->select('int_local_id');
+                $this->db->where_in('int_local_id', $params['local_id']);
+                $sqlLocal = $this->db->get('local');
+                $data['localId'] = $sqlLocal->result_array();
+
+                $data['periodo'] = $params['rangos'];
+
+                $data['lists'] = $this->reporte_model->getStockVentas($params);
+                $this->load->view('menu/reportes/stockVentas_list', $data);
+                break;
+            }
+            case 'pdf': {
+                $params = json_decode($this->input->get('data'));
+                $input = array(
+                    'moneda_id' => $params->moneda_id,
+                    'marca_id' => $params->marca_id,
+                    'grupo_id' => $params->grupo_id,
+                    'familia_id' => $params->familia_id,
+                    'linea_id' => $params->linea_id,
+                    'producto_id' => $params->producto_id,
+                    'tipo_periodo' => $params->tipo_periodo,
+                    'local_id' => json_decode($params->local_id),
+                    'rangos' => json_decode($params->rangos)
+                );
+
+                $data['lists'] = $this->reporte_model->getStockVentas($input);
+
+                $rango = json_decode($params->rangos);
+
+                $ArrayFechaI =explode('/', $rango[0]);
+                $fechaI = $ArrayFechaI[2] ."-".$ArrayFechaI[1] ."-".$ArrayFechaI[0];
+                $fecha_ini = date('Y-m-d 00:00:00', strtotime($fechaI));
+
+                $ArrayFechaF =explode('/', $rango[count($rango)-1]);
+                $fechaF = $ArrayFechaF[2] ."-".$ArrayFechaF[1] ."-".$ArrayFechaF[0];
+                $fecha_fin = date('Y-m-d 23:59:59', strtotime($fechaF));
+
+                $data['fecha_ini'] = $fecha_ini;
+                $data['fecha_fin'] = $fecha_fin;
+
+                $this->db->select('local_nombre');
+                $this->db->where_in('int_local_id', json_decode($params->local_id));
+                $sqlLocal = $this->db->get('local');
+                $data['locale'] = $sqlLocal->result_array();
+
+                $this->db->select('int_local_id');
+                $this->db->where_in('int_local_id', json_decode($params->local_id));
+                $sqlLocal = $this->db->get('local');
+                $data['localId'] = $sqlLocal->result_array();
+
+                $data['periodo'] = json_decode($params->rangos);
+
+                $this->load->library('mpdf53/mpdf');
+                $mpdf = new mPDF('utf-8', 'A4-L', 0, '', 5, 5, 5, 5, 5, 5);
+                $html = $this->load->view('menu/reportes/stockVentas_list_pdf', $data, true);
+                $mpdf->WriteHTML($html);
+                $mpdf->Output();
+                break;
+            }
+            case 'excel': {
+                $params = json_decode($this->input->get('data'));
+                $input = array(
+                    'moneda_id' => $params->moneda_id,
+                    'marca_id' => $params->marca_id,
+                    'grupo_id' => $params->grupo_id,
+                    'familia_id' => $params->familia_id,
+                    'linea_id' => $params->linea_id,
+                    'producto_id' => $params->producto_id,
+                    'tipo_periodo' => $params->tipo_periodo,
+                    'local_id' => json_decode($params->local_id),
+                    'rangos' => json_decode($params->rangos)
+                );
+
+                $data['lists'] = $this->reporte_model->getStockVentas($input);
+
+                $rango = json_decode($params->rangos);
+                
+                $ArrayFechaI =explode('/', $rango[0]);
+                $fechaI = $ArrayFechaI[2] ."-".$ArrayFechaI[1] ."-".$ArrayFechaI[0];
+                $fecha_ini = date('Y-m-d 00:00:00', strtotime($fechaI));
+
+                $ArrayFechaF =explode('/', $rango[count($rango)-1]);
+                $fechaF = $ArrayFechaF[2] ."-".$ArrayFechaF[1] ."-".$ArrayFechaF[0];
+                $fecha_fin = date('Y-m-d 23:59:59', strtotime($fechaF));
+                
+                $data['fecha_ini'] = $fecha_ini;
+                $data['fecha_fin'] = $fecha_fin;                               
+
+                $this->db->select('local_nombre');
+                $this->db->where_in('int_local_id', json_decode($params->local_id));
+                $sqlLocal = $this->db->get('local');
+                $data['locale'] = $sqlLocal->result_array();
+
+                $this->db->select('int_local_id');
+                $this->db->where_in('int_local_id', json_decode($params->local_id));
+                $sqlLocal = $this->db->get('local');
+                $data['localId'] = $sqlLocal->result_array();
+                $data['periodo'] = json_decode($params->rangos);
+                echo $this->load->view('menu/reportes/stockVentas_list_excel', $data, true);
+                break;
+            }
+            default: {
+                if ($this->session->userdata('esSuper') == 1) {
+                    $data['locales'] = $this->local_model->get_all();
+                } else {
+                    $usu = $this->session->userdata('nUsuCodigo');
+                    $data['locales'] = $this->local_model->get_all_usu($usu);
+                }
+                $data["monedas"] = $this->monedas_model->get_all();
+                $data['marcas'] = $this->db->get_where('marcas', array('estatus_marca' => 1))->result();
+                $data['grupos'] = $this->db->get_where('grupos', array('estatus_grupo' => 1))->result();
+                $data['familias'] = $this->db->get_where('familia', array('estatus_familia' => 1))->result();
+                $data['lineas'] = $this->db->get_where('lineas', array('estatus_linea' => 1))->result();
+                $data["productos"] = $this->producto_model->get_productos_list();
+                $data['barra_activa'] = $this->db->get_where('columnas', array('id_columna' => 36))->row();
+                $dataCuerpo['cuerpo'] = $this->load->view('menu/reportes/stockVentas', $data, true);
+                if ($this->input->is_ajax_request()) {
+                    echo $dataCuerpo['cuerpo'];
+                } else {
+                    $this->load->view('menu/template', $dataCuerpo);
+                }
+                break;
+            }
+        }
+    }
 }
