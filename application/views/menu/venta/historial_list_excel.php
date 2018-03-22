@@ -1,28 +1,16 @@
-<style type="text/css">
-    table td {
-        width: 100%;
-        border: #e1e1e1 1px solid;
-        font-size: 9px;
-    }
-
-    thead, th {
-        background: #585858;
-        border: #111 1px solid;
-        color: #fff;
-        font-size: 10px;
-    }
-
-    h4 {
-        margin: 0px;
-    }
-</style>
+<?php
+header("Content-type: application/octet-stream");
+header("Content-Disposition: attachment; filename=historial_venta.xls");
+header("Pragma: no-cache");
+header("Expires: 0");
+?>
 <h2 style="text-align: center;">Historial de Ventas</h2>
 
 <h4>EMPRESA: <?= valueOption('EMPRESA_NOMBRE') ?></h4>
 <h4>FECHA: <?= date('d/m/Y', strtotime($fecha_ini))?> - <?= date('d/m/Y', strtotime($fecha_fin))?></h4>
 <h4>UBICACI&Oacute;N: <?= $local_nombre ?></h4>
 
-<table cellpadding="3" cellspacing="0">
+<table border="1">
     <thead>
     <tr>
         <th>ID</th>

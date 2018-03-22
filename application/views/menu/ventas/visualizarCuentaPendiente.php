@@ -70,7 +70,7 @@
                             </div>
                             <div class="block-content-mini-padding">
                                 <div class="col-xs-3">
-                                    Venta#:
+                                    Venta Nro:
                                 </div>
                                 <div class="col-xs-9">
                                     <?= $cliente['documento_Serie']."-".$cliente['documento_Numero'] ?>

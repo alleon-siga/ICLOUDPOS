@@ -1789,6 +1789,9 @@ FROM (`detalle_venta`) JOIN `venta` ON `venta`.`venta_id`=`detalle_venta`.`id_ve
         if(isset($data['cliente_id']))
             $consulta .= " AND v.id_cliente = ".$data['cliente_id'];
 
+        if(isset($data['moneda_id']))
+            $consulta .= " AND v.id_moneda = ".$data['moneda_id'];
+
         if(isset($data['vence_deuda'])){
 
             $consulta .= " AND
@@ -1874,6 +1877,9 @@ FROM (`detalle_venta`) JOIN `venta` ON `venta`.`venta_id`=`detalle_venta`.`id_ve
 
         if(isset($data['cliente_id']))
             $consulta .= " AND v.id_cliente = ".$data['cliente_id'];
+
+        if(isset($data['moneda_id']))
+            $consulta .= " AND v.id_moneda = ".$data['moneda_id'];
 
         if(isset($data['vence_deuda']) && $data['vence_deuda'] == 1){
             $consulta .= " AND

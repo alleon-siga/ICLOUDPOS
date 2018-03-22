@@ -12,7 +12,7 @@
 
         });
 
-        $("#local, #cliente_id, #vence_deuda").on('change', function () {
+        $("#local, #cliente_id, #vence_deuda, #moneda").on('change', function () {
             $("#lstTabla").html('');
         });
 
@@ -145,6 +145,8 @@
                 break;
             }
         }
+
+        $('#banco_id, #caja_id').trigger('change');
     }
 
 
@@ -161,7 +163,7 @@
                 <div class="row">
 
                     <div class="col-md-1">
-                        <label>Local</label>
+                        <label>Ubicacion:</label>
                     </div>
                     <div class="col-md-3">
 
@@ -194,14 +196,27 @@
                     </div>
 
                     <div class="col-md-1">
+                        <label class="control-label panel-admin-text">Moneda:</label>
+                    </div>
+                    <div class="col-md-2">
+
+                        <select name="moneda" id="moneda" class='cho form-control'>
+                            <?php foreach ($monedas as $moneda): ?>
+                                <option value="<?= $moneda->id_moneda ?>"
+                                        data-simbolo="<?= $moneda->simbolo ?>"><?= $moneda->nombre ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="col-md-1">
                         <button type="button" id="btnBuscar" value="Buscar" class="btn btn-default">
                             <i class="fa fa-search"></i>
                         </button>
                     </div>
 
 
-                    <div class="col-md-3">
-                        <input type="checkbox" id="vence_deuda" name="vence_deuda" value="1" checked>
+                    <div class="col-md-3" style="display: none;">
+                        <input type="checkbox" id="vence_deuda" name="vence_deuda" value="0">
                         <label for="vence_deuda" style="cursor: pointer;">Ver deudas que vencen hoy</label>
                         </button>
                     </div>
@@ -221,7 +236,7 @@
                     <div id="lstTabla"></div>
                 </div>
 
-                <div class="block-section">
+                <div class="block-section" style="display: none;">
 
 
                     <div id="pp_excel">

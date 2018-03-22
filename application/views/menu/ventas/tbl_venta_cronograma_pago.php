@@ -141,7 +141,9 @@
                                     foreach ($metodos as $metodo) { ?>
                                         <option <?php if ($metodo['id_metodo'] == "3") echo "selected"; ?>
                                                 data-tipo_metodo="<?= $metodo['tipo_metodo'] ?>"
-                                                value="<?= $metodo['id_metodo'] ?>"><?= $metodo['nombre_metodo'] ?></option>
+                                                value="<?= $metodo['id_metodo'] ?>">
+                                            <?= $metodo['nombre_metodo'] ?>
+                                        </option>
                                     <?php }
                                 } ?>
                             </select>
@@ -157,7 +159,14 @@
                                 <option value="">Seleccione</option>
                                 <?php foreach ($cajas as $caja): ?>
                                     <option
-                                            value="<?= $caja->id ?>" <?= $caja->principal == '1' ? 'selected' : ''?>><?= $caja->descripcion ?></option>
+                                            value="<?= $caja->id ?>"
+                                            data-tasa="<?= $caja->tasa_soles ?>"
+                                            data-moneda_id="<?= $caja->id_moneda ?>"
+                                            data-moneda_nombre="<?= $caja->nombre ?>"
+                                        <?= $caja->principal == '1' && $venta->id_moneda == $caja->id_moneda ? 'selected' : '' ?>>
+                                        <?= $caja->nombre ?> |
+                                        <?= $caja->descripcion ?>
+                                    </option>
                                 <?php endforeach ?>
                             </select>
                         </div>
@@ -173,9 +182,32 @@
                                 <option value="">Seleccione</option>
                                 <?php foreach ($bancos as $banco): ?>
                                     <option
-                                            value="<?= $banco->banco_id ?>"><?= $banco->banco_nombre ?></option>
+                                            value="<?= $banco->banco_id ?>"
+                                            data-tasa="<?= $banco->tasa_soles ?>"
+                                            data-moneda_id="<?= $banco->moneda_id ?>"
+                                            data-moneda_nombre="<?= $banco->nombre ?>"
+                                    ><?= $banco->banco_nombre ?></option>
                                 <?php endforeach ?>
                             </select>
+                        </div>
+                    </div>
+
+                    <div class="row" id="tipo_cambio_block" style="display: none;">
+                        <div class="col-md-6">
+                            <label for="tipo_cambio" class="control-label panel-admin-text">Cantidad en <span
+                                        id="moneda_nombre"></span></label>
+                        </div>
+                        <div class="col-md-3">
+                            <label>Tipo de cambio</label>
+                            <input type="text" id="tipo_cambio" name="tipo_cambio"
+                                   class="form-control" autocomplete="off"
+                                   value="">
+                        </div>
+                        <div class="col-md-3">
+                            <label>Importe</label>
+                            <input type="text" id="moneda_saldo" name="moneda_saldo"
+                                   class="form-control" autocomplete="off"
+                                   value="">
                         </div>
                     </div>
 
@@ -242,6 +274,32 @@
 <script>
     $(document).ready(function () {
 
+        $('#banco_id, #caja_id').on('change', function () {
+
+            if ($(this).val() != '' && moneda_id != $('#MONEDA_DEFECTO_ID').val()) {
+                var moneda_id = $(this).find('option:selected').first().attr('data-moneda_id');
+                var tasa = $(this).find('option:selected').first().attr('data-tasa');
+                $('#tipo_cambio').val(tasa);
+                $('#moneda_nombre').html($(this).find('option:selected').first().attr('data-moneda_nombre'));
+                $('#tipo_cambio_block').show();
+                $('#cantidad_a_pagar').attr('readonly', 'readonly');
+            }
+            else {
+                $('#tipo_cambio').val('');
+                $('#cantidad_a_pagar').removeAttr('readonly');
+                $('#tipo_cambio_block').css('display', 'none');
+            }
+        });
+
+        $('#moneda_saldo, #tipo_cambio').on('keyup', function () {
+            var tasa = isNaN(parseFloat($('#tipo_cambio').val())) ? 1 : parseFloat($('#tipo_cambio').val());
+            var moneda_saldo = isNaN(parseFloat($('#moneda_saldo').val())) ? 1 : parseFloat($('#moneda_saldo').val());
+
+            $('#cantidad_a_pagar').val(formatPrice(parseFloat(moneda_saldo * tasa)));
+
+        });
+
+        $('#banco_id, #caja_id').trigger('change');
 
         $(".cerrar_pagar_venta").on('click', function () {
             $("#pago_modal").modal('hide');
