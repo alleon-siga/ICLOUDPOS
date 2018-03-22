@@ -4,7 +4,7 @@
     <table class="table table-striped dataTable table-bordered table-condensed table-hover" id="tablaresultado">
         <thead>
         <tr>
-            <th>Id Producto</th>
+            <th><?= getCodigoNombre() ?></th>
             <th>Nombre</th>
             <th>Marca</th>
             <th>Grupo</th>
@@ -23,7 +23,7 @@
         foreach ($productos as $producto) {
             ?>
             <tr>
-                <td><?= sumCod($producto['producto_id']) ?></td>
+                <td><?= getCodigoValue($producto['producto_id'], $producto['producto_codigo_interno']) ?></td>
                 <td><?= $producto['producto_nombre'] ?></td>
                 <td><?= $producto['nombre_marca'] ?></td>
                 <td><?= $producto['nombre_grupo'] ?></td>

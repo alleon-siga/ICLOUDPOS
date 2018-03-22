@@ -141,7 +141,7 @@ class impresion_model extends CI_Model
 
         foreach ($venta as $v) {
 
-            $v->importe_letra = numtoletras($v->importe);
+            $v->importe_letra = numtoletras(number_format($v->importe, 2, '.', ''));
 
             $query = "
             SELECT 
