@@ -398,7 +398,18 @@ class cajas_model extends CI_Model
                 $this->db->where('id', $cuenta->id);
                 $this->db->update('caja_desglose', array('saldo' => $new_saldo));
 
-                //hay que agregar el movimiento
+                $this->db->insert('caja_movimiento', array(
+                    'caja_desglose_id' => $cuenta->id,
+                    'usuario_id' => $this->session->userdata('nUsuCodigo'),
+                    'fecha_mov' => date('Y-m-d H:i:s'),
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'movimiento' => 'INGRESO',
+                    'operacion' => 'INGRESO_ANULADO',
+                    'medio_pago' => 3,
+                    'saldo' => $caja_pendiente->monto,
+                    'saldo_old' => $cuenta->saldo,
+                    'ref_id' => $data['ref_id']
+                ));
             }
 
             $this->db->where('id', $caja_pendiente->id);

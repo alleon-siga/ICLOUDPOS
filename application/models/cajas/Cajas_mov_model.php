@@ -110,6 +110,17 @@ class cajas_mov_model extends CI_Model
                 $mov->ref_val = $doc . $ingreso->documento_serie . ' - ' . $ingreso->documento_numero;
             }
 
+            if ($mov->operacion == 'GASTOS') {
+                $caja_pendiente = $this->db->get_where('caja_pendiente', array('id' => $mov->ref_id))->row();
+                $gasto = $this->db->join('tipos_gasto', 'tipos_gasto.id_tipos_gasto = gastos.tipo_gasto')
+                    ->get_where('gastos', array('id_gastos' => $caja_pendiente->ref_id))->row();
+
+                $mov->operacion_nombre = $mov->operacion_nombre . ' (' . $gasto->nombre_tipos_gasto . ')';
+                $mov->ref_val = $gasto->descripcion;
+
+                $mov->numero = '';
+            }
+
             if ($mov->operacion == 'CUOTA') {
                 $mov->operacion_nombre = 'PAGO DE DEUDA';
 
