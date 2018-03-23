@@ -52,10 +52,10 @@ $query_builder = TRUE;
 
 $db['default'] = array(
     'dsn'	=> '',
-    'hostname' => 'localhost',
-    'username' => 'root',
-    'password' => '',
-    'database' => 'icloudpos_dev',
+    'hostname' => '10.1.1.3',
+    'username' => 'user',
+    'password' => 'password',
+    'database' => 'ip',  // 'database' => 'bdicloudpos_prica' icloudpos_dev ,
     'dbdriver' => 'mysqli',
     'dbprefix' => '',
     'pconnect' => FALSE,

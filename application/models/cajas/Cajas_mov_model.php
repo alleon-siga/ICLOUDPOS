@@ -67,7 +67,8 @@ class cajas_mov_model extends CI_Model
 
             if ($mov->operacion == 'COMPRA') {
 
-                $ingreso = $this->db->get_where('ingreso', array('id_ingreso' => $mov->ref_id))->row();
+                $caja_pendiente = $this->db->get_where('caja_pendiente', array('id' => $mov->ref_id))->row();
+                $ingreso = $this->db->get_where('ingreso', array('id_ingreso' => $caja_pendiente->ref_id))->row();
 
                 $doc = 'NP ';
                 if ($ingreso->tipo_documento == 'BOLETA DE VENTA') $doc = 'BO ';
