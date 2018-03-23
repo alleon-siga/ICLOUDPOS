@@ -86,6 +86,7 @@ class inventario_model extends CI_Model
 
         $this->db->join('unidades_has_producto', 'unidades_has_producto.producto_id=producto.producto_id' . ' and unidades_has_producto.orden=1', 'left');
         $this->db->join('unidades', 'unidades.id_unidad=unidades_has_producto.id_unidad', 'left');
+        $this->db->where(array('producto_estado' => '1'));
         $this->db->group_by('producto_id');
         $this->db->order_by('producto_id', 'desc');
 
