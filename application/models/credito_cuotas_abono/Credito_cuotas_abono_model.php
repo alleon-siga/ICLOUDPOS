@@ -81,7 +81,7 @@ class credito_cuotas_abono_model extends CI_Model
         $caja_desglose = $this->db->join('caja', 'caja.id = caja_desglose.caja_id')
             ->get_where('caja_desglose', array('caja_desglose.id' => $cuenta_id))->row();
 
-        if($caja_desglose->id_moneda != $venta->id_moneda){
+        if($caja_desglose->moneda_id != $venta->id_moneda){
             $total_caja = $moneda_saldo;
         }
 
