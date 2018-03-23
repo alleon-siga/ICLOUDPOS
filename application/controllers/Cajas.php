@@ -11,7 +11,7 @@ class cajas extends MY_Controller
             $this->load->model('cajas/cajas_mov_model');
             $this->load->model('local/local_model');
             $this->load->model('usuario/usuario_model');
-        }else{
+        } else {
             redirect(base_url(), 'refresh');
         }
     }
@@ -178,16 +178,51 @@ class cajas extends MY_Controller
 
     function caja_detalle_form($id)
     {
-        $data['cuenta'] = $this->cajas_model->get_cuenta($id);
+        $data['desglose_id'] = $id;
+        $data['cuenta'] = $this->db->select('caja_desglose.*, caja.*, moneda.*, usuario.nombre AS usuario_nombre')
+            ->from('caja_desglose')
+            ->join('caja', 'caja.id = caja_desglose.caja_id')
+            ->join('moneda', 'moneda.id_moneda = caja.moneda_id')
+            ->join('usuario', 'usuario.nUsuCodigo = caja_desglose.responsable_id')
+            ->where('caja_desglose.id', $id)->get()->row();
 
         $params = array(
             'fecha_ini' => date('Y-m-d H:i:s', strtotime($this->input->post('fecha_ini') . "00:00:00")),
             'fecha_fin' => date('Y-m-d H:i:s', strtotime($this->input->post('fecha_fin') . "23:59:59")),
         );
 
+        $data['fecha_ini'] = str_replace('-', '/', $this->input->post('fecha_ini'));
+        $data['fecha_fin'] = str_replace('-', '/', $this->input->post('fecha_fin'));
+
         $data['cuenta_movimientos'] = $this->cajas_mov_model->get_movimientos_today($id, $params);
 
         $this->load->view('menu/cajas/form_detalle', $data);
+    }
+
+    function caja_detalle_excel($id)
+    {
+        $data['desglose_id'] = $id;
+        $params = json_decode($this->input->get('data'));
+
+        $data['cuenta'] = $this->db->select('caja_desglose.*, caja.*, moneda.*, usuario.nombre AS usuario_nombre')
+            ->from('caja_desglose')
+            ->join('caja', 'caja.id = caja_desglose.caja_id')
+            ->join('moneda', 'moneda.id_moneda = caja.moneda_id')
+            ->join('usuario', 'usuario.nUsuCodigo = caja_desglose.responsable_id')
+            ->where('caja_desglose.id', $id)->get()->row();
+
+        $data['fecha_ini'] = str_replace('-', '/', $params->fecha_ini);
+        $data['fecha_fin'] = str_replace('-', '/', $params->fecha_fin);
+
+        $params = array(
+            'fecha_ini' => date('Y-m-d H:i:s', strtotime($params->fecha_ini . "00:00:00")),
+            'fecha_fin' => date('Y-m-d H:i:s', strtotime($params->fecha_fin . "23:59:59")),
+        );
+
+
+        $data['cuenta_movimientos'] = $this->cajas_mov_model->get_movimientos_today($id, $params);
+
+        echo $this->load->view('menu/cajas/form_detalle_excel', $data, TRUE);
     }
 
     function caja_pendiente_form($id)
@@ -251,10 +286,10 @@ class cajas extends MY_Controller
             $this->db->where('id', $caja_desglose->id);
             $this->db->update('caja_desglose', array('saldo' => $new_saldo));
 
-            if($caja_pendiente->tipo == 'PAGOS_CUOTAS'){
+            if ($caja_pendiente->tipo == 'PAGOS_CUOTAS') {
                 $this->db->where('pagoingreso_id', $caja_pendiente->ref_id);
                 $this->db->update('pagos_ingreso', array(
-                    'estado'=>'COMPLETADO'
+                    'estado' => 'COMPLETADO'
                 ));
             }
 

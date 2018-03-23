@@ -580,29 +580,36 @@ class venta_new extends MY_Controller
         }
     }
 
-    function historial_pdf($local_id, $estado, $mes, $year, $dia_min, $dia_max)
+    function historial_pdf()
     {
+        $params = json_decode($this->input->get('data'));
+
+        $date_range = explode(" - ", $params->fecha);
+        $fecha_ini = str_replace("/", "-", $date_range[0]);
+        $fecha_fin = str_replace("/", "-", $date_range[1]);
+
+
+        $condition = array(
+            'local_id' => $params->local_id,
+            'condicion_id' => $params->condicion_pago_id,
+            'fecha_ini' => $fecha_ini,
+            'fecha_fin' => $fecha_fin,
+            'moneda_id' => $params->moneda_id
+        );
+        $data = $condition;
+
+        $local = $this->db->get_where('local', array('int_local_id' => $condition['local_id']))->row();
+        $data['local_nombre'] = $local->local_nombre;
+        $data['moneda'] = $this->db->get_where('moneda', array('id_moneda' => $condition['moneda_id']))->row();
+        $data['ventas'] = $this->venta->get_ventas($condition);
+
+        $data['venta_totales'] = $this->venta->get_ventas_totales($condition);
+
         $this->load->library('mpdf53/mpdf');
-        $mpdf = new mPDF('utf-8', 'A4-L');
-
-        $data['ventas'] = $this->venta->get_ventas(array(
-            'local_id' => $local_id,
-            'estado' => $estado,
-            'mes' => $mes,
-            'year' => $year,
-            'dia_min' => $dia_min,
-            'dia_max' => $dia_max,
-        ));
-
-        $data['local'] = $this->local_model->get_by('int_local_id', $local_id);
-        $data['estado'] = $estado;
-        $data['fecha_ini'] = $dia_min . '/' . $mes . '/' . $year;
-        $data['fecha_fin'] = $dia_max . '/' . $mes . '/' . $year;
-
-
-        $mpdf->WriteHTML($this->load->view('menu/venta/historial_list_pdf', $data, true));
-        $nombre_archivo = utf8_decode('Historial ventas ' . $data['fecha_ini'] . ' : ' . $data['fecha_fin'] . '.pdf');
-        $mpdf->Output($nombre_archivo, 'I');
+        $mpdf = new mPDF('utf-8', 'A4', 0, '', 5, 5, 5, 5, 5, 5);
+        $html = $this->load->view('menu/venta/historial_list_pdf', $data, true);
+        $mpdf->WriteHTML($html);
+        $mpdf->Output();
     }
 
     function imprimir($venta_id, $tipo_impresion)
@@ -689,89 +696,33 @@ class venta_new extends MY_Controller
 
     }
 
-    function historial_excel($local_id, $estado, $mes, $year, $dia_min, $dia_max)
+    function historial_excel()
     {
 
-        $this->load->library('phpExcel/PHPExcel.php');
+        $params = json_decode($this->input->get('data'));
 
-        $data['ventas'] = $this->venta->get_ventas(array(
-            'local_id' => $local_id,
-            'estado' => $estado,
-            'mes' => $mes,
-            'year' => $year,
-            'dia_min' => $dia_min,
-            'dia_max' => $dia_max,
-        ));
-
-        $local = $this->local_model->get_by('int_local_id', $local_id);
-        $fecha_ini = $dia_min . '/' . $mes . '/' . $year;
-        $fecha_fin = $dia_max . '/' . $mes . '/' . $year;
-
-        $this->phpexcel->getProperties()
-            ->setTitle("ventas")
-            ->setSubject("ventas")
-            ->setDescription("ventas")
-            ->setKeywords("ventas")
-            ->setCategory("ventas");
-
-        $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow(0, 1, "Ubicacion");
-        $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow(1, 1, $local['local_nombre']);
-
-        $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow(3, 1, "Estado");
-        $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow(4, 1, $estado);
-
-        $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow(6, 1, "Fecha");
-        $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow(7, 1, $fecha_ini . ' a ' . $fecha_fin);
+        $date_range = explode(" - ", $params->fecha);
+        $fecha_ini = str_replace("/", "-", $date_range[0]);
+        $fecha_fin = str_replace("/", "-", $date_range[1]);
 
 
-        $i = 0;
+        $condition = array(
+            'local_id' => $params->local_id,
+            'condicion_id' => $params->condicion_pago_id,
+            'fecha_ini' => $fecha_ini,
+            'fecha_fin' => $fecha_fin,
+            'moneda_id' => $params->moneda_id
+        );
+        $data = $condition;
 
-        $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($i++, 3, "Fecha");
-        $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($i++, 3, "Doc");
-        $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($i++, 3, "Num Doc");
-        $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($i++, 3, "RUC - DNI");
-        $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($i++, 3, "Cliente");
-        $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($i++, 3, "Vendedor");
-        $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($i++, 3, "Condicion");
-        $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($i++, 3, "Moneda");
-        $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($i++, 3, "Tip. Cam.");
-        $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($i++, 3, "SubTotal");
-        $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($i++, 3, "IGV");
-        $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($i++, 3, "Total");
+        $local = $this->db->get_where('local', array('int_local_id' => $condition['local_id']))->row();
+        $data['local_nombre'] = $local->local_nombre;
+        $data['moneda'] = $this->db->get_where('moneda', array('id_moneda' => $condition['moneda_id']))->row();
+        $data['ventas'] = $this->venta->get_ventas($condition);
 
-        $row = 4;
-        foreach ($data['ventas'] as $venta) {
-            $col = 0;
-            $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($col++, $row, date('d/m/Y H:i:s', strtotime($venta->venta_fecha)));
-            $doc = '';
-            if ($venta->documento_id == 1) $doc = "FA";
-            if ($venta->documento_id == 2) $doc = "NC";
-            if ($venta->documento_id == 3) $doc = "BO";
-            if ($venta->documento_id == 4) $doc = "GR";
-            if ($venta->documento_id == 5) $doc = "PCV";
-            if ($venta->documento_id == 6) $doc = "NP";
-            $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($col++, $row, $doc);
-            $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($col++, $row, sumCod($venta->venta_id, 4));
-            $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($col++, $row, $venta->ruc);
-            $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($col++, $row, $venta->cliente_nombre);
-            $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($col++, $row, $venta->vendedor_nombre);
-            $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($col++, $row, $venta->condicion_nombre);
-            $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($col++, $row, $venta->moneda_nombre);
-            $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($col++, $row, $venta->moneda_tasa);
-            $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($col++, $row, $venta->subtotal);
-            $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($col++, $row, $venta->impuesto);
-            $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($col++, $row, $venta->total);
+        $data['venta_totales'] = $this->venta->get_ventas_totales($condition);
 
-            $row++;
-        }
-
-
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="RegistroVentas.xlsx"');
-        header('Cache-Control: max-age=0');
-
-        $objWriter = PHPExcel_IOFactory::createWriter($this->phpexcel, 'Excel2007');
-        $objWriter->save('php://output');
+        echo $this->load->view('menu/venta/historial_list_excel', $data, true);
     }
 
 }

@@ -59,7 +59,8 @@ class venta_new_model extends CI_Model
             venta.serie as serie,
             venta.numero as numero,
             venta.nota as nota,
-            venta.dni_garante as nombre_caja
+            venta.dni_garante as nombre_caja,
+            venta.tipo_impuesto as tipo_impuesto
             ')
             ->from('venta')
             ->join('documentos', 'venta.id_documento=documentos.id_doc')
@@ -104,7 +105,7 @@ class venta_new_model extends CI_Model
             if ($action == '')
                 $this->db->where('(venta.venta_status = "COMPLETADO" OR venta.venta_status = "ANULADO")');
             else if ($action == 'anular')
-                $this->db->where('venta.venta_status = "COMPLETADO"');
+                $this->db->where('venta.venta_status = "COMPLETADO" AND numero != ""');
             else if ($where['estado'] != "")
                 $this->db->where('venta.venta_status', $where['estado']);
 
@@ -194,7 +195,8 @@ class venta_new_model extends CI_Model
             detalle_venta.unidad_medida as unidad_id,
             unidades.nombre_unidad as unidad_nombre,
             unidades.abreviatura as unidad_abr,
-            detalle_venta.detalle_importe as importe
+            detalle_venta.detalle_importe as importe,
+            detalle_venta.impuesto_porciento as impuesto_porciento
             ')
             ->from('detalle_venta')
             ->join('producto', 'producto.producto_id=detalle_venta.id_producto')
@@ -884,22 +886,32 @@ class venta_new_model extends CI_Model
         }
     }
 
-    public
-    function devolver_venta($venta_id, $total_importe, $devoluciones, $serie, $numero)
+    private function recalc_totales($venta_id)
     {
-        $venta = $this->get_venta_detalle($venta_id);
+        $venta = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
+        $detalles = $this->db->get_where('detalle_venta', array('id_venta' => $venta_id))->result();
 
-        $venta_old = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
-
-        $total = 0;
         $impuesto = 0;
         $subtotal = 0;
-        if ($venta->documento_id == '1') {
-            $subtotal = $total_importe;
-            $impuesto = number_format(($total_importe * 18) / 100, 2);
+        $total = 0;
+
+        foreach ($detalles as $d) {
+            $total += $d->cantidad * $d->precio;
+        }
+
+        if ($venta->tipo_impuesto == 1) {
+            foreach ($detalles as $d) {
+                $factor = (100 + $d->impuesto_porciento) / 100;
+                $impuesto += ($d->cantidad * $d->precio) - (($d->cantidad * $d->precio) / $factor);
+            }
+            $subtotal = $total - $impuesto;
+        } elseif ($venta->tipo_impuesto == 2) {
+            $subtotal = $total;
+            foreach ($detalles as $d) {
+                $factor = (100 + $d->impuesto_porciento) / 100;
+                $impuesto += (($d->cantidad * $d->precio) * $factor) - ($d->cantidad * $d->precio);
+            }
             $total = $subtotal + $impuesto;
-        } else {
-            $total = $total_importe;
         }
 
         $this->db->where('venta_id', $venta_id);
@@ -909,17 +921,13 @@ class venta_new_model extends CI_Model
             'total_impuesto' => $impuesto,
         ));
 
+        return $total;
+    }
 
-        $moneda_id = $venta_old->id_moneda;
-
-        $this->cajas_model->save_pendiente(array(
-            'monto' => $venta_old->total - $total,
-            'tipo' => 'VENTA_DEVUELTA',
-            'IO' => 2,
-            'ref_id' => $venta_id,
-            'moneda_id' => $moneda_id,
-            'local_id' => $venta_old->local_id
-        ));
+    public
+    function devolver_venta($venta_id, $total_importe, $devoluciones, $serie, $numero)
+    {
+        $venta = $this->get_venta_detalle($venta_id);
 
         $cantidades = array();
         foreach ($devoluciones as $detalle) {
@@ -1006,6 +1014,15 @@ class venta_new_model extends CI_Model
                 ));
             }
         }
+
+        $this->cajas_model->save_pendiente(array(
+            'monto' => $venta->total - $this->recalc_totales($venta->venta_id),
+            'tipo' => 'VENTA_DEVUELTA',
+            'IO' => 2,
+            'ref_id' => $venta_id,
+            'moneda_id' => $venta->moneda_id,
+            'local_id' => $venta->local_id
+        ));
     }
 
     public

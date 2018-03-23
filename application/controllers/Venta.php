@@ -1924,7 +1924,7 @@ JOIN detalleingreso ON detalleingreso.id_ingreso=ingreso.id_ingreso WHERE detall
         $data = "";
 
         $data['locales'] = $this->local_model->get_all();
-
+        $data['monedas'] = $this->db->get_where('moneda', array('status_moneda' => 1))->result();
         $data['metodos'] = $this->metodos_pago_model->get_all();
         $data["lstCliente"] = $this->cliente_model->get_all();
         $dataCuerpo['cuerpo'] = $this->load->view('menu/ventas/pagospendientesVenta', $data, true);
@@ -1941,6 +1941,7 @@ JOIN detalleingreso ON detalleingreso.id_ingreso=ingreso.id_ingreso WHERE detall
 
             $data['local'] = $this->input->post("local", true);
             $data['cliente_id'] = $this->input->post("cliente_id", true);
+            $data['moneda'] = $this->input->post("moneda", true);
 
             $params = array();
             if ($data['local'] != 'TODOS')
@@ -1949,9 +1950,12 @@ JOIN detalleingreso ON detalleingreso.id_ingreso=ingreso.id_ingreso WHERE detall
             if ($data['cliente_id'] != '-1')
                 $params['cliente_id'] = $data['cliente_id'];
 
+            $params['moneda_id'] = $data['moneda'];
+
             //var_dump($this->input->post("vence_deuda", 2));
             $params['vence_deuda'] = $this->input->post("vence_deuda", 2);
 
+            $data['moneda'] = $this->db->get_where('moneda', array('id_moneda' => $params['moneda_id']))->row();
 
             $data['lstVenta'] = $this->venta_model->get_pagos_pendientes($params);
             $data['credito_totales'] = $this->venta_model->get_totales_pagos_pendientes($params);
@@ -2974,17 +2978,30 @@ JOIN detalleingreso ON detalleingreso.id_ingreso=ingreso.id_ingreso WHERE detall
             $result['cliente'] = $this->db->get_where('cliente', array('id_cliente' => $venta->id_cliente))->row();
             $result['moneda'] = $this->credito_cuotas_abono_model->get_suma_cuotas($where);
 
-            $result['bancos'] = $this->db->get_where('banco', array('banco_status' => 1))->result();
+            $result['bancos'] = $this->db->join('caja_desglose', 'caja_desglose.id = banco.cuenta_id')
+                ->join('caja', 'caja.id = caja_desglose.caja_id')
+                ->join('moneda', 'moneda.id_moneda = caja.moneda_id')
+                ->get_where('banco', array('banco_status' => 1))->result();
             $result['tarjetas'] = $this->db->get('tarjeta_pago')->result();
-            $result['cajas'] = $this->db->join('caja_desglose', 'caja_desglose.caja_id=caja.id')
-                ->get_where('caja', array(
-                    'moneda_id' => $venta->id_moneda,
+            $cajas = $this->db->select('caja_desglose.*, moneda.*, banco.banco_id')
+                ->from('caja')
+                ->join('caja_desglose', 'caja_desglose.caja_id=caja.id')
+                ->join('moneda', 'moneda.id_moneda = caja.moneda_id')
+                ->join('banco', 'banco.cuenta_id = caja_desglose.id', 'left')
+                ->where(array(
                     'local_id' => $venta->local_id,
                     'retencion' => 0,
                     'caja_desglose.estado' => 1
-                ))->result();
+                ))->get()->result();
+            $result['cajas'] = array();
+            foreach ($cajas as $caja) {
+                if ($caja->banco_id == null)
+                    $result['cajas'][] = $caja;
+            }
+
 
             $result['cronogramas'] = $this->credito_cuotas_model->get_cronograma_by_cuotas($idventa);
+            $result['venta'] = $venta;
             $result['id_venta'] = $idventa;
             $this->load->view('menu/ventas/tbl_venta_cronograma_pago', $result);
         }
@@ -3006,6 +3023,7 @@ JOIN detalleingreso ON detalleingreso.id_ingreso=ingreso.id_ingreso WHERE detall
         if ($this->input->post('idCuota')) {
             $idCuota = $this->input->post('idCuota');
             $montodescontar = $this->input->post('montodescontar');
+            $moneda_saldo = $this->input->post('moneda_saldo');
             $correlativo_cuota = $this->input->post('correlativo_cuota');
             $anticipado = false;
         } else {
@@ -3014,7 +3032,7 @@ JOIN detalleingreso ON detalleingreso.id_ingreso=ingreso.id_ingreso WHERE detall
             $montodescontar = false;
         }
 
-        $return = $this->credito_cuotas_abono_model->registrar($idCuota, $montodescontar, $metodo_pago, $idVenta, $anticipado, $numero_ope, $banco, $tipo_metodo, $cuenta_id);
+        $return = $this->credito_cuotas_abono_model->registrar($idCuota, $montodescontar, $moneda_saldo, $metodo_pago, $idVenta, $anticipado, $numero_ope, $banco, $tipo_metodo, $cuenta_id);
 
         if ($return == true) {
             $dataresul['success'] = "El pago se ha realizado satisfactoriamente";

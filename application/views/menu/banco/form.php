@@ -7,7 +7,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title">Nuevo Banco</h4>
+                <h4 class="modal-title"><?= isset($banco['banco_id']) ? 'Editar Banco' : 'Nuevo Banco' ?></h4>
             </div>
             <div class="modal-body">
 
@@ -34,12 +34,12 @@
                             <select id="caja_select" name="caja_select" class="form-control">
                                 <?php foreach ($cajas as $caja): ?>
                                     <option <?= $caja->id == $caja_actual->id ? 'selected' : '' ?>
-                                        value="<?= $caja->id ?>"
-                                        data-moneda_id="<?= $caja->moneda_id ?>"
-                                        data-simbolo="<?= $caja->simbolo ?>"
+                                            value="<?= $caja->id ?>"
+                                            data-moneda_id="<?= $caja->moneda_id ?>"
+                                            data-simbolo="<?= $caja->simbolo ?>"
                                     >
-                                    <?= $caja->local_nombre ?>
-                                    <?= ' | '.$caja->nombre ?>
+                                        <?= $caja->local_nombre ?>
+                                        <?= ' | ' . $caja->nombre ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>
@@ -49,7 +49,7 @@
 
                 <div class="row">
                     <div class="form-group">
-                       <div class="col-md-4">
+                        <div class="col-md-4">
                             <label>Asociar Cuenta</label>
                         </div>
                         <div class="col-md-8">
@@ -58,8 +58,8 @@
                                 <?php foreach ($caja_cuentas as $caja_cuenta): ?>
                                     <?php if ($caja_cuenta->caja_id == $caja_actual->id): ?>
                                         <option
-                                            value="<?= $caja_cuenta->id ?>"
-                                            <?= isset($banco['cuenta_id']) && $banco['cuenta_id']==$caja_cuenta->id ? 'selected' : ''?>><?= $caja_cuenta->descripcion ?></option>
+                                                value="<?= $caja_cuenta->id ?>"
+                                            <?= isset($banco['cuenta_id']) && $banco['cuenta_id'] == $caja_cuenta->id ? 'selected' : '' ?>><?= $caja_cuenta->descripcion ?></option>
                                     <?php endif; ?>
                                 <?php endforeach; ?>
                             </select>
@@ -127,11 +127,11 @@
 
 
             <div class="modal-footer">
-                <button type="button" id="" class="btn btn-primary" onclick="grupo.guardar()" >Confirmar</button>
+                <button type="button" class="btn btn-primary" onclick="grupo.guardar()">Confirmar</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
             </div>
         </div>
-            <!-- /.modal-content -->
+        <!-- /.modal-content -->
 </form>
 
 <script>
@@ -142,7 +142,7 @@
     <?php foreach ($cajas as $caja): ?>
     cajas.push({
         'id': '<?=$caja->id?>',
-        'moneda_id': '<?=$caja->moneda_id?>'
+        'moneda_id': '<?=$caja->moneda_id?>',
         'siimbolo': '<?=$caja->simbolo?>'
     });
     <?php endforeach; ?>
@@ -155,12 +155,11 @@
     });
     <?php endforeach; ?>
 
-    if($("#nombre").val() != '' ){
-        $("#saldo").prop("readonly",true);
+    if ($("#nombre").val() != '') {
+        $("#saldo").prop("readonly", true);
     }
 
-    $(document).ready(function(){
-
+    $(document).ready(function () {
         $("#caja_select").on('change', function () {
             var cuenta_id = $("#cuentas_select");
 

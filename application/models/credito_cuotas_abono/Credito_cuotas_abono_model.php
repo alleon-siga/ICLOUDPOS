@@ -57,7 +57,7 @@ class credito_cuotas_abono_model extends CI_Model
         return $query->result_array();
     }
 
-    public function registrar($idCuota, $montodescontar, $metodo_pago, $idVenta, $anticipado, $numero_ope, $banco, $tipo_metodo, $cuenta)
+    public function registrar($idCuota, $montodescontar, $moneda_saldo, $metodo_pago, $idVenta, $anticipado, $numero_ope, $banco, $tipo_metodo, $cuenta)
     {
 
 
@@ -77,9 +77,17 @@ class credito_cuotas_abono_model extends CI_Model
             $cuenta_id = $cuenta;
         }
 
+        $total_caja = $montodescontar;
+        $caja_desglose = $this->db->join('caja', 'caja.id = caja_desglose.caja_id')
+            ->get_where('caja_desglose', array('caja_desglose.id' => $cuenta_id))->row();
+
+        if($caja_desglose->moneda_id != $venta->id_moneda){
+            $total_caja = $moneda_saldo;
+        }
+
         $cuenta_old = $this->cajas_model->get_cuenta($cuenta_id);
 
-        $this->cajas_model->update_saldo($cuenta_id, $montodescontar);
+        $this->cajas_model->update_saldo($cuenta_id, $total_caja);
 
         $this->cajas_mov_model->save_mov(array(
             'caja_desglose_id' => $cuenta_id,
@@ -88,7 +96,7 @@ class credito_cuotas_abono_model extends CI_Model
             'movimiento' => 'INGRESO',
             'operacion' => 'CUOTA',
             'medio_pago' => $metodo_pago,
-            'saldo' => $montodescontar,
+            'saldo' => $total_caja,
             'saldo_old' => $cuenta_old->saldo,
             'ref_id' => $idVenta,
             'ref_val' => '',
