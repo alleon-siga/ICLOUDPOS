@@ -225,6 +225,37 @@ class cajas extends MY_Controller
         echo $this->load->view('menu/cajas/form_detalle_excel', $data, TRUE);
     }
 
+    function caja_detalle_pdf($id)
+    {
+        $data['desglose_id'] = $id;
+        $params = json_decode($this->input->get('data'));
+
+        $data['cuenta'] = $this->db->select('caja_desglose.*, caja.*, moneda.*, usuario.nombre AS usuario_nombre')
+            ->from('caja_desglose')
+            ->join('caja', 'caja.id = caja_desglose.caja_id')
+            ->join('moneda', 'moneda.id_moneda = caja.moneda_id')
+            ->join('usuario', 'usuario.nUsuCodigo = caja_desglose.responsable_id')
+            ->where('caja_desglose.id', $id)->get()->row();
+
+        $data['fecha_ini'] = str_replace('-', '/', $params->fecha_ini);
+        $data['fecha_fin'] = str_replace('-', '/', $params->fecha_fin);
+
+        $params = array(
+            'fecha_ini' => date('Y-m-d H:i:s', strtotime($params->fecha_ini . "00:00:00")),
+            'fecha_fin' => date('Y-m-d H:i:s', strtotime($params->fecha_fin . "23:59:59")),
+        );
+
+
+        $data['cuenta_movimientos'] = $this->cajas_mov_model->get_movimientos_today($id, $params);
+
+        $this->load->library('mpdf53/mpdf');
+        $mpdf = new mPDF('utf-8', 'A4', 0, '', 5, 5, 5, 5, 5, 5);
+        $html = $this->load->view('menu/cajas/form_detalle_pdf', $data, true);
+        $mpdf->WriteHTML($html);
+        $mpdf->Output();
+
+    }
+
     function caja_pendiente_form($id)
     {
         $data['cuenta'] = $this->cajas_model->get_cuenta($id);
@@ -290,6 +321,13 @@ class cajas extends MY_Controller
                 $this->db->where('pagoingreso_id', $caja_pendiente->ref_id);
                 $this->db->update('pagos_ingreso', array(
                     'estado' => 'COMPLETADO'
+                ));
+            }
+
+            if ($caja_pendiente->tipo == 'GASTOS') {
+                $this->db->where('id_gastos', $caja_pendiente->ref_id);
+                $this->db->update('gastos', array(
+                    'status_gastos' => 0
                 ));
             }
 
