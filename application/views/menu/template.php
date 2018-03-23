@@ -1320,7 +1320,7 @@ $primary_nav = array(
                             <?php if ($this->usuarios_grupos_model->user_has_perm($this->session->userdata('nUsuCodigo'), 'cuadrecaja')) { ?>
 
                                 <li>
-                                    <a class="menulink" href="#cuadre_caja" data-toggle="modal">Cuadre de caja</a>
+                                    <a class="menulink" href="#cuadre_caja" data-toggle="modal">Corte de Caja</a>
                                 </li>
                             <?php } ?>
                         </ul>
@@ -1539,7 +1539,7 @@ $primary_nav = array(
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h3>Cuadre de Caja</h3>
+                <h3>Corte de Caja</h3>
             </div>
             <form id="frmCuadreCaja" class='validate form-horizontal' target="_blank" method="post"
                   action="<?php echo $ruta; ?>exportar/toPDF_cuadre_caja">

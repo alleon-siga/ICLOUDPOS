@@ -1,21 +1,9 @@
-<style type="text/css">
-    table td {
-        width: 100%;
-        border: #e1e1e1 1px solid;
-        font-size: 9px;
-    }
-
-    thead, th {
-        background: #585858;
-        border: #111 1px solid;
-        color: #fff;
-        font-size: 10px;
-    }
-
-    h4, h5 {
-        margin: 0px;
-    }
-</style>
+<?php
+header("Content-type: application/octet-stream");
+header("Content-Disposition: attachment; filename=gastos.xls");
+header("Pragma: no-cache");
+header("Expires: 0");
+?>
 
 <h4>Reporte de Gastos</h4>
 <h5>Fecha: <?= date('d/m/Y', strtotime($fecha_ini)) . ' a ' . date('d/m/Y', strtotime($fecha_fin)) ?></h5>
@@ -79,4 +67,4 @@
     </tbody>
 </table>
 
-<h4 style="text-align: right;">Importe: <?= $moneda->simbolo ?> <?= number_format($gastos_totales->total, 2) ?></h4>
+<h4 style="text-align: right;">Importe: <?= $moneda->simbolo ?> <?=number_format($gastos_totales->total, 2)?></h4>

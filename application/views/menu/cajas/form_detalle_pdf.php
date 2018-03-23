@@ -1,14 +1,26 @@
-<?php
-header("Content-type: application/octet-stream");
-header("Content-Disposition: attachment; filename=movimiento_caja.xls");
-header("Pragma: no-cache");
-header("Expires: 0");
-?>
+<style type="text/css">
+    table td {
+        width: 100%;
+        border: #e1e1e1 1px solid;
+        font-size: 9px;
+    }
+
+    thead, th {
+        background: #585858;
+        border: #111 1px solid;
+        color: #fff;
+        font-size: 10px;
+    }
+
+    h4, h5 {
+        margin: 0px;
+    }
+</style>
 <h4>Nombre de la caja: <?= $cuenta->descripcion ?></h4>
 <h5>Fecha: <?= $fecha_ini == $fecha_fin ? $fecha_fin : $fecha_ini . ' a ' . $fecha_fin ?></h5>
 <h5>Moneda: <?= $cuenta->nombre ?></h5>
 <h5>Responsable: <?= $cuenta->usuario_nombre ?></h5>
-<table border="1">
+<table cellpadding="3" cellspacing="0">
     <thead>
     <tr>
         <th>ID</th>

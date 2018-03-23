@@ -7,10 +7,17 @@
             <h4 class="modal-title">Movimientos de caja</h4>
         </div>
         <div class="modal-body">
-            <h4>Nombre de la caja: <?= $cuenta->descripcion ?></h4>
-            <h5>Fecha: <?= $fecha_ini == $fecha_fin ? $fecha_fin : $fecha_ini . ' a ' . $fecha_fin ?></h5>
-            <h5>Moneda: <?= $cuenta->nombre ?></h5>
-            <h5>Responsable: <?= $cuenta->usuario_nombre ?></h5>
+            <div class="row">
+                <div class="col-md-7">
+                    <h4>Nombre de la caja: <?= $cuenta->descripcion ?></h4>
+                    <h5>Fecha: <?= $fecha_ini . ' a ' . $fecha_fin ?></h5>
+                </div>
+                <div class="col-md-5">
+                    <h5>Moneda: <?= $cuenta->nombre ?></h5>
+                    <h5>Responsable: <?= $cuenta->usuario_nombre ?></h5>
+                </div>
+            </div>
+
             <table class="table table-bordered table-striped">
                 <thead>
                 <tr>
@@ -61,15 +68,16 @@
                 <?php endforeach; ?>
 
                 <tr>
-                    <td colspan="7" style="font-weight: bold;">SALDO FINAL (<?= $fecha_fin ?>)</td>
+                    <td colspan="7" style="font-weight: bold; color: #00CC00;">SALDO FINAL (<?= $fecha_fin ?>)</td>
                     <td style="font-weight: bold; color: #0d70b7;"><?= $cuenta->simbolo . ' ' . number_format($total_ingreso, 2) ?></td>
                     <td style="font-weight: bold; color: #ff0000;"><?= $cuenta->simbolo . ' ' . number_format($total_egreso, 2) ?></td>
-                    <td style="font-weight: bold;"><?= $cuenta->simbolo . ' ' . number_format($saldo_anterior, 2) ?></td>
+                    <td style="font-weight: bold; color: #00CC00;"><?= $cuenta->simbolo . ' ' . number_format($saldo_anterior, 2) ?></td>
                 </tr>
                 </tbody>
             </table>
             <h4 class="text-right">
-                Importe Afectado: <?= $cuenta->simbolo . ' ' . number_format($total_ingreso - $total_egreso, 2) ?></h4>
+                SALDO ANTERIOR - SALDO
+                FINAL: <?= $cuenta->simbolo . ' ' . number_format($total_ingreso - $total_egreso, 2) ?></h4>
 
         </div>
         <div class="modal-footer">
@@ -77,6 +85,10 @@
                 <div class="col-md-6 text-left">
                     <button id="exportar_excel" type="button" class="btn btn-default" title="Exportar Excel">
                         <i class="fa fa-file-excel-o"></i>
+                    </button>
+
+                    <button id="exportar_pdf" type="button" class="btn btn-default" title="Exportar Pdf">
+                        <i class="fa fa-file-pdf-o"></i>
                     </button>
                 </div>
                 <div class="col-md-6 text-right">
@@ -95,8 +107,24 @@
                 exportar_excel();
             });
 
+            $('#exportar_pdf').on('click', function (e) {
+                e.preventDefault();
+                exportar_pdf();
+            });
+
 
         });
+
+        function exportar_pdf() {
+
+            var data = {
+                fecha_ini: $("#fecha_ini").val(),
+                fecha_fin: $("#fecha_fin").val()
+            };
+
+            var win = window.open('<?= base_url()?>cajas/caja_detalle_pdf/<?=$desglose_id?>?data=' + JSON.stringify(data), '_blank');
+            win.focus();
+        }
 
         function exportar_excel() {
             var data = {
