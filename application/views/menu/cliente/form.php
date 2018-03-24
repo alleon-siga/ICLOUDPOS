@@ -97,7 +97,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <label class="control-label panel-admin-text">DNI</label>
-                                <input type="text" name="ruc_j" onkeydown="return soloNumeros(event);" value="<?php if (isset($cliente['identificacion'])) echo  $cliente['identificacion']; ?>" id="ruc_j"  class="form-control" />
+                                <input type="text" name="ruc_j" value="<?php if (isset($cliente['identificacion'])) echo  $cliente['identificacion']; ?>" id="ruc_j" typeClass="DNI" class="form-control dni" />
                             </div>
                         </div>
                         <div class="row">
@@ -374,7 +374,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <label class="control-label panel-admin-text">RUC</label>
-                                <input type="text" name="ruc_j" onkeydown="return soloNumeros(event);" value="<?php if (isset($cliente['identificacion'])) echo  $cliente['identificacion']; ?>" id="ruc_j"  class="form-control ruc" />
+                                <input type="text" name="ruc_j" value="<?php if (isset($cliente['identificacion'])) echo  $cliente['identificacion']; ?>" id="ruc_j" class="form-control ruc" />
                             </div>
                         </div>
                         <div class="row">
@@ -672,8 +672,104 @@
             <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button> <!-- grupo.guardar();; -->
         </div>
     </div>
+    <div class="modaloader vertical">
+        <div class="col-xs-12 text-center">
+            <img src="<?php echo $ruta; ?>recursos/img/circles.svg">
+        </div>
+    </div>
 </div>
 <script src="<?php echo $ruta; ?>recursos/js/cliente.js"></script>
 <script type="text/javascript">
+$( "input#ruc_j.dni" ).keyup(function() {
+    var input=$(this);
+    DNI=$(this).val();
+    if (DNI.length==8) {
+        var formData = new FormData();
+        formData.append('DNI', DNI);
+        $.ajax({
+            url: '<?= base_url()?>cliente/getDatosFromAPI_Reniec',
+            type: 'POST',
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            beforeSend: function(){
+                $('div.modaloader').addClass('see');
+            },
+            success: function(data){
+                console.log(data);
+                if (data=='false') {
+                    input.addClass('errorAPI');
+                    $('#formagregar input#nombres').val('');
+                    $('#formagregar input#apellido_paterno').val('');
+                }else{
+                    input.removeClass('errorAPI');
+                    var obj = $.parseJSON(data);
+                    var Nombre  = obj['Nombre'];
+                    var Paterno = obj['Paterno'];
+                    var Materno = obj['Materno'];
+                    $('#formagregar input#nombres').val(Nombre);
+                    $('#formagregar input#apellido_paterno').val(Paterno+' '+Materno);
+                }
+                $('div.modaloader').removeClass('see');
+            },
+            error: function(data){
+              console.log('Error Ajax Peticion');
+              console.log(data);
+            }
+        });
+    }else{
+       input.addClass('errorAPI');
+        $('#formagregar input#nombres').val('');
+        $('#formagregar input#apellido_paterno').val('');
+    }
+});
+$( "input#ruc_j.ruc" ).keyup(function() {
+    var input=$(this);
+    RUC=$(this).val();
+    if (RUC.length==11) {
+        var formData = new FormData();
+        formData.append('RUC', RUC);
+        $.ajax({
+            url: '<?= base_url()?>cliente/getDatosFromAPI_Sunac',
+            type: 'POST',
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            beforeSend: function(){
+                $('div.modaloader').addClass('see');
+            },
+            success: function(data){
+                console.log(data);
+                if (data=='false') {
+                    input.addClass('errorAPI');
+                    $('#formagregarE input#razon_social_j').val('');
+                    $('#formagregarE input#telefono').val('');
+                    $('#formagregarE input#direccion_j').val('');
+                }else{
+                    input.removeClass('errorAPI');
+                    var obj = $.parseJSON(data);
+                    var RazonSocial = obj['RazonSocial'];
+                    var Telefono    = obj['Telefono'];
+                    var Direccion   = obj['Direccion'];
+                    $('#formagregarE input#razon_social_j').val(RazonSocial);
+                    $('#formagregarE input#telefono').val(Telefono);
+                    $('#formagregarE input#direccion_j').val(Direccion);
+                }
+                $('div.modaloader').removeClass('see');
+            },
+            error: function(data){
+              console.log('Error Ajax Peticion');
+              console.log(data);
+            }
+        });
+    }else{
+       input.addClass('errorAPI');
+        $('#formagregarE input#razon_social_j').val('');
+        $('#formagregarE input#telefono').val('');
+        $('#formagregarE input#direccion_j').val('');
+    }
+});
     region.actualizardistritos();
 </script>

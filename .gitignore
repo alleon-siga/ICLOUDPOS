@@ -3,3 +3,5 @@ application/config/database.php
 .htaccess
 uploads/
 application/config/config.php
+.htaccess
+application/config/database.php
