@@ -96,7 +96,8 @@ class reporte_model extends CI_Model
                         IF(SUM((pa.cantidad * (SELECT unidades FROM unidades_has_producto WHERE producto_id=pa.id_producto AND orden=1)) + pa.fraccion) IS NULL, 0, SUM((pa.cantidad * (SELECT unidades FROM unidades_has_producto WHERE producto_id=pa.id_producto AND orden=1)) + pa.fraccion))
                     FROM producto_almacen pa
                     WHERE pa.id_local='$local' AND pa.id_producto=p.producto_id
-                ) AS stock$x
+                ) AS stock$x,
+                SUM(dv.precio * dv.cantidad) AS total$x
             ";
             $x++;
         }
@@ -120,6 +121,7 @@ class reporte_model extends CI_Model
                 AND v.venta_status='COMPLETADO'
                 AND v.fecha >= '".$params['fecha_ini']."'
                 AND v.fecha <= '".$params['fecha_fin']."'
+                AND v.id_moneda = ".$params['moneda_id']."
                 $search
             GROUP BY
                 dv.id_producto
@@ -241,8 +243,8 @@ class reporte_model extends CI_Model
         $familia_id .= ($params['familia_id']>0)? " AND p.producto_familia=".$params['familia_id'] : "";
         $linea_id .= ($params['linea_id']>0)? " AND p.producto_linea=".$params['linea_id'] : "";
         $producto_id .= ($params['producto_id']!='')? " AND p.producto_id IN(".implode(",", $params['producto_id']).")" : "";
+        $tipo = $params['tipo'];
         $search = $marca_id.$grupo_id.$familia_id.$linea_id.$producto_id;
-
         $query = "SELECT p.producto_id, p.producto_codigo_interno, f.nombre_familia, p.producto_nombre, m.nombre_marca, l.nombre_linea";
         $x=1;
         foreach ($params['local_id'] as $local_id)
@@ -269,15 +271,18 @@ class reporte_model extends CI_Model
                     $where = "AND YEAR(v.fecha) IN(".implode(",", $params['rangos']).")";
                     break;
             }
+            if($tipo=='1'){ //cantidad
+                $select = "IF(SUM(up.unidades * dv.cantidad) IS NULL, '0', SUM(up.unidades * dv.cantidad))";
+            }else{ //importe
+                $select = "SUM(dv.precio * dv.cantidad)";
+            }
 
             $query .= ",
-                (
-                    SELECT 
-                        IF(SUM(up.unidades * dv.cantidad) IS NULL, '0', SUM(up.unidades * dv.cantidad))
+                (   SELECT $select
                     FROM venta v
                     INNER JOIN detalle_venta dv ON v.venta_id=dv.id_venta 
                     INNER JOIN unidades_has_producto up ON dv.id_producto=up.producto_id AND dv.unidad_medida=up.id_unidad
-                    WHERE v.venta_status='COMPLETADO' AND v.local_id='$local_id' AND dv.id_producto=p.producto_id AND v.id_moneda=".$params['moneda_id']." $where
+                    WHERE v.venta_status='COMPLETADO' AND v.local_id='$local_id' AND dv.id_producto=p.producto_id $where
                 ) AS cantVend". $x;
             $x++;
         }
@@ -302,15 +307,18 @@ class reporte_model extends CI_Model
                     break;
             }
 
-            foreach ($params['local_id'] as $local_id){        
+            foreach ($params['local_id'] as $local_id){
+                if($tipo=='1'){ //cantidad
+                    $select = "IF(SUM(up.unidades * dv.cantidad) IS NULL, '0', SUM(up.unidades * dv.cantidad))";
+                }else{ //importe
+                    $select = "SUM(dv.precio * dv.cantidad)";
+                }
+
                 $query .= ", 
-                    (
-                        SELECT 
-                            IF(SUM(up.unidades * dv.cantidad) IS NULL, '0', SUM(up.unidades * dv.cantidad))
-                        FROM venta v
+                    (   SELECT $select FROM venta v
                         INNER JOIN detalle_venta dv ON v.venta_id=dv.id_venta 
                         INNER JOIN unidades_has_producto up ON dv.id_producto=up.producto_id AND dv.unidad_medida=up.id_unidad
-                        WHERE v.venta_status='COMPLETADO' AND v.local_id='$local_id' AND dv.id_producto=p.producto_id AND v.id_moneda=".$params['moneda_id']." $where
+                        WHERE v.venta_status='COMPLETADO' AND v.local_id='$local_id' AND dv.id_producto=p.producto_id $where
                     ) AS periodo".$x."_".$local_id;
             }
             $x++;
@@ -332,7 +340,6 @@ class reporte_model extends CI_Model
             WHERE 
                 p.producto_estado='1'
                 AND v.venta_status='COMPLETADO'
-                AND v.id_moneda = ".$params['moneda_id']."
                 $search
             GROUP BY
                 dv.id_producto
