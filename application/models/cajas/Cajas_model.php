@@ -193,7 +193,7 @@ class cajas_model extends CI_Model
                 'fecha_mov' => $fecha,
                 'movimiento' => $data['tipo_ajuste'],
                 'operacion' => 'AJUSTE',
-                'medio_pago' => 'INTERNO',
+                'medio_pago' => 3,
                 'saldo' => $data['importe'],
                 'saldo_old' => $saldo_old,
                 'ref_id' => '',
@@ -215,7 +215,7 @@ class cajas_model extends CI_Model
                 'fecha_mov' => $fecha,
                 'movimiento' => 'EGRESO',
                 'operacion' => 'TRASPASO',
-                'medio_pago' => 'INTERNO',
+                'medio_pago' => 3,
                 'saldo' => $data['importe'],
                 'saldo_old' => $saldo_old,
                 'ref_id' => $data['cuenta_id'],
@@ -241,7 +241,7 @@ class cajas_model extends CI_Model
                 'fecha_mov' => $fecha,
                 'movimiento' => 'INGRESO',
                 'operacion' => 'TRASPASO',
-                'medio_pago' => 'INTERNO',
+                'medio_pago' => 3,
                 'saldo' => $data['subimporte'],
                 'saldo_old' => $saldo_old,
                 'ref_id' => $id,
@@ -280,7 +280,7 @@ class cajas_model extends CI_Model
             'fecha_mov' => $fecha,
             'movimiento' => 'EGRESO',
             'operacion' => 'SUNAT',
-            'medio_pago' => '7',
+            'medio_pago' => 3,
             'saldo' => $data['importe'],
             'saldo_old' => $saldo_old,
             'ref_id' => '',
@@ -398,7 +398,18 @@ class cajas_model extends CI_Model
                 $this->db->where('id', $cuenta->id);
                 $this->db->update('caja_desglose', array('saldo' => $new_saldo));
 
-                //hay que agregar el movimiento
+                $this->db->insert('caja_movimiento', array(
+                    'caja_desglose_id' => $cuenta->id,
+                    'usuario_id' => $this->session->userdata('nUsuCodigo'),
+                    'fecha_mov' => date('Y-m-d H:i:s'),
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'movimiento' => 'INGRESO',
+                    'operacion' => 'INGRESO_ANULADO',
+                    'medio_pago' => 3,
+                    'saldo' => $caja_pendiente->monto,
+                    'saldo_old' => $cuenta->saldo,
+                    'ref_id' => $data['ref_id']
+                ));
             }
 
             $this->db->where('id', $caja_pendiente->id);

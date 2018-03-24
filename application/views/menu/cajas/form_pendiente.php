@@ -11,6 +11,7 @@
                 <thead>
                 <tr>
                     <th>ID</th>
+                    <th>Fecha</th>
                     <th>Responsable</th>
                     <th>Tipo</th>
                     <th>Operacion</th>
@@ -23,6 +24,7 @@
                 <?php foreach ($saldos_pendientes as $mov): ?>
                     <tr>
                         <td><?= $mov->id ?></td>
+                        <td><?= date('d/m/Y H:i', strtotime($mov->created_at)) ?></td>
                         <td><?= $mov->nombre ?></td>
                         <td><?= $mov->tipo ?></td>
                         <td><?= $mov->IO == 2 ? 'Salida' : 'Entrada' ?></td>

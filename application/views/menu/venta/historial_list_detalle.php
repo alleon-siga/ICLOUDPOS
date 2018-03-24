@@ -288,26 +288,26 @@
                     <div class="row">
                         <div class="col-md-8">
                             <?php if ($venta->condicion_id == '2'): ?>
-                            <h4>Cuotas y Vencimientos</h4>
-                            <table class="table table-condensed">
-                                <thead>
-                                <tr>
-                                    <th>Letra</th>
-                                    <th>Vence</th>
-                                    <th>Monto</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <?php foreach ($venta->cuotas as $cuota): ?>
+                                <h4>Cuotas y Vencimientos</h4>
+                                <table class="table table-condensed">
+                                    <thead>
                                     <tr>
-                                        <td><?= $cuota->nro_letra ?></td>
-                                        <td><?= date('d/m/Y', strtotime($cuota->fecha_vencimiento)) ?></td>
-                                        <td><?= $venta->moneda_simbolo . ' ' . number_format($cuota->monto, 2) ?></td>
+                                        <th>Letra</th>
+                                        <th>Vence</th>
+                                        <th>Monto</th>
                                     </tr>
-                                <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                            <?php endif?>
+                                    </thead>
+                                    <tbody>
+                                    <?php foreach ($venta->cuotas as $cuota): ?>
+                                        <tr>
+                                            <td><?= $cuota->nro_letra ?></td>
+                                            <td><?= date('d/m/Y', strtotime($cuota->fecha_vencimiento)) ?></td>
+                                            <td><?= $venta->moneda_simbolo . ' ' . number_format($cuota->monto, 2) ?></td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            <?php endif ?>
 
                             <?php if ($venta->nota != NULL): ?>
                                 <h4>Notas:</h4>
@@ -360,6 +360,7 @@
             <div class="modal-header">
                 <h3>Devolver Venta <span
                             id="venta_numero"><?= sumCod($venta->venta_id, 6) ?></span></h3>
+                <input type="hidden" id="tipo_impuesto" value="<?= $venta->tipo_impuesto ?>">
             </div>
             <div class="modal-body">
                 <div class="row-fluid force-margin">
@@ -413,6 +414,7 @@
                                                style="text-align: center;"
                                                min="0"
                                                max="<?= $detalle->cantidad ?>"
+                                               data-impuesto="<?= $detalle->impuesto_porciento ?>"
                                                value="0">
                                     </td>
                                     <td id="unidad_nombre_<?= $detalle->detalle_id ?>"><?= $detalle->unidad_nombre ?></td>
@@ -455,9 +457,13 @@
 
         $('.devolver_input').bind('keyup change click mouseleave', function () {
             var id = $(this).attr('data-id');
+            var impuesto = parseFloat($(this).attr('data-impuesto'));
+            var tipo_impuesto = $('#tipo_impuesto').val();
             var devolver = isNaN(parseFloat($(this).val())) ? 0 : parseFloat($(this).val());
             var cantidad = isNaN(parseFloat($('#cantidad_' + id).attr('data-cantidad'))) ? 0 : parseFloat($('#cantidad_' + id).attr('data-cantidad'));
             var precio = parseFloat($('#precio_' + id).html().trim());
+
+            var factor = parseFloat((100 + impuesto) / 100);
 
             var cantidad_td = $('#cantidad_' + id);
             var subtotal_td = $('#subtotal_' + id);
@@ -470,13 +476,13 @@
                 subtotales += parseFloat($(this).html())
             });
 
-            if ($("#total_pagado").attr('data-documento') == '1') {
-                var total_devolver = parseFloat($("#total_pagado").attr('data-subtotal')) - subtotales;
-                total_devolver = total_devolver + ((total_devolver * 18) / 100);
-                $('#total_devolver').html(formatPrice(total_devolver));
+            if (tipo_impuesto == 2) {
+                subtotales = subtotales * factor;
             }
-            else
-                $('#total_devolver').html(formatPrice(parseFloat($('#total_pagado').html()) - subtotales));
+
+            var total_devolver = parseFloat($('#total_pagado').html() - subtotales);
+
+            $('#total_devolver').html(formatPrice(total_devolver));
         });
 
         $('.devolver_input').on('focus', function () {

@@ -179,6 +179,8 @@
 
                 $(function () {
 
+
+
                     <?php if($venta_action != 'caja'):?>
                     $('input[name="daterange"]').daterangepicker({
                         "locale": {
@@ -299,10 +301,6 @@
                         type: 'POST',
                         success: function (data) {
                             $("#historial_list").html(data);
-
-                            $('#exportar_pdf').attr('href', $('#exportar_pdf').attr('data-href') + local_id + '/' + estado + '/' + fecha + '/' + moneda_id);
-                            $('#exportar_excel').attr('href', $('#exportar_excel').attr('data-href') + local_id + '/' + estado + '/' + fecha + '/' + moneda_id);
-
                         },
                         error: function () {
                             $.bootstrapGrowl('<h4>Error.</h4> <p>Ha ocurrido un error en la operaci&oacute;n</p>', {
@@ -577,16 +575,6 @@
                             $("#dialog_venta_detalle").html(data);
                         }
                     });
-                }
-
-
-                function generar_reporte_excel() {
-
-                    document.getElementById("frmExcel").submit();
-                }
-
-                function generar_reporte_pdf() {
-                    document.getElementById("frmPDF").submit();
                 }
 
 

@@ -129,15 +129,13 @@
     </table>
 
 
-    <a id="exportar_pdf" target="_blank"
+    <a id="exportar_pdf"
        href="#"
-       data-href="<?= $ruta ?>venta_new/historial_pdf/"
        class="btn  btn-default btn-lg" data-toggle="tooltip" title="Exportar a PDF"
        data-original-title="fa fa-file-pdf-o"><i class="fa fa-file-pdf-o fa-fw"></i></a>
 
-    <a id="exportar_excel" target="_blank"
+    <a id="exportar_excel"
        href="#"
-       data-href="<?= $ruta ?>venta_new/historial_excel/"
        class="btn btn-default btn-lg" data-toggle="tooltip" title="Exportar a Excel"
        data-original-title="fa fa-file-excel-o"><i class="fa fa-file-excel-o fa-fw"></i></a>
 
@@ -171,7 +169,44 @@
 <script type="text/javascript">
     $(function () {
 
+        $('#exportar_excel').on('click', function (e) {
+            e.preventDefault();
+            exportar_excel();
+        });
+
+        $("#exportar_pdf").on('click', function (e) {
+            e.preventDefault();
+            exportar_pdf();
+        });
+
         TablesDatatables.init(1);
 
     });
+
+    function exportar_pdf() {
+
+        var data = {
+            'local_id': $("#venta_local").val(),
+            'esatdo': $("#venta_estado").val(),
+            'fecha': $("#date_range").val(),
+            'moneda_id': $("#moneda_id").val(),
+            'condicion_pago_id': $("#condicion_pago_id").val()
+        };
+
+        var win = window.open('<?= base_url()?>venta_new/historial_pdf?data=' + JSON.stringify(data), '_blank');
+        win.focus();
+    }
+
+    function exportar_excel() {
+        var data = {
+            'local_id': $("#venta_local").val(),
+            'esatdo': $("#venta_estado").val(),
+            'fecha': $("#date_range").val(),
+            'moneda_id': $("#moneda_id").val(),
+            'condicion_pago_id': $("#condicion_pago_id").val()
+        };
+
+        var win = window.open('<?= base_url()?>venta_new/historial_excel?data=' + JSON.stringify(data), '_blank');
+        win.focus();
+    }
 </script>

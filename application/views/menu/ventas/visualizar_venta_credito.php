@@ -21,12 +21,12 @@
                             </div>
                         </div>
                         <div class="col-md-2">
-                            <label for="nro_venta" class="control-label panel-admin-text">Nro Venta:</label>
+                            <label for="nro_venta" class="control-label panel-admin-text">Venta Nro:</label>
                         </div>
                         <div class="col-md-3">
                             <input type="text" class='form-control' name="nro_venta"
                                    id="nro_venta"
-                                   value="<?= $ventas[0]['serie'] . "-" . sumCod($ventas[0]['numero'], 5) ?>"
+                                   value="<?= sumCod($ventas[0]['venta_id'], 6) ?>"
                                    readonly>
                         </div>
                     </div>

@@ -5,13 +5,13 @@
     <div class="row">
         <div class="col-md-3"></div>
         <div class="col-md-3">
-            <label>Total Venta Credito: <?= $md->simbolo ?> <span id="total_venta"><?=number_format($credito_totales->total_venta, 2)?></span></label>
+            <label>Total Venta Credito: <?= $moneda->simbolo ?> <span id="total_venta"><?=number_format($credito_totales->total_venta, 2)?></span></label>
         </div>
         <div class="col-md-3">
-            <label>Total Abonado: <?= $md->simbolo ?> <span id="total_abonado"><?=number_format($credito_totales->total_abonado, 2)?></span></label>
+            <label>Total Abonado: <?= $moneda->simbolo ?> <span id="total_abonado"><?=number_format($credito_totales->total_abonado, 2)?></span></label>
         </div>
         <div class="col-md-3">
-            <label>Total Deuda: <?= $md->simbolo ?> <span id="total_deuda"><?=number_format($credito_totales->total_deuda, 2)?></span></label>
+            <label>Total Deuda: <?= $moneda->simbolo ?> <span id="total_deuda"><?=number_format($credito_totales->total_deuda, 2)?></span></label>
         </div>
     </div>
     <div class="table-responsive">
@@ -343,6 +343,7 @@
                 'correlativo_cuota':  $("#correlativo").val(),
                 'idVenta':$("#venta_id").val(),
                 'montodescontar':$("#cantidad_a_pagar").val(),
+                'moneda_saldo':$("#moneda_saldo").val(),
                 'idCuota': $("#id_credito_cuota").val(),
                 'metodo_pago':$("#metodo").val(),
                 'tipo_metodo': tipo,
