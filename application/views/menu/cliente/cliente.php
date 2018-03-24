@@ -17,18 +17,14 @@
         <table class="table table-striped dataTable" id="example">
             <thead>
             <tr>
-
                 <th style="text-align: center">ID</th>
-                <th style="text-align: center">DNI/RUC</th>
-                <th style="text-align: center">Raz&oacute;n Social o Nombre</th>
                 <th style="text-align: center">Tipo</th>
+                <th style="text-align: center">Identificacion</th>
+                <th style="text-align: center">Raz&oacute;n Social o Nombre</th>
                 <th style="text-align: center">Direccion</th>
                 <th style="text-align: center">Teléfono</th>
                 <th style="text-align: center">correo</th>
-
                 <th class="desktop">Acciones</th>
-
-
             </tr>
             </thead>
             <tbody>
@@ -36,19 +32,14 @@
                 foreach ($clientes as $cliente) {
                     ?>
                     <tr>
-
-
                         <td class="center"><?= $cliente['id_cliente'] ?></td>
+                        <td><?= $cliente['tipo_cliente'] == '1' ? 'Empresa' : 'Persona'?></td>
                         <td><?= $cliente['ruc'] == '2' ? 'RUC:' : 'DNI:'?> <?= $cliente['identificacion'] ?></td>
-                        <td><?= $cliente['razon_social'] ?></td>
-                        <td><?= $cliente['tipo_cliente'] == '1' ? 'Juridico' : 'Natural'?></td>
+                        <td><?= $cliente['razon_social'] ?></td>                        
                         <td><?= $cliente['direccion'] ?></td>
                         <td><?= $cliente['telefono1'] ?></td>
                         <td><?= $cliente['email'] ?></td>
-
-
                         <!--  <td><?php //if($cliente['categoria_precio']!=null){ echo  $cliente['nombre_precio']; }?></td> -->
-
                         <td class="center">
                             <div class="btn-group">
                                 <?php

@@ -23,8 +23,8 @@
     }
 </style>
 <h4 style="text-align: center;">Reporte de Stock y Ventas</h4>
-<h4 style="text-align: center;">Desde <?= date('m/d/Y', strtotime($fecha_ini)) ?>
-    al <?= date('m/d/Y', strtotime($fecha_fin)) ?></h4>
+<h4 style="text-align: center;">Desde <?= date('d/m/Y', strtotime($fecha_ini)) ?>
+    al <?= date('d/m/Y', strtotime($fecha_fin)) ?></h4>
 
 <h5>EMPRESA: <?= valueOption('EMPRESA_NOMBRE') ?></h5>
 <table>
@@ -38,10 +38,10 @@
         <?php foreach ($locale as $x): ?>
             <th rowspan="2" style="vertical-align: middle;"><?= $x['local_nombre']  ?></th>
         <?php endforeach ?>
-            <th rowspan="2" style="vertical-align: middle;">Total</th>
+            <th rowspan="2" style="vertical-align: middle;"><?php if($tipo==1){ echo "Cantidad"; }else{ echo "Total"; } ?></th>
             <?php foreach ($locale as $x): ?>
             <th colspan="<?= count($periodo); ?>"><?= $x['local_nombre']  ?></th>
-            <th rowspan="2" style="vertical-align: middle;">Total</th>
+            <th rowspan="2" style="vertical-align: middle;"><?php if($tipo==1){ echo "Cantidad"; }else{ echo "Total"; } ?></th>
             <?php endforeach ?>
         </tr>
         <tr>
@@ -69,11 +69,11 @@
                 $cantV = $list['cantVend'.$x['int_local_id']];
                 $totalCantV += $cantV;
         ?>
-            <td style="text-align: right;"><?= $cantV; ?></td>
+            <td style="text-align: right;"><?php if($tipo==1){ echo $cantV; }else{ echo number_format($cantV, 2); } ?></td>
         <?php
             }
         ?>
-            <td style="text-align: right;"><?= $totalCantV; ?></td>
+            <td style="text-align: right;"><?php if($tipo==1){ echo $totalCantV; }else{ echo number_format($totalCantV, 2); } ?></td>
         <?php
             foreach ($localId as $a){
                 $totalV = 0;
@@ -81,11 +81,11 @@
                     $v = $list['periodo'.$x.'_'.$a['int_local_id']];
                     $totalV += $v;
         ?>
-            <td style="text-align: right;"><?= $v; ?></td>
+            <td style="text-align: right;"><?php if($tipo==1){ echo $v; }else{ echo number_format($v, 2); } ?></td>
         <?php
                 }
         ?>
-            <td style="text-align: right;"><?= $totalV; ?></td>
+            <td style="text-align: right;"><?php if($tipo==1){ echo $totalV; }else{ echo number_format($totalV, 2); } ?></td>
         <?php
             }
         ?>

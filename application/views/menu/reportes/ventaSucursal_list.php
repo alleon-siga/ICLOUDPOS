@@ -26,7 +26,7 @@
                 <?php for($x=1; $x<=count($locales); $x++){ ?>
                     <th>Vendida</th>
                     <th>Stock actual</th>
-                    <th>% de avance</th>
+                    <th>Total</th>
                 <?php } ?>
                 </tr>
                 </thead>
@@ -36,6 +36,7 @@
                 <?php
                     $ventas[$x] = 0;
                     $stock[$x] = 0;
+                    $total[$x] = 0;
                 ?>
                 <?php } ?>
                 <?php
@@ -53,14 +54,17 @@
                         <?php
                             $ventas[$x] += $list['cantVend'.$x];
                             $stock[$x] += $list['stock'.$x];
+                            $total[$x] += $list['total'.$x];
 
                             $cantVend = $list['cantVend'.$x];
                             $stockAct = $list['stock'.$x];
-                            $porcAvance = number_format(($stockAct==0)? '0':($cantVend/$stockAct)*100,2);
+                            $importe = $list['total'.$x];
+                            //$porcAvance = number_format(($stockAct==0)? '0':($cantVend/$stockAct)*100,2);
+                            //($stock[$x]==0)? '0.00' : number_format(($ventas[$x]/$stock[$x])*100,2)
                         ?>
                         <td style="text-align: right; background-color:<?= $colors[$z] ?>;"><?= empty($cantVend)? '0': $cantVend; ?></td>
                         <td style="text-align: right; background-color:<?= $colors[$z] ?>;"><?= empty($stockAct)? '0': $stockAct; ?></td>
-                        <td style="text-align: right; background-color:<?= $colors[$z] ?>;"><?= $porcAvance; ?> %</td>
+                        <td style="text-align: right; background-color:<?= $colors[$z] ?>;"><?= number_format($importe, 2); ?></td>
                             <?php $z++; ?>
                         <?php } ?>
                     </tr>
@@ -74,7 +78,7 @@
                     <?php if($z==3) $z=0; ?>  
                     <td style="text-align: right; background-color:<?= $colors[$z] ?> !important;"><?= $ventas[$x] ?></td>
                     <td style="text-align: right; background-color:<?= $colors[$z] ?> !important;"><?= $stock[$x] ?></td>
-                    <td style="text-align: right; background-color:<?= $colors[$z] ?> !important;"><?= ($stock[$x]==0)? '0.00' : number_format(($ventas[$x]/$stock[$x])*100,2) ?> %</td>
+                    <td style="text-align: right; background-color:<?= $colors[$z] ?> !important;"><?= number_format($total[$x], 2) ?></td>
                     <?php $z++; ?>
                     <?php } ?>
                     <td></td>
@@ -117,6 +121,7 @@
                 'marca_id': $("#marca_id").val(),
                 'linea_id': $("#linea_id").val(),
                 'familia_id': $("#familia_id").val()
+                
             };
 
             $.post("<?= base_url()?>reporte/ventaSucursal/grafico/", data, function(respuesta){

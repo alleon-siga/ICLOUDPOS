@@ -119,12 +119,21 @@
                 <div class="col-md-3">
                     <input type="text" id="fecha" class="form-control" readonly style="cursor: pointer;" name="fecha" value="<?= date('01/m/Y') ?> - <?= date('d/m/Y') ?>"/>
                 </div>
+                <div class="col-md-2">
+                    <select name="moneda_id" id="moneda_id" class='cho form-control'>
+                        <?php foreach ($monedas as $moneda): ?>
+                        <option value="<?= $moneda['id_moneda'] ?>"
+                        data-simbolo="<?= $moneda['simbolo'] ?>"
+                        <?= $moneda['id_moneda'] == MONEDA_DEFECTO ? 'selected' : ''?>><?= $moneda['nombre']; ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
                 <div class="col-md-1">
                     <button id="btn_buscar" class="btn btn-default">
                         <i class="fa fa-search"></i> Buscar
                     </button>
                 </div>
-                <div class="col-md-5">
+                <div class="col-md-3">
                 </div>
                 <div class="col-md-1">
                     <button type="button" class="btn btn-primary tcharm-trigger form-control">

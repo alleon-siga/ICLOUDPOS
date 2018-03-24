@@ -130,7 +130,7 @@ class cliente extends MY_Controller
     {
         $ruc=$this->input->post('ruc');
        /// var_dump($ruc);
-        $buscar=sizeof($this->cliente_model->get_by('ruc', $ruc));
+        $buscar=sizeof($this->cliente_model->get_by('identificacion', $ruc));
         $json['valor']=$buscar;
         echo json_encode($json);
     }
@@ -152,7 +152,7 @@ class cliente extends MY_Controller
 
         $cliente = array(
             'tipo_cliente' => $this->input->post('tipo_cliente'),
-            'razon_social' => $this->input->post('razon_social_j')!=""?$this->input->post('razon_social_j'): null,
+            'razon_social' => $this->input->post('razon_social_j')!=""?$this->input->post('razon_social_j') : trim($this->input->post('nombres').' '.$this->input->post('apellido_paterno').' '.$this->input->post('apellido_materno')),
             'identificacion' => $this->input->post('ruc_j')!=""?$this->input->post('ruc_j'): null,
             'ruc' => $this->input->post('tipo_iden'),
             'nombres' => $this->input->post('nombres'),
