@@ -152,6 +152,47 @@
     font-size: 11px !important;
 }
 
+/*D3 STYLES*/
 input.errorAPI{
     border: 1px solid #e74c3c;
+}
+div.modaloader{
+    opacity: 0;
+    pointer-events: none;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-align-items: flex-start;
+    -ms-flex-align: start;
+    align-items: flex-start;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.45);
+    -webkit-transition: all .15s ease;
+       -moz-transition: all .15s ease;
+        -ms-transition: all .15s ease;
+         -o-transition: all .15s ease;
+            transition: all .15s ease;
+}
+div.modaloader.see{
+    opacity: 1;
+    pointer-events: auto;
+}
+div.modaloader img{
+    display: inline-block;
+    position: relative;
+    float: none;
+    margin-top: 0px auto;
+    width: 50px;
 }

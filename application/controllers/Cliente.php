@@ -631,6 +631,30 @@ class cliente extends MY_Controller
 
     }
 
+    public function getDatosFromAPI_Reniec(){
+        $dni=$_POST['DNI'];
+        require_once(APPPATH.'libraries/reniec/autoload.php');
+        $cliente = new \Reniec\Reniec();
+        $result = $cliente->search( $dni, true );
+        $resultArray = json_decode($result, TRUE);
+        if ($resultArray['success']==1) {
+            print_r(json_encode($resultArray['result']));
+        }else{
+            echo "false";
+        }
+    }
 
+    public function getDatosFromAPI_Sunac(){
+        $ruc=$_POST['RUC'];
+        require_once(APPPATH.'libraries/sunat/autoload.php');
+        $cliente = new \Sunat\Sunat(true,true);
+        $result = $cliente->search( $ruc, true );
+        $resultArray = json_decode($result, TRUE);
+        if ($resultArray['success']==1) {
+            print_r(json_encode($resultArray['result']));
+        }else{
+            echo "false";
+        }
+    }
 
 }
