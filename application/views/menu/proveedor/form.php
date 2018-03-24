@@ -54,7 +54,7 @@
                             <label class="control-label panel-admin-text">Tel&eacute;fono Empresa </label>
                         </div>
                         <div class="col-md-9">
-                            <input type="text" name="proveedor_telefono1" id=""  class="form-control"
+                            <input type="text" name="proveedor_telefono1" id="proveedor_telefono1"  class="form-control"
                                    value="<?php if (isset($proveedor['proveedor_telefono1'])) echo $proveedor['proveedor_telefono1']; ?>">
                         </div>
                     </div>
@@ -128,6 +128,11 @@
                 <button type="button"  class="btn btn-primary" id="confirmar_boton_proveedor" onclick="guardar_proveedor('proveedor')" >Confirmar</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
 
+            </div>
+            <div class="modaloader vertical">
+                <div class="col-xs-12 text-center">
+                    <img src="<?=base_url();?>recursos/img/circles.svg">
+                </div>
             </div>
             <!-- /.modal-content -->
         </div>
@@ -287,32 +292,71 @@
     }
 
 $( "input#proveedor_nrofax" ).keyup(function() {
+    var input=$(this);
     RUC_DNI=$(this).val();
-    if (RUC_DNI.length==8 || RUC_DNI.length==11) {
-        var formData = new FormData();
-        formData.append('RUC_DNI', RUC_DNI);
+    var formData = new FormData();
+    if (RUC_DNI.length==8) {
+        formData.append('DNI', RUC_DNI);
         $.ajax({
-            url: '<?= base_url()?>proveedor/getDatosFromAPI_RUC_DNI',
+            url: '<?= base_url()?>cliente/getDatosFromAPI_Reniec',
             type: 'POST',
             data: formData,
             cache: false,
             contentType: false,
             processData: false,
+            beforeSend: function(){
+                $('div.modaloader').addClass('see');
+            },
             success: function(data){
-                if (data=='No existe') {
-                    $( "input#proveedor_nrofax" ).addClass('errorAPI');
+                console.log(data);
+                if (data=='false') {
+                    input.addClass('errorAPI');
                     $('input#proveedor_nombre').val('');
+                }else{
+                    input.removeClass('errorAPI');
+                    var obj = $.parseJSON(data);
+                    var Nombre  = obj['Nombre'];
+                    var Paterno = obj['Paterno'];
+                    var Materno = obj['Materno'];
+                    $('input#proveedor_nombre').val(Nombre+' '+Paterno+' '+Materno);
+                }
+                $('div.modaloader').removeClass('see');
+            },
+            error: function(data){
+              console.log('Error Ajax Peticion');
+              console.log(data);
+            }
+        });
+    }else if (RUC_DNI.length==11){
+        formData.append('RUC', RUC_DNI);
+        $.ajax({
+            url: '<?= base_url()?>cliente/getDatosFromAPI_Sunac',
+            type: 'POST',
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            beforeSend: function(){
+                $('div.modaloader').addClass('see');
+            },
+            success: function(data){
+                console.log(data);
+                if (data=='false') {
+                    input.addClass('errorAPI');
+                    $('input#proveedor_nombre').val('');
+                    $('input#proveedor_telefono1').val('');
                     $('input#proveedor_direccion1').val('');
                 }else{
-                    $( "input#proveedor_nrofax" ).removeClass('errorAPI');
+                    input.removeClass('errorAPI');
                     var obj = $.parseJSON(data);
-                        var ruc = obj['ruc'];
-                        var razon_social = obj['razon_social'];
-                        var direccion = obj['direccion'];
-                        $('input#proveedor_nombre').val(razon_social);
-                        $('input#proveedor_direccion1').val(direccion);
+                    var RazonSocial = obj['RazonSocial'];
+                    var Telefono    = obj['Telefono'];
+                    var Direccion   = obj['Direccion'];
+                    $('input#proveedor_nombre').val(RazonSocial);
+                    $('input#proveedor_telefono1').val(Telefono);
+                    $('input#proveedor_direccion1').val(Direccion);
                 }
-              console.log(data);
+                $('div.modaloader').removeClass('see');
             },
             error: function(data){
               console.log('Error Ajax Peticion');
@@ -320,8 +364,9 @@ $( "input#proveedor_nrofax" ).keyup(function() {
             }
         });
     }else{
-        $( "input#proveedor_nrofax" ).addClass('errorAPI');
+        input.addClass('errorAPI');
         $('input#proveedor_nombre').val('');
+        $('input#proveedor_telefono1').val('');
         $('input#proveedor_direccion1').val('');
     }
 });
