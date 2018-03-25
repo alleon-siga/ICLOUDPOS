@@ -25,6 +25,9 @@ class inicio extends MY_Controller
         $data['opciones'] = $this->opciones_model->get_opciones();
         $data["lstLocal"] = $this->l->get_all();//Se cargan la lista de Locales disponibles
         $this->load->view('login', $data);
+        
+        /*Alerta pago pendiente*/
+        $this->load->view('pago_pendiente');
     }
 
     public function validarTema()
