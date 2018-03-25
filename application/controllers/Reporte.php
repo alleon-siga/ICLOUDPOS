@@ -145,6 +145,7 @@ class Reporte extends MY_Controller
     {
         switch ($action) {
             case 'filter': {
+                $params['moneda_id'] = $this->input->post('moneda_id');
                 $params['marca_id'] = $this->input->post('marca_id');
                 $params['grupo_id'] = $this->input->post('grupo_id');
                 $params['familia_id'] = $this->input->post('familia_id');
@@ -153,7 +154,7 @@ class Reporte extends MY_Controller
                 $date_range = explode(" - ", $this->input->post('fecha'));
                 $params['fecha_ini'] = date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0])));
                 $params['fecha_fin'] = date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])));
-
+                $data['moneda'] = $this->db->get_where('moneda', array('id_moneda' => $params['moneda_id']))->row();
                 $data['lists'] = $this->reporte_model->getVentaSucursal($params);
                 if ($this->session->userdata('esSuper') == 1) {
                     $data['locales'] = $this->local_model->get_all();
@@ -165,6 +166,7 @@ class Reporte extends MY_Controller
                 break;
             }
             case 'grafico': {
+                $params['moneda_id'] = $this->input->post('moneda_id');
                 $params['marca_id'] = $this->input->post('marca_id');
                 $params['grupo_id'] = $this->input->post('grupo_id');
                 $params['familia_id'] = $this->input->post('familia_id');
@@ -173,7 +175,7 @@ class Reporte extends MY_Controller
                 $date_range = explode(" - ", $this->input->post('fecha'));
                 $params['fecha_ini'] = date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0])));
                 $params['fecha_fin'] = date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])));
-
+                $data['moneda'] = $this->db->get_where('moneda', array('id_moneda' => $params['moneda_id']))->row();
                 $data['lists'] = $this->reporte_model->getVentaSucursal($params);
                 if ($this->session->userdata('esSuper') == 1) {
                     $data['locales'] = $this->local_model->get_all();
@@ -194,7 +196,8 @@ class Reporte extends MY_Controller
                     'linea_id' => $params->linea_id,
                     'producto_id' => $params->producto_id,
                     'fecha_ini' => date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0]))),
-                    'fecha_fin' => date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])))
+                    'fecha_fin' => date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1]))),
+                    'moneda_id' => $params->moneda_id,
                 );
 
                 $data['lists'] = $this->reporte_model->getVentaSucursal($input);
@@ -225,7 +228,8 @@ class Reporte extends MY_Controller
                     'linea_id' => $params->linea_id,
                     'producto_id' => $params->producto_id,
                     'fecha_ini' => date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0]))),
-                    'fecha_fin' => date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])))
+                    'fecha_fin' => date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1]))),
+                    'moneda_id' => $params->moneda_id,
                 );
 
                 $data['lists'] = $this->reporte_model->getVentaSucursal($input);
@@ -248,6 +252,7 @@ class Reporte extends MY_Controller
                 $data['familias'] = $this->db->get_where('familia', array('estatus_familia' => 1))->result();
                 $data['lineas'] = $this->db->get_where('lineas', array('estatus_linea' => 1))->result();
                 $data["productos"] = $this->producto_model->get_productos_list();
+                $data["monedas"] = $this->monedas_model->get_all();
                 $data['barra_activa'] = $this->db->get_where('columnas', array('id_columna' => 36))->row();
                 $dataCuerpo['cuerpo'] = $this->load->view('menu/reportes/ventaSucursal', $data, true);
                 if ($this->input->is_ajax_request()) {
@@ -505,8 +510,8 @@ class Reporte extends MY_Controller
                 $params['linea_id'] = $this->input->post('linea_id');
                 $params['producto_id'] = $this->input->post('producto_id');
                 $params['local_id'] = json_decode($this->input->post('local_id'));
-                $params['moneda_id'] = $this->input->post('moneda_id');
                 $params['rangos'] = json_decode($this->input->post('rangos'));
+                $params['tipo'] = $this->input->post('tipo');
 
                 $this->db->select('local_nombre');
                 $this->db->where_in('int_local_id', $params['local_id']);
@@ -517,7 +522,7 @@ class Reporte extends MY_Controller
                 $this->db->where_in('int_local_id', $params['local_id']);
                 $sqlLocal = $this->db->get('local');
                 $data['localId'] = $sqlLocal->result_array();
-
+                $data['tipo'] = $params['tipo'];
                 $data['periodo'] = $params['rangos'];
 
                 $data['lists'] = $this->reporte_model->getStockVentas($params);
@@ -527,7 +532,6 @@ class Reporte extends MY_Controller
             case 'pdf': {
                 $params = json_decode($this->input->get('data'));
                 $input = array(
-                    'moneda_id' => $params->moneda_id,
                     'marca_id' => $params->marca_id,
                     'grupo_id' => $params->grupo_id,
                     'familia_id' => $params->familia_id,
@@ -535,7 +539,8 @@ class Reporte extends MY_Controller
                     'producto_id' => $params->producto_id,
                     'tipo_periodo' => $params->tipo_periodo,
                     'local_id' => json_decode($params->local_id),
-                    'rangos' => json_decode($params->rangos)
+                    'rangos' => json_decode($params->rangos),
+                    'tipo' => $params->tipo,
                 );
 
                 $data['lists'] = $this->reporte_model->getStockVentas($input);
@@ -562,7 +567,7 @@ class Reporte extends MY_Controller
                 $this->db->where_in('int_local_id', json_decode($params->local_id));
                 $sqlLocal = $this->db->get('local');
                 $data['localId'] = $sqlLocal->result_array();
-
+                $data['tipo'] = $params->tipo;
                 $data['periodo'] = json_decode($params->rangos);
 
                 $this->load->library('mpdf53/mpdf');
@@ -575,7 +580,6 @@ class Reporte extends MY_Controller
             case 'excel': {
                 $params = json_decode($this->input->get('data'));
                 $input = array(
-                    'moneda_id' => $params->moneda_id,
                     'marca_id' => $params->marca_id,
                     'grupo_id' => $params->grupo_id,
                     'familia_id' => $params->familia_id,
@@ -583,7 +587,8 @@ class Reporte extends MY_Controller
                     'producto_id' => $params->producto_id,
                     'tipo_periodo' => $params->tipo_periodo,
                     'local_id' => json_decode($params->local_id),
-                    'rangos' => json_decode($params->rangos)
+                    'rangos' => json_decode($params->rangos),
+                    'tipo' => $params->tipo,
                 );
 
                 $data['lists'] = $this->reporte_model->getStockVentas($input);
@@ -610,6 +615,7 @@ class Reporte extends MY_Controller
                 $this->db->where_in('int_local_id', json_decode($params->local_id));
                 $sqlLocal = $this->db->get('local');
                 $data['localId'] = $sqlLocal->result_array();
+                $data['tipo'] = $params->tipo;
                 $data['periodo'] = json_decode($params->rangos);
                 echo $this->load->view('menu/reportes/stockVentas_list_excel', $data, true);
                 break;
@@ -621,7 +627,6 @@ class Reporte extends MY_Controller
                     $usu = $this->session->userdata('nUsuCodigo');
                     $data['locales'] = $this->local_model->get_all_usu($usu);
                 }
-                $data["monedas"] = $this->monedas_model->get_all();
                 $data['marcas'] = $this->db->get_where('marcas', array('estatus_marca' => 1))->result();
                 $data['grupos'] = $this->db->get_where('grupos', array('estatus_grupo' => 1))->result();
                 $data['familias'] = $this->db->get_where('familia', array('estatus_familia' => 1))->result();

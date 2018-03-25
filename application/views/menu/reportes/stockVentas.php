@@ -130,12 +130,16 @@
                 <div class="col-md-5">
                     <input type="hidden" id="tipo_periodo" value="">
                     <div class="row">
+                    <?php
+                        $fechaF = date("d/m/Y");
+                        $fechaI = date("d/m/Y", strtotime("-7 days"));
+                    ?>
                         <div class="col-md-6">
-                            <label class="control-label">Desde:</label> <span id="fecha_ini_value"><?= date('01/m/Y') ?></span>
+                            <label class="control-label">Desde:</label> <span id="fecha_ini_value"><?= $fechaI ?></span>
                             <div id="fecha_ini"></div>
                         </div>
                         <div class="col-md-6">
-                            <label class="control-label">Hasta:</label> <span id="fecha_fin_value"><?= date('d/m/Y') ?></span>
+                            <label class="control-label">Hasta:</label> <span id="fecha_fin_value"><?= $fechaF ?></span>
                             <div id="fecha_fin"></div>
                         </div>
                     </div>
@@ -157,17 +161,13 @@
                             </div>
                         </div>
                     </div>
+                    <br>
                     <div class="row">
                         <div class="col-md-12">
-                            <label class="control-label include_days">Incluir:</label>
-                            <div class="btn-group btn-group-justified include_days" data-toggle="buttons">
-                                <label class="btn btn-default">
-                                    <input type="checkbox" id="sabado" autocomplete="off"> Sabado
-                                </label>
-                                <label class="btn btn-default">
-                                    <input type="checkbox" id="domingo" autocomplete="off"> Domingo
-                                </label>
-                            </div>
+                            <select id="tipo" name="tipo" class="form-control filter-input">
+                                <option value="1">Cantidad</option>
+                                <option value="2" selected="">Importe</option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -182,15 +182,6 @@
                                 <?php endforeach; ?>
                             </select>
                         <?php endif; ?>
-                        </div>
-                        <div class="col-md-12">
-                            <select name="moneda_id" id="moneda_id" class='cho form-control'>
-                                <?php foreach ($monedas as $moneda): ?>
-                                <option value="<?= $moneda['id_moneda'] ?>"
-                                data-simbolo="<?= $moneda['simbolo'] ?>"
-                                <?= $moneda['id_moneda'] == MONEDA_DEFECTO ? 'selected' : ''?>><?= $moneda['nombre']; ?></option>
-                                <?php endforeach; ?>
-                            </select>
                         </div>
                     </div>
                 </div>
@@ -240,7 +231,7 @@
                     select_day();
                     set_datepicker_events();
 
-                    $("#day, #month, #year, #sabado, #domingo").on('change', function () {
+                    $("#day, #month, #year").on('change', function () {
                         $('#fecha_ini, #fecha_fin').datepicker('destroy');
                         $('#fecha_ini_value, #fecha_fin_value').html('');
 
@@ -321,7 +312,6 @@
 
                     if (th.length > 0) {
                         var params = {
-                            'moneda_id': $("#moneda_id").val(),
                             'producto_id': $("#producto_id").val(),
                             'grupo_id': $("#grupo_id").val(),
                             'marca_id': $("#marca_id").val(),
@@ -329,7 +319,8 @@
                             'familia_id': $("#familia_id").val(),
                             'local_id': JSON.stringify($("#local_id").val()),
                             'rangos': JSON.stringify(th.slice(1)),
-                            'tipo_periodo': $('#tipo_periodo').val()
+                            'tipo_periodo': $('#tipo_periodo').val(),
+                            'tipo': $("#tipo").val()
                         };
 
                         $.ajax({
@@ -384,21 +375,12 @@
 
                 function select_day() {
                     if ($('#day').prop('checked')) {
-                        var days_off = '';
-
-                        if ($("#domingo").prop('checked')) {
-                            days_off += '0'
-                        }
-                        if ($("#sabado").prop('checked')) {
-                            days_off += '6'
-                        }
                         $('#fecha_ini, #fecha_fin').datepicker({
                             language: "es",
                             format: 'dd/mm/yyyy',
                             startView: 0,
                             minViewMode: 0,
-                            maxViewMode: 0,
-                            daysOfWeekDisabled: days_off
+                            maxViewMode: 0
                         });
                     }
                 }
