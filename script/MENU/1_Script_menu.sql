@@ -36,11 +36,14 @@ UPDATE `opcion` SET `cOpcionDescripcion`='comisionxvendedor', `cOpcionNombre`='C
 UPDATE `opcion` SET `cOpcionDescripcion`='ventaxcomprobante', `cOpcionNombre`='Ventas por comprobantes' WHERE `nOpcion`='706';
 DELETE FROM `opcion` WHERE `nOpcion`='707';
 
+
+-- SCRIPT REPORTES INSERT
+INSERT INTO `opcion` (`nOpcion`, `nOpcionClase`, `cOpcionDescripcion`, `cOpcionNombre`) VALUES ('707', '7', 'productovendido', 'Productos + vendidos');
+INSERT INTO `opcion` (`nOpcion`, `nOpcionClase`, `cOpcionDescripcion`, `cOpcionNombre`) VALUES ('708', '7', 'ventaSucursal', 'Ventas x sucursal');
+INSERT INTO `opcion` (`nOpcion`, `nOpcionClase`, `cOpcionDescripcion`, `cOpcionNombre`) VALUES ('709', '7', 'ventaEmpleado', 'Ventas x empleado');
+INSERT INTO `opcion` (`nOpcion`, `nOpcionClase`, `cOpcionDescripcion`, `cOpcionNombre`) VALUES ('710', '7', 'stockventas', 'Stock y ventas');
+
+
 -- SCRIPT OPCIONES
 INSERT INTO `opcion` (`nOpcion`, `nOpcionClase`, `cOpcionDescripcion`, `cOpcionNombre`) VALUES ('813', '8', 'impuestos', 'Impuestos');
 
-INSERT INTO `opcion` (`nOpcion`, `nOpcionClase`, `cOpcionDescripcion`, `cOpcionNombre`) VALUES ('707', '7', 'productovendido', 'Productos más vendidos');
-INSERT INTO `opcion` (`nOpcion`, `nOpcionClase`, `cOpcionDescripcion`, `cOpcionNombre`) VALUES ('708', '7', 'ventaSucursal', 'Ventas por sucursal');
-INSERT INTO `opcion` (`nOpcion`, `nOpcionClase`, `cOpcionDescripcion`, `cOpcionNombre`) VALUES ('709', '7', 'ventaEmpleado', 'Ventas por empleado');
-
-wfHu6~Skek4E

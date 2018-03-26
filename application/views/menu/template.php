@@ -503,19 +503,19 @@ $primary_nav = array(
                 'slug' => 'ventaxcomprobante'
             ),
             array(
-                'name' => 'Productos más vendidos',
+                'name' => 'Productos + vendidos',
                 'url' => $ruta . 'reporte/productoVendido',
                 'icon' => 'fa fa-area-chart',
                 'slug' => 'productovendido'
             ),
             array(
-                'name' => 'Ventas por sucursal',
+                'name' => 'Ventas x sucursal',
                 'url' => $ruta . 'reporte/ventaSucursal',
                 'icon' => 'fa fa-area-chart',
                 'slug' => 'ventaSucursal'
             ),
             array(
-                'name' => 'Ventas por empleado',
+                'name' => 'Ventas x empleado',
                 'url' => $ruta . 'reporte/ventaEmpleado',
                 'icon' => 'fa fa-area-chart',
                 'slug' => 'ventaEmpleado'
