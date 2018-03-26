@@ -2281,9 +2281,9 @@ $primary_nav = array(
     }
 
 $(document).click(function(e) {
-    e.preventDefault();
     var target = e.target;
     if ($(target).is('li.alertD>a') ) {
+        e.preventDefault();
       $('li.alertD>ul').slideToggle(50);
     }else{
       $('li.alertD>ul').slideUp(50);
