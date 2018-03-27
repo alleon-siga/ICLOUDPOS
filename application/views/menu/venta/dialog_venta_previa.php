@@ -406,10 +406,11 @@
                 </div>
 
             </div>
-            <iframe style="display: none;" id="imprimir_frame" src="" frameborder="YES" height="200" width="100%"
-                    border="0" scrolling=no>
+                <iframe style="display: block;" id="imprimir_frame" src="" frameborder="YES" height="0" width="0"
+                        border="0" scrolling=no>
 
-            </iframe>
+                </iframe>    
+
         </div>
         <div class="modal-footer">
 

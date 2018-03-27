@@ -275,9 +275,9 @@
     $(document).ready(function () {
 
         $('#banco_id, #caja_id').on('change', function () {
+            var moneda_id = $(this).find('option:selected').first().attr('data-moneda_id');
 
             if ($(this).val() != '' && moneda_id != $('#MONEDA_DEFECTO_ID').val()) {
-                var moneda_id = $(this).find('option:selected').first().attr('data-moneda_id');
                 var tasa = $(this).find('option:selected').first().attr('data-tasa');
                 $('#tipo_cambio').val(tasa);
                 $('#moneda_nombre').html($(this).find('option:selected').first().attr('data-moneda_nombre'));

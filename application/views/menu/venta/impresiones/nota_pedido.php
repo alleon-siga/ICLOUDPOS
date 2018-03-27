@@ -188,14 +188,15 @@
     <?php endif; ?>
 
 
-    <?= $venta->nota != NULL ? '<br><span style="text-decoration: underline;">NOTA:</span><br>'.$venta->nota.'<br>' : ''?>
+    <?= $venta->nota != NULL ? '<br><span style="text-decoration: underline;">NOTA:</span><br>' . $venta->nota . '<br>' : '' ?>
 
     <?php
-    $hoy = new DateTime(date('Y-m-d'));
-    $vence = new DateTime(date('Y-m-d', strtotime(valueOption('FECHA_VENTA_PROMO', date('Y-m-d')))));
-    if ($hoy > $vence) {
+    $hoy = date('Ymd');
+    $vence = date('Ymd', strtotime(str_replace('/', '-', valueOption('FECHA_VENTA_PROMO', date('Ymd')))));
+
+    if ($hoy < $vence) {
         echo '<br><div style="border-top: 2px dashed #0b0b0b; padding-top: 5px;">';
-        echo valueOption('VENTA_PROMO', '').'</div><br>';
+        echo valueOption('VENTA_PROMO', '') . '</div><br>';
     }
     ?>
 
