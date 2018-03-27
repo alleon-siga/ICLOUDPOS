@@ -1217,7 +1217,7 @@ $primary_nav = array(
                     <ul class="nav navbar-nav-custom pull-right hidden-xs">
                         <!-- Alternative Sidebar Toggle Button -->
                         <!-- User Dropdown -->
-                        <li class="alertD">
+                        <li class="alertD" style="display: none;">
                             <a href="#">
                                 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 146.6 177.9" style="enable-background:new 0 0 146.6 177.9;" xml:space="preserve">
                                     <g>
