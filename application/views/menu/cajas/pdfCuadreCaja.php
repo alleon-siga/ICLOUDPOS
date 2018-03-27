@@ -132,10 +132,10 @@
                 <td>VENTAS CUOTA INICIALES</td>
                 <td style="text-align: right;"><?= $moneda['simbolo'] ?> <?= $venta_inicial[$moneda['id_moneda']]->total != NULL ? number_format($venta_inicial[$moneda['id_moneda']]->total, 2) : 0 ?></td>
             </tr>
-<!--            <tr>-->
-<!--                <td style="width: 60%;">VENTAS AL CREDITO</td>-->
-<!--                <td style="text-align: right;">--><?//= $moneda['simbolo'] ?><!-- --><?//= $venta_credito[$moneda['id_moneda']]->total != NULL ? number_format($venta_credito[$moneda['id_moneda']]->total, 2) : 0 ?><!--</td>-->
-<!--            </tr>-->
+            <tr>
+                <td style="width: 60%;">VENTAS AL CREDITO</td>
+                <td style="text-align: right;"><?= $moneda['simbolo'] ?> <?= $venta_credito[$moneda['id_moneda']]->total != NULL ? number_format($venta_credito[$moneda['id_moneda']]->total, 2) : 0 ?></td>
+            </tr>
             <tr>
                 <td>COBRANZAS DE CUOTAS</td>
                 <td style="text-align: right;"><?= $moneda['simbolo'] ?> <?= $cobranza_cuota[$moneda['id_moneda']]->total != NULL ? number_format($cobranza_cuota[$moneda['id_moneda']]->total, 2) : 0 ?></td>

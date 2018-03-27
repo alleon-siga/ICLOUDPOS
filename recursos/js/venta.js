@@ -107,6 +107,15 @@ $(document).ready(function () {
         }
     });
 
+    $('#dialog_venta_caja').on('shown.bs.modal', function (e) {
+        $('#caja_nombre').val('.');
+        $('#caja_nombre').focus();
+    });
+
+    $('#caja_nombre').on('focus', function () {
+        $(this).select();
+    });
+
 
     // EVENTOS FUNCIONALES
 
@@ -156,8 +165,8 @@ $(document).ready(function () {
         });
     });
 
-    $('.add_nota').on('click', function(){
-       $('#dialog_venta_nota').modal('show');
+    $('.add_nota').on('click', function () {
+        $('#dialog_venta_nota').modal('show');
     });
 
     $("#local_id").on('change', function () {
@@ -456,7 +465,7 @@ $(document).ready(function () {
             return false;
         }
 
-        if($('#COMPROBANTE').val() == 1 && $('#comprobante_id').val() == ''){
+        if ($('#COMPROBANTE').val() == 1 && $('#comprobante_id').val() == '') {
             show_msg('warning', 'Debe seleccionar un comprobante');
             return false;
         }
@@ -1049,7 +1058,7 @@ function addTable(producto, type) {
     if (type == 'general') {
         template += '<td style="text-align: center;">' + producto.total_minimo + ' (' + producto.um_min + ')</td>';
         template += '<td>' + producto.precio_unitario + '</td>';
-        template += '<td>' + (producto.precio_unitario > producto.precio_descuento ? producto.precio_descuento : '-')  + '</td>';
+        template += '<td>' + (producto.precio_unitario > producto.precio_descuento ? producto.precio_descuento : '-') + '</td>';
         template += '<td>' + parseFloat(producto.subtotal).toFixed(2) + '</td>';
     }
     if (type == 'detalle') {
