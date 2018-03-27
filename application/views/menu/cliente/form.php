@@ -30,15 +30,34 @@
         </div>
         <div class="modal-body">
             <ul class="nav nav-pills nav-justified">
+            <?php if(empty($cliente)){ ?>
+            <?php $cliente['tipo_cliente'] ='' ?>
+                <?php $claseP ='tab-pane fade in active' ?>
+                <?php $claseE ='tab-pane fade' ?>
+                <?php $tipoC = '0' ?>
                 <li class="active"><a data-toggle="tab" href="#persona">Persona</a></li>
                 <li><a data-toggle="tab" href="#empresa">Empresa</a></li>
+            <?php }elseif($cliente['tipo_cliente']=='0'){ //natural ?>
+                <?php $claseP ='tab-pane fade in active' ?>
+                <?php $claseE ='tab-pane fade' ?>
+                <?php $tipoC = '0' ?>
+                <li class="active"><a data-toggle="tab" href="#persona">Persona</a></li>
+            <?php }else{ //empresa ?>
+                <?php $claseP ='tab-pane fade' ?>
+                <?php $claseE ='tab-pane fade in active' ?>
+                <?php $tipoC = '1' ?>
+                <li class="active"><a data-toggle="tab" href="#empresa">Empresa</a></li>
+            <?php } ?>
             </ul>
+
             <div class="tab-content">
-                <div id="persona" class="tab-pane fade in active">
+            <?php //if($cliente['tipo_cliente']=='0' || empty($cliente['tipo_cliente'])){ //natural ?>
+
+                <div id="persona" class="<?= $claseP ?>">
                     <input type="hidden" id="new_from_venta" value="<?= isset($new_from_venta) ? $new_from_venta : 0?>">
                     <form name="formagregar" onsubmit="return validarFrm(this)" action="<?= base_url() ?>cliente/guardar" method="post" id="formagregar"
           enctype="multipart/form-data">
-                        <input type="hidden" name="tipo_cliente" id="tipo_cliente" value="0">
+                        <input type="hidden" class="tipo_cliente" name="tipo_cliente" id="tipo_cliente" value="<?= $tipoC; ?>">
                         <input type="hidden" name="tipo_iden" id="tipo_iden" value="1">
                         <input type="hidden" name="idClientes" id="idClientes" value="<?php if (isset($cliente['id_cliente'])) echo $cliente['id_cliente']; ?>">
                         <div class="row" style="display: none;">
@@ -204,12 +223,13 @@
                                     </select>
                                 </div>
                                 <div class="col-md-4">
-                                    <label class="control-label panel-admin-text">Provincia</label>
+                                    <label class="control-label panel-admin-text">
+                                    </label>
                                     <select name="ciudad_id" id="ciudad_id" required="true" class="chosen form-control" onchange="region.actualizarbarrio();">
                                         <option value="">Seleccione</option>
                                 <?php //if (isset($cliente['id_cliente'])): ?>
                                     <?php foreach ($ciudades as $ciudad): ?>
-                                        <?php $cliente['ciudad'] = '2'; ?>
+                                        <?php //$cliente['ciudad'] = '2'; ?>
                                         <option value="<?php echo $ciudad['ciudad_id'] ?>" <?php if (isset($cliente['ciudad']) and $ciudad['ciudad_id'] == $cliente['ciudad']) echo 'selected' ?>><?= $ciudad['ciudad_nombre'] ?></option>
                                     <?php endforeach ?>
                                 <?php //endif ?>
@@ -310,11 +330,12 @@
                         </div>                                  
                     </form>
                 </div>
-                <div id="empresa" class="tab-pane fade">
+            <?php //}elseif($cliente['tipo_cliente']=='1' || empty($cliente['tipo_cliente'])){ //empresa ?>
+                <div id="empresa" class="<?= $claseE ?>">
                     <input type="hidden" id="new_from_venta" value="<?= isset($new_from_venta) ? $new_from_venta : 0?>">
                     <form name="formagregarE" onsubmit="return validarFrm(this)" action="<?= base_url() ?>cliente/guardar" method="post" id="formagregarE"
           enctype="multipart/form-data">
-                        <input type="hidden" name="tipo_cliente" id="tipo_cliente" value="1">
+                        <input type="hidden" class="tipo_cliente" name="tipo_cliente" id="tipo_cliente" value="<?= $tipoC; ?>">
                         <input type="hidden" name="tipo_iden" id="tipo_iden" value="2">
                         <input type="hidden" name="idClientes" id="idClientes" value="<?php if (isset($cliente['id_cliente'])) echo $cliente['id_cliente']; ?>">
                         <div class="row" style="display: none;">
@@ -555,6 +576,11 @@
                                 </div>
                                 <div class="col-md-4">
                                     <label class="control-label panel-admin-text">Provincia</label>
+                                    <?php 
+                                        /*echo "<pre>";
+                                        echo print_r($ciudades);
+                                        echo "</pre>";*/
+                                    ?>
                                     <select name="ciudad_id" id="ciudad_id" required="true" class="chosen form-control"
                                             onchange="region.actualizarbarrio();">
                                         <option value="">Seleccione</option>
@@ -664,7 +690,8 @@
                                     </script>   
                                 </div>                                 
                     </form>
-                </div>   
+                </div>
+            <?php //} ?>
             </div>
         </div>
         <div class="modal-footer">
@@ -708,6 +735,7 @@ $( "input#ruc_j.dni" ).keyup(function() {
                     var Nombre  = obj['Nombre'];
                     var Paterno = obj['Paterno'];
                     var Materno = obj['Materno'];
+
                     $('#formagregar input#nombres').val(Nombre);
                     $('#formagregar input#apellido_paterno').val(Paterno+' '+Materno);
                 }

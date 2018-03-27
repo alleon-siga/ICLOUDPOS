@@ -5,8 +5,8 @@ header("Pragma: no-cache");
 header("Expires: 0");
 ?>
 <h4 style="text-align: center; margin: 0;">Reporte de ventas por empleado</h4>
-<h4 style="text-align: center; margin: 0;">Desde <?= date('m/d/Y', strtotime($fecha_ini)) ?>
-    al <?= date('m/d/Y', strtotime($fecha_fin)) ?></h4>
+<h4 style="text-align: center; margin: 0;">Desde <?= date('d/m/Y', strtotime($fecha_ini)) ?>
+    al <?= date('d/m/Y', strtotime($fecha_fin)) ?></h4>
 
 <h5 style="margin: 0;">EMPRESA: <?= valueOption('EMPRESA_NOMBRE') ?></h5>
 <h5 style="margin: 0;">DIRECCI&Oacute;N: <?= $local_direccion ?></h5>

@@ -1,5 +1,4 @@
 <?php $ruta = base_url(); ?>
-
 <ul class="breadcrumb breadcrumb-top">
     <li>Clientes</li>
     <li><a href="">Agregar y editar Clientes</a></li>
@@ -82,7 +81,6 @@
 
 <script src="<?php echo $ruta; ?>recursos/js/Validacion.js?<?php echo date("Hms"); ?>"></script>
 <script type="text/javascript">
-
     function borrar(id, nom) {
 
         $('#borrar').modal('show');

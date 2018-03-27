@@ -1,12 +1,12 @@
 <?php
 header("Content-type: application/octet-stream");
-header("Content-Disposition: attachment; filename=producto_vendido.xls");
+header("Content-Disposition: attachment; filename=margen_utilidad.xls");
 header("Pragma: no-cache");
 header("Expires: 0");
 ?>
 <h4 style="text-align: center; margin: 0;">Reporte de m&aacute;rgen de utilidad</h4>
-<h4 style="text-align: center; margin: 0;">Desde <?= date('m/d/Y', strtotime($fecha_ini)) ?>
-    al <?= date('m/d/Y', strtotime($fecha_fin)) ?></h4>
+<h4 style="text-align: center; margin: 0;">Desde <?= date('d/m/Y', strtotime($fecha_ini)) ?>
+    al <?= date('d/m/Y', strtotime($fecha_fin)) ?></h4>
 
 <h5 style="margin: 0;">EMPRESA: <?= valueOption('EMPRESA_NOMBRE') ?></h5>
 <h5 style="margin: 0;">DIRECCI&Oacute;N: <?= $local_direccion ?></h5>

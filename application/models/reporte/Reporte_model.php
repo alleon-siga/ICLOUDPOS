@@ -97,7 +97,14 @@ class reporte_model extends CI_Model
                     FROM producto_almacen pa
                     WHERE pa.id_local='$local' AND pa.id_producto=p.producto_id
                 ) AS stock$x,
-                SUM(dv.precio * dv.cantidad) AS total$x
+                (
+                    SELECT 
+                        SUM(dv.precio * dv.cantidad)
+                    FROM venta v
+                    INNER JOIN detalle_venta dv ON v.venta_id=dv.id_venta 
+                    INNER JOIN unidades_has_producto up ON dv.id_producto=up.producto_id AND dv.unidad_medida=up.id_unidad
+                    WHERE v.venta_status='COMPLETADO' AND v.local_id='$local' AND dv.id_producto=p.producto_id
+                ) AS total$x
             ";
             $x++;
         }
