@@ -783,7 +783,7 @@ function save_venta_credito(imprimir) {
         return false;
     }
 
-    if (parseFloat($("#c_saldo_inicial").val()) == parseFloat($("#c_precio_credito").val())) {
+    if (parseFloat($("#c_saldo_inicial").val()) == parseFloat($("#c_precio_contado").val())) {
         show_msg('warning', '<h4>Error. </h4><p>El saldo inicial no puede ser igual al total de la deuda. Le recomendamos una venta al Contado</p>');
         setTimeout(function () {
             $("#c_saldo_inicial").trigger('focus');

@@ -1557,7 +1557,7 @@ $primary_nav = array(
                             </div>
                         </div>
                         <br>
-                        <div class="control-group row" style="display: none;">
+                        <div class="control-group row">
                             <div class="col-md-1"></div>
                             <label for="fecha" class="control-label col-md-2">Locales:</label>
 
@@ -1574,7 +1574,7 @@ $primary_nav = array(
                             </div>
                         </div>
                         <br>
-                        <div class="control-group row" style="display: none;">
+                        <div class="control-group row">
                             <div class="col-md-1"></div>
                             <label for="fecha" class="control-label col-md-2">Usuarios:</label>
 

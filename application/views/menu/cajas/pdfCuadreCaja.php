@@ -62,9 +62,16 @@
         background: #e7e6e6;
     }
 
-    td {
-        text-align: left;
+    table.td_data{
+        border: 1px solid #0b0b0b;
     }
+
+    table.td_data tr td{
+        border: 1px solid #0b0b0b;
+        text-align: left;
+        font-size: 11px;
+    }
+
 
     #header {
         width: 100%;
@@ -84,7 +91,7 @@
     <?php
     $total_ingresos = $venta_contado[$moneda['id_moneda']]->total
         + $venta_inicial[$moneda['id_moneda']]->total
-        + $venta_credito[$moneda['id_moneda']]->total
+//        + $venta_credito[$moneda['id_moneda']]->total
         + $cobranza_cuota[$moneda['id_moneda']]->total;
 
     $total_egresos = $compra_contado[$moneda['id_moneda']]->total
@@ -115,53 +122,63 @@
                 </td>
             </tr>
         </table>
-
         <p><strong>INGRESOS</strong></p>
-        <table border="1" cellspacing="0" cellpadding="0">
+        <table cellspacing="0" cellpadding="3" class="td_data">
             <tr>
-                <td style="width: 60%;">VENTAS AL CONTADO</td>
+                <td style="width: 65%;">VENTAS AL CONTADO</td>
                 <td style="text-align: right;"><?= $moneda['simbolo'] ?> <?= $venta_contado[$moneda['id_moneda']]->total != NULL ? number_format($venta_contado[$moneda['id_moneda']]->total, 2) : 0 ?></td>
             </tr>
             <tr>
-                <td style="width: 60%;">VENTAS CUOTA INICIALES</td>
+                <td>VENTAS CUOTA INICIALES</td>
                 <td style="text-align: right;"><?= $moneda['simbolo'] ?> <?= $venta_inicial[$moneda['id_moneda']]->total != NULL ? number_format($venta_inicial[$moneda['id_moneda']]->total, 2) : 0 ?></td>
             </tr>
+<!--            <tr>-->
+<!--                <td style="width: 60%;">VENTAS AL CREDITO</td>-->
+<!--                <td style="text-align: right;">--><?//= $moneda['simbolo'] ?><!-- --><?//= $venta_credito[$moneda['id_moneda']]->total != NULL ? number_format($venta_credito[$moneda['id_moneda']]->total, 2) : 0 ?><!--</td>-->
+<!--            </tr>-->
             <tr>
-                <td style="width: 60%;">VENTAS AL CREDITO</td>
-                <td style="text-align: right;"><?= $moneda['simbolo'] ?> <?= $venta_credito[$moneda['id_moneda']]->total != NULL ? number_format($venta_credito[$moneda['id_moneda']]->total, 2) : 0 ?></td>
-            </tr>
-            <tr>
-                <td style="width: 60%;">COBRANZAS DE CUOTAS</td>
+                <td>COBRANZAS DE CUOTAS</td>
                 <td style="text-align: right;"><?= $moneda['simbolo'] ?> <?= $cobranza_cuota[$moneda['id_moneda']]->total != NULL ? number_format($cobranza_cuota[$moneda['id_moneda']]->total, 2) : 0 ?></td>
             </tr>
             <tr>
-                <td style="width: 60%; font-weight: bold;">TOTAL</td>
+                <td colspan="2" style="font-weight: bold; padding-left: 10px;">DETALLE POR MEDIO DE PAGO</td>
+            </tr>
+            <?php foreach ($metodos as $metodo): ?>
+                <?php $detalle = $detalle_ingreso[$moneda['id_moneda']][$metodo->id_metodo]; ?>
+                <?php if ($detalle['importe'] > 0): ?>
+                    <tr>
+                        <td style="padding-left: 20px;"><?= $detalle['nombre'] ?></td>
+                        <td style="text-align: right;"><?= $moneda['simbolo'] ?> <?= number_format($detalle['importe'], 2) ?></td>
+                    </tr>
+                <?php endif; ?>
+            <?php endforeach; ?>
+            <tr>
+                <td style="font-weight: bold;">TOTAL INGRESOS</td>
                 <td style="text-align: right; font-weight: bold;"><?= $moneda['simbolo'] ?> <?= number_format($total_ingresos, 2) ?></td>
             </tr>
         </table>
         <p><strong>EGRESOS</strong></p>
-        <table border="1" cellspacing="0" cellpadding="0">
+        <table cellspacing="0" cellpadding="3" class="td_data">
             <tr>
-                <td style="width: 60%;">COMPRAS AL CONTADO</td>
+                <td style="width: 65%;">COMPRAS AL CONTADO</td>
                 <td style="text-align: right;"><?= $moneda['simbolo'] ?> <?= $compra_contado[$moneda['id_moneda']]->total != NULL ? $compra_contado[$moneda['id_moneda']]->total : 0 ?></td>
             </tr>
             <tr>
-                <td style="width: 60%;">PAGOS A PROVEEDORES</td>
+                <td>PAGOS A PROVEEDORES</td>
                 <td style="text-align: right;"><?= $moneda['simbolo'] ?> <?= $pagos_cuota[$moneda['id_moneda']]->total != NULL ? $pagos_cuota[$moneda['id_moneda']]->total : 0 ?></td>
             </tr>
             <tr>
-                <td style="width: 60%;">GASTOS</td>
+                <td>GASTOS</td>
                 <td style="text-align: right;"><?= $moneda['simbolo'] ?> <?= $gasto[$moneda['id_moneda']]->total != NULL ? $gasto[$moneda['id_moneda']]->total : 0 ?></td>
             </tr>
             <tr>
-                <td style="width: 60%; font-weight: bold;">TOTAL</td>
+                <td style="font-weight: bold;">TOTAL EGRESOS</td>
                 <td style="text-align: right; font-weight: bold;"><?= $moneda['simbolo'] ?> <?= number_format($total_egresos, 2) ?></td>
             </tr>
         </table>
 
-        <br>
-        <p><strong>CORTE DE CAJA (INGRESOS - EGRESOS)</strong></p>
-        <table border="1" cellspacing="0" cellpadding="0">
+        <p><strong>INGRESOS - EGRESOS</strong></p>
+        <table border="1" cellspacing="0" cellpadding="3">
             <tr>
                 <td style="width: 60%; font-weight: bold;">SALDO</td>
                 <td style="text-align: right; font-weight: bold;"><?= $moneda['simbolo'] ?> <?= number_format($total_ingresos - $total_egresos, 2) ?></td>
