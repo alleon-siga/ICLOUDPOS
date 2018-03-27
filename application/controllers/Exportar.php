@@ -135,92 +135,259 @@ class exportar extends MY_Controller
         }
 
         $metodos = $this->db->get_where('metodos_pago', array('status_metodo' => 1))->result();
+        $detalle_ingreso = array();
+        foreach ($metodos as $metodo) {
+            $detalle_ingreso[$metodo->id_metodo] = array(
+                'nombre' => $metodo->nombre_metodo,
+                'importe' => 0
+            );
+        }
 
         $fecha = date('Y-m-d', strtotime(str_replace('/', '-', $this->input->post('fecha', true))));
         $fechadespues = date('Y-m-d', strtotime('+1 day', strtotime($fecha)));
         foreach ($data['monedas'] as $mon) {
 
+            foreach ($metodos as $metodo) {
+                $detalle_ingreso[$metodo->id_metodo] = array(
+                    'nombre' => $metodo->nombre_metodo,
+                    'importe' => 0
+                );
+            }
+
             //VENTA CONTADO
-            $data['venta_contado'][$mon['id_moneda']] = $this->db->select_sum('venta.total', 'total')
+            $this->db->select_sum('venta.total', 'total')
                 ->from('venta')
+                ->where('venta.id_moneda', $mon["id_moneda"])
+                ->where('venta.fecha >=', $fecha)
+                ->where('venta.fecha <', $fechadespues)
+                ->where('venta.venta_status', "COMPLETADO")
+                ->where('venta.condicion_pago', 1);
+
+            if ($id_local != 0) {
+                $this->db->where('venta.local_id', $id_local);
+            }
+
+            if ($id_usuario != 0) {
+                $this->db->where('venta.id_vendedor', $id_usuario);
+            }
+
+            $data['venta_contado'][$mon['id_moneda']] = $this->db->get()->row();
+
+            $this->db->select('*')
+                ->from('venta')
+                ->join('caja_movimiento', 'caja_movimiento.ref_id = venta.venta_id')
                 ->where('venta.id_moneda', $mon["id_moneda"])
                 ->where('venta.fecha >=', $fecha)
                 ->where('venta.fecha <', $fechadespues)
                 ->where('venta.venta_status', "COMPLETADO")
                 ->where('venta.condicion_pago', 1)
-                ->get()->row();
+                ->where('caja_movimiento.operacion', 'VENTA');
+
+            if ($id_local != 0) {
+                $this->db->where('venta.local_id', $id_local);
+            }
+
+            if ($id_usuario != 0) {
+                $this->db->where('venta.id_vendedor', $id_usuario);
+            }
+
+            $ventas = $this->db->get()->result();
+
+            foreach ($ventas as $venta) {
+                $detalle_ingreso[$venta->medio_pago]['importe'] += $venta->saldo;
+            }
+
 
             //VENTA INICIAL
-            $data['venta_inicial'][$mon['id_moneda']] = $this->db->select_sum('venta.inicial', 'total')
+            $this->db->select_sum('venta.inicial', 'total')
                 ->from('venta')
                 ->where('venta.id_moneda', $mon["id_moneda"])
                 ->where('venta.fecha >=', $fecha)
                 ->where('venta.fecha <', $fechadespues)
                 ->where('venta.venta_status', "COMPLETADO")
+                ->where('venta.condicion_pago', 2);
+
+            if ($id_local != 0) {
+                $this->db->where('venta.local_id', $id_local);
+            }
+
+            if ($id_usuario != 0) {
+                $this->db->where('venta.id_vendedor', $id_usuario);
+            }
+
+            $data['venta_inicial'][$mon['id_moneda']] = $this->db->get()->row();
+
+            $this->db->select('*')
+                ->from('venta')
+                ->join('caja_movimiento', 'caja_movimiento.ref_id = venta.venta_id')
+                ->where('venta.id_moneda', $mon["id_moneda"])
+                ->where('venta.fecha >=', $fecha)
+                ->where('venta.fecha <', $fechadespues)
+                ->where('venta.venta_status', "COMPLETADO")
                 ->where('venta.condicion_pago', 2)
-                ->get()->row();
+                ->where('caja_movimiento.operacion', 'VENTA');
+
+            if ($id_local != 0) {
+                $this->db->where('venta.local_id', $id_local);
+            }
+
+            if ($id_usuario != 0) {
+                $this->db->where('venta.id_vendedor', $id_usuario);
+            }
+
+            $ventas = $this->db->get()->result();
+
+            foreach ($ventas as $venta) {
+                $detalle_ingreso[$venta->medio_pago]['importe'] += $venta->saldo;
+            }
 
             //VENTA CREDITO
-            $data['venta_credito'][$mon['id_moneda']] = $this->db->select_sum('credito.dec_credito_montocuota', 'total')
+            $this->db->select_sum('credito.dec_credito_montocuota', 'total')
                 ->from('venta')
                 ->join('credito', 'credito.id_venta = venta.venta_id')
                 ->where('venta.id_moneda', $mon["id_moneda"])
                 ->where('venta.fecha >=', $fecha)
                 ->where('venta.fecha <', $fechadespues)
                 ->where('venta.venta_status', "COMPLETADO")
-                ->where('venta.condicion_pago', 2)
-                ->get()->row();
+                ->where('venta.condicion_pago', 2);
+
+            if ($id_local != 0) {
+                $this->db->where('venta.local_id', $id_local);
+            }
+
+            if ($id_usuario != 0) {
+                $this->db->where('venta.id_vendedor', $id_usuario);
+            }
+
+            $data['venta_credito'][$mon['id_moneda']] = $this->db->get()->row();
 
             //COBRANZAS DE CUOTAS
-            $data['cobranza_cuota'][$mon['id_moneda']] = $this->db->select_sum('credito_cuotas_abono.monto_abono', 'total')
+            $this->db->select_sum('credito_cuotas_abono.monto_abono', 'total')
                 ->from('credito_cuotas_abono')
                 ->join('credito_cuotas', 'credito_cuotas.id_credito_cuota = credito_cuotas_abono.credito_cuota_id')
                 ->join('venta', 'venta.venta_id = credito_cuotas.id_venta')
                 ->where('venta.id_moneda', $mon["id_moneda"])
                 ->where('credito_cuotas_abono.fecha_abono >=', $fecha)
+                ->where('credito_cuotas_abono.fecha_abono <', $fechadespues);
+
+            if ($id_local != 0) {
+                $this->db->where('venta.local_id', $id_local);
+            }
+
+            if ($id_usuario != 0) {
+                $this->db->where('venta.id_vendedor', $id_usuario);
+            }
+
+            $data['cobranza_cuota'][$mon['id_moneda']] = $this->db->get()->row();
+
+            $this->db->select('caja_movimiento.*')
+                ->from('credito_cuotas_abono')
+                ->join('credito_cuotas', 'credito_cuotas.id_credito_cuota = credito_cuotas_abono.credito_cuota_id')
+                ->join('venta', 'venta.venta_id = credito_cuotas.id_venta')
+                ->join('caja_movimiento', 'caja_movimiento.ref_id = venta.venta_id')
+                ->where('venta.id_moneda', $mon["id_moneda"])
+                ->where('credito_cuotas_abono.fecha_abono >=', $fecha)
                 ->where('credito_cuotas_abono.fecha_abono <', $fechadespues)
-                ->get()->row();
+                ->where('caja_movimiento.operacion', 'CUOTA');
+
+            if ($id_local != 0) {
+                $this->db->where('venta.local_id', $id_local);
+            }
+
+            if ($id_usuario != 0) {
+                $this->db->where('venta.id_vendedor', $id_usuario);
+            }
+
+            $ventas = $this->db->get()->result();
+
+            foreach ($ventas as $venta) {
+                $detalle_ingreso[$venta->medio_pago]['importe'] += $venta->saldo;
+            }
 
             //COMPRAS AL CONTADO
-            $data['compra_contado'][$mon['id_moneda']] = $this->db->select_sum('ingreso.total_ingreso', 'total')
+            $this->db->select_sum('ingreso.total_ingreso', 'total')
                 ->from('ingreso')
                 ->where('ingreso.id_moneda', $mon["id_moneda"])
                 ->where('ingreso.fecha_registro >=', $fecha)
                 ->where('ingreso.fecha_registro <', $fechadespues)
                 ->where('ingreso.ingreso_status', "COMPLETADO")
-                ->where('ingreso.pago', "CONTADO")
-                ->get()->row();
+                ->where('ingreso.pago', "CONTADO");
+
+            if ($id_local != 0) {
+                $this->db->where('ingreso.local_id', $id_local);
+            }
+
+            if ($id_usuario != 0) {
+                $this->db->where('ingreso.nUsuCodigo', $id_usuario);
+            }
+
+            $data['compra_contado'][$mon['id_moneda']] = $this->db->get()->row();
 
             //COMPRAS AL CREDITO
-            $data['compra_credito'][$mon['id_moneda']] = $this->db->select_sum('ingreso.total_ingreso', 'total')
+            $this->db->select_sum('ingreso.total_ingreso', 'total')
                 ->from('ingreso')
                 ->where('ingreso.id_moneda', $mon["id_moneda"])
                 ->where('ingreso.fecha_registro >=', $fecha)
                 ->where('ingreso.fecha_registro <', $fechadespues)
                 ->where('ingreso.ingreso_status', "COMPLETADO")
-                ->where('ingreso.pago', "CREDITO")
-                ->get()->row();
+                ->where('ingreso.pago', "CREDITO");
+
+            if ($id_local != 0) {
+                $this->db->where('ingreso.local_id', $id_local);
+            }
+
+            if ($id_usuario != 0) {
+                $this->db->where('ingreso.nUsuCodigo', $id_usuario);
+            }
+
+            $data['compra_credito'][$mon['id_moneda']] = $this->db->get()->row();
 
             //PAGO A PROVEEDORES
-            $data['pagos_cuota'][$mon['id_moneda']] = $this->db->select_sum('pagos_ingreso.pagoingreso_monto', 'total')
+            $this->db->select_sum('pagos_ingreso.pagoingreso_monto', 'total')
                 ->from('pagos_ingreso')
                 ->join('ingreso_credito_cuotas', 'ingreso_credito_cuotas.id = pagos_ingreso.pagoingreso_ingreso_id')
                 ->join('ingreso', 'ingreso.id_ingreso = ingreso_credito_cuotas.ingreso_id')
                 ->where('ingreso.id_moneda', $mon["id_moneda"])
                 ->where('pagos_ingreso.pagoingreso_fecha >=', $fecha)
-                ->where('pagos_ingreso.pagoingreso_fecha <', $fechadespues)
-                ->get()->row();
+                ->where('pagos_ingreso.pagoingreso_fecha <', $fechadespues);
+
+            if ($id_local != 0) {
+                $this->db->where('ingreso.local_id', $id_local);
+            }
+
+            if ($id_usuario != 0) {
+                $this->db->where('ingreso.nUsuCodigo', $id_usuario);
+            }
+
+            $data['pagos_cuota'][$mon['id_moneda']] = $this->db->get()->row();
 
             //GASTOS
-            $data['gasto'][$mon['id_moneda']] = $this->db->select_sum('gastos.total', 'total')
+            $this->db->select_sum('gastos.total', 'total')
                 ->from('gastos')
                 ->where('gastos.fecha >=', $fecha)
                 ->where('gastos.fecha <', $fechadespues)
                 ->where('gastos.id_moneda', $mon["id_moneda"])
-                ->where('gastos.status_gastos', 0)
-                ->get()->row();
+                ->where('gastos.status_gastos', 0);
+
+            if ($id_local != 0) {
+                $this->db->where('gastos.local_id', $id_local);
+            }
+
+            if ($id_usuario != 0) {
+                $this->db->where('gastos.responsable_id', $id_usuario);
+            }
+
+            $data['gasto'][$mon['id_moneda']] = $this->db->get()->row();
+
+
+            $data['detalle_ingreso'][$mon['id_moneda']] = $detalle_ingreso;
 
         }
+
+        $data['metodos'] = $metodos;
+
+//        echo $this->load->view('menu/cajas/pdfCuadreCaja', $data, true);
+//        return false;
 
         $mpdf = new mPDF('utf-8', array(80, 200));
         $mpdf->WriteHTML($this->load->view('menu/cajas/pdfCuadreCaja', $data, true));
