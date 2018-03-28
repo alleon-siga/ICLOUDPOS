@@ -810,16 +810,6 @@ class venta_new_model extends CI_Model
 
             $result = $this->unidades_model->get_cantidad_fraccion($key, $old_cantidad_min + $value);
 
-            /*$this->historico_model->set_historico(array(
-                'producto_id' => $key,
-                'local_id' => $venta->local_id,
-                'cantidad' => $value,
-                'cantidad_actual' => $this->unidades_model->convert_minimo_um($key, $result['cantidad'], $result['fraccion']),
-                'tipo_movimiento' => "ANULACION",
-                'tipo_operacion' => 'ENTRADA',
-                'referencia_valor' => 'Anulacion de Ventas',
-                'referencia_id' => $venta_id
-            ));*/
             $this->db->where('io', 2);
             $this->db->where('operacion', 1);
             $this->db->where('ref_id', $venta_id);
@@ -858,32 +848,32 @@ class venta_new_model extends CI_Model
                 ));
             }
 
-            if ($venta->condicion_id == '2') {
-                $this->db->where('id_venta', $venta_id);
-                $this->db->delete('credito');
 
-                $this->db->where('id_venta', $venta_id);
-                $this->db->delete('credito_cuotas');
-            }
-
-
-            $this->db->where('venta_id', $venta_id);
-            $this->db->update('venta', array('venta_status' => 'ANULADO'));
-
-            $venta = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
-
-            $moneda_id = $venta->id_moneda;
-
-            $this->cajas_model->save_pendiente(array(
-                'monto' => $venta->total,
-                'tipo' => 'VENTA_ANULADA',
-                'IO' => 2,
-                'ref_id' => $venta_id,
-                'moneda_id' => $moneda_id,
-                'local_id' => $venta->local_id
-            ));
 
         }
+
+
+        if ($venta->condicion_id == '2') {
+            $this->db->where('id_venta', $venta_id);
+            $this->db->delete('credito');
+
+            $this->db->where('id_venta', $venta_id);
+            $this->db->delete('credito_cuotas');
+        }
+
+        $this->db->where('venta_id', $venta_id);
+        $this->db->update('venta', array('venta_status' => 'ANULADO'));
+
+        $venta = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
+
+        $this->cajas_model->save_pendiente(array(
+            'monto' => $venta->total,
+            'tipo' => 'VENTA_ANULADA',
+            'IO' => 2,
+            'ref_id' => $venta_id,
+            'moneda_id' => $venta->id_moneda,
+            'local_id' => $venta->local_id
+        ));
     }
 
     private function recalc_totales($venta_id)

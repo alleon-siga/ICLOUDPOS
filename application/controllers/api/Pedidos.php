@@ -48,7 +48,7 @@ class Pedidos extends REST_Controller
         }
     }
 
-    function ultimos_post()
+    public function ultimos_post()
     {
         $estado = $this->input->post('estado');
 
@@ -66,6 +66,13 @@ class Pedidos extends REST_Controller
         $this->response($data, 200);
     }
 
+    public function last_venta_get()
+    {
+        $last_id = $this->venta->get_last_id();
+
+        $this->response($last_id, 200);
+    }
+
     public function save_post()
     {
         $venta['id_usuario'] = $this->input->post('id_usuario');
@@ -78,6 +85,7 @@ class Pedidos extends REST_Controller
 
         $venta['venta_status'] = $this->input->post('venta_estado');
         $venta['fecha_venta'] = $this->input->post('fecha_venta');
+        $venta['tipo_impuesto'] = $this->input->post('tipo_impuesto');
 
         $venta['subtotal'] = $this->input->post('subtotal');
         $venta['impuesto'] = $this->input->post('impuesto');
@@ -89,16 +97,22 @@ class Pedidos extends REST_Controller
         $venta['vc_forma_pago'] = $this->input->post('vc_forma_pago');
         $venta['vc_num_oper'] = $this->input->post('vc_num_oper');
         $venta['vc_tipo_tarjeta'] = $this->input->post('vc_tipo_tarjeta');
+        $venta['vc_banco_id'] = $this->input->post('vc_banco_id');
 
-        $venta['c_dni_garante'] = null;
+        $venta['c_dni_garante'] = $this->input->post('c_garante');
         $venta['c_inicial'] = $this->input->post('c_saldo_inicial') != '' ? $this->input->post('c_saldo_inicial') : 0;
         $venta['c_precio_contado'] = $this->input->post('c_precio_contado');
         $venta['c_precio_credito'] = $this->input->post('c_precio_credito');
         $venta['c_tasa_interes'] = $this->input->post('c_tasa_interes');
         $venta['c_numero_cuotas'] = $this->input->post('c_numero_cuotas');
         $venta['c_fecha_giro'] = $this->input->post('c_fecha_giro');
+        $venta['c_periodo_gracia'] = $this->input->post('c_periodo_gracia');
 
         $venta['caja_total_pagar'] = $this->input->post('caja_total_pagar');
+        $venta['dni_garante'] = $this->input->post('c_garante') != "null" ? $this->input->post('c_garante') : null;
+        $venta['tipo_impuesto'] = 1;
+        $venta['comprobante_id'] = 0;
+        $venta['venta_nota'] = "";
 
         $detalles_productos = json_decode($this->input->post('detalles_productos', true));
         $traspasos = json_decode($this->input->post('traspasos', true));
@@ -139,7 +153,7 @@ class Pedidos extends REST_Controller
         $this->response($data, 200);
     }
 
-    function anular_post()
+    public function anular_post()
     {
         $venta_id = $this->input->post('venta_id');
         $numero = $this->input->post('numero');
