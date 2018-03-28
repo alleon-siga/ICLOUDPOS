@@ -197,7 +197,7 @@ class Reporte extends MY_Controller
                     'producto_id' => $params->producto_id,
                     'fecha_ini' => date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0]))),
                     'fecha_fin' => date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1]))),
-                    'moneda_id' => $params->moneda_id,
+                    'moneda_id' => $params->moneda_id
                 );
 
                 $data['lists'] = $this->reporte_model->getVentaSucursal($input);
@@ -207,7 +207,7 @@ class Reporte extends MY_Controller
                     $usu = $this->session->userdata('nUsuCodigo');
                     $data['locales'] = $this->local_model->get_all_usu($usu);
                 }
-
+                $data['moneda'] = $this->db->get_where('moneda', array('id_moneda' => $params->moneda_id))->row();
                 $data['fecha_ini'] = $input['fecha_ini'];
                 $data['fecha_fin'] = $input['fecha_fin'];
 
@@ -229,7 +229,7 @@ class Reporte extends MY_Controller
                     'producto_id' => $params->producto_id,
                     'fecha_ini' => date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0]))),
                     'fecha_fin' => date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1]))),
-                    'moneda_id' => $params->moneda_id,
+                    'moneda_id' => $params->moneda_id
                 );
 
                 $data['lists'] = $this->reporte_model->getVentaSucursal($input);
@@ -239,7 +239,7 @@ class Reporte extends MY_Controller
                     $usu = $this->session->userdata('nUsuCodigo');
                     $data['locales'] = $this->local_model->get_all_usu($usu);
                 }
-
+                $data['moneda'] = $this->db->get_where('moneda', array('id_moneda' => $params->moneda_id))->row();
                 $data['fecha_ini'] = $input['fecha_ini'];
                 $data['fecha_fin'] = $input['fecha_fin'];
 

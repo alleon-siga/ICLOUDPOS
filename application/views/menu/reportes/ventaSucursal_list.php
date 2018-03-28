@@ -26,7 +26,7 @@
                 <?php for($x=1; $x<=count($locales); $x++){ ?>
                     <th>Vendida</th>
                     <th>Stock actual</th>
-                    <th>Total</th>
+                    <th>Importe total</th>
                 <?php } ?>
                 </tr>
                 </thead>
@@ -64,7 +64,7 @@
                         ?>
                         <td style="text-align: right; background-color:<?= $colors[$z] ?>;"><?= empty($cantVend)? '0': $cantVend; ?></td>
                         <td style="text-align: right; background-color:<?= $colors[$z] ?>;"><?= empty($stockAct)? '0': $stockAct; ?></td>
-                        <td style="text-align: right; background-color:<?= $colors[$z] ?>;"><?= number_format($importe, 2); ?></td>
+                        <td style="text-align: right; background-color:<?= $colors[$z] ?>;"><?= $moneda->simbolo . ' ' . number_format($importe, 2); ?></td>
                             <?php $z++; ?>
                         <?php } ?>
                     </tr>
@@ -78,10 +78,9 @@
                     <?php if($z==3) $z=0; ?>  
                     <td style="text-align: right; background-color:<?= $colors[$z] ?> !important;"><?= $ventas[$x] ?></td>
                     <td style="text-align: right; background-color:<?= $colors[$z] ?> !important;"><?= $stock[$x] ?></td>
-                    <td style="text-align: right; background-color:<?= $colors[$z] ?> !important;"><?= number_format($total[$x], 2) ?></td>
+                    <td style="text-align: right; background-color:<?= $colors[$z] ?> !important;"><?= $moneda->simbolo . ' ' . number_format($total[$x], 2) ?></td>
                     <?php $z++; ?>
                     <?php } ?>
-                    <td></td>
                 </tr>
                 </tfoot>
             </table>
@@ -120,8 +119,8 @@
                 'grupo_id': $("#grupo_id").val(),
                 'marca_id': $("#marca_id").val(),
                 'linea_id': $("#linea_id").val(),
-                'familia_id': $("#familia_id").val()
-                
+                'familia_id': $("#familia_id").val(),
+                'moneda_id': $("#moneda_id").val()
             };
 
             $.post("<?= base_url()?>reporte/ventaSucursal/grafico/", data, function(respuesta){
@@ -216,7 +215,8 @@
             'grupo_id': $("#grupo_id").val(),
             'marca_id': $("#marca_id").val(),
             'linea_id': $("#linea_id").val(),
-            'familia_id': $("#familia_id").val()
+            'familia_id': $("#familia_id").val(),
+            'moneda_id': $("#moneda_id").val()
         };
 
         var win = window.open('<?= base_url()?>reporte/ventaSucursal/pdf?data=' + JSON.stringify(data), '_blank');
@@ -230,7 +230,8 @@
             'grupo_id': $("#grupo_id").val(),
             'marca_id': $("#marca_id").val(),
             'linea_id': $("#linea_id").val(),
-            'familia_id': $("#familia_id").val()
+            'familia_id': $("#familia_id").val(),
+            'moneda_id': $("#moneda_id").val()
         };
 
         var win = window.open('<?= base_url()?>reporte/ventaSucursal/excel?data=' + JSON.stringify(data), '_blank');
