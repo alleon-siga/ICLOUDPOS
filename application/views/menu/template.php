@@ -503,19 +503,19 @@ $primary_nav = array(
                 'slug' => 'ventaxcomprobante'
             ),
             array(
-                'name' => 'Productos más vendidos',
+                'name' => 'Productos + vendidos',
                 'url' => $ruta . 'reporte/productoVendido',
                 'icon' => 'fa fa-area-chart',
                 'slug' => 'productovendido'
             ),
             array(
-                'name' => 'Ventas por sucursal',
+                'name' => 'Ventas x sucursal',
                 'url' => $ruta . 'reporte/ventaSucursal',
                 'icon' => 'fa fa-area-chart',
                 'slug' => 'ventaSucursal'
             ),
             array(
-                'name' => 'Ventas por empleado',
+                'name' => 'Ventas x empleado',
                 'url' => $ruta . 'reporte/ventaEmpleado',
                 'icon' => 'fa fa-area-chart',
                 'slug' => 'ventaEmpleado'
@@ -1217,7 +1217,7 @@ $primary_nav = array(
                     <ul class="nav navbar-nav-custom pull-right hidden-xs">
                         <!-- Alternative Sidebar Toggle Button -->
                         <!-- User Dropdown -->
-                        <li class="alertD">
+                        <li class="alertD" style="display: none;">
                             <a href="#">
                                 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 146.6 177.9" style="enable-background:new 0 0 146.6 177.9;" xml:space="preserve">
                                     <g>
@@ -1581,7 +1581,7 @@ $primary_nav = array(
                             </div>
                         </div>
                         <br>
-                        <div class="control-group row" style="display: none;">
+                        <div class="control-group row">
                             <div class="col-md-1"></div>
                             <label for="fecha" class="control-label col-md-2">Locales:</label>
 
@@ -1598,7 +1598,7 @@ $primary_nav = array(
                             </div>
                         </div>
                         <br>
-                        <div class="control-group row" style="display: none;">
+                        <div class="control-group row">
                             <div class="col-md-1"></div>
                             <label for="fecha" class="control-label col-md-2">Usuarios:</label>
 
