@@ -14,6 +14,18 @@ class Cajas_api_model extends CI_Model
         return $this->db->get_where('caja_desglose', array('id' => $id))->row();
     }
 
+    function get_cuenta_id($data)
+    {
+        $cuenta = $this->db->select('caja_desglose.id as id')->from('caja_desglose')
+            ->join('caja', 'caja.id = caja_desglose.caja_id')
+            ->where('caja_desglose.principal', 1)
+            ->where('caja.moneda_id', $data['moneda_id'])
+            ->where('caja.local_id', $data['local_id'])
+            ->get()->row();
+
+        return $cuenta != NULL ? $cuenta->id : NULL;
+    }
+
     function update_saldo($id, $saldo, $ingreso = TRUE)
     {
         $cuenta = $this->get_cuenta($id);
@@ -33,7 +45,7 @@ class Cajas_api_model extends CI_Model
     function save_pendiente($data, $id_usuario){
 
         $this->db->insert('caja_pendiente', array(
-            'caja_desglose_id'=>$this->get_valid_cuenta_id($data['moneda_id'], $data['local_id']),
+            'caja_desglose_id'=>$this->get_valid_cuenta_id($data['moneda_id'], $data['local_id'], $id_usuario),
             'usuario_id'=>$id_usuario,
             'tipo'=>$data['tipo'],
             'monto'=> $data['monto'],
@@ -43,7 +55,7 @@ class Cajas_api_model extends CI_Model
         ));
     }
 
-    function get_valid_cuenta_id($moneda, $local){
+    function get_valid_cuenta_id($moneda, $local, $id_usuario){
         $cuenta = $this->db->select('caja_desglose.id as id')->from('caja_desglose')
             ->join('caja', 'caja.id = caja_desglose.caja_id')
             ->where('caja_desglose.principal', 1)
@@ -55,14 +67,14 @@ class Cajas_api_model extends CI_Model
             $this->db->insert('caja', array(
                 'local_id'=>$local,
                 'moneda_id'=>$moneda,
-                'responsable_id'=>$this->session->userdata('nUsuCodigo'),
+                'responsable_id'=>$id_usuario,
                 'estado'=>1
             ));
             $caja_id = $this->db->insert_id();
 
             $this->db->insert('caja_desglose', array(
                 'caja_id'=>$caja_id,
-                'responsable_id'=>$this->session->userdata('nUsuCodigo'),
+                'responsable_id'=>$id_usuario,
                 'descripcion'=>'Caja Temporal Principal',
                 'saldo'=>0,
                 'principal'=>1,
