@@ -632,6 +632,8 @@ class cliente extends MY_Controller
     }
 
     public function getDatosFromAPI_Reniec(){
+        error_reporting(0);
+        ini_set('display_errors', 0);
         $dni=$_POST['DNI'];
         require_once(APPPATH.'libraries/reniec/autoload.php');
         $cliente = new \Reniec\Reniec();
@@ -645,6 +647,8 @@ class cliente extends MY_Controller
     }
 
     public function getDatosFromAPI_Sunac(){
+        error_reporting(0);
+        ini_set('display_errors', 0);
         $ruc=$_POST['RUC'];
         require_once(APPPATH.'libraries/sunat/autoload.php');
         $cliente = new \Sunat\Sunat(true,true);

@@ -30,6 +30,7 @@ class cliente_model extends CI_Model
         $this->db->join('grupos_cliente', 'grupos_cliente.id_grupos_cliente=cliente.grupo_id');
         $this->db->join('ciudades c', 'c.ciudad_id=cliente.ciudad_id', 'left');
         //$this->db->join('precios', 'precios.id_precio=cliente.categoria_precio','left');
+        $this->db->order_by('id_cliente', 'DESC');
         $query = $this->db->get('cliente');
         return $query->result_array();
     }

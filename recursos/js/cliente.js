@@ -649,7 +649,6 @@ function guardarcliente() {
     /*if($("#tipo_cliente").val()=='1'){
         validar_ruc_n();
     }*/
-
         if ($('#tipo_cliente').val() == "") {
                 
                 var growlType = 'warning';
@@ -662,6 +661,8 @@ function guardarcliente() {
 
             return false
         }
+        //alert($('#tipo_cliente').val());
+
         if ($("#razon_social_j").val() == '' && $('#tipo_cliente').val()=='1') {
             
                 var growlType = 'warning';
@@ -963,316 +964,10 @@ function guardarcliente() {
             $(this).prop('disabled', true);
 
         }
-
-
     });
-
 }
 
-function guardarclienteEmpresa() {
-        
 
-        if ($('#tipo_cliente').val() == "") {
-                
-                var growlType = 'warning';
-
-                $.bootstrapGrowl('<h4>Debe seleccionar el tipo de cliente</h4>', {
-                    type: growlType,
-                    delay: 2500,
-                    allow_dismiss: true
-                });
-
-            return false
-        }
-
-        if ($("#razon_social_j").val() == '') {
-            
-                var growlType = 'warning';
-
-                $.bootstrapGrowl('<h4>Debe ingresar una razon social</h4>', {
-                    type: growlType,
-                    delay: 2500,
-                    allow_dismiss: true
-                });
-                return false;
-        }
-
-        if ($('#tipo_iden').val() == "") {
-                
-                var growlType = 'warning';
-
-                $.bootstrapGrowl('<h4>Debe seleccionar el tipo de identificacion</h4>', {
-                    type: growlType,
-                    delay: 2500,
-                    allow_dismiss: true
-                });
-
-            return false
-        }
-
-        if ($("#ruc_j").val() == '') {
-        
-            var growlType = 'warning';
-            var msj = '<h4>Debe ingresar un RUC/DNI</h4>';
-
-            $.bootstrapGrowl(msj, {
-                type: growlType,
-                delay: 2500,
-                allow_dismiss: true
-            });
-
-            return false;
-        }
-
-
-        if($("#tipo_iden").val()==2){
-            /*if ($("#ruc_j").val().length != 11) {
-                
-                var growlType = 'warning';
-                $("#ruc_j").focus();
-                $.bootstrapGrowl('<h4>El RUC debe contener 11 d&iacute;gitos</h4>', {
-                    type: growlType,
-                    delay: 2500,
-                    allow_dismiss: true
-                });
-                return false;
-            }*/
-
-            if ($('#tipo_cliente').val() == 1){
-
-                if ($("#nombres").val() == '' && $("#apellido_paterno").val() == '' && $("#apellido_materno").val() == '') {
-                   
-                    var growlType = 'warning';
-
-                    $.bootstrapGrowl('<h4>Debe ingresar un representante</h4>', {
-                        type: growlType,
-                        delay: 2500,
-                        allow_dismiss: true
-                    });
-                    return false;
-                }
-
-                if ($("#apellidoPJuridico").val() == '') {
-                   
-                    var growlType = 'warning';
-
-                    $.bootstrapGrowl('<h4>Debe ingresar el DNI del representante</h4>', {
-                        type: growlType,
-                        delay: 2500,
-                        allow_dismiss: true
-                    });
-                    return false;
-                }
-            }
-
-        }
-        /*else if($("#tipo_iden").val()==1){
-            if ($("#ruc_j").val().length != 8) {
-               
-                var growlType = 'warning';
-                $("#ruc_j").focus();
-                $.bootstrapGrowl('<h4>El DNI debe contener 8 d&iacute;gitos</h4>', {
-                    type: growlType,
-                    delay: 2500,
-                    allow_dismiss: true
-                });
-                return false;
-            }
-        }*/
-            
-
-        if($("#direccion_j").val() == '') {
-        
-            var growlType = 'warning';
-
-            $.bootstrapGrowl('<h4>Debe ingresar una direcci&oacute;n</h4>', {
-                type: growlType,
-                delay: 2500,
-                allow_dismiss: true
-            });
-
-            return false;
-        }
-
-        if ($("#distrito_id").val() == '' && $("#ciudad_id").val() == '' && $("#estado_id").val() == '') {
-        
-            var growlType = 'warning';
-
-            $.bootstrapGrowl('<h4>Debe seleccionar un Departamento/Provincia/Distrito</h4>', {
-                type: growlType,
-                delay: 2500,
-                allow_dismiss: true
-            });
-
-            return false;
-        }
-
-        /*if ($("#correo").val() == '') {
-        
-            var growlType = 'warning';
-            $("#correo").focus()
-            $.bootstrapGrowl('<h4>Debe ingresar un correo</h4>', {
-                type: growlType,
-                delay: 2500,
-                allow_dismiss: true
-            });
-
-            return false;
-        }
-
-        if ($("#telefono").val() == '') {
-        
-            var growlType = 'warning';
-            $("#telefono").focus()
-            $.bootstrapGrowl('<h4>Debe ingresar un telefono</h4>', {
-                type: growlType,
-                delay: 2500,
-                allow_dismiss: true
-            });
-
-            return false;
-        }*/
-
-        if ($("#genero").val() == '') {
-        
-            var growlType = 'warning';
-            $.bootstrapGrowl('<h4>Debe seleccionar un genero</h4>', {
-                type: growlType,
-                delay: 2500,
-                allow_dismiss: true
-            });
-
-            return false;
-        }
-
-        if ($("#estatus_j").val() == '') {
-        
-            var growlType = 'warning';
-            $("#estatus").focus()
-            $.bootstrapGrowl('<h4>Debe seleccionar un Estado</h4>', {
-                type: growlType,
-                delay: 2500,
-                allow_dismiss: true
-            });
-
-            return false;
-        }
-
-        if ($("#grupo_id_juridico").val() == '') {
-        
-            var growlType = 'warning';
-            $("#estatus").focus()
-            $.bootstrapGrowl('<h4>Debe seleccionar un grupo</h4>', {
-                type: growlType,
-                delay: 2500,
-                allow_dismiss: true
-            });
-
-            return false;
-        }
-
-        if ($('#retencion').prop('checked') && $("#retencion_value").val() == '') {
-            var growlType = 'warning';
-            $.bootstrapGrowl('<h4>Debe ingresar la retencion</h4>', {
-                type: growlType,
-                delay: 2500,
-                allow_dismiss: true
-            });
-            return false;
-        }
-
-        if ($('#credito').prop('checked') && $("#lineaC_j").val() == '') {
-            var growlType = 'warning';
-            $.bootstrapGrowl('<h4>Debe ingresar la linea de credito</h4>', {
-                type: growlType,
-                delay: 2500,
-                allow_dismiss: true
-            });
-            return false;
-        }
-
-
-    var formData = $('#formagregar').serialize();
-
-    $('#load_div').show()
-    $.ajax({
-        url: base_url + 'cliente/guardar',
-        type: "post",
-        dataType: "json",
-        data: formData,
-        success: function (data) {
-            var modal = "clienteomodal";
-            if (data.error == undefined) {
-
-                var growlType = 'success';
-
-                $.bootstrapGrowl('<h4>' + data.success + '</h4>', {
-                    type: growlType,
-                    delay: 2500,
-                    allow_dismiss: true
-                });
-
-                $(this).prop('disabled', true);
-
-                $("#agregar").modal('hide');
-                if($("#new_from_venta").val() == 1){
-                    $('#dialog_new_cliente').attr('data-id', data.cliente);
-                    $('#dialog_new_cliente').modal('hide');
-                    $('.modal-backdrop').remove();
-                    $('#load_div').hide();
-                }
-                else{
-                    return $.ajax({
-                    url: base_url+'cliente',
-                    success: function(data){
-                        $('#page-content').html(data);
-                        $('.modal-backdrop').remove();
-                        $('#load_div').hide();
-                    }
-
-                    });
-                }
-                
-
-            }else {
-
-                var growlType = 'warning';
-
-                $.bootstrapGrowl('<h4>' + data.error + '</h4>', {
-                    type: growlType,
-                    delay: 2500,
-                    allow_dismiss: true
-                });
-
-                $(this).prop('disabled', true);
-                $('.modal-backdrop').remove()
-                $('#load_div').hide()
-            }
-            
-
-
-
-        },
-        error: function (response) {
-            $('.modal-backdrop').remove()
-            $('#load_div').hide()
-            var growlType = 'warning';
-
-
-            $.bootstrapGrowl('<h4>Ha ocurrido un error al realizar la operacion</h4>', {
-                type: growlType,
-                delay: 2500,
-                allow_dismiss: true
-            });
-
-            $(this).prop('disabled', true);
-
-        }
-
-
-    });
-
-}
 
 function deleteimg(id,nombre) {
 
@@ -2173,12 +1868,26 @@ function borrar_img(id, nombre, id_div) {
 
 }
 
+//var nombres, apellidos, dni;
+
 $('.nav-pills a[href="#persona"]').on('shown.bs.tab', function(event){
-    $('#tipo_cliente').attr('value','0');
+    $('.tipo_cliente').attr('value','0');
     $('#tipo_iden').attr('value','1');
+
+    /*$('#nombres').val(nombres);
+    $('#apellido_paterno').val(apellidos);
+    $('#ruc_j').val(dni);*/
 });
 
 $('.nav-pills a[href="#empresa"]').on('shown.bs.tab', function(event){
-   $('#tipo_cliente').attr('value','1');
+   $('.tipo_cliente').attr('value','1');
    $('#tipo_iden').attr('value','2');
+
+   /*nombres = $('#nombres').val();
+   apellidos = $('#apellido_paterno').val();
+   dni = $('#ruc_j').val();
+
+   $('#nombres').val('');
+   $('#apellido_paterno').val('');
+   $('#ruc_j').val('');*/
 });

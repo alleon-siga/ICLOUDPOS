@@ -45,8 +45,6 @@ class Kardex_api_model extends CI_Model
             $data['cantidad_saldo'] = $cantidad_saldo - $data['cantidad'];
         }
 
-
-
         $this->db->insert('kardex', $data);
         return $this->db->insert_id();
     }

@@ -138,8 +138,12 @@ class Clientes extends REST_Controller
             $result = $this->cliente_api_model->update($cliente);
         }
 
-        if ($result) {
+        if ($result > 1) {
             $data['response'] = 'success';
+
+        } else if ($result == -1) {
+            $data['response'] = 'existe';
+
         } else {
             $data['response'] = 'failed';
         }

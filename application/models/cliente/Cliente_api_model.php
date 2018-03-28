@@ -21,6 +21,16 @@ class Cliente_api_model extends CI_Model
         return $result;
     }
 
+    function get_grupos_all()
+    {
+        $result = $this->db->select('*')
+            ->from('grupos_cliente')
+            ->where('status_grupos_cliente', 1)
+            ->get()->result();
+
+        return $result;
+    }
+
     function get_estados()
     {
         $result = $this->db->select('*')
@@ -53,7 +63,24 @@ class Cliente_api_model extends CI_Model
 
     function insertar($cliente)
     {
-        $this->db->insert('cliente', $cliente);
-        return $this->db->insert_id();
+        $validar_rs = $this->validarRazonSocial($cliente);
+
+        if (sizeof($validar_rs) < 1) {
+            $this->db->insert('cliente', $cliente);
+            return $this->db->insert_id();
+
+        } else {
+            return -1;
+        }
+    }
+
+    function validarRazonSocial($cliente)
+    {
+        $result = $this->db->select('*')
+            ->from('cliente')
+            ->where('razon_social', $cliente['razon_social'])
+            ->get()->result();
+
+        return $result;
     }
 }
