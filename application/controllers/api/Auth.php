@@ -11,6 +11,8 @@ class Auth extends CI_Controller
 		$this->load->model('local/local_api_model');
 		$this->load->model('usuario/usuario_api_model');
 		$this->load->model('monedas/moneda_api_model');
+		$this->load->model('banco/banco_api_model');
+		$this->load->model('banco/tarjeta_api_model');
         $this->load->model('api/api_model', 'apiModel');
 		$this->load->library('user_agent');
     }
@@ -64,6 +66,15 @@ class Auth extends CI_Controller
 				//Monedas
 				$monedas = $this->moneda_api_model->get_all();
 
+				//Bancos
+				$bancos = $this->banco_api_model->get_all();
+
+				//Tarjetas
+				$tarjetas = $this->tarjeta_api_model->get_all();
+
+				//Grupos cliente
+				$grupos_cliente = $this->cliente_api_model->get_grupos_all();
+
 				// Json Array
 				$json = array(
 					'status'  => 'success',
@@ -72,7 +83,10 @@ class Auth extends CI_Controller
 					'api_key' => $apiKey,
 					'clientes' => $clientes,
 					'locales' => $locales,
-					'monedas' => $monedas
+					'monedas' => $monedas,
+					'bancos' => $bancos,
+					'tarjetas' => $tarjetas,
+					'grupos_cliente' => $grupos_cliente
 				);
 
 				echo json_encode($json);
