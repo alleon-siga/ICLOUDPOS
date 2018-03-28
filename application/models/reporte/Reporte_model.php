@@ -253,7 +253,6 @@ class reporte_model extends CI_Model
         $tipo = $params['tipo'];
         $search = $marca_id.$grupo_id.$familia_id.$linea_id.$producto_id;
         $query = "SELECT p.producto_id, p.producto_codigo_interno, f.nombre_familia, p.producto_nombre, m.nombre_marca, l.nombre_linea";
-        $x=1;
         foreach ($params['local_id'] as $local_id)
         {
             switch ($params['tipo_periodo']) {
@@ -281,7 +280,7 @@ class reporte_model extends CI_Model
             if($tipo=='1'){ //cantidad
                 $select = "IF(SUM(up.unidades * dv.cantidad) IS NULL, '0', SUM(up.unidades * dv.cantidad))";
             }else{ //importe
-                $select = "SUM(dv.precio * dv.cantidad)";
+                $select = "IF(SUM(dv.precio * dv.cantidad) IS NULL, '0', SUM(dv.precio * dv.cantidad))";
             }
 
             $query .= ",
@@ -290,8 +289,7 @@ class reporte_model extends CI_Model
                     INNER JOIN detalle_venta dv ON v.venta_id=dv.id_venta 
                     INNER JOIN unidades_has_producto up ON dv.id_producto=up.producto_id AND dv.unidad_medida=up.id_unidad
                     WHERE v.venta_status='COMPLETADO' AND v.local_id='$local_id' AND dv.id_producto=p.producto_id $where
-                ) AS cantVend". $x;
-            $x++;
+                ) AS cantVend". $local_id;
         }
 
         $x=1;
