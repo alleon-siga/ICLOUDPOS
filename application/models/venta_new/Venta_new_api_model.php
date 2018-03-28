@@ -46,6 +46,7 @@ class Venta_new_api_model extends CI_Model
             credito.dec_credito_montodebito as credito_pagado,
             credito.dec_credito_montocuota as credito_pendiente,
             credito.var_credito_estado as credito_estado,
+            venta.dni_garante as nombre_vd,
             (select SUM(detalle_venta.cantidad) from detalle_venta
             where detalle_venta.id_venta=venta.venta_id) as total_bultos
             ')
