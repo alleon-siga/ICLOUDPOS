@@ -298,7 +298,7 @@ class exportar extends MY_Controller
                 $this->db->where('venta.id_vendedor', $id_usuario);
             }
 
-            $ventas = $this->db->get()->result();
+            $ventas = $this->db->group_by('caja_movimiento.id')->get()->result();
 
             foreach ($ventas as $venta) {
                 $detalle_ingreso[$venta->medio_pago]['importe'] += $venta->saldo;
