@@ -105,7 +105,7 @@
                                 <select id="producto_id" name="producto_id" multiple="multiple">
                                 <?php foreach ($productos as $producto): ?>
                                     <option value="<?= $producto->producto_id ?>"
-                                            data-impuesto="<?= $producto->porcentaje_impuesto ?>">
+                                            data-impuesto="<?= $producto->porcentaje_impuesto ?>" selected>
                                         <?php $barra = $barra_activa->activo == 1 && $producto->barra != "" ? "CB: " . $producto->barra : "" ?>
                                         <?= getCodigoValue($producto->producto_id, $producto->codigo) . ' - ' . $producto->producto_nombre . " " . $barra ?>
                                     </option>
@@ -128,12 +128,17 @@
                 <div class="col-md-3">
                     <input type="text" id="fecha" class="form-control" readonly style="cursor: pointer;" name="fecha" value="<?= date('01/m/Y') ?> - <?= date('d/m/Y') ?>"/>
                 </div>
+                <div class="col-md-2">
+                    <select class="form-control" id="tipo" name="tipo">
+                        <option value="1" selected="selected">Productos con ventas</option>
+                        <option value="2">Productos sin ventas</option>
+                        <option value="3">Ambos</option>
+                    </select>
+                </div>                
                 <div class="col-md-1">
                     <button id="btn_buscar" class="btn btn-default">
                         <i class="fa fa-search"></i> Buscar
                     </button>
-                </div>
-                <div class="col-md-2">
                 </div>
                 <div class="col-md-1">
                     <button type="button" class="btn btn-primary tcharm-trigger form-control">
@@ -212,7 +217,7 @@
 
                     $('.ctrl').chosen();
 
-                    getReporte();
+                    //getReporte();
 
                     $("#btn_buscar, .btn_buscar").on("click", function () {
                         getReporte();
@@ -247,7 +252,8 @@
                         'grupo_id': $("#grupo_id").val(),
                         'marca_id': $("#marca_id").val(),
                         'linea_id': $("#linea_id").val(),
-                        'familia_id': $("#familia_id").val()
+                        'familia_id': $("#familia_id").val(),
+                        'tipo': $('#tipo').val()
                     };
 
                     $.ajax({

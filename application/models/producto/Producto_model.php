@@ -132,24 +132,44 @@ class producto_model extends CI_Model
             ->get()->result();
     }
 
-    public function get_productos_list2($params)
+    public function get_productos_list2($params = '')
     {
-        $this->db->select('producto_id, producto_codigo_interno as codigo, producto_nombre, producto_codigo_barra as barra, impuestos.porcentaje_impuesto');
-        $this->db->from('producto');
-        $this->db->join('impuestos', 'impuestos.id_impuesto = producto.producto_impuesto');
-        $this->db->where('producto_estatus', '1');
-        $this->db->where('producto_estado', '1');
-        if($params['marca_id']>0)
-            $this->db->where('producto_marca', $params['marca_id']);
-        if($params['grupo_id']>0)
-            $this->db->where('produto_grupo', $params['grupo_id']);
-        if($params['familia_id']>0)
-            $this->db->where('producto_familia', $params['familia_id']);
-        if($params['linea_id']>0)
-            $this->db->where('producto_linea', $params['linea_id']);
-
-        $this->db->group_by('producto_id');
-        return $this->db->get()->result();
+        //Consulta que muestra los productos mas vendidos de mayor a menor
+        $query = "
+            SELECT 
+                p.producto_id, 
+                p.producto_codigo_interno as codigo, 
+                p.producto_nombre, 
+                p.producto_codigo_barra as barra, 
+                i.porcentaje_impuesto,
+                SUM(up.unidades * dv.cantidad) AS ventas
+            FROM 
+                detalle_venta AS dv
+                INNER JOIN 
+                    venta v ON v.venta_id=dv.id_venta
+                INNER JOIN 
+                    producto p ON dv.id_producto=p.producto_id
+                INNER JOIN 
+                    impuestos i ON i.id_impuesto = p.producto_impuesto
+                INNER JOIN 
+                    unidades_has_producto up ON dv.id_producto=up.producto_id AND dv.unidad_medida=up.id_unidad
+                INNER JOIN 
+                    unidades_has_producto up2 ON dv.id_producto=up2.producto_id 
+                    AND (select id_unidad from unidades_has_producto where unidades_has_producto.producto_id = dv.id_producto  ORDER BY orden DESC LIMIT 1) = up2.id_unidad 
+            WHERE 
+                v.venta_status='COMPLETADO' AND producto_estatus='1' AND producto_estado='1'";
+        if(!empty($params)){
+            if($params['marca_id']>0)
+                $query .= " AND producto_marca = ".$params['marca_id'];
+            if($params['grupo_id']>0)
+                $query .= " AND produto_grupo = ".$params['grupo_id'];
+            if($params['familia_id']>0)
+                $query .= " AND producto_familia = ".$params['familia_id'];
+            if($params['linea_id']>0)
+                $query .= " AND producto_linea = ".$params['linea_id'];
+        }
+        $query .= " GROUP BY dv.id_producto ORDER BY ventas DESC";
+        return $this->db->query($query)->result();
     }
 
     public function getCodigo($cod, $id)
