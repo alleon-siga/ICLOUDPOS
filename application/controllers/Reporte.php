@@ -28,7 +28,7 @@ class Reporte extends MY_Controller
                 $date_range = explode(" - ", $this->input->post('fecha'));
                 $params['fecha_ini'] = date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0])));
                 $params['fecha_fin'] = date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])));
-
+                $params['tipo'] = $this->input->post('tipo');
                 $data['lists'] = $this->reporte_model->getProductoVendido($params);
 
                 $this->load->view('menu/reportes/productoVendido_list', $data);
@@ -44,7 +44,8 @@ class Reporte extends MY_Controller
                 $date_range = explode(" - ", $this->input->post('fecha'));
                 $params['fecha_ini'] = date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0])));
                 $params['fecha_fin'] = date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])));
-
+                $params['tipo'] = $this->input->post('tipo');
+                $params['limit'] = $this->input->post('limit');
                 $data['lists'] = $this->reporte_model->getProductoVendido($params);
                 echo json_encode($data);
                 break;
@@ -60,7 +61,8 @@ class Reporte extends MY_Controller
                     'linea_id' => $params->linea_id,
                     'producto_id' => $params->producto_id,
                     'fecha_ini' => date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0]))),
-                    'fecha_fin' => date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])))
+                    'fecha_fin' => date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1]))),
+                    'tipo' => $this->input->post('tipo')
                 );
 
                 $data['lists'] = $this->reporte_model->getProductoVendido($input);
@@ -78,7 +80,6 @@ class Reporte extends MY_Controller
                 $mpdf->WriteHTML($html);
                 $mpdf->Output();
                 break;
-                break;
             }
             case 'excel': {
                 $params = json_decode($this->input->get('data'));
@@ -91,7 +92,8 @@ class Reporte extends MY_Controller
                     'linea_id' => $params->linea_id,
                     'producto_id' => $params->producto_id,
                     'fecha_ini' => date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0]))),
-                    'fecha_fin' => date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])))
+                    'fecha_fin' => date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1]))),
+                    'tipo' => $this->input->post('tipo')
                 );
 
                 $data['lists'] = $this->reporte_model->getProductoVendido($input);
@@ -117,7 +119,7 @@ class Reporte extends MY_Controller
                 $data['grupos'] = $this->db->get_where('grupos', array('estatus_grupo' => 1))->result();
                 $data['familias'] = $this->db->get_where('familia', array('estatus_familia' => 1))->result();
                 $data['lineas'] = $this->db->get_where('lineas', array('estatus_linea' => 1))->result();
-                $data["productos"] = $this->producto_model->get_productos_list();
+                $data["productos"] = $this->producto_model->get_productos_list2();
                 $data['barra_activa'] = $this->db->get_where('columnas', array('id_columna' => 36))->row();
                 $dataCuerpo['cuerpo'] = $this->load->view('menu/reportes/productoVendido', $data, true);
                 if ($this->input->is_ajax_request()) {

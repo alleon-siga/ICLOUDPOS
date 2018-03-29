@@ -18,6 +18,17 @@
 </ul>
 <div class="tab-content">
     <div id="data" class="tab-pane fade in active">
+                <div class="row">
+            <div class="col-md-12">
+                <br>
+                <button type="button" id="exportar_excel" title="Exportar Excel" class="btn btn-primary">
+                    <i class="fa fa-file-excel-o fa-fw"></i>
+                </button>
+                <button type="button" id="exportar_pdf" title="Exportar Pdf" class="btn btn-primary">
+                    <i class="fa fa-file-pdf-o fa-fw"></i>
+                </button>
+            </div>
+        </div>
         <div class="table-responsive">
             <table class='table table-striped dataTable table-bordered no-footer tableStyle' style="overflow:scroll; ">
                 <thead>

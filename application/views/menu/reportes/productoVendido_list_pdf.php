@@ -53,7 +53,7 @@
         <tr>
             <td><?= getCodigoValue($list->producto_id, $list->producto_codigo_interno) ?></td>
             <td><?= $list->producto_nombre ?></td>
-            <td style="text-align: right;"><?= $list->ventas ?></td>
+            <td style="text-align: right;"><?= (empty($list->ventas))? '0':$list->ventas ?></td>
             <td style="text-align: right;"><?= $list->stock ?></td>
             <td><?= $list->nombre_unidad ?></td>
             <td><?= number_format(($list->stock==0)? '0':($list->ventas/$list->stock)*100,2); ?> %</td>
