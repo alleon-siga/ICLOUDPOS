@@ -233,6 +233,7 @@
 
                     $("#day, #month, #year").on('change', function () {
                         $('#fecha_ini, #fecha_fin').datepicker('destroy');
+
                         $('#fecha_ini_value, #fecha_fin_value').html('');
 
                         $('.include_days').hide();
@@ -263,7 +264,7 @@
 
                     $('.ctrl').chosen();
 
-                    getReporte();
+                    //getReporte();
 
                     $("#btn_buscar, .btn_buscar").on("click", function () {
                         getReporte();

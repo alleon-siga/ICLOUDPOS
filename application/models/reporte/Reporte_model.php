@@ -18,43 +18,46 @@ class reporte_model extends CI_Model
         $familia_id .= ($params['familia_id']>0)? " AND p.producto_familia=".$params['familia_id'] : "";
         $linea_id .= ($params['linea_id']>0)? " AND p.producto_linea=".$params['linea_id'] : "";
         $producto_id .= ($params['producto_id']!='')? " AND p.producto_id IN(".implode(",", $params['producto_id']).")" : "";
+
+        if($params['tipo']==1){ // Productos con ventas
+            $where = "HAVING ventas IS NOT NULL";
+        }elseif($params['tipo']==2){ //Productos sin ventas
+            $where = "HAVING ventas IS NULL";
+        }else{ //Todos
+            $where = "";
+        }
+        $producto_id .= ($params['producto_id']!='')? " AND p.producto_id IN(".implode(",", $params['producto_id']).")" : "";
         $search = $marca_id.$grupo_id.$familia_id.$linea_id.$producto_id;
-        $query = "
-            SELECT 
-                p.producto_id AS producto_id, 
-                p.producto_codigo_interno AS producto_codigo_interno, 
-                p.producto_nombre AS producto_nombre,
-                SUM(up.unidades * dv.cantidad) AS ventas, 
-                (
-                    SELECT SUM((pa.cantidad * (SELECT unidades FROM unidades_has_producto WHERE producto_id=pa.id_producto AND orden=1)) + pa.fraccion) AS und
-                    FROM producto_almacen pa
-                    WHERE pa.id_producto=dv.id_producto
-                ) AS stock,
-                u.nombre_unidad AS nombre_unidad
-            FROM 
-                detalle_venta AS dv
-                INNER JOIN 
-                    venta v ON v.venta_id=dv.id_venta
-                INNER JOIN 
-                    producto p ON dv.id_producto=p.producto_id
-                INNER JOIN 
-                    unidades_has_producto up ON dv.id_producto=up.producto_id AND dv.unidad_medida=up.id_unidad
-                INNER JOIN 
-                    unidades_has_producto up2 ON dv.id_producto=up2.producto_id 
-                    AND (select id_unidad from unidades_has_producto where unidades_has_producto.producto_id = dv.id_producto  ORDER BY orden DESC LIMIT 1) = up2.id_unidad 
-                INNER JOIN 
-                    unidades u ON up2.id_unidad=u.id_unidad
-            WHERE 
-                v.venta_status='COMPLETADO'
-                AND v.local_id = ".$params['local_id']."
-                AND v.fecha >= '".$params['fecha_ini']."'
-                AND v.fecha <= '".$params['fecha_fin']."'
-                $search
-            GROUP BY 
-                dv.id_producto
-            ORDER BY 
-                ventas DESC
-        ";
+        //Limitar top
+        $limit = '';
+        if(isset($params['limit'])){
+            $limit = "LIMIT 0, ".$params['limit'];
+        }
+        $query = "SELECT p.producto_id AS producto_id, p.producto_codigo_interno AS producto_codigo_interno, p.producto_nombre AS producto_nombre,
+            (
+                SELECT SUM(up.unidades * dv.cantidad)
+                FROM detalle_venta AS dv
+                INNER JOIN venta v ON v.venta_id=dv.id_venta
+                INNER JOIN producto p2 ON dv.id_producto=p2.producto_id
+                INNER JOIN unidades_has_producto up ON dv.id_producto=up.producto_id AND dv.unidad_medida=up.id_unidad
+                INNER JOIN unidades_has_producto up2 ON dv.id_producto=up2.producto_id 
+                AND (select id_unidad from unidades_has_producto where unidades_has_producto.producto_id = dv.id_producto  ORDER BY orden DESC LIMIT 1) = up2.id_unidad
+                INNER JOIN unidades u ON up2.id_unidad=u.id_unidad
+                WHERE dv.id_producto = p.producto_id AND v.venta_status='COMPLETADO' AND v.local_id = '".$params['local_id']."' AND v.fecha >= '".$params['fecha_ini']."' AND v.fecha <= '".$params['fecha_fin']."'
+            ) AS ventas,
+            (
+                SELECT SUM((pa.cantidad * (SELECT unidades FROM unidades_has_producto WHERE producto_id=pa.id_producto AND orden=1)) + pa.fraccion) AS und
+                FROM producto_almacen pa
+                WHERE pa.id_producto=p.producto_id
+            ) AS stock,
+            (
+                SELECT u.nombre_unidad
+                FROM unidades u, producto p2, unidades_has_producto up, unidades_has_producto up2
+                WHERE p2.producto_id = p.producto_id AND p2.producto_id=up.producto_id AND u.id_unidad=up.id_unidad AND p2.producto_id=up2.producto_id AND (SELECT id_unidad FROM unidades_has_producto WHERE unidades_has_producto.producto_id = p2.producto_id  ORDER BY orden DESC LIMIT 1) = up2.id_unidad 
+                LIMIT 1
+            ) AS nombre_unidad
+            FROM producto p
+            WHERE p.producto_estado='1' ".$search." ".$where." ORDER BY ventas DESC ".$limit;
 
         return $this->db->query($query)->result();
     }
@@ -253,7 +256,6 @@ class reporte_model extends CI_Model
         $tipo = $params['tipo'];
         $search = $marca_id.$grupo_id.$familia_id.$linea_id.$producto_id;
         $query = "SELECT p.producto_id, p.producto_codigo_interno, f.nombre_familia, p.producto_nombre, m.nombre_marca, l.nombre_linea";
-        $x=1;
         foreach ($params['local_id'] as $local_id)
         {
             switch ($params['tipo_periodo']) {
@@ -281,7 +283,7 @@ class reporte_model extends CI_Model
             if($tipo=='1'){ //cantidad
                 $select = "IF(SUM(up.unidades * dv.cantidad) IS NULL, '0', SUM(up.unidades * dv.cantidad))";
             }else{ //importe
-                $select = "SUM(dv.precio * dv.cantidad)";
+                $select = "IF(SUM(dv.precio * dv.cantidad) IS NULL, '0', SUM(dv.precio * dv.cantidad))";
             }
 
             $query .= ",
@@ -290,8 +292,7 @@ class reporte_model extends CI_Model
                     INNER JOIN detalle_venta dv ON v.venta_id=dv.id_venta 
                     INNER JOIN unidades_has_producto up ON dv.id_producto=up.producto_id AND dv.unidad_medida=up.id_unidad
                     WHERE v.venta_status='COMPLETADO' AND v.local_id='$local_id' AND dv.id_producto=p.producto_id $where
-                ) AS cantVend". $x;
-            $x++;
+                ) AS cantVend". $local_id;
         }
 
         $x=1;

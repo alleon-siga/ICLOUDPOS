@@ -12,7 +12,7 @@
 <div class="tab-content">
     <div id="data" class="tab-pane fade in active">
         <div class="table-responsive">
-            <table class='table dataTable table-striped  table-bordered no-footer tableStyle' style="overflow:scroll">
+            <table class='table table-striped dataTable table-bordered no-footer tableStyle' style="overflow:scroll">
                 <thead>
                 <tr>
                     <th><?= getCodigoNombre() ?></th>
@@ -36,7 +36,7 @@
                     <tr>
                         <td><?= getCodigoValue($list->producto_id, $list->producto_codigo_interno) ?></td>
                         <td><?= $list->producto_nombre ?></td>
-                        <td style="text-align: right;"><?= $list->ventas ?></td>
+                        <td style="text-align: right;"><?= (empty($list->ventas))? '0':$list->ventas ?></td>
                         <td style="text-align: right;"><?= $list->stock ?></td>
                         <td><?= $list->nombre_unidad ?></td>
                         <td><?= number_format(($list->stock==0)? '0':($list->ventas/$list->stock)*100,2); ?> %</td>
@@ -72,6 +72,9 @@
 </div>
 <script type="text/javascript">
     $(document).ready(function () {
+        TablesDatatables.init(2);
+
+
         $('#exportar_excel').on('click', function () {
             exportar_excel();
         });
@@ -81,6 +84,7 @@
         });
 
         $('.nav-tabs a[href="#grafico"]').on('shown.bs.tab', function(event){
+            $("#grafico").html($("#loading").html());
             var data = {
                 'local_id': $("#local_id").val(),
                 'fecha': $("#fecha").val(),
@@ -88,7 +92,9 @@
                 'grupo_id': $("#grupo_id").val(),
                 'marca_id': $("#marca_id").val(),
                 'linea_id': $("#linea_id").val(),
-                'familia_id': $("#familia_id").val()
+                'familia_id': $("#familia_id").val(),
+                'tipo': $("#tipo").val(),
+                'limit': $(".dataTables_length select").val()
             };
 
             $.post("<?= base_url()?>reporte/productoVendido/grafico/", data, function(respuesta){
@@ -132,12 +138,12 @@
                     },
                     legend: {
                         layout: 'vertical',
-                        align: 'right',
+                        align: 'left',
                         verticalAlign: 'top',
-                        x: -40,
-                        y: 80,
+                        x: -10,
+                        y: -15,
                         floating: true,
-                        borderWidth: 1,
+                        borderWidth: 0,
                         backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
                         shadow: true
                     },
@@ -172,7 +178,8 @@
             'grupo_id': $("#grupo_id").val(),
             'marca_id': $("#marca_id").val(),
             'linea_id': $("#linea_id").val(),
-            'familia_id': $("#familia_id").val()
+            'familia_id': $("#familia_id").val(),
+            'tipo': $("#tipo").val()
         };
 
         var win = window.open('<?= base_url()?>reporte/productoVendido/pdf?data=' + JSON.stringify(data), '_blank');
@@ -187,7 +194,8 @@
             'grupo_id': $("#grupo_id").val(),
             'marca_id': $("#marca_id").val(),
             'linea_id': $("#linea_id").val(),
-            'familia_id': $("#familia_id").val()
+            'familia_id': $("#familia_id").val(),
+            'tipo': $("#tipo").val()
         };
 
         var win = window.open('<?= base_url()?>reporte/productoVendido/excel?data=' + JSON.stringify(data), '_blank');
