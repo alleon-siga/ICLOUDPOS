@@ -352,7 +352,7 @@
                         </span>
                         <button type="button" class="btn btn-danger"
                                 onclick="$('#dialog_venta_credito').modal('hide');"><i
-                                    class="fa fa-close"></i> Cancelar
+                                    class="fa fa-close"></i> Cerrar
                         </button>
                     </div>
                 </div>
@@ -447,8 +447,8 @@
                             </a>
                             <button class="btn btn-default" style="margin-bottom:5px"
                                     type="button"
-                                    onclick="$('#dialog_venta_credito').modal('hide');"><i
-                                        class="fa fa-close"></i> Cancelar
+                                    onclick="close_modal()"><i
+                                        class="fa fa-close"></i> Cerrar
                             </button>
                         </div>
                     </div>
@@ -632,6 +632,11 @@
             });
         })
         ;
+
+        function close_modal(){
+            $('#dialog_venta_credito').modal('hide');
+            $(".modal-backdrop").remove();
+        }
 
         function credito_init(precio_contado, estado) {
             $("#c_precio_contado").val(precio_contado);

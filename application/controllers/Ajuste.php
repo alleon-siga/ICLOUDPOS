@@ -60,11 +60,12 @@ class Ajuste extends MY_Controller
         $ajuste['total_importe'] = $this->input->post('total_importe');
 
         $ajuste['operacion_otros'] = $this->input->post('operacion_otros');
+        $otros_val = $this->input->post('otros_val');
 
         $detalles_productos = json_decode($this->input->post('detalles_productos', true));
 
         
-        $ajuste_id = $this->ajuste_model->save_ajuste($ajuste, $detalles_productos);
+        $ajuste_id = $this->ajuste_model->save_ajuste($ajuste, $detalles_productos, $otros_val);
         
 
         if ($ajuste_id) {

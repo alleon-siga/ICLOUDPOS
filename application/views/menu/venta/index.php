@@ -44,7 +44,9 @@
                                 <?php foreach ($clientes as $cliente): ?>
                                     <option
                                             value="<?php echo $cliente['id_cliente']; ?>"
-                                            data-ruc="<?= $cliente['ruc'] ?>"><?php echo $cliente['razon_social']; ?></option>
+                                            data-ruc="<?= $cliente['ruc'] ?>"
+                                        <?= $cliente['id_cliente'] == 1 ? 'selected' : '' ?>
+                                    ><?php echo $cliente['razon_social']; ?></option>
                                 <?php endforeach; ?>
                             </select>
                             <a id="cliente_new" href="#" class="input-group-addon btn-default">
@@ -587,7 +589,7 @@
                 <div class="modal-body ">
                     <label class="control-label">Nota:</label>
                     <textarea type="text" name="venta_nota" rows="5" id="venta_nota"
-                              class='form-control textarea-editor' >
+                              class='form-control textarea-editor'>
                     </textarea>
                 </div>
 

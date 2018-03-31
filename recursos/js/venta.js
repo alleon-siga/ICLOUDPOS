@@ -478,9 +478,9 @@ $(document).ready(function () {
         $.ajax({
             url: ruta + 'venta_new',
             success: function (data) {
-                $('#page-content').html(data);
                 $("#loading_save_venta").modal('hide');
                 $(".modal-backdrop").remove();
+                $('#page-content').html(data);
             }
         });
     });
@@ -729,7 +729,6 @@ function save_venta_contado(imprimir) {
                 show_msg('success', '<h4>Correcto. </h4><p>La venta numero ' + data.venta.venta_id + ' se ha guardado con exito.</p>');
                 if (imprimir == '1') {
                     $("#dialog_venta_imprimir").html('');
-                    $("#dialog_venta_imprimir").modal('show');
 
                     $.ajax({
                         url: ruta + 'venta_new/get_venta_previa',
@@ -737,8 +736,10 @@ function save_venta_contado(imprimir) {
                         data: {'venta_id': data.venta.venta_id},
 
                         success: function (data) {
-                            $("#dialog_venta_imprimir").html(data);
                             $("#loading_save_venta").modal('hide');
+                            $(".modal-backdrop").remove();
+                            $("#dialog_venta_imprimir").html(data);
+                            $("#dialog_venta_imprimir").modal('show');
                         }
                     });
                 } else {
@@ -822,7 +823,6 @@ function save_venta_credito(imprimir) {
                 show_msg('success', '<h4>Correcto. </h4><p>La venta numero ' + data.venta.venta_id + ' se ha guardado con exito.</p>');
                 if (imprimir == '1') {
                     $("#dialog_venta_imprimir").html('');
-                    $("#dialog_venta_imprimir").modal('show');
 
                     setTimeout(function () {
                         $.ajax({
@@ -831,9 +831,10 @@ function save_venta_credito(imprimir) {
                             data: {'venta_id': data.venta.venta_id},
 
                             success: function (data) {
-                                $("#dialog_venta_imprimir").html(data);
                                 $("#loading_save_venta").modal('hide');
                                 $(".modal-backdrop").remove();
+                                $("#dialog_venta_imprimir").html(data);
+                                $("#dialog_venta_imprimir").modal('show');
                             }
                         });
                     }, 500);
@@ -841,9 +842,9 @@ function save_venta_credito(imprimir) {
                     $.ajax({
                         url: ruta + 'venta_new',
                         success: function (data) {
-                            $('#page-content').html(data);
                             $("#loading_save_venta").modal('hide');
                             $(".modal-backdrop").remove();
+                            $('#page-content').html(data);
                         }
                     });
                 }
