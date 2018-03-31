@@ -12,7 +12,7 @@ class ajuste_model extends CI_Model
     }
 
 
-    function save_ajuste($ajuste, $productos)
+    function save_ajuste($ajuste, $productos, $otros_val)
     {
 
 
@@ -21,7 +21,7 @@ class ajuste_model extends CI_Model
         $ajuste_id = $this->db->insert_id();
 
 
-        $this->save_producto_detalles($ajuste_id, $ajuste['local_id'], $productos);
+        $this->save_producto_detalles($ajuste_id, $ajuste['local_id'], $productos, $otros_val);
 
         return $ajuste_id;
 
@@ -29,7 +29,7 @@ class ajuste_model extends CI_Model
 
     
 
-    private function save_producto_detalles($ajuste_id, $local_id, $productos)
+    private function save_producto_detalles($ajuste_id, $local_id, $productos, $otros_val)
     {
         //Preparo los detalles de la venta para insertarlo y sus historicos
         $ajuste = $this->db->get_where('ajuste', array('id'=>$ajuste_id))->row();
@@ -89,7 +89,8 @@ class ajuste_model extends CI_Model
                 'operacion' => $ajuste->operacion,
                 'serie' => $ajuste->serie,
                 'numero' => $ajuste->numero,
-                'ref_id' => $ajuste->id
+                'ref_id' => $ajuste->id,
+                'ref_val' => $otros_val
             );
             $this->kardex_model->set_kardex($values);
 

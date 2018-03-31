@@ -198,12 +198,18 @@ $(document).ready(function () {
 
         var entrada = '<option value="1">Entrada</option>';
         var salida = '<option value="2">Salida</option>';
+        $('#otros_valor_block').hide();
+        $('#otros_val').val('');
 
         if (oper == '07' || oper == '12' || oper == '13' || oper == '14' || oper == '15') {
             $("#tipo_movimiento").html(salida);
         }
         else if (oper == '09' || oper == '99') {
             $("#tipo_movimiento").html(entrada + salida);
+
+            if (oper == '99') {
+                $('#otros_valor_block').show();
+            }
         }
         else if (oper == '16') {
             $("#tipo_movimiento").html(entrada);
