@@ -12,7 +12,7 @@
     <script src="<?php echo $ruta; ?>recursos/js/vendor/jquery-1.11.1.min.js"></script>
 
     <meta name="description"
-          content="ProUI is a Responsive Bootstrap Admin Template created by pixelcave and published on Themeforest.">
+          content="iCloudPOS, sistema de inventario, ventas y gastos web y movil">
     <meta name="author" content="pixelcave">
     <meta name="robots" content="noindex, nofollow">
 
@@ -72,7 +72,7 @@
                           //  document.getElementById("error").innerHTML = "<a>Usuario o clave incorrecta, por favor vuelva a intentar</a>";
 
                           //  document.getElementById('light').style.display='block';document.getElementById('fade').style.display='block';
-               $("#light").html('Usuario o clave incorrecta, por favor vuelva a intentar')        
+               $("#light").html('Usuario o clave incorrecta, por favor vuelva a intentar')
     $("#light").delay("slow").fadeIn().delay(2000).fadeOut();
 
 
@@ -158,13 +158,13 @@ color: white;
 
     <div class="login-title text-center" style="-webkit-border-radius: 18px 18px 18px 18px; border-radius: 18px 18px 18px 18px;
 -webkit-box-shadow: 0 0 4px 4px #000000; box-shadow: 0 0 4px 4px #000000; background-color: rgba(102, 102, 102, 0.6); color: rgba(102, 102, 102, 0.6);">
-            
+
         <div>
-            
+
             <div class="sidebar-user-avatar" style="margin-left:0px; position: relative; left:10%; margin-top:-2%">
                     <img src="<?php echo base_url();?>/recursos/img/punto_de_venta_v2.jpg" alt="avatar">
             </div>
-    
+
                 <h1>
                     <strong><?php echo valueOptionDB('EMPRESA_NOMBRE', 'NEW LEVEL') ?></strong><br>
                     <small><strong>Iniciar Sesi&oacute;n</strong></small> <!--or <strong>Register</strong></small>-->
@@ -218,7 +218,7 @@ color: white;
                 </div>
             </div>-->
             <div class="">
-               
+
                 <div class="">
                     <button id="btnlogin" type="button" class="btn_login"> Iniciar
                     </button>
