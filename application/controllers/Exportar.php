@@ -157,9 +157,11 @@ class exportar extends MY_Controller
             //VENTA CONTADO
             $this->db->select_sum('venta.total', 'total')
                 ->from('venta')
+                ->join('caja_movimiento', 'caja_movimiento.ref_id = venta.venta_id')
+                ->where('caja_movimiento.operacion', 'VENTA')
                 ->where('venta.id_moneda', $mon["id_moneda"])
-                ->where('venta.fecha >=', $fecha)
-                ->where('venta.fecha <', $fechadespues)
+                ->where('caja_movimiento.fecha_mov >=', $fecha)
+                ->where('caja_movimiento.fecha_mov <', $fechadespues)
                 ->where('venta.venta_status', "COMPLETADO")
                 ->where('venta.condicion_pago', 1);
 
@@ -177,8 +179,8 @@ class exportar extends MY_Controller
                 ->from('venta')
                 ->join('caja_movimiento', 'caja_movimiento.ref_id = venta.venta_id')
                 ->where('venta.id_moneda', $mon["id_moneda"])
-                ->where('venta.fecha >=', $fecha)
-                ->where('venta.fecha <', $fechadespues)
+                ->where('caja_movimiento.fecha_mov >=', $fecha)
+                ->where('caja_movimiento.fecha_mov <', $fechadespues)
                 ->where('venta.venta_status', "COMPLETADO")
                 ->where('venta.condicion_pago', 1)
                 ->where('caja_movimiento.operacion', 'VENTA');
@@ -201,9 +203,11 @@ class exportar extends MY_Controller
             //VENTA INICIAL
             $this->db->select_sum('venta.inicial', 'total')
                 ->from('venta')
+                ->join('caja_movimiento', 'caja_movimiento.ref_id = venta.venta_id')
+                ->where('caja_movimiento.operacion', 'VENTA')
                 ->where('venta.id_moneda', $mon["id_moneda"])
-                ->where('venta.fecha >=', $fecha)
-                ->where('venta.fecha <', $fechadespues)
+                ->where('caja_movimiento.fecha_mov >=', $fecha)
+                ->where('caja_movimiento.fecha_mov <', $fechadespues)
                 ->where('venta.venta_status', "COMPLETADO")
                 ->where('venta.condicion_pago', 2);
 
@@ -221,8 +225,8 @@ class exportar extends MY_Controller
                 ->from('venta')
                 ->join('caja_movimiento', 'caja_movimiento.ref_id = venta.venta_id')
                 ->where('venta.id_moneda', $mon["id_moneda"])
-                ->where('venta.fecha >=', $fecha)
-                ->where('venta.fecha <', $fechadespues)
+                ->where('caja_movimiento.fecha_mov >=', $fecha)
+                ->where('caja_movimiento.fecha_mov <', $fechadespues)
                 ->where('venta.venta_status', "COMPLETADO")
                 ->where('venta.condicion_pago', 2)
                 ->where('caja_movimiento.operacion', 'VENTA');
@@ -266,9 +270,11 @@ class exportar extends MY_Controller
                 ->from('credito_cuotas_abono')
                 ->join('credito_cuotas', 'credito_cuotas.id_credito_cuota = credito_cuotas_abono.credito_cuota_id')
                 ->join('venta', 'venta.venta_id = credito_cuotas.id_venta')
+                ->join('caja_movimiento', 'caja_movimiento.ref_id = venta.venta_id')
+                ->where('caja_movimiento.operacion', 'CUOTA')
                 ->where('venta.id_moneda', $mon["id_moneda"])
-                ->where('credito_cuotas_abono.fecha_abono >=', $fecha)
-                ->where('credito_cuotas_abono.fecha_abono <', $fechadespues);
+                ->where('caja_movimiento.fecha_mov >=', $fecha)
+                ->where('caja_movimiento.fecha_mov <', $fechadespues);
 
             if ($id_local != 0) {
                 $this->db->where('venta.local_id', $id_local);
@@ -286,8 +292,8 @@ class exportar extends MY_Controller
                 ->join('venta', 'venta.venta_id = credito_cuotas.id_venta')
                 ->join('caja_movimiento', 'caja_movimiento.ref_id = venta.venta_id')
                 ->where('venta.id_moneda', $mon["id_moneda"])
-                ->where('credito_cuotas_abono.fecha_abono >=', $fecha)
-                ->where('credito_cuotas_abono.fecha_abono <', $fechadespues)
+                ->where('caja_movimiento.fecha_mov >=', $fecha)
+                ->where('caja_movimiento.fecha_mov <', $fechadespues)
                 ->where('caja_movimiento.operacion', 'CUOTA');
 
             if ($id_local != 0) {
@@ -307,9 +313,11 @@ class exportar extends MY_Controller
             //COMPRAS AL CONTADO
             $this->db->select_sum('ingreso.total_ingreso', 'total')
                 ->from('ingreso')
+                ->join('caja_pendiente', "caja_pendiente.ref_id = ingreso.id_ingreso AND caja_pendiente.tipo = 'COMPRA'")
+                ->join('caja_movimiento', "caja_movimiento.ref_id = caja_pendiente.id AND caja_movimiento.operacion = 'COMPRA'")
                 ->where('ingreso.id_moneda', $mon["id_moneda"])
-                ->where('ingreso.fecha_registro >=', $fecha)
-                ->where('ingreso.fecha_registro <', $fechadespues)
+                ->where('caja_movimiento.fecha_mov >=', $fecha)
+                ->where('caja_movimiento.fecha_mov <', $fechadespues)
                 ->where('ingreso.ingreso_status', "COMPLETADO")
                 ->where('ingreso.pago', "CONTADO");
 
@@ -347,9 +355,11 @@ class exportar extends MY_Controller
                 ->from('pagos_ingreso')
                 ->join('ingreso_credito_cuotas', 'ingreso_credito_cuotas.id = pagos_ingreso.pagoingreso_ingreso_id')
                 ->join('ingreso', 'ingreso.id_ingreso = ingreso_credito_cuotas.ingreso_id')
+                ->join('caja_pendiente', "caja_pendiente.ref_id = pagos_ingreso.pagoingreso_id AND caja_pendiente.tipo = 'PAGOS_CUOTAS'")
+                ->join('caja_movimiento', "caja_movimiento.ref_id = caja_pendiente.id AND caja_movimiento.operacion = 'PAGOS_CUOTAS'")
                 ->where('ingreso.id_moneda', $mon["id_moneda"])
-                ->where('pagos_ingreso.pagoingreso_fecha >=', $fecha)
-                ->where('pagos_ingreso.pagoingreso_fecha <', $fechadespues);
+                ->where('caja_movimiento.fecha_mov >=', $fecha)
+                ->where('caja_movimiento.fecha_mov <', $fechadespues);
 
             if ($id_local != 0) {
                 $this->db->where('ingreso.local_id', $id_local);
@@ -364,8 +374,10 @@ class exportar extends MY_Controller
             //GASTOS
             $this->db->select_sum('gastos.total', 'total')
                 ->from('gastos')
-                ->where('gastos.fecha >=', $fecha)
-                ->where('gastos.fecha <', $fechadespues)
+                ->join('caja_pendiente', "caja_pendiente.ref_id = gastos.id_gastos AND caja_pendiente.tipo = 'GASTOS'")
+                ->join('caja_movimiento', "caja_movimiento.ref_id = caja_pendiente.id AND caja_movimiento.operacion = 'GASTOS'")
+                ->where('caja_movimiento.fecha_mov >=', $fecha)
+                ->where('caja_movimiento.fecha_mov <', $fechadespues)
                 ->where('gastos.id_moneda', $mon["id_moneda"])
                 ->where('gastos.status_gastos', 0);
 
