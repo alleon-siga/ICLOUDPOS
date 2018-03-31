@@ -618,6 +618,7 @@ class ingresos extends MY_Controller
                 ->get_where('ingreso', array('id_ingreso' => $id_ingreso))->row();
 
             $dataresult['ingreso_detalles'] = $this->db->join('producto', 'producto.producto_id=detalleingreso.id_producto')
+                ->join('unidades', 'unidades.id_unidad = detalleingreso.unidad_medida')
                 ->get_where('detalleingreso', array('id_ingreso' => $id_ingreso))->result();
 
             $dataresult['credito'] = $this->db->get_where('ingreso_credito', array('ingreso_id' => $id_ingreso))->row();
