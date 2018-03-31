@@ -94,10 +94,11 @@
                         </div>
                         <div class="box-content box-nomargin">
                             <div id="lstTabla" class="table-responsive">
-
                                 <table id="table" class="table table-striped table-bordered tableStyle">
                                     <thead>
+                                    <th><?= getCodigoNombre() ?></th>
                                     <th>Producto</th>
+                                    <th>UM</th>
                                     <th>Cantidad</th>
                                     <th>Precio</th>
                                     <th>Subtotal</th>
@@ -107,7 +108,9 @@
                                     <?php if (count($ingreso_detalles > 0)) {
                                         foreach ($ingreso_detalles as $row): ?>
                                             <tr>
+                                                <td><?= getCodigoValue(sumCod($row->producto_id, 4), $row->producto_codigo_interno) ?></td>
                                                 <td><?= $row->producto_nombre ?></td>
+                                                <td><?= $row->nombre_unidad ?></td>
                                                 <td><?= number_format($row->cantidad, 2, ',', '.') ?></td>
                                                 <td><?= $ingreso->simbolo . ' ' . number_format($row->precio, 2, ',', '.') ?></td>
                                                 <td><?= $ingreso->simbolo . ' ' . number_format($row->total_detalle, 2, ',', '.') ?></td>
