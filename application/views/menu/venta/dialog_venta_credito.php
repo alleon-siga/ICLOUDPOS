@@ -352,7 +352,7 @@
                         </span>
                         <button type="button" class="btn btn-danger"
                                 onclick="$('#dialog_venta_credito').modal('hide');"><i
-                                    class="fa fa-close"></i> Cerrar
+                                    class="fa fa-close"></i> Cancelar
                         </button>
                     </div>
                 </div>
@@ -448,7 +448,7 @@
                             <button class="btn btn-default" style="margin-bottom:5px"
                                     type="button"
                                     onclick="close_modal()"><i
-                                        class="fa fa-close"></i> Cerrar
+                                        class="fa fa-close"></i> Cancelar
                             </button>
                         </div>
                     </div>
