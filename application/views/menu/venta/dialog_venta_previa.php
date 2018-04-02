@@ -73,7 +73,7 @@
                     <button class="btn btn-danger"
                             type="button"
                             onclick="close_previa_modal()"><i
-                                class="fa fa-close"></i> Cancelar
+                                class="fa fa-close"></i> Cerrar
                     </button>
                 </div>
             </div>
@@ -448,7 +448,7 @@
                     <button class="btn btn-danger"
                             type="button"
                             onclick="close_previa_modal()"><i
-                                class="fa fa-close"></i> Cancelar
+                                class="fa fa-close"></i> Cerrar
                     </button>
                 </div>
             </div>

@@ -287,6 +287,12 @@
                     <br>
                     <div class="row">
                         <div class="col-md-8">
+                            <?php if (count($kardex) > 0): ?>
+                                <h4>Anulaciones</h4>
+                                <?php foreach ($kardex as $k): ?>
+                                    <h5><?= 'NC ' . $k->serie . ' - ' . $k->numero ?></h5>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                             <?php if ($venta->condicion_id == '2'): ?>
                                 <h4>Cuotas y Vencimientos</h4>
                                 <table class="table table-condensed">

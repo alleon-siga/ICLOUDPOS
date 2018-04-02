@@ -909,6 +909,9 @@ class venta_new_model extends CI_Model
             }
             $total = $subtotal + $impuesto;
         }
+        else{
+            $subtotal = $total;
+        }
 
         $this->db->where('venta_id', $venta_id);
         $this->db->update('venta', array(
