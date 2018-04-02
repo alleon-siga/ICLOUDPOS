@@ -1,4 +1,4 @@
-<div class="alertD" >
+<div class="alertD" style="display: none;">
 	<div class="col-xs-12 header">
 		<a href="#" class="close">
 			<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 159.4 159.3" style="enable-background:new 0 0 159.4 159.3;" xml:space="preserve">
