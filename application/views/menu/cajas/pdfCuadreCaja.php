@@ -177,11 +177,11 @@
             </tr>
         </table>
 
-        <p><strong>INGRESOS - EGRESOS</strong></p>
+        <p><strong>INGRESOS - EGRESOS (EFECTIVO)</strong></p>
         <table border="1" cellspacing="0" cellpadding="3">
             <tr>
                 <td style="width: 60%; font-weight: bold;">SALDO</td>
-                <td style="text-align: right; font-weight: bold;"><?= $moneda['simbolo'] ?> <?= number_format($total_ingresos - $total_egresos, 2) ?></td>
+                <td style="text-align: right; font-weight: bold;"><?= $moneda['simbolo'] ?> <?= number_format($total_ingresos - $total_egreso_efectivo[$moneda['id_moneda']], 2) ?></td>
             </tr>
         </table>
     </div>

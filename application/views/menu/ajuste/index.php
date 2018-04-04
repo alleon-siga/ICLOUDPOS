@@ -1,4 +1,4 @@
-<?php $md = get_moneda_defecto()?>
+<?php $md = get_moneda_defecto() ?>
 <ul class="breadcrumb breadcrumb-top">
     <li>Ajuste de Inventario</li>
     <li><a href="">Operaciones de Entrada/Salida</a></li>
@@ -39,7 +39,7 @@
                         <select name="local_id" id="local_id" class='form-control'>
                             <?php foreach ($locales as $local): ?>
                                 <option <?= $local->local_id == $local->local_defecto && $this->session->userdata('esSuper') != 1 ? 'selected="selected"' : '' ?>
-                                    value="<?= $local->local_id ?>"><?= $local->local_nombre ?></option>
+                                        value="<?= $local->local_id ?>"><?= $local->local_nombre ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -51,8 +51,8 @@
                             <option value=""></option>
                             <?php foreach ($productos as $producto): ?>
                                 <option value="<?= $producto->producto_id ?>">
-                                    <?php $barra = $barra_activa->activo == 1 && $producto->barra != "" ? "CB: ".$producto->barra : ""?>
-                                    <?= getCodigoValue($producto->producto_id, $producto->codigo) . ' - ' . $producto->producto_nombre . " ". $barra ?>
+                                    <?php $barra = $barra_activa->activo == 1 && $producto->barra != "" ? "CB: " . $producto->barra : "" ?>
+                                    <?= getCodigoValue($producto->producto_id, $producto->codigo) . ' - ' . $producto->producto_nombre . " " . $barra ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
@@ -186,8 +186,8 @@
                                                 <input type="checkbox" id="tabla_vista"> <b>Mostrar Detalles</b>
                                             </span>
                             <table
-                                class="table table-striped dataTable table-condensed table-bordered dataTable-noheader table-has-pover dataTable-nosort"
-                                data-nosort="0">
+                                    class="table table-striped dataTable table-condensed table-bordered dataTable-noheader table-has-pover dataTable-nosort"
+                                    data-nosort="0">
                                 <thead id="head_productos"></thead>
                                 <tbody id="body_productos"></tbody>
                             </table>
@@ -207,18 +207,18 @@
                         <label class="control-label">Moneda:</label>
                     </div>
                     <div class="col-md-7" id="moneda_block_text" style="display: none;">
-                        <label class="control-label" id="moneda_text"><?= $monedas[0]['nombre']?></label>
+                        <label class="control-label" id="moneda_text"><?= $monedas[0]['nombre'] ?></label>
                     </div>
                     <div class="col-md-7" id="moneda_block_input" style="display: block;">
                         <div class="help-key badge label-success" style="display: none;">5</div>
                         <select name="moneda_id" id="moneda_id" class='form-control'>
                             <?php foreach ($monedas as $moneda): ?>
                                 <option
-                                    data-tasa="<?php echo $moneda['tasa_soles'] ?>"
-                                    data-nombre="<?php echo $moneda['nombre'] ?>"
-                                    data-simbolo="<?php echo $moneda['simbolo'] ?>"
-                                    data-oper="<?php echo $moneda['ope_tasa'] ?>"
-                                    value="<?= $moneda['id_moneda'] ?>"><?= $moneda['nombre'] ?></option>
+                                        data-tasa="<?php echo $moneda['tasa_soles'] ?>"
+                                        data-nombre="<?php echo $moneda['nombre'] ?>"
+                                        data-simbolo="<?php echo $moneda['simbolo'] ?>"
+                                        data-oper="<?php echo $moneda['ope_tasa'] ?>"
+                                        value="<?= $moneda['id_moneda'] ?>"><?= $moneda['nombre'] ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -238,7 +238,7 @@
                                    name="tasa" id="tasa" value="0.00"
                                    onkeydown="return soloDecimal4(this, event);">
                             <a id="refresh_tasa" href="#" class="input-group-addon" style="display: none;"><i
-                                    class="fa fa-refresh"></i></a>
+                                        class="fa fa-refresh"></i></a>
                         </div>
                     </div>
                 </div>
@@ -253,10 +253,11 @@
                         <label class="control-label" id="movimiento_text">Entrada</label>
                     </div>
                     <div class="col-md-7" id="movimiento_block_input">
-                        <select name="tipo_movimiento" id="tipo_movimiento" data-placeholder="Seleccione" class='form-control'>
-                                <option value=""></option>
-                                <option value="1">Entrada</option>
-                                <option value="2">Salida</option>
+                        <select name="tipo_movimiento" id="tipo_movimiento" data-placeholder="Seleccione"
+                                class='form-control'>
+                            <option value=""></option>
+                            <option value="1">Entrada</option>
+                            <option value="2">Salida</option>
                         </select>
                     </div>
                 </div>
@@ -272,16 +273,26 @@
                     </div>
                     <div class="col-md-7" id="operacion_block_input">
                         <select name="tipo_operacion" id="tipo_operacion"
-                        data-placeholder="Selecciona" class='form-control'>
+                                data-placeholder="Selecciona" class='form-control'>
                             <option value=""></option>
-                            <?php foreach (get_sunat_operacion() as $key => $value):?>
-                                <option value="<?=$key?>"><?=$value?></option>
-                            <?php endforeach;?>
+                            <?php foreach (get_sunat_operacion() as $key => $value): ?>
+                                <option value="<?= $key ?>"><?= $value ?></option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                 </div>
 
 
+                <div class="row" id="otros_valor_block" style="display: none;">
+                    <div class="col-md-5 label-title">
+                        <label class="control-label">Otros Valor:</label>
+                    </div>
+                    <div class="col-md-7">
+                        <textarea class="form-control" name="otros_val" id="otros_val">
+
+                        </textarea>
+                    </div>
+                </div>
 
 
                 <hr class="hr-margin-10">
@@ -295,11 +306,12 @@
                         <label class="control-label" id="documento_text"></label>
                     </div>
                     <div class="col-md-7" id="documento_block_input">
-                        <select name="tipo_documento" id="tipo_documento" class='form-control' data-placeholder="Selecciona">
+                        <select name="tipo_documento" id="tipo_documento" class='form-control'
+                                data-placeholder="Selecciona">
                             <option value=""></option>
-                            <?php foreach (get_sunat_documento() as $key => $value):?>
-                                <option value="<?=$key?>"><?=$value?></option>
-                            <?php endforeach;?>
+                            <?php foreach (get_sunat_documento() as $key => $value): ?>
+                                <option value="<?= $key ?>"><?= $value ?></option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                 </div>
@@ -398,21 +410,18 @@
     <div class="form-actions">
 
         <button class="btn" id="terminar_ajuste" type="button"><i
-                class="fa fa-save fa-3x text-info fa-fw"></i> <br>F6 Guardar
+                    class="fa fa-save fa-3x text-info fa-fw"></i> <br>F6 Guardar
         </button>
-
 
 
         <button type="button" class="btn" id="reiniciar_ajuste"><i class="fa fa-refresh fa-3x text-info fa-fw"></i><br>Reiniciar
         </button>
         <button class="btn" type="button" id="cancelar_ajuste"><i
-                class="fa fa-remove fa-3x text-warning fa-fw"></i><br>Cancelar
+                    class="fa fa-remove fa-3x text-warning fa-fw"></i><br>Cancelar
         </button>
     </div>
 
 </div>
-
-
 
 
 <div class="modal fade" id="dialog_venta_confirm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"

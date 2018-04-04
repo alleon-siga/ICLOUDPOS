@@ -432,6 +432,8 @@ class venta_new_model extends CI_Model
 
         $this->save_producto_detalles($venta_id, $venta['id_documento'], $venta['local_id'], $productos);
 
+
+
         if ($venta['venta_status'] == 'COMPLETADO') {
             //guardo la relacion del modo de pago
             if ($venta['vc_forma_pago'] != 7) {
@@ -450,6 +452,8 @@ class venta_new_model extends CI_Model
                 $this->db->insert('venta_tarjeta', $tarjeta);
             }
         }
+
+        $this->recalc_totales($venta_id);
 
         return $venta_id;
 
@@ -480,8 +484,8 @@ class venta_new_model extends CI_Model
             'subtotal' => $venta['subtotal'],
             'total_impuesto' => $venta['impuesto'],
             'total' => $venta['c_precio_credito'] + $venta['c_inicial'],
-            'pagado' => 0,
-            'vuelto' => 0,
+            'pagado' => $venta['vc_importe'],
+            'vuelto' => $venta['vc_vuelto'],
             'tasa_cambio' => $venta['tasa_cambio'],
             'dni_garante' => $venta['c_dni_garante'],
             'inicial' => $venta['c_inicial'],
@@ -576,6 +580,8 @@ class venta_new_model extends CI_Model
                 $this->db->insert('venta_tarjeta', $tarjeta);
             }
         }
+
+        $this->recalc_totales($venta_id);
 
         return $venta_id;
 
@@ -884,10 +890,10 @@ class venta_new_model extends CI_Model
         $impuesto = 0;
         $subtotal = 0;
         $total = 0;
-
         foreach ($detalles as $d) {
             $total += $d->cantidad * $d->precio;
         }
+
 
         if ($venta->tipo_impuesto == 1) {
             foreach ($detalles as $d) {
@@ -902,6 +908,9 @@ class venta_new_model extends CI_Model
                 $impuesto += (($d->cantidad * $d->precio) * $factor) - ($d->cantidad * $d->precio);
             }
             $total = $subtotal + $impuesto;
+        }
+        else{
+            $subtotal = $total;
         }
 
         $this->db->where('venta_id', $venta_id);

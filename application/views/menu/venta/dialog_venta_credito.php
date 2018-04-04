@@ -447,7 +447,7 @@
                             </a>
                             <button class="btn btn-default" style="margin-bottom:5px"
                                     type="button"
-                                    onclick="$('#dialog_venta_credito').modal('hide');"><i
+                                    onclick="close_modal()"><i
                                         class="fa fa-close"></i> Cancelar
                             </button>
                         </div>
@@ -632,6 +632,11 @@
             });
         })
         ;
+
+        function close_modal(){
+            $('#dialog_venta_credito').modal('hide');
+            $(".modal-backdrop").remove();
+        }
 
         function credito_init(precio_contado, estado) {
             $("#c_precio_contado").val(precio_contado);

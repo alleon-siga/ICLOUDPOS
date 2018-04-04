@@ -89,7 +89,7 @@ class cajas_mov_model extends CI_Model
 
                 $mov->operacion_nombre = $mov->operacion == 'VENTA_ANULADA' ? 'VENTA ANULADA' : 'VENTA DEVUELTA';
                 $mov->numero = 'NC ' . $kardex->serie . ' - ' . $kardex->numero;
-                $mov->ref_val = 'NP ' . $mov->ref_id;
+                $mov->ref_val = 'NP ' . $caja_pendiente->ref_id;
             }
 
             if ($mov->operacion == 'INGRESO_ANULADO') {

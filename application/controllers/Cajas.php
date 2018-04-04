@@ -19,8 +19,14 @@ class cajas extends MY_Controller
     function index($local_id = false)
     {
 
-        $data['locales'] = $this->local_model->get_all();
-        $local = $local_id != false ? $local_id : $data['locales'][0]['int_local_id'];
+        if ($this->session->userdata('esSuper') == 1) {
+            $data['locales'] = $this->local_model->get_all();
+        } else {
+            $usu = $this->session->userdata('nUsuCodigo');
+            $data['locales'] = $this->local_model->get_all_usu($usu);
+        }
+
+        $local = $local_id != false ? $local_id : $this->session->userdata('id_local');
         $data['cajas'] = $this->cajas_model->get_all($local);
         $data['local_selected'] = $local;
         $dataCuerpo['cuerpo'] = $this->load->view('menu/cajas/cajas', $data, true);

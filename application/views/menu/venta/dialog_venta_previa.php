@@ -72,8 +72,8 @@
 
                     <button class="btn btn-danger"
                             type="button"
-                            onclick="$('#dialog_venta_imprimir').modal('hide');"><i
-                                class="fa fa-close"></i> Cancelar
+                            onclick="close_previa_modal()"><i
+                                class="fa fa-close"></i> Cerrar
                     </button>
                 </div>
             </div>
@@ -447,8 +447,8 @@
 
                     <button class="btn btn-danger"
                             type="button"
-                            onclick="$('#dialog_venta_imprimir').modal('hide');"><i
-                                class="fa fa-close"></i> Cancelar
+                            onclick="close_previa_modal()"><i
+                                class="fa fa-close"></i> Cerrar
                     </button>
                 </div>
             </div>
@@ -464,6 +464,12 @@
 
 
 <script>
+
+    function close_previa_modal(){
+        $('#dialog_venta_imprimir').modal('hide');
+        $(".modal-backdrop").remove();
+    }
+
     $(document).ready(function () {
 
         $('#btn_venta_test').on('click', function () {

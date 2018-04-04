@@ -834,9 +834,11 @@ AND cantidad < producto_stockminimo + (producto_stockminimo * 30)/100 and cantid
         }
         $tasa_soles = $moneda['tasa_soles'];
         $moneda_nombre = $moneda['nombre'];
+        $moneda_simbolo = $moneda['simbolo'];
 
         $data['tasa_soles'] = $tasa_soles;
         $data['moneda_nombre'] = $moneda_nombre;
+        $data['moneda_simbolo'] = $moneda_simbolo;
         /* if (!empty($monedas)) {
              $moneda = $this->monedas_model->get_by('id_moneda', $monedas);
              if (intval($moneda['tasa_soles']) > 0) {
