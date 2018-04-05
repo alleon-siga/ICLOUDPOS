@@ -243,7 +243,7 @@ class Venta_new_api_model extends CI_Model
         $venta['impuesto'] = ($venta['c_precio_credito'] + $venta['c_inicial']) - $venta['subtotal'];
 
         //preparo la venta
-        $venta_contado = array(
+        $venta_credito = array(
             'local_id' => $venta['local_id'],
             'id_documento' => $venta['id_documento'],
             'id_cliente' => $venta['id_cliente'],
@@ -255,7 +255,7 @@ class Venta_new_api_model extends CI_Model
             'factura_impresa' => 0,
             'subtotal' => $venta['subtotal'],
             'total_impuesto' => $venta['impuesto'],
-            'total' => $venta['c_precio_credito'],
+            'total' => $venta['c_precio_credito'] + $venta['c_inicial'],
             'pagado' => 0,
             'vuelto' => 0,
             'tasa_cambio' => $venta['tasa_cambio'],
@@ -268,11 +268,11 @@ class Venta_new_api_model extends CI_Model
 
 
         //inserto la venta
-        $this->db->insert('venta', $venta_contado);
+        $this->db->insert('venta', $venta_credito);
         $venta_id = $this->db->insert_id();
 
-        if ($venta['venta_status'] != 'CAJA' && $venta_contado['inicial'] > 0) {
-            $moneda_id = $venta_contado['id_moneda'];
+        if ($venta['venta_status'] != 'CAJA' && $venta_credito['inicial'] > 0) {
+            $moneda_id = $venta_credito['id_moneda'];
 
             if ($venta['vc_forma_pago'] == 4 || $venta['vc_forma_pago'] == 8 || $venta['vc_forma_pago'] == 9) {
                 $banco = $this->db->get_where('banco', array('banco_id' => $venta['vc_banco_id']))->row();
@@ -280,12 +280,12 @@ class Venta_new_api_model extends CI_Model
             } else {
                 $cuenta_id = $this->cajas_api_model->get_cuenta_id(array(
                     'moneda_id' => $moneda_id,
-                    'local_id' => $venta_contado['local_id']));
+                    'local_id' => $venta_credito['local_id']));
             }
 
             $cuenta_old = $this->cajas_api_model->get_cuenta($cuenta_id);
 
-            $this->cajas_api_model->update_saldo($cuenta_id, $venta_contado['inicial']);
+            $this->cajas_api_model->update_saldo($cuenta_id, $venta_credito['inicial']);
 
             $this->cajas_mov_api_model->save_mov(array(
                 'caja_desglose_id' => $cuenta_id,
@@ -294,7 +294,7 @@ class Venta_new_api_model extends CI_Model
                 'movimiento' => 'INGRESO',
                 'operacion' => 'VENTA',
                 'medio_pago' => $venta['vc_forma_pago'],
-                'saldo' => $venta_contado['inicial'],
+                'saldo' => $venta_credito['inicial'],
                 'saldo_old' => $cuenta_old->saldo,
                 'ref_id' => $venta_id,
                 'ref_val' => $venta['vc_num_oper']
@@ -329,13 +329,13 @@ class Venta_new_api_model extends CI_Model
             ));
         }
 
-        if ($venta['venta_status'] == 'COMPLETADO' && $venta_contado['inicial'] > 0) {
+        if ($venta['venta_status'] == 'COMPLETADO' && $venta_credito['inicial'] > 0) {
             //guardo la relacion del modo de pago
             if ($venta['vc_forma_pago'] != 7) {
                 $contado = array(
                     'id_venta' => $venta_id,
                     'status' => 'PagoCancelado',
-                    'montopagado' => $venta_contado['inicial']
+                    'montopagado' => $venta_credito['inicial']
                 );
                 $this->db->insert('contado', $contado);
             } elseif ($venta['vc_forma_pago'] == 7) {
