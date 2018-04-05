@@ -12,14 +12,21 @@
 	<div class="col-xs-12 content">
 		<ul>
 			<li>
-				<span>Hosting</span>
-				<span>139.40</span>
+				<span>Enero</span>
+				<span>160.00</span>
 			</li>
 			<li>
-				<span>Sistema</span>
-				<span>405.70</span>
+				<span>Febrero</span>
+				<span>160.00</span>
+			</li>
+			<li>
+				<span>Marzo</span>
+				<span>160.00</span>
 			</li>
 		</ul>
+	</div>
+	<div class="col-xs-12 header">
+		<h5 class="col-xs-12">Fecha de corte 31/03/2018</h5>
 	</div>
 </div>
 <a href="#" class="notification">

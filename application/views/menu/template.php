@@ -1229,15 +1229,11 @@ $primary_nav = array(
                             </a>
                             <ul>
                                 <li>
-                                    <h5>Tiene cargos pendiente de pago:</h5>
+                                    <h5>Tiene cargos pendiente de pago: Fecha corte 31/03/2018</h5>
                                 </li>
                                 <li>
-                                    <span>Hosting</span>
-                                    <span>139.40</span>
-                                </li>
-                                <li>
-                                    <span>Sistema</span>
-                                    <span>405.70</span>
+                                    <span>Marzo - Abril</span>
+                                    <span>100.00</span>
                                 </li>
                             </ul>
                         </li>
