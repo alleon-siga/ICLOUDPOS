@@ -25,7 +25,8 @@ class reporte_venta_model extends CI_Model
                 comp.nombre AS comprobante_nombre,
                 CONCAT(comp.serie, comp_v.numero) AS comprobante_numero,
                 v.total_impuesto AS impuesto,
-                v.total AS total
+                v.total AS total,
+                DATE(v.fecha) AS fecha
             FROM
                 venta AS v
                     JOIN

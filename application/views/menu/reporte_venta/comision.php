@@ -28,10 +28,6 @@
 
                     </div>
 
-                    <div class="col-md-1">
-
-                    </div>
-
                     <div class="col-md-3">
                         <input type="text" id="date_range" class="form-control" readonly style="cursor: pointer;"
                                name="daterange" value="<?= date('01/m/Y') ?> - <?= date('d/m/Y') ?>"/>
@@ -47,8 +43,6 @@
                             <?php endforeach; ?>
                         </select>
                     </div>
-
-                    <div class="col-md-1"></div>
 
                     <div class="col-md-2">
                         <button id="btn_buscar" class="btn btn-default">

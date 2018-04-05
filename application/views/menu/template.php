@@ -51,7 +51,6 @@ $template = array(
     'active_page' => basename($_SERVER['PHP_SELF'])
 );
 
-
 if ($this->session->userdata('tema')) {
 
     $template['theme'] = $this->session->userdata('tema');

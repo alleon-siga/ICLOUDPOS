@@ -81,9 +81,9 @@
                         <?php $z=0; ?>
                         <?php for($x=1; $x<=count($locales); $x++){ ?>
                         <?php if($z==3) $z=0; ?>  
-                        <td><?= $ventas[$x] ?></td>
-                        <td><?= $stock[$x] ?></td>
-                        <td><?= $moneda->simbolo . ' ' . number_format($total[$x], 2) ?></td>
+                        <td style="text-align: right; background-color:<?= $colors[$z] ?> !important;"><?= $ventas[$x] ?></td>
+                        <td style="text-align: right; background-color:<?= $colors[$z] ?> !important;"><?= $stock[$x] ?></td>
+                        <td style="text-align: right; background-color:<?= $colors[$z] ?> !important;"><?= $moneda->simbolo . ' ' . number_format($total[$x], 2) ?></td>
                         <?php $z++; ?>
                         <?php } ?>
                     </tr>
@@ -104,7 +104,6 @@
         </div>
     </div>
     <div id="grafico" class="tab-pane fade" style="min-width: 310px; max-width: 800px; height: 400px; margin: 0 auto">
-
     </div>
 </div>
 <!-- Datatable -->
@@ -143,7 +142,7 @@
             }
         });*/
 
-        TablesDatatables.init(2);
+        TablesDatatables.init(1,'asc');
         /* Add placeholder attribute to the search input */
         /*$('.dataTables_filter input').attr('placeholder', 'Buscar');
         $('.dataTables_filter input').wrap('<div class="input-group"></div>');
@@ -167,9 +166,10 @@
                 'marca_id': $("#marca_id").val(),
                 'linea_id': $("#linea_id").val(),
                 'familia_id': $("#familia_id").val(),
-                'moneda_id': $("#moneda_id").val()
+                'moneda_id': $("#moneda_id").val(),
+                'limit': $(".dataTables_length select").val()
             };
-
+            $("#grafico").html($("#loading").html());
             $.post("<?= base_url()?>reporte/ventaSucursal/grafico/", data, function(respuesta){
                 //Usar primero esto
                 var data_estadistica = eval("("+respuesta+")"); // Obtenemos la informacion del JSON
@@ -236,6 +236,7 @@
                 var stock = new Array();
 
                 for(var i = 0; i < data_estadistica['locales'].length; i++){
+
                     options.xAxis.categories.push(data_estadistica['locales'][i]['local_nombre']);
 
                     vendida[i] = 0;
@@ -245,7 +246,10 @@
                         vendida[i] += parseInt(data_estadistica['lists'][x]['cantVend' + (i+1)]);
                         stock[i] += parseInt(data_estadistica['lists'][x]['stock' + (i+1)]);
                     }
+                }
 
+                for(var i = 0; i < data_estadistica['locales'].length; i++){
+                    if((i+1)>data_estadistica['limit']) break;
                     options.series[0].data.push(parseInt(vendida[i]));
                     options.series[1].data.push(parseInt(stock[i]));
                 }

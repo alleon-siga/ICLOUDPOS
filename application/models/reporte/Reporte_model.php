@@ -72,7 +72,6 @@ class reporte_model extends CI_Model
         $linea_id .= ($params['linea_id']>0)? " AND p.producto_linea=".$params['linea_id'] : "";
         $producto_id .= ($params['producto_id']!='')? " AND p.producto_id IN(".implode(",", $params['producto_id']).")" : "";
         $search = $marca_id.$grupo_id.$familia_id.$linea_id.$producto_id;
-
         $query = "SELECT p.producto_id, p.producto_codigo_interno, p.producto_nombre, u.nombre_unidad";
         
         $usu = $this->session->userdata('nUsuCodigo');
@@ -136,8 +135,7 @@ class reporte_model extends CI_Model
             GROUP BY
                 dv.id_producto
             ORDER BY
-                p.producto_id
-        ";
+                p.producto_id";
 
         return $this->db->query($query)->result_array();
     }
@@ -153,8 +151,15 @@ class reporte_model extends CI_Model
         $producto_id .= ($params['producto_id']!='')? " AND p.producto_id IN(".implode(",", $params['producto_id']).")" : "";
         $search = $marca_id.$grupo_id.$familia_id.$linea_id.$producto_id;
         $tipo = $params['tipo'];
+        $orden = ($tipo=='1')? "cantidad":"total";
+        $local_id = ($params['local_id']>0)? " AND v.local_id = ".$params['local_id'] : "";
+        //Limitar top
+        $limit = '';
+        if(isset($params['limit'])){
+            $limit = "LIMIT 0, ".$params['limit'];
+        }
         $query = "
-            SELECT 
+            SELECT
                 p.producto_id AS producto_id, 
                 v.id_vendedor AS id_vendedor, 
                 u.nombre AS nombre,
@@ -179,15 +184,15 @@ class reporte_model extends CI_Model
                     AND (select id_unidad from unidades_has_producto where unidades_has_producto.producto_id = dv.id_producto  ORDER BY orden DESC LIMIT 1) = up2.id_unidad 
                 WHERE
                     v.venta_status='COMPLETADO'
-                    AND v.id_moneda = ".$params['moneda_id']."
-                    AND v.local_id = ".$params['local_id']."
+                    AND v.id_moneda = ".$params['moneda_id']." 
+                    $local_id
                     AND v.fecha >= '".$params['fecha_ini']."'
                     AND v.fecha <= '".$params['fecha_fin']."'
                     $search
             GROUP BY
                 v.id_vendedor
             ORDER BY 
-                cantidad DESC
+                $orden DESC $limit
         ";
 
         return $this->db->query($query)->result();
@@ -352,7 +357,7 @@ class reporte_model extends CI_Model
             GROUP BY
                 dv.id_producto
             ORDER BY
-                p.producto_id
+                p.producto_nombre
         ";
 
         return $this->db->query($query)->result_array();

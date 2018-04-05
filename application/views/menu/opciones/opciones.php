@@ -39,7 +39,18 @@
                    value="<?= valueOption("EMPRESA_NOMBRE", 'TEAYUDO') ?>">
         </div>
     </div>
+    <div class="row form-group">
+        <div class="col-md-4">
+            <label class="control-label panel-admin-text">Identificaci&oacute;n de la empresa:</label>
+        </div>
 
+        <div class="col-md-8">
+            <input type="text" name="EMPRESA_IDENTIFICACION" required="true" id="EMPRESA_IDENTIFICACION"
+                   class='form-control'
+                   maxlength="100"
+                   value="<?= valueOption("EMPRESA_IDENTIFICACION", '12345678910') ?>">
+        </div>
+    </div>
     <div class="row form-group">
         <div class="col-md-4">
             <label class="control-label panel-admin-text">Correo de la empresa:</label>

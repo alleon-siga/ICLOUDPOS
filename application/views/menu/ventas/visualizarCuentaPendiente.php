@@ -73,7 +73,7 @@
                                     Venta Nro:
                                 </div>
                                 <div class="col-xs-9">
-                                    <?= $cliente['documento_Serie']."-".$cliente['documento_Numero'] ?>
+                                    <?= sumCod($cliente['venta_id'], 6) ?>
                                 </div>
 
 

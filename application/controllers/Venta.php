@@ -626,8 +626,8 @@ class venta extends MY_Controller
 
             $select = '*';
             $from = "venta";
-            $join = array('cliente', 'documento_venta');
-            $campos_join = array('cliente.id_cliente=venta.id_cliente', 'venta.id_documento=documento_venta.id_tipo_documento');
+            $join = array('cliente');
+            $campos_join = array('cliente.id_cliente=venta.id_cliente');
             $where = array(
                 'venta_id' => $id_venta
             );

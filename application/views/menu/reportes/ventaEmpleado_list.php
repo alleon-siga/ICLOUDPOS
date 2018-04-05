@@ -17,6 +17,7 @@
                 <tr>
                     <th>Id</th>
                     <th>Nombre</th>
+                    <th>Moneda</th>
                     <?php if(isset($lists[0]->tipo)){ ?>
                     <th><?= ($lists[0]->tipo=='1')? 'Cantidad': 'Total' ?></th>
                     <?php } ?>
@@ -38,11 +39,12 @@
                     <tr>
                         <td><?= $list->id_vendedor ?></td>
                         <td><?= $list->nombre ?></td>
+                        <td><?= $moneda->simbolo ?></td>
                         <?php if(isset($lists[0]->tipo)){ ?>
                             <?php if($list->tipo=='1'){ ?>
                                 <td><?= $list->cantidad ?></td>
                             <?php }elseif($list->tipo=='2') { ?>
-                                <td><?= $moneda->simbolo . ' ' . number_format($list->total,2) ?></td>
+                                <td><?= number_format($list->total,2) ?></td>
                             <?php } ?>
                         <?php } ?>
                         <td><?= $list->anulado ?></td>
@@ -52,11 +54,12 @@
                 <tfoot>
                 <tr>
                     <td colspan="2">TOTALES</td>
+                    <td><?= $moneda->simbolo ?></td>
                     <?php if(isset($lists[0]->tipo)){ ?>
                         <?php if($lists[0]->tipo=='1'){ ?>
                             <td><?= $cant ?></td>   
                         <?php }elseif($lists[0]->tipo=='2'){ ?>
-                            <td><?= $moneda->simbolo . ' ' . number_format($total, 2) ?></td>
+                            <td><?= number_format($total, 2) ?></td>
                         <?php } ?>
                     <?php } ?>
                     <td><?= $anulado ?></td>
@@ -84,6 +87,8 @@
 
 <script type="text/javascript">
     $(function () {
+        TablesDatatables.init(3);
+
         $('#exportar_excel').on('click', function () {
             exportar_excel();
         });
@@ -103,6 +108,7 @@
                 'linea_id': $("#linea_id").val(),
                 'familia_id': $("#familia_id").val(),
                 'tipo': $("#tipo").val(),
+                'limit': $(".dataTables_length select").val()
             };
 
             $.post("<?= base_url()?>reporte/ventaEmpleado/grafico/", data, function(respuesta){

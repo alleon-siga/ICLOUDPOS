@@ -41,7 +41,7 @@
 
 <script type="text/javascript">
     $(function () {
-
+        TablesDatatables.init(0);
         $('#exportar_excel').on('click', function () {
             exportar_excel();
         });

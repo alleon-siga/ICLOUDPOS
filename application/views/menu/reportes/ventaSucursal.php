@@ -215,8 +215,6 @@
 
                     $('.ctrl').chosen();
 
-                    getReporte();
-
                     $("#btn_buscar, .btn_buscar").on("click", function () {
                         getReporte();
                     });
