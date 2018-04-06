@@ -97,5 +97,22 @@ if (isset($productos)) {
 
 
 $html .= "</table>";
+$html .='<table><tr><td colspan="9" align="right"><b>Total:</b></td><td>';
+
+$simbolo=$moneda_simbolo;
+if (isset($operacion)) {
+    $precio = $total;
+    $string = ' $precio$operacion$tasa_soles ';
+    //   echo $string. "<br>";
+    eval("\$string = \"$string\";");
+    eval("\$string = \"$string\";");
+    eval("\$result = ($string);");
+
+    $html .= $simbolo." ".number_format($result, 2);
+} else {
+    $html .= $simbolo." ".number_format($total, 2);
+} 
+$html .= "</td></tr></table>";
+
 echo $html;
 ?>

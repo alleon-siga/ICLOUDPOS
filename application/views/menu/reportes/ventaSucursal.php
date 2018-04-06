@@ -160,7 +160,7 @@
             <script src="<?= base_url('recursos/js/tcharm.js') ?>"></script>
             <script src="<?php echo $ruta; ?>recursos/js/multiple-select.js"></script>
             <!-- /.modal-dialog -->
-            <script type="text/javascript">
+            <script type="text/javascript">                
                 // Filtro en select
                 $("#producto_id").multipleSelect({
                     filter: true,
@@ -214,8 +214,6 @@
                     });
 
                     $('.ctrl').chosen();
-
-                    getReporte();
 
                     $("#btn_buscar, .btn_buscar").on("click", function () {
                         getReporte();

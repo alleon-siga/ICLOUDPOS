@@ -1,6 +1,6 @@
 <?php $ruta = base_url(); ?>
-
-<div class="content-header content-header-media">
+<?php $md = get_moneda_defecto() ?>
+<div class="content-header content-header-media" style="height: 110px;">
     <div class="header-section">
         <div class="row">
             <!-- Main Title (hidden on small devices for the statistics to fit) -->
@@ -43,10 +43,66 @@
         </div>
     </div>
     <!-- For best results use an image with a resolution of 2560x248 pixels (You can also use a blurred image with ratio 10:1 - eg: 1000x100 pixels - it will adjust and look great!) -->
-    <img src="<?php echo $ruta; ?>recursos/img/placeholders/headers/dashboard_header.jpg" alt="header image" class="animation-pulseSlow">
+    <!--<img src="<?php //echo $ruta; ?>recursos/img/placeholders/headers/dashboard_header.jpg" alt="header image" class="animation-pulseSlow">-->
 </div>
 <!-- END Dashboard Header -->
+<div class="row">
+    <div class="col-md-3">
+        <a href="<?=$ruta?>ingresos?costos=true" class="widget widget-hover-effect1 menulink">
+            <div class="widget-simple">
+                <div class="widget-icon pull-left themed-background-autumn animation-fadeIn">
+                    <i class="gi gi-cart_in sidebar-nav-icon" ></i>
+                </div>
+                <h3 class="widget-content text-right animation-pullDown">
+                    Registrar Compras
+                </h3>
+            </div>
+        </a>
+        <!-- END Widget -->
+    </div>
 
+    <div class="col-md-3">
+        <a href="<?=$ruta?>venta_new" class="widget widget-hover-effect1 menulink">
+            <div class="widget-simple">
+                <div class="widget-icon pull-left themed-background-autumn animation-fadeIn">
+                    <i class="fa fa-share sidebar-nav-icon" ></i>
+                </div>
+                <h3 class="widget-content text-right animation-pullDown">
+                    Registrar Ventas
+                </h3>
+            </div>
+        </a>
+        <!-- END Widget -->
+    </div>
+
+    <div class="col-md-3">
+        <a href="<?=$ruta?>ingresos/consultarCompras" class="widget widget-hover-effect1 menulink">
+            <div class="widget-simple">
+                <div class="widget-icon pull-left themed-background-autumn animation-fadeIn">
+                    <i class="gi gi-list sidebar-nav-icon" ></i>
+                </div>
+                <h3 class="widget-content text-right animation-pullDown">
+                    Productos de alta rotaci&oacute;n
+                </h3>
+            </div>
+        </a>
+        <!-- END Widget -->
+    </div>
+
+    <div class="col-md-3">
+        <a href="<?=$ruta?>venta_new/historial" class="widget widget-hover-effect1 menulink">
+            <div class="widget-simple">
+                <div class="widget-icon pull-left themed-background-autumn animation-fadeIn">
+                    <i class="fa fa-history sidebar-nav-icon" ></i>
+                </div>
+                <h3 class="widget-content text-right animation-pullDown">
+                    Productos sin rotaci&oacute;n
+                </h3>
+            </div>
+        </a>
+        <!-- END Widget -->
+    </div>
+</div>
 <!-- Mini Top Stats Row -->
 <div class="row">
     <?php if($this->usuarios_grupos_model->user_has_perm($this->session->userdata('nUsuCodigo'), 'nuevoproducto')) {?>
@@ -143,11 +199,143 @@
     </div>-->
 </div>
 <!-- END Mini Top Stats Row -->
-
-
-
-
+<div class="row">
+    <?php if ($this->usuarios_grupos_model->user_has_perm($this->session->userdata('nUsuCodigo'), 'reporteVentas')) { ?>
+    <div class="col-md-6">
+        <div id="containerRv" style="min-width: 310px; height: 400px; margin: 0 auto"></div>        
+    </div>    
+    <?php } ?>
+    
+    <?php if ($this->usuarios_grupos_model->user_has_perm($this->session->userdata('nUsuCodigo'), 'reporteCompras')) { ?>
+    <div class="col-md-6">
+        <div id="containerRc" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+    </div>
+    <?php } ?>
+</div>
 <!-- Load and execute javascript code used only in this page -->
 <script src="<?php echo $ruta; ?>recursos/js/pages/index.js"></script>
-<script>$(function(){ Index.init(); });</script>
+<script>
+$(function(){
+    Index.init(); 
+        //Grafico de reporte de ventas
+        $.post('<?php echo $ruta; ?>principal/reporteVentas', {}, function(result){
+            var data_estadistica = eval("("+result+")"); // Obtenemos la informacion del JSON
+            var options = {
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text: 'Reporte de ventas semanal'
+                },
+                colors: ['green'],
+                subtitle: {
+                    text: ''
+                },
+                xAxis: {
+                    categories: [],
+                    crosshair: true
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: '<?= $md->nombre ?> (<?= $md->simbolo ?>)'
+                    }
+                },
+                tooltip: {
+                    headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                    pointFormat: '<tr><td style="color:{series.color};padding:0" nowrap>{series.name}: </td>' +
+                        '<td style="padding:0" nowrap><b> {point.y:.1f} <?= $md->simbolo ?></b></td></tr>',
+                    footerFormat: '</table>',
+                    shared: true,
+                    useHTML: true
+                },
+                plotOptions: {
+                    column: {
+                        pointPadding: 0.2,
+                        borderWidth: 0
+                    }
+                },
+                series: [{
+                    name: 'Ventas',
+                    data: []
+
+                }]
+            };
+
+            var arrMes = ['Dic', 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Set', 'Oct', 'Nov'];
+            for(var i = 0; i < data_estadistica['venta'].length; i++){
+                if(data_estadistica['venta'][i]['2'].length>0){
+                    let fechaYhora = data_estadistica['venta'][i]['2'].split(' ');
+                    let arrFecha = fechaYhora[0].split('-');
+                    let fecha = new Date(arrFecha[0],arrFecha[1],arrFecha[2]);
+                    let mes = fecha.getMonth();
+
+                    options.xAxis.categories.push(arrFecha[2] + ' ' + arrMes[mes]);
+                    options.series[0].data.push(parseInt(data_estadistica['venta'][i]['1']));
+                    //options.series[1].data.push(parseInt(data_estadistica['utilidad'][i]['1']));
+                }
+            }            
+            Highcharts.chart('containerRv', options);
+        });
+        //Grafico de reporte de compras
+        $.post('<?php echo $ruta; ?>principal/reporteCompras', {}, function(result){
+            var data_estadistica = eval("("+result+")"); // Obtenemos la informacion del JSON
+            var options = {
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text: 'Reporte de compras semanal'
+                },
+                colors: ['brown'],
+                subtitle: {
+                    text: ''
+                },
+                xAxis: {
+                    categories: [],
+                    crosshair: true
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: '<?= $md->nombre ?> (<?= $md->simbolo ?>)'
+                    }
+                },
+                tooltip: {
+                    headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                    pointFormat: '<tr><td style="color:{series.color};padding:0" nowrap>{series.name}: </td>' +
+                        '<td style="padding:0" nowrap><b> {point.y:.1f} <?= $md->simbolo ?></b></td></tr>',
+                    footerFormat: '</table>',
+                    shared: true,
+                    useHTML: true
+                },
+                plotOptions: {
+                    column: {
+                        pointPadding: 0.2,
+                        borderWidth: 0
+                    }
+                },
+                series: [{
+                    name: 'Compras',
+                    data: []
+
+                }]
+            };
+            //var arrDia = ['Dom','Lun','Mar','Mie','Jue','Vie','Sab'];
+            var arrMes = ['Dic', 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Set', 'Oct', 'Nov'];
+            for(var i = 0; i < data_estadistica['ingresos'].length; i++){
+                let fechaYhora = data_estadistica['ingresos'][i]['fecha_emision'].split(' ');
+                let arrFecha = fechaYhora[0].split('-');
+                let fecha = new Date(arrFecha[0],arrFecha[1],arrFecha[2]);
+                //let dia = fecha.getDay(); 
+                let mes = fecha.getMonth();
+
+                //options.xAxis.categories.push(arrDia[dia] + ' ' + arrFecha[2] + ' ' + arrMes[mes]);
+                options.xAxis.categories.push(arrFecha[2] + ' ' + arrMes[mes]);
+                options.series[0].data.push(parseInt(data_estadistica['ingresos'][i]['total']));
+            }            
+            Highcharts.chart('containerRc', options);
+        });    
+});
+</script>
 

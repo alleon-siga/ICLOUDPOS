@@ -33,6 +33,9 @@
             <td style="text-transform: uppercase; text-align: center;"><?= valueOption('EMPRESA_NOMBRE', '') ?></td>
         </tr>
         <tr>
+            <td style="text-transform: uppercase;">Identificaci&oacute;n: <?= $identificacion->config_value ?></td>
+        </tr>
+        <tr>
             <td style="text-transform: uppercase;">Ubicaci&oacute;n: <?= $venta->local_nombre ?></td>
         </tr>
         <tr>

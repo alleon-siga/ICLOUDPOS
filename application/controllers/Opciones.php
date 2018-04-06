@@ -22,6 +22,7 @@ class opciones extends MY_Controller
             'EMPRESA_CORREO',
             'EMPRESA_CONTACTO',
             'EMPRESA_TELEFONO',
+            'EMPRESA_IDENTIFICACION',
             'CODIGO_DEFAULT',
             'VALOR_UNICO',
             'PRECIO_INGRESO',

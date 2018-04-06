@@ -849,7 +849,7 @@ function guardarcliente() {
             return false;
         }
 
-        if ($("#grupo_id_juridico").val() == '') {
+        if ($("#grupo_id_juridico").val() == '' && $('#tipo_iden').val()=='2') {
         
             var growlType = 'warning';
             $("#estatus").focus()

@@ -9,6 +9,8 @@
     <table class='table table-striped dataTable table-bordered no-footer tableStyle' style="overflow:scroll">
         <thead>
         <tr>
+            <th>Id</th>
+            <th>Fecha</th>
             <th>Identificaci&oacute;n</th>
             <th>Documento</th>
             <th>Cliente</th>
@@ -29,6 +31,8 @@
             $total_impuesto += $list->impuesto;
             ?>
             <tr>
+                <td><?= $list->venta_id ?></td>
+                <td><?= date('d/m/Y', strtotime($list->fecha)) ?></td>
                 <td><?= $list->identificacion ?></td>
                 <?php
                 $doc = 'NP ';
@@ -46,7 +50,7 @@
         </tbody>
         <tfoot>
         <tr>
-            <td colspan="5">TOTALES</td>
+            <td colspan="7">TOTALES</td>
             <td><?= $moneda->simbolo . ' ' . number_format($total_impuesto, 2) ?></td>
             <td><?= $moneda->simbolo . ' ' . number_format($total, 2) ?></td>
         </tr>

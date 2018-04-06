@@ -122,7 +122,9 @@ class venta_new_model extends CI_Model
             $this->db->where('venta.fecha >=', $where['year'] . '-' . sumCod($where['mes'], 2) . '-' . $where['dia_min'] . " 00:00:00");
             $this->db->where('venta.fecha <=', $where['year'] . '-' . sumCod($where['mes'], 2) . '-' . $last_day . " 23:59:59");
         }
-
+        if(isset($where['usuarios_id']) && !empty($where['usuarios_id'])){
+            $this->db->where('venta.id_vendedor', $where['usuarios_id']);
+        }
         $ventas = $this->db->get()->result();
 
         return $ventas;
@@ -171,7 +173,9 @@ class venta_new_model extends CI_Model
             $this->db->where('venta.fecha >=', $where['year'] . '-' . sumCod($where['mes'], 2) . '-' . $where['dia_min']);
             $this->db->where('venta.fecha <=', $where['year'] . '-' . sumCod($where['mes'], 2) . '-' . $last_day);
         }
-
+        if(isset($where['usuarios_id']) && !empty($where['usuarios_id'])){
+            $this->db->where('venta.id_vendedor', $where['usuarios_id']);
+        }
         return $this->db->get()->row();
     }
 

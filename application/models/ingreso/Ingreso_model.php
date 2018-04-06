@@ -1281,4 +1281,17 @@ WHERE detalleingreso.id_ingreso='$compra_id'");
         }
 
     }
+
+    function get_compras2(){
+        $this->db->select("
+            ingreso.fecha_emision as fecha_emision,
+            SUM(ingreso.total_ingreso * IFNULL(ingreso.tasa_cambio, 1)) as total
+        ")
+        ->from('ingreso');
+        $this->db->where('ingreso.ingreso_status', 'COMPLETADO');
+        $this->db->group_by('DATE(ingreso.fecha_emision)');
+        $this->db->order_by('ingreso.fecha_emision DESC');
+        $this->db->limit('7');
+        return $this->db->get()->result_array();
+    }
 }

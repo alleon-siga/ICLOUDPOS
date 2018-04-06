@@ -74,7 +74,8 @@
                             <i class="fa fa-search"></i>
                         </a>
 
-                        <?php if($venta->numero == ''):?>
+                        <?php if($venta->numero == '' && $venta_action != 'comision'):?>
+
                             <a class="btn btn-warning" data-toggle="tooltip" style="margin-right: 5px;"
                                title="Ver" data-original-title="Facturar"
                                href="#"
@@ -83,13 +84,15 @@
                             </a>
                         <?php endif;?>
 
-                        <?php if ($venta_action != 'anular' && $venta_action != 'caja' && $venta->venta_estado != 'CERRADA'): ?>
+                        <?php if ($venta_action != 'anular' && $venta_action != 'caja' && $venta->venta_estado != 'CERRADA' && $venta_action != 'comision'): ?>
+                            <?php //if($venta_action != 'comision'):  ?>
                             <a class="btn btn-primary" data-toggle="tooltip" style="margin-right: 5px;"
                                title="Ver" data-original-title="Ver"
                                href="#"
                                onclick="previa('<?= $venta->venta_id ?>');">
                                 <i class="fa fa-print"></i>
                             </a>
+                            <?php //endif; ?>
 
                             <?php if ($venta->factura_impresa == 1 && $venta->documento_id != 6 && (validOption('ACTIVAR_SHADOW', 1) || validOption('ACTIVAR_FACTURACION_VENTA', 1))): ?>
                                 <a class="btn btn-warning" data-toggle="tooltip" style="margin-right: 5px;"
@@ -209,4 +212,23 @@
         var win = window.open('<?= base_url()?>venta_new/historial_excel?data=' + JSON.stringify(data), '_blank');
         win.focus();
     }
+
+    function ver(venta_id) {
+
+        $("#dialog_venta_detalle").html($("#loading").html());
+        $("#dialog_venta_detalle").modal('show');
+
+        $.ajax({
+            url: '<?php echo $ruta . 'venta_new/get_venta_detalle/' . $venta_action; ?>',
+            type: 'POST',
+            data: {'venta_id': venta_id},
+
+            success: function (data) {
+                $("#dialog_venta_detalle").html(data);
+            },
+            error: function () {
+                alert('asd')
+            }
+        });
+    }    
 </script>

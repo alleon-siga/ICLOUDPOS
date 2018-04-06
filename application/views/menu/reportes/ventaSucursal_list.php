@@ -5,6 +5,8 @@
         font-weight: bold;
     }
 </style>
+<!-- Datatable  -->
+<!--<link rel="stylesheet" type="text/css" href="<?php //echo $ruta; ?>recursos/css/jquery.dataTables.css"/>-->
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#data">Tabla</a></li>
   <li><a data-toggle="tab" href="#grafico">Gr&aacute;fico</a></li>
@@ -12,23 +14,24 @@
 <div class="tab-content">
     <div id="data" class="tab-pane fade in active">
         <div class="table-responsive">
+            <!--<table id="example" class='display' style="width: 100%">-->
             <table class='table table-striped dataTable table-bordered no-footer tableStyle' style="overflow:scroll">
                 <thead>
-                <tr>
-                    <th rowspan="2" style="vertical-align: middle;"><?= getCodigoNombre() ?></th>
-                    <th rowspan="2" style="vertical-align: middle;">Nombre</th>
-                    <th rowspan="2" style="vertical-align: middle;">Unidad</th>
-                    <?php foreach ($locales as $local): ?>
-                    <th colspan="3"><?= $local['local_nombre'] ?></th>
-                    <?php endforeach ?>    
-                </tr>
-                <tr>
-                <?php for($x=1; $x<=count($locales); $x++){ ?>
-                    <th>Vendida</th>
-                    <th>Stock actual</th>
-                    <th>Importe total</th>
-                <?php } ?>
-                </tr>
+                    <tr>
+                        <th rowspan="2" style="vertical-align: middle;"><?= getCodigoNombre() ?></th>
+                        <th rowspan="2" style="vertical-align: middle;">Nombre</th>
+                        <th rowspan="2" style="vertical-align: middle;">Unidad</th>
+                        <?php foreach ($locales as $local): ?>
+                        <th colspan="3"><?= $local['local_nombre'] ?></th>
+                        <?php endforeach ?>    
+                    </tr>
+                    <tr>
+                    <?php for($x=1; $x<=count($locales); $x++){ ?>
+                        <th>Vendida</th>
+                        <th>Stock actual</th>
+                        <th>Importe total</th>
+                    <?php } ?>
+                    </tr>
                 </thead>
                 <tbody>
                 <?php $ventas = array(); $stock = array(); ?>
@@ -71,17 +74,19 @@
                 <?php endforeach ?>
                 </tbody>
                 <tfoot>
-                <tr>
-                    <td colspan="3">TOTALES</td>
-                    <?php $z=0; ?>
-                    <?php for($x=1; $x<=count($locales); $x++){ ?>
-                    <?php if($z==3) $z=0; ?>  
-                    <td style="text-align: right; background-color:<?= $colors[$z] ?> !important;"><?= $ventas[$x] ?></td>
-                    <td style="text-align: right; background-color:<?= $colors[$z] ?> !important;"><?= $stock[$x] ?></td>
-                    <td style="text-align: right; background-color:<?= $colors[$z] ?> !important;"><?= $moneda->simbolo . ' ' . number_format($total[$x], 2) ?></td>
-                    <?php $z++; ?>
-                    <?php } ?>
-                </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td>TOTALES</td>
+                        <?php $z=0; ?>
+                        <?php for($x=1; $x<=count($locales); $x++){ ?>
+                        <?php if($z==3) $z=0; ?>  
+                        <td style="text-align: right; background-color:<?= $colors[$z] ?> !important;"><?= $ventas[$x] ?></td>
+                        <td style="text-align: right; background-color:<?= $colors[$z] ?> !important;"><?= $stock[$x] ?></td>
+                        <td style="text-align: right; background-color:<?= $colors[$z] ?> !important;"><?= $moneda->simbolo . ' ' . number_format($total[$x], 2) ?></td>
+                        <?php $z++; ?>
+                        <?php } ?>
+                    </tr>
                 </tfoot>
             </table>
         </div>
@@ -99,11 +104,52 @@
         </div>
     </div>
     <div id="grafico" class="tab-pane fade" style="min-width: 310px; max-width: 800px; height: 400px; margin: 0 auto">
-
     </div>
 </div>
+<!-- Datatable -->
+<!--<script type="text/javascript" src="<?php //echo $ruta ?>recursos/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="<?php //echo $ruta ?>recursos/js/datatables.min.js"></script>-->
 <script type="text/javascript">
      $(function () {
+        /*$('#example').DataTable( {
+            "scrollY":        "300px",
+            "scrollX":        true,
+            "scrollCollapse": true,
+            "paging":         true,
+            "dom": '<"row"<"pull-left"f><"pull-right"l>>rt<"row"<"pull-left"i><"pull-right"p>>',
+            "language": {
+               "emptyTable": "No se encontraron registros",
+               "info": "Mostrando _START_ a _END_ de _TOTAL_ resultados",
+               "infoEmpty": "Mostrando 0 a 0 de 0 resultados",
+               "infoFiltered": "(filtrado de _MAX_ total resultados)",
+               "infoPostFix": "",
+               "thousands": ",",
+               "lengthMenu": "Mostrar _MENU_ resultados",
+               "loadingRecords": "Cargando...",
+               "processing": "Procesando...",
+               "search": "",
+               "zeroRecords": "No se encontraron resultados",
+               "paginate": {
+                   "first": "Primero",
+                   "last": "Ultimo",
+                   "next": "Siguiente",
+                   "previous": "Anterior"
+               },
+               "aria": {
+                   "sortAscending": ": activar ordenar columnas ascendente",
+                   "sortDescending": ": activar ordenar columnas descendente"
+               }
+            }
+        });*/
+
+        TablesDatatables.init(1,'asc');
+        /* Add placeholder attribute to the search input */
+        /*$('.dataTables_filter input').attr('placeholder', 'Buscar');
+        $('.dataTables_filter input').wrap('<div class="input-group"></div>');
+        $('.dataTables_filter .input-group').append('<span class="input-group-addon"><i class="fa fa-search"></i></span>');
+        $('#example_paginate').removeClass('dataTables_paginate paging_simple_numbers').addClass('dataTables_paginate paging_bootstrap');
+        $('.pull-right ul').removeClass('pagination').addClass('pagination pagination-sm remove-margin');
+        $('.pull-right ul li').removeClass('paginate_button');*/
         $('#exportar_excel').on('click', function () {
             exportar_excel();
         });
@@ -120,9 +166,10 @@
                 'marca_id': $("#marca_id").val(),
                 'linea_id': $("#linea_id").val(),
                 'familia_id': $("#familia_id").val(),
-                'moneda_id': $("#moneda_id").val()
+                'moneda_id': $("#moneda_id").val(),
+                'limit': $(".dataTables_length select").val()
             };
-
+            $("#grafico").html($("#loading").html());
             $.post("<?= base_url()?>reporte/ventaSucursal/grafico/", data, function(respuesta){
                 //Usar primero esto
                 var data_estadistica = eval("("+respuesta+")"); // Obtenemos la informacion del JSON
@@ -189,6 +236,7 @@
                 var stock = new Array();
 
                 for(var i = 0; i < data_estadistica['locales'].length; i++){
+
                     options.xAxis.categories.push(data_estadistica['locales'][i]['local_nombre']);
 
                     vendida[i] = 0;
@@ -198,7 +246,10 @@
                         vendida[i] += parseInt(data_estadistica['lists'][x]['cantVend' + (i+1)]);
                         stock[i] += parseInt(data_estadistica['lists'][x]['stock' + (i+1)]);
                     }
+                }
 
+                for(var i = 0; i < data_estadistica['locales'].length; i++){
+                    if((i+1)>data_estadistica['limit']) break;
                     options.series[0].data.push(parseInt(vendida[i]));
                     options.series[1].data.push(parseInt(stock[i]));
                 }
@@ -237,4 +288,7 @@
         var win = window.open('<?= base_url()?>reporte/ventaSucursal/excel?data=' + JSON.stringify(data), '_blank');
         win.focus();
     }
+    //Eliminar estilo del boton salir
+    //$('#salir').removeClass('pagination pagination-sm remove-margin');
+    $('.dataTables_scrollBody table thead').remove();
 </script>
