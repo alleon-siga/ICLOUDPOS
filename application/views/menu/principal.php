@@ -1,5 +1,5 @@
 <?php $ruta = base_url(); ?>
-
+<?php $md = get_moneda_defecto() ?>
 <div class="content-header content-header-media" style="height: 110px;">
     <div class="header-section">
         <div class="row">
@@ -82,7 +82,7 @@
                     <i class="gi gi-list sidebar-nav-icon" ></i>
                 </div>
                 <h3 class="widget-content text-right animation-pullDown">
-                    Resumen de Entradas Diarias
+                    Productos de alta rotaci&oacute;n
                 </h3>
             </div>
         </a>
@@ -96,7 +96,7 @@
                     <i class="fa fa-history sidebar-nav-icon" ></i>
                 </div>
                 <h3 class="widget-content text-right animation-pullDown">
-                    Resumen de Salidas Diarias
+                    Productos sin rotaci&oacute;n
                 </h3>
             </div>
         </a>
@@ -225,33 +225,26 @@ $(function(){
                     type: 'column'
                 },
                 title: {
-                    text: 'Reporte semanal de salidas'
+                    text: 'Reporte de ventas semanal'
                 },
+                colors: ['green'],
                 subtitle: {
                     text: ''
                 },
                 xAxis: {
-                    categories: [
-                        'Dom',
-                        'Lun',
-                        'Mar',
-                        'Mie',
-                        'Jue',
-                        'Vie',
-                        'Sab'
-                    ],
+                    categories: [],
                     crosshair: true
                 },
                 yAxis: {
                     min: 0,
                     title: {
-                        text: 'Dolares ($)'
+                        text: '<?= $md->nombre ?> (<?= $md->simbolo ?>)'
                     }
                 },
                 tooltip: {
                     headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
                     pointFormat: '<tr><td style="color:{series.color};padding:0" nowrap>{series.name}: </td>' +
-                        '<td style="padding:0" nowrap><b> {point.y:.1f} $</b></td></tr>',
+                        '<td style="padding:0" nowrap><b> {point.y:.1f} <?= $md->simbolo ?></b></td></tr>',
                     footerFormat: '</table>',
                     shared: true,
                     useHTML: true
@@ -266,20 +259,25 @@ $(function(){
                     name: 'Ventas',
                     data: []
 
-                }, {
-                    name: 'Ganancias',
-                    data: []
-
                 }]
             };
 
+            var arrMes = ['Dic', 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Set', 'Oct', 'Nov'];
             for(var i = 0; i < data_estadistica['venta'].length; i++){
-                options.series[0].data.push(parseInt(data_estadistica['venta'][i]['1']));
-                options.series[1].data.push(parseInt(data_estadistica['utilidad'][i]['1']));
+                if(data_estadistica['venta'][i]['2'].length>0){
+                    let fechaYhora = data_estadistica['venta'][i]['2'].split(' ');
+                    let arrFecha = fechaYhora[0].split('-');
+                    let fecha = new Date(arrFecha[0],arrFecha[1],arrFecha[2]);
+                    let mes = fecha.getMonth();
+
+                    options.xAxis.categories.push(arrFecha[2] + ' ' + arrMes[mes]);
+                    options.series[0].data.push(parseInt(data_estadistica['venta'][i]['1']));
+                    //options.series[1].data.push(parseInt(data_estadistica['utilidad'][i]['1']));
+                }
             }            
             Highcharts.chart('containerRv', options);
         });
-
+        //Grafico de reporte de compras
         $.post('<?php echo $ruta; ?>principal/reporteCompras', {}, function(result){
             var data_estadistica = eval("("+result+")"); // Obtenemos la informacion del JSON
             var options = {
@@ -287,8 +285,9 @@ $(function(){
                     type: 'column'
                 },
                 title: {
-                    text: 'Reporte semanal de compras'
+                    text: 'Reporte de compras semanal'
                 },
+                colors: ['brown'],
                 subtitle: {
                     text: ''
                 },
@@ -299,13 +298,13 @@ $(function(){
                 yAxis: {
                     min: 0,
                     title: {
-                        text: 'Dolares ($)'
+                        text: '<?= $md->nombre ?> (<?= $md->simbolo ?>)'
                     }
                 },
                 tooltip: {
                     headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
                     pointFormat: '<tr><td style="color:{series.color};padding:0" nowrap>{series.name}: </td>' +
-                        '<td style="padding:0" nowrap><b> {point.y:.1f} $</b></td></tr>',
+                        '<td style="padding:0" nowrap><b> {point.y:.1f} <?= $md->simbolo ?></b></td></tr>',
                     footerFormat: '</table>',
                     shared: true,
                     useHTML: true

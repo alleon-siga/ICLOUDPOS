@@ -13,10 +13,10 @@
             <!-- Progress Bars Wizard Title -->
             <div class="row">
                 <div class="form-group">
-                    <div class="col-md-1">
+                    <!--<div class="col-md-1">
                         <label class="control-label panel-admin-text">Ubicaci&oacute;n:</label>
-                    </div>
-                    <div class="col-md-3">
+                    </div>-->
+                    <div class="col-md-2">
                         <?php if (isset($locales)): ?>
                             <select id="venta_local" class="form-control filter-input">
                                 <?php foreach ($locales as $local): ?>
@@ -25,15 +25,20 @@
                                 <?php endforeach; ?>
                             </select>
                         <?php endif; ?>
-
                     </div>
-
-                    <div class="col-md-3">
-                        <input type="text" id="date_range" class="form-control" readonly style="cursor: pointer;"
-                               name="daterange" value="<?= date('01/m/Y') ?> - <?= date('d/m/Y') ?>"/>
-
+                    <div class="col-md-2">
+                        <?php if (isset($usuarios)): ?>
+                            <select id="usuarios_id" class="form-control filter-input">
+                                <option value="">Todos</option>
+                                <?php foreach ($usuarios as $usuario): ?>
+                                    <option value="<?= $usuario->nUsuCodigo; ?>"> <?= $usuario->nombre ?> </option>
+                                <?php endforeach; ?>
+                            </select>
+                        <?php endif; ?>
                     </div>
-
+                    <div class="col-md-2">
+                        <input type="text" id="date_range" class="form-control" readonly style="cursor: pointer;" name="daterange" value="<?= date('01/m/Y') ?> - <?= date('d/m/Y') ?>"/>
+                    </div>
                     <div class="col-md-2">
                         <select name="moneda_id" id="moneda_id" class='cho form-control'>
                             <?php foreach ($monedas as $moneda): ?>
@@ -43,7 +48,7 @@
                             <?php endforeach; ?>
                         </select>
                     </div>
-
+                    <div class="col-md-2"></div>
                     <div class="col-md-2">
                         <button id="btn_buscar" class="btn btn-default">
                             <i class="fa fa-search"></i>
@@ -57,11 +62,14 @@
 
             <div class="row-fluid">
                 <div class="span12">
-                    <div id="historial_list">
-
-
-                    </div>
-
+                    <ul class="nav nav-tabs">
+                      <li class="active"><a data-toggle="tab" href="#resumen">Resumen</a></li>
+                      <li><a data-toggle="tab" href="#detallado">Detallado</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div id="resumen" class="tab-pane fade in active"></div>
+                        <div id="detallado" class="tab-pane fade"></div>
+                    </div>                    
                 </div>
             </div>
             <div class="row" id="loading" style="display: none;">
@@ -117,7 +125,7 @@
 
                     $('select').chosen();
 
-                    get_comisiones();
+                    //get_comisiones();
 
                     $("#btn_buscar").on("click", function () {
                         get_comisiones();
@@ -128,8 +136,41 @@
 
                 });
 
+                    $('.nav-tabs a[href="#detallado"]').on('shown.bs.tab', function(event){
+                        $("#detallado").html($("#loading").html());
+                        var data = {
+                            'local_id': $("#venta_local").val(),
+                            'fecha': $("#date_range").val(),
+                            'moneda_id': $("#moneda_id").val(),
+                            'usuarios_id': $('#usuarios_id').val(),
+                            'venta_action': 'comision'
+                        };
+
+                        $.ajax({
+                            //(valor: comision) con esto se muestra solo el boton ver
+                            url: '<?= base_url()?>venta_new/get_ventas/comision', 
+                            data: data,
+                            type: 'POST',
+                            success: function (data) {
+                                $("#detallado").html(data);
+                            },
+                            error: function () {
+                                $.bootstrapGrowl('<h4>Error.</h4> <p>Ha ocurrido un error en la operaci&oacute;n</p>', {
+                                    type: 'danger',
+                                    delay: 5000,
+                                    allow_dismiss: true
+                                });
+                            }
+                        });
+                    });
+
+                    $('.nav-tabs a[href="#resumen"]').on('shown.bs.tab', function(event){
+                        get_comisiones()
+                    });
+
                 function get_comisiones() {
-                    $("#historial_list").html($("#loading").html());
+                    $('.nav-tabs a[href="#resumen"]').tab('show');
+                    $("#resumen").html($("#loading").html());
 
                     var local_id = $("#venta_local").val();
                     var fecha = $('#date_range').val();
@@ -140,11 +181,12 @@
                         data: {
                             'local_id': local_id,
                             'fecha': fecha,
-                            'moneda_id': moneda_id
+                            'moneda_id': moneda_id,
+                            'usuarios_id': $('#usuarios_id').val()
                         },
                         type: 'POST',
                         success: function (data) {
-                            $("#historial_list").html(data);
+                            $("#resumen").html(data);
                         },
                         error: function () {
                             $.bootstrapGrowl('<h4>Error.</h4> <p>Ha ocurrido un error en la operaci&oacute;n</p>', {
@@ -152,11 +194,7 @@
                                 delay: 5000,
                                 allow_dismiss: true
                             });
-                            $("#historial_list").html('');
                         }
                     });
-
                 }
-
-
             </script>

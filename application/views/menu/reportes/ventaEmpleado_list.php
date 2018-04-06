@@ -39,7 +39,7 @@
                     <tr>
                         <td><?= $list->id_vendedor ?></td>
                         <td><?= $list->nombre ?></td>
-                        <td><?= $moneda->simbolo ?></td>
+                        <td><?= $moneda->nombre ?></td>
                         <?php if(isset($lists[0]->tipo)){ ?>
                             <?php if($list->tipo=='1'){ ?>
                                 <td><?= $list->cantidad ?></td>
@@ -53,8 +53,9 @@
                 </tbody>
                 <tfoot>
                 <tr>
-                    <td colspan="2">TOTALES</td>
-                    <td><?= $moneda->simbolo ?></td>
+                    <td></td>
+                    <td>TOTALES</td>
+                    <td><?= $moneda->nombre ?></td>
                     <?php if(isset($lists[0]->tipo)){ ?>
                         <?php if($lists[0]->tipo=='1'){ ?>
                             <td><?= $cant ?></td>   
@@ -114,13 +115,79 @@
             $.post("<?= base_url()?>reporte/ventaEmpleado/grafico/", data, function(respuesta){
                 //Usar primero esto
                 var data_estadistica = eval("("+respuesta+")"); // Obtenemos la informacion del JSON
+
+                /*var options = {
+                    title: {
+                        text: 'Ventas por empleado'
+                    },
+                    xAxis: {
+                        categories: ['Importe', 'Anulado', 'Pears', 'Bananas', 'Plums']
+                    },
+                    labels: {
+                        items: [{
+                            html: 'Total fruit consumption',
+                            style: {
+                                left: '50px',
+                                top: '18px',
+                                color: (Highcharts.theme && Highcharts.theme.textColor) || 'black'
+                            }
+                        }]
+                    },
+                    series: [{
+                        type: 'column',
+                        name: 'Jane',
+                        data: [3, 2, 1, 3, 4]
+                    }, {
+                        type: 'column',
+                        name: 'John',
+                        data: [2, 3, 5, 7, 6]
+                    }, {
+                        type: 'column',
+                        name: 'Joe',
+                        data: [4, 3, 3, 9, 0]
+                    }, {
+                        type: 'spline',
+                        name: 'Average',
+                        data: [3, 2.67, 3, 6.33, 3.33],
+                        marker: {
+                            lineWidth: 2,
+                            lineColor: Highcharts.getOptions().colors[3],
+                            fillColor: 'white'
+                        }
+                    }, {
+                        type: 'pie',
+                        name: 'Total consumption',
+                        data: [{
+                            name: 'Jane',
+                            y: 13,
+                            color: Highcharts.getOptions().colors[0] // Jane's color
+                        }, {
+                            name: 'John',
+                            y: 23,
+                            color: Highcharts.getOptions().colors[1] // John's color
+                        }, {
+                            name: 'Joe',
+                            y: 19,
+                            color: Highcharts.getOptions().colors[2] // Joe's color
+                        }],
+                        center: [100, 80],
+                        size: 100,
+                        showInLegend: false,
+                        dataLabels: {
+                            enabled: false
+                        }
+                    }]
+                };
+
+                Highcharts.chart('grafico', options);*/
+
                 var options = {
                     chart: {
                         type: 'bar'
                     },
                     title: {
                         text: "Ventas por empleado"
-                    },
+                    },  
                     subtitle: {
                         text: ''
                     },
@@ -152,10 +219,10 @@
                     },
                     legend: {
                         layout: 'vertical',
-                        align: 'right',
+                        align: 'left',
                         verticalAlign: 'top',
-                        x: -40,
-                        y: 80,
+                        x: -5,
+                        y: 5,
                         floating: true,
                         borderWidth: 1,
                         backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),

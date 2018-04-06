@@ -81,6 +81,7 @@ class venta_new extends MY_Controller
         }
 
         $params['moneda_id'] = $this->input->post('moneda_id');
+        $params['usuarios_id'] = $this->input->post('usuarios_id');
         $data['moneda'] = $this->db->get_where('moneda', array('id_moneda' => $params['moneda_id']))->row();
         $data['ventas'] = $this->venta->get_ventas($params, $action);
 
@@ -624,6 +625,7 @@ class venta_new extends MY_Controller
         $moneda = $this->db->get_where('moneda', array('id_moneda' => $venta_temp->id_moneda))->row();
         if ($tipo_impresion == 'PEDIDO') {
             $data['venta'] = $this->venta->get_venta_detalle($venta_id);
+            $data['identificacion'] = $this->db->get_where('configuraciones', array('config_key' =>'EMPRESA_IDENTIFICACION'))->row();
             $total = $data['venta']->total;
             $data['totalLetras'] = numtoletras($total, $moneda->nombre);
             $this->load->view('menu/venta/impresiones/nota_pedido', $data);
@@ -714,7 +716,7 @@ class venta_new extends MY_Controller
 
         $condition = array(
             'local_id' => $params->local_id,
-            'condicion_id' => $params->condicion_pago_id,
+            'condicion_id' => (isset($params->condicion_pago_id))? $params->condicion_pago_id : '',
             'fecha_ini' => $fecha_ini,
             'fecha_fin' => $fecha_fin,
             'moneda_id' => $params->moneda_id

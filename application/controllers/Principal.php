@@ -116,6 +116,7 @@ class principal extends MY_Controller
                     $newData[0] = intval($result['ventas'][$j]['ciclo']);
                     $newData[1] = $result['ventas'][$j]['total_venta'];
                     //$newData[] = $result['ventas'][$i]['total_venta'];// ESto es el valor del eje X
+                    $newData[2] = $result['ventas'][$j]['fecha'];
                     $data['venta'][] = $newData;
                     $newData[1] = $result['ventas'][$j]['total_utilidad'];
                     $data['utilidad'][] = $newData;
@@ -128,6 +129,7 @@ class principal extends MY_Controller
                 $newData = array();
                 $newData[0] = $i;
                 $newData[1] = intval(0);// ESto es el valor del eje X
+                $newData[2] = '';
                 $data['venta'][] = $newData;
                 $newData[1] = 0;
                 $data['utilidad'][] = $newData;

@@ -48,7 +48,7 @@
             <input type="text" name="EMPRESA_IDENTIFICACION" required="true" id="EMPRESA_IDENTIFICACION"
                    class='form-control'
                    maxlength="100"
-                   value="<?= valueOption("EMPRESA_IDENTIFICACION", '12345678910') ?>">
+                   value="<?= valueOption("EMPRESA_IDENTIFICACION", '') ?>">
         </div>
     </div>
     <div class="row form-group">
