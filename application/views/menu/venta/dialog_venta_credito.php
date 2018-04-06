@@ -544,6 +544,10 @@
             });
 
 
+            $("#c_saldo_inicial_por").on('keyup', function () {
+                refresh_credito_window(2);
+            });
+
             $("#c_tasa_interes, #c_numero_cuotas, #c_saldo_inicial_por, #c_dia_pago").on('keyup', function () {
                 refresh_credito_window(1);
             });
@@ -555,7 +559,7 @@
             });
 
             $("#c_saldo_inicial").on('keyup', function () {
-                refresh_credito_window(2);
+                refresh_credito_window(1);
             });
 
             $("#c_saldo_inicial_por").on('keydown', function (e) {
@@ -664,12 +668,12 @@
             var tasa_interes = isNaN(parseFloat($("#c_tasa_interes").val())) ? 0 : parseFloat($("#c_tasa_interes").val());
 
 
-            if (trigger == 1 || trigger == undefined) {
+            if (trigger == 2) {
                 var saldo_porciento = isNaN(parseFloat($("#c_saldo_inicial_por").val())) ? 0 : parseFloat($("#c_saldo_inicial_por").val());
                 var saldo_inicial = parseFloat((precio_contado * saldo_porciento) / 100);
                 $("#c_saldo_inicial").val(formatPrice(saldo_inicial));
             }
-            else if (trigger == 2) {
+            else if (trigger == 1 || trigger == undefined) {
                 var saldo_inicial = isNaN(parseFloat($("#c_saldo_inicial").val())) ? 0 : parseFloat($("#c_saldo_inicial").val());
                 var saldo_porciento = parseFloat((saldo_inicial * 100) / precio_contado);
                 $("#c_saldo_inicial_por").val(parseFloat(saldo_porciento).toFixed(2));
@@ -693,8 +697,10 @@
 
             var estado = $("#venta_estado").val();
 
+            var si = isNaN(parseFloat((precio_contado * saldo_porciento) / 100)) ? 0 : parseFloat((precio_contado * saldo_porciento) / 100);
+
             if(estado == 'COMPLETADO'){
-                if (saldo_inicial > 0) {
+                if (si > 0) {
                     $('#continuar_venta_block').show();
                     $('#guardar_credito_block').hide();
                 }
