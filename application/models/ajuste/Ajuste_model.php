@@ -27,12 +27,46 @@ class ajuste_model extends CI_Model
 
     }
 
-    
+    function getAjustes($params)
+    {
+
+        $query = "
+            SELECT 
+                a.id,
+                DATE_FORMAT(a.fecha, '%d/%m/%Y') AS fecha,
+                a.operacion,
+                a.documento,
+                a.io,
+                a.serie,
+                a.numero,
+                l.local_nombre,
+                a.estado,
+                u.nombre
+            FROM
+                ajuste AS a
+                    JOIN
+                local AS l ON l.int_local_id = a.local_id
+                    JOIN
+                usuario AS u ON u.nUsuCodigo = a.usuario_id
+            WHERE
+                a.local_id = " . $params['local_id'] . "
+                    AND a.moneda_id = " . $params['moneda_id'] . "
+                    AND a.fecha >= '" . $params['fecha_ini'] . "'
+                    AND a.fecha <= '" . $params['fecha_fin'] . "'
+            ";
+
+        if (isset($params['io']) && $params['io'] != 0) {
+            $query .= " AND io = " . $params['io'];
+        }
+
+        return $this->db->query($query)->result();
+    }
+
 
     private function save_producto_detalles($ajuste_id, $local_id, $productos, $otros_val)
     {
         //Preparo los detalles de la venta para insertarlo y sus historicos
-        $ajuste = $this->db->get_where('ajuste', array('id'=>$ajuste_id))->row();
+        $ajuste = $this->db->get_where('ajuste', array('id' => $ajuste_id))->row();
         $cantidades = array();
         $ajuste_detalle = array();
         foreach ($productos as $producto) {
@@ -74,7 +108,7 @@ class ajuste_model extends CI_Model
             $old_cantidad_min = $old_cantidad != NULL ? $this->unidades_model->convert_minimo_um($key, $old_cantidad->cantidad, $old_cantidad->fraccion) : 0;
 
             $ajuste_cantidad = $old_cantidad_min - $value;
-            if($ajuste->io == 1)
+            if ($ajuste->io == 1)
                 $ajuste_cantidad = $old_cantidad_min + $value;
 
             $result = $this->unidades_model->get_cantidad_fraccion($key, $ajuste_cantidad);

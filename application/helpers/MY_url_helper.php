@@ -106,7 +106,7 @@ function get_sunat_documento($code = false)
     if ($code == false) {
         return $array;
     } else {
-        $array[$code];
+        return $array[$code];
     }
 }
 
@@ -123,10 +123,10 @@ function get_sunat_operacion($code = false)
         '99' => 'Otros',
     );
 
-    if ($code == false) {
+    if ($code === false) {
         return $array;
     } else {
-        $array[$code];
+        return $array[$code];
     }
 }
 
