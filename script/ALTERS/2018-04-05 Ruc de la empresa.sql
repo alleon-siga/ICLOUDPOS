@@ -1,7 +1,7 @@
 INSERT INTO configuraciones(config_key, config_value) VALUES('EMPRESA_IDENTIFICACION', '12345678910');
 
-INSERT INTO opcion(cOpcionDescripcion, cOpcionNombre) VALUES('dashboard', 'Dashboard');
+INSERT INTO opcion(nOpcion,cOpcionDescripcion, cOpcionNombre) VALUES(9,'dashboard', 'Dashboard');
 
-INSERT INTO opcion(nOpcionClase, cOpcionDescripcion, cOpcionNombre) VALUES('816','reporteVentas', 'Reporte semanal de salidas');
+INSERT INTO opcion(nOpcion, nOpcionClase, cOpcionDescripcion, cOpcionNombre) VALUES(901,9,'reporteVentas', 'Reporte semanal de salidas');
 
-INSERT INTO opcion(nOpcionClase, cOpcionDescripcion, cOpcionNombre) VALUES('816','reporteCompras', 'Reporte semanal de compras');
+INSERT INTO opcion(nOpcion, nOpcionClase, cOpcionDescripcion, cOpcionNombre) VALUES(902,9,'reporteCompras', 'Reporte semanal de compras');
