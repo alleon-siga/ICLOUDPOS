@@ -22,6 +22,7 @@
                 <th>Desde</th>
                 <th>Hasta</th>
                 <th>Longitud</th>
+                <th>Actual</th>
                 <th>Estado</th>
                 <th class="desktop">Acciones</th>
 
@@ -37,6 +38,7 @@
                         <td><?= $comprobante->desde ?></td>
                         <td><?= $comprobante->hasta ?></td>
                         <td><?= $comprobante->longitud ?></td>
+                        <td><?= $comprobante->num_actual ?></td>
                         <td><?= $comprobante->estado == 1 ? 'Activo' : 'Inactivo' ?></td>
                         <td>
                             <div class="btn-group">

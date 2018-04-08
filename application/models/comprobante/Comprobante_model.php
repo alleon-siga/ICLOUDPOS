@@ -70,7 +70,10 @@ class Comprobante_model extends CI_Model
         if ($cv == NULL) {
             $correlativo = $comprobante->desde;
         } else {
-            $correlativo = $cv->numero + 1;
+            //$correlativo = $cv->numero + 1;
+            //Se ha cambiado por campo numero_actual
+            $comprobante = $this->db->get_where('comprobantes', array('id' => $comprobante_id))->row();
+            $correlativo = $comprobante->num_actual + 1;
         }
 
         if ($correlativo <= $comprobante->hasta) {
@@ -79,6 +82,9 @@ class Comprobante_model extends CI_Model
                 'comprobante_id' => $comprobante_id,
                 'numero' => sumCod($correlativo, $comprobante->longitud)
             ));
+            //Actualizar campo numero_actual
+            $this->db->where('id', $comprobante_id);
+            $this->db->update('comprobantes', array('num_actual' => $correlativo));
         } else {
             $this->error = 'El nombre que desea guardar ya existe';
             $this->db->trans_off();
