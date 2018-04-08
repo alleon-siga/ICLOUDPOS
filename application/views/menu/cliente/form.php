@@ -186,11 +186,13 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <label class="control-label panel-admin-text">Grupo</label>
+                                <?php  $x=1;  ?>
                                 <select  id="grupo_id_juridico" name="grupo_id_juridico" required="true" class="chosen form-control">
                                     <option value="">Seleccione</option>
                                     <?php foreach ($grupos as $grupo): ?>
                                         <?php if(!isset($cliente['grupo_id'])){ $cliente['grupo_id'] = 1; } ?>
-                                        <option value="<?php echo $grupo['id_grupos_cliente'] ?>" <?php  if (isset($cliente['grupo_id']) and $cliente['grupo_id'] == $grupo['id_grupos_cliente']) echo 'selected' ?>><?= $grupo['nombre_grupos_cliente'] ?></option>
+                                        <option value="<?php echo $grupo['id_grupos_cliente'] ?>" <?php  if (isset($cliente['grupo_id']) and $cliente['grupo_id'] == $grupo['id_grupos_cliente'] || $x==1) echo 'selected' ?>><?= $grupo['nombre_grupos_cliente'] ?></option>
+                                    <?php  $x++;  ?>
                                     <?php endforeach ?>
                                 </select>
                             </div>
@@ -448,11 +450,13 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <label class="control-label panel-admin-text">Grupo</label>
-                                <select  id="grupo_id_juridico" name="grupo_id_juridico" required="true" class="chosen form-control">
+                                <select  id="grupo_id_juridicoE" name="grupo_id_juridico" required="true" class="chosen form-control">
                                     <option value="">Seleccione</option>
+                                    <?php  $x=1;  ?>
                                     <?php foreach ($grupos as $grupo): ?>
                                         <option
-                                            value="<?php echo $grupo['id_grupos_cliente'] ?>" <?php  if (isset($cliente['grupo_id']) and $cliente['grupo_id'] == $grupo['id_grupos_cliente']) echo 'selected' ?>><?= $grupo['nombre_grupos_cliente'] ?></option>
+                                            value="<?php echo $grupo['id_grupos_cliente'] ?>" <?php  if ((isset($cliente['grupo_id']) and $cliente['grupo_id'] == $grupo['id_grupos_cliente']) || $x==1) echo 'selected' ?>><?= $grupo['nombre_grupos_cliente'] ?></option>
+                                    <?php  $x++;  ?>
                                     <?php endforeach ?>
                                 </select>
                             </div>

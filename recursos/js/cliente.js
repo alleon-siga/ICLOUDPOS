@@ -849,8 +849,7 @@ function guardarcliente() {
             return false;
         }
 
-        if ($("#grupo_id_juridico").val() == '' && $('#tipo_iden').val()=='2') {
-        
+        if ($("#grupo_id_juridicoE").val() == '' && $('#tipo_iden').val()=='2') {
             var growlType = 'warning';
             $("#estatus").focus()
             $.bootstrapGrowl('<h4>Debe seleccionar un grupo</h4>', {

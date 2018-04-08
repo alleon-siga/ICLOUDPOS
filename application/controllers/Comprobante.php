@@ -49,7 +49,8 @@ class Comprobante extends MY_Controller
             'desde' => $this->input->post('desde'),
             'hasta' => $this->input->post('hasta'),
             'longitud' => $this->input->post('longitud'),
-            'estado' => $this->input->post('estado')
+            'estado' => $this->input->post('estado'),
+            'num_actual' => $this->input->post('actual')
         );
 
         if (empty($id)) {

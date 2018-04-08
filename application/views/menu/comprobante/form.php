@@ -75,6 +75,18 @@
                                 value="<?= isset($comprobante) ? $comprobante->longitud : '' ?>">
                     </div>
                 </div>
+                <div class="form-group row">
+                    <label class="col-md-2 col-md-offset-2">N&uacute;mero actual</label>
+                    <div class="col-md-6">
+                        <input
+                                type="number"
+                                name="actual"
+                                id="actual"
+                                required="numero actual"
+                                class="form-control"
+                                value="<?= isset($comprobante) ? $comprobante->num_actual : '0' ?>">
+                    </div>
+                </div>
 
                 <div class="form-group row">
                     <label class="col-md-2 col-md-offset-2">Estado</label>
@@ -131,6 +143,11 @@
                 show_msg('warning', 'El campo longitud serie es requerido');
                 return false;
             }
+
+            if ($('#actual').val() == '') {
+                show_msg('warning', 'El campo longitud numero actual es requerido');
+                return false;
+            }            
 
             if ($('#desde').val() >= $('#hasta').val()) {
                 show_msg('warning', 'El campo desde tiene que ser menor que el hasta');
