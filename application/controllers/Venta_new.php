@@ -116,12 +116,17 @@ class venta_new extends MY_Controller
         $data['venta'] = $this->venta->get_venta_detalle($venta_id);
         $data['venta_action'] = $action;
         $data['detalle'] = 'venta';
-        $data['kardex'] = $this->db->get_where('kardex', array(
+        $this->db->select('serie, numero');
+        $this->db->from('kardex');
+        $this->db->where(array('ref_id' => $venta_id, 'io' => 2, 'tipo' => 7, 'operacion' => 5));
+        $this->db->group_by('serie, numero');
+        $data['kardex'] = $this->db->get()->result();
+        /*$data['kardex'] = $this->db->get_where('kardex', array(
             'ref_id' => $venta_id,
             'io' => 2,
             'tipo' => 7,
             'operacion' => 5
-        ))->result();
+        ))->result();*/
         $this->load->view('menu/venta/historial_list_detalle', $data);
     }
 

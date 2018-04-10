@@ -290,7 +290,8 @@
                             <?php if (count($kardex) > 0): ?>
                                 <h4>Anulaciones</h4>
                                 <?php foreach ($kardex as $k): ?>
-                                    <h5><a href="javascript:ver_nc('<?= $venta->venta_id ?>','<?= $venta->local_id ?>')"><?= 'NC ' . $k->serie . ' - ' . $k->numero ?></a></h5>
+                                    <h5>
+                                    <a href="javascript:ver_nc('<?= $venta->venta_id ?>','<?= $k->serie ?>','<?= $k->numero ?>')"><?= 'NC ' . $k->serie . ' - ' . $k->numero ?></a></h5>
                                 <?php endforeach; ?>
                             <?php endif; ?>
                             <?php if ($venta->condicion_id == '2'): ?>
@@ -350,7 +351,7 @@
                 <div class="row">
                     <div class="text-right">
                         <div class="col-md-12">
-                            <input type="button" class='btn btn-default' value="Cerrar"
+                            <input type="button" class='btn btn-danger' value="Cerrar"
                                    data-dismiss="modal">
                         </div>
                     </div>

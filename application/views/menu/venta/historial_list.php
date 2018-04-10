@@ -172,7 +172,7 @@
          aria-labelledby="myModalLabel"
          aria-hidden="true"
          data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog" style="width: 50%">
+        <div class="modal-dialog" style="width: 60%">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" onclick="$('#nc_modal').modal('hide');" aria-hidden="true">
@@ -184,7 +184,7 @@
                 
                 </div>
                 <div class="modal-footer">
-                    <a href="#" class="btn btn-default" id="cerrar_pago_modal" onclick="$('#nc_modal').modal('hide');">Cerrar</a>
+                    <a href="#" class="btn btn-danger" id="cerrar_pago_modal" onclick="$('#nc_modal').modal('hide');">Cerrar</a>
                 </div>
             </div>
         </div>
@@ -252,12 +252,12 @@
         });
     }
 
-    function ver_nc(venta_id, local_id) {
+    function ver_nc(venta_id, serie, numero) {
         $("#nc_modal").modal('show');
         $.ajax({
             url: '<?php echo $ruta ?>venta/get_nota_credito/',
             type: 'POST',
-            data: {'venta_id': venta_id, 'local_id': local_id},
+            data: {'venta_id': venta_id, 'serie': serie, 'numero': numero},
             success: function (data) {
                 $("#nc_modal_body").html(data);
             },

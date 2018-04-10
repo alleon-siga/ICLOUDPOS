@@ -1,30 +1,33 @@
+<?php $md = get_moneda_defecto() ?>
 <table class="table table-bordered">
     <thead>
     <tr>
-        <th>Id</th>
-        <th>Fecha</th>
-        <th>Documento</th>
+        <th>Id.Dev.</th>
+        <th>Producto</th>
         <th>Cantidad</th>
         <th>UM</th>
-        <th>Venta documento</th>
-        <th>Venta Numero</th>
-        <th>Fecha venta</th>
-        <th>Venta estado</th>
+        <th>Precio</th>
+        <th>Subtotal</th>
     </tr>
     </thead>
     <tbody>
+<?php $Subtotal = 0; ?>    	
 <?php foreach ($data as $dato) { ?>
 		<tr>
-			<td><?= $dato->venta_id ?></td>
-			<td><?= $dato->fecha ?></td>
-			<td><?= $dato->documento ?></td>
+			<td><?= $dato->id_devolucion ?></td>
+			<td><?= $dato->producto_nombre ?></td>
 			<td><?= $dato->cantidad ?></td>
-			<td><?= $dato->um ?></td>
-			<td><?= $dato->venta_documento ?></td>
-			<td><?= $dato->venta_numero ?></td>
-			<td><?= $dato->fecha_venta ?></td>
-			<td><?= $dato->venta_estado ?></td>
+			<td><?= $dato->nombre_unidad ?></td>
+			<td><?= number_format($dato->precio,2) ?></td>
+			<td><?= $md->simbolo.' '.number_format($dato->detalle_importe,2) ?></td>
 		</tr>
+<?php $Subtotal += $dato->detalle_importe ?>
 <?php } ?>
     </tbody>
+    <tfoot>
+    	<tr>
+    		<td align="right" colspan="5">Subtotal</td>
+    		<td><?= $md->simbolo.' '.number_format($Subtotal,2) ?></td>
+    	</tr>
+    </tfoot>
  </table>

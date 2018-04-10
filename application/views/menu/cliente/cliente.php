@@ -1,4 +1,5 @@
 <?php $ruta = base_url(); ?>
+<?php $term = diccionarioTermino() ?>
 <ul class="breadcrumb breadcrumb-top">
     <li>Clientes</li>
     <li><a href="">Agregar y editar Clientes</a></li>
@@ -18,7 +19,7 @@
             <tr>
                 <th style="text-align: center">ID</th>
                 <th style="text-align: center">Tipo</th>
-                <th style="text-align: center">Identificacion</th>
+                <th style="text-align: center"><?= $term[0]->valor.' / '.$term[1]->valor ?></th>
                 <th style="text-align: center">Raz&oacute;n Social o Nombre</th>
                 <th style="text-align: center">Direccion</th>
                 <th style="text-align: center">Teléfono</th>
@@ -33,7 +34,7 @@
                     <tr>
                         <td class="center"><?= $cliente['id_cliente'] ?></td>
                         <td><?= $cliente['tipo_cliente'] == '1' ? 'Empresa' : 'Persona'?></td>
-                        <td><?= $cliente['ruc'] == '2' ? 'RUC:' : 'DNI:'?> <?= $cliente['identificacion'] ?></td>
+                        <td><?= $cliente['ruc'] == '2' ? $term[1]->valor.':' : $term[0]->valor.':'?> <?= $cliente['identificacion'] ?></td>
                         <td><?= $cliente['razon_social'] ?></td>                        
                         <td><?= $cliente['direccion'] ?></td>
                         <td><?= $cliente['telefono1'] ?></td>

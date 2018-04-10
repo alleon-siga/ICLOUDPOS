@@ -522,3 +522,8 @@ function subfijo($xx)
     //
     return $xsub;
 }
+
+function diccionarioTermino(){
+    $CI =& get_instance();
+    return $CI->db->get_where('diccionario_termino', array('activo' => '1'))->result();
+}
