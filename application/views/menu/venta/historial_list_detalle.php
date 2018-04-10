@@ -562,6 +562,15 @@
                 return false;
             }
 
+            var total_importe = parseFloat($("#total_pagado").html()) - parseFloat($("#total_devolver").html());
+            if (total_importe == 0) {
+                $.bootstrapGrowl('<h4>Error.</h4> <p>No puede devolver la totalidad de la venta. Realice una anulacion.</p>', {
+                    type: 'warning',
+                    delay: 5000,
+                    allow_dismiss: true
+                });
+                return false;
+            }
             return flag;
         }
 

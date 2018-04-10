@@ -10,9 +10,64 @@ class Reporte_ventas extends MY_Controller
             $this->load->model('reporte_venta/reporte_venta_model');
             $this->load->model('local/local_model');
             $this->load->model('usuario/usuario_model');
+            $this->load->model('reporte_venta/rcliente_estado_model');
         } else {
             redirect(base_url(), 'refresh');
         }
+    }
+
+    function cliente_estado($action = '')
+    {
+        $data['reporte_nombre'] = 'Reporte de Estado de Cuenta del Cliente';
+
+        switch ($action) {
+            case 'filter': {
+                $data['clientes'] = $this->rcliente_estado_model->get_estado_cuenta(array(
+                    'fecha_ini' => date('Y-m-d', strtotime($this->input->post('fecha_ini'))),
+                    'fecha_fin' => date('Y-m-d', strtotime($this->input->post('fecha_fin'))),
+                    'fecha_flag' => $this->input->post('fecha_flag'),
+                    'vendedor_id' => $this->input->post('vendedor_id'),
+                    'cliente_id' => $this->input->post('cliente_id'),
+                    'estado' => $this->input->post('estado')
+                ));
+
+                $data['form_filter'] = true;
+
+
+                echo $this->load->view('menu/reporte_venta/cliente_estado/tabla', $data, true);
+                break;
+            }
+            default: {
+                $cliente_id = $this->input->get('cliente_id', null);
+                if ($cliente_id != null) {
+                    $data['clientes'] = $this->rcliente_estado_model->get_estado_cuenta(array(
+                        'fecha_ini' => date('Y-m-01'),
+                        'fecha_fin' => date('Y-m-d'),
+                        'fecha_flag' => 1,
+                        'cliente_id' => $cliente_id,
+                    ));
+
+                } else {
+                    $data['clientes'] = array();
+                }
+
+
+                $data['reporte_filtro'] = $this->load->view('menu/reporte_venta/cliente_estado/filtros', array(
+                    'vendedores' => $this->db->get_where('usuario', array('deleted' => 0))->result(),
+                    'clientes' => $this->db->get_where('cliente', array('cliente_status' => 1))->result(),
+                    'cliente_id' => $cliente_id
+                ), true);
+                $data['reporte_tabla'] = $this->load->view('menu/reporte_venta/cliente_estado/tabla', $data, true);
+                $dataCuerpo['cuerpo'] = $this->load->view('menu/reporte_venta/report_template', $data, true);
+                if ($this->input->is_ajax_request()) {
+                    echo $dataCuerpo['cuerpo'];
+                } else {
+                    $this->load->view('menu/template', $dataCuerpo);
+                }
+            }
+        }
+
+
     }
 
 
