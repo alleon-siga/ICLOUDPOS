@@ -176,6 +176,7 @@ class cotizar_model extends CI_Model
         $cotizacion = $this->get_cotizaciones(array('id' => $id));
 
         $cotizacion->detalles = $this->db->select('
+            c.id as cotizacion_id,
             cd.id as detalle_id,
             c.local_id AS local_id,
             local.local_nombre AS local_nombre,
@@ -313,5 +314,66 @@ class cotizar_model extends CI_Model
         }
     }
 
+    public function editarCotizacion($id){
+        $parte = explode('|', $id);
+        $id = $parte[0];
+        $cotizacion_id = $parte[1];
+        $data = array(
+            'cantidad' => $this->input->post('Cantidad'),
+            'precio' => $this->input->post('Precio'),
+            'precio_venta' => $this->input->post('Precio')
+        );
+        $this->db->where('id', $id);
+        $this->db->update('cotizacion_detalles', $data);
+        $this->recalc_totales($cotizacion_id);
+    }
 
+    public function eliminarCotizacion($id){
+        $parte = explode('|', $id);
+        $id = $parte[0];
+        $cotizacion_id = $parte[1];
+        $this->db->where('id', $id);
+        $this->db->delete('cotizacion_detalles');
+        $this->recalc_totales($cotizacion_id);
+    }
+
+    public function recalc_totales($venta_id)
+    {
+        $venta = $this->db->get_where('cotizacion', array('id' => $venta_id))->row();
+        $detalles = $this->db->get_where('cotizacion_detalles', array('cotizacion_id' => $venta_id))->result();
+
+        $impuesto = 0;
+        $subtotal = 0;
+        $total = 0;
+        foreach ($detalles as $d) {
+            $total += $d->cantidad * $d->precio;
+        }
+
+        if ($venta->tipo_impuesto == 1) {
+            foreach ($detalles as $d) {
+                $factor = (100 + $d->impuesto) / 100;
+                $impuesto += ($d->cantidad * $d->precio) - (($d->cantidad * $d->precio) / $factor);
+            }
+            $subtotal = $total - $impuesto;
+        } elseif ($venta->tipo_impuesto == 2) {
+            $subtotal = $total;
+            foreach ($detalles as $d) {
+                $factor = (100 + $d->impuesto) / 100;
+                $impuesto += (($d->cantidad * $d->precio) * $factor) - ($d->cantidad * $d->precio);
+            }
+            $total = $subtotal + $impuesto;
+        }
+        else{
+            $subtotal = $total;
+        }
+
+        $this->db->where('id', $venta_id);
+        $this->db->update('cotizacion', array(
+            'total' => $total,
+            'subtotal' => $subtotal,
+            'impuesto' => $impuesto,
+        ));
+
+        return $total;
+    }
 }

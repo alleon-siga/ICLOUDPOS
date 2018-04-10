@@ -27,7 +27,7 @@ header("Expires: 0");
     </tr>
     </thead>
     <tbody>
-
+    <?php $total_venta = $imp_com = 0; ?>
     <?php foreach ($lists as $list): ?>
         <tr>
             <td><?= $list->vendedor_id ?></td>
@@ -36,7 +36,16 @@ header("Expires: 0");
             <td><?= number_format($list->comision, 2) ?></td>
             <td><?= $moneda->simbolo.' '.number_format($list->importe_comision, 2) ?></td>
         </tr>
+    <?php $total_venta += $list->total_venta; ?>
+    <?php $imp_com += $list->importe_comision; ?>        
     <?php endforeach ?>
-
     </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="2">Total:</td>
+            <td><?= $moneda->simbolo.' '.number_format($total_venta, 2); ?></td>
+            <td></td>
+            <td><?= $moneda->simbolo.' '.number_format($imp_com, 2); ?></td>
+        </tr>
+    </tfoot>    
 </table>

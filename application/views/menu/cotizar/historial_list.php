@@ -100,6 +100,10 @@
 
         TablesDatatables.init(1);
 
+        $("#dialog_cotizar_detalle").on("hide.bs.modal", function(){
+            get_cotizaciones();
+        })
+
     });
 
     function cotizar(id) {

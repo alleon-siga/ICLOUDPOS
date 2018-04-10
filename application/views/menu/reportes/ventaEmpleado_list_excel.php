@@ -9,7 +9,7 @@ header("Expires: 0");
     al <?= date('d/m/Y', strtotime($fecha_fin)) ?></h4>
 
 <h5 style="margin: 0;">EMPRESA: <?= valueOption('EMPRESA_NOMBRE') ?></h5>
-<h5 style="margin: 0;">DIRECCI&Oacute;N: <?= $local_direccion ?></h5>
+<h5 style="margin: 0;">DIRECCI&Oacute;N: <?= utf8_decode($local_direccion) ?></h5>
 <h5 style="margin: 0;">SUCURSAL: <?= $local_nombre ?></h5>
 <table border="1">
     <thead>

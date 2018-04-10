@@ -118,6 +118,7 @@
                 <div class="col-md-3">
                     <?php if (isset($locales)): ?>
                         <select id="local_id" class="form-control filter-input">
+                            <option value="0">Todos</option>
                             <?php foreach ($locales as $local): ?>
                                 <option <?php if ($this->session->userdata('id_local') == $local['int_local_id']) echo "selected"; ?>
                                         value="<?= $local['int_local_id']; ?>"> <?= $local['local_nombre'] ?> </option>
@@ -227,8 +228,6 @@
                     });
 
                     $('.ctrl').chosen();
-
-                    getReporte();
 
                     $("#btn_buscar, .btn_buscar").on("click", function () {
                         getReporte();

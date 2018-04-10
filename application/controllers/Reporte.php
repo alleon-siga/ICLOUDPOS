@@ -178,6 +178,7 @@ class Reporte extends MY_Controller
                 $params['fecha_ini'] = date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0])));
                 $params['fecha_fin'] = date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])));
                 $data['moneda'] = $this->db->get_where('moneda', array('id_moneda' => $params['moneda_id']))->row();
+                $data['limit'] = $this->input->post('limit');
                 $data['lists'] = $this->reporte_model->getVentaSucursal($params);
                 if ($this->session->userdata('esSuper') == 1) {
                     $data['locales'] = $this->local_model->get_all();
@@ -302,9 +303,8 @@ class Reporte extends MY_Controller
                 $date_range = explode(" - ", $this->input->post('fecha'));
                 $params['fecha_ini'] = date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0])));
                 $params['fecha_fin'] = date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])));
-
                 $data['moneda'] = $this->db->get_where('moneda', array('id_moneda' => $params['moneda_id']))->row();
-
+                $params['limit'] = $this->input->post('limit');
                 $data['lists'] = $this->reporte_model->getVentaEmpleado($params);
                 echo json_encode($data);
                 break;

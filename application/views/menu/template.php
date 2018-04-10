@@ -51,7 +51,6 @@ $template = array(
     'active_page' => basename($_SERVER['PHP_SELF'])
 );
 
-
 if ($this->session->userdata('tema')) {
 
     $template['theme'] = $this->session->userdata('tema');
@@ -1235,7 +1234,7 @@ $primary_nav = array(
                     <ul class="nav navbar-nav-custom pull-right hidden-xs">
                         <!-- Alternative Sidebar Toggle Button -->
                         <!-- User Dropdown -->
-                        <li class="alertD" style="display: none;">
+                        <li class="alertD" style="display: none">
                             <a href="#">
                                 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 146.6 177.9" style="enable-background:new 0 0 146.6 177.9;" xml:space="preserve">
                                     <g>
@@ -1247,11 +1246,23 @@ $primary_nav = array(
                             </a>
                             <ul>
                                 <li>
-                                    <h5>Tiene cargos pendiente de pago: Fecha corte 31/03/2018</h5>
+                                    <h5>Tiene cargos pendiente de pago: Fecha corte 02/04/2018</h5>
                                 </li>
                                 <li>
-                                    <span>Marzo - Abril</span>
-                                    <span>100.00</span>
+                                    <span>Enero</span>
+                                    <span>160.00</span>
+                                </li>
+                                 <li>
+                                    <span>Febrero</span>
+                                    <span>160.00</span>
+                                </li>
+                                <li>
+                                    <span>Marzo</span>
+                                    <span>160.00</span>
+                                </li>
+                                <li>
+                                    <span>Abril</span>
+                                    <span>160.00</span>
                                 </li>
                             </ul>
                         </li>

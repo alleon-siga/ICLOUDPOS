@@ -657,6 +657,7 @@ AND cantidad < producto_stockminimo + (producto_stockminimo * 30)/100 and cantid
             }
             $tasa_soles = $moneda['tasa_soles'];
             $moneda_nombre = $moneda['nombre'];
+            $moneda_simbolo = $moneda['simbolo'];
         }
 
         $data['productos'] = $this->inventario_model->get_valorizacion($condicion);
@@ -772,6 +773,22 @@ AND cantidad < producto_stockminimo + (producto_stockminimo * 30)/100 and cantid
         }
 
         $html .= "</table>";
+        $html .='<table><tr><td colspan="8" align="right"><b>Total:</b></td><td colspan="2">';
+
+        $simbolo=$moneda_simbolo;
+        if (isset($operacion)) {
+            $precio = $total;
+            $string = ' $precio$operacion$tasa_soles ';
+            //   echo $string. "<br>";
+            eval("\$string = \"$string\";");
+            eval("\$string = \"$string\";");
+            eval("\$result = ($string);");
+
+            $html .= $simbolo." ".number_format($result, 2);
+        } else {
+            $html .= $simbolo." ".number_format($total, 2);
+        } 
+        $html .= "</td></tr></table>";
 
 // Imprimimos el texto con writeHTMLCell()
         $pdf->writeHTMLCell($w = 0, $h = 0, $x = '', $y = '', $html, $border = 0, $ln = 1, $fill = 0, $reseth = true, $align = '', $autopadding = true);
@@ -834,9 +851,11 @@ AND cantidad < producto_stockminimo + (producto_stockminimo * 30)/100 and cantid
         }
         $tasa_soles = $moneda['tasa_soles'];
         $moneda_nombre = $moneda['nombre'];
+        $moneda_simbolo = $moneda['simbolo'];
 
         $data['tasa_soles'] = $tasa_soles;
         $data['moneda_nombre'] = $moneda_nombre;
+        $data['moneda_simbolo'] = $moneda_simbolo;
         /* if (!empty($monedas)) {
              $moneda = $this->monedas_model->get_by('id_moneda', $monedas);
              if (intval($moneda['tasa_soles']) > 0) {

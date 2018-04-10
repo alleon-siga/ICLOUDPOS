@@ -9,6 +9,7 @@ class Reporte_ventas extends MY_Controller
         if ($this->login_model->verify_session()) {
             $this->load->model('reporte_venta/reporte_venta_model');
             $this->load->model('local/local_model');
+            $this->load->model('usuario/usuario_model');
             $this->load->model('reporte_venta/rcliente_estado_model');
         } else {
             redirect(base_url(), 'refresh');
@@ -150,7 +151,6 @@ class Reporte_ventas extends MY_Controller
                 }
                 $data['monedas'] = $this->db->get_where('moneda', array('status_moneda' => 1))->result();
                 $data['comprobantes'] = $this->db->get_where('comprobantes', array('estado' => 1))->result();
-
                 $dataCuerpo['cuerpo'] = $this->load->view('menu/reporte_venta/comprobante', $data, true);
                 if ($this->input->is_ajax_request()) {
                     echo $dataCuerpo['cuerpo'];
@@ -169,13 +169,12 @@ class Reporte_ventas extends MY_Controller
             case 'filter': {
                 $params['local_id'] = $this->input->post('local_id');
                 $params['moneda_id'] = $this->input->post('moneda_id');
-
                 $date_range = explode(" - ", $this->input->post('fecha'));
                 $params['fecha_ini'] = date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0])));
                 $params['fecha_fin'] = date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])));
 
                 $data['moneda'] = $this->db->get_where('moneda', array('id_moneda' => $params['moneda_id']))->row();
-
+                $params['usuarios_id'] = $this->input->post('usuarios_id');
                 $data['lists'] = $this->reporte_venta_model->getVendedoresComision($params);
 
                 $this->load->view('menu/reporte_venta/comision_list', $data);
@@ -189,6 +188,7 @@ class Reporte_ventas extends MY_Controller
                     'moneda_id' => $params->moneda_id,
                     'fecha_ini' => date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0]))),
                     'fecha_fin' => date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1]))),
+                    'usuarios_id' => $params->usuarios_id
                 );
 
                 $data['lists'] = $this->reporte_venta_model->getVendedoresComision($input);
@@ -216,6 +216,7 @@ class Reporte_ventas extends MY_Controller
                     'moneda_id' => $params->moneda_id,
                     'fecha_ini' => date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0]))),
                     'fecha_fin' => date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1]))),
+                    'usuarios_id' => $params->usuarios_id
                 );
 
                 $data['lists'] = $this->reporte_venta_model->getVendedoresComision($input);
@@ -239,6 +240,7 @@ class Reporte_ventas extends MY_Controller
                     $data['locales'] = $this->local_model->get_all_usu($usu);
                 }
                 $data['monedas'] = $this->db->get_where('moneda', array('status_moneda' => 1))->result();
+                $data['usuarios'] = $this->usuario_model->select_all_user();
                 $dataCuerpo['cuerpo'] = $this->load->view('menu/reporte_venta/comision', $data, true);
                 if ($this->input->is_ajax_request()) {
                     echo $dataCuerpo['cuerpo'];
@@ -249,6 +251,4 @@ class Reporte_ventas extends MY_Controller
             }
         }
     }
-
-
 }

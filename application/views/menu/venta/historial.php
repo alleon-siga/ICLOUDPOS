@@ -333,25 +333,6 @@
                     });
                 }
 
-                function ver(venta_id) {
-
-                    $("#dialog_venta_detalle").html($("#loading").html());
-                    $("#dialog_venta_detalle").modal('show');
-
-                    $.ajax({
-                        url: '<?php echo $ruta . 'venta_new/get_venta_detalle/' . $venta_action; ?>',
-                        type: 'POST',
-                        data: {'venta_id': venta_id},
-
-                        success: function (data) {
-                            $("#dialog_venta_detalle").html(data);
-                        },
-                        error: function () {
-                            alert('asd')
-                        }
-                    });
-                }
-
                 function cobrar(venta_id) {
 
                     $("#dialog_venta_detalle").html($("#loading").html());

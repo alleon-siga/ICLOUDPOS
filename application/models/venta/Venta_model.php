@@ -1571,7 +1571,7 @@ WHERE (((SELECT
 
     function estadistica_semanaactual($condicion, $group)
     {
-        $sql = "SELECT SUM(detalle_importe) AS total_venta, SUM(detalle_utilidad) AS total_utilidad, DAYOFWEEK(fecha)  AS ciclo,
+        $sql = "SELECT fecha, SUM(detalle_importe) AS total_venta, SUM(detalle_utilidad) AS total_utilidad, DAYOFWEEK(fecha)  AS ciclo,
 count(venta.venta_id) as numero_venta, venta.`venta_status`
 FROM (`detalle_venta`) JOIN `venta` ON `venta`.`venta_id`=`detalle_venta`.`id_venta` WHERE ";
         $sql .= $condicion;

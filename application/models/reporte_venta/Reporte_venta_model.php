@@ -25,7 +25,8 @@ class reporte_venta_model extends CI_Model
                 comp.nombre AS comprobante_nombre,
                 CONCAT(comp.serie, comp_v.numero) AS comprobante_numero,
                 v.total_impuesto AS impuesto,
-                v.total AS total
+                v.total AS total,
+                DATE(v.fecha) AS fecha
             FROM
                 venta AS v
                     JOIN
@@ -48,6 +49,10 @@ class reporte_venta_model extends CI_Model
 
     function getVendedoresComision($params)
     {
+        $where_usuario = '';
+        if(!empty($params['usuarios_id'])){
+            $where_usuario = "AND v.id_vendedor = '".$params['usuarios_id']."'";
+        }
         $query = "
                 SELECT
                     v.id_vendedor AS vendedor_id,
@@ -63,7 +68,8 @@ class reporte_venta_model extends CI_Model
                 AND v.local_id = " . $params['local_id'] . "
                 AND v.venta_status = 'COMPLETADO' 
                 AND v.fecha >= '".$params['fecha_ini']."'
-                    AND v.fecha <= '".$params['fecha_fin']."'
+                AND v.fecha <= '".$params['fecha_fin']."'
+                $where_usuario
                 GROUP BY
                     v.id_vendedor;
             ";

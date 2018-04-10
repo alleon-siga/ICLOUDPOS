@@ -69,14 +69,12 @@
                                 </div>
                             </div>
                             <div class="block-content-mini-padding">
-                                <div class="col-xs-3">
+                                <div class="col-xs-5">
                                     Venta Nro:
                                 </div>
-                                <div class="col-xs-9">
-                                    <?= $cliente['documento_Serie']."-".$cliente['documento_Numero'] ?>
+                                <div class="col-xs-7">
+                                    <?= sumCod($cliente['venta_id'], 6) ?>
                                 </div>
-
-
                             </div>
 
 
@@ -92,6 +90,8 @@
                                         echo date('d-m-Y', strtotime( $cronogramas[0]['fecha_abono']));
                                     }  ?>
                                 </div>
+                            </div>
+                            <div class="block-content-mini-padding">
                                 <div class="col-xs-5">
                                     Hora:
 

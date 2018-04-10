@@ -231,5 +231,15 @@ class cotizar extends MY_Controller
         echo json_encode($data);
     }
 
-
+    function editarCotizacion()
+    {
+        $action = $this->input->post('action');
+        $id = $this->input->post('identify');
+        if($action=='edit'){
+            $this->cotizar_model->editarCotizacion($id);
+        }elseif($action=='delete'){
+            $this->cotizar_model->eliminarCotizacion($id);
+        }
+        echo json_encode($action);
+    }
 }
