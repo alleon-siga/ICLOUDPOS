@@ -456,6 +456,18 @@ $primary_nav = array(
                 'slug' => 'resumenventas'
             ),
 //            array(
+//                'name' => 'Estado de Cuenta Cliente',
+//                'url' => $ruta . 'reporte_ventas/cliente_estado',
+//                'icon' => 'fa fa-pie-chart',
+//                'slug' => 'resumenventas'
+//            ),
+            array(
+                'name' => 'Avance de Pagos',
+                'url' => $ruta . 'reporte_compras/proveedor_estado',
+                'icon' => 'fa fa-pie-chart',
+                'slug' => 'resumenventas'
+            ),
+//            array(
 //                'name' => 'Entradas y Salidas',
 //                'url' => $ruta . 'ajuste/reporte',
 //                'icon' => 'fa fa-pie-chart',
