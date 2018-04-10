@@ -46,9 +46,9 @@ class reporte_model extends CI_Model
                 WHERE dv.id_producto = p.producto_id AND v.venta_status='COMPLETADO' AND v.local_id = '".$params['local_id']."' AND v.fecha >= '".$params['fecha_ini']."' AND v.fecha <= '".$params['fecha_fin']."'
             ) AS ventas,
             (
-                SELECT SUM((pa.cantidad * (SELECT unidades FROM unidades_has_producto WHERE producto_id=pa.id_producto AND orden=1)) + pa.fraccion) AS und
+                SELECT SUM((pa.cantidad * (SELECT unidades FROM unidades_has_producto WHERE producto_id=pa.id_producto AND orden=1)) + pa.fraccion)
                 FROM producto_almacen pa
-                WHERE pa.id_producto=p.producto_id
+                WHERE pa.id_producto=p.producto_id AND pa.id_local = '".$params['local_id']."'
             ) AS stock,
             (
                 SELECT u.nombre_unidad
@@ -74,11 +74,9 @@ class reporte_model extends CI_Model
         $search = $marca_id.$grupo_id.$familia_id.$linea_id.$producto_id;
         $query = "SELECT p.producto_id, p.producto_codigo_interno, p.producto_nombre, u.nombre_unidad";
         
-        $usu = $this->session->userdata('nUsuCodigo');
-        $sqlLocal = $this->db->select('`l`.`int_local_id` AS `int_local_id`,`l`.`local_nombre` AS `local_nombre`,`ua`.`usuario_id`  AS `usuario_id`');
-        $sqlLocal = $this->db->from('(`local` `l` LEFT JOIN `usuario_almacen` `ua`  ON ((`ua`.`local_id` = `l`.`int_local_id`)))');
+        $sqlLocal = $this->db->select('`l`.`int_local_id` AS `int_local_id`,`l`.`local_nombre` AS `local_nombre`');
+        $sqlLocal = $this->db->from('(`local` `l`)');
         $sqlLocal = $this->db->where('`l`.`local_status` = 1');
-        $sqlLocal = $this->db->where('usuario_id', $usu);
         $sqlLocal = $this->db->get();
         $x=1;
         foreach ($sqlLocal->result() as $row)

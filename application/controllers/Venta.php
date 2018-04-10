@@ -3081,5 +3081,18 @@ JOIN detalleingreso ON detalleingreso.id_ingreso=ingreso.id_ingreso WHERE detall
         echo json_encode($data);
     }
 
+    public function cambiar_fecha()
+    {
+        $data['id'] = $this->input->post('id');
+        $data['fecha'] = date('Y-m-d H:i:s', strtotime($this->input->post('fecha') . " " . date('H:i:s')));
 
+        $this->db->where('id_credito_cuota', $data['id']);
+        $this->db->update('credito_cuotas', array('fecha_vencimiento' => $data['fecha']));
+    }
+
+    public function get_nota_credito()
+    {
+        $data['data'] = $this->venta_model->get_nota_credito();
+        $this->load->view('menu/ventas/vista_nota_credito', $data);
+    }
 }

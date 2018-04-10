@@ -27,7 +27,7 @@ header("Expires: 0");
     </thead>
     <tbody>
     <?php if (count($ventas) > 0): ?>
-
+        <?php $total = 0; ?>
         <?php foreach ($ventas as $venta): ?>
             <tr <?= $venta->venta_estado == 'ANULADO' ? 'style="color: red;"' : '' ?>>
                 <td><?= $venta->venta_id ?></td>
@@ -59,7 +59,16 @@ header("Expires: 0");
                 <td style="text-align: right;"><?= $venta->moneda_simbolo ?> <?= number_format($venta->total, 2) ?></td>
 
             </tr>
+        <?php 
+            if($venta->venta_estado != 'ANULADO'){
+                $total += $venta->total;         
+            }
+        ?>
         <?php endforeach ?>
+            <tr>
+                <td colspan="9" align="right">Total</td>
+                <td style="text-align: right;"><?= $venta->moneda_simbolo ?> <?= number_format($total, 2) ?></td>
+            </tr>        
     <?php endif; ?>
 
     </tbody>

@@ -806,8 +806,15 @@ class venta_new_model extends CI_Model
                 $detalle->unidad_id,
                 $detalle->cantidad
             );
-
-
+            //Guardando en tabla venta_devolucion
+            $this->db->insert('venta_devolucion', array(
+                'id_venta' => $venta_id,
+                'id_producto' => $detalle->producto_id,
+                'precio' => $detalle->precio,
+                'cantidad' => $detalle->cantidad,
+                'unidad_medida' => $detalle->unidad_id,
+                'detalle_importe' => $detalle->importe
+            ));
         }
         foreach ($cantidades as $key => $value) {
 
@@ -954,8 +961,16 @@ class venta_new_model extends CI_Model
                     'detalle_importe' => $detalle->new_importe
                 ));
             }
+            //Guardando en tabla venta_devolucion
+            $this->db->insert('venta_devolucion', array(
+                'id_venta' => $venta_id,
+                'id_producto' => $detalle->producto_id,
+                'precio' => $detalle->precio,
+                'cantidad' => $detalle->devolver,
+                'unidad_medida' => $detalle->unidad_id,
+                'detalle_importe' => $detalle->devolver * $detalle->precio
+            ));
         }
-
 
         foreach ($cantidades as $key => $value) {
 

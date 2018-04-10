@@ -2056,4 +2056,39 @@ FROM (`detalle_venta`) JOIN `venta` ON `venta`.`venta_id`=`detalle_venta`.`id_ve
     {
         $query = $this->db->query("UPDATE credito c SET c.dec_credito_montocuota=c.dec_credito_montocuota-" . $montodescontar . " WHERE c.id_venta=" . $venta_id . " ");
     }
+
+    public function get_nota_credito()
+    {
+        $venta_id = $this->input->post('venta_id');
+        $local_id = $this->input->post('local_id');
+
+        $query = "
+            SELECT
+                k.id,
+                DATE_FORMAT(k.fecha, '%d/%m/%y') AS fecha,
+                CONCAT('NC ', k.serie, ' - ', k.numero) AS documento,
+                (k.cantidad * - 1) AS cantidad,
+                u.nombre_unidad AS um,
+                v.venta_id AS venta_id,
+                doc_v.des_doc AS venta_documento,
+                ifnull(CONCAT(v.serie, ' - ', v.numero), 'NO FACTURADO') AS
+            venta_numero,
+                DATE_FORMAT(v.fecha, '%d/%m/%y') AS fecha_venta,
+                v.venta_status AS venta_estado
+            FROM
+                kardex AS k
+                    JOIN
+                venta AS v ON v.venta_id = k.ref_id
+                    JOIN
+                documentos AS doc_v ON doc_v.id_doc = v.id_documento
+                    JOIN
+                unidades AS u ON u.id_unidad = k.unidad_id
+            WHERE
+                k.io = 2 AND k.tipo = 7
+                AND k.operacion = 5
+                AND k.local_id = '$local_id'
+                AND v.venta_id = '$venta_id'
+        ";
+        return $this->db->query($query)->result();
+    }
 }

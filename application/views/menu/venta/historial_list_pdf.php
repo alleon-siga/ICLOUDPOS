@@ -39,15 +39,14 @@
     </thead>
     <tbody>
     <?php if (count($ventas) > 0): ?>
-
+        <?php $total = 0; ?>
         <?php foreach ($ventas as $venta): ?>
-            <tr <?= $venta->venta_estado == 'ANULADO' ? 'style="color: red;"' : '' ?>>
-                <td><?= $venta->venta_id ?></td>
-                <td>
+            <tr>
+                <td <?= $venta->venta_estado == 'ANULADO' ? 'style="color: red;"' : '' ?>><?= $venta->venta_id ?></td>
+                <td <?= $venta->venta_estado == 'ANULADO' ? 'style="color: red;"' : '' ?>>
                     <span style="display: none;"><?= date('YmdHis', strtotime($venta->venta_fecha)) ?></span>
                     <?= date('d/m/Y H:i', strtotime($venta->venta_fecha)) ?>
                 </td>
-
                 <td><?php
                     $doc = '';
                     if ($venta->documento_id == 1) $doc = "FA";
@@ -62,16 +61,25 @@
                         echo '<span style="color: #0000FF">NO FACTURADO</span>';
                     ?>
                 </td>
-                <td><?= $venta->ruc ?></td>
-                <td><?= $venta->cliente_nombre ?></td>
-                <td><?= $venta->vendedor_nombre ?></td>
-                <td><?= $venta->condicion_nombre ?></td>
-                <td><?= $venta->venta_estado ?></td>
-                <td><?= $venta->moneda_tasa ?></td>
-                <td style="text-align: right;"><?= $venta->moneda_simbolo ?> <?= number_format($venta->total, 2) ?></td>
+                <td <?= $venta->venta_estado == 'ANULADO' ? 'style="color: red;"' : '' ?>><?= $venta->ruc ?></td>
+                <td <?= $venta->venta_estado == 'ANULADO' ? 'style="color: red;"' : '' ?>><?= $venta->cliente_nombre ?></td>
+                <td <?= $venta->venta_estado == 'ANULADO' ? 'style="color: red;"' : '' ?>><?= $venta->vendedor_nombre ?></td>
+                <td <?= $venta->venta_estado == 'ANULADO' ? 'style="color: red;"' : '' ?>><?= $venta->condicion_nombre ?></td>
+                <td <?= $venta->venta_estado == 'ANULADO' ? 'style="color: red;"' : '' ?>><?= $venta->venta_estado ?></td>
+                <td <?= $venta->venta_estado == 'ANULADO' ? 'style="color: red;"' : '' ?>><?= $venta->moneda_tasa ?></td>
+                <td <?= $venta->venta_estado == 'ANULADO' ? 'style="color: red; text-align: right;"' : 'style="text-align: right;"' ?>><?= $venta->moneda_simbolo ?> <?= number_format($venta->total, 2) ?></td>
 
             </tr>
+        <?php 
+            if($venta->venta_estado != 'ANULADO'){
+                $total += $venta->total;         
+            }
+        ?>
         <?php endforeach ?>
+            <tr>
+                <td colspan="9" align="right">Total</td>
+                <td style="text-align: right;"><?= $venta->moneda_simbolo ?> <?= number_format($total, 2) ?></td>
+            </tr>
     <?php endif; ?>
 
     </tbody>
