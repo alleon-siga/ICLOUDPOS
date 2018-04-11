@@ -28,7 +28,6 @@
         color: #333333;
     }
 </style>
-<link rel="stylesheet" href="<?= base_url() ?>recursos/js/datepicker-range/daterangepicker.css">
 <form id="form_filter">
     <div id="charm" class="tcharm">
         <div class="tcharm-header">
@@ -55,6 +54,26 @@
                     </button>
                 </div>
 
+            </div>
+
+            <div class="row">
+                <label class="control-label">Ubicaci&oacute;n:</label>
+                <select id="local_id" class="form-control filter-input">
+                    <?php foreach ($locales as $local): ?>
+                        <option <?php if ($this->session->userdata('id_local') == $local['int_local_id']) echo "selected"; ?>
+                                value="<?= $local['int_local_id']; ?>"> <?= $local['local_nombre'] ?> </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <div class="row">
+                <label class="control-label">Moneda:</label>
+                <select id="moneda_id" name="moneda_id" class="form-control">
+                    <?php foreach ($monedas as $m): ?>
+                        <option value="<?= $m->id_moneda ?>"
+                            <?= $m->id_moneda == MONEDA_DEFECTO ? 'selected' : '' ?>><?= $m->nombre ?></option>
+                    <?php endforeach; ?>
+                </select>
             </div>
 
             <div class="row">
@@ -99,11 +118,15 @@
         <div class="col-md-2">
             <label class="control-label" style="padding-top: 8px;">Fecha de Venta:</label>
         </div>
+        <div class="col-md-2">
+            <input id="fecha_ini" type="text" class="form-control input-datepicker" value="<?= date('01-m-Y') ?>"
+                   style="cursor: pointer;" readonly>
+        </div>
 
-        <div class="col-md-3">
-            <input type="text" id="date_range" class="form-control" readonly style="cursor: pointer;"
-                   name="daterange" value="<?= date('01/m/Y') ?> - <?= date('d/m/Y') ?>"/>
 
+        <div class="col-md-2">
+            <input id="fecha_fin" type="text" class="form-control input-datepicker" value="<?= date('d-m-Y') ?>"
+                   style="cursor: pointer;" readonly>
         </div>
 
         <div class="col-md-3">
@@ -113,16 +136,6 @@
                    style="cursor: pointer;">
                 Incluir Filtro de Fecha
             </label>
-        </div>
-
-        <div class="col-md-2">
-            <select name="moneda_id" id="moneda_id" class='cho form-control'>
-                <?php foreach ($monedas as $moneda): ?>
-                    <option value="<?= $moneda->id_moneda ?>"
-                            data-simbolo="<?= $moneda->simbolo ?>"
-                        <?= $moneda->id_moneda == MONEDA_DEFECTO ? 'selected' : '' ?>><?= $moneda->nombre ?></option>
-                <?php endforeach; ?>
-            </select>
         </div>
 
         <div class="col-md-1">
@@ -140,48 +153,10 @@
     </div>
 </form>
 <script src="<?= base_url('recursos/js/tcharm.js') ?>"></script>
-<script src="<?php echo base_url(); ?>recursos/js/datepicker-range/moment.min.js"></script>
-<script src="<?php echo base_url(); ?>recursos/js/datepicker-range/daterangepicker.js"></script>
 
 <script>
 
     $(document).ready(function () {
-
-        $('input[name="daterange"]').daterangepicker({
-            "locale": {
-                "format": "DD/MM/YYYY",
-                "separator": " - ",
-                "applyLabel": "Aplicar",
-                "cancelLabel": "Cancelar",
-                "fromLabel": "De",
-                "toLabel": "A",
-                "customRangeLabel": "Personalizado",
-                "daysOfWeek": [
-                    "Do",
-                    "Lu",
-                    "Ma",
-                    "Mi",
-                    "Ju",
-                    "Vi",
-                    "Sa"
-                ],
-                "monthNames": [
-                    "Enero",
-                    "Febrero",
-                    "Marzo",
-                    "Abril",
-                    "Mayo",
-                    "Junio",
-                    "Julio",
-                    "Agosto",
-                    "Septiembre",
-                    "Octubre",
-                    "Noviembre",
-                    "Diciembre"
-                ],
-                "firstDay": 1
-            }
-        });
 
         $("#vendedor_id, #cliente_id").chosen();
 
@@ -217,10 +192,12 @@
         $('#barloadermodal').modal('show');
         $("#charm").tcharm('hide');
         var data = {
-            'fecha': $('#date_range').val(),
+            'fecha_ini': $('#fecha_ini').val(),
+            'fecha_fin': $('#fecha_fin').val(),
             'vendedor_id': $("#vendedor_id").val(),
             'cliente_id': $("#cliente_id").val(),
             'moneda_id': $("#moneda_id").val(),
+            'local_id': $("#local_id").val(),
             'estado': $("#estado").val()
         };
 
@@ -230,7 +207,7 @@
             data.fecha_flag = 0;
 
         $.ajax({
-            url: '<?php echo base_url('reporte/cliente_estado/filter')?>',
+            url: '<?php echo base_url('reporte_ventas/cliente_estado/filter')?>',
             data: data,
             type: 'post',
             success: function (data) {
