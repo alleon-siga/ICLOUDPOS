@@ -633,6 +633,15 @@ class ingresos extends MY_Controller
         }
     }
 
+    public function cambiar_fecha()
+    {
+        $data['id'] = $this->input->post('id');
+        $data['fecha'] = date('Y-m-d H:i:s', strtotime($this->input->post('fecha') . " " . date('H:i:s')));
+
+        $this->db->where('id', $data['id']);
+        $this->db->update('ingreso_credito_cuotas', array('fecha_vencimiento' => $data['fecha']));
+    }
+
 
     function devolucion()
     {

@@ -1,4 +1,5 @@
 <?php  $ruta= base_url(); ?>
+<?php $term = diccionarioTermino() ?>
 <style>
   .datepicker{z-index:9999 !important;}
 </style>
@@ -115,7 +116,7 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <label class="control-label panel-admin-text">DNI</label>
+                                <label class="control-label panel-admin-text"><?= $term[0]->valor ?></label>
                                 <input type="text" name="ruc_j" value="<?php if (isset($cliente['identificacion'])) echo  $cliente['identificacion']; ?>" id="ruc_j" typeClass="DNI" class="form-control dni" />
                             </div>
                         </div>
@@ -396,7 +397,7 @@
 
                         <div class="row">
                             <div class="col-md-12">
-                                <label class="control-label panel-admin-text">RUC</label>
+                                <label class="control-label panel-admin-text"><?= $term[1]->valor ?></label>
                                 <input type="text" name="ruc_j" value="<?php if (isset($cliente['identificacion'])) echo  $cliente['identificacion']; ?>" id="ruc_j" class="form-control ruc" />
                             </div>
                         </div>

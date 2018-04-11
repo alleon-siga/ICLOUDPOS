@@ -87,7 +87,18 @@
                                 value="<?= isset($comprobante) ? $comprobante->num_actual : '0' ?>">
                     </div>
                 </div>
-
+                <div class="form-group row">
+                    <label class="col-md-2 col-md-offset-2">Fecha de vencimiento</label>
+                    <div class="col-md-6">
+                        <input
+                                type="text"
+                                name="fecha_venc"
+                                id="fecha_venc"
+                                required="fecha de vencimiento"
+                                class="form-control input-datepicker"
+                                value="<?= isset($comprobante) ? date('d-m-Y', strtotime($comprobante->fecha_venc)) : '' ?>">
+                    </div>
+                </div>
                 <div class="form-group row">
                     <label class="col-md-2 col-md-offset-2">Estado</label>
                     <div class="col-md-6">
@@ -117,6 +128,10 @@
 <script>
 
     $(function () {
+        $('.input-datepicker').datepicker({
+            weekStart: 1, 
+            format: 'dd-mm-yyyy'
+        });
 
         $('#guardar_form').on('click', function () {
             if ($('#nombre').val() == '') {

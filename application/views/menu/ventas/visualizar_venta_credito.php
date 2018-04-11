@@ -140,7 +140,8 @@
                                                        type="text" data-id="<?= $pago->id_credito_cuota ?>"
                                                        class="numero_unico">
                                             </td>
-                                            <td align="center"><?= date("d/m/Y", strtotime($pago->fecha_vencimiento)) ?></td>
+                                            <td align="center">
+                                                <input type="text" class="form-control cambiar_fecha" readonly style="width: 100px; padding: 2px 2px; cursor: pointer; color: #2CA8E4; text-align: center; border: 1px solid #2CA8E4;" value="<?= date('d-m-Y', strtotime($pago->fecha_vencimiento)) ?>" data-id="<?= $pago->id_credito_cuota ?>"></td>
                                             <td align="right"> <?= $ventas[0]["simbolo"] . " " . number_format($pago->monto, 2) ?></td>
                                             <td align="right"><?php if ($pago->monto_restante == null) {
                                                     echo $ventas[0]["simbolo"] . " " . number_format($pago->monto, 2);
@@ -262,11 +263,9 @@
         })();
 
         $(function () {
-
 //            $('.numero_unico').on('keydown', function(){
 //                $('.numero_unico').off('keyup');
 //            })
-
 
             $('.numero_unico').on('keyup', function (e) {
                 var input = $(this);
@@ -300,11 +299,42 @@
                 }, 1000);
             });
 
-        })
+            var fecha_flag = true;
+
+            $('.cambiar_fecha').datepicker({
+                weekStart: 1,
+                format: 'dd-mm-yyyy'
+            });
+
+            $('.cambiar_fecha').on('change', function (e) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                if (fecha_flag)
+                    cambiar_fecha($(this).attr('data-id'), $(this).val());
+                $(this).datepicker('hide');
+            });
+        });
+
         function cerrar_detalle_historial() {
 
             $('#visualizar_cada_historial').modal('hide');
         }
 
-
+        function cambiar_fecha(id, fecha) {
+            fecha_flag = false;
+            $.ajax({
+                url: '<?php echo base_url('venta/cambiar_fecha'); ?>',
+                type: 'POST',
+                data: {"id": id, 'fecha': fecha},
+                headers: {
+                    Accept: 'application/json'
+                },
+                success: function (data) {
+                    //$("#btn_buscar").click();
+                },
+                complete: function () {
+                    fecha_flag = true;
+                }
+            });
+        }   
     </script>

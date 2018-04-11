@@ -1,5 +1,5 @@
 <?php $ruta = base_url(); ?>
-
+<?php $term = diccionarioTermino() ?>
 <ul class="breadcrumb breadcrumb-top">
     <li>Proveedor</li>
     <li><a href="">Agregar y editar Proveedor</a></li>
@@ -33,7 +33,7 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
             <tr>
 
                 <th>ID</th>
-                <th>RUC / DNI</th>
+                <th><?= $term[0]->valor.' / '.$term[1]->valor ?></th>
                 <th>Razón Social</th>
                 <th>Direcci&oacute;n Fiscal</th>
                 <th>Tel&eacute;fono Empresa</th>

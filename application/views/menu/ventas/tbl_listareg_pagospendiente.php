@@ -1,6 +1,7 @@
 <?php $ruta = base_url(); ?>
 <!--<script src="<?php echo $ruta; ?>recursos/js/custom.js"></script>-->
 <?php $md = get_moneda_defecto()?>
+<?php $term = diccionarioTermino() ?>
 <br>
     <div class="row">
         <div class="col-md-3"></div>
@@ -23,7 +24,7 @@
         <th class='tip' title="Fecha Venta">Fecha Venta</th>
         <th>Documento</th>
 
-        <th>RUC/DNI</th>
+        <th><?= $term[0]->valor.' / '.$term[1]->valor ?></th>
         <th>Cliente</th>
 
 
@@ -57,7 +58,7 @@
                     <?= $v->serie . '-' . sumCod($v->correlativo, 5)?>
                 </td>
 
-                <td><?= $v->ruc == 2 ? 'RUC: ' : 'DNI: ' ?> <?= $v->indentificacion; ?></td>
+                <td><?= $v->ruc == 2 ? $term[1]->valor.': ' : $term[0]->valor.': ' ?> <?= $v->indentificacion; ?></td>
                 <td><?php echo $v->Cliente; ?></td>
 
 

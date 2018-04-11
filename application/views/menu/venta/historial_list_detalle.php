@@ -290,7 +290,8 @@
                             <?php if (count($kardex) > 0): ?>
                                 <h4>Anulaciones</h4>
                                 <?php foreach ($kardex as $k): ?>
-                                    <h5><?= 'NC ' . $k->serie . ' - ' . $k->numero ?></h5>
+                                    <h5>
+                                    <a href="javascript:ver_nc('<?= $venta->venta_id ?>','<?= $k->serie ?>','<?= $k->numero ?>')"><?= 'NC ' . $k->serie . ' - ' . $k->numero ?></a></h5>
                                 <?php endforeach; ?>
                             <?php endif; ?>
                             <?php if ($venta->condicion_id == '2'): ?>
@@ -350,7 +351,7 @@
                 <div class="row">
                     <div class="text-right">
                         <div class="col-md-12">
-                            <input type="button" class='btn btn-default' value="Cerrar"
+                            <input type="button" class='btn btn-danger' value="Cerrar"
                                    data-dismiss="modal">
                         </div>
                     </div>
@@ -460,7 +461,6 @@
     </div>
 
     <script>
-
         $('.devolver_input').bind('keyup change click mouseleave', function () {
             var id = $(this).attr('data-id');
             var impuesto = parseFloat($(this).attr('data-impuesto'));
@@ -647,13 +647,12 @@
                     devolucion.devolver = devolver;
                     devolucion.new_cantidad = parseFloat($('#cantidad_' + id).html());
                     devolucion.new_importe = parseFloat($('#subtotal_' + id).html());
-
+                    devolucion.precio = parseFloat($('#precio_' + id).html());
                     devoluciones.push(devolucion);
                 }
             });
 
             return JSON.stringify(devoluciones);
         }
-
     </script>
 <?php endif; ?>

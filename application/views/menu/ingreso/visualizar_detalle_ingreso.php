@@ -188,7 +188,8 @@
                                                                                              id="val<?php echo $i; ?>"
                                                                                              value="<?php echo $idletra; ?>">
                                             </td>
-                                            <td align="center"><?= date("d/m/Y", strtotime($pago->fecha_vencimiento)) ?></td>
+                                            <td align="center">
+                                                <input type="text" class="form-control cambiar_fecha" readonly style="width: 100px; padding: 2px 2px; cursor: pointer; color: #2CA8E4; text-align: center; border: 1px solid #2CA8E4;" value="<?= date('d-m-Y', strtotime($pago->fecha_vencimiento)) ?>" data-id="<?= $pago->id ?>"></td>
                                             <td align="right"> <?= $ingreso->simbolo . " " . number_format($pago->monto, 2) ?></td>
                                             <td align="right"><?= $ingreso->simbolo . " " . number_format($pago->monto - $pago->monto_pagado, 2) ?></td>
                                             <?php if ($pago->pagado) { ?>
@@ -260,8 +261,38 @@
     </div>
 </div>
 <script>
+    var fecha_flag = true;
 
     $(document).ready(function () {
+        $('.cambiar_fecha').datepicker({
+            weekStart: 1,
+            format: 'dd-mm-yyyy'
+        });
 
+        $('.cambiar_fecha').on('change', function (e) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            if (fecha_flag)
+                cambiar_fecha($(this).attr('data-id'), $(this).val());
+            $(this).datepicker('hide');
+        });
     });
+
+    function cambiar_fecha(id, fecha) {
+        fecha_flag = false;
+        $.ajax({
+            url: '<?php echo base_url('ingresos/cambiar_fecha'); ?>',
+            type: 'POST',
+            data: {"id": id, 'fecha': fecha},
+            headers: {
+                Accept: 'application/json'
+            },
+            success: function (data) {
+                //$("#btn_buscar").click();
+            },
+            complete: function () {
+                fecha_flag = true;
+            }
+        });
+    }
 </script>

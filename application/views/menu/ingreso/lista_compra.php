@@ -1,4 +1,5 @@
 <?php $md = get_moneda_defecto() ?>
+<?php $term = diccionarioTermino() ?>
 <?php if (count($ingresos) > 0): ?>
     <br>
     <div class="row">
@@ -26,7 +27,7 @@
                 <th>Fecha Doc</th>
                 <th>Doc</th>
                 <th>Num Doc</th>
-                <th>RUC Provedor</th>
+                <th><?= $term[0]->valor.' / '.$term[1]->valor ?> Provedor</th>
                 <th>Proveedor</th>
                 <th>Tipo Pago</th>
                 <?php if ($md->id_moneda != $moneda->id_moneda): ?>

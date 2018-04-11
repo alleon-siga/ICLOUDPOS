@@ -78,7 +78,8 @@ class cotizar extends MY_Controller
         $this->load->view('menu/cotizar/historial_cotizar_detalle', $data);
     }
 
-    function exportar_pdf($id){
+    function exportar_pdf($id, $tipoCliente){
+        $data['tipo_cliente'] = $tipoCliente;
         $data['cotizar'] = $this->cotizar_model->get_cotizar_detalle($id);
 
         $this->load->library('mpdf53/mpdf');

@@ -50,7 +50,8 @@ class Comprobante extends MY_Controller
             'hasta' => $this->input->post('hasta'),
             'longitud' => $this->input->post('longitud'),
             'estado' => $this->input->post('estado'),
-            'num_actual' => $this->input->post('actual')
+            'num_actual' => $this->input->post('actual'),
+            'fecha_venc' => date('Y-m-d', strtotime($this->input->post('fecha_venc')))
         );
 
         if (empty($id)) {

@@ -2056,4 +2056,18 @@ FROM (`detalle_venta`) JOIN `venta` ON `venta`.`venta_id`=`detalle_venta`.`id_ve
     {
         $query = $this->db->query("UPDATE credito c SET c.dec_credito_montocuota=c.dec_credito_montocuota-" . $montodescontar . " WHERE c.id_venta=" . $venta_id . " ");
     }
+
+    public function get_nota_credito()
+    {
+        $venta_id = $this->input->post('venta_id');
+        $serie = $this->input->post('serie');
+        $numero = $this->input->post('numero');
+
+        $this->db->select('id_devolucion, producto_nombre, cantidad, nombre_unidad, precio, detalle_importe');
+        $this->db->from('venta_devolucion');
+        $this->db->join('producto', 'venta_devolucion.id_producto = producto.producto_id');
+        $this->db->join('unidades', 'unidades.id_unidad=venta_devolucion.unidad_medida');
+        $this->db->where(array('id_venta' => $venta_id, 'serie' => $serie, 'numero' => $numero));
+        return $this->db->get()->result();
+    }
 }
