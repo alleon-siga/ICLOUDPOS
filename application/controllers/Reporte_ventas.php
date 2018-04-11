@@ -28,13 +28,75 @@ class Reporte_ventas extends MY_Controller
                     'fecha_flag' => $this->input->post('fecha_flag'),
                     'vendedor_id' => $this->input->post('vendedor_id'),
                     'cliente_id' => $this->input->post('cliente_id'),
+                    'moneda_id' => $this->input->post('moneda_id'),
+                    'local_id' => $this->input->post('local_id'),
                     'estado' => $this->input->post('estado')
                 ));
 
                 $data['form_filter'] = true;
 
+                $data['local'] = $this->db->get_where('local', array('int_local_id' => $this->input->post('local_id')))->row();
+                $data['moneda'] = $this->db->get_where('moneda', array('id_moneda' => $this->input->post('moneda_id')))->row();
 
                 echo $this->load->view('menu/reporte_venta/cliente_estado/tabla', $data, true);
+                break;
+            }
+            case 'pdf': {
+                $params = json_decode($this->input->get('data'));
+                $data['clientes'] = $this->rcliente_estado_model->get_estado_cuenta(array(
+                    'fecha_ini' => date('Y-m-d', strtotime($params->fecha_ini)),
+                    'fecha_fin' => date('Y-m-d', strtotime($params->fecha_fin)),
+                    'fecha_flag' => $params->fecha_flag,
+                    'vendedor_id' => $params->vendedor_id,
+                    'cliente_id' => $params->cliente_id,
+                    'moneda_id' => $params->moneda_id,
+                    'local_id' => $params->local_id,
+                    'estado' => $params->estado
+                ));
+
+                $data['form_filter'] = true;
+
+                $data['local'] = $this->db->get_where('local', array('int_local_id' => $params->local_id))->row();
+                $data['moneda'] = $this->db->get_where('moneda', array('id_moneda' => $params->moneda_id))->row();
+
+                $data['local_nombre'] = $data['local']->local_nombre;
+                $data['local_direccion'] = $data['local']->direccion;
+
+                $data['fecha_ini'] = $params->fecha_ini;
+                $data['fecha_fin'] = $params->fecha_fin;
+
+                $this->load->library('mpdf53/mpdf');
+                $mpdf = new mPDF('utf-8', 'A4', 0, '', 5, 5, 5, 5, 5, 5);
+                $html = $this->load->view('menu/reporte_venta/cliente_estado/tabla_pdf', $data, true);
+                $mpdf->WriteHTML($html);
+                $mpdf->Output();
+                break;
+            }
+            case 'excel': {
+                $params = json_decode($this->input->get('data'));
+                $data['clientes'] = $this->rcliente_estado_model->get_estado_cuenta(array(
+                    'fecha_ini' => date('Y-m-d', strtotime($params->fecha_ini)),
+                    'fecha_fin' => date('Y-m-d', strtotime($params->fecha_fin)),
+                    'fecha_flag' => $params->fecha_flag,
+                    'vendedor_id' => $params->vendedor_id,
+                    'cliente_id' => $params->cliente_id,
+                    'moneda_id' => $params->moneda_id,
+                    'local_id' => $params->local_id,
+                    'estado' => $params->estado
+                ));
+
+                $data['form_filter'] = true;
+
+                $data['local'] = $this->db->get_where('local', array('int_local_id' => $params->local_id))->row();
+                $data['moneda'] = $this->db->get_where('moneda', array('id_moneda' => $params->moneda_id))->row();
+
+                $data['local_nombre'] = $data['local']->local_nombre;
+                $data['local_direccion'] = $data['local']->direccion;
+
+                $data['fecha_ini'] = $params->fecha_ini;
+                $data['fecha_fin'] = $params->fecha_fin;
+
+                echo $this->load->view('menu/reporte_venta/cliente_estado/tabla_excel', $data, true);
                 break;
             }
             default: {
@@ -45,16 +107,29 @@ class Reporte_ventas extends MY_Controller
                         'fecha_fin' => date('Y-m-d'),
                         'fecha_flag' => 1,
                         'cliente_id' => $cliente_id,
+                        'moneda_id' => MONEDA_DEFECTO,
+                        'local_id' => $this->session->userdata('id_local')
                     ));
 
                 } else {
                     $data['clientes'] = array();
                 }
 
+                $data['local'] = $this->db->get_where('local', array('int_local_id' => $this->session->userdata('id_local')))->row();
+                $data['moneda'] = $this->db->get_where('moneda', array('id_moneda' => MONEDA_DEFECTO))->row();
+
+                if ($this->session->userdata('esSuper') == 1) {
+                    $locales = $this->local_model->get_all();
+                } else {
+                    $usu = $this->session->userdata('nUsuCodigo');
+                    $locales = $this->local_model->get_all_usu($usu);
+                }
 
                 $data['reporte_filtro'] = $this->load->view('menu/reporte_venta/cliente_estado/filtros', array(
                     'vendedores' => $this->db->get_where('usuario', array('deleted' => 0))->result(),
                     'clientes' => $this->db->get_where('cliente', array('cliente_status' => 1))->result(),
+                    'monedas' => $this->db->get_where('moneda', array('status_moneda' => 1))->result(),
+                    'locales' => $locales,
                     'cliente_id' => $cliente_id
                 ), true);
                 $data['reporte_tabla'] = $this->load->view('menu/reporte_venta/cliente_estado/tabla', $data, true);
