@@ -18,10 +18,34 @@ class principal extends MY_Controller
 
     }
 
+    //Preparo el flashdata inicial y se lo asigno al $data.
+    // Nota: esto debe ir al principio de los controllers para no sobrescribir lo que se agrega despues
+    /*function _prepareFlashData()
+    {
+        $data = array();
+
+        if ($this->session->flashdata('success') != FALSE) {
+            $data['success'] = $this->session->flashdata('success');
+        }
+        if ($this->session->flashdata('error') != FALSE) {
+            $data['error'] = $this->session->flashdata('error');
+        }
+
+        if ($this->session->userdata('esSuper') == 1) {
+            $data['locales'] = $this->local_model->get_all();
+        } else {
+            $usu = $this->session->userdata('nUsuCodigo');
+            $data['locales'] = $this->local_model->get_all_usu($usu);
+        }
+
+        return $data;
+    }*/
+
     function index()
     {
         $data['usuarios'] = $this->usuario_model->select_all_user();
-        $data['locales'] = $this->local_model->get_all();
+        //$data['locales'] = $this->local_model->get_all();
+        $data = _prepareFlashData();
         $data['monedas'] = $this->db->get_where('moneda', array('status_moneda'=>'1'))->result();
         //$data['ventashoy'] = count($this->venta_model->get_ventas_by(array('DATE(fecha)'=>date('Y-m-d'),'venta_status'=>COMPLETADO)));
         $data['ventashoy'] = 0;

@@ -166,9 +166,10 @@
                         <label>Ubicacion:</label>
                     </div>
                     <div class="col-md-3">
-
                         <select name="local" id="local" class='cho form-control'>
+                        <?php if(count($locales)>1): ?>
                             <option value="TODOS">TODOS</option>
+                        <?php endif; ?>
                             <?php if (count($locales) > 0): ?>
                                 <?php foreach ($locales as $local): ?>
                                     <option

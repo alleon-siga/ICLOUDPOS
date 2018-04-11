@@ -527,3 +527,27 @@ function diccionarioTermino(){
     $CI =& get_instance();
     return $CI->db->get_where('diccionario_termino', array('activo' => '1'))->result();
 }
+
+//Preparo el flashdata inicial y se lo asigno al $data.
+// Nota: esto debe ir al principio de los controllers para no sobrescribir lo que se agrega despues
+function _prepareFlashData()
+{
+    $data = array();
+    $CI =& get_instance();
+    $CI->load->model('local/local_model');
+
+    if ($CI->session->flashdata('success') != FALSE) {
+        $data['success'] = $CI->session->flashdata('success');
+    }
+    if ($CI->session->flashdata('error') != FALSE) {
+        $data['error'] = $CI->session->flashdata('error');
+    }
+    if ($CI->session->userdata('esSuper') == 1) {
+        $data['locales'] = $CI->local_model->get_all();
+    } else {
+        $usu = $CI->session->userdata('nUsuCodigo');
+        $data['locales'] = $CI->local_model->get_all_usu($usu);
+    }
+
+    return $data;
+}
