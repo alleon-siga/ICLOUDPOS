@@ -1,5 +1,6 @@
 <?php $ruta = base_url(); ?>
 <?php $md = get_moneda_defecto() ?>
+<?php $term = diccionarioTermino() ?>
 <div class="row">
     <div class="col-md-10"></div>
 
@@ -40,7 +41,7 @@
                         <?= date('d/m/Y', strtotime($detalle->fecha)) ?>
                     </td>
 
-                    <td style="text-align: center;"><?= $detalle->tipo_cliente == '2' ? 'RUC' : 'DNI' ?></td>
+                    <td style="text-align: center;"><?= $detalle->tipo_cliente == '2' ? $term[1]->valor : $term[0]->valor ?></td>
                     <td><?= $detalle->ruc ?></td>
                     <td><?= $detalle->cliente_nombre ?></td>
                     <td><?= $detalle->vendedor_nombre ?></td>
@@ -66,7 +67,7 @@
                         <a class="btn btn-sm btn-default" data-toggle="tooltip" style="margin-right: 5px;"
                            title="Exportar" data-original-title="Exportar"
                            href="#"
-                           onclick="exportar_pdf('<?= $detalle->id ?>');">
+                           onclick="exportar_pdf('<?= $detalle->id ?>','<?= $detalle->tipo_cliente ?>');">
                             <i class="fa fa-file-pdf-o"></i>
                         </a>
 
@@ -143,9 +144,9 @@
         });
     }
 
-    function exportar_pdf(id) {
+    function exportar_pdf(id, tp) {
 
-        var win = window.open('<?= base_url()?>cotizar/exportar_pdf/' + id, '_blank');
+        var win = window.open('<?= base_url()?>cotizar/exportar_pdf/' + id + '/' + tp, '_blank');
         win.focus();
     }
 

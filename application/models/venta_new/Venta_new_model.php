@@ -60,7 +60,8 @@ class venta_new_model extends CI_Model
             venta.numero as numero,
             venta.nota as nota,
             venta.dni_garante as nombre_caja,
-            venta.tipo_impuesto as tipo_impuesto
+            venta.tipo_impuesto as tipo_impuesto,
+            cliente.tipo_cliente as tipo_cliente
             ')
             ->from('venta')
             ->join('documentos', 'venta.id_documento=documentos.id_doc')
@@ -968,7 +969,9 @@ class venta_new_model extends CI_Model
                 'precio' => $detalle->precio,
                 'cantidad' => $detalle->devolver,
                 'unidad_medida' => $detalle->unidad_id,
-                'detalle_importe' => $detalle->devolver * $detalle->precio
+                'detalle_importe' => $detalle->devolver * $detalle->precio,
+                'serie' => $serie,
+                'numero' => $numero
             ));
         }
 

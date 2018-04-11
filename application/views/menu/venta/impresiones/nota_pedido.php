@@ -1,3 +1,4 @@
+<?php $term = diccionarioTermino() ?>
 <style>
     @media print {
         html, body {
@@ -33,7 +34,7 @@
             <td style="text-transform: uppercase; text-align: center;"><?= valueOption('EMPRESA_NOMBRE', '') ?></td>
         </tr>
         <tr>
-            <td style="text-transform: uppercase;">Identificaci&oacute;n: <?= $identificacion->config_value ?></td>
+            <td style="text-transform: uppercase;"><?= $term[1]->valor ?>: <?= $identificacion->config_value ?></td>
         </tr>
         <tr>
             <td style="text-transform: uppercase;">Ubicaci&oacute;n: <?= $venta->local_nombre ?></td>
@@ -68,7 +69,7 @@
                 Fecha: <?= date('d/m/Y h:i a', strtotime($venta->venta_fecha)) ?></td>
         </tr>
         <tr>
-            <td style="text-transform: uppercase;">Identificaci&oacute;n Cliente: <?= $venta->ruc ?></td>
+            <td style="text-transform: uppercase;"><?= ($venta->tipo_cliente == '1')? $term[1]->valor : $term[0]->valor ?> : <?= $venta->ruc ?></td>
         </tr>
         <tr>
             <td style="text-transform: uppercase;">Cliente: <?= $venta->cliente_nombre ?></td>
@@ -129,7 +130,7 @@
             </tr>
         <?php endif; ?>
         <tr>
-            <td colspan="2">ITBIS:</td>
+            <td colspan="2"><?= $term[2]->valor ?>:</td>
             <td style="text-align: right;"><?= $venta->moneda_simbolo . ' ' . $venta->impuesto ?></td>
         </tr>
         <tr>

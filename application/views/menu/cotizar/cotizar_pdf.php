@@ -1,3 +1,4 @@
+<?php $term = diccionarioTermino() ?>
 <style type="text/css">
     table {
         width: 100%;
@@ -30,7 +31,7 @@
         <td>DIRECCI&Oacute;N: <?= $cotizar->cliente_direccion == "" ? '-' : $cotizar->cliente_direccion ?></td>
     </tr>
     <tr>
-        <td>RUC: <?= $cotizar->ruc ?></td>
+        <td><?= $tipo_cliente == '2' ? $term[1]->valor : $term[0]->valor ?>: <?= $cotizar->ruc ?></td>
     </tr>
     <tr>
         <td>TEL&Eacute;FONO: <?= $cotizar->telefono == "" ? '-' : $cotizar->telefono ?></td>
