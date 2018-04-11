@@ -34,11 +34,11 @@ class Rcliente_estado_model extends CI_Model
         if (isset($params['estado']) && $params['estado'] != 0) {
             switch ($params['estado']) {
                 case 1: {
-                    $this->db->where('credito.var_credito_estado', "PagoCancelado");
+                    $this->db->where("(venta.condicion_pago = 1 OR credito.var_credito_estado = 'PagoCancelado')");
                     break;
                 }
                 case 2: {
-                    $this->db->where('credito.var_credito_estado', "PagoPendiente");
+                    $this->db->where("(venta.condicion_pago = 2 AND credito.var_credito_estado = 'PagoPendiente')");
                     break;
                 }
             }
@@ -49,6 +49,12 @@ class Rcliente_estado_model extends CI_Model
 
         if (isset($params['vendedor_id']) && $params['vendedor_id'] != 0)
             $this->db->where('usuario.nUsuCodigo', $params['vendedor_id']);
+
+        if (isset($params['moneda_id']))
+            $this->db->where('venta.id_moneda', $params['moneda_id']);
+
+        if (isset($params['local_id']))
+            $this->db->where('venta.local_id', $params['local_id']);
 
         $clientes = $this->db->get()->result();
 
@@ -61,34 +67,75 @@ class Rcliente_estado_model extends CI_Model
                 ->from('credito_cuotas_abono')
                 ->join('credito_cuotas', 'credito_cuotas.id_credito_cuota = credito_cuotas_abono.credito_cuota_id')
                 ->join('venta', 'venta.venta_id = credito_cuotas.id_venta')
+                ->join('credito', 'credito.id_venta = venta.venta_id')
                 ->where('venta.venta_status', "COMPLETADO")
                 ->where('venta.id_cliente', $cliente->cliente_id);
 
-            if (isset($params['fecha_ini']) && isset($params['fecha_fin']) && $params['fecha_flag'] == 1) {
-                $this->db->where('venta.fecha >=', date('Y-m-d H:i:s', strtotime($params['fecha_ini'] . ' 00:00:00')));
-                $this->db->where('venta.fecha <=', date('Y-m-d H:i:s', strtotime($params['fecha_fin'] . ' 23:59:59')));
-            }
-
-            if (isset($params['estado']) && $params['estado'] != 0) {
-                switch ($params['estado']) {
-                    case 1: {
-                        $this->db->where('credito.var_credito_estado', "PagoCancelado");
-                        break;
-                    }
-                    case 2: {
-                        $this->db->where('credito.var_credito_estado', "PagoPendiente");
-                        break;
-                    }
-                }
-            }
+           $this->_filtro_totales($params);
             $pagado_pendientes = $this->db->get()->row();
 
-            $cliente->pagado_pendientes = isset($pagado_pendientes->monto) ? $pagado_pendientes->monto : 0;
-            $cliente->subtotal_pago -= $cliente->pagado_pendientes;
+            $cliente->subtotal_pago = isset($pagado_pendientes->monto) ? $pagado_pendientes->monto : 0;
+
+            $this->db->select("
+                SUM(venta.total) as monto,
+            ")
+                ->from('venta')
+                ->join('credito', 'credito.id_venta = venta.venta_id', 'LEFT')
+                ->where('venta.venta_status', "COMPLETADO")
+                ->where('venta.condicion_pago', "1")
+                ->where('venta.id_cliente', $cliente->cliente_id);
+
+            $this->_filtro_totales($params);
+            $pagado_pendientes = $this->db->get()->row();
+
+            $cliente->subtotal_pago += isset($pagado_pendientes->monto) ? $pagado_pendientes->monto : 0;
+
+
+            $this->db->select("
+                SUM(venta.inicial) as monto,
+            ")
+                ->from('venta')
+                ->join('credito', 'credito.id_venta = venta.venta_id')
+                ->where('venta.venta_status', "COMPLETADO")
+                ->where('venta.condicion_pago', "2")
+                ->where('venta.id_cliente', $cliente->cliente_id);
+
+            $this->_filtro_totales($params);
+            $pagado_pendientes = $this->db->get()->row();
+
+            $cliente->subtotal_pago += isset($pagado_pendientes->monto) ? $pagado_pendientes->monto : 0;
         }
+
+
 
         return $clientes;
 
+    }
+
+    function _filtro_totales($params){
+        if (isset($params['fecha_ini']) && isset($params['fecha_fin']) && $params['fecha_flag'] == 1) {
+            $this->db->where('venta.fecha >=', date('Y-m-d H:i:s', strtotime($params['fecha_ini'] . ' 00:00:00')));
+            $this->db->where('venta.fecha <=', date('Y-m-d H:i:s', strtotime($params['fecha_fin'] . ' 23:59:59')));
+        }
+
+        if (isset($params['moneda_id']))
+            $this->db->where('venta.id_moneda', $params['moneda_id']);
+
+        if (isset($params['local_id']))
+            $this->db->where('venta.local_id', $params['local_id']);
+
+        if (isset($params['estado']) && $params['estado'] != 0) {
+            switch ($params['estado']) {
+                case 1: {
+                    $this->db->where("(venta.condicion_pago = 1 OR credito.var_credito_estado = 'PagoCancelado')");
+                    break;
+                }
+                case 2: {
+                    $this->db->where("(venta.condicion_pago = 2 AND credito.var_credito_estado = 'PagoPendiente')");
+                    break;
+                }
+            }
+        }
     }
 
     function get_cobranzas_by_cliente($cliente_id, $params)
@@ -96,17 +143,23 @@ class Rcliente_estado_model extends CI_Model
         $this->db->select("
             venta.venta_id as venta_id,
             documentos.des_doc as documento_nombre, 
+            documentos.id_doc as documento_id, 
             venta.serie as documento_serie, 
             venta.numero as documento_numero, 
             venta.fecha as fecha_venta, 
             venta.total as total_deuda, 
+            venta.condicion_pago as condicion_pago,
+            condiciones_pago.nombre_condiciones as condicion_pago_nombre,
             credito.dec_credito_montodebito as actual,
-            (venta.total - credito.dec_credito_montodebito)  as credito,
+            IFNULL(venta.inicial, 0) as inicial,
+            (venta.total - credito.dec_credito_montodebito) as credito,
+            credito.var_credito_estado as credito_estado,
             venta.venta_status as venta_estado,
             DATEDIFF(CURDATE(), (venta.fecha)) as atraso
         ")
             ->from('venta')
-            ->join('credito', 'credito.id_venta = venta.venta_id')
+            ->join('credito', 'credito.id_venta = venta.venta_id', 'LEFT')
+            ->join('condiciones_pago', 'condiciones_pago.id_condiciones = venta.condicion_pago')
             ->join('documentos', 'documentos.id_doc = venta.id_documento')
             ->where('venta.venta_status', "COMPLETADO")
             ->where('venta.id_cliente', $cliente_id);
@@ -116,14 +169,20 @@ class Rcliente_estado_model extends CI_Model
             $this->db->where('venta.fecha <=', date('Y-m-d H:i:s', strtotime($params['fecha_fin'] . ' 23:59:59')));
         }
 
+        if (isset($params['moneda_id']))
+            $this->db->where('venta.id_moneda', $params['moneda_id']);
+
+        if (isset($params['local_id']))
+            $this->db->where('venta.local_id', $params['local_id']);
+
         if (isset($params['estado']) && $params['estado'] != 0) {
             switch ($params['estado']) {
                 case 1: {
-                    $this->db->where('credito.var_credito_estado', "PagoCancelado");
+                    $this->db->where("(venta.condicion_pago = 1 OR credito.var_credito_estado = 'PagoCancelado')");
                     break;
                 }
                 case 2: {
-                    $this->db->where('credito.var_credito_estado', "PagoPendiente");
+                    $this->db->where("(venta.condicion_pago = 2 AND credito.var_credito_estado = 'PagoPendiente')");
                     break;
                 }
             }
@@ -132,54 +191,98 @@ class Rcliente_estado_model extends CI_Model
 
         $cobranzas = $this->db->get()->result();
 
+
         foreach ($cobranzas as $cobranza) {
             $pagado_pendientes = $this->db->select("
-                SUM(historial_pagos_clientes.historial_monto) as monto,
+                SUM(credito_cuotas_abono.monto_abono) as monto,
             ")
-                ->from('historial_pagos_clientes')
-                ->join('metodos_pago', 'metodos_pago.id_metodo = historial_pagos_clientes.historial_tipopago')
-                ->where('credito_id', $cobranza->venta_id)
-                ->where('historial_pagos_clientes.historial_estatus', 'PENDIENTE')
-                ->group_by('credito_id')
+                ->from('credito_cuotas_abono')
+                ->join('metodos_pago', 'metodos_pago.id_metodo = credito_cuotas_abono.tipo_pago')
+                ->join('credito_cuotas', 'credito_cuotas.id_credito_cuota = credito_cuotas_abono.credito_cuota_id')
+                ->where('credito_cuotas.id_venta', $cobranza->venta_id)
+                ->where('credito_cuotas.ispagado', 0)
+                ->group_by('credito_cuotas.id_venta')
                 ->get()->row();
 
             $cobranza->pagado_pendientes = isset($pagado_pendientes->monto) ? $pagado_pendientes->monto : 0;
             $cobranza->actual = $cobranza->actual - $cobranza->pagado_pendientes;
             $cobranza->credito = $cobranza->credito + $cobranza->pagado_pendientes;
 
-            $cobranza->detalles = $this->db->select("
-                historial_pagos_clientes.historial_fecha as fecha,
-                historial_pagos_clientes.historial_monto as monto,
-                metodos_pago.nombre_metodo as tipo_pago_nombre,
-                historial_pagos_clientes.historial_estatus as estado,
-            ")
-                ->from('historial_pagos_clientes')
-                ->join('metodos_pago', 'metodos_pago.id_metodo = historial_pagos_clientes.historial_tipopago')
-                ->where('credito_id', $cobranza->venta_id)
-                ->where('historial_pagos_clientes.historial_estatus', 'CONFIRMADO')
-                ->order_by('historial_pagos_clientes.historial_fecha', 'ASC ')
-                ->get()->result();
+            if ($cobranza->condicion_pago == 1) {
+                $temp = new stdClass();
+                $caja = $this->db->join('metodos_pago', 'metodos_pago.id_metodo = caja_movimiento.medio_pago')
+                    ->get_where('caja_movimiento', array(
+                        'movimiento' => 'INGRESO',
+                        'operacion' => 'VENTA',
+                        'ref_id' => $cobranza->venta_id
+                    ))->row();
+
+                $temp->letra = 'PAGO CONTADO';
+                $temp->fecha = $caja->fecha_mov;
+                $temp->monto = $caja->saldo;
+                $temp->tipo_pago_nombre = $caja->nombre_metodo;
+
+                $cobranza->detalles = array($temp);
+            } else {
+                $result_detalles = array();
+                if ($cobranza->inicial > 0) {
+                    $temp = new stdClass();
+                    $caja = $this->db->join('metodos_pago', 'metodos_pago.id_metodo = caja_movimiento.medio_pago')
+                        ->get_where('caja_movimiento', array(
+                            'movimiento' => 'INGRESO',
+                            'operacion' => 'VENTA',
+                            'ref_id' => $cobranza->venta_id
+                        ))->row();
+
+                    $temp->letra = 'PAGO INICIAL';
+                    $temp->fecha = $caja->fecha_mov;
+                    $temp->monto = $caja->saldo;
+                    $temp->tipo_pago_nombre = $caja->nombre_metodo;
+                    $result_detalles = array($temp);
+                }
+
+
+                $detalles = $this->db->select("
+                    credito_cuotas.nro_letra as letra,
+                    credito_cuotas_abono.fecha_abono as fecha,
+                    credito_cuotas_abono.monto_abono as monto,
+                    metodos_pago.nombre_metodo as tipo_pago_nombre,
+                    ")
+                    ->from('credito_cuotas_abono')
+                    ->join('credito_cuotas', 'credito_cuotas.id_credito_cuota = credito_cuotas_abono.credito_cuota_id')
+                    ->join('metodos_pago', 'metodos_pago.id_metodo = credito_cuotas_abono.tipo_pago')
+                    ->where('credito_cuotas.id_venta', $cobranza->venta_id)
+                    ->order_by('credito_cuotas_abono.fecha_abono', 'ASC ')
+                    ->get()->result();
+
+                foreach ($detalles as $d) {
+                    $result_detalles[] = $d;
+                }
+
+                $cobranza->detalles = $result_detalles;
+            }
+
 
             $pagado_pendientes = $this->db->select("
-                SUM(historial_pagos_clientes.historial_monto) as monto,
+                SUM(credito_cuotas_abono.monto_abono) as monto,
             ")
-                ->from('historial_pagos_clientes')
-                ->join('metodos_pago', 'metodos_pago.id_metodo = historial_pagos_clientes.historial_tipopago')
-                ->where('credito_id', $cobranza->venta_id)
-                ->where('historial_pagos_clientes.historial_estatus', 'PENDIENTE')
-                ->group_by('credito_id')
+                ->from('credito_cuotas_abono')
+                ->join('credito_cuotas', 'credito_cuotas.id_credito_cuota = credito_cuotas_abono.credito_cuota_id')
+                ->where('credito_cuotas.id_venta', $cobranza->venta_id)
+                ->where('credito_cuotas.ispagado', 0)
+                ->group_by('credito_cuotas.id_venta')
                 ->get()->row();
 
             $cobranza->pagado_pendientes = isset($pagado_pendientes->monto) ? $pagado_pendientes->monto : 0;
 
             $pagado_confirmado = $this->db->select("
-                SUM(historial_pagos_clientes.historial_monto) as monto,
+                SUM(credito_cuotas_abono.monto_abono) as monto,
             ")
-                ->from('historial_pagos_clientes')
-                ->join('metodos_pago', 'metodos_pago.id_metodo = historial_pagos_clientes.historial_tipopago')
-                ->where('credito_id', $cobranza->venta_id)
-                ->where('historial_pagos_clientes.historial_estatus', 'CONFIRMADO')
-                ->group_by('credito_id')
+                ->from('credito_cuotas_abono')
+                ->join('credito_cuotas', 'credito_cuotas.id_credito_cuota = credito_cuotas_abono.credito_cuota_id')
+                ->where('credito_cuotas.id_venta', $cobranza->venta_id)
+                ->where('credito_cuotas.ispagado', 0)
+                ->group_by('credito_cuotas.id_venta')
                 ->get()->row();
 
             $cobranza->pagado_confirmados = isset($pagado_confirmado->monto) ? $pagado_confirmado->monto : 0;
