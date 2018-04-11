@@ -1923,7 +1923,8 @@ JOIN detalleingreso ON detalleingreso.id_ingreso=ingreso.id_ingreso WHERE detall
     {
         $data = "";
 
-        $data['locales'] = $this->local_model->get_all();
+        //$data['locales'] = $this->local_model->get_all();
+        $data = _prepareFlashData();
         $data['monedas'] = $this->db->get_where('moneda', array('status_moneda' => 1))->result();
         $data['metodos'] = $this->metodos_pago_model->get_all();
         $data["lstCliente"] = $this->cliente_model->get_all();

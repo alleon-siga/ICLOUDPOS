@@ -42,7 +42,8 @@ class usuario extends MY_Controller
 
         $data = array();
         $data['grupos'] = $this->usuarios_grupos_model->get_all();
-        $data['locales'] = $this->local_model->get_all();
+        //$data['locales'] = $this->local_model->get_all();
+        $data = _prepareFlashData();
         $idusu = $this->session->userdata('nUsuCodigo');
         $usu = $this->usuario_model->get_by('nUsuCodigo',$idusu);
         if ($id != FALSE) {
