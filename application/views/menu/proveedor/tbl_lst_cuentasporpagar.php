@@ -35,16 +35,18 @@
     <table class='table table-striped dataTable table-bordered tableStyle' id="tablaresult" name="tablaresult">
         <thead>
         <tr>
-            <th>ID</th>
-            <th>Tipo</th>
-            <th>Documento</th>
+            <th># Compra</th>
+            <th># Comprobante</th>
             <th>Proveedor</th>
-            <th>Fecha Compra</th>
-            <th>Monto Venta</th>
-            <th>Monto Inicial</th>
-            <th>Monto Pagado</th>
-            <th>Saldo Deuda</th>
-            <th>Días Transcurridos</th>
+            <th>Fecha emisi&oacute;n</th>
+            <th>Importe compra</th>
+            <th>Inicial</th>
+            <th>Importe abonado</th>
+            <th>Pendiente de pago</th>
+            <th>D&iacute;as Transcurridos</th>
+            <?php if($local=="TODOS"){ ?>
+            <th>Local</th>
+            <?php } ?>
             <th>Accion</th>
         </tr>
         </thead>
@@ -52,8 +54,22 @@
         <?php foreach ($lstproveedor as $p): ?>
             <tr>
                 <td><?= $p->ingreso_id ?></td>
-                <td><?= $p->documento_nombre ?></td>
-                <td><?= $p->documento_serie . ' - ' . $p->documento_numero ?></td>
+                <td style="text-align: center;">
+                <?php
+                $doc = '';
+                if ($p->documento_nombre == 'FACTURA') $doc = "FA";
+                if ($p->documento_nombre == 'NOTA CREDITO') $doc = "NC";
+                if ($p->documento_nombre == 'BOLETA DE VENTA') $doc = "BO";
+                if ($p->documento_nombre == 'GUIA DE REMISION') $doc = "GR";
+                if ($p->documento_nombre == 'PEDIDO COMPRA-VENTA') $doc = "PCV";
+                if ($p->documento_nombre == 'NOTA PEDIDO') $doc = "NP";
+
+                if($p->documento_numero != '')
+                    echo $doc . ' ' . $p->documento_serie . '-' . sumCod($p->documento_numero, 6);
+                else
+                    echo '<span style="color: #0000FF">NO FACTURADO</span>';      
+                ?>
+                </td>
                 <td><?= $p->proveedor_nombre ?></td>
                 <td><?= date('d/m/Y', strtotime($p->fecha_emision)) ?></td>
                 <td><?= $p->simbolo . ' ' . number_format($p->total_ingreso, 2) ?></td>
@@ -61,12 +77,15 @@
                 <td><?= $p->simbolo . ' ' . number_format($p->monto_debito, 2) ?></td>
                 <td><?= $p->simbolo . ' ' . number_format($p->monto_cuota - $p->monto_debito, 2) ?></td>
                 <td><?= $p->dias_transcurridos ?></td>
+                <?php if($local=="TODOS"){ ?>
+                <td><?= $p->local_nombre; ?></td>
+                <?php } ?>
                 <td>
                     <a class='btn btn-xs btn-default tip' title="Ver Venta"
                        onclick="visualizar(<?= $p->ingreso_id ?>)"><i
                                 class="fa fa-search"></i> Ver</a>
 
-                    <a onclick="pagar_venta(<?= $p->ingreso_id ?>)" class='btn btn-xs btn-default tip'
+                    <a onclick="pagar_venta(<?= $p->ingreso_id ?>)" class='btn btn-xs btn-primary tip'
                        title="Pagar"><i
                                 class="fa fa-paypal"></i>
                         Pagar</a>

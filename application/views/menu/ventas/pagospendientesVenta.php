@@ -173,7 +173,7 @@
                             <?php if (count($locales) > 0): ?>
                                 <?php foreach ($locales as $local): ?>
                                     <option
-                                            value="<?php echo $local['int_local_id']; ?>"><?php echo $local['local_nombre']; ?></option>
+                                            value="<?php echo $local['int_local_id']; ?>" <?= $local['int_local_id'] == $this->session->userdata('id_local') ? 'selected' : ''?>><?php echo $local['local_nombre']; ?></option>
                                 <?php endforeach; ?>
                             <?php else : ?>
                             <?php endif; ?>

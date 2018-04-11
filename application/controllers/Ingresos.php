@@ -313,9 +313,22 @@ class ingresos extends MY_Controller
     function lst_cuentas_porpagar()
     {
         if ($this->input->is_ajax_request()) {
-
+            if (!empty($this->input->post('local_id'))){
+                $local_id = $this->input->post('local_id');
+                $data['local'] = $local_id;
+            }else{
+                $usu = $this->session->userdata('nUsuCodigo');
+                $dataLocal = $this->local_model->get_all_usu($usu);
+                $arr = array();
+                foreach ($dataLocal as $value) {
+                    $arr[] = $value['int_local_id'];
+                }
+                $local_id = implode(",", $arr);
+                $data['local'] = 'TODOS';
+            }
+            
             $params = array(
-                'local_id' => $this->input->post('local_id'),
+                'local_id' => $local_id,
                 'proveedor_id' => $this->input->post('proveedor'),
                 'moneda_id' => $this->input->post('moneda'),
             );

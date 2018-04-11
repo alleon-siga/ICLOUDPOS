@@ -87,7 +87,10 @@
             <tr>
                 <td style="text-transform: uppercase; text-align: center; border-top: 1px solid #0b0b0b;">
                     <?= $venta->comprobante_nombre ?><br>
-                    NCF: <?= $venta->comprobante ?>
+                    NCF: <?= $venta->comprobante ?><br>
+                    <div style="text-align: right; text-transform: capitalize;">
+                        V&aacute;lido hasta: <?= date('d/m/Y', strtotime($venta->fecha_venc)) ?>
+                    </div>
                 </td>
             </tr>
         <?php endif; ?>

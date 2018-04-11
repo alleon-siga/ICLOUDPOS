@@ -1945,8 +1945,17 @@ JOIN detalleingreso ON detalleingreso.id_ingreso=ingreso.id_ingreso WHERE detall
             $data['moneda'] = $this->input->post("moneda", true);
 
             $params = array();
-            if ($data['local'] != 'TODOS')
+            if ($data['local'] != 'TODOS'){
                 $params['local_id'] = $data['local'];
+            }else{
+                $usu = $this->session->userdata('nUsuCodigo');
+                $dataLocal = $this->local_model->get_all_usu($usu);
+                $arr = array();
+                foreach ($dataLocal as $value) {
+                    $arr[] = $value['int_local_id'];
+                }
+                $params['local_id'] = implode(",", $arr);
+            }
 
             if ($data['cliente_id'] != '-1')
                 $params['cliente_id'] = $data['cliente_id'];

@@ -4,7 +4,7 @@ header("Content-Disposition: attachment; filename=historial_venta.xls");
 header("Pragma: no-cache");
 header("Expires: 0");
 ?>
-<h2 style="text-align: center;">Historial de Ventas</h2>
+<h2 style="text-align: center;">Registro de Ventas</h2>
 
 <h4>EMPRESA: <?= valueOption('EMPRESA_NOMBRE') ?></h4>
 <h4>FECHA: <?= date('d/m/Y', strtotime($fecha_ini))?> - <?= date('d/m/Y', strtotime($fecha_fin))?></h4>
@@ -13,9 +13,9 @@ header("Expires: 0");
 <table border="1">
     <thead>
     <tr>
-        <th>ID</th>
+        <th># Venta</th>
         <th>Fecha</th>
-        <th>Doc</th>
+        <th># Comprobante</th>
         <th>Identificaci&oacute;n</th>
         <th>Cliente</th>
         <th>Vendedor</th>
@@ -32,8 +32,7 @@ header("Expires: 0");
             <tr <?= $venta->venta_estado == 'ANULADO' ? 'style="color: red;"' : '' ?>>
                 <td><?= $venta->venta_id ?></td>
                 <td>
-                    <span style="display: none;"><?= date('YmdHis', strtotime($venta->venta_fecha)) ?></span>
-                    <?= date('d/m/Y H:i', strtotime($venta->venta_fecha)) ?>
+                    <span style="display: none;"><?= date('d/m/Y H:i', strtotime($venta->venta_fecha)) ?></span>
                 </td>
 
                 <td><?php
@@ -51,11 +50,11 @@ header("Expires: 0");
                     ?>
                 </td>
                 <td><?= $venta->ruc ?></td>
-                <td><?= $venta->cliente_nombre ?></td>
-                <td><?= $venta->vendedor_nombre ?></td>
-                <td><?= $venta->condicion_nombre ?></td>
-                <td><?= $venta->venta_estado ?></td>
-                <td><?= $venta->moneda_tasa ?></td>
+                <td><?= utf8_decode($venta->cliente_nombre) ?></td>
+                <td><?= utf8_decode($venta->vendedor_nombre) ?></td>
+                <td><?= utf8_decode($venta->condicion_nombre) ?></td>
+                <td><?= utf8_decode($venta->venta_estado) ?></td>
+                <td><?= utf8_decode($venta->moneda_tasa) ?></td>
                 <td style="text-align: right;"><?= $venta->moneda_simbolo ?> <?= number_format($venta->total, 2) ?></td>
 
             </tr>

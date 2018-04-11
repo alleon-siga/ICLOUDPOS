@@ -40,7 +40,6 @@
     <div class="box-content box-nomargin">
         <div class="table-responsive">
 
-
             <table class='table table-striped table-media dataTable table-bordered'>
                 <thead>
                 <tr>
@@ -60,10 +59,13 @@
                             <td><?php if(count($locales_usuario)>0){
 
                                     foreach($locales_usuario as $row){
-
-                                        if($row['usuario_id']==$usu->nUsuCodigo){
-                                            echo $row['local_nombre']; echo "<br>";
+                                        $arr = array();
+                                        foreach ($row as $value) {
+                                            if($value['usuario_id']==$usu->nUsuCodigo){
+                                                $arr[] = $value['local_nombre'];
+                                            }
                                         }
+                                        echo implode(" / ", $arr);
                                     }
 
                                 } ?></td>
