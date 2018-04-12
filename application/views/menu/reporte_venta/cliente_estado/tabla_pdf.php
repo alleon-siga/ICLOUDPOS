@@ -39,19 +39,19 @@ $total_saldo = 0; ?>
             <th>Cliente</th>
             <td colspan="4"><?= $cliente->cliente_nombre ?></td>
             <th>Total Vendido</th>
-            <td><?= $moneda->simbolo ?> <span><?= number_format($cliente->subtotal_venta, 2) ?></span></td>
+            <td colspan="2"><?= $moneda->simbolo ?> <span><?= number_format($cliente->subtotal_venta, 2) ?></span></td>
         </tr>
         <tr>
             <th>Ubicaci&oacute;n</th>
             <td colspan="4"><?= $local->local_nombre ?></td>
             <th>Total Pagado</th>
-            <td><?= $moneda->simbolo ?> <span><?= number_format($cliente->subtotal_pago, 2) ?></span></td>
+            <td colspan="2"><?= $moneda->simbolo ?> <span><?= number_format($cliente->subtotal_pago, 2) ?></span></td>
         </tr>
         <tr>
             <th>Vendedor</th>
             <td colspan="4"><?= $cliente->vendedor_nombre ?></td>
             <th>Total Saldo</th>
-            <td>
+            <td colspan="2">
                 <label style="margin-bottom: 0px;"
                        class="control-label badge <?= $cliente->subtotal_venta - $cliente->subtotal_pago > 0 ? 'b-warning' : 'b-default' ?>">
                     <?= $moneda->simbolo ?>
@@ -67,6 +67,7 @@ $total_saldo = 0; ?>
             <th>Pago</th>
             <th>Saldo</th>
             <th>Estado</th>
+            <th></th>
         </tr>
         <?php $actual_desglose = 0 ?>
         <?php $total_venta += number_format($cliente->subtotal_venta, 2, '.', ''); ?>
@@ -86,13 +87,21 @@ $total_saldo = 0; ?>
                     <?= $cobranza->documento_numero != null ?
                         $doc . $cobranza->documento_serie . ' - ' . sumCod($cobranza->documento_numero, 6) :
                         '<span style="color: blue;">NO FACTURADO</span>' ?>
+                    (# Vnt: <?= $cobranza->venta_id ?>)
                 </td>
                 <td><?= $cobranza->condicion_pago_nombre ?></td>
-                <td><?= $moneda->simbolo . ' ' . number_format($cobranza->total_deuda, 2) ?></td>
+                <td>
+                    <?= $moneda->simbolo . ' ' . number_format($cobranza->total_deuda, 2) ?>
+                </td>
                 <td></td>
                 <?php $actual_desglose += $cobranza->total_deuda; ?>
                 <td><?= $moneda->simbolo . ' ' . number_format($actual_desglose, 2) ?></td>
                 <td><?= $cobranza->condicion_pago == 1 || $cobranza->credito_estado == 'PagoCancelado' ? 'Cancelado' : 'Pendiente' ?></td>
+                <td>
+                    <a href="#" class="btn btn-default show_detalle" data-id="<?= $cobranza->venta_id ?>">
+                        <i class="fa fa-search"></i>
+                    </a>
+                </td>
             </tr>
 
             <? foreach ($cobranza->detalles as $detalle): ?>
@@ -104,7 +113,13 @@ $total_saldo = 0; ?>
                     <td><?= $moneda->simbolo . ' ' . number_format($detalle->monto, 2) ?></td>
                     <?php $actual_desglose -= $detalle->monto; ?>
                     <td><?= $moneda->simbolo . ' ' . number_format($actual_desglose, 2) ?></td>
-                    <td></td>
+                    <td colspan="2">
+
+                        <?= $detalle->letra == 'PAGO INICIAL' && $cobranza->total_interes > 0
+                            ? '<span style="font-weight: bold;">INTERES:</span> ' . $moneda->simbolo . ' ' . number_format($cobranza->total_interes, 2)
+                            . ' (' . $cobranza->tasa_interes . '%)'
+                            : '' ?>
+                    </td>
                 </tr>
             <?php endforeach; ?>
         <?php endforeach; ?>

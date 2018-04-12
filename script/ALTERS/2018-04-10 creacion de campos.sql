@@ -18,4 +18,4 @@ INSERT INTO diccionario_termino(tipo, valor, longitud) VALUES('Identificacion em
 INSERT INTO diccionario_termino(tipo, valor, longitud) VALUES('Impuesto','IGV','2');
 
 ALTER TABLE `comprobantes`
-ADD COLUMN `fecha_venc`  date NULL AFTER `num_actual`;
+ADD COLUMN `fecha_venc`  date NULL AFTER `estado`;
