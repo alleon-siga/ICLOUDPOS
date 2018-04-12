@@ -25,10 +25,11 @@ class usuario extends MY_Controller
         if ($this->session->flashdata('error') != FALSE) {
             $data ['error'] = $this->session->flashdata('error');
         }
-
-        $data['locales_usuario']=$this->local_model->get_all_usu_almacen();
         $data["lstUsuario"] = $this->usuario_model->select_all_user();
-
+        foreach ($data["lstUsuario"] as $valor){
+            $data['locales_usuario'][] = $this->local_model->get_all_usu($valor->nUsuCodigo);
+        }
+        
         $dataCuerpo['cuerpo'] = $this->load->view('menu/usuario/usuario', $data, true);
         if ($this->input->is_ajax_request()) {
             echo $dataCuerpo['cuerpo'];
@@ -42,8 +43,7 @@ class usuario extends MY_Controller
 
         $data = array();
         $data['grupos'] = $this->usuarios_grupos_model->get_all();
-        //$data['locales'] = $this->local_model->get_all();
-        $data = _prepareFlashData();
+        $data['locales'] = $this->local_model->get_all();
         $idusu = $this->session->userdata('nUsuCodigo');
         $usu = $this->usuario_model->get_by('nUsuCodigo',$idusu);
         if ($id != FALSE) {

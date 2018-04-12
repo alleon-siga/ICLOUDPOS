@@ -30,10 +30,11 @@
                     <?php foreach ($locale as $x): ?>
                         <th rowspan="2" style="vertical-align: middle;"><?= $x['local_nombre']  ?></th>
                     <?php endforeach ?>
-                        <th rowspan="2" style="vertical-align: middle;"><?php if($tipo==1){ echo "Cantidad"; }else{ echo "Total"; } ?></th>
+                        <th rowspan="2" style="vertical-align: middle;"><?php if($tipo==1){ echo "Total ventas"; }else{ echo "Total"; } ?></th>
                         <?php foreach ($locale as $x): ?>
+                        <th rowspan="2" style="vertical-align: middle;">Stock actual</th>
                         <th colspan="<?= count($periodo); ?>"><?= $x['local_nombre']  ?></th>
-                        <th rowspan="2" style="vertical-align: middle;"><?php if($tipo==1){ echo "Cantidad"; }else{ echo "Total"; } ?></th>
+                        <th rowspan="2" style="vertical-align: middle;"><?php if($tipo==1){ echo "Total ventas"; }else{ echo "Total"; } ?></th>
                         <?php endforeach ?>
                     </tr>
                     <tr>
@@ -59,12 +60,14 @@
                         $totalCantV = 0;
                         foreach ($localId as $x){
                             $cantV = $list['cantVend'.$x['int_local_id']];
+                            $stockA = $list['stock_'.$x['int_local_id']];
                             $totalCantV += $cantV;
                     ?>
                         <td style="text-align: right;"><?php if($tipo==1){ echo $cantV; }else{ echo number_format($cantV, 2); } ?></td>
                     <?php
                         }
                     ?>
+                        <td style="text-align: right;"><?= $stockA ?></td>
                         <td style="text-align: right;"><?php if($tipo==1){ echo $totalCantV; }else{ echo number_format($totalCantV, 2); } ?></td>
                     <?php
                         foreach ($localId as $a){

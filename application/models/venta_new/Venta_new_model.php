@@ -39,7 +39,7 @@ class venta_new_model extends CI_Model
             cliente.razon_social as cliente_nombre,
             cliente.identificacion as ruc,
             venta.id_vendedor as vendedor_id,
-            usuario.nombre as vendedor_nombre,
+            usuario.username as vendedor_nombre,
             venta.condicion_pago as condicion_id,
             condiciones_pago.nombre_condiciones as condicion_nombre,
             venta.venta_status as venta_estado,
@@ -87,6 +87,7 @@ class venta_new_model extends CI_Model
                     ))->row();
                 if ($comprobante != NULL) {
                     $venta->comprobante_nombre = $comprobante->nombre;
+                    $venta->fecha_venc = $comprobante->fecha_venc;
                     $venta->comprobante = $comprobante->serie . sumCod($comprobante->numero, $comprobante->longitud);
                 }
             }

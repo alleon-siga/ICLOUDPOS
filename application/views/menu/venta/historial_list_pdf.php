@@ -16,7 +16,7 @@
         margin: 0px;
     }
 </style>
-<h2 style="text-align: center;">Historial de Ventas</h2>
+<h2 style="text-align: center;">Registro de Ventas</h2>
 
 <h4>EMPRESA: <?= valueOption('EMPRESA_NOMBRE') ?></h4>
 <h4>FECHA: <?= date('d/m/Y', strtotime($fecha_ini))?> - <?= date('d/m/Y', strtotime($fecha_fin))?></h4>
@@ -25,9 +25,9 @@
 <table cellpadding="3" cellspacing="0">
     <thead>
     <tr>
-        <th>ID</th>
+        <th># Venta</th>
         <th>Fecha</th>
-        <th>Doc</th>
+        <th># Comprobante</th>
         <th>Identificaci&oacute;n</th>
         <th>Cliente</th>
         <th>Vendedor</th>

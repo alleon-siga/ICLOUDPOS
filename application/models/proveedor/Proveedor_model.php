@@ -26,7 +26,8 @@ class proveedor_model extends CI_Model
                 ingreso_credito.monto_cuota as monto_cuota,
                 ingreso_credito.monto_debito as monto_debito,
                 ingreso_credito.inicial as inicial, 
-                DATEDIFF(CURDATE(), ingreso.fecha_emision) as dias_transcurridos
+                DATEDIFF(CURDATE(), ingreso.fecha_emision) as dias_transcurridos,
+                l.local_nombre as local_nombre
             FROM
                 (ingreso)
                     JOIN
@@ -35,6 +36,8 @@ class proveedor_model extends CI_Model
                 moneda ON moneda.id_moneda = ingreso.id_moneda 
                     JOIN
                 ingreso_credito ON ingreso_credito.ingreso_id = ingreso.id_ingreso
+                    JOIN
+                local l ON ingreso.local_id = l.int_local_id
             WHERE
                 ingreso_credito.estado = 'PENDIENTE' 
         ";
@@ -49,7 +52,7 @@ class proveedor_model extends CI_Model
             $consulta .= " AND ingreso.id_moneda =" . $data['moneda_id'] . "";
 
         if (isset($data['local_id']) && $data['local_id'] != "")
-            $consulta .= " AND ingreso.local_id =" . $data['local_id'] . "";
+            $consulta .= " AND ingreso.local_id IN(" . $data['local_id'] . ")";
 
 
         $consulta .= " GROUP BY ingreso.id_ingreso";
@@ -83,7 +86,7 @@ class proveedor_model extends CI_Model
             $consulta .= " AND ingreso.id_moneda =" . $data['moneda_id'] . "";
 
         if (isset($data['local_id']) && $data['local_id'] != "")
-            $consulta .= " AND ingreso.local_id =" . $data['local_id'] . "";
+            $consulta .= " AND ingreso.local_id IN(" . $data['local_id'] . ")";
 
 
         return $this->db->query($consulta)->row();
