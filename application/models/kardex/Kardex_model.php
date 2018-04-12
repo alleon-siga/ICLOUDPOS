@@ -20,6 +20,8 @@ class kardex_model extends CI_Model
         if (!isset($data['usuario_id']))
             $data['usuario_id'] = isset($data['id_usuario']) ? $data['id_usuario'] : $this->session->userdata('nUsuCodigo');
 
+        unset($data['id_usuario']);
+
         if(!isset($data['unidad_id'])){
             $orden_max = $this->db->select_max('orden', 'orden')
                 ->where('producto_id', $data['producto_id'])->get('unidades_has_producto')->row();
