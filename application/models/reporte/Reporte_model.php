@@ -261,6 +261,14 @@ class reporte_model extends CI_Model
         $query = "SELECT p.producto_id, p.producto_codigo_interno, f.nombre_familia, p.producto_nombre, m.nombre_marca, l.nombre_linea";
         foreach ($params['local_id'] as $local_id)
         {
+            $query .= ",
+            (
+                SELECT 
+                    IF(SUM((pa.cantidad * (SELECT unidades FROM unidades_has_producto WHERE producto_id=pa.id_producto AND orden=1)) + pa.fraccion) IS NULL, 0, SUM((pa.cantidad * (SELECT unidades FROM unidades_has_producto WHERE producto_id=pa.id_producto AND orden=1)) + pa.fraccion))
+                FROM producto_almacen pa
+                WHERE pa.id_local='$local_id' AND pa.id_producto=p.producto_id
+            ) AS stock_".$local_id;
+
             switch ($params['tipo_periodo']) {
                 case '1': //dia
                     $rango = $params['rangos'];

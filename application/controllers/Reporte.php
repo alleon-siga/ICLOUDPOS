@@ -550,12 +550,27 @@ class Reporte extends MY_Controller
                 $rango = json_decode($params->rangos);
 
                 $ArrayFechaI =explode('/', $rango[0]);
-                $fechaI = $ArrayFechaI[2] ."-".$ArrayFechaI[1] ."-".$ArrayFechaI[0];
-                $fecha_ini = date('Y-m-d 00:00:00', strtotime($fechaI));
-
                 $ArrayFechaF =explode('/', $rango[count($rango)-1]);
-                $fechaF = $ArrayFechaF[2] ."-".$ArrayFechaF[1] ."-".$ArrayFechaF[0];
-                $fecha_fin = date('Y-m-d 23:59:59', strtotime($fechaF));
+
+                if($params->tipo_periodo=='1'){ //por dia
+                    $fechaI = $ArrayFechaI[2] ."-".$ArrayFechaI[1] ."-".$ArrayFechaI[0];
+                    $fecha_ini = date('Y-m-d 00:00:00', strtotime($fechaI));                
+                    $fechaF = $ArrayFechaF[2] ."-".$ArrayFechaF[1] ."-".$ArrayFechaF[0];
+                    $fecha_fin = date('Y-m-d 23:59:59', strtotime($fechaF));
+                }elseif($params->tipo_periodo=='2') { //por mes
+                    $fechaI = $ArrayFechaI[1] ."-".$ArrayFechaI[0] ."-01";
+                    $fecha_ini = date('Y-m-d 00:00:00', strtotime($fechaI));
+                    $fechaF = $ArrayFechaF[1] ."-".$ArrayFechaF[0];
+                    $aux = date('Y-m-d 00:00:00', strtotime("{$fechaF} + 1 month"));
+                    $fecha_fin = date('Y-m-d 23:59:59', strtotime("{$aux} - 1 day"));
+                }elseif($params->tipo_periodo=='3') { //por año
+                    $fechaI = $ArrayFechaI[0] ."-01-01";
+                    $fecha_ini = date('Y-m-d 00:00:00', strtotime($fechaI));
+
+                    $fechaF = $ArrayFechaF[0] ."-12";
+                    $aux = date('Y-m-d 00:00:00', strtotime("{$fechaF} + 1 month"));
+                    $fecha_fin = date('Y-m-d 23:59:59', strtotime("{$aux} - 1 day"));
+                }
 
                 $data['fecha_ini'] = $fecha_ini;
                 $data['fecha_fin'] = $fecha_fin;
@@ -596,15 +611,28 @@ class Reporte extends MY_Controller
                 $data['lists'] = $this->reporte_model->getStockVentas($input);
 
                 $rango = json_decode($params->rangos);
-                
                 $ArrayFechaI =explode('/', $rango[0]);
-                $fechaI = $ArrayFechaI[2] ."-".$ArrayFechaI[1] ."-".$ArrayFechaI[0];
-                $fecha_ini = date('Y-m-d 00:00:00', strtotime($fechaI));
-
                 $ArrayFechaF =explode('/', $rango[count($rango)-1]);
-                $fechaF = $ArrayFechaF[2] ."-".$ArrayFechaF[1] ."-".$ArrayFechaF[0];
-                $fecha_fin = date('Y-m-d 23:59:59', strtotime($fechaF));
-                
+
+                if($params->tipo_periodo=='1'){ //por dia
+                    $fechaI = $ArrayFechaI[2] ."-".$ArrayFechaI[1] ."-".$ArrayFechaI[0];
+                    $fecha_ini = date('Y-m-d 00:00:00', strtotime($fechaI));                
+                    $fechaF = $ArrayFechaF[2] ."-".$ArrayFechaF[1] ."-".$ArrayFechaF[0];
+                    $fecha_fin = date('Y-m-d 23:59:59', strtotime($fechaF));
+                }elseif($params->tipo_periodo=='2') { //por mes
+                    $fechaI = $ArrayFechaI[1] ."-".$ArrayFechaI[0] ."-01";
+                    $fecha_ini = date('Y-m-d 00:00:00', strtotime($fechaI));
+                    $fechaF = $ArrayFechaF[1] ."-".$ArrayFechaF[0];
+                    $aux = date('Y-m-d 00:00:00', strtotime("{$fechaF} + 1 month"));
+                    $fecha_fin = date('Y-m-d 23:59:59', strtotime("{$aux} - 1 day"));
+                }elseif($params->tipo_periodo=='3') { //por año
+                    $fechaI = $ArrayFechaI[0] ."-01-01";
+                    $fecha_ini = date('Y-m-d 00:00:00', strtotime($fechaI));
+
+                    $fechaF = $ArrayFechaF[0] ."-12";
+                    $aux = date('Y-m-d 00:00:00', strtotime("{$fechaF} + 1 month"));
+                    $fecha_fin = date('Y-m-d 23:59:59', strtotime("{$aux} - 1 day"));
+                }
                 $data['fecha_ini'] = $fecha_ini;
                 $data['fecha_fin'] = $fecha_fin;                               
 
