@@ -328,11 +328,18 @@ $primary_nav = array(
                 'icon' => 'fa fa-list',
                 'slug' => 'cuentasporcobrar'
             ),
-
+            /*
             array(
                 'name' => 'Estado de Cuenta',
                 'url' => $ruta . 'venta/estadocuenta',
                 'icon' => 'fa fa-list',
+                'slug' => 'estadocuenta'
+            ),*/
+
+            array(
+                'name' => 'Estado de Cuenta Cliente',
+                'url' => $ruta . 'reporte_ventas/cliente_estado',
+                'icon' => 'fa fa-pie-chart',
                 'slug' => 'estadocuenta'
             ),
 
@@ -454,12 +461,14 @@ $primary_nav = array(
                 'icon' => 'fa fa-pie-chart',
                 'slug' => 'resumenventas'
             ),
+            /*
             array(
                 'name' => 'Estado de Cuenta Cliente',
                 'url' => $ruta . 'reporte_ventas/cliente_estado',
                 'icon' => 'fa fa-pie-chart',
                 'slug' => 'resumenventas'
             ),
+            */
             array(
                 'name' => 'Avance de Pagos',
                 'url' => $ruta . 'reporte_compras/proveedor_estado',
@@ -502,23 +511,18 @@ $primary_nav = array(
                 'slug' => 'ingresodetallado'
             ),
             array(
-                'name' => 'Estado de Cuenta',
-                'url' => $ruta . 'venta/estadocuenta',
-                'icon' => 'fa fa-credit-card',
-                'slug' => 'estadodecuenta'
-            ),
-            array(
                 'name' => 'Comision/Vendedor',
                 'url' => $ruta . 'reporte_ventas/comision',
                 'icon' => 'fa fa-pie-chart',
                 'slug' => 'comisionxvendedor'
             ),
             array(
-                'name' => 'Ventas/Comprobantes',
-                'url' => $ruta . 'reporte_ventas/comprobante',
-                'icon' => 'fa fa-pie-chart',
-                'slug' => 'ventaxcomprobante'
+                'name' => 'Stock y ventas',
+                'url' => $ruta . 'reporte/stockVentas',
+                'icon' => 'fa fa-area-chart',
+                'slug' => 'stockventas'
             ),
+
             array(
                 'name' => 'Productos + vendidos',
                 'url' => $ruta . 'reporte/productoVendido',
@@ -544,11 +548,12 @@ $primary_nav = array(
                 'slug' => 'margenutilidad'
             ),
             array(
-                'name' => 'Stock y ventas',
-                'url' => $ruta . 'reporte/stockVentas',
-                'icon' => 'fa fa-area-chart',
-                'slug' => 'stockventas'
+                'name' => 'Ventas/Comprobantes',
+                'url' => $ruta . 'reporte_ventas/comprobante',
+                'icon' => 'fa fa-pie-chart',
+                'slug' => 'ventaxcomprobante'
             ),
+
         ),
     ),
 
@@ -1362,8 +1367,7 @@ $primary_nav = array(
                             <?php if ($this->usuarios_grupos_model->user_has_perm($this->session->userdata('nUsuCodigo'), 'estadocuenta')) { ?>
 
                                 <li>
-
-                                    <a class="menulink" href="<?= $ruta ?>venta/estadocuenta">Estado de cuentas</a>
+                                    <a class="menulink" href="<?= $ruta ?>reporte_ventas/cliente_estado">Estado de cuentas</a>
                                 </li>
                             <?php } ?>
                             <?php if ($this->usuarios_grupos_model->user_has_perm($this->session->userdata('nUsuCodigo'), 'cuadrecaja')) { ?>
