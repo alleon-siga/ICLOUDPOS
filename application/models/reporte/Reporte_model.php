@@ -258,7 +258,7 @@ class reporte_model extends CI_Model
         $producto_id .= ($params['producto_id']!='')? " AND p.producto_id IN(".implode(",", $params['producto_id']).")" : "";
         $tipo = $params['tipo'];
         $search = $marca_id.$grupo_id.$familia_id.$linea_id.$producto_id;
-        $query = "SELECT p.producto_id, p.producto_codigo_interno, f.nombre_familia, p.producto_nombre, m.nombre_marca, l.nombre_linea";
+        $query = "SELECT p.producto_id, p.producto_codigo_interno, f.nombre_familia, p.producto_nombre, u.nombre_unidad, m.nombre_marca, l.nombre_linea, mo.simbolo";
         foreach ($params['local_id'] as $local_id)
         {
             $query .= ",
@@ -284,8 +284,16 @@ class reporte_model extends CI_Model
                     break;
                 case '2': //mes
                     $rango = $params['rangos'];
-                    $arr = explode('/', $rango[0]);
-                    $where = "AND MONTH(v.fecha)='".$arr[0]."' AND YEAR(v.fecha)='".$arr[1]."'";
+                    $arrI = explode('/', $rango[0]);
+                    $fechaI = $arrI[1] ."-".$arrI[0] ."-01";
+                    $fecha_ini = date('Y-m-d 00:00:00', strtotime($fechaI));
+
+                    $arrF = explode('/', $rango[count($rango)-1]);
+                    $fechaF = $arrF[1] ."-".$arrF[0];
+                    $aux = date('Y-m-d 23:59:59', strtotime("{$fechaF} + 1 month"));
+                    $fecha_fin = date('Y-m-d 23:59:59', strtotime("{$aux} - 1 day"));
+
+                    $where = "AND v.fecha >= '".$fecha_ini."' AND v.fecha <= '".$fecha_fin."'";
                     break;
                 case '3': //anio
                     $where = "AND YEAR(v.fecha) IN(".implode(",", $params['rangos']).")";
@@ -350,6 +358,13 @@ class reporte_model extends CI_Model
                 detalle_venta dv ON p.producto_id=dv.id_producto
             INNER JOIN 
                 venta v ON v.venta_id=dv.id_venta
+            INNER JOIN unidades_has_producto up 
+                ON dv.id_producto=up.producto_id AND dv.unidad_medida=up.id_unidad
+            INNER JOIN unidades_has_producto up2 ON dv.id_producto=up2.producto_id AND (select id_unidad from unidades_has_producto where unidades_has_producto.producto_id = dv.id_producto  ORDER BY orden DESC LIMIT 1) = up2.id_unidad 
+            INNER JOIN unidades u 
+                ON up2.id_unidad=u.id_unidad
+            INNER JOIN 
+                moneda mo ON v.id_moneda = mo.id_moneda
             LEFT JOIN 
                 familia f ON p.producto_familia = f.id_familia
             LEFT JOIN 
