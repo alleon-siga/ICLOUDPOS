@@ -14,7 +14,7 @@ class Rcliente_estado_model extends CI_Model
         $this->db->select("
             cliente.id_cliente as cliente_id,
             cliente.razon_social as cliente_nombre,
-            usuario.nombre as vendedor_nombre, 
+            usuario.nombre as vendedor_nombre,
             SUM(venta.total) as subtotal_venta,
             SUM(credito.dec_credito_montodebito) as subtotal_pago
         ")
@@ -142,12 +142,12 @@ class Rcliente_estado_model extends CI_Model
     {
         $this->db->select("
             venta.venta_id as venta_id,
-            documentos.des_doc as documento_nombre, 
-            documentos.id_doc as documento_id, 
-            venta.serie as documento_serie, 
-            venta.numero as documento_numero, 
-            venta.fecha as fecha_venta, 
-            venta.total as total_deuda, 
+            documentos.des_doc as documento_nombre,
+            documentos.id_doc as documento_id,
+            venta.serie as documento_serie,
+            venta.numero as documento_numero,
+            venta.fecha as fecha_venta,
+            venta.total as total_deuda,
             venta.condicion_pago as condicion_pago,
             condiciones_pago.nombre_condiciones as condicion_pago_nombre,
             credito.dec_credito_montodebito as actual,
@@ -210,6 +210,11 @@ class Rcliente_estado_model extends CI_Model
 
             if ($cobranza->condicion_pago == 1) {
                 $temp = new stdClass();
+                $temp->letra = 'PAGO CONTADO';
+                $temp->fecha = $cobranza->fecha_venta;
+                $temp->monto = $cobranza->total_deuda;
+                $temp->tipo_pago_nombre = '<span style="color: #e67e22;">INDEFINIDO</span>';
+
                 $caja = $this->db->join('metodos_pago', 'metodos_pago.id_metodo = caja_movimiento.medio_pago')
                     ->get_where('caja_movimiento', array(
                         'movimiento' => 'INGRESO',
@@ -217,16 +222,21 @@ class Rcliente_estado_model extends CI_Model
                         'ref_id' => $cobranza->venta_id
                     ))->row();
 
-                $temp->letra = 'PAGO CONTADO';
-                $temp->fecha = $caja->fecha_mov;
-                $temp->monto = $caja->saldo;
-                $temp->tipo_pago_nombre = $caja->nombre_metodo;
+                if($caja != NULL){
+                    $temp->tipo_pago_nombre = $caja->nombre_metodo;
+                }
+
 
                 $cobranza->detalles = array($temp);
             } else {
                 $result_detalles = array();
                 if ($cobranza->inicial > 0) {
                     $temp = new stdClass();
+                    $temp->letra = 'PAGO INICIAL';
+                    $temp->fecha = $cobranza->fecha_venta;
+                    $temp->monto = $cobranza->inicial;
+                    $temp->tipo_pago_nombre = '<span style="color: #e67e22;">INDEFINIDO</span>';
+
                     $caja = $this->db->join('metodos_pago', 'metodos_pago.id_metodo = caja_movimiento.medio_pago')
                         ->get_where('caja_movimiento', array(
                             'movimiento' => 'INGRESO',
@@ -234,10 +244,10 @@ class Rcliente_estado_model extends CI_Model
                             'ref_id' => $cobranza->venta_id
                         ))->row();
 
-                    $temp->letra = 'PAGO INICIAL';
-                    $temp->fecha = $caja->fecha_mov;
-                    $temp->monto = $caja->saldo;
-                    $temp->tipo_pago_nombre = $caja->nombre_metodo;
+                    if($caja != NULL){
+                        $temp->tipo_pago_nombre = $caja->nombre_metodo;
+                    }
+
                     $result_detalles = array($temp);
                 }
 
