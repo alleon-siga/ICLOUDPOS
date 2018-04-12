@@ -86,9 +86,12 @@ $total_saldo = 0; ?>
                     <?= $cobranza->documento_numero != null ?
                         $doc . $cobranza->documento_serie . ' - ' . sumCod($cobranza->documento_numero, 6) :
                         '<span style="color: blue;">NO FACTURADO</span>' ?>
+                    (# Vnt: <?= $cobranza->venta_id ?>)
                 </td>
                 <td><?= $cobranza->condicion_pago_nombre ?></td>
-                <td><?= $moneda->simbolo . ' ' . number_format($cobranza->total_deuda, 2) ?></td>
+                <td>
+                    <?= $moneda->simbolo . ' ' . number_format($cobranza->total_deuda, 2) ?>
+                </td>
                 <td></td>
                 <?php $actual_desglose += $cobranza->total_deuda; ?>
                 <td><?= $moneda->simbolo . ' ' . number_format($actual_desglose, 2) ?></td>
@@ -104,7 +107,13 @@ $total_saldo = 0; ?>
                     <td><?= $moneda->simbolo . ' ' . number_format($detalle->monto, 2) ?></td>
                     <?php $actual_desglose -= $detalle->monto; ?>
                     <td><?= $moneda->simbolo . ' ' . number_format($actual_desglose, 2) ?></td>
-                    <td></td>
+                    <td>
+
+                        <?= $detalle->letra == 'PAGO INICIAL' && $cobranza->total_interes > 0
+                            ? '<span style="font-weight: bold;">INTERES:</span> ' . $moneda->simbolo . ' ' . number_format($cobranza->total_interes, 2)
+                            . ' (' . $cobranza->tasa_interes . '%)'
+                            : '' ?>
+                    </td>
                 </tr>
             <?php endforeach; ?>
         <?php endforeach; ?>

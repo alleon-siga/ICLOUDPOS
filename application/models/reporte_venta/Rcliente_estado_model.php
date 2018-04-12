@@ -15,7 +15,7 @@ class Rcliente_estado_model extends CI_Model
             cliente.id_cliente as cliente_id,
             cliente.razon_social as cliente_nombre,
             usuario.nombre as vendedor_nombre,
-            SUM(venta.total) as subtotal_venta,
+            SUM(IF(credito.tasa_interes > 0, venta.total + ((venta.total - venta.inicial) * (credito.tasa_interes / 100)), venta.total)) as subtotal_venta,
             SUM(credito.dec_credito_montodebito) as subtotal_pago
         ")
             ->from('cliente')
@@ -147,13 +147,15 @@ class Rcliente_estado_model extends CI_Model
             venta.serie as documento_serie,
             venta.numero as documento_numero,
             venta.fecha as fecha_venta,
-            venta.total as total_deuda,
+            IF(credito.tasa_interes > 0, venta.total + ((venta.total - venta.inicial) * (credito.tasa_interes / 100)), venta.total) as total_deuda,
+            IF(credito.tasa_interes > 0, (venta.total - venta.inicial) * (credito.tasa_interes / 100), 0) as total_interes,
             venta.condicion_pago as condicion_pago,
             condiciones_pago.nombre_condiciones as condicion_pago_nombre,
             credito.dec_credito_montodebito as actual,
             IFNULL(venta.inicial, 0) as inicial,
             (venta.total - credito.dec_credito_montodebito) as credito,
             credito.var_credito_estado as credito_estado,
+            credito.tasa_interes as tasa_interes,
             venta.venta_status as venta_estado,
             DATEDIFF(CURDATE(), (venta.fecha)) as atraso
         ")
