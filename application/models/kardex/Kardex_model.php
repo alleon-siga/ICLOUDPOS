@@ -18,7 +18,7 @@ class kardex_model extends CI_Model
             $data['fecha'] = date('Y-m-d H:i:s');
 
         if (!isset($data['usuario_id']))
-            $data['usuario_id'] = $this->session->userdata('nUsuCodigo');
+            $data['usuario_id'] = isset($data['id_usuario']) ? $data['id_usuario'] : $this->session->userdata('nUsuCodigo');
 
         if(!isset($data['unidad_id'])){
             $orden_max = $this->db->select_max('orden', 'orden')

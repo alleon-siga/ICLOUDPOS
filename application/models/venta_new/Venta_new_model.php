@@ -123,7 +123,7 @@ class venta_new_model extends CI_Model
             $this->db->where('venta.fecha >=', $where['year'] . '-' . sumCod($where['mes'], 2) . '-' . $where['dia_min'] . " 00:00:00");
             $this->db->where('venta.fecha <=', $where['year'] . '-' . sumCod($where['mes'], 2) . '-' . $last_day . " 23:59:59");
         }
-        if(isset($where['usuarios_id']) && !empty($where['usuarios_id'])){
+        if (isset($where['usuarios_id']) && !empty($where['usuarios_id'])) {
             $this->db->where('venta.id_vendedor', $where['usuarios_id']);
         }
         $ventas = $this->db->get()->result();
@@ -174,7 +174,7 @@ class venta_new_model extends CI_Model
             $this->db->where('venta.fecha >=', $where['year'] . '-' . sumCod($where['mes'], 2) . '-' . $where['dia_min']);
             $this->db->where('venta.fecha <=', $where['year'] . '-' . sumCod($where['mes'], 2) . '-' . $last_day);
         }
-        if(isset($where['usuarios_id']) && !empty($where['usuarios_id'])){
+        if (isset($where['usuarios_id']) && !empty($where['usuarios_id'])) {
             $this->db->where('venta.id_vendedor', $where['usuarios_id']);
         }
         return $this->db->get()->row();
@@ -294,7 +294,7 @@ class venta_new_model extends CI_Model
 
         $this->cajas_mov_model->save_mov(array(
             'caja_desglose_id' => $cuenta_id,
-            'usuario_id' => $this->session->userdata('nUsuCodigo'),
+            'usuario_id' => $venta['id_usuario'],
             'fecha_mov' => date('Y-m-d H:i:s'),
             'movimiento' => 'INGRESO',
             'operacion' => 'VENTA',
@@ -360,7 +360,7 @@ class venta_new_model extends CI_Model
             'local_id' => $venta['local_id'],
             'id_documento' => $venta['id_documento'],
             'id_cliente' => $venta['id_cliente'],
-            'id_vendedor' => $this->session->userdata('nUsuCodigo'),
+            'id_vendedor' => $venta['id_usuario'],
             'condicion_pago' => $venta['condicion_pago'],
             'id_moneda' => $venta['id_moneda'],
             'venta_status' => $venta['venta_status'],
@@ -420,7 +420,7 @@ class venta_new_model extends CI_Model
 
             $this->cajas_mov_model->save_mov(array(
                 'caja_desglose_id' => $cuenta_id,
-                'usuario_id' => $this->session->userdata('nUsuCodigo'),
+                'usuario_id' => $venta['id_usuario'],
                 'fecha_mov' => date('Y-m-d H:i:s'),
                 'movimiento' => 'INGRESO',
                 'operacion' => 'VENTA',
@@ -435,8 +435,7 @@ class venta_new_model extends CI_Model
         $this->correlativos_model->update_nota_pedido($venta['local_id'], $venta_id);
 
 
-        $this->save_producto_detalles($venta_id, $venta['id_documento'], $venta['local_id'], $productos);
-
+        $this->save_producto_detalles($venta_id, $venta['id_documento'], $venta['local_id'], $productos, $venta['id_usuario']);
 
 
         if ($venta['venta_status'] == 'COMPLETADO') {
@@ -480,7 +479,7 @@ class venta_new_model extends CI_Model
             'local_id' => $venta['local_id'],
             'id_documento' => $venta['id_documento'],
             'id_cliente' => $venta['id_cliente'],
-            'id_vendedor' => $this->session->userdata('nUsuCodigo'),
+            'id_vendedor' => $venta['id_usuario'],
             'condicion_pago' => $venta['condicion_pago'],
             'id_moneda' => $venta['id_moneda'],
             'venta_status' => $venta['venta_status'],
@@ -524,7 +523,7 @@ class venta_new_model extends CI_Model
 
             $this->cajas_mov_model->save_mov(array(
                 'caja_desglose_id' => $cuenta_id,
-                'usuario_id' => $this->session->userdata('nUsuCodigo'),
+                'usuario_id' => $venta['id_usuario'],
                 'fecha_mov' => date('Y-m-d H:i:s'),
                 'movimiento' => 'INGRESO',
                 'operacion' => 'VENTA',
@@ -540,7 +539,7 @@ class venta_new_model extends CI_Model
         $this->correlativos_model->update_nota_pedido($venta['local_id'], $venta_id);
 
 
-        $this->save_producto_detalles($venta_id, $venta['id_documento'], $venta['local_id'], $productos);
+        $this->save_producto_detalles($venta_id, $venta['id_documento'], $venta['local_id'], $productos, $venta['id_usuario']);
 
 
         $this->db->insert('credito', array(
@@ -634,7 +633,7 @@ class venta_new_model extends CI_Model
     }
 
     private
-    function save_producto_detalles($venta_id, $doc_id, $local_id, $productos)
+    function save_producto_detalles($venta_id, $doc_id, $local_id, $productos, $id_usuario)
     {
         //Preparo los detalles de la venta para insertarlo y sus historicos
         $cantidades = array();
@@ -736,7 +735,8 @@ class venta_new_model extends CI_Model
                 'operacion' => 1,
                 'serie' => '-',
                 'numero' => '-',
-                'ref_id' => $venta->venta_id
+                'ref_id' => $venta->venta_id,
+                'id_usuario' => $id_usuario
             );
             $this->kardex_model->set_kardex($values);
 
@@ -791,7 +791,7 @@ class venta_new_model extends CI_Model
     }
 
     public
-    function anular_venta($venta_id, $serie, $numero)
+    function anular_venta($venta_id, $serie, $numero, $id_usuario = false)
     {
         $venta = $this->get_venta_detalle($venta_id);
 
@@ -846,7 +846,8 @@ class venta_new_model extends CI_Model
                 'serie' => $serie,
                 'numero' => $numero,
                 'ref_id' => $venta->venta_id,
-                'ref_val' => $referencias->ref_val
+                'ref_val' => $referencias->ref_val,
+                'id_usuario' => $id_usuario != false ? $this->session->userdata('nUsuCodigo') : $id_usuario
             );
             $this->kardex_model->set_kardex($values);
 
@@ -865,7 +866,6 @@ class venta_new_model extends CI_Model
                     'fraccion' => $result['fraccion']
                 ));
             }
-
 
 
         }
@@ -890,7 +890,8 @@ class venta_new_model extends CI_Model
             'IO' => 2,
             'ref_id' => $venta_id,
             'moneda_id' => $venta->id_moneda,
-            'local_id' => $venta->local_id
+            'local_id' => $venta->local_id,
+            'id_usuario' => $id_usuario != false ? $this->session->userdata('nUsuCodigo') : $id_usuario
         ));
     }
 
@@ -920,8 +921,7 @@ class venta_new_model extends CI_Model
                 $impuesto += (($d->cantidad * $d->precio) * $factor) - ($d->cantidad * $d->precio);
             }
             $total = $subtotal + $impuesto;
-        }
-        else{
+        } else {
             $subtotal = $total;
         }
 
@@ -936,7 +936,7 @@ class venta_new_model extends CI_Model
     }
 
     public
-    function devolver_venta($venta_id, $total_importe, $devoluciones, $serie, $numero)
+    function devolver_venta($venta_id, $total_importe, $devoluciones, $serie, $numero, $id_usuario = false)
     {
         $venta = $this->get_venta_detalle($venta_id);
 
@@ -1015,7 +1015,8 @@ class venta_new_model extends CI_Model
                 'serie' => $serie,
                 'numero' => $numero,
                 'ref_id' => $venta->venta_id,
-                'ref_val' => $referencias->ref_val
+                'ref_val' => $referencias->ref_val,
+                'id_usuario' => $id_usuario != false ? $this->session->userdata('nUsuCodigo') : $id_usuario
             );
             $this->kardex_model->set_kardex($values);
 
@@ -1042,7 +1043,8 @@ class venta_new_model extends CI_Model
             'IO' => 2,
             'ref_id' => $venta_id,
             'moneda_id' => $venta->moneda_id,
-            'local_id' => $venta->local_id
+            'local_id' => $venta->local_id,
+            'id_usuario' => $id_usuario != false ? $this->session->userdata('nUsuCodigo') : $id_usuario
         ));
     }
 

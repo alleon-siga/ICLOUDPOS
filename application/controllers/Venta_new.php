@@ -213,6 +213,7 @@ class venta_new extends MY_Controller
         $venta['local_id'] = $this->input->post('local_venta_id');
         $venta['id_documento'] = $this->input->post('tipo_documento');
         $venta['id_cliente'] = $this->input->post('cliente_id');
+        $venta['id_usuario'] = $this->session->userdata('nUsuCodigo');
         $venta['condicion_pago'] = $this->input->post('tipo_pago');
         $venta['id_moneda'] = $this->input->post('moneda_id');
         $venta['tasa_cambio'] = $this->input->post('tasa');
@@ -453,6 +454,7 @@ class venta_new extends MY_Controller
     {
 
         $venta['venta_id'] = $this->input->post('venta_id');
+        $venta['id_usuario'] = $this->session->userdata('nUsuCodigo');
         $venta['tipo_pago'] = $this->input->post('tipo_pago');
         $venta['importe'] = $this->input->post('importe');
         $venta['vuelto'] = $this->input->post('vuelto');

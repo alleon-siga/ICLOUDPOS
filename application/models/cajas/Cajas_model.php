@@ -10,7 +10,7 @@ class cajas_model extends CI_Model
         $this->load->model('cajas/cajas_mov_model');
     }
 
-    function sync_cajas()
+    function sync_cajas($data = array())
     {
 
         $locales = $this->db->get_where('local', array('local_status' => 1))->result();
@@ -27,7 +27,7 @@ class cajas_model extends CI_Model
                     $this->db->insert('caja', array(
                         'local_id' => $local->int_local_id,
                         'moneda_id' => $moneda->id_moneda,
-                        'responsable_id' => $this->session->userdata('nUsuCodigo'),
+                        'responsable_id' => isset($data['id_usuario']) ? $data['id_usuario'] : $this->session->userdata('nUsuCodigo'),
                         'estado' => 1
                     ));
                 }
@@ -189,7 +189,7 @@ class cajas_model extends CI_Model
 
             $this->cajas_mov_model->save_mov(array(
                 'caja_desglose_id' => $id,
-                'usuario_id' => $this->session->userdata('nUsuCodigo'),
+                'usuario_id' => isset($data['id_usuario']) ? $data['id_usuario'] : $this->session->userdata('nUsuCodigo'),
                 'fecha_mov' => $fecha,
                 'movimiento' => $data['tipo_ajuste'],
                 'operacion' => 'AJUSTE',
@@ -211,7 +211,7 @@ class cajas_model extends CI_Model
 
             $this->cajas_mov_model->save_mov(array(
                 'caja_desglose_id' => $id,
-                'usuario_id' => $this->session->userdata('nUsuCodigo'),
+                'usuario_id' => isset($data['id_usuario']) ? $data['id_usuario'] : $this->session->userdata('nUsuCodigo'),
                 'fecha_mov' => $fecha,
                 'movimiento' => 'EGRESO',
                 'operacion' => 'TRASPASO',
@@ -237,7 +237,7 @@ class cajas_model extends CI_Model
 
             $this->cajas_mov_model->save_mov(array(
                 'caja_desglose_id' => $cuenta_destino->id,
-                'usuario_id' => $this->session->userdata('nUsuCodigo'),
+                'usuario_id' => isset($data['id_usuario']) ? $data['id_usuario'] : $this->session->userdata('nUsuCodigo'),
                 'fecha_mov' => $fecha,
                 'movimiento' => 'INGRESO',
                 'operacion' => 'TRASPASO',
@@ -251,7 +251,7 @@ class cajas_model extends CI_Model
 
             $this->db->insert('caja_pendiente', array(
                 'caja_desglose_id' => $cuenta_destino->id,
-                'usuario_id' => $this->session->userdata('nUsuCodigo'),
+                'usuario_id' => isset($data['id_usuario']) ? $data['id_usuario'] : $this->session->userdata('nUsuCodigo'),
                 'tipo' => 'TRASPASO',
                 'IO' => 1,
                 'monto' => $data['importe'],
@@ -276,7 +276,7 @@ class cajas_model extends CI_Model
 
         $this->cajas_mov_model->save_mov(array(
             'caja_desglose_id' => $id,
-            'usuario_id' => $this->session->userdata('nUsuCodigo'),
+            'usuario_id' => isset($data['id_usuario']) ? $data['id_usuario'] : $this->session->userdata('nUsuCodigo'),
             'fecha_mov' => $fecha,
             'movimiento' => 'EGRESO',
             'operacion' => 'SUNAT',
@@ -325,7 +325,7 @@ class cajas_model extends CI_Model
             return TRUE;
     }
 
-    function get_valid_cuenta_id($moneda, $local)
+    function get_valid_cuenta_id($moneda, $local, $data = array())
     {
         $cuenta = $this->db->select('caja_desglose.id as id')->from('caja_desglose')
             ->join('caja', 'caja.id = caja_desglose.caja_id')
@@ -338,14 +338,14 @@ class cajas_model extends CI_Model
             $this->db->insert('caja', array(
                 'local_id' => $local,
                 'moneda_id' => $moneda,
-                'responsable_id' => $this->session->userdata('nUsuCodigo'),
+                'responsable_id' => isset($data['id_usuario']) ? $data['id_usuario'] : $this->session->userdata('nUsuCodigo'),
                 'estado' => 1
             ));
             $caja_id = $this->db->insert_id();
 
             $this->db->insert('caja_desglose', array(
                 'caja_id' => $caja_id,
-                'responsable_id' => $this->session->userdata('nUsuCodigo'),
+                'responsable_id' => isset($data['id_usuario']) ? $data['id_usuario'] : $this->session->userdata('nUsuCodigo'),
                 'descripcion' => 'Caja Temporal Principal',
                 'saldo' => 0,
                 'principal' => 1,
@@ -371,7 +371,7 @@ class cajas_model extends CI_Model
 
         $this->db->insert('caja_pendiente', array(
             'caja_desglose_id' => isset($data['cuenta_id']) ? $data['cuenta_id'] : $this->get_valid_cuenta_id($data['moneda_id'], $data['local_id']),
-            'usuario_id' => $this->session->userdata('nUsuCodigo'),
+            'usuario_id' => isset($data['id_usuario']) ? $data['id_usuario'] : $this->session->userdata('nUsuCodigo'),
             'tipo' => $data['tipo'],
             'monto' => $data['monto'],
             'estado' => 0,
@@ -400,7 +400,7 @@ class cajas_model extends CI_Model
 
                 $this->db->insert('caja_movimiento', array(
                     'caja_desglose_id' => $cuenta->id,
-                    'usuario_id' => $this->session->userdata('nUsuCodigo'),
+                    'usuario_id' => isset($data['id_usuario']) ? $data['id_usuario'] : $this->session->userdata('nUsuCodigo'),
                     'fecha_mov' => date('Y-m-d H:i:s'),
                     'created_at' => date('Y-m-d H:i:s'),
                     'movimiento' => 'INGRESO',
@@ -415,7 +415,7 @@ class cajas_model extends CI_Model
             $this->db->where('id', $caja_pendiente->id);
             $this->db->update('caja_pendiente', array(
                 'caja_desglose_id' => $cuenta->id,
-                'usuario_id' => $this->session->userdata('nUsuCodigo'),
+                'usuario_id' => isset($data['id_usuario']) ? $data['id_usuario'] : $this->session->userdata('nUsuCodigo'),
                 'monto' => $data['monto'],
                 'estado' => 0,
             ));
@@ -425,7 +425,7 @@ class cajas_model extends CI_Model
 
             $this->db->insert('caja_pendiente', array(
                 'caja_desglose_id' => $cuenta->id,
-                'usuario_id' => $this->session->userdata('nUsuCodigo'),
+                'usuario_id' => isset($data['id_usuario']) ? $data['id_usuario'] : $this->session->userdata('nUsuCodigo'),
                 'tipo' => $data['tipo'],
                 'monto' => $data['monto'],
                 'estado' => 0,
@@ -455,7 +455,7 @@ class cajas_model extends CI_Model
 
                 $this->db->insert('caja_movimiento', array(
                     'caja_desglose_id' => $cuenta->id,
-                    'usuario_id' => $this->session->userdata('nUsuCodigo'),
+                    'usuario_id' => isset($data['id_usuario']) ? $data['id_usuario'] : $this->session->userdata('nUsuCodigo'),
                     'fecha_mov' => date('Y-m-d H:i:s'),
                     'created_at' => date('Y-m-d H:i:s'),
                     'movimiento' => 'INGRESO',
