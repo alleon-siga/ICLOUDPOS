@@ -1,3 +1,4 @@
+<?php $term = diccionarioTermino() ?>
 <form name="formagregar" action="<?= base_url() ?>proveedor/guardar" method="post" id="formagregarproveedor">
 
     <input type="hidden" name="id" id=""
@@ -14,7 +15,7 @@
                 <div class="row">
                     <div class="form-group">
                         <div class="col-md-3">
-                            <label class="control-label panel-admin-text">RUC / DNI</label>
+                            <label class="control-label panel-admin-text"><?= $term[1]->valor.' / '.$term[0]->valor ?></label>
                         </div>
                         <div class="col-md-9">
                             <input type="text" name="proveedor_nrofax" id="proveedor_nrofax"  class="form-control"

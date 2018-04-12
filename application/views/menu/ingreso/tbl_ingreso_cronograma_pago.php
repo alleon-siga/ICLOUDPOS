@@ -59,13 +59,14 @@
                                                 <?php if ($flag_pago): ?>
                                                     <td align="center" id="botonPagar<?php echo $i; ?>">
 
-                                                        <a class="btn btn-xs btn-default"
+                                                        <a class="btn btn-xs btn-primary"
                                                            onclick="abonar(
                                                             <?= $ingreso->id_ingreso; ?>,
                                                             <?= $i; ?>,
                                                             <?= $pago->id ?>,
                                                             <?= $pago->monto ?>,
-                                                            <?= $pago->monto_pagado?>)">
+                                                            <?= $pago->monto_pagado?>,
+                                                            '<?= $ingreso->simbolo ?>')">
                                                             <i class="fa fa-paypal"></i> Pagar</a>
                                                     </td>
                                                     <?php $flag_pago = false; ?>
@@ -90,8 +91,6 @@
         </div>
     </div>
 </div>
-
-
 <div class="modal fade" id="pago_modal" tabindex="-1" role="dialog" style="z-index: 999999;"
      aria-labelledby="myModalLabel"
      aria-hidden="true"
@@ -107,22 +106,23 @@
             <div class="modal-body">
                 <form id="form" class="pad-5">
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-5">
                             <label class="control-label panel-admin-text">Importe de la Cuota</label>
                         </div>
-                        <div class="col-md-6">
-                            <input type="hidden" id="correlativo">
-                            <input type="text" id="total_cuota" value="" class="form-control" readonly>
+                        <div class="col-md-7">
+                            <div class="input-group">
+                                <input type="hidden" id="correlativo">
+                                <div class="input-group-addon tipo_moneda"></div>
+                                <input style="text-align: right;" type="text" id="total_cuota" value="" class="form-control" readonly>
+                            </div>
                         </div>
                     </div>
-
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-5">
                             <label class="control-label panel-admin-text">Metodo de Pago</label>
                         </div>
-                        <div class="col-md-6">
-                            <select class="form-control" name="metodo" id="metodo"
-                                    style="width:250px" onchange="verificar_banco_cuota()">
+                        <div class="col-md-7">
+                            <select class="form-control" name="metodo" id="metodo" onchange="verificar_banco_cuota()">
                                 <?php
                                 if (count($metodos) > 0) {
                                     foreach ($metodos as $metodo) { ?>
@@ -134,12 +134,11 @@
                             </select>
                         </div>
                     </div>
-
                     <div class="row caja_block">
-                        <div class="col-md-6">
+                        <div class="col-md-5">
                             <label class="control-label panel-admin-text">Seleccione la Cuenta</label>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-7">
                             <select name="caja_id" id="caja_id" class="form-control">
                                 <option value="">Seleccione</option>
                                 <?php foreach ($cajas as $caja): ?>
@@ -149,13 +148,11 @@
                             </select>
                         </div>
                     </div>
-
-
                     <div class="row" id="banco_block" style="display: none;">
-                        <div class="col-md-6">
+                        <div class="col-md-5">
                             <label class="control-label panel-admin-text">Seleccione el Banco</label>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-7">
                             <select name="banco_id" id="banco_id" class="form-control">
                                 <option value="">Seleccione</option>
                                 <?php foreach ($bancos as $banco): ?>
@@ -165,13 +162,11 @@
                             </select>
                         </div>
                     </div>
-
-
                     <div class="row" id="tipo_tarjeta_block" style="display:none;">
-                        <div class="col-md-6">
+                        <div class="col-md-5">
                             <label for="tipo_tarjeta" class="control-label panel-admin-text">Tipo de Tarjeta:</label>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-7">
                             <select class="form-control" id="tipo_tarjeta" name="tipo_tarjeta">
                                 <option value="">Seleccione</option>
                                 <?php foreach ($tarjetas as $tarjeta) : ?>
@@ -180,55 +175,57 @@
                             </select>
                         </div>
                     </div>
-
-
                     <div class="row" id="operacion_block" style="display: none;">
-                        <div class="col-md-6">
+                        <div class="col-md-5">
                             <label id="num_oper_label" class="control-label panel-admin-text">Nro de
                                 Operaci&oacute;n</label>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-7">
                             <input type="text" id="num_oper" name="num_oper"
                                    class="form-control" autocomplete="off"
                                    value="">
                         </div>
                     </div>
-
-
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-5">
                             <label class="control-label panel-admin-text">Cantidad a Abonar</label>
                         </div>
-                        <div class="col-md-6">
-                            <input type="hidden" id="correlativo">
-                            <input type="hidden" id="compra_id">
-                            <input type="hidden" id="id_credito_cuota">
-
-                            <input type="number" id="cantidad_a_pagar" name="cantidad_a_pagar" value=""
-                                   class="form-control">
+                        <div class="col-md-7">
+                            <div class="input-group">
+                                <div class="input-group-addon tipo_moneda"></div>
+                                <input type="hidden" id="correlativo">
+                                <input type="hidden" id="compra_id">
+                                <input type="hidden" id="id_credito_cuota">
+                                <input type="number" id="cantidad_a_pagar" name="cantidad_a_pagar" value="" class="form-control">
+                            </div>
+                            <br>
+                            <input style="cursor: pointer;" type="checkbox" id="check_all"> <label style="cursor: pointer;" for="check_all">Pagar todo</label>
                         </div>
                     </div>
-
                 </form>
                 <br>
             </div>
             <div class="modal-footer">
-                <a href="#" class="btn btn-default" id="guardarPago_pagospendiente" onclick="guardarPago()"><i
+                <a href="#" class="btn btn-primary" id="guardarPago_pagospendiente" onclick="guardarPago()"><i
                             class=""></i> Pagar Cuota</a>
-                <a href="#" class="btn btn-default" id="cerrar_pago_modal" onclick="$('#pago_modal').modal('hide');">Cancelar</a>
+                <a href="#" class="btn btn-danger" id="cerrar_pago_modal" onclick="$('#pago_modal').modal('hide');">Salir</a>
             </div>
         </div>
     </div>
 </div>
-
-
 <div class="modal fade" id="visualizarPago" tabindex="-1" role="dialog"
      aria-labelledby="myModalLabel"
      aria-hidden="true">
 </div>
 <script>
     $(document).ready(function () {
-
+        $('#check_all').on('click', function(){
+            if($(this).prop('checked')){
+                $('#cantidad_a_pagar').val($('#total_cuota').val());
+            }else{
+                $('#cantidad_a_pagar').val('');
+            }
+        });
 
         $(".cerrar_pagar_venta").on('click', function () {
             $("#pago_modal").modal('hide');
@@ -413,7 +410,7 @@
         });
     }
 
-    function abonar(id, i, credito_cuota_id, monto, pagado) {
+    function abonar(id, i, credito_cuota_id, monto, pagado, moneda) {
         $('#cargando_modal').modal('show')
         $("#abrir_bancos_cuota").html('')
 
@@ -424,6 +421,7 @@
         $("#total_cuota").val(parseFloat(monto - pagado).toFixed(2));
         $("#cantidad_a_pagar").val('');
         $("#cantidad_a_pagar").focus();
+        $('.tipo_moneda').text(moneda);
         $("#pago_modal").modal('show');
         $('#cargando_modal').modal('hide')
     }

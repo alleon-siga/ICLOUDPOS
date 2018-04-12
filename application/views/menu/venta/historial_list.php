@@ -19,9 +19,9 @@
     <table class='table table-striped dataTable table-bordered no-footer tableStyle' style="overflow:scroll">
         <thead>
         <tr>
-            <th>ID</th>
+            <th># Venta</th>
             <th>Fecha</th>
-            <th>Doc</th>
+            <th># Comprobante</th>
             <th>Identificaci&oacute;n</th>
             <th>Cliente</th>
             <th>Vendedor</th>
@@ -30,8 +30,6 @@
             <th>Tip. Cam.</th>
             <th>Total <?= $venta_action == 'caja' ? 'a Pagar' : '' ?></th>
             <th>Acciones</th>
-
-
         </tr>
         </thead>
         <tbody>

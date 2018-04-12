@@ -21,7 +21,7 @@
                             </div>
                         </div>
                         <div class="col-md-2">
-                            <label for="nro_venta" class="control-label panel-admin-text">Venta Nro:</label>
+                            <label for="nro_venta" class="control-label panel-admin-text"># Venta:</label>
                         </div>
                         <div class="col-md-3">
                             <input type="text" class='form-control' name="nro_venta"
@@ -43,7 +43,7 @@
                                    readonly>
                         </div>
                         <div class="col-md-2">
-                            <label for="fec_primer_pago" class="control-label panel-admin-text">Monto Deuda:</label>
+                            <label for="fec_primer_pago" class="control-label panel-admin-text">Importe venta:</label>
                         </div>
 
                         <div class="col-md-3">

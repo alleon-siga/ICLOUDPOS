@@ -618,7 +618,6 @@ class venta_new extends MY_Controller
         $data['ventas'] = $this->venta->get_ventas($condition);
 
         $data['venta_totales'] = $this->venta->get_ventas_totales($condition);
-
         $this->load->library('mpdf53/mpdf');
         $mpdf = new mPDF('utf-8', 'A4', 0, '', 5, 5, 5, 5, 5, 5);
         $html = $this->load->view('menu/venta/historial_list_pdf', $data, true);

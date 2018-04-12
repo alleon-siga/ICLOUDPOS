@@ -1784,7 +1784,7 @@ FROM (`detalle_venta`) JOIN `venta` ON `venta`.`venta_id`=`detalle_venta`.`id_ve
         ";
 
         if(isset($data['local_id']))
-            $consulta .= " AND v.local_id = ".$data['local_id'];
+            $consulta .= " AND v.local_id IN(".$data['local_id'].")";
 
         if(isset($data['cliente_id']))
             $consulta .= " AND v.id_cliente = ".$data['cliente_id'];
@@ -1825,8 +1825,8 @@ FROM (`detalle_venta`) JOIN `venta` ON `venta`.`venta_id`=`detalle_venta`.`id_ve
                 local.local_nombre AS local,
                 v.inicial + cd.dec_credito_montodebito AS MontoCancelado,
                 v.total - v.inicial - cd.dec_credito_montodebito AS SaldoPendiente,
-                IFNULL(correlativos.serie, '0000') AS serie,
-                IFNULL(correlativos.correlativo, v.venta_id) AS correlativo,
+                v.serie AS serie,
+                v.numero AS correlativo,
                 d.id_doc AS TipoDocumento,
                 d.des_doc AS Documento,
                 (SELECT
@@ -1864,8 +1864,6 @@ FROM (`detalle_venta`) JOIN `venta` ON `venta`.`venta_id`=`detalle_venta`.`id_ve
                 moneda ON moneda.id_moneda = v.id_moneda
                     JOIN
                 local local ON local.int_local_id = v.local_id
-                    LEFT JOIN
-                correlativos ON local.int_local_id = correlativos.id_local and v.id_documento = correlativos.id_documento
             WHERE
                 cd.var_credito_estado = 'PagoPendiente'
                 AND v.venta_status = 'COMPLETADO'
@@ -1873,7 +1871,7 @@ FROM (`detalle_venta`) JOIN `venta` ON `venta`.`venta_id`=`detalle_venta`.`id_ve
         ";
 
         if(isset($data['local_id']))
-            $consulta .= " AND v.local_id = ".$data['local_id'];
+            $consulta .= " AND v.local_id IN(".$data['local_id'].")";
 
         if(isset($data['cliente_id']))
             $consulta .= " AND v.id_cliente = ".$data['cliente_id'];

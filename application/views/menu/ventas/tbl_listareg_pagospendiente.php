@@ -20,17 +20,13 @@
 <table class='table table-striped dataTable table-bordered no-footer tableStyle' id="lstPagP" name="lstPagP">
     <thead>
     <tr>
-        <th>ID</th>
+        <th># Venta</th>
         <th class='tip' title="Fecha Venta">Fecha Venta</th>
-        <th>Documento</th>
-
-        <th><?= $term[0]->valor.' / '.$term[1]->valor ?></th>
+        <th># Comprobante</th>
         <th>Cliente</th>
-
-
         <th class='tip' title="Monto Credito Solicitado">Importe Venta</th>
         <th class='tip' title="Monto Cancelado">Importe Abonado</th>
-        <th class='tip' title="Monto Cancelado">Saldo Deuda</th>
+        <th class='tip' title="Monto Cancelado">Pendiente de pago</th>
         <th class='tip' title="Monto Cancelado">Cuotas</th>
 
         <th class='tip' title="Total" tool ># Cuotas Atrasado</th>
@@ -47,21 +43,22 @@
                 <td><?php echo $v->Venta_id; ?></td>
                 <td style="text-align: center;"><span style="display: none"><?= date('YmdHis', strtotime($v->FechaReg)) ?></span><?php echo date("d/m/Y", strtotime($v->FechaReg)) ?></td>
                 <td style="text-align: center;">
-                    <?php
-                    if($v->TipoDocumento==1) echo "FA";
-                    if($v->TipoDocumento==2) echo "NC";
-                    if($v->TipoDocumento==3) echo "BO";
-                    if($v->TipoDocumento==4) echo "GR";
-                    if($v->TipoDocumento==5) echo "PCV";
-                    if($v->TipoDocumento==6) echo "NP";
-                    ?>
-                    <?= $v->serie . '-' . sumCod($v->correlativo, 5)?>
+                <?php
+                $doc = '';
+                if ($v->TipoDocumento == 1) $doc = "FA";
+                if ($v->TipoDocumento == 2) $doc = "NC";
+                if ($v->TipoDocumento == 3) $doc = "BO";
+                if ($v->TipoDocumento == 4) $doc = "GR";
+                if ($v->TipoDocumento == 5) $doc = "PCV";
+                if ($v->TipoDocumento == 6) $doc = "NP";
+
+                if($v->correlativo != '')
+                    echo $doc . ' ' . $v->serie . '-' . sumCod($v->correlativo, 6);
+                else
+                    echo '<span style="color: #0000FF">NO FACTURADO</span>';      
+                ?>
                 </td>
-
-                <td><?= $v->ruc == 2 ? $term[1]->valor.': ' : $term[0]->valor.': ' ?> <?= $v->indentificacion; ?></td>
                 <td><?php echo $v->Cliente; ?></td>
-
-
                 <td style="text-align: right;"><?php echo $v->Simbolo.' '. number_format($v->MontoTotal,2) ?></td>
                 <td style="text-align: right;"><?php echo $v->Simbolo .' '.number_format($v->MontoCancelado,2) ?></td>
                 <td style="text-align: right;"><?php echo $v->Simbolo.' '. number_format($v->MontoTotal - $v->MontoCancelado,2) ?></td>
@@ -74,7 +71,7 @@
                     <div class="btn-group">
                         <a class='btn btn-xs btn-default tip' title="Ver Venta" onclick="visualizar(<?= $v->Venta_id; ?>)"><i
                                 class="fa fa-search"></i> Ver</a>
-                        <a onclick="pagar_venta(<?= $v->Venta_id; ?>)" class='btn btn-xs btn-default tip' title="Pagar"><i
+                        <a onclick="pagar_venta(<?= $v->Venta_id; ?>)" class='btn btn-xs btn-primary tip' title="Pagar"><i
                                 class="fa fa-paypal"></i>
                             Cobrar</a>
 
@@ -423,7 +420,7 @@
         });
     }
 
-    function abonar(idVenta, i, montodescontar,id_credito_cuota,restante) {
+    function abonar(idVenta, i, montodescontar,id_credito_cuota,restante, moneda) {
         $('#cargando_modal').modal('show')
         $("#abrir_bancos_cuota").html('')
 
@@ -433,6 +430,7 @@
         $("#id_credito_cuota").val(id_credito_cuota);
         $("#total_cuota").val(restante);
         $("#cantidad_a_pagar").val('');
+        $('.tipo_moneda').text(moneda);
         $("#cantidad_a_pagar").focus();
        $("#pago_modal").modal('show');
         $('#cargando_modal').modal('hide')
