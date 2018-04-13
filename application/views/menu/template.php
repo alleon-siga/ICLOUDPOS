@@ -76,12 +76,12 @@ $primary_nav = array(
                 'slug' => 'productos'
             ),
 
-             array(
-                 'name' => 'Stock Productos',
-                 'url' => $ruta . 'producto/stock',
-                 'icon' => 'fa fa-list',
-                 'slug' => 'stock'
-             ),
+            array(
+                'name' => 'Stock Productos',
+                'url' => $ruta . 'producto/stock',
+                'icon' => 'fa fa-list',
+                'slug' => 'stock'
+            ),
 
             array(
                 'name' => 'Traspasos de Almacen',
@@ -90,7 +90,7 @@ $primary_nav = array(
                 'slug' => 'traspaso'
             ),
 
-             array(
+            array(
                 'name' => 'Entradas & Salidas',
                 'url' => $ruta . 'ajuste',
                 'icon' => 'fa fa-exchange',
@@ -169,23 +169,23 @@ $primary_nav = array(
               ),
             */
             array(
-                  'name' => 'Ingreso Calzado',
-                  'url' => $ruta . 'ingreso_calzado',
-                  'icon' => 'fa fa-sort-amount-asc',
-                  'slug' => 'ingresocalzado'
-              ),
+                'name' => 'Ingreso Calzado',
+                'url' => $ruta . 'ingreso_calzado',
+                'icon' => 'fa fa-sort-amount-asc',
+                'slug' => 'ingresocalzado'
+            ),
             array(
-                  'name' => 'Plantilla Producto',
-                  'url' => $ruta . 'plantilla',
-                  'icon' => 'fa fa-sort-amount-asc',
-                  'slug' => 'plantillaproducto'
-              ),
+                'name' => 'Plantilla Producto',
+                'url' => $ruta . 'plantilla',
+                'icon' => 'fa fa-sort-amount-asc',
+                'slug' => 'plantillaproducto'
+            ),
             array(
                 'name' => 'Serie Calzado',
                 'url' => $ruta . 'seriescalzado',
                 'icon' => 'fa fa-sort-amount-asc',
                 'slug' => 'seriescalzado'
-            ),array(
+            ), array(
                 'name' => 'Reporte Calzado',
                 'url' => $ruta . 'ingreso_calzado/reporte',
                 'icon' => 'fa fa-sort-amount-asc',
@@ -305,7 +305,6 @@ $primary_nav = array(
     ),
 
 
-
     array(
         'name' => 'CLIENTES',
         'slug' => 'clientespadre',
@@ -405,7 +404,7 @@ $primary_nav = array(
                 'slug' => 'tiposgasto'
             ),
 
-             array(
+            array(
                 'name' => 'Monedas',
                 'url' => $ruta . 'monedas',
                 'icon' => 'fa fa-money',
@@ -806,7 +805,7 @@ $primary_nav = array(
         var ya = 0;
 
 
-         function show_msg(type, msg) {
+        function show_msg(type, msg) {
 
             $.bootstrapGrowl(msg, {
                 type: type,
@@ -821,7 +820,7 @@ $primary_nav = array(
 </head>
 
 <body>
-<?php $md = get_moneda_defecto()?>
+<?php $md = get_moneda_defecto() ?>
 <input type="hidden" id="MONEDA_DEFECTO_ID" value="<?= MONEDA_DEFECTO ?>">
 <input type="hidden" id="MONEDA_DEFECTO_NOMBRE" value="<?= $md->nombre ?>">
 <input type="hidden" id="MONEDA_DEFECTO_SIMBOLO" value="<?= $md->simbolo ?>">
@@ -951,7 +950,7 @@ $primary_nav = array(
                             <a href="#modal-user-settings" data-toggle="modal" class="enable-tooltip"
                                data-placement="bottom" title="Settings"><i class="gi gi-user"></i></a>
                             <a href="<?= $ruta ?>logout" data-toggle="tooltip" data-placement="bottom" title="Logout"><i
-                                    class="gi gi-exit"></i></a>
+                                        class="gi gi-exit"></i></a>
                         </div>
                     </div>
                     <!-- END User Info -->
@@ -1050,7 +1049,7 @@ $primary_nav = array(
                                         <li class="sidebar-header">
                                             <?php if (isset($link['opt']) && $link['opt']) { // If the header has options set ?>
                                                 <span
-                                                    class="sidebar-header-options clearfix"><?php echo $link['opt']; ?></span>
+                                                        class="sidebar-header-options clearfix"><?php echo $link['opt']; ?></span>
                                             <?php } ?>
                                             <span class="sidebar-header-title"><?php echo $link['name']; ?></span>
                                         </li>
@@ -1186,7 +1185,7 @@ $primary_nav = array(
                                 <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">
                                     <img src="<?php echo $ruta ?>recursos/img/placeholders/avatars/avatar2.jpg"
                                          alt="avatar"> <i
-                                        class="fa fa-angle-down"></i>
+                                            class="fa fa-angle-down"></i>
                                 </a>
                                 <ul class="dropdown-menu dropdown-custom dropdown-menu-right">
 
@@ -1241,7 +1240,10 @@ $primary_nav = array(
                         <!-- User Dropdown -->
                         <li class="alertD" style="display: none">
                             <a href="#">
-                                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 146.6 177.9" style="enable-background:new 0 0 146.6 177.9;" xml:space="preserve">
+                                <svg version="1.1" xmlns="http://www.w3.org/2000/svg"
+                                     xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                                     viewBox="0 0 146.6 177.9" style="enable-background:new 0 0 146.6 177.9;"
+                                     xml:space="preserve">
                                     <g>
                                         <path d="M73.3,177.9c14.2,0,26.1-10.2,28.6-23.7H44.7C47.2,167.7,59,177.9,73.3,177.9z"/>
                                         <path d="M143.4,113.4c-7.3,0-13.3-6-13.3-13.3V79.5c0-2.3-0.1-4.6-0.4-6.8c-3,1.1-6.3,1.8-9.8,1.8c-15.3,0-27.7-12.4-27.7-27.7c0-7,2.6-13.5,7-18.4c-4-2.1-8.2-3.7-12.6-4.8c1.4-2.4,2.2-5.1,2.2-8.1C88.9,7,81.9,0,73.3,0S57.7,7,57.7,15.6c0,2.9,0.8,5.7,2.2,8c-25,6-43.5,28.5-43.5,55.3v21.2c0,7.3-6,13.3-13.3,13.3H0v32.8h146.6v-32.8H143.4z"/>
@@ -1257,7 +1259,7 @@ $primary_nav = array(
                                     <span>Enero</span>
                                     <span>160.00</span>
                                 </li>
-                                 <li>
+                                <li>
                                     <span>Febrero</span>
                                     <span>160.00</span>
                                 </li>
@@ -1275,7 +1277,7 @@ $primary_nav = array(
                             <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">
                                 <img src="<?php echo $ruta ?>recursos/img/punto_de_venta_v2.jpg"
                                      alt="avatar"> <i
-                                    class="fa fa-angle-down"></i>
+                                        class="fa fa-angle-down"></i>
                             </a>
                             <ul class="dropdown-menu dropdown-custom dropdown-menu-right">
 
@@ -1329,8 +1331,8 @@ $primary_nav = array(
                                 <li>
                                     <a class="menulink" href="<?= $ruta ?>venta_new/historial/caja">Ventas por
                                         Cobrar <span
-                                            class="badge label-danger"
-                                            id="cobrar_top"><?php echo cantidad_ventas_cobrar() ?></span></a>
+                                                class="badge label-danger"
+                                                id="cobrar_top"><?php echo cantidad_ventas_cobrar() ?></span></a>
                                 </li>
                                 <script>
                                     //FUNCION TIMER PARA DETECTAR LOS COBROS POR PAGAR
@@ -1367,7 +1369,8 @@ $primary_nav = array(
                             <?php if ($this->usuarios_grupos_model->user_has_perm($this->session->userdata('nUsuCodigo'), 'estadocuenta')) { ?>
 
                                 <li>
-                                    <a class="menulink" href="<?= $ruta ?>reporte_ventas/cliente_estado">Estado de cuentas</a>
+                                    <a class="menulink" href="<?= $ruta ?>reporte_ventas/cliente_estado">Estado de
+                                        cuentas</a>
                                 </li>
                             <?php } ?>
                             <?php if ($this->usuarios_grupos_model->user_has_perm($this->session->userdata('nUsuCodigo'), 'cuadrecaja')) { ?>
@@ -1617,24 +1620,30 @@ $primary_nav = array(
                             <div class="controls col-md-8">
                                 <select class="form-control" id="locales" name="locales" class='cho form-control'
                                         required="true">
-                                        <option value="0">TODOS</option>
+                                    <option value="0">TODOS</option>
                                     <?php foreach ($locales as $local) { ?>
                                         <option
-                                            value="<?= $local['int_local_id'] ?>"><?= $local['local_nombre'] ?></option>
+                                                value="<?= $local['int_local_id'] ?>"
+                                            <?= $local['int_local_id'] == $this->session->userdata('id_local') ? 'selected' : '' ?>
+                                        ><?= $local['local_nombre'] ?></option>
                                     <?php } ?>
 
                                 </select>
                             </div>
                         </div>
-                        <br>
-                        <div class="control-group row">
+
+                        <div class="control-group row"
+                             style="display: <?= $this->session->userdata('grupo') == 2 ? 'block' : 'none' ?>">
+                            <br>
                             <div class="col-md-1"></div>
                             <label for="fecha" class="control-label col-md-2">Usuarios:</label>
 
                             <div class="controls col-md-8">
                                 <select class="form-control" id="usuarios" name="usuarios" class='cho form-control'
                                         required="true">
-                                    <option value="0">TODOS</option>
+                                    <?php if ($this->session->userdata('grupo') == 2): ?>
+                                        <option value="0">TODOS</option>
+                                    <?php endif; ?>
                                     <?php foreach ($usuarios as $usuario) { ?>
                                         <option
                                                 value="<?= $usuario->nUsuCodigo ?>"><?= $usuario->nombre ?></option>
@@ -2128,58 +2137,58 @@ $primary_nav = array(
             }
 
 
-             if (e.keyCode == 113) {
+            if (e.keyCode == 113) {
 
-             e.preventDefault();
+                e.preventDefault();
 
-             if ($(".modal").is(":visible")) {
-             return false;
-             }
-             $('#barloadermodal').modal('show');
+                if ($(".modal").is(":visible")) {
+                    return false;
+                }
+                $('#barloadermodal').modal('show');
 
-             $.ajax({
-             url: '<?=$ruta?>producto/stock',
-             success: function (data) {
+                $.ajax({
+                    url: '<?=$ruta?>producto/stock',
+                    success: function (data) {
 
-             if (data.error == undefined) {
+                        if (data.error == undefined) {
 
-             $('#page-content').html(data);
-
-
-             } else {
-
-             var growlType = 'warning';
-
-             $.bootstrapGrowl('<h4>' + data.error + '</h4>', {
-             type: growlType,
-             delay: 2500,
-             allow_dismiss: true
-             });
-
-             $(this).prop('disabled', true);
-
-             }
+                            $('#page-content').html(data);
 
 
-             $('#barloadermodal').modal('hide');
+                        } else {
 
-             },
-             error: function (response) {
-             $('#barloadermodal').modal('hide');
-             var growlType = 'warning';
+                            var growlType = 'warning';
 
-             $.bootstrapGrowl('<h4>Ha ocurrido un error al realizar la operacion</h4>', {
-             type: growlType,
-             delay: 2500,
-             allow_dismiss: true
-             });
+                            $.bootstrapGrowl('<h4>' + data.error + '</h4>', {
+                                type: growlType,
+                                delay: 2500,
+                                allow_dismiss: true
+                            });
 
-             $(this).prop('disabled', true);
+                            $(this).prop('disabled', true);
 
-             }
-             })
+                        }
 
-             }
+
+                        $('#barloadermodal').modal('hide');
+
+                    },
+                    error: function (response) {
+                        $('#barloadermodal').modal('hide');
+                        var growlType = 'warning';
+
+                        $.bootstrapGrowl('<h4>Ha ocurrido un error al realizar la operacion</h4>', {
+                            type: growlType,
+                            delay: 2500,
+                            allow_dismiss: true
+                        });
+
+                        $(this).prop('disabled', true);
+
+                    }
+                })
+
+            }
 
             if (e.keyCode == 115) {
 
@@ -2309,13 +2318,13 @@ $primary_nav = array(
         }
     }
 
-$(document).click(function(e) {
-    var target = e.target;
-    if ($(target).is('li.alertD>a') ) {
-        e.preventDefault();
-      $('li.alertD>ul').slideToggle(50);
-    }else{
-      $('li.alertD>ul').slideUp(50);
-    }
-})
+    $(document).click(function (e) {
+        var target = e.target;
+        if ($(target).is('li.alertD>a')) {
+            e.preventDefault();
+            $('li.alertD>ul').slideToggle(50);
+        } else {
+            $('li.alertD>ul').slideUp(50);
+        }
+    })
 </script>
