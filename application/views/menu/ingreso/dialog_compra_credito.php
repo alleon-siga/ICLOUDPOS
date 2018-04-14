@@ -186,11 +186,13 @@
                                 <div class="input-group">
                                     <div class="input-group-addon tipo_moneda"><?= $md->simbolo ?></div>
                                     <input type="text" style="text-align: right; padding-right: 2px;"
+                                           autocomplete="off"
                                            class='form-control'
                                            name="c_saldo_inicial" id="c_saldo_inicial"
                                            value="">
                                     <div class="input-group-addon" style="padding: 0; font-weight: bold;">
                                         <input type="text"
+                                               autocomplete="off"
                                                style=" text-align: right; width: 40px; height: 30px; margin: 0; margin-left: 5px; padding: 0; padding-right: 2px; border: 1px solid #fff;"
                                                name="c_saldo_inicial_por" id="c_saldo_inicial_por"
                                                value="0">%
@@ -207,6 +209,7 @@
                             <div class="col-md-7">
                                 <div class="input-group">
                                     <input type="text"
+                                           autocomplete="off"
                                            class='form-control'
                                            name="c_tasa_interes" id="c_tasa_interes"
                                            value="0"
@@ -260,6 +263,7 @@
 
                             <div class="col-md-7">
                                 <input type="text"
+                                       autocomplete="off"
                                        class='form-control'
                                        name="c_dia_pago" id="c_dia_pago" value=""
                                        onkeydown="return soloDecimal(this, event);">
@@ -274,6 +278,7 @@
 
                             <div class="col-md-7">
                                 <input type="text"
+                                       autocomplete="off"
                                        class='form-control'
                                        name="c_periodo_gracia" id="c_periodo_gracia" value="0"
                                        onkeydown="return soloDecimal(this, event);">
@@ -347,7 +352,7 @@
                 refresh_credito_window(1);
             });
 
-            $("#c_saldo_inicial").on('keyup', function () {
+            $("#c_saldo_inicial_por").on('keyup', function () {
                 refresh_credito_window(2);
             });
 
@@ -454,12 +459,12 @@
 
 
 
-            if (trigger == 1 || trigger == undefined) {
+            if (trigger == 2) {
                 var saldo_porciento = isNaN(parseFloat($("#c_saldo_inicial_por").val())) ? 0 : parseFloat($("#c_saldo_inicial_por").val());
                 var saldo_inicial = parseFloat((precio_contado * saldo_porciento) / 100);
                 $("#c_saldo_inicial").val(formatPrice(saldo_inicial));
             }
-            else if (trigger == 2) {
+            else if (trigger == 1 || trigger == undefined) {
                 var saldo_inicial = isNaN(parseFloat($("#c_saldo_inicial").val())) ? 0 : parseFloat($("#c_saldo_inicial").val());
                 var saldo_porciento = parseFloat((saldo_inicial * 100) / precio_contado);
                 $("#c_saldo_inicial_por").val(parseFloat(saldo_porciento).toFixed(2));

@@ -23,7 +23,7 @@ class venta_new_model extends CI_Model
     function get_ventas($where = array(), $action = '')
     {
         $this->db->select('
-            venta.venta_id as venta_id,
+           venta.venta_id as venta_id,
             venta.comprobante_id as comprobante_id,
             venta.fecha as venta_fecha,
             venta.pagado as venta_pagado,
@@ -127,9 +127,11 @@ class venta_new_model extends CI_Model
             $this->db->where('venta.fecha >=', $where['year'] . '-' . sumCod($where['mes'], 2) . '-' . $where['dia_min'] . " 00:00:00");
             $this->db->where('venta.fecha <=', $where['year'] . '-' . sumCod($where['mes'], 2) . '-' . $last_day . " 23:59:59");
         }
+
         if (isset($where['usuarios_id']) && !empty($where['usuarios_id'])) {
             $this->db->where('venta.id_vendedor', $where['usuarios_id']);
         }
+
         $ventas = $this->db->get()->result();
 
         return $ventas;
@@ -364,7 +366,7 @@ class venta_new_model extends CI_Model
     function save_venta_contado($venta, $productos, $traspasos = array())
     {
 
-        $this->save_traspasos($traspasos);
+        $this->save_traspasos($traspasos, $venta['id_usuario']);
 
         //preparo la venta
         $venta_contado = array(
@@ -476,7 +478,7 @@ class venta_new_model extends CI_Model
 
     function save_venta_credito($venta, $productos, $traspasos = array(), $cuotas)
     {
-        $this->save_traspasos($traspasos);
+        $this->save_traspasos($traspasos, $venta['id_usuario']);
 
         if ($venta['venta_status'] == 'CAJA' && $venta['c_inicial'] == 0)
             $venta['venta_status'] = 'COMPLETADO';
@@ -773,7 +775,7 @@ class venta_new_model extends CI_Model
     }
 
     private
-    function save_traspasos($traspasos)
+    function save_traspasos($traspasos, $id_usuario)
     {
         //Hago los traspasos en caso de haber
         foreach ($traspasos as $traspaso) {
@@ -786,7 +788,7 @@ class venta_new_model extends CI_Model
                 ->get('unidades_has_producto')->row();
 
             $next_id = $this->db->select_max('venta_id')->get('venta')->row();
-            $this->traspaso_model->traspasar_productos($traspaso->id_producto, $traspaso->local_id, $traspaso->parent_local, array(
+            $this->traspaso_model->traspasar_productos($traspaso->id_producto, $traspaso->local_id, $traspaso->parent_local, $id_usuario, array(
                 'um_id' => $minima_unidad->um_id,
                 'cantidad' => $traspaso->cantidad,
                 'venta_id' => $next_id->venta_id + 1

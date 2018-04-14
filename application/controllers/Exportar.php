@@ -350,6 +350,26 @@ class exportar extends MY_Controller
 
             $data['compra_credito'][$mon['id_moneda']] = $this->db->get()->row();
 
+            //COMPRAS AL CREDITO INICIAL
+            $this->db->select_sum('ingreso_credito.inicial', 'total')
+                ->from('ingreso')
+                ->join('ingreso_credito', 'ingreso_credito.ingreso_id = ingreso.id_ingreso')
+                ->where('ingreso.id_moneda', $mon["id_moneda"])
+                ->where('ingreso.fecha_registro >=', $fecha)
+                ->where('ingreso.fecha_registro <', $fechadespues)
+                ->where('ingreso.ingreso_status', "COMPLETADO")
+                ->where('ingreso.pago', "CREDITO");
+
+            if ($id_local != 0) {
+                $this->db->where('ingreso.local_id', $id_local);
+            }
+
+            if ($id_usuario != 0) {
+                $this->db->where('ingreso.nUsuCodigo', $id_usuario);
+            }
+
+            $data['compra_credito_inicial'][$mon['id_moneda']] = $this->db->get()->row();
+
             //PAGO A PROVEEDORES
             $this->db->select_sum('pagos_ingreso.pagoingreso_monto', 'total')
                 ->from('pagos_ingreso')

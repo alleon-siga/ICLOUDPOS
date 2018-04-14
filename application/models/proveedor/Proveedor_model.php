@@ -39,7 +39,7 @@ class proveedor_model extends CI_Model
                     JOIN
                 local l ON ingreso.local_id = l.int_local_id
             WHERE
-                ingreso_credito.estado = 'PENDIENTE' 
+                ingreso_credito.estado = 'PENDIENTE' AND ingreso.ingreso_status = 'COMPLETADO'
         ";
 
         if (isset($data['proveedor_id']) && $data['proveedor_id'] != "")
