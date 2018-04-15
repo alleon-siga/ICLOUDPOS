@@ -319,6 +319,14 @@ class cajas extends MY_Controller
                 $data_mov['medio_pago'] = $movimiento->medio_pago;
             }
 
+            if ($caja_pendiente->tipo == 'PAGOS_CUOTAS') {
+                $movimiento = $this->db->get_where('pagos_ingreso', array(
+                    'pagoingreso_id' => $caja_pendiente->ref_id
+                ))->row();
+
+                $data_mov['medio_pago'] = $movimiento->medio_pago_id;
+            }
+
             $new_saldo = 0;
             if ($caja_pendiente->IO == 2) {
                 $data_mov['movimiento'] = 'EGRESO';

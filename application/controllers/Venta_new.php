@@ -281,8 +281,11 @@ class venta_new extends MY_Controller
 //                }
                 $data['success'] = '1';
                 $data['venta'] = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
-            } else
+            } else{
+                if(isset($this->venta->error))
+                    $data['msg'] = $this->venta->error;
                 $data['success'] = '0';
+            }
 
         } else {
             $data['success'] = "3";
@@ -468,8 +471,11 @@ class venta_new extends MY_Controller
         if ($result) {
             $data['success'] = '1';
             $data['venta'] = $this->db->get_where('venta', array('venta_id' => $venta['venta_id']))->row();
-        } else
+        } else{
+            if(isset($this->venta->error))
+                $data['msg'] = $this->venta->error;
             $data['success'] = '0';
+        }
 
 
         echo json_encode($data);

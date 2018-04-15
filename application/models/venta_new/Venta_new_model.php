@@ -188,7 +188,7 @@ class venta_new_model extends CI_Model
 
     function get_last_id()
     {
-        $last_id = $this->db->select('venta_id')->order_by('venta_id',"desc")->limit(1)->get('venta')->row();
+        $last_id = $this->db->select('venta_id')->order_by('venta_id', "desc")->limit(1)->get('venta')->row();
 
         return $last_id;
     }
@@ -297,6 +297,11 @@ class venta_new_model extends CI_Model
                 'local_id' => $venta_actual->local_id));
         }
 
+        if ($cuenta_id == NULL) {
+            $this->error = 'No existe una cuenta para este local';
+            return false;
+        }
+
         $cuenta_old = $this->cajas_model->get_cuenta($cuenta_id);
 
         $venta_total = $venta_actual->total;
@@ -365,6 +370,22 @@ class venta_new_model extends CI_Model
 
     function save_venta_contado($venta, $productos, $traspasos = array())
     {
+        if ($venta['venta_status'] != 'CAJA') {
+            if ($venta['vc_forma_pago'] == 4 || $venta['vc_forma_pago'] == 8 || $venta['vc_forma_pago'] == 9 || $venta['vc_forma_pago'] == 7) {
+                $banco = $this->db->get_where('banco', array('banco_id' => $venta['vc_banco_id']))->row();
+                $cuenta_id = $banco->cuenta_id;
+            } else {
+                $cuenta_id = $this->cajas_model->get_cuenta_id(array(
+                    'moneda_id' => $venta['id_moneda'],
+                    'local_id' => $venta['local_id']));
+            }
+
+            if ($cuenta_id == NULL) {
+                $this->error = 'No existe una cuenta para este local';
+                return false;
+            }
+        }
+
 
         $this->save_traspasos($traspasos, $venta['id_usuario']);
 
@@ -411,20 +432,11 @@ class venta_new_model extends CI_Model
 
 
         if ($venta['venta_status'] != 'CAJA') {
-            $moneda_id = $venta_contado['id_moneda'];
+
 
             // Hago la facturacion de comprobantes
             if (validOption('COMPROBANTE', 1))
                 $this->comprobante_model->facturar($venta_id, $venta['comprobante_id']);
-
-            if ($venta['vc_forma_pago'] == 4 || $venta['vc_forma_pago'] == 8 || $venta['vc_forma_pago'] == 9 || $venta['vc_forma_pago'] == 7) {
-                $banco = $this->db->get_where('banco', array('banco_id' => $venta['vc_banco_id']))->row();
-                $cuenta_id = $banco->cuenta_id;
-            } else {
-                $cuenta_id = $this->cajas_model->get_cuenta_id(array(
-                    'moneda_id' => $moneda_id,
-                    'local_id' => $venta_contado['local_id']));
-            }
 
 
             $cuenta_old = $this->cajas_model->get_cuenta($cuenta_id);
@@ -478,6 +490,24 @@ class venta_new_model extends CI_Model
 
     function save_venta_credito($venta, $productos, $traspasos = array(), $cuotas)
     {
+
+        if ($venta['venta_status'] != 'CAJA' && $venta['c_inicial'] > 0) {
+            if ($venta['vc_forma_pago'] == 4 || $venta['vc_forma_pago'] == 8 || $venta['vc_forma_pago'] == 9 || $venta['vc_forma_pago'] == 7) {
+                $banco = $this->db->get_where('banco', array('banco_id' => $venta['vc_banco_id']))->row();
+                $cuenta_id = $banco->cuenta_id;
+            } else {
+                $cuenta_id = $this->cajas_model->get_cuenta_id(array(
+                    'moneda_id' => $venta['id_moneda'],
+                    'local_id' => $venta['local_id']));
+            }
+
+            if ($cuenta_id == NULL) {
+                $this->error = 'No existe una cuenta para este local';
+                return false;
+            }
+        }
+
+
         $this->save_traspasos($traspasos, $venta['id_usuario']);
 
         if ($venta['venta_status'] == 'CAJA' && $venta['c_inicial'] == 0)
@@ -518,16 +548,6 @@ class venta_new_model extends CI_Model
         $venta_id = $this->db->insert_id();
 
         if ($venta['venta_status'] != 'CAJA' && $venta_contado['inicial'] > 0) {
-            $moneda_id = $venta_contado['id_moneda'];
-
-            if ($venta['vc_forma_pago'] == 4 || $venta['vc_forma_pago'] == 8 || $venta['vc_forma_pago'] == 9 || $venta['vc_forma_pago'] == 7) {
-                $banco = $this->db->get_where('banco', array('banco_id' => $venta['vc_banco_id']))->row();
-                $cuenta_id = $banco->cuenta_id;
-            } else {
-                $cuenta_id = $this->cajas_model->get_cuenta_id(array(
-                    'moneda_id' => $moneda_id,
-                    'local_id' => $venta_contado['local_id']));
-            }
 
 
             $cuenta_old = $this->cajas_model->get_cuenta($cuenta_id);
