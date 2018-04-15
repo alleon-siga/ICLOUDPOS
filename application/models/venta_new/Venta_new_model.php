@@ -23,7 +23,7 @@ class venta_new_model extends CI_Model
     function get_ventas($where = array(), $action = '')
     {
         $this->db->select('
-            venta.venta_id as venta_id,
+           venta.venta_id as venta_id,
             venta.comprobante_id as comprobante_id,
             venta.fecha as venta_fecha,
             venta.pagado as venta_pagado,
@@ -127,9 +127,11 @@ class venta_new_model extends CI_Model
             $this->db->where('venta.fecha >=', $where['year'] . '-' . sumCod($where['mes'], 2) . '-' . $where['dia_min'] . " 00:00:00");
             $this->db->where('venta.fecha <=', $where['year'] . '-' . sumCod($where['mes'], 2) . '-' . $last_day . " 23:59:59");
         }
+
         if (isset($where['usuarios_id']) && !empty($where['usuarios_id'])) {
             $this->db->where('venta.id_vendedor', $where['usuarios_id']);
         }
+
         $ventas = $this->db->get()->result();
 
         return $ventas;
@@ -186,7 +188,7 @@ class venta_new_model extends CI_Model
 
     function get_last_id()
     {
-        $last_id = $this->db->select('venta_id')->order_by('venta_id',"desc")->limit(1)->get('venta')->row();
+        $last_id = $this->db->select('venta_id')->order_by('venta_id', "desc")->limit(1)->get('venta')->row();
 
         return $last_id;
     }
@@ -286,13 +288,18 @@ class venta_new_model extends CI_Model
 
         $moneda_id = $venta_actual->id_moneda;
 
-        if ($venta['tipo_pago'] == 4 || $venta['tipo_pago'] == 8 || $venta['tipo_pago'] == 9) {
+        if ($venta['tipo_pago'] == 4 || $venta['tipo_pago'] == 8 || $venta['tipo_pago'] == 9 || $venta['tipo_pago'] == 7) {
             $banco = $this->db->get_where('banco', array('banco_id' => $venta['banco_id']))->row();
             $cuenta_id = $banco->cuenta_id;
         } else {
             $cuenta_id = $this->cajas_model->get_cuenta_id(array(
                 'moneda_id' => $moneda_id,
                 'local_id' => $venta_actual->local_id));
+        }
+
+        if ($cuenta_id == NULL) {
+            $this->error = 'No existe una cuenta para este local';
+            return false;
         }
 
         $cuenta_old = $this->cajas_model->get_cuenta($cuenta_id);
@@ -363,8 +370,24 @@ class venta_new_model extends CI_Model
 
     function save_venta_contado($venta, $productos, $traspasos = array())
     {
+        if ($venta['venta_status'] != 'CAJA') {
+            if ($venta['vc_forma_pago'] == 4 || $venta['vc_forma_pago'] == 8 || $venta['vc_forma_pago'] == 9 || $venta['vc_forma_pago'] == 7) {
+                $banco = $this->db->get_where('banco', array('banco_id' => $venta['vc_banco_id']))->row();
+                $cuenta_id = $banco->cuenta_id;
+            } else {
+                $cuenta_id = $this->cajas_model->get_cuenta_id(array(
+                    'moneda_id' => $venta['id_moneda'],
+                    'local_id' => $venta['local_id']));
+            }
 
-        $this->save_traspasos($traspasos);
+            if ($cuenta_id == NULL) {
+                $this->error = 'No existe una cuenta para este local';
+                return false;
+            }
+        }
+
+
+        $this->save_traspasos($traspasos, $venta['id_usuario']);
 
         //preparo la venta
         $venta_contado = array(
@@ -409,20 +432,11 @@ class venta_new_model extends CI_Model
 
 
         if ($venta['venta_status'] != 'CAJA') {
-            $moneda_id = $venta_contado['id_moneda'];
+
 
             // Hago la facturacion de comprobantes
             if (validOption('COMPROBANTE', 1))
                 $this->comprobante_model->facturar($venta_id, $venta['comprobante_id']);
-
-            if ($venta['vc_forma_pago'] == 4 || $venta['vc_forma_pago'] == 8 || $venta['vc_forma_pago'] == 9) {
-                $banco = $this->db->get_where('banco', array('banco_id' => $venta['vc_banco_id']))->row();
-                $cuenta_id = $banco->cuenta_id;
-            } else {
-                $cuenta_id = $this->cajas_model->get_cuenta_id(array(
-                    'moneda_id' => $moneda_id,
-                    'local_id' => $venta_contado['local_id']));
-            }
 
 
             $cuenta_old = $this->cajas_model->get_cuenta($cuenta_id);
@@ -476,7 +490,25 @@ class venta_new_model extends CI_Model
 
     function save_venta_credito($venta, $productos, $traspasos = array(), $cuotas)
     {
-        $this->save_traspasos($traspasos);
+
+        if ($venta['venta_status'] != 'CAJA' && $venta['c_inicial'] > 0) {
+            if ($venta['vc_forma_pago'] == 4 || $venta['vc_forma_pago'] == 8 || $venta['vc_forma_pago'] == 9 || $venta['vc_forma_pago'] == 7) {
+                $banco = $this->db->get_where('banco', array('banco_id' => $venta['vc_banco_id']))->row();
+                $cuenta_id = $banco->cuenta_id;
+            } else {
+                $cuenta_id = $this->cajas_model->get_cuenta_id(array(
+                    'moneda_id' => $venta['id_moneda'],
+                    'local_id' => $venta['local_id']));
+            }
+
+            if ($cuenta_id == NULL) {
+                $this->error = 'No existe una cuenta para este local';
+                return false;
+            }
+        }
+
+
+        $this->save_traspasos($traspasos, $venta['id_usuario']);
 
         if ($venta['venta_status'] == 'CAJA' && $venta['c_inicial'] == 0)
             $venta['venta_status'] = 'COMPLETADO';
@@ -516,16 +548,6 @@ class venta_new_model extends CI_Model
         $venta_id = $this->db->insert_id();
 
         if ($venta['venta_status'] != 'CAJA' && $venta_contado['inicial'] > 0) {
-            $moneda_id = $venta_contado['id_moneda'];
-
-            if ($venta['vc_forma_pago'] == 4 || $venta['vc_forma_pago'] == 8 || $venta['vc_forma_pago'] == 9) {
-                $banco = $this->db->get_where('banco', array('banco_id' => $venta['vc_banco_id']))->row();
-                $cuenta_id = $banco->cuenta_id;
-            } else {
-                $cuenta_id = $this->cajas_model->get_cuenta_id(array(
-                    'moneda_id' => $moneda_id,
-                    'local_id' => $venta_contado['local_id']));
-            }
 
 
             $cuenta_old = $this->cajas_model->get_cuenta($cuenta_id);
@@ -747,7 +769,7 @@ class venta_new_model extends CI_Model
                 'serie' => '-',
                 'numero' => '-',
                 'ref_id' => $venta->venta_id,
-                'id_usuario' => $id_usuario
+                'usuario_id' => $id_usuario
             );
             $this->kardex_model->set_kardex($values);
 
@@ -773,7 +795,7 @@ class venta_new_model extends CI_Model
     }
 
     private
-    function save_traspasos($traspasos)
+    function save_traspasos($traspasos, $id_usuario)
     {
         //Hago los traspasos en caso de haber
         foreach ($traspasos as $traspaso) {
@@ -786,7 +808,7 @@ class venta_new_model extends CI_Model
                 ->get('unidades_has_producto')->row();
 
             $next_id = $this->db->select_max('venta_id')->get('venta')->row();
-            $this->traspaso_model->traspasar_productos($traspaso->id_producto, $traspaso->local_id, $traspaso->parent_local, array(
+            $this->traspaso_model->traspasar_productos($traspaso->id_producto, $traspaso->local_id, $traspaso->parent_local, $id_usuario, array(
                 'um_id' => $minima_unidad->um_id,
                 'cantidad' => $traspaso->cantidad,
                 'venta_id' => $next_id->venta_id + 1
@@ -858,7 +880,7 @@ class venta_new_model extends CI_Model
                 'numero' => $numero,
                 'ref_id' => $venta->venta_id,
                 'ref_val' => $referencias->ref_val,
-                'id_usuario' => $id_usuario != false ? $this->session->userdata('nUsuCodigo') : $id_usuario
+                'usuario_id' => $id_usuario == false ? $this->session->userdata('nUsuCodigo') : $id_usuario
             );
             $this->kardex_model->set_kardex($values);
 
@@ -902,7 +924,7 @@ class venta_new_model extends CI_Model
             'ref_id' => $venta_id,
             'moneda_id' => $venta->id_moneda,
             'local_id' => $venta->local_id,
-            'id_usuario' => $id_usuario != false ? $this->session->userdata('nUsuCodigo') : $id_usuario
+            'id_usuario' => $id_usuario == false ? $this->session->userdata('nUsuCodigo') : $id_usuario
         ));
     }
 
@@ -1027,7 +1049,7 @@ class venta_new_model extends CI_Model
                 'numero' => $numero,
                 'ref_id' => $venta->venta_id,
                 'ref_val' => $referencias->ref_val,
-                'id_usuario' => $id_usuario != false ? $this->session->userdata('nUsuCodigo') : $id_usuario
+                'usuario_id' => $id_usuario == false ? $this->session->userdata('nUsuCodigo') : $id_usuario
             );
             $this->kardex_model->set_kardex($values);
 
@@ -1055,7 +1077,7 @@ class venta_new_model extends CI_Model
             'ref_id' => $venta_id,
             'moneda_id' => $venta->moneda_id,
             'local_id' => $venta->local_id,
-            'id_usuario' => $id_usuario != false ? $this->session->userdata('nUsuCodigo') : $id_usuario
+            'id_usuario' => $id_usuario == false ? $this->session->userdata('nUsuCodigo') : $id_usuario
         ));
     }
 

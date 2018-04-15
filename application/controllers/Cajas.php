@@ -309,6 +309,24 @@ class cajas extends MY_Controller
                 'ref_id' => $caja_pendiente->id
             );
 
+            if ($caja_pendiente->tipo == 'VENTA_ANULADA' || $caja_pendiente->tipo == 'VENTA_DEVUELTA') {
+                $movimiento = $this->db->get_where('caja_movimiento', array(
+                    'ref_id' => $caja_pendiente->ref_id,
+                    'operacion' => 'VENTA',
+                    'movimiento' => 'INGRESO'
+                ))->row();
+
+                $data_mov['medio_pago'] = $movimiento->medio_pago;
+            }
+
+            if ($caja_pendiente->tipo == 'PAGOS_CUOTAS') {
+                $movimiento = $this->db->get_where('pagos_ingreso', array(
+                    'pagoingreso_id' => $caja_pendiente->ref_id
+                ))->row();
+
+                $data_mov['medio_pago'] = $movimiento->medio_pago_id;
+            }
+
             $new_saldo = 0;
             if ($caja_pendiente->IO == 2) {
                 $data_mov['movimiento'] = 'EGRESO';

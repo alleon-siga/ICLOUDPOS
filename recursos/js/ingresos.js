@@ -587,10 +587,12 @@ function cancelarIngreso() {
     /*con esto evito que se uede la pantalla en gris*/
     $('body').removeClass('modal-open');
     $('.modal-backdrop').remove();
-
+    $('#barloadermodal').modal('show');
     $.ajax({
-        url: ruta + 'principal',
+        url: ruta + 'ingresos?costos=true',
         success: function (data) {
+            $('#barloadermodal').modal('hide');
+            $('.modal-backdrop').remove();
             $('#page-content').html(data);
         }
     });

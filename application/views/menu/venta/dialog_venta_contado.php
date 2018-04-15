@@ -219,7 +219,7 @@
                     }, 500);
                     return false;
                 }
-                if (($("#vc_forma_pago").val() == '4' || $("#vc_forma_pago").val() == '8' || $("#vc_forma_pago").val() == '9') && $("#vc_banco_id").val() == '') {
+                if (($("#vc_forma_pago").val() == '4' || $("#vc_forma_pago").val() == '8' || $("#vc_forma_pago").val() == '9' || $("#vc_forma_pago").val() == '7') && $("#vc_banco_id").val() == '') {
                     show_msg('warning', '<h4>Error. </h4><p>Debe seleccionar un Banco</p>');
                     setTimeout(function () {
                         $("#vc_banco_id").trigger('focus');
@@ -253,6 +253,7 @@
             }
             //tarjeta
             else if (forma_pago == '7') {
+                $("#vc_banco_block").show();
                 $("#vc_num_oper_block").show();
                 $("#vc_tipo_tarjeta_block").show();
                 setTimeout(function () {
