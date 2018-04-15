@@ -9,8 +9,8 @@ class Pedidos extends REST_Controller
     {
         parent::__construct();
 
-        $this->load->model('venta_new/venta_new_api_model', 'venta');
-        $this->load->model('inventario/inventario_api_model');
+        $this->load->model('venta_new/venta_new_model', 'venta');
+        $this->load->model('inventario/inventario_model');
         $this->load->model('api/api_model', 'api');
 
         $this->very_auth();
@@ -52,9 +52,9 @@ class Pedidos extends REST_Controller
     {
         $estado = $this->input->post('estado');
 
-        $params = array('estado' => $estado);
+        $where = array('estado' => $estado);
 
-        $ventas = $this->venta->get_ventas($params);
+        $ventas = $this->venta->get_ventas($where, "caja");
 
         $data = array();
         foreach ($ventas as $venta) {
@@ -85,7 +85,7 @@ class Pedidos extends REST_Controller
 
         $venta['venta_status'] = $this->input->post('venta_estado');
         $venta['fecha_venta'] = $this->input->post('fecha_venta');
-        $venta['tipo_impuesto'] = $this->input->post('tipo_impuesto');
+        //$venta['tipo_impuesto'] = $this->input->post('tipo_impuesto');
 
         $venta['subtotal'] = $this->input->post('subtotal');
         $venta['impuesto'] = $this->input->post('impuesto');
@@ -128,7 +128,7 @@ class Pedidos extends REST_Controller
             );
         }
 
-        $sin_stock = $this->inventario_api_model->check_stock($validar_detalle);
+        $sin_stock = $this->inventario_model->check_stock($validar_detalle);
 
         if (count($sin_stock) == 0) {
             $venta_id = 0;
