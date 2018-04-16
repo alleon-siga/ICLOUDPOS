@@ -379,6 +379,14 @@
 
                 function save_venta_contado(imprimir) {
 
+                    if (isNaN(parseFloat($('#vc_importe').val()))) {
+                        show_msg('warning', '<h4>Error. </h4><p>El importe tiene que ser numerico.</p>');
+                        setTimeout(function () {
+                            $("#vc_importe").trigger('focus');
+                        }, 500);
+                        return false;
+                    }
+
                     if ($("#vc_forma_pago").val() == '3' && $("#vc_vuelto").val() < 0) {
                         show_msg('warning', '<h4>Error. </h4><p>El importe no puede ser menor que el total a pagar. Recomendamos una venta al Cr&eacute;dito.</p>');
                         setTimeout(function () {

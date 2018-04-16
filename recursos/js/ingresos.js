@@ -63,19 +63,28 @@ $(document).ready(function () {
 
     updateMonedas();
     $('body').off('keydown');
+    $('body').off('keyup');
+
     $('body').on('keydown', function (e) {
         if (e.keyCode == 117) {
             e.preventDefault();
-            if ($(".modal").is(":visible") == false) {
+        }
+    });
+
+    $('body').on('keyup', function (e) {
+        if (e.keyCode == 117) {
+            e.preventDefault();
+            if ($("#confirmarmodal").is(":visible") == true || $("#dialog_compra_credito").is(":visible") == true) {
+                guardaringreso();
+
+            }
+            else {
                 /*dependiendo de el valor de costo, se llama a la funcion que valida los campos*/
                 if ($("#costos").val() == 'true') {
                     validar_ingreso()
                 } else {
                     validar_registro_existencia()
                 }
-            }
-            else {
-                guardaringreso();
             }
 
 
@@ -843,7 +852,7 @@ function guardaringreso() {
     // console.log($('#frmCompra').serialize());
     // return false;
     /*esta funcion carga el modal que indica que esta procesando, y ejecuta la funcion de guardar*/
-    $("#botonconfirmar").addClass('disabled');
+    $("#botonconfirmar_save").addClass('disabled');
     $("#btn_compra_credito").addClass('disabled');
     $("#barloadermodal").modal('show');
 

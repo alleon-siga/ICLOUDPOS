@@ -279,6 +279,16 @@ class venta_new_model extends CI_Model
 
         $this->db->where('venta_id', $venta_id);
         $this->db->update('venta', $update_venta);
+
+
+        $this->db->where('io', 2);
+        $this->db->where('operacion', 1);
+        $this->db->where('ref_id', $venta_id);
+        $this->db->update('kardex', array(
+            'serie' => $update_venta['serie'],
+            'numero' => sumCod($update_venta['numero'], 6)
+        ));
+
     }
 
     function save_venta_caja($venta)
@@ -766,8 +776,8 @@ class venta_new_model extends CI_Model
                 'io' => 2,
                 'tipo' => $tipo,
                 'operacion' => 1,
-                'serie' => '-',
-                'numero' => '-',
+                'serie' => $venta->serie != null ? $venta->serie : '-',
+                'numero' => $venta->numero != null ? sumCod($venta->numero, 6) : '-',
                 'ref_id' => $venta->venta_id,
                 'usuario_id' => $id_usuario
             );
