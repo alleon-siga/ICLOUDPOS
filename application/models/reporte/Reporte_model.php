@@ -386,45 +386,27 @@ class reporte_model extends CI_Model
 
     function getHojaColecta($params)
     {
-        $marca_id = $grupo_id = $familia_id = $linea_id = $producto_id = '';
-
+        $local_id = $marca_id = $grupo_id = $familia_id = $linea_id = $producto_id = '';
+        $usu = $this->session->userdata('nUsuCodigo');
+        $local_id .= ($params['local_id']>0)? " AND v.local_id=".$params['local_id'] : "";
         $marca_id .= ($params['marca_id']>0)? " AND p.producto_marca=".$params['marca_id'] : "";
         $grupo_id .= ($params['grupo_id']>0)? " AND p.produto_grupo=".$params['grupo_id'] : "";
         $familia_id .= ($params['familia_id']>0)? " AND p.producto_familia=".$params['familia_id'] : "";
         $linea_id .= ($params['linea_id']>0)? " AND p.producto_linea=".$params['linea_id'] : "";
         $producto_id .= ($params['producto_id']!='')? " AND p.producto_id IN(".implode(",", $params['producto_id']).")" : "";
-        $search = $marca_id.$grupo_id.$familia_id.$linea_id.$producto_id;
-        //Limitar top
-        $limit = '';
-        if(isset($params['limit'])){
-            $limit = "LIMIT 0, ".$params['limit'];
-        }
-        $query = "SELECT p.producto_id AS producto_id, p.producto_codigo_interno AS producto_codigo_interno, p.producto_nombre AS producto_nombre,
-            (
-                SELECT SUM(up.unidades * dv.cantidad)
-                FROM detalle_venta AS dv
-                INNER JOIN venta v ON v.venta_id=dv.id_venta
-                INNER JOIN producto p2 ON dv.id_producto=p2.producto_id
-                INNER JOIN unidades_has_producto up ON dv.id_producto=up.producto_id AND dv.unidad_medida=up.id_unidad
-                INNER JOIN unidades_has_producto up2 ON dv.id_producto=up2.producto_id 
-                AND (select id_unidad from unidades_has_producto where unidades_has_producto.producto_id = dv.id_producto  ORDER BY orden DESC LIMIT 1) = up2.id_unidad
-                INNER JOIN unidades u ON up2.id_unidad=u.id_unidad
-                WHERE dv.id_producto = p.producto_id AND v.venta_status='COMPLETADO' AND v.local_id = '".$params['local_id']."' AND v.fecha >= '".$params['fecha_ini']."' AND v.fecha <= '".$params['fecha_fin']."'
-            ) AS ventas,
-            (
-                SELECT SUM((pa.cantidad * (SELECT unidades FROM unidades_has_producto WHERE producto_id=pa.id_producto AND orden=1)) + pa.fraccion)
-                FROM producto_almacen pa
-                WHERE pa.id_producto=p.producto_id AND pa.id_local = '".$params['local_id']."'
-            ) AS stock,
-            (
-                SELECT u.nombre_unidad
-                FROM unidades u, producto p2, unidades_has_producto up, unidades_has_producto up2
-                WHERE p2.producto_id = p.producto_id AND p2.producto_id=up.producto_id AND u.id_unidad=up.id_unidad AND p2.producto_id=up2.producto_id AND (SELECT id_unidad FROM unidades_has_producto WHERE unidades_has_producto.producto_id = p2.producto_id  ORDER BY orden DESC LIMIT 1) = up2.id_unidad 
-                LIMIT 1
-            ) AS nombre_unidad
-            FROM producto p
-            WHERE p.producto_estado='1' ".$search." ORDER BY ventas DESC ".$limit;
+        $search = $local_id.$marca_id.$grupo_id.$familia_id.$linea_id.$producto_id;
 
-        return $this->db->query($query)->result();
+        $this->db->select('v.venta_id, c.razon_social, v.serie, v.numero, p.producto_nombre, dv.cantidad, dv.precio, dv.detalle_importe, l.local_nombre, d.abr_doc, m.simbolo, v.fecha');
+        $this->db->from('detalle_venta dv');
+        $this->db->join('venta v', 'v.venta_id=dv.id_venta');
+        $this->db->join('documentos d', 'v.id_documento = d.id_doc');
+        $this->db->join('moneda m', 'v.id_moneda = m.id_moneda');
+        $this->db->join('producto p', 'dv.id_producto=p.producto_id');
+        $this->db->join('cliente c', 'v.id_cliente = c.id_cliente');
+        $this->db->join('`local` l', 'v.local_id = l.int_local_id');
+        $this->db->join('usuario_almacen ua', "v.local_id = ua.local_id AND ua.usuario_id = $usu");
+        $this->db->where("v.venta_status='COMPLETADO' AND v.fecha >= '".$params['fecha_ini']."' AND v.fecha <= '".$params['fecha_fin']."' $search");
+        $this->db->order_by('v.local_id, v.venta_id DESC');
+        return $this->db->get()->result();
     }
 }

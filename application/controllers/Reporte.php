@@ -692,7 +692,7 @@ class Reporte extends MY_Controller
                 $this->load->view('menu/reportes/hojaColecta_list', $data);
                 break;
             }
-            case 'grafico': {
+            /*case 'grafico': {
                 $params['local_id'] = $this->input->post('local_id');
                 $params['marca_id'] = $this->input->post('marca_id');
                 $params['grupo_id'] = $this->input->post('grupo_id');
@@ -706,7 +706,7 @@ class Reporte extends MY_Controller
                 $data['lists'] = $this->reporte_model->getHojaColecta($params);
                 echo json_encode($data);
                 break;
-            }
+            }*/
             case 'pdf': {
                 $params = json_decode($this->input->get('data'));
                 $date_range = explode(' - ', $params->fecha);
@@ -724,14 +724,14 @@ class Reporte extends MY_Controller
                 $data['lists'] = $this->reporte_model->getHojaColecta($input);
 
                 $local = $this->db->get_where('local', array('int_local_id' => $input['local_id']))->row();
-                $data['local_nombre'] = $local->local_nombre;
-                $data['local_direccion'] = $local->direccion;
+                $data['local_nombre'] = !empty($local->local_nombre)? $local->local_nombre: 'TODOS';
+                $data['local_direccion'] = !empty($local->direccion)? $local->direccion: 'TODOS';
 
                 $data['fecha_ini'] = $input['fecha_ini'];
                 $data['fecha_fin'] = $input['fecha_fin'];
 
                 $this->load->library('mpdf53/mpdf');
-                $mpdf = new mPDF('utf-8', 'A4', 0, '', 5, 5, 5, 5, 5, 5);
+                $mpdf = new mPDF('utf-8', 'A4-L', 0, '', 5, 5, 5, 5, 5, 5);
                 $html = $this->load->view('menu/reportes/hojaColecta_list_pdf', $data, true);
                 $mpdf->WriteHTML($html);
                 $mpdf->Output();
@@ -754,8 +754,8 @@ class Reporte extends MY_Controller
                 $data['lists'] = $this->reporte_model->getHojaColecta($input);
 
                 $local = $this->db->get_where('local', array('int_local_id' => $input['local_id']))->row();
-                $data['local_nombre'] = $local->local_nombre;
-                $data['local_direccion'] = $local->direccion;
+                $data['local_nombre'] = !empty($local->local_nombre)? $local->local_nombre: 'TODOS';
+                $data['local_direccion'] = !empty($local->direccion)? $local->direccion: 'TODOS';
 
                 $data['fecha_ini'] = $input['fecha_ini'];
                 $data['fecha_fin'] = $input['fecha_fin'];
