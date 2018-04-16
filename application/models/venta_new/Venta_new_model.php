@@ -396,8 +396,9 @@ class venta_new_model extends CI_Model
             }
         }
 
-
-        $this->save_traspasos($traspasos, $venta['id_usuario']);
+        if (sizeof($traspasos) > 0) {
+            $this->save_traspasos($traspasos, $venta['id_usuario']);
+        }
 
         //preparo la venta
         $venta_contado = array(
@@ -517,8 +518,9 @@ class venta_new_model extends CI_Model
             }
         }
 
-
-        $this->save_traspasos($traspasos, $venta['id_usuario']);
+        if (sizeof($traspasos) > 0) {
+            $this->save_traspasos($traspasos, $venta['id_usuario']);
+        }
 
         if ($venta['venta_status'] == 'CAJA' && $venta['c_inicial'] == 0)
             $venta['venta_status'] = 'COMPLETADO';
@@ -936,6 +938,8 @@ class venta_new_model extends CI_Model
             'local_id' => $venta->local_id,
             'id_usuario' => $id_usuario == false ? $this->session->userdata('nUsuCodigo') : $id_usuario
         ));
+
+        return $venta_id;
     }
 
     private function recalc_totales($venta_id)
