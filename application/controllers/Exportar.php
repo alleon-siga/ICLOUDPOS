@@ -415,7 +415,7 @@ class exportar extends MY_Controller
             $data['detalle_ingreso'][$mon['id_moneda']] = $detalle_ingreso;
 
 
-            //EGRESO EFECTIVO
+            //EGRESO EFECTIVO Y CHEQUE
             $this->db->select_sum('caja_movimiento.saldo', 'total')
                 ->from('caja_movimiento')
                 ->join('caja_desglose', 'caja_desglose.id = caja_movimiento.caja_desglose_id')
@@ -424,7 +424,7 @@ class exportar extends MY_Controller
                 ->where('caja_movimiento.fecha_mov >=', $fecha)
                 ->where('caja_movimiento.fecha_mov <', $fechadespues)
                 ->where('caja_movimiento.movimiento', 'EGRESO')
-                ->where('caja_movimiento.medio_pago', 3);
+                ->where('(caja_movimiento.medio_pago = 3 OR caja_movimiento.medio_pago = 5)');
 
             if ($id_local != 0) {
                 $this->db->where('caja.local_id', $id_local);
@@ -437,6 +437,30 @@ class exportar extends MY_Controller
             $egreso_efectivo = $this->db->get()->row();
 
             $data['total_egreso_efectivo'][$mon['id_moneda']] = $egreso_efectivo != NULL ? $egreso_efectivo->total : 0;
+
+
+            //INGRESO EFECTIVO Y CHEQUE
+            $this->db->select_sum('caja_movimiento.saldo', 'total')
+                ->from('caja_movimiento')
+                ->join('caja_desglose', 'caja_desglose.id = caja_movimiento.caja_desglose_id')
+                ->join('caja', 'caja.id = caja_desglose.caja_id')
+                ->where('caja.moneda_id', $mon["id_moneda"])
+                ->where('caja_movimiento.fecha_mov >=', $fecha)
+                ->where('caja_movimiento.fecha_mov <', $fechadespues)
+                ->where('caja_movimiento.movimiento', 'INGRESO')
+                ->where('(caja_movimiento.medio_pago = 3 OR caja_movimiento.medio_pago = 5)');
+
+            if ($id_local != 0) {
+                $this->db->where('caja.local_id', $id_local);
+            }
+
+            if ($id_usuario != 0) {
+                $this->db->where('caja_movimiento.usuario_id', $id_usuario);
+            }
+
+            $ingreso_efectivo = $this->db->get()->row();
+
+            $data['total_ingreso_efectivo'][$mon['id_moneda']] = $ingreso_efectivo != NULL ? $ingreso_efectivo->total : 0;
 
         }
 

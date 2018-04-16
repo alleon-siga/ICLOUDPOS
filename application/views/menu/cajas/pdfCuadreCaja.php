@@ -99,6 +99,7 @@
         + $pagos_cuota[$moneda['id_moneda']]->total
         + $gasto[$moneda['id_moneda']]->total
         + $credito_inicial;
+
     ?>
     <div style="padding-left: 10px; padding-right: 10px; height: 99%; width: 98.5%;">
         <table style="width: 100%;">
@@ -183,7 +184,7 @@
         <table border="1" cellspacing="0" cellpadding="3">
             <tr>
                 <td style="width: 60%; font-weight: bold;">SALDO</td>
-                <td style="text-align: right; font-weight: bold;"><?= $moneda['simbolo'] ?> <?= number_format($total_ingresos - $total_egreso_efectivo[$moneda['id_moneda']], 2) ?></td>
+                <td style="text-align: right; font-weight: bold;"><?= $moneda['simbolo'] ?> <?= number_format($total_ingreso_efectivo[$moneda['id_moneda']] - $total_egreso_efectivo[$moneda['id_moneda']], 2) ?></td>
             </tr>
         </table>
     </div>
