@@ -1,4 +1,4 @@
-<div class="modal-dialog" style="width: 85%;">
+<div class="modal-dialog" style="width: 95%;">
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" onclick="$('#dialog_form').modal('hide');"

@@ -60,7 +60,7 @@ class cajas_mov_model extends CI_Model
                 } else {
                     $mov->ref_val = 'NO FACTURADO';
                 }
-                $mov->numero = 'NP ' . $mov->ref_id;
+                $mov->numero = 'NP ' . $mov->ref_id . ' (' . date('d/m/Y', strtotime($venta->fecha)) . ')';
 
 
             }
@@ -75,10 +75,12 @@ class cajas_mov_model extends CI_Model
                 if ($ingreso->tipo_documento == 'FACTURA') $doc = 'FA ';
 
                 $mov->numero = $doc . $ingreso->documento_serie . ' - ' . $ingreso->documento_numero;
+                $mov->ref_val = 'Registro: ' . date('d/m/Y', strtotime($ingreso->fecha_registro));
             }
 
             if ($mov->operacion == 'VENTA_ANULADA' || $mov->operacion == 'VENTA_DEVUELTA') {
                 $caja_pendiente = $this->db->get_where('caja_pendiente', array('id' => $mov->ref_id))->row();
+                $venta = $this->db->get_where('venta', array('venta_id' => $caja_pendiente->ref_id))->row();
 
                 $kardex = $this->db->get_where('kardex', array(
                     'io' => 2,
@@ -89,7 +91,7 @@ class cajas_mov_model extends CI_Model
 
                 $mov->operacion_nombre = $mov->operacion == 'VENTA_ANULADA' ? 'VENTA ANULADA' : 'VENTA DEVUELTA';
                 $mov->numero = 'NC ' . $kardex->serie . ' - ' . $kardex->numero;
-                $mov->ref_val = 'NP ' . $caja_pendiente->ref_id;
+                $mov->ref_val = 'NP ' . $caja_pendiente->ref_id . ' (' . date('d/m/Y', strtotime($venta->fecha)) . ')';
             }
 
             if ($mov->operacion == 'INGRESO_ANULADO') {
@@ -119,7 +121,7 @@ class cajas_mov_model extends CI_Model
                 $mov->operacion_nombre = $mov->operacion_nombre . ' (' . $gasto->nombre_tipos_gasto . ')';
                 $mov->ref_val = $gasto->descripcion;
 
-                $mov->numero = '';
+                $mov->numero = 'Registro: ' . date('d/m/Y', strtotime($gasto->fecha_registro));
             }
 
             if ($mov->operacion == 'CUOTA') {
@@ -150,7 +152,7 @@ class cajas_mov_model extends CI_Model
                 if ($ingreso->tipo_documento == 'BOLETA DE VENTA') $doc = 'BO ';
                 if ($ingreso->tipo_documento == 'FACTURA') $doc = 'FA ';
 
-                $mov->numero = $doc . $ingreso->documento_serie . ' - ' . $ingreso->documento_numero;
+                $mov->numero = $doc . $ingreso->documento_serie . ' - ' . $ingreso->documento_numero . ' (' . date('d/m/Y', strtotime($ingreso->fecha_registro)) . ')';
 
                 $mov->ref_val = 'Monto: ' . $ingreso_credito_cuotas->monto . ' | Letra: ' . $ingreso_credito_cuotas->letra;
             }

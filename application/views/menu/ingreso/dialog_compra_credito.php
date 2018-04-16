@@ -328,14 +328,15 @@
 
         $(document).ready(function () {
 
-            $(document).keyup(function (e) {
-
-                if (e.keyCode == 117 && $("#dialog_compra_credito").is(":visible") == true) {
-                    e.preventDefault();
-                    e.stopImmediatePropagation();
-                    $('#btn_compra_credito').click();
-                }
-            });
+//            $(document).keyup(function (e) {
+//
+//                if (e.keyCode == 117 && $("#dialog_compra_credito").is(":visible") == true) {
+//                    e.preventDefault();
+//                    e.stopImmediatePropagation();
+//                    $('#btn_compra_credito').click();
+//                    alert('asd')
+//                }
+//            });
 
             $('#btn_compra_credito').on('click', function () {
                 guardaringreso();

@@ -689,7 +689,7 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
 
             </div>
             <div class="modal-footer">
-                <button type="button" id="botonconfirmar" class="btn btn-primary" onclick="guardaringreso()">
+                <button type="button" id="botonconfirmar_save" class="btn btn-primary" onclick="guardaringreso()">
                     F6 Confirmar
                 </button>
                 <button type="button" class="btn btn-danger" id="cerrar_confirmar" onclick="cerrar_confirmar()">
