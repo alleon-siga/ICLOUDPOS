@@ -62,16 +62,15 @@
         background: #e7e6e6;
     }
 
-    table.td_data{
+    table.td_data {
         border: 1px solid #0b0b0b;
     }
 
-    table.td_data tr td{
+    table.td_data tr td {
         border: 1px solid #0b0b0b;
         text-align: left;
         font-size: 11px;
     }
-
 
     #header {
         width: 100%;
@@ -89,6 +88,8 @@
 </style>
 <?php foreach ($monedas as $moneda): ?>
     <?php
+    $credito_inicial = $compra_credito_inicial[$moneda['id_moneda']]->total != NULL ? $compra_credito_inicial[$moneda['id_moneda']]->total : 0;
+
     $total_ingresos = $venta_contado[$moneda['id_moneda']]->total
         + $venta_inicial[$moneda['id_moneda']]->total
 //        + $venta_credito[$moneda['id_moneda']]->total
@@ -96,7 +97,8 @@
 
     $total_egresos = $compra_contado[$moneda['id_moneda']]->total
         + $pagos_cuota[$moneda['id_moneda']]->total
-        + $gasto[$moneda['id_moneda']]->total;
+        + $gasto[$moneda['id_moneda']]->total
+        + $credito_inicial;
     ?>
     <div style="padding-left: 10px; padding-right: 10px; height: 99%; width: 98.5%;">
         <table style="width: 100%;">
@@ -165,7 +167,7 @@
             </tr>
             <tr>
                 <td>PAGOS A PROVEEDORES</td>
-                <td style="text-align: right;"><?= $moneda['simbolo'] ?> <?= $pagos_cuota[$moneda['id_moneda']]->total != NULL ? $pagos_cuota[$moneda['id_moneda']]->total : 0 ?></td>
+                <td style="text-align: right;"><?= $moneda['simbolo'] ?> <?= $pagos_cuota[$moneda['id_moneda']]->total != NULL ? $pagos_cuota[$moneda['id_moneda']]->total + $credito_inicial : 0 + $credito_inicial ?></td>
             </tr>
             <tr>
                 <td>GASTOS</td>

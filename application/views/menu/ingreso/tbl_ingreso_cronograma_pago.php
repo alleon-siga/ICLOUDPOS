@@ -255,14 +255,13 @@
                 $(".caja_block").show();
                 if (metodo == '3')
                     $("#operacion_block").hide();
-
-                if (metodo == '7')
-                    $("#tipo_tarjeta_block").show();
                 break;
             }
             case 'BANCO': {
                 $("#banco_block").show();
                 $("#operacion_block").show();
+                if (metodo == '7')
+                    $("#tipo_tarjeta_block").show();
                 break;
             }
         }

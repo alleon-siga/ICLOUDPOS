@@ -1,4 +1,3 @@
-INSERT INTO configuraciones(config_key, config_value) VALUES('EMPRESA_IDENTIFICACION', '12345678910');
 
 INSERT INTO opcion(nOpcion,cOpcionDescripcion, cOpcionNombre) VALUES(9,'dashboard', 'Dashboard');
 

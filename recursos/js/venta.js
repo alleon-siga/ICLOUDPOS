@@ -708,7 +708,8 @@ function save_venta_contado(imprimir) {
         }, 500);
         return false;
     }
-    if (($("#vc_forma_pago").val() == '4' || $("#vc_forma_pago").val() == '8' || $("#vc_forma_pago").val() == '9') && $("#vc_banco_id").val() == '') {
+
+    if (($("#vc_forma_pago").val() == '4' || $("#vc_forma_pago").val() == '8' || $("#vc_forma_pago").val() == '9' || $("#vc_forma_pago").val() == '7') && $("#vc_banco_id").val() == '') {
         show_msg('warning', '<h4>Error. </h4><p>Debe seleccionar un Banco</p>');
         setTimeout(function () {
             $("#vc_banco_id").trigger('focus');
@@ -767,7 +768,10 @@ function save_venta_contado(imprimir) {
                 $('.save_venta_contado').removeAttr('disabled');
             }
             else {
-                show_msg('danger', '<h4>Error. </h4><p>Ha ocurrido un error insperado al guardar la venta.</p>');
+                if (data.msg)
+                    show_msg('danger', '<h4>Error. </h4><p>' + data.msg + '</p>');
+                else
+                    show_msg('danger', '<h4>Error. </h4><p>Ha ocurrido un error insperado al guardar la venta.</p>');
                 $("#dialog_venta_contado").modal('show');
                 $('.save_venta_contado').removeAttr('disabled');
             }

@@ -103,7 +103,7 @@ class traspaso_model extends CI_Model
     }
 
 
-    function traspasar_productos($producto_id, $local1, $local2, $data)
+    function traspasar_productos($producto_id, $local1, $local2, $id_usuario, $data)
     {
 
         $old_cantidad_1 = $this->db->get_where('producto_almacen', array(
@@ -161,6 +161,7 @@ class traspaso_model extends CI_Model
             'numero' => '-',
             'ref_id' => $data['venta_id'],
             'ref_val' => $local_nombre2->local_nombre,
+            'usuario_id' => $id_usuario
         );
         $this->kardex_model->set_kardex($values);
 
