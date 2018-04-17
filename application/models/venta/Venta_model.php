@@ -2061,11 +2061,13 @@ FROM (`detalle_venta`) JOIN `venta` ON `venta`.`venta_id`=`detalle_venta`.`id_ve
         $serie = $this->input->post('serie');
         $numero = $this->input->post('numero');
 
-        $this->db->select('id_devolucion, producto_nombre, cantidad, nombre_unidad, precio, detalle_importe');
-        $this->db->from('venta_devolucion');
-        $this->db->join('producto', 'venta_devolucion.id_producto = producto.producto_id');
-        $this->db->join('unidades', 'unidades.id_unidad=venta_devolucion.unidad_medida');
-        $this->db->where(array('id_venta' => $venta_id, 'serie' => $serie, 'numero' => $numero));
+        $this->db->select('k.id, p.producto_nombre, (k.cantidad * - 1) AS cantidad, u.nombre_unidad, up.precio');
+        $this->db->from('kardex AS k');
+        $this->db->join('producto AS p', 'p.producto_id = k.producto_id');
+        $this->db->join('detalle_venta dv', 'k.ref_id = dv.id_venta AND k.producto_id = dv.id_producto');
+        $this->db->join('unidades AS u', 'u.id_unidad = k.unidad_id');
+        $this->db->join('unidades_has_precio AS up', 'up.id_producto = p.producto_id AND up.id_unidad = u.id_unidad AND up.id_precio=1');
+        $this->db->where("k.io = 2 AND k.tipo = 7 AND k.operacion = 5 AND dv.id_venta= $venta_id AND k.serie='$serie' AND k.numero='$numero'");
         return $this->db->get()->result();
     }
 }
