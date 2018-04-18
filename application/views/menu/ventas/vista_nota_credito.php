@@ -14,14 +14,14 @@
 <?php $Subtotal = 0; ?>    	
 <?php foreach ($data as $dato) { ?>
 		<tr>
-			<td><?= $dato->id_devolucion ?></td>
+			<td><?= $dato->id ?></td>
 			<td><?= $dato->producto_nombre ?></td>
 			<td><?= $dato->cantidad ?></td>
 			<td><?= $dato->nombre_unidad ?></td>
 			<td><?= number_format($dato->precio,2) ?></td>
-			<td><?= $md->simbolo.' '.number_format($dato->detalle_importe,2) ?></td>
+			<td><?= $md->simbolo.' '.number_format($dato->cantidad * $dato->precio,2) ?></td>
 		</tr>
-<?php $Subtotal += $dato->detalle_importe ?>
+<?php $Subtotal += ($dato->cantidad * $dato->precio) ?>
 <?php } ?>
     </tbody>
     <tfoot>

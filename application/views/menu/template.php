@@ -533,7 +533,12 @@ $primary_nav = array(
                 'icon' => 'fa fa-area-chart',
                 'slug' => 'margenutilidad'
             ),
-
+            array(
+                'name' => 'Hoja de colecta',
+                'url' => $ruta . 'reporte/hojaColecta',
+                'icon' => 'fa fa-area-chart',
+                'slug' => 'hojaColecta'
+            )
         ),
     ),
 

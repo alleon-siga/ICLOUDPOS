@@ -1,0 +1,1 @@
+INSERT INTO opcion(nOpcion, nOpcionClase, cOpcionDescripcion, cOpcionNombre) VALUES(712,7,'hojaColecta', 'Reporte hoja de colecta');
