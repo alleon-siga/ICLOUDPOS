@@ -201,10 +201,10 @@
         $(".save_venta_contado").on('click', function () {
             var tipo_pago = $("#contado_tipo_pago").val();
 
-            if (tipo_pago == '1'){
+            if (tipo_pago == '1') {
                 save_venta_contado($(this).attr('data-imprimir'));
 
-            } else if(tipo_pago == '2'){
+            } else if (tipo_pago == '2') {
                 if ($("#vc_forma_pago").val() == '3' && $("#vc_vuelto").val() < 0) {
                     show_msg('warning', '<h4>Error. </h4><p>El importe no puede ser menor que el total a pagar. Recomendamos una venta al Cr&eacute;dito.</p>');
                     setTimeout(function () {
@@ -282,8 +282,14 @@
         });
 
         $("#vc_importe").on('keyup', function () {
-            var vuelto = parseFloat($("#vc_importe").val()) - parseFloat($("#vc_total_pagar").val());
-            $("#vc_vuelto").val(vuelto.toFixed(2));
+            var importe = isNaN(parseFloat($("#vc_importe").val())) ? 0 : parseFloat($("#vc_importe").val());
+            if (importe > 0) {
+                var vuelto = parseFloat(importe - parseFloat($("#vc_total_pagar").val()));
+                $("#vc_vuelto").val(vuelto.toFixed(2));
+            }
+            else{
+                $("#vc_vuelto").val('0'.toFixed(2))
+            }
         });
 
         $("#vc_num_oper").on('focus', function () {
