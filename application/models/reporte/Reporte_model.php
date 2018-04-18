@@ -396,7 +396,7 @@ class reporte_model extends CI_Model
         $producto_id .= ($params['producto_id']!='')? " AND p.producto_id IN(".implode(",", $params['producto_id']).")" : "";
         $search = $local_id.$marca_id.$grupo_id.$familia_id.$linea_id.$producto_id;
 
-        $this->db->select('v.venta_id, c.razon_social, v.serie, v.numero, p.producto_nombre, dv.cantidad, dv.precio, dv.detalle_importe, l.local_nombre, d.abr_doc, m.simbolo, v.fecha');
+        $this->db->select('v.venta_id, c.razon_social, v.serie, v.numero, p.producto_nombre, dv.cantidad, dv.precio, dv.detalle_importe, l.local_nombre, d.abr_doc, m.simbolo, v.fecha, v.nota');
         $this->db->from('detalle_venta dv');
         $this->db->join('venta v', 'v.venta_id=dv.id_venta');
         $this->db->join('documentos d', 'v.id_documento = d.id_doc');

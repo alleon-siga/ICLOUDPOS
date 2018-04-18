@@ -853,14 +853,14 @@ class venta_new_model extends CI_Model
                 $detalle->cantidad
             );
             //Guardando en tabla venta_devolucion
-            $this->db->insert('venta_devolucion', array(
+            /*$this->db->insert('venta_devolucion', array(
                 'id_venta' => $venta_id,
                 'id_producto' => $detalle->producto_id,
                 'precio' => $detalle->precio,
                 'cantidad' => $detalle->cantidad,
                 'unidad_medida' => $detalle->unidad_id,
                 'detalle_importe' => $detalle->importe
-            ));
+            ));*/
         }
         foreach ($cantidades as $key => $value) {
 
@@ -1010,7 +1010,7 @@ class venta_new_model extends CI_Model
                 ));
             }
             //Guardando en tabla venta_devolucion
-            $this->db->insert('venta_devolucion', array(
+            /*$this->db->insert('venta_devolucion', array(
                 'id_venta' => $venta_id,
                 'id_producto' => $detalle->producto_id,
                 'precio' => $detalle->precio,
@@ -1019,7 +1019,7 @@ class venta_new_model extends CI_Model
                 'detalle_importe' => $detalle->devolver * $detalle->precio,
                 'serie' => $serie,
                 'numero' => $numero
-            ));
+            ));*/
         }
 
         foreach ($cantidades as $key => $value) {

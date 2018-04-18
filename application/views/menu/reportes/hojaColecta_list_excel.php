@@ -47,7 +47,7 @@
             <td><?= utf8_decode($list->local_nombre) ?></td>
             <td><?= utf8_decode($list->razon_social) ?></td>
             <td><?= $list->abr_doc . ' ' . $list->serie . '-' . sumCod($list->numero, 6) ?></td>
-            <td><?= utf8_decode($list->producto_nombre) ?></td>
+            <td><?= utf8_decode($list->producto_nombre).' '.utf8_decode($list->nota) ?></td>
             <td><?= $list->cantidad ?></td>
             <td style="text-align: right;"><?= $list->simbolo ?> <?= number_format($list->precio, 2) ?></td>
             <td style="text-align: right;"><?= $list->simbolo ?> <?= number_format($list->detalle_importe, 2) ?></td>
