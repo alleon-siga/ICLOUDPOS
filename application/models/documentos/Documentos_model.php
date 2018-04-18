@@ -17,4 +17,11 @@ class documentos_model extends CI_Model {
 		}
 		return $filas;
     }
+
+    public function get_documentosBy($where){
+        $this->db->select('id_doc, des_doc');
+        $this->db->from('documentos');
+        $this->db->where($where);
+        return $this->db->get()->result();
+    }
 }

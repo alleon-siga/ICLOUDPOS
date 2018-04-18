@@ -21,12 +21,20 @@
                     <hr class="hr-margin-5">
                     <div class="row">
                         <div class="col-md-4"><label class="control-label">Documento:</label></div>
-                        <div class="col-md-6"><?= $venta->documento_nombre ?></div>
+                        <div class="col-md-6">
+                            <select id="cboDoc" class="form-control">
+                            <?php foreach ($comprobante as $dato): ?>
+                                <option value="<?= $dato->id_doc ?>" <?php if($venta->documento_id == $dato->id_doc){ echo "selected"; } ?>>
+                                    <?= $dato->des_doc ?></option>
+                            <?php endforeach; ?>
+                                
+                            </select>
+                        </div>
                     </div>
                     <hr class="hr-margin-5">
                     <div class="row">
                         <div class="col-md-4"><label class="control-label">Documento Numero:</label></div>
-                        <div class="col-md-6"><?= $venta->next_correlativo ?></div>
+                        <div class="col-md-6" id="docNum"><?= $venta->next_correlativo ?></div>
                     </div>
                     <hr class="hr-margin-5">
                     <?php if ($venta->comprobante_id > 0): ?>
@@ -75,7 +83,8 @@
                 url: '<?php echo base_url() . 'venta_new/facturar_venta'; ?>',
                 type: 'POST',
                 data: {
-                    'venta_id': '<?= $venta->venta_id ?>'
+                    'venta_id': '<?= $venta->venta_id ?>',
+                    'iddoc': $('#cboDoc').val()
                 },
                 success: function () {
                     $('#dialog_venta_confirm').modal('hide');
@@ -93,6 +102,20 @@
                 }
             });
         })
+
+        $('#cboDoc').on('change', function(){
+            $.ajax({
+                url: '<?= base_url() ?>venta_new/getDocumentoNumero',
+                type: 'POST',
+                data: {
+                    'iddoc': $('#cboDoc').val(),
+                    'local_id': '<?= $venta->local_id ?>'
+                },
+                success: function(data){
+                    $('#docNum').text(data);
+                }
+            });
+        });
     });
 
 
