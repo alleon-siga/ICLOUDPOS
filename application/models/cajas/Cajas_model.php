@@ -442,6 +442,9 @@ class cajas_model extends CI_Model
             'id' => $this->get_valid_cuenta_id($data['moneda_id'], $data['local_id']
             )))->row();
 
+        if ($data['tipo'] == 'COMPRA')
+            $ingreso = $this->db->get_where('ingreso', array('id_ingreso' => $data['ref_id']))->row();
+
         $caja_pendiente = $this->db->get_where('caja_pendiente', array(
             'tipo' => $data['tipo'],
             'ref_id' => $data['ref_id']
@@ -449,22 +452,94 @@ class cajas_model extends CI_Model
 
         if ($caja_pendiente != NULL) {
             if ($caja_pendiente->estado == 1) {
-                $new_saldo = $cuenta->saldo + $caja_pendiente->monto;
-                $this->db->where('id', $cuenta->id);
-                $this->db->update('caja_desglose', array('saldo' => $new_saldo));
+                if (isset($ingreso) && $ingreso->pago == 'CREDITO') {
+                    $ingreso_credito = $this->db->get_where('ingreso_credito', array('ingreso_id' => $ingreso->id_ingreso))->row();
+                    if ($ingreso_credito->inicial > 0) {
+                        $cuenta = $this->db->get_where('caja_desglose', array(
+                            'id' => $this->get_valid_cuenta_id($data['moneda_id'], $data['local_id']
+                            )))->row();
 
-                $this->db->insert('caja_movimiento', array(
-                    'caja_desglose_id' => $cuenta->id,
-                    'usuario_id' => isset($data['id_usuario']) ? $data['id_usuario'] : $this->session->userdata('nUsuCodigo'),
-                    'fecha_mov' => date('Y-m-d H:i:s'),
-                    'created_at' => date('Y-m-d H:i:s'),
-                    'movimiento' => 'INGRESO',
-                    'operacion' => 'INGRESO_ANULADO',
-                    'medio_pago' => 3,
-                    'saldo' => $caja_pendiente->monto,
-                    'saldo_old' => $cuenta->saldo,
-                    'ref_id' => $data['ref_id']
-                ));
+                        $new_saldo = $cuenta->saldo + $ingreso_credito->inicial;
+                        $this->db->where('id', $cuenta->id);
+                        $this->db->update('caja_desglose', array('saldo' => $new_saldo));
+
+                        $this->db->insert('caja_movimiento', array(
+                            'caja_desglose_id' => $cuenta->id,
+                            'usuario_id' => isset($data['id_usuario']) ? $data['id_usuario'] : $this->session->userdata('nUsuCodigo'),
+                            'fecha_mov' => date('Y-m-d H:i:s'),
+                            'created_at' => date('Y-m-d H:i:s'),
+                            'movimiento' => 'INGRESO',
+                            'operacion' => 'INGRESO_ANULADO',
+                            'medio_pago' => 3,
+                            'saldo' => $ingreso_credito->inicial,
+                            'saldo_old' => $cuenta->saldo,
+                            'ref_id' => $data['ref_id']
+                        ));
+                    }
+
+                    $pagos = $this->db->select('pagos_ingreso.*')->from('pagos_ingreso')
+                        ->join('ingreso_credito_cuotas', 'ingreso_credito_cuotas.id = pagos_ingreso.pagoingreso_ingreso_id')
+                        ->where('ingreso_credito_cuotas.ingreso_id', $ingreso->id_ingreso)
+                        ->group_by('pagos_ingreso.pagoingreso_id')
+                        ->get()->result();
+
+                    foreach ($pagos as $pago) {
+
+                        $caja_pendiente = $this->db->get_where('caja_pendiente', array(
+                            'tipo' => 'PAGOS_CUOTAS',
+                            'ref_id' => $pago->pagoingreso_id
+                        ))->row();
+
+                        if ($caja_pendiente != null) {
+                            if ($caja_pendiente->estado == 1) {
+                                $cuenta = $this->db->get_where('caja_desglose', array(
+                                    'id' => $this->get_valid_cuenta_id($data['moneda_id'], $data['local_id']
+                                    )))->row();
+
+                                $new_saldo = $cuenta->saldo + $pago->pagoingreso_monto;
+                                $this->db->where('id', $cuenta->id);
+                                $this->db->update('caja_desglose', array('saldo' => $new_saldo));
+
+                                $this->db->insert('caja_movimiento', array(
+                                    'caja_desglose_id' => $cuenta->id,
+                                    'usuario_id' => isset($data['id_usuario']) ? $data['id_usuario'] : $this->session->userdata('nUsuCodigo'),
+                                    'fecha_mov' => date('Y-m-d H:i:s'),
+                                    'created_at' => date('Y-m-d H:i:s'),
+                                    'movimiento' => 'INGRESO',
+                                    'operacion' => 'INGRESO_ANULADO',
+                                    'medio_pago' => $pago->medio_pago_id,
+                                    'saldo' => $pago->pagoingreso_monto,
+                                    'saldo_old' => $cuenta->saldo,
+                                    'ref_id' => $data['ref_id']
+                                ));
+                            } else {
+                                $this->db->where('id', $caja_pendiente->id);
+                                $this->db->delete('caja_pendiente');
+                            }
+                        }
+
+
+                    }
+
+                } else {
+                    $new_saldo = $cuenta->saldo + $caja_pendiente->monto;
+                    $this->db->where('id', $cuenta->id);
+                    $this->db->update('caja_desglose', array('saldo' => $new_saldo));
+
+                    $this->db->insert('caja_movimiento', array(
+                        'caja_desglose_id' => $cuenta->id,
+                        'usuario_id' => isset($data['id_usuario']) ? $data['id_usuario'] : $this->session->userdata('nUsuCodigo'),
+                        'fecha_mov' => date('Y-m-d H:i:s'),
+                        'created_at' => date('Y-m-d H:i:s'),
+                        'movimiento' => 'INGRESO',
+                        'operacion' => 'INGRESO_ANULADO',
+                        'medio_pago' => 3,
+                        'saldo' => $caja_pendiente->monto,
+                        'saldo_old' => $cuenta->saldo,
+                        'ref_id' => $data['ref_id']
+                    ));
+                }
+
             } else {
                 $this->db->where('id', $caja_pendiente->id);
                 $this->db->delete('caja_pendiente');
