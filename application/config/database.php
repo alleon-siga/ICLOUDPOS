@@ -1,4 +1,4 @@
-<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 /*
 | -------------------------------------------------------------------
 | DATABASE CONNECTIVITY SETTINGS
@@ -46,16 +46,15 @@
 */
 
 
-
 $active_group = 'default';
 $query_builder = TRUE;
 
 $db['default'] = array(
-    'dsn'	=> '',
-    'hostname' => 'localhost',
-    'username' => 'root',
-    'password' => '',
-    'database' => 'icloudpos_dev',
+    'dsn' => '',
+    'hostname' => '10.1.1.3',
+    'username' => 'user',
+    'password' => 'password',
+    'database' => DATABASE_HOST != false ? DATABASE_HOST : 'ip_newlevel',
     'dbdriver' => 'mysqli',
     'dbprefix' => '',
     'pconnect' => FALSE,

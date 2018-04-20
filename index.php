@@ -1,4 +1,12 @@
 <?php
+
+if($_SERVER['SERVER_NAME'] == 'vym.grupocd.pe')
+    define('DATABASE_HOST', 'grupocd_vym');
+elseif($_SERVER['SERVER_NAME'] == 'lg.grupocd.pe')
+    define('DATABASE_HOST', 'grupocd_lg');
+else
+    define('DATABASE_HOST', false);
+
 /**
  * CodeIgniter
  *
