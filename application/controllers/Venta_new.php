@@ -134,9 +134,15 @@ class venta_new extends MY_Controller
     {
         $venta_id = $this->input->post('venta_id');
         $data['venta'] = $this->venta->get_venta_facturar($venta_id);
+        $data['comprobante'] = $this->documentos_model->get_documentosBy('id_doc IN(1,3)');
         $data['venta_action'] = $action;
         $data['detalle'] = 'venta';
         $this->load->view('menu/venta/historial_list_facturar', $data);
+    }
+
+    function getDocumentoNumero(){
+        $num = $this->venta->getDocumentoNumero();
+        echo $num;
     }
 
     function facturar_venta()

@@ -426,7 +426,7 @@ class venta extends MY_Controller
 
 
                             $resultado = $this->venta_model->actualizar_venta($venta, $detalle);
-                            $this->venta_devolucion_model->insertar_devolucion($devolucion, $venta['venta_id'], $this->input->post('id_local', true));
+                            //$this->venta_devolucion_model->insertar_devolucion($devolucion, $venta['venta_id'], $this->input->post('id_local', true));
 
                         }
                         $dataresult['devolver'] = $venta['devolver'];

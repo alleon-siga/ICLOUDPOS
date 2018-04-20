@@ -264,13 +264,24 @@ class venta_new_model extends CI_Model
         return $venta;
     }
 
+    function getDocumentoNumero()
+    {
+        $id_doc = $this->input->post('iddoc');
+        $local_id = $this->input->post('local_id');
+
+        $correlativo = $this->correlativos_model->get_correlativo($local_id, $id_doc);
+        return $correlativo->serie . ' - ' . sumCod($correlativo->correlativo, 6);
+    }
+
     function facturar_venta($venta_id)
     {
+        $iddoc = $this->input->post('iddoc');
         $venta = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
-        $correlativo = $this->correlativos_model->get_correlativo($venta->local_id, $venta->id_documento);
+        $correlativo = $this->correlativos_model->get_correlativo($venta->local_id, $iddoc);
         $update_venta['fecha_facturacion'] = date('Y-m-d H:i:s');
         $update_venta['serie'] = $correlativo->serie;
         $update_venta['numero'] = $correlativo->correlativo;
+        $update_venta['id_documento'] = $iddoc;
         $this->correlativos_model->sumar_correlativo($venta->local_id, $venta->id_documento);
 
         // Hago la facturacion de comprobantes
@@ -853,14 +864,14 @@ class venta_new_model extends CI_Model
                 $detalle->cantidad
             );
             //Guardando en tabla venta_devolucion
-            $this->db->insert('venta_devolucion', array(
+            /*$this->db->insert('venta_devolucion', array(
                 'id_venta' => $venta_id,
                 'id_producto' => $detalle->producto_id,
                 'precio' => $detalle->precio,
                 'cantidad' => $detalle->cantidad,
                 'unidad_medida' => $detalle->unidad_id,
                 'detalle_importe' => $detalle->importe
-            ));
+            ));*/
         }
         foreach ($cantidades as $key => $value) {
 
@@ -1010,7 +1021,7 @@ class venta_new_model extends CI_Model
                 ));
             }
             //Guardando en tabla venta_devolucion
-            $this->db->insert('venta_devolucion', array(
+            /*$this->db->insert('venta_devolucion', array(
                 'id_venta' => $venta_id,
                 'id_producto' => $detalle->producto_id,
                 'precio' => $detalle->precio,
@@ -1019,7 +1030,7 @@ class venta_new_model extends CI_Model
                 'detalle_importe' => $detalle->devolver * $detalle->precio,
                 'serie' => $serie,
                 'numero' => $numero
-            ));
+            ));*/
         }
 
         foreach ($cantidades as $key => $value) {
