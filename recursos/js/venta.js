@@ -11,7 +11,7 @@ $(document).ready(function () {
     App.sidebar('close-sidebar');
 
     if ($("#venta_estado").val() == 'CAJA') {
-        $(".ocultar_caja").hide();
+        $(".ocultar_caja").show();
     }
     else if ($("#venta_estado").val() == 'COMPLETADO') {
         $(".ocultar_caja").show();

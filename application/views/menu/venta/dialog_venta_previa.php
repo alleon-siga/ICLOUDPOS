@@ -35,12 +35,12 @@
                     <?php endif; ?>
                 </div>
                 <div class="col-md-12">
-<!--                    --><?php //if (ENV == 'DEV'): ?>
-<!--                        <button class="btn btn-primary" data-id="--><?//= $venta->venta_id ?><!--"-->
-<!--                                type="button"-->
-<!--                                id="btn_venta_test"><i class="fa fa-print"></i> IMPRIMIR TEST-->
-<!--                        </button>-->
-<!--                    --><?php //endif; ?>
+                    <?php if (ENV == 'DEV'): ?>
+                        <button class="btn btn-primary" data-id="<?= $venta->venta_id ?>"
+                                type="button"
+                                id="btn_venta_imprimir_test"><i class="fa fa-print"></i> IMPRIMIR TEST
+                        </button>
+                    <?php endif; ?>
 
                     <button class="btn btn-primary btn_venta_imprimir"
                             type="button"
@@ -472,7 +472,7 @@
 
     $(document).ready(function () {
 
-        $('.btn_venta_imprimir').on('click', function () {
+        $('#btn_venta_imprimir_test').on('click', function () {
             var input = $('.btn_venta_imprimir');
 
             input.html('<i class="fa fa-print"></i> IMPRIMIENDO...');
@@ -526,17 +526,17 @@
             }
         });
 
-//        $(".btn_venta_imprimir").on('click', function () {
-//            $.bootstrapGrowl('<p>IMPRIMIENDO PEDIDO</p>', {
-//                type: 'success',
-//                delay: 2500,
-//                allow_dismiss: true
-//            });
-//
-//            var url = '<?//=base_url('venta_new/imprimir/' . $venta->venta_id . '/PEDIDO')?>//';
-//            $("#imprimir_frame").attr('src', url);
-//
-//        });
+        $(".btn_venta_imprimir").on('click', function () {
+            $.bootstrapGrowl('<p>IMPRIMIENDO PEDIDO</p>', {
+                type: 'success',
+                delay: 2500,
+                allow_dismiss: true
+            });
+
+            var url = '<?=base_url('venta_new/imprimir/' . $venta->venta_id . '/PEDIDO')?>';
+            $("#imprimir_frame").attr('src', url);
+
+        });
 
         $(".btn_venta_imprimir_almacen").on('click', function () {
             $.bootstrapGrowl('<p>IMPRIMIENDO PEDIDO ALMACEN</p>', {

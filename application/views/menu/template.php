@@ -1627,7 +1627,7 @@ $primary_nav = array(
                             <div class="controls col-md-8">
                                 <select class="form-control" id="usuarios" name="usuarios" class='cho form-control'
                                         required="true">
-                                    <?php if ($this->session->userdata('grupo') == 2): ?>
+                                    <?php if ($this->session->userdata('grupo') != 8): ?>
                                         <option value="0">TODOS</option>
                                     <?php endif; ?>
                                     <?php foreach ($usuarios as $usuario) { ?>
