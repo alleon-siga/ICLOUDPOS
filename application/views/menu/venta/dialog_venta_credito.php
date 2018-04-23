@@ -344,7 +344,7 @@
                                 id="btn_venta_credito"><i
                                     class="fa fa-save"></i> Guardar
                         </button>
-                        <button type="button" class="btn btn-default save_venta_credito ocultar_caja" data-imprimir="1"
+                        <button type="button" class="btn btn-default save_venta_credito" data-imprimir="1"
                                 id="btn_venta_credito_imprimir"
                         ><i
                                     class="fa fa-print"></i> (F6) Grabar e imprimir
@@ -440,7 +440,7 @@
                                         class="fa fa-save"></i>Guardar
                             </button>
 
-                            <a href="#" class="btn btn-default save_venta_credito ocultar_caja"
+                            <a href="#" class="btn btn-default save_venta_credito"
                                style="margin-bottom:5px"
                                id="btn_venta_credito_simple_imprimir" data-imprimir="1" type="button"><i
                                         class="fa fa-print"></i> (F6)Guardar e imprimir
@@ -509,25 +509,23 @@
 
             $(document).keyup(function (e) {
 
-                if (e.keyCode == 117 && $("#dialog_venta_credito").is(":visible") == true && $("#venta_estado").val() == 'COMPLETADO') {
-                    e.preventDefault();
-                    e.stopImmediatePropagation();
-                    $('.save_venta_credito[data-imprimir="1"]').first().click();
-                }
+
             });
 
             $('.save_venta_credito').on('click', function () {
-                if ($("#c_venta_estado").val() == 'COMPLETADO' || $("#c_venta_estado").val() == 'CAJA')
+
+                if ($("#c_venta_estado").val() == 'COMPLETADO')
                     save_venta_credito($(this).attr('data-imprimir'));
                 else {
                     $("#dialog_venta_credito").modal('hide');
                     caja_init(formatPrice($("#c_saldo_inicial").val()));
                 }
 
+
             });
 
             $('#btn_continuar_credito').on('click', function () {
-                if ($("#c_venta_estado").val() == 'COMPLETADO'){
+                if ($("#c_venta_estado").val() == 'COMPLETADO') {
                     var tipo_pago = $("#tipo_pago").val();
 
                     $("#vc_total_pagar").val(formatPrice($("#c_saldo_inicial").val()));
@@ -543,8 +541,10 @@
                         $("#vc_forma_pago").change();
                     }, 500);
                 }
-                else{
-                    save_venta_credito(0);
+                else {
+                    $("#dialog_venta_credito").modal('hide');
+                    caja_init(formatPrice($("#c_saldo_inicial").val()));
+//                    save_venta_credito(0);
                 }
 
             });
