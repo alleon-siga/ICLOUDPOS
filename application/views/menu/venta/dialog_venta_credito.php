@@ -517,7 +517,7 @@
             });
 
             $('.save_venta_credito').on('click', function () {
-                if ($("#c_venta_estado").val() == 'COMPLETADO')
+                if ($("#c_venta_estado").val() == 'COMPLETADO' || $("#c_venta_estado").val() == 'CAJA')
                     save_venta_credito($(this).attr('data-imprimir'));
                 else {
                     $("#dialog_venta_credito").modal('hide');
@@ -527,20 +527,26 @@
             });
 
             $('#btn_continuar_credito').on('click', function () {
-                var tipo_pago = $("#tipo_pago").val();
+                if ($("#c_venta_estado").val() == 'COMPLETADO'){
+                    var tipo_pago = $("#tipo_pago").val();
 
-                $("#vc_total_pagar").val(formatPrice($("#c_saldo_inicial").val()));
-                $("#vc_importe").val($("#c_saldo_inicial").val());
-                $('#contado_tipo_pago').val(tipo_pago);
-                $("#vc_vuelto").val(0);
-                $("#vc_num_oper").val('');
+                    $("#vc_total_pagar").val(formatPrice($("#c_saldo_inicial").val()));
+                    $("#vc_importe").val($("#c_saldo_inicial").val());
+                    $('#contado_tipo_pago').val(tipo_pago);
+                    $("#vc_vuelto").val(0);
+                    $("#vc_num_oper").val('');
 
-                $("#dialog_venta_contado").modal('show');
+                    $("#dialog_venta_contado").modal('show');
 
-                setTimeout(function () {
-                    $("#vc_forma_pago").val('3').trigger("chosen:updated");
-                    $("#vc_forma_pago").change();
-                }, 500);
+                    setTimeout(function () {
+                        $("#vc_forma_pago").val('3').trigger("chosen:updated");
+                        $("#vc_forma_pago").change();
+                    }, 500);
+                }
+                else{
+                    save_venta_credito(0);
+                }
+
             });
 
 
@@ -637,7 +643,7 @@
         })
         ;
 
-        function close_modal(){
+        function close_modal() {
             $('#dialog_venta_credito').modal('hide');
             $(".modal-backdrop").remove();
         }
@@ -699,7 +705,7 @@
 
             var si = isNaN(parseFloat((precio_contado * saldo_porciento) / 100)) ? 0 : parseFloat((precio_contado * saldo_porciento) / 100);
 
-            if(estado == 'COMPLETADO'){
+            if (estado == 'COMPLETADO' || estado == 'CAJA') {
                 if (si > 0) {
                     $('#continuar_venta_block').show();
                     $('#guardar_credito_block').hide();
@@ -708,9 +714,6 @@
                     $('#continuar_venta_block').hide();
                     $('#guardar_credito_block').show();
                 }
-            } else if(estado == 'CAJA') {
-                $('#continuar_venta_block').hide();
-                $('#guardar_credito_block').show();
             }
 
 
