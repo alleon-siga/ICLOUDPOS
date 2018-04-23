@@ -1,11 +1,4 @@
 <?php $md = get_moneda_defecto() ?>
-<?php 
-/*echo "<pre>";
-echo print_r($metodos);
-echo "</pre>";
-
-echo "c ".count($metodos['id_metodo']);*/
- ?>
 <input type="hidden" id="caja_venta_id" value="">
 <input type="hidden" id="contado_tipo_pago" value="">
 <div class="modal-dialog" style="width: 40%">
@@ -14,7 +7,6 @@ echo "c ".count($metodos['id_metodo']);*/
             <h4>Terminar Venta</h4>
         </div>
         <div class="modal-body panel-venta-left">
-            <?php if(count($metodos)>1){ ?>
             <div class="row" id="vc_forma_pago_block">
                 <div class="form-group">
                     <div class="col-md-3">
@@ -29,9 +21,6 @@ echo "c ".count($metodos['id_metodo']);*/
                     </div>
                 </div>
             </div>
-            <?php }else{ ?>
-            <input type="hidden" name="vc_forma_pago" value="<?= $metodos['id_metodo'] ?>">
-            <?php } ?>
             <div class="row" id="vc_moneda_tasa_block" style="display:none;">
                 <div class="form-group">
                     <div class="col-md-3">

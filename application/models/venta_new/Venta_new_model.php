@@ -1172,4 +1172,34 @@ class venta_new_model extends CI_Model
         $mpdf->Output($nombre_archivo, 'I');
     }
 
+    public function save_recarga($venta)
+    {
+        $venta = array(
+            'local_id' => $venta['local_id'],
+            'id_documento' => 6,
+            'id_cliente' => $venta['id_cliente'],
+            'id_vendedor' => $venta['id_usuario'],
+            'condicion_pago' => $venta['condicion_pago'],
+            'id_moneda' => $venta['id_moneda'],
+            'venta_status' => 'COMPLETADO',
+            'fecha' => date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $venta['fecha_venta']) . date(" H:i:s"))),
+            'factura_impresa' => 0,
+            'subtotal' => number_format($venta['total_importe'] / 1.18, 2),
+            'total_impuesto' => number_format($venta['total_importe'] - ($venta['total_importe'] / 1.18), 2),
+            'total' => $venta['total_importe'],
+            'pagado' => $venta['vc_importe'],
+            'vuelto' => $venta['vc_vuelto'],
+            'tasa_cambio' => $venta['tasa_cambio'],
+            'dni_garante' => null,
+            'inicial' => null,
+            'tipo_impuesto' => $venta['tipo_impuesto'],
+            'comprobante_id' => $venta['comprobante_id'],
+            'nota' => null,
+            'dni_garante' => $venta['dni_garante']
+        );
+        //inserto la venta
+        $this->db->insert('venta', $venta);
+        $venta_id = $this->db->insert_id();
+        return $venta_id;
+    }
 }

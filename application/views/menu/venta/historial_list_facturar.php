@@ -1,5 +1,5 @@
 <input type="hidden" id="venta_id" value="<?= $venta->venta_id ?>">
-
+<input type="hidden" id="tipo_cliente" value="<?= $venta->tipo_cliente ?>">
 <div class="modal-dialog" style="width: 40%">
     <div class="modal-content">
         <div class="modal-header">
@@ -11,41 +11,45 @@
                 <div class="row-fluid">
                     <div class="row">
                         <div class="col-md-4"><label class="control-label">Venta No.:</label></div>
-                        <div class="col-md-6"><?= sumCod($venta->venta_id, 6) ?></div>
+                        <div class="col-md-8"><?= sumCod($venta->venta_id, 6) ?></div>
+                    </div>
+                    <hr class="hr-margin-5">
+                    <div class="row">
+                        <div class="col-md-4"><label class="control-label">Cliente:</label></div>
+                        <div class="col-md-8"><?= sumCod($venta->cliente_nombre, 6) ?></div>
                     </div>
                     <hr class="hr-margin-5">
                     <div class="row">
                         <div class="col-md-4"><label class="control-label">Fecha Documento:</label></div>
-                        <div class="col-md-6"><?= date('m/d/Y') ?></div>
+                        <div class="col-md-8"><?= date('m/d/Y') ?></div>
                     </div>
                     <hr class="hr-margin-5">
                     <div class="row">
                         <div class="col-md-4"><label class="control-label">Documento:</label></div>
-                        <div class="col-md-6">
+                        <div class="col-md-8" style="margin-left: 0; padding-left: 14;">
                             <select id="cboDoc" class="form-control">
                             <?php foreach ($comprobante as $dato): ?>
                                 <option value="<?= $dato->id_doc ?>" <?php if($venta->documento_id == $dato->id_doc){ echo "selected"; } ?>>
                                     <?= $dato->des_doc ?></option>
                             <?php endforeach; ?>
-                                
                             </select>
                         </div>
                     </div>
                     <hr class="hr-margin-5">
                     <div class="row">
                         <div class="col-md-4"><label class="control-label">Documento Numero:</label></div>
-                        <div class="col-md-6" id="docNum"><?= $venta->next_correlativo ?></div>
+                        <div class="col-md-8" id="docNum"><?= $venta->next_correlativo ?></div>
                     </div>
                     <hr class="hr-margin-5">
                     <?php if ($venta->comprobante_id > 0): ?>
                         <div class="row">
                             <div class="col-md-4"><label class="control-label">Comprobante:</label></div>
-                            <div class="col-md-6"><?= $venta->comprobante_nombre ?></div>
+                            <div class="col-md-8"><?= $venta->comprobante_nombre ?></div>
                         </div>
                         <hr class="hr-margin-5">
                         <div class="row">
                             <div class="col-md-4"><label class="control-label">Comprobante Numero:</label></div>
-                            <div class="col-md-6"><?= $venta->comprobante ?></div>
+                            <div class="col-md-8"><?= $venta->comprobante ?></div>
                         </div>
                         <hr class="hr-margin-5">
                     <?php endif; ?>
@@ -79,28 +83,28 @@
         $("#confirm_venta_text").html($("#loading").html());
 
         $('#facturar_btn').on('click', function () {
-            $.ajax({
-                url: '<?php echo base_url() . 'venta_new/facturar_venta'; ?>',
-                type: 'POST',
-                data: {
-                    'venta_id': '<?= $venta->venta_id ?>',
-                    'iddoc': $('#cboDoc').val()
-                },
-                success: function () {
-                    $('#dialog_venta_confirm').modal('hide');
-                    $('#dialog_venta_facturar').modal('hide');
-                    $(".modal-backdrop").remove();
-                    $.bootstrapGrowl('<h4>Correcto.</h4> <p>Venta facturada con exito.</p>', {
-                        type: 'success',
-                        delay: 5000,
-                        allow_dismiss: true
-                    });
-                    get_ventas();
-                },
-                error: function () {
-                    alert('Error inesperado');
-                }
-            });
+            if ($("#cboDoc").val() == 1 && $("#tipo_cliente").val() == 0) {
+                show_msg('warning', '<h4>Error. </h4><p>El Cliente no tiene ruc para realizar venta en factura.</p>');
+            }else{
+                $.ajax({
+                    url: '<?php echo base_url() . 'venta_new/facturar_venta'; ?>',
+                    type: 'POST',
+                    data: {
+                        'venta_id': '<?= $venta->venta_id ?>',
+                        'iddoc': $('#cboDoc').val()
+                    },
+                    success: function () {
+                        $('#dialog_venta_confirm').modal('hide');
+                        $('#dialog_venta_facturar').modal('hide');
+                        $(".modal-backdrop").remove();
+                        show_msg('success', '<h4>Correcto.</h4> <p>Venta facturada con exito.</p>');
+                        get_ventas();
+                    },
+                    error: function () {
+                        alert('Error inesperado');
+                    }
+                });
+            }
         })
 
         $('#cboDoc').on('change', function(){
@@ -118,5 +122,11 @@
         });
     });
 
-
+    function show_msg(type, msg) {
+        $.bootstrapGrowl(msg, {
+            type: type,
+            delay: 5000,
+            allow_dismiss: true
+        });
+    }
 </script>
