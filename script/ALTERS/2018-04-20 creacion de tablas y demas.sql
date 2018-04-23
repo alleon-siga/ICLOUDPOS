@@ -2,7 +2,8 @@ CREATE TABLE `recarga` (
   `rec_cod` int(11) DEFAULT NULL,
   `id_venta` int(11) DEFAULT NULL,
   `rec_trans` varchar(255) DEFAULT NULL,
-  `rec_nro` varchar(9) DEFAULT NULL
+  `rec_nro` varchar(9) DEFAULT NULL,
+  `rec_ope`  int DEFAULT NULL COMMENT 'Se enlaza con tabla diccionario_termino en el grupo 3'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 ALTER TABLE `recarga`

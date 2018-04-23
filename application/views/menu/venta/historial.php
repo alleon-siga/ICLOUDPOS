@@ -34,8 +34,7 @@
                     <div class="col-md-3" style="display: <?= $venta_action != 'caja' ? 'block' : 'none' ?>">
                         <label class="control-label panel-admin-text">Fecha</label>
                         <input type="text" id="date_range" class="form-control" readonly style="cursor: pointer;"
-                               name="daterange" value="<?= date('01/m/Y') ?> - <?= date('d/m/Y') ?>"/>
-
+                               name="daterange" value="<?= date('d/m/Y') ?> - <?= date('d/m/Y') ?>"/>
                     </div>
 
                     <div class="col-md-2" style="display: <?= $venta_action != 'caja' ? 'block' : 'none' ?>">

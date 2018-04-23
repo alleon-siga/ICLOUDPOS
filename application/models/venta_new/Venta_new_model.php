@@ -1187,19 +1187,28 @@ class venta_new_model extends CI_Model
             'subtotal' => number_format($venta['total_importe'] / 1.18, 2),
             'total_impuesto' => number_format($venta['total_importe'] - ($venta['total_importe'] / 1.18), 2),
             'total' => $venta['total_importe'],
-            'pagado' => $venta['vc_importe'],
-            'vuelto' => $venta['vc_vuelto'],
-            'tasa_cambio' => $venta['tasa_cambio'],
+            'pagado' => $venta['vc_importe2'],
+            'vuelto' => $venta['vc_vuelto2'],
+            'tasa_cambio' => 0,
             'dni_garante' => null,
             'inicial' => null,
-            'tipo_impuesto' => $venta['tipo_impuesto'],
-            'comprobante_id' => $venta['comprobante_id'],
+            'tipo_impuesto' => 1,
+            'comprobante_id' => 0,
             'nota' => null,
-            'dni_garante' => $venta['dni_garante']
+            'dni_garante' => null
         );
         //inserto la venta
         $this->db->insert('venta', $venta);
         $venta_id = $this->db->insert_id();
+
+        $recarga = array(
+            'id_venta' => $venta_id,
+            'rec_trans' => $venta['cod_tran'],
+            'rec_nro' => $venta['rec_nro'],
+            'rec_ope' => $venta['rec_ope']
+        );
+        //inserto la recarga
+        $this->db->insert('recarga', $recarga);
         return $venta_id;
     }
 }

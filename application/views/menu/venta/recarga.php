@@ -9,77 +9,49 @@
         <!-- SECCION IZQUIERDA -->
         <div class="col-md-12 block-section">
             <form id="frmRecarga" method="post">
+                <input type="hidden" name="vc_importe2" value="">
+                <input type="hidden" name="vc_vuelto2">
                 <!-- SELECCION DEL LOCAL DE LA VENTA -->
-                <div class="row">
-                    <div class="col-md-1">
-                        <label class="control-label panel-admin-text">Local:</label>
-                    </div>
-                    <div class="col-md-3">
-                        <select name="local_venta_id" id="local_venta_id" class='form-control'>
-                            <?php foreach ($locales as $local): ?>
-                                <option <?= $local->local_id == $local->local_defecto ? 'selected="selected"' : '' ?>
-                                        value="<?= $local->local_id ?>"><?= $local->local_nombre ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div class="col-md-1">
-                        <label class="control-label panel-admin-text">Cliente:</label>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="input-group">
-                            <select name="cliente_id" id="cliente_id" class='form-control'>
-                                <?php foreach ($clientes as $cliente): ?>
-                                    <option
-                                            value="<?php echo $cliente['id_cliente']; ?>"
-                                            data-ruc="<?= $cliente['ruc'] ?>"
-                                        <?= $cliente['id_cliente'] == 1 ? 'selected' : '' ?>
-                                    ><?php echo $cliente['razon_social']; ?></option>
+                <div class="col-md-12 block block-section">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <label class="control-label panel-admin-text">Local:</label>
+                        </div>
+                        <div class="col-md-4">
+                            <select name="local_venta_id" id="local_venta_id" class='form-control'>
+                                <?php foreach ($locales as $local): ?>
+                                    <option <?= $local->local_id == $local->local_defecto ? 'selected="selected"' : '' ?>
+                                            value="<?= $local->local_id ?>"><?= $local->local_nombre ?></option>
                                 <?php endforeach; ?>
                             </select>
-                            <a id="cliente_new" href="#" class="input-group-addon btn-default">
-                                <i class="fa fa-plus-circle"></i>
-                            </a>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="control-label panel-admin-text">Cliente:</label>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <select name="cliente_id" id="cliente_id" class='form-control'>
+                                    <?php foreach ($clientes as $cliente): ?>
+                                        <option
+                                                value="<?php echo $cliente['id_cliente']; ?>"
+                                                data-ruc="<?= $cliente['ruc'] ?>"
+                                            <?= $cliente['id_cliente'] == 1 ? 'selected' : '' ?>
+                                        ><?php echo $cliente['razon_social']; ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <a id="cliente_new" href="#" class="input-group-addon btn-default">
+                                    <i class="fa fa-plus-circle"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-1">
-                        <label class="control-label panel-admin-text">Operador:</label>
-                    </div>
-                    <div class="col-md-3">
-                        <select name="operador_id" id="operador_id" class='form-control'>
-                            <?php foreach ($operadore as $operador): ?>
-                                <option <?= $operador->id == $operador->valor ? 'selected="selected"' : '' ?>
-                                        value="<?= $operador->id ?>"><?= $operador->valor ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>                
-                </div>
-                <hr class="hr-margin-10">
-                <br>
-                <div class="col-md-12 block block-section">
+                    <br>
                     <div class="row">
                         <div class="col-md-2">
                             <label class="control-label">Fecha:</label>
                         </div>
                         <div class="col-md-4">
                             <input type="text" class="form-control date-picker" name="fecha_venta" id="fecha_venta" value="<?= date('d/m/Y') ?>" readonly="" style="cursor: pointer;">
-                        </div>
-                        <div class="col-md-2">
-                            <label class="control-label">Moneda:</label>
-                        </div>
-                        <div class="col-md-4">
-                            <select name="moneda_id" id="moneda_id" class="form-control">
-                            <?php foreach($monedas as $moneda): ?>
-                                <option value="<?= $moneda->id_moneda ?>"><?= $moneda->nombre ?></option>
-                            <?php endforeach; ?>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-2">
-                            <label class="control-label">Total:</label>
-                        </div>
-                        <div class="col-md-4">
-                            <input type="text" class="form-control" name="total_importe" id="total_importe">
                         </div>
                         <div class="col-md-2">
                             <label class="control-label">Pago:</label>
@@ -92,13 +64,47 @@
                             </select>
                         </div>
                     </div>
+                    <br>
                     <div class="row">
+                        <div class="col-md-2">
+                            <label class="control-label">Moneda:</label>
+                        </div>
+                        <div class="col-md-4">
+                            <select name="moneda_id" id="moneda_id" class="form-control">
+                            <?php foreach($monedas as $moneda): ?>
+                                <option value="<?= $moneda->id_moneda ?>"><?= $moneda->nombre ?></option>
+                            <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="control-label">Total:</label>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" name="total_importe" id="total_importe">
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <label class="control-label panel-admin-text">Operador:</label>
+                        </div>
+                        <div class="col-md-4">
+                            <select name="operador_id" id="operador_id" class='form-control'>
+                                <?php foreach ($operadore as $operador): ?>
+                                    <option <?= $operador->id == $operador->valor ? 'selected="selected"' : '' ?>
+                                            value="<?= $operador->id ?>"><?= $operador->valor ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
                         <div class="col-md-2">
                             <label class="control-label panel-admin-text">N&uacute;mero de recarga:</label>
                         </div>
                         <div class="col-md-4">
                             <input type="text" class="form-control" name="nro_recarga" id="nro_recarga" value="">
                         </div>
+                    </div>
+                    <br>
+                    <div class="row">
                         <div class="col-md-2">
                             <label class="control-label panel-admin-text">C&oacute;digo de transacci&oacute;n:</label>
                         </div>

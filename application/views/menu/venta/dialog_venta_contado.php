@@ -14,7 +14,7 @@ echo "c ".count($metodos['id_metodo']);*/
             <h4>Terminar Venta</h4>
         </div>
         <div class="modal-body panel-venta-left">
-            <?php if(count($metodos)>1){ ?>
+            <?php if(!isset($metodos['id_metodo'])){ ?>
             <div class="row" id="vc_forma_pago_block">
                 <div class="form-group">
                     <div class="col-md-3">

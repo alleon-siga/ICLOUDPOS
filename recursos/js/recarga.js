@@ -37,10 +37,14 @@ $(document).ready(function(){
 
     $("#terminar_venta").on('click', function (e) {
         e.preventDefault();
-        //$('#dialog_new_cliente').attr('data-id', '');
         $("#dialog_venta_contado").html($("#loading").html());
         $('#dialog_venta_contado').modal('show');
-        $("#dialog_venta_contado").load(ruta + 'venta_new/dialog_venta_contado');
+        $("#dialog_venta_contado").load(ruta + 'venta_new/dialog_venta_contado', function(){
+            let num = parseFloat($('#total_importe').val());
+            $('#vc_total_pagar').attr('value', num.toFixed(2));
+            $('#vc_importe2').attr('value', $('#vc_importe').val());
+            $('#vc_vuelto2').attr('value', $('#vc_vuelto').val());
+        }); 
     });    
 
     $('.date-picker').datepicker({
