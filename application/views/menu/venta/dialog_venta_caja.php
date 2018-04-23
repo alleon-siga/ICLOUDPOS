@@ -110,6 +110,7 @@
                 return false;
             }
             save_venta_caja($(this).attr('data-imprimir'));
+
         });
 
     });

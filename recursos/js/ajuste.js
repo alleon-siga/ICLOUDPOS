@@ -24,6 +24,9 @@ $(document).ready(function () {
 
     var F6 = 117;
 
+    $(document).off('keyup');
+    $(document).off('keydown');
+
     $(document).keydown(function (e) {
 
         if (e.keyCode == tecla_ctrl) {

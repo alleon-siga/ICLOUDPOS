@@ -275,13 +275,11 @@ class venta_new_model extends CI_Model
 
     function facturar_venta($venta_id)
     {
-        $iddoc = $this->input->post('iddoc');
         $venta = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
-        $correlativo = $this->correlativos_model->get_correlativo($venta->local_id, $iddoc);
+        $correlativo = $this->correlativos_model->get_correlativo($venta->local_id, $venta->id_documento);
         $update_venta['fecha_facturacion'] = date('Y-m-d H:i:s');
         $update_venta['serie'] = $correlativo->serie;
         $update_venta['numero'] = $correlativo->correlativo;
-        $update_venta['id_documento'] = $iddoc;
         $this->correlativos_model->sumar_correlativo($venta->local_id, $venta->id_documento);
 
         // Hago la facturacion de comprobantes

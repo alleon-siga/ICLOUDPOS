@@ -11,11 +11,12 @@ $(document).ready(function () {
     App.sidebar('close-sidebar');
 
     if ($("#venta_estado").val() == 'CAJA') {
-        $(".ocultar_caja").show();
+        $(".ocultar_caja").hide();
     }
     else if ($("#venta_estado").val() == 'COMPLETADO') {
         $(".ocultar_caja").show();
     }
+
 
     $('.date-picker').datepicker({format: 'dd/mm/yyyy'});
     $('.date-picker').css('cursor', 'pointer');
@@ -104,6 +105,19 @@ $(document).ready(function () {
             e.preventDefault();
             e.stopImmediatePropagation();
             $('.save_venta_caja[data-imprimir="0"]').first().click();
+        }
+
+        if (e.keyCode == 117 && $("#dialog_venta_contado").is(":visible") == true && ($("#venta_estado").val() == 'COMPLETADO' || $("#caja_imprimir").val() == '1')) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            $('.save_venta_contado[data-imprimir="1"]').first().click();
+        }
+
+        var saldo_inicial_comp = isNaN(parseFloat($("#c_saldo_inicial").val())) ? 0 : parseFloat($("#c_saldo_inicial").val());
+        if (e.keyCode == 117 && $("#dialog_venta_credito").is(":visible") == true && saldo_inicial_comp == 0) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            $('.save_venta_credito[data-imprimir="1"]').first().click();
         }
     });
 
@@ -781,6 +795,7 @@ function save_venta_contado(imprimir) {
         },
         complete: function (data) {
             $('.save_venta_contado').removeAttr('disabled');
+
         }
     });
 }
