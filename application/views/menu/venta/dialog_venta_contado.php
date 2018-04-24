@@ -185,20 +185,11 @@
 
         $(document).keyup(function (e) {
 
-            if (e.keyCode == 117 && $("#dialog_venta_contado").is(":visible") == true && $("#venta_estado").val() == 'COMPLETADO') {
-                e.preventDefault();
-                e.stopImmediatePropagation();
-                $('.save_venta_contado[data-imprimir="1"]').first().click();
-            }
 
-            if (e.keyCode == 117 && $("#dialog_venta_contado").is(":visible") == true && $("#caja_imprimir").val() == '1') {
-                e.preventDefault();
-                e.stopImmediatePropagation();
-                $('.save_venta_contado[data-imprimir="1"]').first().click();
-            }
         });
 
         $(".save_venta_contado").on('click', function () {
+
             var tipo_pago = $("#contado_tipo_pago").val();
 
             if (tipo_pago == '1') {
@@ -229,6 +220,7 @@
 
                 save_venta_credito($(this).attr('data-imprimir'));
             }
+
         });
 
         $("#vc_forma_pago").on('change', function () {
@@ -287,7 +279,7 @@
                 var vuelto = parseFloat(importe - parseFloat($("#vc_total_pagar").val()));
                 $("#vc_vuelto").val(vuelto.toFixed(2));
             }
-            else{
+            else {
                 $("#vc_vuelto").val('0'.toFixed(2))
             }
         });
