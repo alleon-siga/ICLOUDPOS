@@ -125,7 +125,7 @@ class cajas_mov_model extends CI_Model
             }
 
             if ($mov->operacion == 'CUOTA') {
-                $mov->operacion_nombre = 'PAGO DE DEUDA';
+                $mov->operacion_nombre = 'CUENTA X COBRAR';
 
                 $venta = $this->db->get_where('venta', array('venta_id' => $mov->ref_id))->row();
                 $doc = 'NP ';

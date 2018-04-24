@@ -20,7 +20,8 @@
         <thead>
         <tr>
             <th># Venta</th>
-            <th>Fecha</th>
+            <th>Fecha Registro</th>
+            <th>Fecha Venta</th>
             <th># Comprobante</th>
             <th>Identificaci&oacute;n</th>
             <th>Cliente</th>
@@ -38,6 +39,11 @@
             <?php foreach ($ventas as $venta): ?>
                 <tr <?= $venta->venta_estado == 'ANULADO' ? 'style="color: red;"' : '' ?>>
                     <td><?= $venta->venta_id ?></td>
+                    <td>
+                        <span style="display: none;"><?= date('YmdHis', strtotime($venta->venta_creado)) ?></span>
+                        <?= date('d/m/Y H:i', strtotime($venta->venta_creado)) ?>
+                    </td>
+
                     <td>
                         <span style="display: none;"><?= date('YmdHis', strtotime($venta->venta_fecha)) ?></span>
                         <?= date('d/m/Y H:i', strtotime($venta->venta_fecha)) ?>

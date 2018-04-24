@@ -266,7 +266,7 @@ class exportar extends MY_Controller
             $data['venta_credito'][$mon['id_moneda']] = $this->db->get()->row();
 
             //COBRANZAS DE CUOTAS
-            $this->db->select_sum('credito_cuotas_abono.monto_abono', 'total')
+            $this->db->select('credito_cuotas_abono.monto_abono AS total')
                 ->from('credito_cuotas_abono')
                 ->join('credito_cuotas', 'credito_cuotas.id_credito_cuota = credito_cuotas_abono.credito_cuota_id')
                 ->join('venta', 'venta.venta_id = credito_cuotas.id_venta')
@@ -284,7 +284,13 @@ class exportar extends MY_Controller
                 $this->db->where('venta.id_vendedor', $id_usuario);
             }
 
-            $data['cobranza_cuota'][$mon['id_moneda']] = $this->db->get()->row();
+            $temp = $this->db->group_by('credito_cuotas_abono.abono_id')->get()->result();
+            $data['cobranza_cuota'][$mon['id_moneda']] = new stdClass();
+            $data['cobranza_cuota'][$mon['id_moneda']]->total = 0;
+            foreach ($temp as $t) {
+                $data['cobranza_cuota'][$mon['id_moneda']]->total += $t->total;
+            }
+
 
             $this->db->select('caja_movimiento.*')
                 ->from('credito_cuotas_abono')
