@@ -1550,6 +1550,8 @@ function accionGuardar() {
             }
             else {
                 $("#botonconfirmar").removeClass('disabled');
+                $("#botonconfirmar_save").removeClass('disabled');
+                //botonconfirmar_save
                 $("#btn_compra_credito").removeClass('disabled');
                 var growlType = 'warning';
                 $.bootstrapGrowl('<h4>' + data.error + '</h4>', {
