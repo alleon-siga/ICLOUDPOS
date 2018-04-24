@@ -376,7 +376,8 @@ class cajas_model extends CI_Model
             'monto' => $data['monto'],
             'estado' => 0,
             'IO' => $data['IO'],
-            'ref_id' => $data['ref_id']
+            'ref_id' => $data['ref_id'],
+            'ref_val' => isset($data['ref_val']) ? $data['ref_val'] : ''
         ));
     }
 
