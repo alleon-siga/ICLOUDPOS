@@ -260,6 +260,12 @@ $primary_nav = array(
                 'slug' => 'generarventa'
             ),
             array(
+                'name' => 'Recarga',
+                'url' => $ruta . 'venta_new/recarga',
+                'icon' => 'fa fa-share',
+                'slug' => 'generarRecarga'
+            ),
+            array(
                 'name' => 'Cobrar en Caja',
                 'url' => $ruta . 'venta_new/historial/caja',
                 'icon' => 'fa fa-share',
@@ -538,7 +544,13 @@ $primary_nav = array(
                 'url' => $ruta . 'reporte/hojaColecta',
                 'icon' => 'fa fa-area-chart',
                 'slug' => 'hojaColecta'
-            )
+            ),
+            array(
+                'name' => 'Pagos',
+                'url' => $ruta . 'venta_new/pagosRecarga',
+                'icon' => 'fa fa-history',
+                'slug' => 'pagosRecarga'
+            ),
         ),
     ),
 

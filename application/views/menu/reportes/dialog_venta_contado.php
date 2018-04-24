@@ -1,11 +1,4 @@
 <?php $md = get_moneda_defecto() ?>
-<?php 
-/*echo "<pre>";
-echo print_r($metodos);
-echo "</pre>";
-
-echo "c ".count($metodos['id_metodo']);*/
- ?>
 <input type="hidden" id="caja_venta_id" value="">
 <input type="hidden" id="contado_tipo_pago" value="">
 <div class="modal-dialog" style="width: 40%">
@@ -14,7 +7,6 @@ echo "c ".count($metodos['id_metodo']);*/
             <h4>Terminar Venta</h4>
         </div>
         <div class="modal-body panel-venta-left">
-            <?php if(!isset($metodos['id_metodo'])){ ?>
             <div class="row" id="vc_forma_pago_block">
                 <div class="form-group">
                     <div class="col-md-3">
@@ -29,9 +21,6 @@ echo "c ".count($metodos['id_metodo']);*/
                     </div>
                 </div>
             </div>
-            <?php }else{ ?>
-            <input type="hidden" name="vc_forma_pago" id="vc_forma_pago" value="<?= $metodos['id_metodo'] ?>">
-            <?php } ?>
             <div class="row" id="vc_moneda_tasa_block" style="display:none;">
                 <div class="form-group">
                     <div class="col-md-3">
@@ -196,11 +185,22 @@ echo "c ".count($metodos['id_metodo']);*/
 
         $(document).keyup(function (e) {
 
+            if (e.keyCode == 117 && $("#dialog_venta_contado").is(":visible") == true && $("#venta_estado").val() == 'COMPLETADO') {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                $('.save_venta_contado[data-imprimir="1"]').first().click();
+            }
 
+            if (e.keyCode == 117 && $("#dialog_venta_contado").is(":visible") == true && $("#caja_imprimir").val() == '1') {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                $('.save_venta_contado[data-imprimir="1"]').first().click();
+            }
         });
 
         $(".save_venta_contado").on('click', function () {
             var tipo_pago = $("#contado_tipo_pago").val();
+
             if (tipo_pago == '1') {
                 save_venta_contado($(this).attr('data-imprimir'));
 
@@ -229,7 +229,6 @@ echo "c ".count($metodos['id_metodo']);*/
 
                 save_venta_credito($(this).attr('data-imprimir'));
             }
-
         });
 
         $("#vc_forma_pago").on('change', function () {
@@ -288,7 +287,7 @@ echo "c ".count($metodos['id_metodo']);*/
                 var vuelto = parseFloat(importe - parseFloat($("#vc_total_pagar").val()));
                 $("#vc_vuelto").val(vuelto.toFixed(2));
             }
-            else {
+            else{
                 $("#vc_vuelto").val('0'.toFixed(2))
             }
         });

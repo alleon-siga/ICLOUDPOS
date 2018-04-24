@@ -18,7 +18,7 @@
             <!-- Progress Bars Wizard Title -->
             <div class="row">
                 <div class="form-group">
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <?php if (isset($locales)): ?>
                             <label class="control-label panel-admin-text">Ubicaci&oacute;n</label>
                             <select id="venta_local" class="form-control filter-input">
@@ -31,10 +31,11 @@
 
                     </div>
 
-                    <div class="col-md-3" style="display: <?= $venta_action != 'caja' ? 'block' : 'none' ?>">
-                        <label class="control-label panel-admin-text">Fecha</label>
+                    <div class="col-md-2" style="display: <?= $venta_action != 'caja' ? 'block' : 'none' ?>">
+                        <label class="control-label panel-admin-text">Fecha de pago</label>
                         <input type="text" id="date_range" class="form-control" readonly style="cursor: pointer;"
                                name="daterange" value="<?= date('d/m/Y') ?> - <?= date('d/m/Y') ?>"/>
+
                     </div>
 
                     <div class="col-md-2" style="display: <?= $venta_action != 'caja' ? 'block' : 'none' ?>">
@@ -58,7 +59,13 @@
                             <?php endforeach; ?>
                         </select>
                     </div>
-
+                    <div class="col-md-2">
+                        <label class="control-label panel-admin-text">Tipo</label>
+                        <select name="moneda_id" id="moneda_id" class='cho form-control'>
+                            <option value="1">Deben</option>
+                            <option value="2">Cancelado</option>
+                        </select>
+                    </div>
 
                     <div class="col-md-1" style="display: none;">
                         <label class="control-label panel-admin-text">Estado:</label>
@@ -178,23 +185,6 @@
 
                 $(function () {
 
-                    $(document).off('keyup');
-                    $(document).off('keydown');
-
-                    $(document).on('keydown', function (e) {
-                        if (e.keyCode == 117) {
-                            e.preventDefault();
-                        }
-                    });
-
-                    $(document).on('keyup', function (e) {
-                        if (e.keyCode == 117 && $("#dialog_venta_contado").is(":visible") == true) {
-                            e.preventDefault();
-                            e.stopImmediatePropagation();
-                            $('.save_venta_contado[data-imprimir="1"]').first().click();
-                        }
-                    });
-
 
 
                     <?php if($venta_action != 'caja'):?>
@@ -306,7 +296,7 @@
 
 
                     $.ajax({
-                        url: '<?= base_url()?>venta_new/get_ventas/<?=$venta_action?>',
+                        url: '<?= base_url()?>venta_new/get_pagoRecarga/<?=$venta_action?>',
                         data: {
                             'local_id': local_id,
                             'fecha': fecha,

@@ -180,7 +180,7 @@
             </tr>
         </table>
 
-        <p><strong>INGRESOS - EGRESOS (EFECTIVO)</strong></p>
+        <p><strong>CUADRE DE EFECTIVO</strong></p>
         <table border="1" cellspacing="0" cellpadding="3">
             <tr>
                 <td style="width: 60%; font-weight: bold;">SALDO</td>

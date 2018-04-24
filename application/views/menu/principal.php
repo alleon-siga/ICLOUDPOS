@@ -76,7 +76,7 @@
     </div>
 
     <div class="col-md-3">
-        <a href="<?=$ruta?>ingresos/consultarCompras" class="widget widget-hover-effect1 menulink">
+        <a href="<?=$ruta?>reporte/productoVendido" class="widget widget-hover-effect1 menulink">
             <div class="widget-simple">
                 <div class="widget-icon pull-left themed-background-autumn animation-fadeIn">
                     <i class="gi gi-list sidebar-nav-icon" ></i>
@@ -90,7 +90,7 @@
     </div>
 
     <div class="col-md-3">
-        <a href="<?=$ruta?>venta_new/historial" class="widget widget-hover-effect1 menulink">
+        <a href="<?=$ruta?>reporte/productoVendido" class="widget widget-hover-effect1 menulink">
             <div class="widget-simple">
                 <div class="widget-icon pull-left themed-background-autumn animation-fadeIn">
                     <i class="fa fa-history sidebar-nav-icon" ></i>

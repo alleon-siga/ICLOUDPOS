@@ -26,6 +26,7 @@ class venta_new_model extends CI_Model
            venta.venta_id as venta_id,
             venta.comprobante_id as comprobante_id,
             venta.fecha as venta_fecha,
+            venta.created_at as venta_creado,
             venta.pagado as venta_pagado,
             venta.vuelto as venta_vuelto,
             venta.local_id as local_id,
@@ -115,8 +116,8 @@ class venta_new_model extends CI_Model
                 $this->db->where('venta.venta_status', $where['estado']);
 
         if (isset($where['fecha_ini']) && isset($where['fecha_fin'])) {
-            $this->db->where('venta.fecha >=', date('Y-m-d H:i:s', strtotime($where['fecha_ini'] . " 00:00:00")));
-            $this->db->where('venta.fecha <=', date('Y-m-d H:i:s', strtotime($where['fecha_fin'] . " 23:59:59")));
+            $this->db->where('venta.created_at >=', date('Y-m-d H:i:s', strtotime($where['fecha_ini'] . " 00:00:00")));
+            $this->db->where('venta.created_at <=', date('Y-m-d H:i:s', strtotime($where['fecha_fin'] . " 23:59:59")));
         }
 
         if (isset($where['mes']) && isset($where['year']) && isset($where['dia_min']) && isset($where['dia_max'])) {
@@ -168,8 +169,8 @@ class venta_new_model extends CI_Model
                 $this->db->where('venta.venta_status = "COMPLETADO"');
 
         if (isset($where['fecha_ini']) && isset($where['fecha_fin'])) {
-            $this->db->where('venta.fecha >=', date('Y-m-d H:i:s', strtotime($where['fecha_ini'] . " 00:00:00")));
-            $this->db->where('venta.fecha <=', date('Y-m-d H:i:s', strtotime($where['fecha_fin'] . " 23:59:59")));
+            $this->db->where('venta.created_at >=', date('Y-m-d H:i:s', strtotime($where['fecha_ini'] . " 00:00:00")));
+            $this->db->where('venta.created_at <=', date('Y-m-d H:i:s', strtotime($where['fecha_fin'] . " 23:59:59")));
         }
 
         if (isset($where['mes']) && isset($where['year']) && isset($where['dia_min']) && isset($where['dia_max'])) {
@@ -177,8 +178,8 @@ class venta_new_model extends CI_Model
             if ($last_day > $where['dia_max'])
                 $last_day = $where['dia_max'];
 
-            $this->db->where('venta.fecha >=', $where['year'] . '-' . sumCod($where['mes'], 2) . '-' . $where['dia_min']);
-            $this->db->where('venta.fecha <=', $where['year'] . '-' . sumCod($where['mes'], 2) . '-' . $last_day);
+            $this->db->where('venta.created_at >=', $where['year'] . '-' . sumCod($where['mes'], 2) . '-' . $where['dia_min']);
+            $this->db->where('venta.created_at <=', $where['year'] . '-' . sumCod($where['mes'], 2) . '-' . $last_day);
         }
         if (isset($where['usuarios_id']) && !empty($where['usuarios_id'])) {
             $this->db->where('venta.id_vendedor', $where['usuarios_id']);
@@ -938,7 +939,8 @@ class venta_new_model extends CI_Model
 
         $venta = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
 
-        $this->cajas_model->save_pendiente(array(
+
+        $caja_desglose = array(
             'monto' => $venta->total,
             'tipo' => 'VENTA_ANULADA',
             'IO' => 2,
@@ -946,7 +948,18 @@ class venta_new_model extends CI_Model
             'moneda_id' => $venta->id_moneda,
             'local_id' => $venta->local_id,
             'id_usuario' => $id_usuario == false ? $this->session->userdata('nUsuCodigo') : $id_usuario
-        ));
+        );
+
+        $cuenta = $this->db->get_where('caja_movimiento', array(
+            'operacion' => 'VENTA',
+            'movimiento' => 'INGRESO',
+            'ref_id' => $venta->venta_id
+        ))->row();
+
+        if ($cuenta != NULL)
+            $caja_desglose['cuenta_id'] = $cuenta->caja_desglose_id;
+
+        $this->cajas_model->save_pendiente($caja_desglose);
 
         return $venta_id;
     }
@@ -1170,4 +1183,58 @@ class venta_new_model extends CI_Model
         $mpdf->Output($nombre_archivo, 'I');
     }
 
+    public function save_recarga($venta)
+    {
+        $data = array(
+            'local_id' => $venta['local_id'],
+            'id_documento' => 6,
+            'id_cliente' => $venta['id_cliente'],
+            'id_vendedor' => $venta['id_usuario'],
+            'condicion_pago' => $venta['condicion_pago'],
+            'id_moneda' => $venta['id_moneda'],
+            'venta_status' => 'COMPLETADO',
+            'fecha' => date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $venta['fecha_venta']) . date(" H:i:s"))),
+            'factura_impresa' => 0,
+            'subtotal' => number_format($venta['total_importe'] / 1.18, 2),
+            'total_impuesto' => number_format($venta['total_importe'] - ($venta['total_importe'] / 1.18), 2),
+            'total' => $venta['total_importe'],
+            'pagado' => $venta['vc_importe'],
+            'vuelto' => $venta['vc_vuelto'],
+            'tasa_cambio' => 0,
+            'dni_garante' => null,
+            'inicial' => null,
+            'tipo_impuesto' => 1,
+            'comprobante_id' => 0,
+            'nota' => null,
+            'dni_garante' => null
+        );
+        //inserto la venta
+        $this->db->insert('venta', $data);
+        $venta_id = $this->db->insert_id();
+
+        $product = $this->db->get_where('producto', array('producto_nombre' => 'RECARGA VIRTUAL'))->row();
+        $data = array(
+            'id_venta' => $venta_id,
+            'id_producto' => $product->producto_id,
+            'precio' => number_format($venta['total_importe'], 2),
+            'cantidad' => 1,
+            'unidad_medida' => 1,
+            'detalle_importe' => number_format($venta['total_importe'], 2),
+            'impuesto_id' => 1,
+            'impuesto_porciento' => 18.00,
+            'precio_venta' => number_format($venta['total_importe'], 2)
+        );
+        //inserto en detalle
+        $this->db->insert('detalle_venta', $data);
+
+        $data = array(
+            'id_venta' => $venta_id,
+            'rec_trans' => $venta['cod_tran'],
+            'rec_nro' => $venta['rec_nro'],
+            'rec_ope' => $venta['rec_ope']
+        );
+        //inserto la recarga
+        $this->db->insert('recarga', $data);
+        return $venta_id;
+    }
 }
