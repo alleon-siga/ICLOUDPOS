@@ -111,7 +111,7 @@ class venta_new_model extends CI_Model
             if ($action == '')
                 $this->db->where('(venta.venta_status = "COMPLETADO" OR venta.venta_status = "ANULADO")');
             else if ($action == 'anular')
-                $this->db->where('venta.venta_status = "COMPLETADO" AND numero != ""');
+                $this->db->where('venta.venta_status = "COMPLETADO"');
             else if ($where['estado'] != "")
                 $this->db->where('venta.venta_status', $where['estado']);
 
@@ -846,7 +846,7 @@ class venta_new_model extends CI_Model
     }
 
     public
-    function anular_venta($venta_id, $serie, $numero, $id_usuario = false)
+    function anular_venta($venta_id, $serie, $numero, $metodo_pago, $cuenta_id, $id_usuario = false)
     {
         $venta = $this->get_venta_detalle($venta_id);
 
@@ -925,41 +925,41 @@ class venta_new_model extends CI_Model
 
         }
 
-
-        if ($venta->condicion_id == '2') {
-            $this->db->where('id_venta', $venta_id);
-            $this->db->delete('credito');
-
-            $this->db->where('id_venta', $venta_id);
-            $this->db->delete('credito_cuotas');
-        }
-
         $this->db->where('venta_id', $venta_id);
         $this->db->update('venta', array('venta_status' => 'ANULADO'));
 
         $venta = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
 
+        $total = $venta->total;
+        if ($venta->condicion_pago == 2) {
+            $total = $venta->inicial > 0 ? $venta->inicial : 0;
 
-        $caja_desglose = array(
-            'monto' => $venta->total,
-            'tipo' => 'VENTA_ANULADA',
-            'IO' => 2,
-            'ref_id' => $venta_id,
-            'moneda_id' => $venta->id_moneda,
-            'local_id' => $venta->local_id,
-            'id_usuario' => $id_usuario == false ? $this->session->userdata('nUsuCodigo') : $id_usuario
-        );
+            $cobranzas = $this->db->select_sum('credito_cuotas_abono.monto_abono', 'total')
+                ->from('credito_cuotas_abono')
+                ->join('credito_cuotas', 'credito_cuotas.id_credito_cuota = credito_cuotas_abono.credito_cuota_id')
+                ->where('credito_cuotas.id_venta', $venta->venta_id)
+                ->get()->row();
 
-        $cuenta = $this->db->get_where('caja_movimiento', array(
-            'operacion' => 'VENTA',
-            'movimiento' => 'INGRESO',
-            'ref_id' => $venta->venta_id
-        ))->row();
+            $total += $cobranzas->total;
+        }
 
-        if ($cuenta != NULL)
-            $caja_desglose['cuenta_id'] = $cuenta->caja_desglose_id;
+        if ($total > 0) {
+            $caja_desglose = array(
+                'monto' => $total,
+                'tipo' => 'VENTA_ANULADA',
+                'IO' => 2,
+                'ref_id' => $venta_id,
+                'moneda_id' => $venta->id_moneda,
+                'local_id' => $venta->local_id,
+                'id_usuario' => $id_usuario == false ? $this->session->userdata('nUsuCodigo') : $id_usuario,
+                'ref_val' => $metodo_pago
+            );
 
-        $this->cajas_model->save_pendiente($caja_desglose);
+            $caja_desglose['cuenta_id'] = $cuenta_id;
+
+            $this->cajas_model->save_pendiente($caja_desglose);
+        }
+
 
         return $venta_id;
     }
@@ -1005,7 +1005,7 @@ class venta_new_model extends CI_Model
     }
 
     public
-    function devolver_venta($venta_id, $total_importe, $devoluciones, $serie, $numero, $id_usuario = false)
+    function devolver_venta($venta_id, $total_importe, $devoluciones, $serie, $numero, $metodo_pago, $cuenta_id, $id_usuario = false)
     {
         $venta = $this->get_venta_detalle($venta_id);
 
@@ -1109,10 +1109,12 @@ class venta_new_model extends CI_Model
         $this->cajas_model->save_pendiente(array(
             'monto' => $venta->total - $this->recalc_totales($venta->venta_id),
             'tipo' => 'VENTA_DEVUELTA',
+            'cuenta_id' => $cuenta_id,
             'IO' => 2,
             'ref_id' => $venta_id,
             'moneda_id' => $venta->moneda_id,
             'local_id' => $venta->local_id,
+            'ref_val' => $metodo_pago,
             'id_usuario' => $id_usuario == false ? $this->session->userdata('nUsuCodigo') : $id_usuario
         ));
     }

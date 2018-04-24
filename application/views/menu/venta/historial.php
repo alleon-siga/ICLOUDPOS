@@ -32,7 +32,7 @@
                     </div>
 
                     <div class="col-md-3" style="display: <?= $venta_action != 'caja' ? 'block' : 'none' ?>">
-                        <label class="control-label panel-admin-text">Fecha</label>
+                        <label class="control-label panel-admin-text">Fecha Registro</label>
                         <input type="text" id="date_range" class="form-control" readonly style="cursor: pointer;"
                                name="daterange" value="<?= date('d/m/Y') ?> - <?= date('d/m/Y') ?>"/>
                     </div>
@@ -119,47 +119,6 @@
                 </div>
             </div>
 
-            <div class="modal fade" id="dialog_venta_confirm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-                 aria-hidden="true">
-
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h4 class="modal-title">Confirmaci&oacute;n</h4>
-                        </div>
-
-                        <div class="modal-body ">
-                            <h5 id="confirm_venta_text">Estas Seguro?</h5>
-
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <label>Serie</label>
-                                    <input type="text" id="documento_serie" class="form-control">
-                                </div>
-                                <div class="col-md-5">
-                                    <label>Numero</label>
-                                    <input type="text" id="documento_numero" class="form-control">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="modal-footer">
-                            <button id="confirm_venta_button" type="button" class="btn btn-primary">
-                                Aceptar
-                            </button>
-
-                            <button type="button" class="btn btn-danger"
-                                    onclick="$('#dialog_venta_confirm').modal('hide');">
-                                Cancelar
-                            </button>
-
-                        </div>
-                    </div>
-                    <!-- /.modal-content -->
-                </div>
-
-
-            </div>
 
             <div class="modal fade" id="dialog_venta_contado" tabindex="-1" role="dialog"
                  aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false"
@@ -546,16 +505,20 @@
                         data: {
                             'venta_id': venta_id,
                             'serie': $("#documento_serie").val(),
-                            'numero': $("#documento_numero").val()
+                            'numero': $("#documento_numero").val(),
+                            'metodo_pago': $("#metodo_pago").val(),
+                            'cuenta_id': $("#cuenta_id").val()
                         },
 
                         success: function (data) {
                             $('#dialog_venta_confirm').modal('hide');
+                            $(".modal-backdrop").remove();
                             $.bootstrapGrowl('<h4>Correcto.</h4> <p>Venta anulada con exito.</p>', {
                                 type: 'success',
                                 delay: 5000,
                                 allow_dismiss: true
                             });
+
                             get_ventas();
                         },
                         error: function () {

@@ -1631,7 +1631,7 @@ $primary_nav = array(
                         </div>
 
                         <div class="control-group row"
-                             style="display: <?= $this->session->userdata('grupo') == 2 ? 'block' : 'none' ?>">
+                             style="display: <?= $this->session->userdata('grupo') != 8 ? 'block' : 'none' ?>">
                             <br>
                             <div class="col-md-1"></div>
                             <label for="fecha" class="control-label col-md-2">Usuarios:</label>
