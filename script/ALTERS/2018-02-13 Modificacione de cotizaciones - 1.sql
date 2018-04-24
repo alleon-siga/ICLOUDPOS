@@ -1,3 +1,0 @@
-ALTER TABLE `cotizacion`
-ADD COLUMN `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `lugar_entrega`;
-

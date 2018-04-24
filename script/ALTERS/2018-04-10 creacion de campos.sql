@@ -1,6 +1,3 @@
-ALTER TABLE `venta_devolucion`
-ADD COLUMN `serie`  varchar(45) NULL AFTER `detalle_utilidad`,
-ADD COLUMN `numero`  varchar(45) NULL AFTER `serie`;
 
 CREATE TABLE `diccionario_termino` (
 `id`  int(11) NOT NULL AUTO_INCREMENT,
