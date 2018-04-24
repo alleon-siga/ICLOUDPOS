@@ -30,7 +30,7 @@ echo "c ".count($metodos['id_metodo']);*/
                 </div>
             </div>
             <?php }else{ ?>
-            <input type="hidden" name="vc_forma_pago" value="<?= $metodos['id_metodo'] ?>">
+            <input type="hidden" name="vc_forma_pago" id="vc_forma_pago" value="<?= $metodos['id_metodo'] ?>">
             <?php } ?>
             <div class="row" id="vc_moneda_tasa_block" style="display:none;">
                 <div class="form-group">
@@ -200,9 +200,7 @@ echo "c ".count($metodos['id_metodo']);*/
         });
 
         $(".save_venta_contado").on('click', function () {
-
             var tipo_pago = $("#contado_tipo_pago").val();
-
             if (tipo_pago == '1') {
                 save_venta_contado($(this).attr('data-imprimir'));
 

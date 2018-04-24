@@ -778,7 +778,21 @@ class venta_new extends MY_Controller
         $venta['condicion_pago'] = $this->input->post('tipo_pago');
         $venta['rec_nro'] = $this->input->post('nro_recarga');
         $venta['cod_tran'] = $this->input->post('cod_tran');
+        $venta['id_usuario'] = $this->session->userdata('nUsuCodigo');
+        $venta['vc_importe'] = $this->input->post('vc_importe2');
+        $venta['vc_vuelto'] = $this->input->post('vc_vuelto2');
         $venta_id = $this->venta->save_recarga($venta);
+
+        if($venta_id) {
+            $data['success'] = '1';
+            $data['venta'] = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
+        }else{
+            if(isset($this->venta->error)){
+                $data['msg'] = $this->venta->error;
+            }
+            $data['success'] = '0';
+        }
+        echo json_encode($data);
     }
 
     function pagosRecarga($action = "")

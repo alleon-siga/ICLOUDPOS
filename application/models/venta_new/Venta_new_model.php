@@ -1172,7 +1172,7 @@ class venta_new_model extends CI_Model
 
     public function save_recarga($venta)
     {
-        $venta = array(
+        $data = array(
             'local_id' => $venta['local_id'],
             'id_documento' => 6,
             'id_cliente' => $venta['id_cliente'],
@@ -1185,8 +1185,8 @@ class venta_new_model extends CI_Model
             'subtotal' => number_format($venta['total_importe'] / 1.18, 2),
             'total_impuesto' => number_format($venta['total_importe'] - ($venta['total_importe'] / 1.18), 2),
             'total' => $venta['total_importe'],
-            'pagado' => $venta['vc_importe2'],
-            'vuelto' => $venta['vc_vuelto2'],
+            'pagado' => $venta['vc_importe'],
+            'vuelto' => $venta['vc_vuelto'],
             'tasa_cambio' => 0,
             'dni_garante' => null,
             'inicial' => null,
@@ -1196,17 +1196,32 @@ class venta_new_model extends CI_Model
             'dni_garante' => null
         );
         //inserto la venta
-        $this->db->insert('venta', $venta);
+        $this->db->insert('venta', $data);
         $venta_id = $this->db->insert_id();
 
-        $recarga = array(
+        $product = $this->db->get_where('producto', array('producto_nombre' => 'RECARGA VIRTUAL'))->row();
+        $data = array(
+            'id_venta' => $venta_id,
+            'id_producto' => $product->producto_id,
+            'precio' => number_format($venta['total_importe'], 2),
+            'cantidad' => 1,
+            'unidad_medida' => 1,
+            'detalle_importe' => number_format($venta['total_importe'], 2),
+            'impuesto_id' => 1,
+            'impuesto_porciento' => 18.00,
+            'precio_venta' => number_format($venta['total_importe'], 2)
+        );
+        //inserto en detalle
+        $this->db->insert('detalle_venta', $data);
+
+        $data = array(
             'id_venta' => $venta_id,
             'rec_trans' => $venta['cod_tran'],
             'rec_nro' => $venta['rec_nro'],
             'rec_ope' => $venta['rec_ope']
         );
         //inserto la recarga
-        $this->db->insert('recarga', $recarga);
+        $this->db->insert('recarga', $data);
         return $venta_id;
     }
 }
