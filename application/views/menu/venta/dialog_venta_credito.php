@@ -514,7 +514,8 @@
 
             $('.save_venta_credito').on('click', function () {
 
-                if ($("#c_venta_estado").val() == 'COMPLETADO')
+                var saldo_inicial_comp1 = isNaN(parseFloat($("#c_saldo_inicial").val())) ? 0 : parseFloat($("#c_saldo_inicial").val());
+                if ($("#c_venta_estado").val() == 'COMPLETADO' || (saldo_inicial_comp1 == 0 && $("#c_venta_estado").val() == 'CAJA'))
                     save_venta_credito($(this).attr('data-imprimir'));
                 else {
                     $("#dialog_venta_credito").modal('hide');

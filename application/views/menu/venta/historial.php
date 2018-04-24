@@ -179,6 +179,23 @@
 
                 $(function () {
 
+                    $(document).off('keyup');
+                    $(document).off('keydown');
+
+                    $(document).on('keydown', function (e) {
+                        if (e.keyCode == 117) {
+                            e.preventDefault();
+                        }
+                    });
+
+                    $(document).on('keyup', function (e) {
+                        if (e.keyCode == 117 && $("#dialog_venta_contado").is(":visible") == true) {
+                            e.preventDefault();
+                            e.stopImmediatePropagation();
+                            $('.save_venta_contado[data-imprimir="1"]').first().click();
+                        }
+                    });
+
 
 
                     <?php if($venta_action != 'caja'):?>
