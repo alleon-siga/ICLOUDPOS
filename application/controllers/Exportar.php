@@ -316,6 +316,52 @@ class exportar extends MY_Controller
                 $detalle_ingreso[$venta->medio_pago]['importe'] += $venta->saldo;
             }
 
+            //ANULACIONES INGRESOS
+            $this->db->select_sum('caja_movimiento.saldo', 'total')
+                ->from('caja_movimiento')
+                ->join('caja_desglose', 'caja_desglose.id = caja_movimiento.caja_desglose_id')
+                ->join('caja', 'caja.id = caja_desglose.caja_id')
+                ->where('caja_movimiento.fecha_mov >=', $fecha)
+                ->where('caja_movimiento.fecha_mov <', $fechadespues)
+                ->where('caja.moneda_id', $mon["id_moneda"])
+                ->where("(caja_movimiento.operacion = 'INGRESO_ANULADO')")
+                ->where('caja_desglose.estado', 1);
+
+            if ($id_local != 0) {
+                $this->db->where('caja.local_id', $id_local);
+            }
+
+            if ($id_usuario != 0) {
+                $this->db->where('caja_movimiento.usuario_id', $id_usuario);
+            }
+
+            $data['anulacion_ingreso'][$mon['id_moneda']] = $this->db->get()->row();
+
+            $this->db->select('caja_movimiento.*')
+                ->from('caja_movimiento')
+                ->join('caja_desglose', 'caja_desglose.id = caja_movimiento.caja_desglose_id')
+                ->join('caja', 'caja.id = caja_desglose.caja_id')
+                ->where('caja_movimiento.fecha_mov >=', $fecha)
+                ->where('caja_movimiento.fecha_mov <', $fechadespues)
+                ->where('caja.moneda_id', $mon["id_moneda"])
+                ->where("(caja_movimiento.operacion = 'INGRESO_ANULADO')")
+                ->where('caja_desglose.estado', 1);
+
+            if ($id_local != 0) {
+                $this->db->where('caja.local_id', $id_local);
+            }
+
+            if ($id_usuario != 0) {
+                $this->db->where('caja_movimiento.usuario_id', $id_usuario);
+            }
+
+            $anulaciones = $this->db->get()->result();
+
+            foreach ($anulaciones as $anulacion) {
+                $detalle_ingreso[$anulacion->medio_pago]['importe'] += $anulacion->saldo;
+            }
+
+
             //COMPRAS AL CONTADO
             $this->db->select_sum('ingreso.total_ingreso', 'total')
                 ->from('ingreso')
@@ -417,9 +463,31 @@ class exportar extends MY_Controller
 
             $data['gasto'][$mon['id_moneda']] = $this->db->get()->row();
 
+            //ANULACIONES VENTAS
+            $this->db->select_sum('caja_movimiento.saldo', 'total')
+                ->from('caja_movimiento')
+                ->join('caja_desglose', 'caja_desglose.id = caja_movimiento.caja_desglose_id')
+                ->join('caja', 'caja.id = caja_desglose.caja_id')
+                ->where('caja_movimiento.fecha_mov >=', $fecha)
+                ->where('caja_movimiento.fecha_mov <', $fechadespues)
+                ->where('caja.moneda_id', $mon["id_moneda"])
+                ->where("(caja_movimiento.operacion = 'VENTA_ANULADA' OR caja_movimiento.operacion = 'VENTA_DEVUELTA')")
+                ->where('caja_desglose.estado', 1);
+
+            if ($id_local != 0) {
+                $this->db->where('caja.local_id', $id_local);
+            }
+
+            if ($id_usuario != 0) {
+                $this->db->where('caja_movimiento.usuario_id', $id_usuario);
+            }
+
+            $data['anulacion_egreso'][$mon['id_moneda']] = $this->db->get()->row();
+
+
+
 
             $data['detalle_ingreso'][$mon['id_moneda']] = $detalle_ingreso;
-
 
             //EGRESO EFECTIVO Y CHEQUE
             $this->db->select_sum('caja_movimiento.saldo', 'total')
