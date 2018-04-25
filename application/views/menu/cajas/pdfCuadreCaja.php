@@ -92,12 +92,14 @@
 
     $total_ingresos = $venta_contado[$moneda['id_moneda']]->total
         + $venta_inicial[$moneda['id_moneda']]->total
+        + $anulacion_ingreso[$moneda['id_moneda']]->total
 //        + $venta_credito[$moneda['id_moneda']]->total
         + $cobranza_cuota[$moneda['id_moneda']]->total;
 
     $total_egresos = $compra_contado[$moneda['id_moneda']]->total
         + $pagos_cuota[$moneda['id_moneda']]->total
         + $gasto[$moneda['id_moneda']]->total
+        + $anulacion_egreso[$moneda['id_moneda']]->total
         + $credito_inicial;
 
     ?>
@@ -144,6 +146,10 @@
                 <td style="text-align: right;"><?= $moneda['simbolo'] ?> <?= $cobranza_cuota[$moneda['id_moneda']]->total != NULL ? number_format($cobranza_cuota[$moneda['id_moneda']]->total, 2) : 0 ?></td>
             </tr>
             <tr>
+                <td>OPERACIONES ANULADAS</td>
+                <td style="text-align: right;"><?= $moneda['simbolo'] ?> <?= $anulacion_ingreso[$moneda['id_moneda']]->total != NULL ? $anulacion_ingreso[$moneda['id_moneda']]->total : 0 ?></td>
+            </tr>
+            <tr>
                 <td colspan="2" style="font-weight: bold; padding-left: 10px;">DETALLE POR MEDIO DE PAGO</td>
             </tr>
             <?php foreach ($metodos as $metodo): ?>
@@ -173,6 +179,10 @@
             <tr>
                 <td>GASTOS</td>
                 <td style="text-align: right;"><?= $moneda['simbolo'] ?> <?= $gasto[$moneda['id_moneda']]->total != NULL ? $gasto[$moneda['id_moneda']]->total : 0 ?></td>
+            </tr>
+            <tr>
+                <td>OPERACIONES ANULADAS</td>
+                <td style="text-align: right;"><?= $moneda['simbolo'] ?> <?= $anulacion_egreso[$moneda['id_moneda']]->total != NULL ? $anulacion_egreso[$moneda['id_moneda']]->total : 0 ?></td>
             </tr>
             <tr>
                 <td style="font-weight: bold;">TOTAL EGRESOS</td>
