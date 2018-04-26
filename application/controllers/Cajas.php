@@ -316,7 +316,7 @@ class cajas extends MY_Controller
                     'movimiento' => 'INGRESO'
                 ))->row();
 
-                $data_mov['medio_pago'] = $movimiento->medio_pago;
+                $data_mov['medio_pago'] = $caja_pendiente->ref_val != "" ? $caja_pendiente->ref_val : $movimiento->medio_pago;
             }
 
             if ($caja_pendiente->tipo == 'PAGOS_CUOTAS') {

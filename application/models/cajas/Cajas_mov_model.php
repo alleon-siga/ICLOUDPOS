@@ -38,7 +38,7 @@ class cajas_mov_model extends CI_Model
             ->where('caja_movimiento.caja_desglose_id', $cuenta_id)
             ->where('caja_movimiento.created_at >=', $data['fecha_ini'])
             ->where('caja_movimiento.created_at <=', $data['fecha_fin'])
-            ->order_by('caja_movimiento.created_at', 'ASC');
+            ->order_by('caja_movimiento.id', 'ASC');
 
         $movimientos = $this->db->get()->result();
 
@@ -125,7 +125,7 @@ class cajas_mov_model extends CI_Model
             }
 
             if ($mov->operacion == 'CUOTA') {
-                $mov->operacion_nombre = 'PAGO DE DEUDA';
+                $mov->operacion_nombre = 'CUENTA X COBRAR';
 
                 $venta = $this->db->get_where('venta', array('venta_id' => $mov->ref_id))->row();
                 $doc = 'NP ';
