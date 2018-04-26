@@ -386,19 +386,22 @@ class reporte_model extends CI_Model
 
     function getHojaColecta($params)
     {
-        $local_id = $marca_id = $grupo_id = $familia_id = $linea_id = $producto_id = '';
+        $local_id = $marca_id = $grupo_id = $familia_id = $linea_id = $producto_id = $operador_id = '';
         $usu = $this->session->userdata('nUsuCodigo');
         $local_id .= ($params['local_id']>0)? " AND v.local_id=".$params['local_id'] : "";
         $marca_id .= ($params['marca_id']>0)? " AND p.producto_marca=".$params['marca_id'] : "";
         $grupo_id .= ($params['grupo_id']>0)? " AND p.produto_grupo=".$params['grupo_id'] : "";
         $familia_id .= ($params['familia_id']>0)? " AND p.producto_familia=".$params['familia_id'] : "";
         $linea_id .= ($params['linea_id']>0)? " AND p.producto_linea=".$params['linea_id'] : "";
+        $operador_id .= ($params['operador_id']>0)? " AND r.rec_ope=".$params['operador_id'] : "";
         $producto_id .= ($params['producto_id']!='')? " AND p.producto_id IN(".implode(",", $params['producto_id']).")" : "";
-        $search = $local_id.$marca_id.$grupo_id.$familia_id.$linea_id.$producto_id;
+        $search = $local_id.$marca_id.$grupo_id.$familia_id.$linea_id.$operador_id.$producto_id;
 
-        $this->db->select('v.venta_id, c.razon_social, v.serie, v.numero, p.producto_nombre, dv.cantidad, dv.precio, dv.detalle_importe, l.local_nombre, d.abr_doc, m.simbolo, v.fecha, v.nota');
+        $this->db->select('v.venta_id, c.razon_social, v.serie, v.numero, p.producto_nombre, dv.cantidad, dv.precio, dv.detalle_importe, l.local_nombre, d.abr_doc, m.simbolo, v.fecha, v.nota, dt.valor');
         $this->db->from('detalle_venta dv');
         $this->db->join('venta v', 'v.venta_id=dv.id_venta');
+        $this->db->join('recarga r', 'v.venta_id = r.id_venta', 'left');
+        $this->db->join('diccionario_termino dt', 'r.rec_ope = dt.id', 'left');
         $this->db->join('documentos d', 'v.id_documento = d.id_doc');
         $this->db->join('moneda m', 'v.id_moneda = m.id_moneda');
         $this->db->join('producto p', 'dv.id_producto=p.producto_id');
@@ -407,6 +410,33 @@ class reporte_model extends CI_Model
         $this->db->join('usuario_almacen ua', "v.local_id = ua.local_id AND ua.usuario_id = $usu");
         $this->db->where("v.venta_status='COMPLETADO' AND v.fecha >= '".$params['fecha_ini']."' AND v.fecha <= '".$params['fecha_fin']."' $search");
         $this->db->order_by('v.local_id, v.venta_id DESC');
+        return $this->db->get()->result();
+    }
+
+    function getPagosRecarga($params)
+    {
+        $this->db->select("v.venta_id, v.fecha, c.razon_social, c.nota, r.rec_nro, r.rec_trans, v.total, cca.fecha_abono, cca.monto_abono, l.local_nombre, IF(v.condicion_pago=2,'CREDITO', 'CONTADO') AS condicion, v.condicion_pago, cru.ispagado, dt.valor");
+        $this->db->from('venta v');
+        $this->db->join('detalle_venta dv', 'v.venta_id = dv.id_venta');
+        $this->db->join('cliente c', 'c.id_cliente = v.id_cliente');
+        $this->db->join('local l', 'v.local_id = l.int_local_id');
+        $this->db->join('recarga r', 'v.venta_id = r.id_venta');
+        $this->db->join('diccionario_termino dt', 'r.rec_ope = dt.id');
+        $this->db->join('credito cr', 'v.venta_id = cr.id_venta', 'left');
+        $this->db->join('credito_cuotas cru', 'v.venta_id = cru.id_venta', 'left');
+        $this->db->join('credito_cuotas_abono cca', 'cru.id_credito_cuota = cca.credito_cuota_id', 'left');
+        if($params['local_id']>0) 
+            $this->db->where('v.local_id = '.$params['local_id']);
+        if(!empty($params['fecha_ini']) && !empty($params['fecha_fin'])) 
+            $this->db->where("v.fecha >= '".$params['fecha_ini']."' AND v.fecha <= '".$params['fecha_fin']."'");
+        if($params['condicion_pago']>0)
+            $this->db->where('v.condicion_pago = '.$params['condicion_pago']);
+        if($params['estado_pago']==1){ //deben
+            $this->db->where('ispagado = 0');
+        }elseif($params['estado_pago']==2){ //Cancelado
+            $this->db->where('(ispagado = 1 OR ispagado IS NULL)');
+        }
+
         return $this->db->get()->result();
     }
 }

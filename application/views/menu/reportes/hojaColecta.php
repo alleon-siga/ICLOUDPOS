@@ -130,6 +130,13 @@
                     <input type="text" id="fecha" class="form-control" readonly style="cursor: pointer;" name="fecha" value="<?= date('d/m/Y') ?> - <?= date('d/m/Y') ?>"/>
                 </div>
                 <div class="col-md-2">
+                    <select name="operador_id" id="operador_id" class='form-control'>
+                        <option value="0">TODOS</option>
+                        <?php foreach ($operadore as $operador): ?>
+                            <option <?= $operador->id == $operador->valor ? 'selected="selected"' : '' ?>
+                                    value="<?= $operador->id ?>"><?= $operador->valor ?></option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>                
                 <div class="col-md-1">
                     <button id="btn_buscar" class="btn btn-default">
@@ -248,7 +255,8 @@
                         'grupo_id': $("#grupo_id").val(),
                         'marca_id': $("#marca_id").val(),
                         'linea_id': $("#linea_id").val(),
-                        'familia_id': $("#familia_id").val()
+                        'familia_id': $("#familia_id").val(),
+                        'operador_id': $('#operador_id').val()
                     };
 
                     $.ajax({

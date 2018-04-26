@@ -38,7 +38,7 @@
             <th>Cliente</th>
             <th># Comprobante</th>
             <th>Producto</th>
-            <th>Cantidad</th>
+            <th>Operador</th>
             <th>Precio unitario</th>
             <th>Importe</th>
         </tr>
@@ -65,7 +65,7 @@
             <td><?= $list->razon_social ?></td>
             <td><?= $list->abr_doc . ' ' . $list->serie . '-' . sumCod($list->numero, 6) ?></td>
             <td><?= $list->producto_nombre.' '.$list->nota ?></td>
-            <td><?= $list->cantidad ?></td>
+            <td><?= $list->valor ?></td>
             <td style="text-align: right;"><?= $list->simbolo ?> <?= number_format($list->precio, 2) ?></td>
             <td style="text-align: right;"><?= $list->simbolo ?> <?= number_format($list->detalle_importe, 2) ?></td>
         </tr>

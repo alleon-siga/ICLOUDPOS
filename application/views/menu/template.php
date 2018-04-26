@@ -547,7 +547,7 @@ $primary_nav = array(
             ),
             array(
                 'name' => 'Pagos',
-                'url' => $ruta . 'venta_new/pagosRecarga',
+                'url' => $ruta . 'reporte/pagosRecarga',
                 'icon' => 'fa fa-history',
                 'slug' => 'pagosRecarga'
             ),

@@ -10,6 +10,7 @@ class Reporte extends MY_Controller
             $this->load->model('producto/producto_model');
             $this->load->model('monedas/monedas_model');
             $this->load->model('reporte/reporte_model');
+            $this->load->model('diccionario_termino/diccionario_termino_model');
         }else{
             redirect(base_url(), 'refresh');
         }
@@ -687,6 +688,7 @@ class Reporte extends MY_Controller
                 $date_range = explode(" - ", $this->input->post('fecha'));
                 $params['fecha_ini'] = date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0])));
                 $params['fecha_fin'] = date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])));
+                $params['operador_id'] = $this->input->post('operador_id');
                 $data['lists'] = $this->reporte_model->getHojaColecta($params);
 
                 $this->load->view('menu/reportes/hojaColecta_list', $data);
@@ -718,7 +720,8 @@ class Reporte extends MY_Controller
                     'linea_id' => $params->linea_id,
                     'producto_id' => $params->producto_id,
                     'fecha_ini' => date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0]))),
-                    'fecha_fin' => date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])))
+                    'fecha_fin' => date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1]))),
+                    'operador_id' => $params->operador_id
                 );
 
                 $data['lists'] = $this->reporte_model->getHojaColecta($input);
@@ -748,7 +751,8 @@ class Reporte extends MY_Controller
                     'linea_id' => $params->linea_id,
                     'producto_id' => $params->producto_id,
                     'fecha_ini' => date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0]))),
-                    'fecha_fin' => date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])))
+                    'fecha_fin' => date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1]))),
+                    'operador_id' => $params->operador_id
                 );
 
                 $data['lists'] = $this->reporte_model->getHojaColecta($input);
@@ -776,7 +780,96 @@ class Reporte extends MY_Controller
                 $data['lineas'] = $this->db->get_where('lineas', array('estatus_linea' => 1))->result();
                 $data["productos"] = $this->producto_model->get_productos_list2();
                 $data['barra_activa'] = $this->db->get_where('columnas', array('id_columna' => 36))->row();
+                $data['operadore'] = $this->diccionario_termino_model->get_all_operador();
                 $dataCuerpo['cuerpo'] = $this->load->view('menu/reportes/hojaColecta', $data, true);
+                if ($this->input->is_ajax_request()) {
+                    echo $dataCuerpo['cuerpo'];
+                } else {
+                    $this->load->view('menu/template', $dataCuerpo);
+                }
+                break;
+            }
+        }        
+    }
+
+    function pagosRecarga($action = '')
+    {
+        switch ($action) {
+            case 'filter': {
+                $params['local_id'] = $this->input->post('local_id');
+                $date_range = explode(" - ", $this->input->post('fecha'));
+                $params['fecha_ini'] = date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0])));
+                $params['fecha_fin'] = date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])));
+                $params['condicion_pago'] = $this->input->post('condicion_pago');
+                $params['estado_pago'] = $this->input->post('estado_pago');
+                $data['condicion_pago'] = $params['condicion_pago'];
+                $data['estado_pago'] = $params['estado_pago'];
+                $data['lists'] = $this->reporte_model->getPagosRecarga($params);
+
+                $this->load->view('menu/reportes/pagosRecarga_list', $data);
+                break;
+            }
+            case 'pdf': {
+                $params = json_decode($this->input->get('data'));
+                $date_range = explode(' - ', $params->fecha);
+                $input = array(
+                    'local_id' => $params->local_id,
+                    'fecha_ini' => date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0]))),
+                    'fecha_fin' => date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1]))),
+                    'estado_pago' => $params->estado_pago,
+                    'condicion_pago' => $params->condicion_pago
+                );
+
+                $data['lists'] = $this->reporte_model->getPagosRecarga($input);
+
+                $local = $this->db->get_where('local', array('int_local_id' => $input['local_id']))->row();
+                $data['local_nombre'] = !empty($local->local_nombre)? $local->local_nombre: 'TODOS';
+                $data['local_direccion'] = !empty($local->direccion)? $local->direccion: 'TODOS';
+
+                $data['fecha_ini'] = $input['fecha_ini'];
+                $data['fecha_fin'] = $input['fecha_fin'];
+                $data['condicion_pago'] = $input['condicion_pago'];
+                $data['estado_pago'] = $input['estado_pago'];
+                $this->load->library('mpdf53/mpdf');
+                $mpdf = new mPDF('utf-8', 'A4-L', 0, '', 5, 5, 5, 5, 5, 5);
+                $html = $this->load->view('menu/reportes/pagosRecarga_list_pdf', $data, true);
+                $mpdf->WriteHTML($html);
+                $mpdf->Output();
+                break;
+            }
+            case 'excel': {
+                $params = json_decode($this->input->get('data'));
+                $date_range = explode(' - ', $params->fecha);
+                $input = array(
+                    'local_id' => $params->local_id,
+                    'fecha_ini' => date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0]))),
+                    'fecha_fin' => date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1]))),
+                    'estado_pago' => $params->estado_pago,
+                    'condicion_pago' => $params->condicion_pago
+                );
+
+                $data['lists'] = $this->reporte_model->getPagosRecarga($input);
+
+                $local = $this->db->get_where('local', array('int_local_id' => $input['local_id']))->row();
+                $data['local_nombre'] = !empty($local->local_nombre)? $local->local_nombre: 'TODOS';
+                $data['local_direccion'] = !empty($local->direccion)? $local->direccion: 'TODOS';
+
+                $data['fecha_ini'] = $input['fecha_ini'];
+                $data['fecha_fin'] = $input['fecha_fin'];
+                $data['condicion_pago'] = $input['condicion_pago'];
+                $data['estado_pago'] = $input['estado_pago'];
+                echo $this->load->view('menu/reportes/pagosRecarga_list_excel', $data, true);
+                break;
+            }
+            default: {
+                if ($this->session->userdata('esSuper') == 1) {
+                    $data['locales'] = $this->local_model->get_all();
+                } else {
+                    $usu = $this->session->userdata('nUsuCodigo');
+                    $data['locales'] = $this->local_model->get_all_usu($usu);
+                }
+                $data['condiciones_pagos'] = $this->db->get_where('condiciones_pago', array('status_condiciones' => 1))->result();
+                $dataCuerpo['cuerpo'] = $this->load->view('menu/reportes/pagosRecarga', $data, true);
                 if ($this->input->is_ajax_request()) {
                     echo $dataCuerpo['cuerpo'];
                 } else {

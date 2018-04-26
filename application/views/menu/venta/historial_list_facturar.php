@@ -16,7 +16,7 @@
                     <hr class="hr-margin-5">
                     <div class="row">
                         <div class="col-md-4"><label class="control-label">Cliente:</label></div>
-                        <div class="col-md-8"><?= sumCod($venta->cliente_nombre, 6) ?></div>
+                        <div class="col-md-8"><?= $venta->cliente_nombre ?></div>
                     </div>
                     <hr class="hr-margin-5">
                     <div class="row">

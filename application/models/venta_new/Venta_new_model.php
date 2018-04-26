@@ -1179,7 +1179,7 @@ class venta_new_model extends CI_Model
             'id_vendedor' => $venta['id_usuario'],
             'condicion_pago' => $venta['condicion_pago'],
             'id_moneda' => $venta['id_moneda'],
-            'venta_status' => 'COMPLETADO',
+            'venta_status' => $venta['venta_status'],
             'fecha' => date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $venta['fecha_venta']) . date(" H:i:s"))),
             'factura_impresa' => 0,
             'subtotal' => number_format($venta['total_importe'] / 1.18, 2),
@@ -1189,12 +1189,19 @@ class venta_new_model extends CI_Model
             'vuelto' => $venta['vc_vuelto'],
             'tasa_cambio' => 0,
             'dni_garante' => null,
-            'inicial' => null,
+            'inicial' => 0,
             'tipo_impuesto' => 1,
             'comprobante_id' => 0,
             'nota' => null,
-            'dni_garante' => null
+            'dni_garante' => null,
         );
+        if($venta['condicion_pago'] == '1'){
+            $correlativo = $this->correlativos_model->get_correlativo($venta['local_id'], 6);
+            $data['fecha_facturacion'] = date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $venta['fecha_venta']) . date(" H:i:s")));
+            $data['serie'] = $correlativo->serie;
+            $data['numero'] = $correlativo->correlativo;
+            $this->correlativos_model->sumar_correlativo($venta['local_id'], 6);
+        }
         //inserto la venta
         $this->db->insert('venta', $data);
         $venta_id = $this->db->insert_id();
@@ -1214,14 +1221,73 @@ class venta_new_model extends CI_Model
         //inserto en detalle
         $this->db->insert('detalle_venta', $data);
 
+        if($venta['condicion_pago']==2){ //Al credito
+            $data = array(
+                'id_venta' => $venta_id,
+                'int_credito_nrocuota' => 1,
+                'dec_credito_montocuota' => number_format($venta['total_importe'], 2),
+                'var_credito_estado' => 'PagoPendiente',
+                'id_moneda' => $venta['id_moneda'],
+                'tasa_cambio' => 0
+            );
+            $this->db->insert('credito', $data);
+
+            $data = array(
+                'nro_letra' => '1 / 1',
+                'fecha_giro' => date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $venta['fecha_venta']) . date(" H:i:s"))),
+                'fecha_vencimiento' => date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $venta['fecha_venta']) . date(" H:i:s"))),
+                'monto' => number_format($venta['total_importe'], 2),
+                'isgiro' => '0',
+                'id_venta' => $venta_id,
+                'ispagado' => '0'
+            );
+            $this->db->insert('credito_cuotas', $data);
+        }else{
+            if ($venta['vc_forma_pago'] == 4 || $venta['vc_forma_pago'] == 8 || $venta['vc_forma_pago'] == 9 || $venta['vc_forma_pago'] == 7) {
+                $banco = $this->db->get_where('banco', array('banco_id' => $venta['vc_banco_id']))->row();
+                $cuenta_id = $banco->cuenta_id;
+            } else {
+                $cuenta_id = $this->cajas_model->get_cuenta_id(array(
+                    'moneda_id' => $venta['id_moneda'],
+                    'local_id' => $venta['local_id']));
+            }
+
+            if ($cuenta_id == NULL) {
+                $this->error = 'No existe una cuenta para este local';
+                return false;
+            }
+
+            $cuenta_old = $this->cajas_model->get_cuenta($cuenta_id);
+
+            $this->cajas_model->update_saldo($cuenta_id, $venta['total_importe']);
+
+            $this->cajas_mov_model->save_mov(array(
+                'caja_desglose_id' => $cuenta_id,
+                'usuario_id' => $venta['id_usuario'],
+                'fecha_mov' => date('Y-m-d H:i:s'),
+                'movimiento' => 'INGRESO',
+                'operacion' => 'VENTA',
+                'medio_pago' => $venta['vc_forma_pago'],
+                'saldo' => $venta['total_importe'],
+                'saldo_old' => $cuenta_old->saldo,
+                'ref_id' => $venta_id,
+                'ref_val' => NULL
+            ));
+        }
+
         $data = array(
             'id_venta' => $venta_id,
             'rec_trans' => $venta['cod_tran'],
             'rec_nro' => $venta['rec_nro'],
-            'rec_ope' => $venta['rec_ope']
+            'rec_ope' => $venta['rec_ope'],
+            'rec_pob' => $venta['rec_pob'],
         );
         //inserto la recarga
         $this->db->insert('recarga', $data);
+        //Actualizo cliente
+        $update['nota'] = $venta['nota'];
+        $this->db->where('id_cliente', $venta['id_cliente']);
+        $this->db->update('cliente', $update);
         return $venta_id;
     }
 }

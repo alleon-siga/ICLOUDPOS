@@ -216,6 +216,12 @@
                             <h4>Datos Adicionales</h4>
                             <div class="row">
                                 <div class="col-md-4">
+                                    <label class="control-label panel-admin-text">Nota</label>
+                                    <input type="text" name="tienda" value="<?php if (isset($cliente['nota'])) echo  $cliente['nota']; ?>" id="tienda" class="form-control" data-placeholder="Tienda"  />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
                                     <label class="control-label panel-admin-text">Departamento</label>
                                     <select name="estado_id" id="estado_id" required="true" class="chosen form-control" onchange="region.actualizardistritos();">
                                         <option value="">Seleccione</option>
@@ -226,8 +232,7 @@
                                     </select>
                                 </div>
                                 <div class="col-md-4">
-                                    <label class="control-label panel-admin-text">
-                                    </label>
+                                    <label class="control-label panel-admin-text">Provincia</label>
                                     <select name="ciudad_id" id="ciudad_id" required="true" class="chosen form-control" onchange="region.actualizarbarrio();">
                                         <option value="">Seleccione</option>
                                 <?php //if (isset($cliente['id_cliente'])): ?>
