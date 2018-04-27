@@ -88,6 +88,7 @@ $(document).ready(function(){
                 var data = JSON.parse(data);
                 $('#tienda').val(data.nota);
                 $('#nro_recarga').val(data.telefono1);
+                $('#poblado_id').val(data.id_grupos_cliente);
                 $('#cod_tran').focus();
             }
         });
@@ -128,6 +129,10 @@ function save_venta_contado(imprimir){
     $("#dialog_venta_contado").modal('hide');
     $('.save_venta_contado').attr('disabled', 'disabled');
 
+    $("#vc_num_oper2").attr('value', $('#vc_num_oper').val());
+    $("#vc_forma_pago2").attr('value', $('#vc_forma_pago').val());
+    $("#vc_banco_id2").attr('value', $('#vc_banco_id').val());
+
     $.ajax({
         url: ruta + 'venta_new/save_recarga/',
         type: 'POST',
@@ -158,14 +163,40 @@ function save_venta_contado(imprimir){
 }
 
 function save_venta_credito(imprimir){
-    save_venta_contado(imprimir);
+
+    $.ajax({
+        url: ruta + 'venta_new/save_recarga/',
+        type: 'POST',
+        dataType: 'json',
+        data: $('#frmRecarga').serialize(),
+        success: function (data) {
+            if (data.success == '1') {
+                show_msg('success', '<h4>Imprimiendo. </h4><p>La venta numero ' + data.venta.venta_id + ' se ha pagado con exito.</p>');
+                if (imprimir == '1') {
+                    let url = ruta + 'venta_new/imprimir/' + data.venta.venta_id + '/PEDIDO';
+                    $("#imprimir_frame").attr('src', url);
+                    document.frmRecarga.reset();
+                }
+            }else{
+                if (data.msg)
+                    show_msg('danger', '<h4>Error. </h4><p>' + data.msg + '</p>');
+                else
+                    show_msg('danger', '<h4>Error. </h4><p>Ha ocurrido un error insperado al guardar la venta.</p>');
+            }
+        },
+        error: function (data) {
+            show_msg('danger', '<h4>Error. </h4><p>Ha ocurrido un error insperado al guardar la venta.</p>');
+        },
+        complete: function (data) {
+            $('.save_venta_contado').removeAttr('disabled');
+        }
+    });
 }
 
 function terminar_venta(){
     var importe = $('#total_importe').val();
     var nro_recarga = $('#nro_recarga').val();
     var cod_tran = $('#cod_tran').val();
-
     if($.trim(importe)==''){
         show_msg('warning', '<h4>Advertencia. </h4><p>El importe es requerido</p>');
         setTimeout(function () {
@@ -202,21 +233,23 @@ function terminar_venta(){
         return false;
     }
 
-    $("#dialog_venta_contado").html($("#loading").html());
-    $('#dialog_venta_contado').modal('show');
+    if($('#tipo_pago').val()==1){
+        $("#dialog_venta_contado").html($("#loading").html());
+        $('#dialog_venta_contado').modal('show');
 
-    $("#dialog_venta_contado").load(ruta + 'venta_new/dialog_venta_contado', function(){
-        let num = parseFloat($('#total_importe').val());
-        $('#vc_total_pagar').attr('value', num.toFixed(2));
-        $('#vc_importe2').attr('value', $('#vc_importe').val());
-        $('#vc_vuelto2').attr('value', $('#vc_vuelto').val());
-        $('#contado_tipo_pago').attr('value', $('#tipo_pago').val());
-        $("#vc_forma_pago2").attr('value', $('#vc_forma_pago').val());
-        $("#vc_banco_id2").attr('value', $('#vc_banco_id').val());
-        if($('#tipo_pago').val()==1){
-            $('#vc_importe').attr('value', num.toFixed(2));
-        }else{
-            $('#vc_importe').attr('value', 0);
-        }
-    });     
+        $("#dialog_venta_contado").load(ruta + 'venta_new/dialog_venta_contado', function(){
+            let num = parseFloat($('#total_importe').val());
+            $('#vc_total_pagar').attr('value', num.toFixed(2));
+            $('#vc_importe2').attr('value', $('#vc_importe').val());
+            $('#vc_vuelto2').attr('value', $('#vc_vuelto').val());
+            $('#contado_tipo_pago').attr('value', $('#tipo_pago').val());
+            if($('#tipo_pago').val()==1){
+                $('#vc_importe').attr('value', num.toFixed(2));
+            }else{
+                $('#vc_importe').attr('value', 0);
+            }
+        });
+    }else{
+        save_venta_credito(1);
+    }   
 }

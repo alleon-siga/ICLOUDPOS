@@ -10,7 +10,9 @@ class Reporte extends MY_Controller
             $this->load->model('producto/producto_model');
             $this->load->model('monedas/monedas_model');
             $this->load->model('reporte/reporte_model');
+            $this->load->model('usuario/usuario_model');
             $this->load->model('diccionario_termino/diccionario_termino_model');
+            $this->load->model('clientesgrupos/clientes_grupos_model');
         }else{
             redirect(base_url(), 'refresh');
         }
@@ -689,26 +691,12 @@ class Reporte extends MY_Controller
                 $params['fecha_ini'] = date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0])));
                 $params['fecha_fin'] = date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])));
                 $params['operador_id'] = $this->input->post('operador_id');
+                $params['usuario_id'] = $this->input->post('usuario_id');
                 $data['lists'] = $this->reporte_model->getHojaColecta($params);
 
                 $this->load->view('menu/reportes/hojaColecta_list', $data);
                 break;
             }
-            /*case 'grafico': {
-                $params['local_id'] = $this->input->post('local_id');
-                $params['marca_id'] = $this->input->post('marca_id');
-                $params['grupo_id'] = $this->input->post('grupo_id');
-                $params['familia_id'] = $this->input->post('familia_id');
-                $params['linea_id'] = $this->input->post('linea_id');
-                $params['producto_id'] = $this->input->post('producto_id');
-                $date_range = explode(" - ", $this->input->post('fecha'));
-                $params['fecha_ini'] = date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0])));
-                $params['fecha_fin'] = date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])));
-                $params['limit'] = $this->input->post('limit');
-                $data['lists'] = $this->reporte_model->getHojaColecta($params);
-                echo json_encode($data);
-                break;
-            }*/
             case 'pdf': {
                 $params = json_decode($this->input->get('data'));
                 $date_range = explode(' - ', $params->fecha);
@@ -768,10 +756,10 @@ class Reporte extends MY_Controller
                 break;
             }
             default: {
+                $usu = $this->session->userdata('nUsuCodigo');
                 if ($this->session->userdata('esSuper') == 1) {
                     $data['locales'] = $this->local_model->get_all();
                 } else {
-                    $usu = $this->session->userdata('nUsuCodigo');
                     $data['locales'] = $this->local_model->get_all_usu($usu);
                 }
                 $data['marcas'] = $this->db->get_where('marcas', array('estatus_marca' => 1))->result();
@@ -781,6 +769,11 @@ class Reporte extends MY_Controller
                 $data["productos"] = $this->producto_model->get_productos_list2();
                 $data['barra_activa'] = $this->db->get_where('columnas', array('id_columna' => 36))->row();
                 $data['operadore'] = $this->diccionario_termino_model->get_all_operador();
+                if ($this->session->userdata('grupo') == 8) { //perfil de vendedor
+                    $data['usuarios'] = $this->usuario_model->buscar_id($usu);
+                }else{
+                    $data['usuarios'] = $this->usuario_model->select_all_user();
+                }
                 $dataCuerpo['cuerpo'] = $this->load->view('menu/reportes/hojaColecta', $data, true);
                 if ($this->input->is_ajax_request()) {
                     echo $dataCuerpo['cuerpo'];
@@ -800,9 +793,8 @@ class Reporte extends MY_Controller
                 $date_range = explode(" - ", $this->input->post('fecha'));
                 $params['fecha_ini'] = date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0])));
                 $params['fecha_fin'] = date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])));
-                $params['condicion_pago'] = $this->input->post('condicion_pago');
                 $params['estado_pago'] = $this->input->post('estado_pago');
-                $data['condicion_pago'] = $params['condicion_pago'];
+                $params['poblado_id'] = $this->input->post('poblado_id');
                 $data['estado_pago'] = $params['estado_pago'];
                 $data['lists'] = $this->reporte_model->getPagosRecarga($params);
 
@@ -817,7 +809,7 @@ class Reporte extends MY_Controller
                     'fecha_ini' => date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0]))),
                     'fecha_fin' => date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1]))),
                     'estado_pago' => $params->estado_pago,
-                    'condicion_pago' => $params->condicion_pago
+                    'poblado_id' => $params->poblado_id,
                 );
 
                 $data['lists'] = $this->reporte_model->getPagosRecarga($input);
@@ -845,7 +837,7 @@ class Reporte extends MY_Controller
                     'fecha_ini' => date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0]))),
                     'fecha_fin' => date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1]))),
                     'estado_pago' => $params->estado_pago,
-                    'condicion_pago' => $params->condicion_pago
+                    'poblado_id' => $params->poblado_id,
                 );
 
                 $data['lists'] = $this->reporte_model->getPagosRecarga($input);
@@ -856,7 +848,6 @@ class Reporte extends MY_Controller
 
                 $data['fecha_ini'] = $input['fecha_ini'];
                 $data['fecha_fin'] = $input['fecha_fin'];
-                $data['condicion_pago'] = $input['condicion_pago'];
                 $data['estado_pago'] = $input['estado_pago'];
                 echo $this->load->view('menu/reportes/pagosRecarga_list_excel', $data, true);
                 break;
@@ -869,6 +860,7 @@ class Reporte extends MY_Controller
                     $data['locales'] = $this->local_model->get_all_usu($usu);
                 }
                 $data['condiciones_pagos'] = $this->db->get_where('condiciones_pago', array('status_condiciones' => 1))->result();
+                $data['poblados'] = $this->clientes_grupos_model->get_all();
                 $dataCuerpo['cuerpo'] = $this->load->view('menu/reportes/pagosRecarga', $data, true);
                 if ($this->input->is_ajax_request()) {
                     echo $dataCuerpo['cuerpo'];

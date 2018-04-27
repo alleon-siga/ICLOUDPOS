@@ -15,12 +15,4 @@ class diccionario_termino_model extends CI_Model {
     	$this->db->where('grupo=3 AND activo=1');
     	return $this->db->get()->result();
     }
-
-    function get_all_poblado()
-    {
-        $this->db->select('id, valor');
-        $this->db->from('diccionario_termino');
-        $this->db->where('grupo=5 AND activo=1');
-        return $this->db->get()->result();
-    }
  }

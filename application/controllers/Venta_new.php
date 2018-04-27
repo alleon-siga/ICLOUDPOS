@@ -22,6 +22,7 @@ class venta_new extends MY_Controller
             $this->load->model('cotizar/cotizar_model');
             $this->load->model('metodosdepago/metodos_pago_model');
             $this->load->model('diccionario_termino/diccionario_termino_model');
+            $this->load->model('clientesgrupos/clientes_grupos_model');
         } else {
             redirect(base_url(), 'refresh');
         }
@@ -118,8 +119,9 @@ class venta_new extends MY_Controller
         $data['venta'] = $this->venta->get_venta_detalle($venta_id);
         $data['venta_action'] = $action;
         $data['detalle'] = 'venta';
-        $this->db->select('serie, numero');
+        $this->db->select('serie, numero, fecha, nombre');
         $this->db->from('kardex');
+        $this->db->join('usuario', 'kardex.usuario_id = usuario.nUsuCodigo');
         $this->db->where(array('ref_id' => $venta_id, 'io' => 2, 'tipo' => 7, 'operacion' => 5));
         $this->db->group_by('serie, numero');
         $data['kardex'] = $this->db->get()->result();
@@ -758,7 +760,7 @@ class venta_new extends MY_Controller
         $data['locales'] = $this->local_model->get_local_by_user($this->session->userdata('nUsuCodigo'));
         $data["clientes"] = $this->cliente_model->get_all();
         $data['operadore'] = $this->diccionario_termino_model->get_all_operador();
-        $data['poblados'] = $this->diccionario_termino_model->get_all_poblado();
+        $data['poblados'] = $this->clientes_grupos_model->get_all();
         $data['monedas'] = $this->monedas_model->get_monedas_activas();
         $data['condPagos'] = $this->condiciones_pago_model->get_all();
         $dataCuerpo['cuerpo'] = $this->load->view('menu/venta/recarga', $data, true);
@@ -787,6 +789,7 @@ class venta_new extends MY_Controller
         $venta['nota'] = $this->input->post('tienda');
         $venta['vc_forma_pago'] = $this->input->post('vc_forma_pago2');
         $venta['vc_banco_id'] = $this->input->post('vc_banco_id2');
+        $venta['vc_num_oper'] = $this->input->post('vc_num_oper2');
         $venta['venta_status'] = 'COMPLETADO';
         $venta_id = false;
         if($venta['condicion_pago']==2 && $venta['id_cliente']==1){

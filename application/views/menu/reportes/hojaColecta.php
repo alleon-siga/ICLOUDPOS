@@ -115,7 +115,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <?php if (isset($locales)): ?>
                         <select id="local_id" class="form-control filter-input">
                             <option value="0">TODOS</option>
@@ -126,7 +126,7 @@
                         </select>
                     <?php endif; ?>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <input type="text" id="fecha" class="form-control" readonly style="cursor: pointer;" name="fecha" value="<?= date('d/m/Y') ?> - <?= date('d/m/Y') ?>"/>
                 </div>
                 <div class="col-md-2">
@@ -137,7 +137,19 @@
                                     value="<?= $operador->id ?>"><?= $operador->valor ?></option>
                         <?php endforeach; ?>
                     </select>
-                </div>                
+                </div>
+                <div class="col-md-2">
+                    <select name="usuario_id" id="usuario_id" class='form-control'>
+                    <?php if(isset($usuarios->nUsuCodigo)){ ?>
+                        <option value="<?= $usuarios->nUsuCodigo ?>"><?= $usuarios->nombre ?></option>
+                    <?php }else{ ?>
+                        <option value="0">TODOS</option>
+                        <?php foreach ($usuarios as $usuario): ?>
+                            <option value="<?= $usuario->nUsuCodigo ?>"><?= $usuario->nombre ?></option>
+                        <?php endforeach; ?>
+                    <?php } ?>
+                    </select>
+                </div>
                 <div class="col-md-1">
                     <button id="btn_buscar" class="btn btn-default">
                         <i class="fa fa-search"></i> Buscar
@@ -256,7 +268,8 @@
                         'marca_id': $("#marca_id").val(),
                         'linea_id': $("#linea_id").val(),
                         'familia_id': $("#familia_id").val(),
-                        'operador_id': $('#operador_id').val()
+                        'operador_id': $('#operador_id').val(),
+                        'usuario_id': $('#usuario_id').val()
                     };
 
                     $.ajax({

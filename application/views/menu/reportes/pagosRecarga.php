@@ -25,15 +25,14 @@
                 <div class="col-md-3">
                     <input type="text" id="fecha" class="form-control" readonly style="cursor: pointer;" name="fecha" value="<?= date('d/m/Y') ?> - <?= date('d/m/Y') ?>"/>
                 </div>
-                <!--<div class="col-md-2">
-                    <select name="condicion_pago" id="condicion_pago" class='form-control'>
+                <div class="col-md-2">
+                    <select name="poblado_id" id="poblado_id" class='form-control'>
                         <option value="0">Todos</option>
-                        <?php //foreach ($condiciones_pagos as $condicion): ?>
-                            <option value="<?= $condicion->id_condiciones ?>">
-                                <?= $condicion->nombre_condiciones ?></option>
-                        <?php //endforeach; ?>
+                        <?php foreach ($poblados as $poblado): ?>
+                            <option value="<?= $poblado['id_grupos_cliente'] ?>"><?= $poblado['nombre_grupos_cliente'] ?></option>
+                        <?php endforeach; ?>
                     </select>
-                </div>-->
+                </div>
                 <div class="col-md-2">
                     <input type="hidden" name="condicion_pago" id="condicion_pago" value="0">
                     <select name="estado_pago" id="estado_pago" class='form-control'>
@@ -118,8 +117,8 @@
                     var data = {
                         'local_id': $("#local_id").val(),
                         'fecha': $("#fecha").val(),
-                        'condicion_pago': $("#condicion_pago").val(),
-                        'estado_pago': $('#estado_pago').val()
+                        'estado_pago': $('#estado_pago').val(),
+                        'poblado_id': $('#poblado_id').val(),
                     };
 
                     $.ajax({

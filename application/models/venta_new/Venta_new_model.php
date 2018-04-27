@@ -1286,7 +1286,7 @@ class venta_new_model extends CI_Model
                 'saldo' => $venta['total_importe'],
                 'saldo_old' => $cuenta_old->saldo,
                 'ref_id' => $venta_id,
-                'ref_val' => NULL
+                'ref_val' => $venta['vc_num_oper']
             ));
         }
 

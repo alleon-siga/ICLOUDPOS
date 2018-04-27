@@ -77,20 +77,6 @@
         $("#exportar_pdf").on('click', function () {
             exportar_pdf();
         });
-
-        /*$('.nav-tabs a[href="#grafico"]').on('shown.bs.tab', function(event){
-            $("#grafico").html($("#loading").html());
-            var data = {
-                'local_id': $("#local_id").val(),
-                'fecha': $("#fecha").val(),
-                'producto_id': $("#producto_id").val(),
-                'grupo_id': $("#grupo_id").val(),
-                'marca_id': $("#marca_id").val(),
-                'linea_id': $("#linea_id").val(),
-                'familia_id': $("#familia_id").val(),
-                'limit': $(".dataTables_length select").val()
-            };
-        });*/
     });
 
     function exportar_pdf() {

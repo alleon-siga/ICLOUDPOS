@@ -20,6 +20,7 @@
                 <input type="hidden" id="moneda_id" name="moneda_id" value="<?= $md->id_moneda ?>">
                 <input type="hidden" id="vc_forma_pago2" name="vc_forma_pago2" value="">
                 <input type="hidden" id="vc_banco_id2" name="vc_banco_id2" value="">
+                <input type="hidden" id="vc_num_oper2" name="vc_num_oper2" value="">
                 <!-- SELECCION DEL LOCAL DE LA VENTA -->
                 <div class="col-md-12 block block-section">
                     <div class="row">
@@ -85,10 +86,9 @@
                             <label class="control-label panel-admin-text">Centro poblado:</label>
                         </div>
                         <div class="col-md-4">
-                            <select name="poblado_id" id="poblado_id" class='form-control ctrl'>
+                            <select name="poblado_id" id="poblado_id" class='form-control'>
                                 <?php foreach ($poblados as $poblado): ?>
-                                    <option <?= $poblado->id == $poblado->valor ? 'selected="selected"' : '' ?>
-                                            value="<?= $poblado->id ?>"><?= $poblado->valor ?></option>
+                                    <option value="<?= $poblado['id_grupos_cliente'] ?>"><?= $poblado['nombre_grupos_cliente'] ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>

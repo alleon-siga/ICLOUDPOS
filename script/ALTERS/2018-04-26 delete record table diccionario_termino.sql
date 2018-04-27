@@ -1,0 +1,1 @@
+delete from diccionario_termino where id in(10, 11);

@@ -23,69 +23,74 @@
             <th># Transacci&oacute;n</th>
             <th>Fecha recarga</th>
             <th>Monto Recarga</th>
-            <?php if($condicion_pago==2 || $condicion_pago==0){ ?><th>Fecha pago</th><?php } ?>
-            <?php if($condicion_pago==2 || $condicion_pago==0){ ?><th>Monto pagado</th><?php } ?>
+            <th>Fecha pago</th>
+            <th>Monto pagado</th>
             <th>Pendiente pago</th>
             <th>Local</th>
             <th>Condici&oacute;n</th>
-            <?php if($estado_pago==0){ ?><th>Estado</th><?php } ?>
+            <th>Estado</th>
         </tr>
     </thead>
-   <tbody>
+    <tbody>
     <?php $suma = 0;  ?>    
     <?php foreach ($lists as $list): ?>
-        <tr>
+    <?php
+        $fechaRecarga = $list->fecha;
+        $debe = 0;
+        $color = 'b-default';
+        $estado = 'Cancelado';
+        $fechaPago = $list->fecha;
+        $montoPagado = $list->total;
+        if($list->condicion_pago == 2){
+            $debe = $list->monto_restante;
+            if($debe == 0 && !empty($debe)){ //cuando no hay deuda
+                $color = 'b-default';
+                $estado = 'Cancelado';
+                $fechaPago = $list->fecha_abono;
+                $montoPagado = $list->monto_abono;
+            }elseif(empty($debe)){ //cuando no hay ningun pago
+                $debe = $list->total;
+                $color = 'b-warning';
+                $estado = 'Debe';
+                $fechaPago = '';
+                $montoPagado = 0;
+            }else{ //cuando hay deuda
+                $color = 'b-warning';
+                $estado = 'Debe';
+                $fechaPago = $list->fecha_abono;
+                $montoPagado = $list->monto_abono;
+            }
+        }
+        if(strtotime($fechaPago) == strtotime($fechaRecarga)){
+            $colorFila = "#9fa8da";
+        }else{
+            $colorFila = "#81d4fa";
+        }
+    ?>
+        <tr style="background-color: <?= $colorFila ?> !important">
             <td><?= $list->venta_id ?></td>
             <td><?= utf8_decode($list->razon_social) ?></td>
             <td><?= utf8_decode($list->nota) ?></td>
             <td><?= $list->valor ?></td>
             <td><?= $list->rec_nro ?></td>
             <td><?= $list->rec_trans ?></td>
-            <td><?= date('d/m/Y H:i', strtotime($list->fecha)) ?></td>
+            <td><?= date('d/m/Y H:i', strtotime($fechaRecarga)) ?></td>
+            <td style="text-align: right;"><?= $md->simbolo ?> <?= number_format($list->total, 2) ?></td>
+            <td><?php if(!empty($fechaPago)) echo date('d/m/Y H:i', strtotime($fechaPago)) ?></td>
+            <td style="text-align: right;"><?= $md->simbolo.' '.number_format($montoPagado, 2); ?></td>
             <td style="text-align: right;">
-                <?= $md->simbolo ?> <?= number_format($list->total, 2) ?>
-            </td>
-            <?php if($condicion_pago==2 || $condicion_pago==0){ ?>
-                <td>
-                <?php if(!empty($list->fecha_abono)){ ?>
-                    <?php echo date('d/m/Y H:i', strtotime($list->fecha_abono)); ?>
-                <?php }else{ ?>
-                    <?php echo date('d/m/Y H:i', strtotime($list->fecha)); ?>
-                <?php } ?>
-                </td>
-            <?php } ?>
-            <?php if($condicion_pago==2 || $condicion_pago==0){ ?>
-                <td style="text-align: right;">
-                    <?php if(!empty($list->monto_abono)){ ?>
-                        <?php echo $md->simbolo.' '.number_format($list->monto_abono, 2); ?>
-                    <?php }else{ ?>
-                        <?php echo $md->simbolo.' '.number_format($list->total, 2); ?>
-                    <?php } ?>
-                </td>
-            <?php } ?>
-            <td style="text-align: right;">
-                <label style="margin-bottom: 0px;">
-                <?php if(!empty($list->monto_abono)){ ?>
-                    <?= number_format($list->total - $list->monto_abono, 2) ?>
-                <?php }else{ ?>
-                    <?= number_format($list->total - $list->total, 2) ?>
-                <?php } ?>
+                <label style="margin-bottom: 0px;" class="control-label badge <?= $color ?>">
+                    <?= $md->simbolo.' '.number_format($debe, 2); ?>
                 </label>
             </td>
             <td><?= utf8_decode($list->local_nombre) ?></td>
             <td><?= utf8_decode($list->condicion) ?></td>
-            <?php if($estado_pago==0){ ?>
-                <?php if($list->ispagado == 1 OR $list->ispagado==''){ ?>
-                    <td>Cancelado</td>
-                <?php }elseif($list->ispagado == 0) { ?>
-                    <td>Debe</td>
-                <?php } ?>
-            <?php } ?>
-        </tr>
+            <td><?= $estado ?></td>
+        </tr>     
         <?php if(!empty($list->monto_abono)){ ?>
-            <?= $suma += $list->monto_abono ?>
-        <?php }else{ ?>
-            <?= $suma += $list->total ?>
+            <?php $suma += $list->monto_abono ?>
+        <?php }elseif($list->condicion_pago==1){ ?>
+            <?php $suma += $list->total ?>
         <?php } ?>
     <?php endforeach ?>
     </tbody>
