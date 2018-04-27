@@ -23,8 +23,12 @@
     }
 </style>
 <h4 style="text-align: center;">Reporte recargas virtuales</h4>
-<h4 style="text-align: center;">Desde <?= date('d/m/Y', strtotime($fecha_ini)) ?> al <?= date('d/m/Y', strtotime($fecha_fin)) ?> 
-    Hora: <?= date('H:i:s') ?></h4>
+<h4 style="text-align: center;">
+<?php if(isset($fecha_ini) && isset($fecha_fin)): ?>    
+    Desde <?= date('d/m/Y', strtotime($fecha_ini)) ?> al <?= date('d/m/Y', strtotime($fecha_fin)) ?> 
+    Hora: <?= date('H:i:s') ?>
+<?php endif; ?>
+</h4>
 
 <h5>EMPRESA: <?= valueOption('EMPRESA_NOMBRE') ?></h5>
 <h5>DIRECCI&Oacute;N: <?= $local_direccion ?></h5>
@@ -35,6 +39,7 @@
             <th># Venta</th>
             <th>Cliente</th>
             <th>Tienda</th>
+            <th>Usuario</th>
             <th>Operador</th>
             <th># Recarga</th>
             <th># Transacci&oacute;n</th>
@@ -49,7 +54,7 @@
         </tr>
     </thead>
     <tbody>
-    <?php $suma = 0;  ?>    
+    <?php $suma = $montoRecarga = $pendientePago = 0;  ?>
     <?php foreach ($lists as $list): ?>
     <?php
         $fechaRecarga = $list->fecha;
@@ -88,6 +93,7 @@
             <td><?= $list->venta_id ?></td>
             <td><?= utf8_decode($list->razon_social) ?></td>
             <td><?= utf8_decode($list->nota) ?></td>
+            <td><?= utf8_decode($list->nombre) ?></td>
             <td><?= $list->valor ?></td>
             <td><?= $list->rec_nro ?></td>
             <td><?= $list->rec_trans ?></td>
@@ -104,18 +110,24 @@
             <td><?= utf8_decode($list->condicion) ?></td>
             <td><?= $estado ?></td>
         </tr>     
-        <?php if(!empty($list->monto_abono)){ ?>
-            <?php $suma += $list->monto_abono ?>
-        <?php }elseif($list->condicion_pago==1){ ?>
-            <?php $suma += $list->total ?>
-        <?php } ?>
+        <?php 
+            if(!empty($list->monto_abono)){
+                $suma += $list->monto_abono;
+            }elseif($list->condicion_pago==1){
+                $suma += $list->total;
+            }
+            $montoRecarga += $list->total;
+            $pendientePago += $debe;
+        ?>
     <?php endforeach ?>
     </tbody>
     <tfoot>
         <tr>
-            <td colspan="9" style="text-align: right;">TOTAL</td>
-            <td style="text-align: right;"><?= $md->simbolo ?> <?= number_format($suma, 2) ?></td>
+            <td colspan="8" style="text-align: right;">TOTAL</td>
+            <td style="text-align: right;"><?= $md->simbolo ?> <?= number_format($montoRecarga, 2) ?></td>
             <td></td>
+            <td style="text-align: right; color: green;"><?= $md->simbolo ?> <?= number_format($suma, 2) ?></td>
+            <td style="text-align: right; color: red;"><?= $md->simbolo ?> <?= number_format($pendientePago, 2) ?></td>
             <td></td>
             <td></td>
             <td></td>

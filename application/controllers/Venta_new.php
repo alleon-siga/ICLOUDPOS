@@ -790,6 +790,7 @@ class venta_new extends MY_Controller
         $venta['vc_forma_pago'] = $this->input->post('vc_forma_pago2');
         $venta['vc_banco_id'] = $this->input->post('vc_banco_id2');
         $venta['vc_num_oper'] = $this->input->post('vc_num_oper2');
+        $venta['telefono1'] = $this->input->post('nro_recarga');
         $venta['venta_status'] = 'COMPLETADO';
         $venta_id = false;
         if($venta['condicion_pago']==2 && $venta['id_cliente']==1){

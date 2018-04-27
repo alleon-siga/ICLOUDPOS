@@ -1295,12 +1295,13 @@ class venta_new_model extends CI_Model
             'rec_trans' => $venta['cod_tran'],
             'rec_nro' => $venta['rec_nro'],
             'rec_ope' => $venta['rec_ope'],
-            'rec_pob' => $venta['rec_pob'],
+            'rec_pob' => $venta['rec_pob']
         );
         //inserto la recarga
         $this->db->insert('recarga', $data);
         //Actualizo cliente
         $update['nota'] = $venta['nota'];
+        $update['telefono1'] = $venta['telefono1'];
         $this->db->where('id_cliente', $venta['id_cliente']);
         $this->db->update('cliente', $update);
         return $venta_id;

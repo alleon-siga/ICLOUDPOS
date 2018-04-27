@@ -13,6 +13,7 @@
             <div class="row">
                 <div class="col-md-2">
                     <?php if (isset($locales)): ?>
+                        <label class="control-label panel-admin-text">Ubicación</label>
                         <select id="local_id" class="form-control">
                             <option value="0">TODOS</option>
                             <?php foreach ($locales as $local): ?>
@@ -23,27 +24,51 @@
                     <?php endif; ?>
                 </div>
                 <div class="col-md-3">
-                    <input type="text" id="fecha" class="form-control" readonly style="cursor: pointer;" name="fecha" value="<?= date('d/m/Y') ?> - <?= date('d/m/Y') ?>"/>
+                    <label class="control-label panel-admin-text">Fecha Registro</label>
+                    <div class="row">
+                        <div class="col-md-10">
+                            <input type="text" id="fecha" class="form-control" readonly style="cursor: pointer;" name="fecha" value="<?= date('d/m/Y') ?> - <?= date('d/m/Y') ?>"/>
+                        </div>
+                        <div class="col-md-2">
+                            <input class="form-control" type="checkbox" name="chkNoFecha" id="chkNoFecha" title="Considerar fecha" />
+                        </div>
+                    </div>
                 </div>
                 <div class="col-md-2">
+                    <label class="control-label panel-admin-text">Centro Poblado</label>
                     <select name="poblado_id" id="poblado_id" class='form-control'>
-                        <option value="0">Todos</option>
+                        <option value="0">TODOS</option>
                         <?php foreach ($poblados as $poblado): ?>
                             <option value="<?= $poblado['id_grupos_cliente'] ?>"><?= $poblado['nombre_grupos_cliente'] ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
                 <div class="col-md-2">
+                    <label class="control-label panel-admin-text">Condici&oacute;n de Pago</label>
                     <input type="hidden" name="condicion_pago" id="condicion_pago" value="0">
                     <select name="estado_pago" id="estado_pago" class='form-control'>
-                        <option value="0">Todos</option>
+                        <option value="0">TODOS</option>
                         <option value="1">Debe</option>
                         <option value="2">Cancelado</option>
                     </select>
                 </div>
                 <div class="col-md-2">
+                    <label class="control-label panel-admin-text">Usuario</label>
+                    <select name="usuario_id" id="usuario_id" class='form-control'>
+                    <?php if(isset($usuarios->nUsuCodigo)){ ?>
+                        <option value="<?= $usuarios->nUsuCodigo ?>"><?= $usuarios->nombre ?></option>
+                    <?php }else{ ?>
+                        <option value="0">TODOS</option>
+                        <?php foreach ($usuarios as $usuario): ?>
+                            <option value="<?= $usuario->nUsuCodigo ?>"><?= $usuario->nombre ?></option>
+                        <?php endforeach; ?>
+                    <?php } ?>
+                    </select>
+                </div>
+                <div class="col-md-1">
+                    <div style="padding-top: 30px;"></div>
                     <button id="btn_buscar" class="btn btn-default">
-                        <i class="fa fa-search"></i> Buscar
+                        <i class="fa fa-search"></i>
                     </button>
                 </div>
             </div>
@@ -66,6 +91,29 @@
             <!-- /.modal-dialog -->
             <script type="text/javascript">
                 $(document).ready(function () {
+                    $('#chkNoFecha').prop('checked', true);
+                    var fecha = $('#fecha').val();
+
+                    $('#estado_pago').on('change', function(){
+                        if($(this).val()==1){
+                            $('#chkNoFecha').prop('checked', false);
+                            fecha = $('#fecha').val();
+                            $('#fecha').val('');
+                        }else{
+                            $('#chkNoFecha').prop('checked', true);
+                            $('#fecha').val(fecha);
+                        }
+                    });
+
+                    $('#chkNoFecha').on('click', function(){
+                        if($(this).prop('checked')==true){
+                            $('#fecha').val(fecha);
+                        }else{
+                            fecha = $('#fecha').val();
+                            $('#fecha').val('');
+                        }
+                    })
+
                     $('input[name="fecha"]').daterangepicker({
                         "locale": {
                             "format": "DD/MM/YYYY",
@@ -119,6 +167,7 @@
                         'fecha': $("#fecha").val(),
                         'estado_pago': $('#estado_pago').val(),
                         'poblado_id': $('#poblado_id').val(),
+                        'usuario_id': $('#usuario_id').val()
                     };
 
                     $.ajax({

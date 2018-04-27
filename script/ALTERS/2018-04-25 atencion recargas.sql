@@ -22,9 +22,3 @@ update diccionario_termino set grupo=1 where id in(1,2);
 update diccionario_termino set grupo=2 where id in(3);
 
 INSERT INTO `diccionario_termino` VALUES ('4', 'operador', 'BITEL', '9', '1', '3');
-INSERT INTO `diccionario_termino` VALUES ('5', 'operador', 'CLARO', '9', '1', '3');
-INSERT INTO `diccionario_termino` VALUES ('6', 'operador', 'MOVISTAR', '9', '1', '3');
-INSERT INTO `diccionario_termino` VALUES ('7', 'cliente', 'PUNTO DE VENTA', null, '1', '4');
-INSERT INTO `diccionario_termino` VALUES ('8', 'cliente', 'CLIENTE FINAL', null, '1', '4');
-INSERT INTO `diccionario_termino` VALUES ('9', 'operador', 'ENTEL', '9', '1', '3');
-INSERT INTO `diccionario_termino` VALUES ('10', 'centro_poblado', 'aaa', '45', '1', '5');

@@ -163,7 +163,7 @@ function save_venta_contado(imprimir){
 }
 
 function save_venta_credito(imprimir){
-
+    $("#loading2").html($("#loading").html());
     $.ajax({
         url: ruta + 'venta_new/save_recarga/',
         type: 'POST',
@@ -178,11 +178,12 @@ function save_venta_credito(imprimir){
                     document.frmRecarga.reset();
                 }
             }else{
-                if (data.msg)
+                if(data.msg)
                     show_msg('danger', '<h4>Error. </h4><p>' + data.msg + '</p>');
                 else
                     show_msg('danger', '<h4>Error. </h4><p>Ha ocurrido un error insperado al guardar la venta.</p>');
             }
+            $("#loading2").html('');
         },
         error: function (data) {
             show_msg('danger', '<h4>Error. </h4><p>Ha ocurrido un error insperado al guardar la venta.</p>');
@@ -232,9 +233,9 @@ function terminar_venta(){
         }, 500);
         return false;
     }
+    $("#dialog_venta_contado").html($("#loading").html());
 
     if($('#tipo_pago').val()==1){
-        $("#dialog_venta_contado").html($("#loading").html());
         $('#dialog_venta_contado').modal('show');
 
         $("#dialog_venta_contado").load(ruta + 'venta_new/dialog_venta_contado', function(){

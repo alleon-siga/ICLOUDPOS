@@ -117,6 +117,7 @@
                 </div>
                 <div class="col-md-2">
                     <?php if (isset($locales)): ?>
+                        <label class="control-label panel-admin-text">Ubicación</label>
                         <select id="local_id" class="form-control filter-input">
                             <option value="0">TODOS</option>
                             <?php foreach ($locales as $local): ?>
@@ -126,10 +127,12 @@
                         </select>
                     <?php endif; ?>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-3">
+                    <label class="control-label panel-admin-text">Fecha Registro</label>
                     <input type="text" id="fecha" class="form-control" readonly style="cursor: pointer;" name="fecha" value="<?= date('d/m/Y') ?> - <?= date('d/m/Y') ?>"/>
                 </div>
                 <div class="col-md-2">
+                    <label class="control-label panel-admin-text">Operador</label>
                     <select name="operador_id" id="operador_id" class='form-control'>
                         <option value="0">TODOS</option>
                         <?php foreach ($operadore as $operador): ?>
@@ -139,6 +142,7 @@
                     </select>
                 </div>
                 <div class="col-md-2">
+                    <label class="control-label panel-admin-text">Usuario</label>
                     <select name="usuario_id" id="usuario_id" class='form-control'>
                     <?php if(isset($usuarios->nUsuCodigo)){ ?>
                         <option value="<?= $usuarios->nUsuCodigo ?>"><?= $usuarios->nombre ?></option>
@@ -151,11 +155,13 @@
                     </select>
                 </div>
                 <div class="col-md-1">
+                    <div style="padding-top: 30px;"></div>
                     <button id="btn_buscar" class="btn btn-default">
                         <i class="fa fa-search"></i> Buscar
                     </button>
                 </div>
                 <div class="col-md-1">
+                    <div style="padding-top: 30px;"></div>
                     <button type="button" class="btn btn-primary tcharm-trigger form-control">
                         <i class="fa fa-plus"></i>
                     </button>

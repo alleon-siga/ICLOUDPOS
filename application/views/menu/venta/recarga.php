@@ -144,5 +144,6 @@
 </div>
 <div class="modal fade" id="dialog_new_cliente" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true"></div>
 <div class="modal fade" id="dialog_venta_contado" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true"></div>
+<div id="loading2"></div>
 <iframe style="display: block;" id="imprimir_frame" src="" frameborder="YES" height="0" width="0" border="0" scrolling="no"></iframe>
 <script src="<?= base_url('recursos/js/recarga.js') ?>"></script>
