@@ -18,55 +18,68 @@
             <th># Venta</th>
             <th>Fecha</th>
             <th>Local</th>
+            <th>Usuario</th>
             <th>Cliente</th>
             <th># Comprobante</th>
             <th>Producto</th>
-            <th>Cantidad</th>
+            <th>Operador</th>
             <th>Precio unitario</th>
             <th>Importe</th>
         </tr>
     </thead>
     <tbody>
-    <?php
-        $venta_id_temp = '';
-        $suma = $total = 0;
-        foreach ($lists as $list):
-            if($venta_id_temp!=$list->local_nombre && !empty($venta_id_temp)){
-    ?>
-        <tr>
-            <td style="text-align: right; font-weight: bold;" colspan="8">TOTAL <?= $venta_id_temp ?></td>
-            <td style="text-align: right; font-weight: bold;"><?= $list->simbolo ?> <?= number_format($suma, 2) ?></td>
-        </tr>
-    <?php
-                $suma = 0;
-            }
-    ?>
+    <?php $suma = 0;  ?>    
+    <?php foreach ($lists as $list): ?>
         <tr>
             <td><?= $list->venta_id ?></td>
             <td><?= date('d/m/Y H:i', strtotime($list->fecha)) ?></td>
             <td><?= utf8_decode($list->local_nombre) ?></td>
+            <td><?= utf8_decode($list->nombre) ?></td>
             <td><?= utf8_decode($list->razon_social) ?></td>
             <td><?= $list->abr_doc . ' ' . $list->serie . '-' . sumCod($list->numero, 6) ?></td>
             <td><?= utf8_decode($list->producto_nombre).' '.utf8_decode($list->nota) ?></td>
-            <td><?= $list->cantidad ?></td>
+            <td><?= $list->valor ?></td>
             <td style="text-align: right;"><?= $list->simbolo ?> <?= number_format($list->precio, 2) ?></td>
             <td style="text-align: right;"><?= $list->simbolo ?> <?= number_format($list->detalle_importe, 2) ?></td>
         </tr>
-    <?php
-            $suma += $list->detalle_importe;
-            $venta_id_temp = $list->local_nombre;
-            $total += $list->detalle_importe;
-        endforeach;
-    ?>
-        <tr>
-            <td style="text-align: right; font-weight: bold;" colspan="8">TOTAL <?= $list->local_nombre ?></td>
-            <td style="text-align: right; font-weight: bold;"><?= !empty($list->simbolo)? $list->simbolo : $md->simbolo ?> <?= number_format($suma, 2) ?></td>
-        </tr>
+    <?php $suma += $list->detalle_importe ?>
+    <?php endforeach ?>
     </tbody>
     <tfoot>
+        <?php 
+            $totalEfectivo = $totalBanco = 0;
+            foreach($totalesCon as $totalCon){
+                if($totalCon->medio_pago==3){
+                    $totalEfectivo += $totalCon->saldo;
+                }else{
+                    $totalBanco += $totalCon->saldo;
+                }
+            }
+        ?>
         <tr>
-            <td style="text-align: right; font-weight: bold;" colspan="8">TOTAL GENERAL</td>
-            <td style="text-align: right; font-weight: bold;"><?= !empty($list->simbolo)? $list->simbolo : $md->simbolo ?> <?= number_format($total, 2) ?></td>
+            <td colspan="9" style="text-align: right;"><b>TOTAL EFECTIVO</b></td>
+            <td style="text-align: right;"><?= $md->simbolo.' '.number_format($totalEfectivo, 2) ?></td>
+        </tr>
+        <tr>                      
+            <td colspan="9" style="text-align: right;"><b>TOTAL BANCARIZADO</b></td>
+            <td style="text-align: right;"><?= $md->simbolo.' '.number_format($totalBanco, 2) ?></td>
+        </tr>
+        <tr>
+            <td colspan="9" style="text-align: right;"><b>TOTAL CREDITO</b></td>
+            <td style="text-align: right;">
+            <?php
+                echo $md->simbolo.' '.number_format($suma - $totalEfectivo - $totalBanco,2);
+                /*if(isset($totalesCre->saldo)){
+                    echo $md->simbolo.' '.number_format($totalesCre->saldo, 2);
+                }else{
+                    echo $md->simbolo.' '.number_format(0, 2);
+                }*/
+            ?>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="9" style="text-align: right;"><b>TOTAL VENTAS</b></td>
+            <td style="text-align: right;"><?= !empty($list->simbolo)? $list->simbolo : $md->simbolo ?> <?= number_format($suma, 2) ?></td>
         </tr>
     </tfoot>
 </table>

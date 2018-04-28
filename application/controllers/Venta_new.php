@@ -1,4 +1,5 @@
-<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+<?php
+if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 class venta_new extends MY_Controller
 {
@@ -21,6 +22,7 @@ class venta_new extends MY_Controller
             $this->load->model('cotizar/cotizar_model');
             $this->load->model('metodosdepago/metodos_pago_model');
             $this->load->model('diccionario_termino/diccionario_termino_model');
+            $this->load->model('clientesgrupos/clientes_grupos_model');
         } else {
             redirect(base_url(), 'refresh');
         }
@@ -47,7 +49,6 @@ class venta_new extends MY_Controller
             'bancos' => $this->db->get_where('banco', array('banco_status' => 1))->result()
         ), true);
 
-
         $dataCuerpo['cuerpo'] = $this->load->view('menu/venta/historial', $data, true);
         if ($this->input->is_ajax_request()) {
             echo $dataCuerpo['cuerpo'];
@@ -65,16 +66,6 @@ class venta_new extends MY_Controller
         $date_range = explode(" - ", $this->input->post('fecha'));
         $fecha_ini = str_replace("/", "-", $date_range[0]);
         $fecha_fin = str_replace("/", "-", $date_range[1]);
-
-        $data['metodos_pago'] = $this->db->get_where('metodos_pago', array('status_metodo' => 1))->result();
-
-        $data['cuentas'] = $this->db->select('caja_desglose.*')
-            ->from('caja_desglose')
-            ->join('caja', 'caja.id = caja_desglose.caja_id')
-            ->where('caja.local_id', $local_id)
-            ->where('caja.moneda_id', $this->input->post('moneda_id'))
-            ->where('caja_desglose.estado', 1)
-            ->get()->result();
 
 
         if ($action != 'caja') {
@@ -128,8 +119,9 @@ class venta_new extends MY_Controller
         $data['venta'] = $this->venta->get_venta_detalle($venta_id);
         $data['venta_action'] = $action;
         $data['detalle'] = 'venta';
-        $this->db->select('serie, numero');
+        $this->db->select('serie, numero, fecha, nombre');
         $this->db->from('kardex');
+        $this->db->join('usuario', 'kardex.usuario_id = usuario.nUsuCodigo');
         $this->db->where(array('ref_id' => $venta_id, 'io' => 2, 'tipo' => 7, 'operacion' => 5));
         $this->db->group_by('serie, numero');
         $data['kardex'] = $this->db->get()->result();
@@ -146,14 +138,13 @@ class venta_new extends MY_Controller
     {
         $venta_id = $this->input->post('venta_id');
         $data['venta'] = $this->venta->get_venta_facturar($venta_id);
-        $data['comprobante'] = $this->documentos_model->get_documentosBy('id_doc IN(1,3)');
+        $data['comprobante'] = $this->documentos_model->get_documentosBy('id_doc IN(1,3,6)');
         $data['venta_action'] = $action;
         $data['detalle'] = 'venta';
         $this->load->view('menu/venta/historial_list_facturar', $data);
     }
 
-    function getDocumentoNumero()
-    {
+    function getDocumentoNumero(){
         $num = $this->venta->getDocumentoNumero();
         echo $num;
     }
@@ -300,8 +291,8 @@ class venta_new extends MY_Controller
 //                }
                 $data['success'] = '1';
                 $data['venta'] = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
-            } else {
-                if (isset($this->venta->error))
+            } else{
+                if(isset($this->venta->error))
                     $data['msg'] = $this->venta->error;
                 $data['success'] = '0';
             }
@@ -460,10 +451,7 @@ class venta_new extends MY_Controller
         $venta_id = $this->input->post('venta_id');
         $numero = $this->input->post('numero');
         $serie = $this->input->post('serie');
-        $metodo_pago = $this->input->post('metodo_pago');
-        $cuenta_id = $this->input->post('cuenta_id');
-
-        $this->venta->anular_venta($venta_id, $serie, $numero, $metodo_pago, $cuenta_id);
+        $this->venta->anular_venta($venta_id, $serie, $numero);
     }
 
     function get_venta_cobro()
@@ -493,8 +481,8 @@ class venta_new extends MY_Controller
         if ($result) {
             $data['success'] = '1';
             $data['venta'] = $this->db->get_where('venta', array('venta_id' => $venta['venta_id']))->row();
-        } else {
-            if (isset($this->venta->error))
+        } else{
+            if(isset($this->venta->error))
                 $data['msg'] = $this->venta->error;
             $data['success'] = '0';
         }
@@ -519,9 +507,7 @@ class venta_new extends MY_Controller
         $devoluciones = json_decode($this->input->post('devoluciones'));
         $numero = $this->input->post('numero');
         $serie = $this->input->post('serie');
-        $metodo_pago = $this->input->post('metodo_pago');
-        $cuenta_id = $this->input->post('cuenta_id');
-        $this->venta->devolver_venta($venta_id, $total_importe, $devoluciones, $serie, $numero, $metodo_pago, $cuenta_id);
+        $this->venta->devolver_venta($venta_id, $total_importe, $devoluciones, $serie, $numero);
     }
 
     function opciones($action = 'get')
@@ -661,7 +647,7 @@ class venta_new extends MY_Controller
         $moneda = $this->db->get_where('moneda', array('id_moneda' => $venta_temp->id_moneda))->row();
         if ($tipo_impresion == 'PEDIDO') {
             $data['venta'] = $this->venta->get_venta_detalle($venta_id);
-            $data['identificacion'] = $this->db->get_where('configuraciones', array('config_key' => 'EMPRESA_IDENTIFICACION'))->row();
+            $data['identificacion'] = $this->db->get_where('configuraciones', array('config_key' =>'EMPRESA_IDENTIFICACION'))->row();
             $total = $data['venta']->total;
             $data['totalLetras'] = numtoletras($total, $moneda->nombre);
             $this->load->view('menu/venta/impresiones/nota_pedido', $data);
@@ -752,7 +738,7 @@ class venta_new extends MY_Controller
 
         $condition = array(
             'local_id' => $params->local_id,
-            'condicion_id' => (isset($params->condicion_pago_id)) ? $params->condicion_pago_id : '',
+            'condicion_id' => (isset($params->condicion_pago_id))? $params->condicion_pago_id : '',
             'fecha_ini' => $fecha_ini,
             'fecha_fin' => $fecha_fin,
             'moneda_id' => $params->moneda_id
@@ -774,6 +760,7 @@ class venta_new extends MY_Controller
         $data['locales'] = $this->local_model->get_local_by_user($this->session->userdata('nUsuCodigo'));
         $data["clientes"] = $this->cliente_model->get_all();
         $data['operadore'] = $this->diccionario_termino_model->get_all_operador();
+        $data['poblados'] = $this->clientes_grupos_model->get_all();
         $data['monedas'] = $this->monedas_model->get_monedas_activas();
         $data['condPagos'] = $this->condiciones_pago_model->get_all();
         $dataCuerpo['cuerpo'] = $this->load->view('menu/venta/recarga', $data, true);
@@ -798,94 +785,46 @@ class venta_new extends MY_Controller
         $venta['id_usuario'] = $this->session->userdata('nUsuCodigo');
         $venta['vc_importe'] = $this->input->post('vc_importe2');
         $venta['vc_vuelto'] = $this->input->post('vc_vuelto2');
-        $venta_id = $this->venta->save_recarga($venta);
+        $venta['rec_pob'] = $this->input->post('poblado_id');
+        $venta['nota'] = $this->input->post('tienda');
+        $venta['vc_forma_pago'] = $this->input->post('vc_forma_pago2');
+        $venta['vc_banco_id'] = $this->input->post('vc_banco_id2');
+        $venta['vc_num_oper'] = $this->input->post('vc_num_oper2');
+        $venta['telefono1'] = $this->input->post('nro_recarga');
+        $venta['venta_status'] = 'COMPLETADO';
+        $venta_id = false;
+        if($venta['condicion_pago']==2 && $venta['id_cliente']==1){
+            $this->venta->error = 'El Cliente frecuente no tiene credito.';
+        }else{
+            $venta_id = $this->venta->save_recarga($venta);    
+        }
 
-        if ($venta_id) {
+        if($venta_id) {
             $data['success'] = '1';
             $data['venta'] = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
-        } else {
-            if (isset($this->venta->error)) {
+        }else{
+            if(isset($this->venta->error)){
                 $data['msg'] = $this->venta->error;
             }
             $data['success'] = '0';
         }
         echo json_encode($data);
-    }
-
-    function pagosRecarga($action = "")
-    {
-        if ($this->session->userdata('esSuper') == 1) {
-            $data['locales'] = $this->local_model->get_all();
-        } else {
-            $usu = $this->session->userdata('nUsuCodigo');
-            $data['locales'] = $this->local_model->get_all_usu($usu);
-        }
-
-        $data['venta_action'] = $action;
-        $data['monedas'] = $this->db->get_where('moneda', array('status_moneda' => 1))->result();
-        $data['condiciones_pagos'] = $this->db->get_where('condiciones_pago', array('status_condiciones' => 1))->result();
-
-        $data['dialog_venta_contado'] = $this->load->view('menu/reportes/dialog_venta_contado', array(
-            'tarjetas' => $this->db->get('tarjeta_pago')->result(),
-            'metodos' => $this->metodos_pago_model->get_all(),
-            'bancos' => $this->db->get_where('banco', array('banco_status' => 1))->result()
-        ), true);
-
-        $dataCuerpo['cuerpo'] = $this->load->view('menu/reportes/pagosRecarga', $data, true);
-        if ($this->input->is_ajax_request()) {
-            echo $dataCuerpo['cuerpo'];
-        } else {
-            $this->load->view('menu/template', $dataCuerpo);
-        }
-    }
-
-    function get_pagoRecarga($action = "")
-    {
-        $local_id = $this->input->post('local_id');
-        $estado = $this->input->post('estado');
-        $condicion_pago_id = $this->input->post('condicion_pago_id');
-
-        $date_range = explode(" - ", $this->input->post('fecha'));
-        $fecha_ini = str_replace("/", "-", $date_range[0]);
-        $fecha_fin = str_replace("/", "-", $date_range[1]);
-
-
-        if ($action != 'caja') {
-            $params = array(
-                'local_id' => $local_id,
-                'estado' => $estado,
-                'condicion_id' => $condicion_pago_id,
-                'fecha_ini' => $fecha_ini,
-                'fecha_fin' => $fecha_fin
-            );
-        } else {
-            $params = array(
-                'local_id' => $local_id,
-                'estado' => $estado
-            );
-        }
-
-        $params['moneda_id'] = $this->input->post('moneda_id');
-        $params['usuarios_id'] = $this->input->post('usuarios_id');
-        $data['moneda'] = $this->db->get_where('moneda', array('id_moneda' => $params['moneda_id']))->row();
-        $data['ventas'] = $this->venta->get_ventas($params, $action);
-
-
-        $data['venta_totales'] = $this->venta->get_ventas_totales($params, $action);
-
-        $data['venta_action'] = $action;
-        if ($action != 'caja')
-            $this->load->view('menu/reportes/pagosRecarga_list', $data);
-        else
-            $this->load->view('menu/venta/caja_list', $data);
-    }
+    }   
 
     function dialog_venta_contado()
     {
         $this->load->view('menu/venta/dialog_venta_contado', array(
+            'recarga' => '1',
             'tarjetas' => $this->db->get('tarjeta_pago')->result(),
-            'metodos' => $this->metodos_pago_model->get_by('id_metodo', 3),
+            'metodos' => $this->metodos_pago_model->get_all(),
             'bancos' => $this->db->get_where('banco', array('banco_status' => 1))->result()
         ));
+    }
+
+    function getCliente()
+    {
+        $id = $this->input->post('id');
+        $datos = $this->cliente_model->get_by('id_cliente', $id);
+        echo json_encode($datos);
     }
 }

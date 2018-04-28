@@ -1,11 +1,4 @@
 <?php $md = get_moneda_defecto() ?>
-<?php 
-/*echo "<pre>";
-echo print_r($metodos);
-echo "</pre>";
-
-echo "c ".count($metodos['id_metodo']);*/
- ?>
 <input type="hidden" id="caja_venta_id" value="">
 <input type="hidden" id="contado_tipo_pago" value="">
 <div class="modal-dialog" style="width: 40%">
@@ -14,7 +7,6 @@ echo "c ".count($metodos['id_metodo']);*/
             <h4>Terminar Venta</h4>
         </div>
         <div class="modal-body panel-venta-left">
-            <?php if(!isset($metodos['id_metodo'])){ ?>
             <div class="row" id="vc_forma_pago_block">
                 <div class="form-group">
                     <div class="col-md-3">
@@ -29,9 +21,6 @@ echo "c ".count($metodos['id_metodo']);*/
                     </div>
                 </div>
             </div>
-            <?php }else{ ?>
-            <input type="hidden" name="vc_forma_pago" id="vc_forma_pago" value="<?= $metodos['id_metodo'] ?>">
-            <?php } ?>
             <div class="row" id="vc_moneda_tasa_block" style="display:none;">
                 <div class="form-group">
                     <div class="col-md-3">
@@ -168,18 +157,22 @@ echo "c ".count($metodos['id_metodo']);*/
 
             <div class="row">
                 <div class="col-md-12">
+            <?php if(!isset($recarga)){ ?>
                     <button class="btn btn-default save_venta_contado" data-imprimir="0"
                             type="button"
                             id="btn_venta_contado"><i
                                 class="fa fa-save"></i> Guardar
-
-
                     </button>
-
                     <a href="#" class="btn btn-default save_venta_contado ocultar_caja"
                        id="btn_venta_contado_imprimir" data-imprimir="1" type="button"><i
                                 class="fa fa-print"></i> (F6)Guardar e imprimir
                     </a>
+            <?php }else{ ?>
+                    <a href="#" class="btn btn-default save_venta_contado ocultar_caja"
+                       id="btn_venta_contado_imprimir" data-imprimir="1" type="button"><i
+                                class="fa fa-print"></i> (F6)Guardar e imprimir
+                    </a>
+            <?php } ?>      
                     <button class="btn btn-danger"
                             type="button"
                             onclick="$('#dialog_venta_contado').modal('hide');"><i
