@@ -814,7 +814,6 @@ class venta_new extends MY_Controller
     function dialog_venta_contado()
     {
         $this->load->view('menu/venta/dialog_venta_contado', array(
-            'recarga' => '1',
             'tarjetas' => $this->db->get('tarjeta_pago')->result(),
             'metodos' => $this->metodos_pago_model->get_all(),
             'bancos' => $this->db->get_where('banco', array('banco_status' => 1))->result()

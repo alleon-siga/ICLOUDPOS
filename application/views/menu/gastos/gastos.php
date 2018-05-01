@@ -504,4 +504,21 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
 </div>
 <!-- /.modal-dialog -->
 </div>
+<div class="modal fade" id="agregarproveedor" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+</div>
 <script src="<?php echo $ruta ?>recursos/js/pages/tablesDatatables.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $("#agregarproveedor").load('<?= $ruta ?>proveedor/form');
+    });
+    
+    function agregarproveedor() {
+        $("#formagregarproveedor").trigger("reset");
+        $('#agregarproveedor').modal('show');
+        setTimeout(function () {
+            $('#confirmar_boton_proveedor').removeAttr("onclick");
+            $('#confirmar_boton_proveedor').attr("onclick", "guardar_proveedor('producto')");
+        }, 10);
+    }    
+</script>

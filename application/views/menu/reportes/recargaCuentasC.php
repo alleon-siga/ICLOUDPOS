@@ -1,7 +1,7 @@
 <?php $ruta = base_url(); ?>
 <ul class="breadcrumb breadcrumb-top">
     <li>Reporte</li>
-    <li><a href="">Pagos recarga</a></li>
+    <li><a href="">Recargas cuentas por cobrar</a></li>
 </ul>
 <link rel="stylesheet" href="<?= $ruta ?>recursos/css/plugins.css">
 <link rel="stylesheet" href="<?= $ruta ?>recursos/js/datepicker-range/daterangepicker.css">
@@ -23,17 +23,10 @@
                         </select>
                     <?php endif; ?>
                 </div>
-                <div class="col-md-3">
-                    <label class="control-label panel-admin-text">Fecha Registro</label>
-                    <div class="row">
-                        <div class="col-md-10">
-                            <input type="text" id="fecha" class="form-control" readonly style="cursor: pointer;" name="fecha" value="<?= date('d/m/Y') ?> - <?= date('d/m/Y') ?>"/>
-                        </div>
-                        <div class="col-md-2">
-                            <input class="form-control" type="checkbox" name="chkNoFecha" id="chkNoFecha" title="Considerar fecha" />
-                        </div>
-                    </div>
-                </div>
+                <!--<div class="col-md-3">
+                    <label class="control-label panel-admin-text">Fecha Recarga</label>
+                    <input type="text" id="fecha" class="form-control" readonly style="cursor: pointer;" name="fecha" value=""/>
+                </div>-->
                 <div class="col-md-2">
                     <label class="control-label panel-admin-text">Centro Poblado</label>
                     <select name="poblado_id" id="poblado_id" class='form-control'>
@@ -41,15 +34,6 @@
                         <?php foreach ($poblados as $poblado): ?>
                             <option value="<?= $poblado['id_grupos_cliente'] ?>"><?= $poblado['nombre_grupos_cliente'] ?></option>
                         <?php endforeach; ?>
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <label class="control-label panel-admin-text">Condici&oacute;n de Pago</label>
-                    <input type="hidden" name="condicion_pago" id="condicion_pago" value="0">
-                    <select name="estado_pago" id="estado_pago" class='form-control'>
-                        <option value="0">TODOS</option>
-                        <option value="1">Debe</option>
-                        <option value="2">Cancelado</option>
                     </select>
                 </div>
                 <div class="col-md-2">
@@ -68,7 +52,7 @@
                 <div class="col-md-1">
                     <div style="padding-top: 30px;"></div>
                     <button id="btn_buscar" class="btn btn-default">
-                        <i class="fa fa-search"></i>
+                        <i class="fa fa-search"></i> Buscar
                     </button>
                 </div>
             </div>
@@ -91,29 +75,6 @@
             <!-- /.modal-dialog -->
             <script type="text/javascript">
                 $(document).ready(function () {
-                    $('#chkNoFecha').prop('checked', true);
-                    var fecha = $('#fecha').val();
-
-                    $('#estado_pago').on('change', function(){
-                        if($(this).val()==1){
-                            $('#chkNoFecha').prop('checked', false);
-                            fecha = $('#fecha').val();
-                            $('#fecha').val('');
-                        }else{
-                            $('#chkNoFecha').prop('checked', true);
-                            $('#fecha').val(fecha);
-                        }
-                    });
-
-                    $('#chkNoFecha').on('click', function(){
-                        if($(this).prop('checked')==true){
-                            $('#fecha').val(fecha);
-                        }else{
-                            fecha = $('#fecha').val();
-                            $('#fecha').val('');
-                        }
-                    })
-
                     $('input[name="fecha"]').daterangepicker({
                         "locale": {
                             "format": "DD/MM/YYYY",
@@ -164,14 +125,13 @@
 
                     var data = {
                         'local_id': $("#local_id").val(),
-                        'fecha': $("#fecha").val(),
-                        'estado_pago': $('#estado_pago').val(),
+                        'fecha': '',//$("#fecha").val(),
                         'poblado_id': $('#poblado_id').val(),
                         'usuario_id': $('#usuario_id').val()
                     };
 
                     $.ajax({
-                        url: '<?= base_url()?>reporte/pagosRecarga/filter',
+                        url: '<?= base_url()?>reporte/recargaCuentasC/filter',
                         data: data,
                         type: 'POST',
                         success: function (data) {
