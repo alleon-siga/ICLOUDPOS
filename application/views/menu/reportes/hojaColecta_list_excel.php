@@ -23,6 +23,7 @@
             <th># Comprobante</th>
             <th>Producto</th>
             <th>Operador</th>
+            <th>Condici&oacute;n</th>
             <th>Precio unitario</th>
             <th>Importe</th>
         </tr>
@@ -39,6 +40,7 @@
             <td><?= $list->abr_doc . ' ' . $list->serie . '-' . sumCod($list->numero, 6) ?></td>
             <td><?= utf8_decode($list->producto_nombre).' '.utf8_decode($list->nota) ?></td>
             <td><?= $list->valor ?></td>
+            <td><?= $list->condicion ?></td>
             <td style="text-align: right;"><?= $list->simbolo ?> <?= number_format($list->precio, 2) ?></td>
             <td style="text-align: right;"><?= $list->simbolo ?> <?= number_format($list->detalle_importe, 2) ?></td>
         </tr>
@@ -57,15 +59,15 @@
             }
         ?>
         <tr>
-            <td colspan="9" style="text-align: right;"><b>TOTAL EFECTIVO</b></td>
+            <td colspan="10" style="text-align: right;"><b>TOTAL EFECTIVO</b></td>
             <td style="text-align: right;"><?= $md->simbolo.' '.number_format($totalEfectivo, 2) ?></td>
         </tr>
         <tr>                      
-            <td colspan="9" style="text-align: right;"><b>TOTAL BANCARIZADO</b></td>
+            <td colspan="10" style="text-align: right;"><b>TOTAL BANCARIZADO</b></td>
             <td style="text-align: right;"><?= $md->simbolo.' '.number_format($totalBanco, 2) ?></td>
         </tr>
         <tr>
-            <td colspan="9" style="text-align: right;"><b>TOTAL CREDITO</b></td>
+            <td colspan="10" style="text-align: right;"><b>TOTAL CREDITO</b></td>
             <td style="text-align: right;">
             <?php
                 echo $md->simbolo.' '.number_format($suma - $totalEfectivo - $totalBanco,2);
@@ -78,7 +80,7 @@
             </td>
         </tr>
         <tr>
-            <td colspan="9" style="text-align: right;"><b>TOTAL VENTAS</b></td>
+            <td colspan="10" style="text-align: right;"><b>TOTAL VENTAS</b></td>
             <td style="text-align: right;"><?= !empty($list->simbolo)? $list->simbolo : $md->simbolo ?> <?= number_format($suma, 2) ?></td>
         </tr>
     </tfoot>

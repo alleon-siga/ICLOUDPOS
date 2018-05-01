@@ -64,7 +64,9 @@
                     $montoPagado = $list->monto_abono;
                 }
             }
-            if(strtotime($fechaPago) == strtotime($fechaRecarga)){
+            $fechaPagoFecha = explode(' ', $fechaPago);
+            $fechaRecargaFecha = explode(' ', $fechaRecarga);
+            if(strtotime($fechaPagoFecha[0]) == strtotime($fechaRecargaFecha[0])){
                 $colorFila = "#9fa8da";
             }else{
                 $colorFila = "#81d4fa";
@@ -157,7 +159,7 @@
             'usuario_id': $('#usuario_id').val()
         };
 
-        var win = window.open('<?= base_url()?>reporte/pagosRecarga/pdf?data=' + JSON.stringify(data), '_blank');
+        var win = window.open('<?= base_url()?>reporte/recargaDia/pdf?data=' + JSON.stringify(data), '_blank');
         win.focus();
     }
 
@@ -170,7 +172,7 @@
             'usuario_id': $('#usuario_id').val()
         };
 
-        var win = window.open('<?= base_url()?>reporte/pagosRecarga/excel?data=' + JSON.stringify(data), '_blank');
+        var win = window.open('<?= base_url()?>reporte/recargaDia/excel?data=' + JSON.stringify(data), '_blank');
         win.focus();
     }
 </script>

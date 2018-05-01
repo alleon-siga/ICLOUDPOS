@@ -220,6 +220,8 @@
                      * Sino quiere decir que esta en su modulo normal, y retornara la vista nuevamente*/
                     if(retorno=='producto') {
                         update_proveedor(data.id,data.nombre);
+                    }else if(retorno=='gasto') {
+                        update_proveedor(data.id,data.nombre);
                     }
 
                     var growlType = 'success';

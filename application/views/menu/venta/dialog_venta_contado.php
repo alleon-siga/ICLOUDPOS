@@ -157,7 +157,6 @@
 
             <div class="row">
                 <div class="col-md-12">
-            <?php if(!isset($recarga)){ ?>
                     <button class="btn btn-default save_venta_contado" data-imprimir="0"
                             type="button"
                             id="btn_venta_contado"><i
@@ -166,13 +165,7 @@
                     <a href="#" class="btn btn-default save_venta_contado ocultar_caja"
                        id="btn_venta_contado_imprimir" data-imprimir="1" type="button"><i
                                 class="fa fa-print"></i> (F6)Guardar e imprimir
-                    </a>
-            <?php }else{ ?>
-                    <a href="#" class="btn btn-default save_venta_contado ocultar_caja"
-                       id="btn_venta_contado_imprimir" data-imprimir="1" type="button"><i
-                                class="fa fa-print"></i> (F6)Guardar e imprimir
-                    </a>
-            <?php } ?>      
+                    </a>    
                     <button class="btn btn-danger"
                             type="button"
                             onclick="$('#dialog_venta_contado').modal('hide');"><i

@@ -45,14 +45,12 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="row">
                     <div class="form-group">
                         <div class="col-md-3">
                             <label class="control-label panel-admin-text">Tipo de Gasto</label>
                         </div>
                         <div class="col-md-9">
-
                             <select name="tipo_gasto" id="tipo_gasto" required="true"
                                     class="select_chosen form-control">
                                 <option value="">Seleccione</option>
@@ -61,11 +59,19 @@
                                             value="<?php echo $gasto['id_tipos_gasto'] ?>" <?php if (isset($gastos['tipo_gasto']) and $gastos['tipo_gasto'] == $gasto['id_tipos_gasto']) echo 'selected' ?>><?= $gasto['nombre_tipos_gasto'] ?></option>
                                 <?php endforeach ?>
                             </select>
-
                         </div>
                     </div>
                 </div>
-
+                <div class="row">
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            <label class="control-label panel-admin-text">Gravable</label>
+                        </div>
+                        <div class="col-md-9">
+                            
+                        </div>
+                    </div>
+                </div>
                 <div class="row">
                     <div class="form-group">
                         <div class="col-md-3">
@@ -93,10 +99,9 @@
                         <div class="col-md-3">
                             <label class="control-label panel-admin-text">Proveedor</label>
                         </div>
-                        <div class="col-md-9">
-
+                        <div class="col-md-7">
                             <select name="proveedor" id="proveedor" required="true" class="form-control">
-                                <option value="">Seleccione</option>
+                                <option value="">Seleccione</option>   
                                 <?php foreach ($proveedores as $proveedor): ?>
                                     <option
                                             value="<?php echo $proveedor->id_proveedor ?>"
@@ -105,11 +110,16 @@
                                     </option>
                                 <?php endforeach ?>
                             </select>
-
+                        </div>
+                        <div class="col-md-2">
+                            <a class="btn btn-default" data-toggle="tooltip"
+                               title="Agregar Proveedor" data-original-title="Agregar Proveedor"
+                               href="#" onclick="agregarproveedor()">
+                                <i class="hi hi-plus-sign"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
-
                 <div class="row" id="usuario_block" style="display: none;">
                     <div class="form-group">
                         <div class="col-md-3">
@@ -198,7 +208,7 @@
     <?php endforeach;?>
 
     $(document).ready(function () {
-
+        //$("#proveedor").chosen();
 
         setTimeout(function () {
             $(".select_chosen").chosen();
@@ -251,5 +261,11 @@
             $("#usuario").chosen();
         }
 
+    }
+
+    function update_proveedor(id, nombre) {
+        $('#proveedor').append('<option value="' + id + '">' + nombre + '</option>');
+        $('#proveedor').val(id)
+        $("#proveedor").trigger('chosen:updated');
     }
 </script>
