@@ -190,7 +190,7 @@ class venta_new extends MY_Controller
         $data["clientes"] = $this->cliente_model->get_all();
         $data["monedas"] = $this->monedas_model->get_all();
         $data["tipo_pagos"] = $this->condiciones_pago_model->get_all();
-        $data['tipo_documentos'] = $this->documentos_model->get_documentos();
+        $data['tipo_documentos'] = $this->db->get_where('documentos', array('ventas' => 1))->result();
         $data['precios'] = $this->precios_model->get_all_by('mostrar_precio', '1', array('campo' => 'orden', 'tipo' => 'ASC'));
         $data['comprobantes'] = $this->db->get_where('comprobantes', array('estado' => 1))->result();
 
