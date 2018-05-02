@@ -95,7 +95,7 @@ class gastos extends MY_Controller
         $data["monedas"] = $this->monedas_model->get_all();
         $data["proveedores"] = $this->proveedor_model->select_all_proveedor();
         $data["usuarios"] = $this->db->get_where('usuario', array('activo' => 1))->result();
-
+        $data["documentos"] = $this->db->get_where('documentos', array('gastos' => 1))->result();
         $data['cuentas'] = $this->db->select('caja_desglose.*, caja.local_id, caja.moneda_id, moneda.nombre AS moneda_nombre')
             ->from('caja_desglose')
             ->join('caja', 'caja.id = caja_desglose.caja_id')
@@ -135,7 +135,11 @@ class gastos extends MY_Controller
             'cuenta_id' => $this->input->post('cuenta_id'),
             'proveedor_id' => $proveedor,
             'usuario_id' => $usuario,
-            'responsable_id' => $this->session->userdata('nUsuCodigo')
+            'responsable_id' => $this->session->userdata('nUsuCodigo'),
+            'gravable' => $this->input->post('gravable'),
+            'id_documento' => $this->input->post('cboDocumento'),
+            'serie' => $this->input->post('doc_serie'),
+            'numero' => $this->input->post('doc_numero')
         );
 
         if (empty($id)) {

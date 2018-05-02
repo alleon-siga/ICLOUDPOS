@@ -1,5 +1,4 @@
 <form name="formagregar" action="<?= base_url() ?>gastos/guardar" method="post" id="formagregar">
-
     <input type="hidden" name="id" id="" required="true"
            value="<?php if (isset($gastos['id_gastos'])) echo $gastos['id_gastos']; ?>">
 
@@ -68,7 +67,48 @@
                             <label class="control-label panel-admin-text">Gravable</label>
                         </div>
                         <div class="col-md-9">
-                            
+                            <?php
+                                if(!isset($gastos['gravable'])){
+                                    $gravable = 0;
+                                }else{
+                                    $gravable = $gastos['gravable'];
+                                }
+                            ?>
+                            <select name="gravable" id="gravable" class="select_chosen form-control">
+                                <option value="0" <?php if($gravable == '0'){ echo "selected"; } ?>>NO</option>
+                                <option value="1" <?php if($gravable == '1'){ echo "selected"; } ?>>SI</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            <label class="control-label panel-admin-text">Documento</label>
+                        </div>
+                        <div class="col-md-9">
+                            <select name="cboDocumento" id="cboDocumento" class="form-control">
+                            <?php foreach ($documentos as $documento) { ?>
+                                <option value="<?= $documento->id_doc ?>"><?= $documento->des_doc ?></option>
+                            <?php } ?>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            <label class="control-label panel-admin-text">No. Documento</label>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <input type="text" name="doc_serie" id="doc_serie" value="" class="form-control">
+                                </div>
+                                <div class="col-md-9">
+                                    <input type="text" name="doc_numero" id="doc_numero" value="" class="form-control">
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

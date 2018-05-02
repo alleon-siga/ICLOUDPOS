@@ -101,7 +101,11 @@ class gastos_model extends CI_Model
             'tasa_cambio' => 0,
             'proveedor_id' => $data['proveedor_id'],
             'usuario_id' => $data['usuario_id'],
-            'responsable_id' => $data['responsable_id']
+            'responsable_id' => $data['responsable_id'],
+            'gravable' => $data['gravable'],
+            'id_documento' => $data['id_documento'],
+            'serie' => $data['serie'],
+            'numero' => $data['numero']
         );
 
         $this->db->insert('gastos', $gastos);
