@@ -96,13 +96,17 @@
                     <br>
                     <div class="row">
                         <div class="col-md-2">
-                            <label class="control-label panel-admin-text">Operador:</label>
+                            <label class="control-label panel-admin-text">Documento:</label>
                         </div>
                         <div class="col-md-4">
-                            <select name="operador_id" id="operador_id" class='form-control ctrl'>
-                                <?php foreach ($operadore as $operador): ?>
-                                    <option value="<?= $operador->id ?>"><?= $operador->valor ?></option>
-                                <?php endforeach; ?>
+                            <select name="cboDocumento" id="cboDocumento" class="form-control">
+                            <?php foreach ($documentos as $documento) { ?>
+                            <?php 
+                                $selected = '';
+                                if($documento->id_doc=='6'){ $selected = "selected"; } 
+                            ?>
+                                <option value="<?= $documento->id_doc ?>" <?= $selected ?>><?= $documento->des_doc ?></option>
+                            <?php } ?>
                             </select>
                         </div>
                         <div class="col-md-2">
@@ -111,7 +115,6 @@
                         <div class="col-md-4">
                             <input type="text" class="form-control" name="nro_recarga" id="nro_recarga" value="">
                         </div>
-                        
                     </div>
                     <br>
                     <div class="row">
@@ -129,6 +132,19 @@
                                 <div class="input-group-addon"><?= $md->simbolo ?></div>
                                 <input type="text" class="form-control" name="total_importe" id="total_importe">
                             </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <label class="control-label panel-admin-text">Operador:</label>
+                        </div>
+                        <div class="col-md-4">
+                            <select name="operador_id" id="operador_id" class='form-control ctrl'>
+                                <?php foreach ($operadore as $operador): ?>
+                                    <option value="<?= $operador->id ?>"><?= $operador->valor ?></option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
                     </div>
                     <br>

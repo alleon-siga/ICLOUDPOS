@@ -1189,7 +1189,7 @@ class venta_new_model extends CI_Model
     {
         $data = array(
             'local_id' => $venta['local_id'],
-            'id_documento' => 6,
+            'id_documento' => $venta['id_documento'],
             'id_cliente' => $venta['id_cliente'],
             'id_vendedor' => $venta['id_usuario'],
             'condicion_pago' => $venta['condicion_pago'],
@@ -1211,11 +1211,11 @@ class venta_new_model extends CI_Model
             'dni_garante' => null,
         );
         if($venta['condicion_pago'] == '1'){
-            $correlativo = $this->correlativos_model->get_correlativo($venta['local_id'], 6);
+            $correlativo = $this->correlativos_model->get_correlativo($venta['local_id'], $venta['id_documento']);
             $data['fecha_facturacion'] = date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $venta['fecha_venta']) . date(" H:i:s")));
             $data['serie'] = $correlativo->serie;
             $data['numero'] = $correlativo->correlativo;
-            $this->correlativos_model->sumar_correlativo($venta['local_id'], 6);
+            $this->correlativos_model->sumar_correlativo($venta['local_id'], $venta['id_documento']);
         }
         //inserto la venta
         $this->db->insert('venta', $data);

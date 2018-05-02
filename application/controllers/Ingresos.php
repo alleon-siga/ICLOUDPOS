@@ -62,7 +62,7 @@ class ingresos extends MY_Controller
         $data["lstProveedor"] = $this->proveedor_model->select_all_proveedor();
         $data["monedas"] = $this->monedas_model->get_all();
         $data['barra_activa'] = $this->db->get_where('columnas', array('id_columna' => 36))->row();
-
+        $data["documentos"] = $this->db->get_where('documentos', array('compras' => 1))->result();
         $data['dialog_compra_credito'] = $this->load->view('menu/ingreso/dialog_compra_credito', array(), true);
 
 

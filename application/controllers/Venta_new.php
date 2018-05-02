@@ -763,6 +763,7 @@ class venta_new extends MY_Controller
         $data['poblados'] = $this->clientes_grupos_model->get_all();
         $data['monedas'] = $this->monedas_model->get_monedas_activas();
         $data['condPagos'] = $this->condiciones_pago_model->get_all();
+        $data["documentos"] = $this->db->get_where('documentos', array('ventas' => 1))->result();
         $dataCuerpo['cuerpo'] = $this->load->view('menu/venta/recarga', $data, true);
         if ($this->input->is_ajax_request()) {
             echo $dataCuerpo['cuerpo'];
@@ -792,6 +793,7 @@ class venta_new extends MY_Controller
         $venta['vc_num_oper'] = $this->input->post('vc_num_oper2');
         $venta['telefono1'] = $this->input->post('nro_recarga');
         $venta['venta_status'] = 'COMPLETADO';
+        $venta['id_documento'] = $this->input->post('cboDocumento');
         $venta_id = false;
         if($venta['condicion_pago']==2 && $venta['id_cliente']==1){
             $this->venta->error = 'El Cliente frecuente no tiene credito.';

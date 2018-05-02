@@ -144,7 +144,6 @@ function save_venta_contado(imprimir){
                 if (imprimir == '1') {
                     let url = ruta + 'venta_new/imprimir/' + data.venta.venta_id + '/PEDIDO';
                     $("#imprimir_frame").attr('src', url);
-                    document.frmRecarga.reset();
                 }
             }else{
                 if (data.msg)
@@ -152,6 +151,7 @@ function save_venta_contado(imprimir){
                 else
                     show_msg('danger', '<h4>Error. </h4><p>Ha ocurrido un error insperado al guardar la venta.</p>');
             }
+            document.frmRecarga.reset();
         },
         error: function (data) {
             show_msg('danger', '<h4>Error. </h4><p>Ha ocurrido un error insperado al guardar la venta.</p>');
@@ -252,5 +252,5 @@ function terminar_venta(){
         });
     }else{
         save_venta_credito(1);
-    }   
+    }
 }
