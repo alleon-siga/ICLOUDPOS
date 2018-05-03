@@ -195,15 +195,12 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                                                 <div class="controls">
                                                     <select name="cboTipDoc" id="cboTipDoc" class='cho form-control'
                                                             required="true">
-                                                        <option value="<?= BOLETAVENTA ?>"
-                                                            <?php if (isset($ingreso->tipo_documento) and $ingreso->tipo_documento == BOLETAVENTA)
-                                                                echo "selected"; ?>><?= BOLETAVENTA ?></option>
-                                                        <option value="<?= FACTURA ?>"
-                                                            <?php if (isset($ingreso->tipo_documento) and $ingreso->tipo_documento == FACTURA)
-                                                                echo "selected"; ?>><?= FACTURA ?></option>
-                                                        <option
-                                                                value="<?= NOTAVENTA ?>" <?php if (isset($ingreso->tipo_documento) and $ingreso->tipo_documento == NOTAVENTA)
-                                                            echo "selected"; ?>><?= NOTAVENTA ?></option>
+                                                    <?php foreach ($documentos as $documento) { ?>
+                                                        <option value="<?= $documento->des_doc ?>" 
+                                                        <?php if (isset($ingreso->tipo_documento) && $ingreso->tipo_documento == $documento->des_doc) echo "selected"; ?>>
+                                                        <?= $documento->des_doc ?>
+                                                        </option>
+                                                    <?php } ?>
                                                     </select>
                                                 </div>
                                             </div>

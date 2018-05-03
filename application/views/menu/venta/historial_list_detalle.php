@@ -291,7 +291,10 @@
                                 <h4>Anulaciones</h4>
                                 <?php foreach ($kardex as $k): ?>
                                     <h5>
-                                    <a href="javascript:ver_nc('<?= $venta->venta_id ?>','<?= $k->serie ?>','<?= $k->numero ?>')"><?= 'NC ' . $k->serie . ' - ' . $k->numero ?></a></h5>
+                                    <a href="javascript:ver_nc('<?= $venta->venta_id ?>','<?= $k->serie ?>','<?= $k->numero ?>')"><?= 'NC ' . $k->serie . ' - ' . $k->numero ?></a>
+                                    <br><br>
+                                    <span style="color: red">Fecha y hora de anulaci&oacute;n: <b><?= date('d/m/Y H:i', strtotime($k->fecha)).'</b> Anulado por: '.'<b>'.$k->nombre.'</b>' ?></span>
+                                    </h5>
                                 <?php endforeach; ?>
                             <?php endif; ?>
                             <?php if ($venta->condicion_id == '2'): ?>

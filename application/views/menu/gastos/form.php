@@ -1,5 +1,4 @@
 <form name="formagregar" action="<?= base_url() ?>gastos/guardar" method="post" id="formagregar">
-
     <input type="hidden" name="id" id="" required="true"
            value="<?php if (isset($gastos['id_gastos'])) echo $gastos['id_gastos']; ?>">
 
@@ -45,14 +44,12 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="row">
                     <div class="form-group">
                         <div class="col-md-3">
                             <label class="control-label panel-admin-text">Tipo de Gasto</label>
                         </div>
                         <div class="col-md-9">
-
                             <select name="tipo_gasto" id="tipo_gasto" required="true"
                                     class="select_chosen form-control">
                                 <option value="">Seleccione</option>
@@ -61,11 +58,60 @@
                                             value="<?php echo $gasto['id_tipos_gasto'] ?>" <?php if (isset($gastos['tipo_gasto']) and $gastos['tipo_gasto'] == $gasto['id_tipos_gasto']) echo 'selected' ?>><?= $gasto['nombre_tipos_gasto'] ?></option>
                                 <?php endforeach ?>
                             </select>
-
                         </div>
                     </div>
                 </div>
-
+                <div class="row">
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            <label class="control-label panel-admin-text">Gravable</label>
+                        </div>
+                        <div class="col-md-9">
+                            <?php
+                                if(!isset($gastos['gravable'])){
+                                    $gravable = 0;
+                                }else{
+                                    $gravable = $gastos['gravable'];
+                                }
+                            ?>
+                            <select name="gravable" id="gravable" class="select_chosen form-control">
+                                <option value="0" <?php if($gravable == '0'){ echo "selected"; } ?>>NO</option>
+                                <option value="1" <?php if($gravable == '1'){ echo "selected"; } ?>>SI</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            <label class="control-label panel-admin-text">Documento</label>
+                        </div>
+                        <div class="col-md-9">
+                            <select name="cboDocumento" id="cboDocumento" class="form-control">
+                            <?php foreach ($documentos as $documento) { ?>
+                                <option value="<?= $documento->id_doc ?>"><?= $documento->des_doc ?></option>
+                            <?php } ?>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            <label class="control-label panel-admin-text">No. Documento</label>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <input type="text" name="doc_serie" id="doc_serie" value="" class="form-control">
+                                </div>
+                                <div class="col-md-9">
+                                    <input type="text" name="doc_numero" id="doc_numero" value="" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="row">
                     <div class="form-group">
                         <div class="col-md-3">
@@ -93,10 +139,9 @@
                         <div class="col-md-3">
                             <label class="control-label panel-admin-text">Proveedor</label>
                         </div>
-                        <div class="col-md-9">
-
+                        <div class="col-md-7">
                             <select name="proveedor" id="proveedor" required="true" class="form-control">
-                                <option value="">Seleccione</option>
+                                <option value="">Seleccione</option>   
                                 <?php foreach ($proveedores as $proveedor): ?>
                                     <option
                                             value="<?php echo $proveedor->id_proveedor ?>"
@@ -105,11 +150,16 @@
                                     </option>
                                 <?php endforeach ?>
                             </select>
-
+                        </div>
+                        <div class="col-md-2">
+                            <a class="btn btn-default" data-toggle="tooltip"
+                               title="Agregar Proveedor" data-original-title="Agregar Proveedor"
+                               href="#" onclick="agregarproveedor()">
+                                <i class="hi hi-plus-sign"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
-
                 <div class="row" id="usuario_block" style="display: none;">
                     <div class="form-group">
                         <div class="col-md-3">
@@ -198,7 +248,7 @@
     <?php endforeach;?>
 
     $(document).ready(function () {
-
+        //$("#proveedor").chosen();
 
         setTimeout(function () {
             $(".select_chosen").chosen();
@@ -251,5 +301,11 @@
             $("#usuario").chosen();
         }
 
+    }
+
+    function update_proveedor(id, nombre) {
+        $('#proveedor').append('<option value="' + id + '">' + nombre + '</option>');
+        $('#proveedor').val(id)
+        $("#proveedor").trigger('chosen:updated');
     }
 </script>

@@ -170,7 +170,8 @@ class cliente extends MY_Controller
             'grupo_id' => $this->input->post('grupo_id_juridico')!=""?$this->input->post('grupo_id_juridico'): null,
             'agente_retension' => $this->input->post('retencion')?$this->input->post('retencion'):0,
             'agente_retension_valor' =>$this->input->post('retencion_value')==0? null: $this->input->post('retencion_value'),
-            'linea_credito' => $this->input->post('lineaC_j')?$this->input->post('lineaC_j'):null
+            'linea_credito' => $this->input->post('lineaC_j')?$this->input->post('lineaC_j'):null,
+            'nota' => $this->input->post('tienda')?$this->input->post('tienda'):null
         );
 
             if (empty($id)) {

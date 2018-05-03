@@ -386,27 +386,158 @@ class reporte_model extends CI_Model
 
     function getHojaColecta($params)
     {
-        $local_id = $marca_id = $grupo_id = $familia_id = $linea_id = $producto_id = '';
+        $local_id = $marca_id = $grupo_id = $familia_id = $linea_id = $producto_id = $operador_id = $usuario_id = '';
         $usu = $this->session->userdata('nUsuCodigo');
         $local_id .= ($params['local_id']>0)? " AND v.local_id=".$params['local_id'] : "";
         $marca_id .= ($params['marca_id']>0)? " AND p.producto_marca=".$params['marca_id'] : "";
         $grupo_id .= ($params['grupo_id']>0)? " AND p.produto_grupo=".$params['grupo_id'] : "";
         $familia_id .= ($params['familia_id']>0)? " AND p.producto_familia=".$params['familia_id'] : "";
         $linea_id .= ($params['linea_id']>0)? " AND p.producto_linea=".$params['linea_id'] : "";
+        $operador_id .= ($params['operador_id']>0)? " AND r.rec_ope=".$params['operador_id'] : "";
         $producto_id .= ($params['producto_id']!='')? " AND p.producto_id IN(".implode(",", $params['producto_id']).")" : "";
-        $search = $local_id.$marca_id.$grupo_id.$familia_id.$linea_id.$producto_id;
+        $usuario_id .= ($params['usuario_id']>0)? " AND v.id_vendedor=".$params['usuario_id'] : "";
+        $search = $local_id.$marca_id.$grupo_id.$familia_id.$linea_id.$operador_id.$producto_id.$usuario_id;
 
-        $this->db->select('v.venta_id, c.razon_social, v.serie, v.numero, p.producto_nombre, dv.cantidad, dv.precio, dv.detalle_importe, l.local_nombre, d.abr_doc, m.simbolo, v.fecha, v.nota');
+        $this->db->select("v.venta_id, c.razon_social, v.serie, v.numero, p.producto_nombre, dv.cantidad, dv.precio, dv.detalle_importe, l.local_nombre, d.abr_doc, m.simbolo, v.fecha, v.nota, dt.valor, u.nombre, IF(v.condicion_pago=2,'CREDITO', 'CONTADO') AS condicion");
         $this->db->from('detalle_venta dv');
         $this->db->join('venta v', 'v.venta_id=dv.id_venta');
+        $this->db->join('recarga r', 'v.venta_id = r.id_venta', 'left');
+        $this->db->join('diccionario_termino dt', 'r.rec_ope = dt.id', 'left');
         $this->db->join('documentos d', 'v.id_documento = d.id_doc');
         $this->db->join('moneda m', 'v.id_moneda = m.id_moneda');
         $this->db->join('producto p', 'dv.id_producto=p.producto_id');
         $this->db->join('cliente c', 'v.id_cliente = c.id_cliente');
         $this->db->join('`local` l', 'v.local_id = l.int_local_id');
         $this->db->join('usuario_almacen ua', "v.local_id = ua.local_id AND ua.usuario_id = $usu");
+        $this->db->join('usuario u', 'v.id_vendedor = u.nUsuCodigo');
         $this->db->where("v.venta_status='COMPLETADO' AND v.fecha >= '".$params['fecha_ini']."' AND v.fecha <= '".$params['fecha_fin']."' $search");
         $this->db->order_by('v.local_id, v.venta_id DESC');
+        return $this->db->get()->result();
+    }
+
+    function getRecargaDia($params)
+    {
+        $this->db->select("v.venta_id, v.fecha, c.razon_social, c.nota, r.rec_nro, r.rec_trans, v.total, cru.ultimo_pago AS fecha_abono, cr.dec_credito_montodebito AS monto_abono, l.local_nombre, IF(v.condicion_pago=2,'CREDITO', 'CONTADO') AS condicion, v.condicion_pago, cru.ispagado, dt.valor, (cr.dec_credito_montocuota - cr.dec_credito_montodebito) AS monto_restante, u.nombre");
+        $this->db->from('venta v');
+        $this->db->join('detalle_venta dv', 'v.venta_id = dv.id_venta');
+        $this->db->join('cliente c', 'c.id_cliente = v.id_cliente');
+        $this->db->join('local l', 'v.local_id = l.int_local_id');
+        $this->db->join('recarga r', 'v.venta_id = r.id_venta');
+        $this->db->join('diccionario_termino dt', 'r.rec_ope = dt.id');
+        $this->db->join('usuario u', 'v.id_vendedor = u.nUsuCodigo');
+        $this->db->join('credito cr', 'v.venta_id = cr.id_venta', 'left');
+        $this->db->join('credito_cuotas cru', 'v.venta_id = cru.id_venta', 'left');
+        if($params['local_id']>0){
+            $this->db->where('v.local_id = '.$params['local_id']);
+        }
+        if(!empty($params['fecha_ini']) && !empty($params['fecha_fin'])){
+            $this->db->where("v.fecha >= '".$params['fecha_ini']."' AND v.fecha <= '".$params['fecha_fin']."'");
+        }
+        if($params['estado_pago']==1){ //deben
+            $this->db->where('ispagado = 0');
+        }elseif($params['estado_pago']==2){ //Cancelado
+            $this->db->where('(ispagado = 1 OR ispagado IS NULL)');
+        }
+        if($params['poblado_id']>0){
+            $this->db->where('rec_pob = ', $params['poblado_id']);
+        }
+        if($params['usuario_id']>0){
+            $this->db->where('v.id_vendedor = ', $params['usuario_id']);   
+        }
+        return $this->db->get()->result();
+    }
+
+    function getRecargaCobranza($params)
+    {
+        $this->db->select("v.venta_id, v.fecha, c.razon_social, c.nota, r.rec_nro, r.rec_trans, v.total, cru.ultimo_pago AS fecha_abono, cr.dec_credito_montodebito AS monto_abono, l.local_nombre, IF(v.condicion_pago=2,'CREDITO', 'CONTADO') AS condicion, v.condicion_pago, cru.ispagado, dt.valor, (cr.dec_credito_montocuota - cr.dec_credito_montodebito) AS monto_restante, u.nombre");
+        $this->db->from('venta v');
+        $this->db->join('detalle_venta dv', 'v.venta_id = dv.id_venta');
+        $this->db->join('cliente c', 'c.id_cliente = v.id_cliente');
+        $this->db->join('local l', 'v.local_id = l.int_local_id');
+        $this->db->join('recarga r', 'v.venta_id = r.id_venta');
+        $this->db->join('diccionario_termino dt', 'r.rec_ope = dt.id');
+        $this->db->join('usuario u', 'v.id_vendedor = u.nUsuCodigo');
+        $this->db->join('credito cr', 'v.venta_id = cr.id_venta');
+        $this->db->join('credito_cuotas cru', 'v.venta_id = cru.id_venta');
+        $this->db->where('v.condicion_pago = 2');
+        $this->db->where('DATE(v.fecha) <> DATE(cru.ultimo_pago)');
+        if($params['local_id']>0){
+            $this->db->where('v.local_id = '.$params['local_id']);
+        }
+        if(!empty($params['fecha_ini']) && !empty($params['fecha_fin'])){
+            $this->db->where("cru.ultimo_pago >= '".$params['fecha_ini']."' AND cru.ultimo_pago <= '".$params['fecha_fin']."'");
+        }
+        if($params['estado_pago']==1){ //deben
+            $this->db->where('ispagado = 0');
+        }elseif($params['estado_pago']==2){ //Cancelado
+            $this->db->where('(ispagado = 1 OR ispagado IS NULL)');
+        }
+        if($params['poblado_id']>0){
+            $this->db->where('rec_pob = ', $params['poblado_id']);
+        }
+        if($params['usuario_id']>0){
+            $this->db->where('v.id_vendedor = ', $params['usuario_id']);   
+        }
+        return $this->db->get()->result();
+    }
+
+    function getRecargaCuentasC($params)
+    {
+        $this->db->select("v.venta_id, v.fecha, c.razon_social, c.nota, r.rec_nro, r.rec_trans, v.total, cru.ultimo_pago AS fecha_abono, cr.dec_credito_montodebito AS monto_abono, l.local_nombre, IF(v.condicion_pago=2,'CREDITO', 'CONTADO') AS condicion, v.condicion_pago, cru.ispagado, dt.valor, (cr.dec_credito_montocuota - cr.dec_credito_montodebito) AS monto_restante, u.nombre");
+        $this->db->from('venta v');
+        $this->db->join('detalle_venta dv', 'v.venta_id = dv.id_venta');
+        $this->db->join('cliente c', 'c.id_cliente = v.id_cliente');
+        $this->db->join('local l', 'v.local_id = l.int_local_id');
+        $this->db->join('recarga r', 'v.venta_id = r.id_venta');
+        $this->db->join('diccionario_termino dt', 'r.rec_ope = dt.id');
+        $this->db->join('usuario u', 'v.id_vendedor = u.nUsuCodigo');
+        $this->db->join('credito cr', 'v.venta_id = cr.id_venta');
+        $this->db->join('credito_cuotas cru', 'v.venta_id = cru.id_venta');
+        $this->db->where('ispagado = 0');
+        if($params['local_id']>0){
+            $this->db->where('v.local_id = '.$params['local_id']);
+        }
+        if(!empty($params['fecha_ini']) && !empty($params['fecha_fin'])){
+            $this->db->where("v.fecha >= '".$params['fecha_ini']."' AND v.fecha <= '".$params['fecha_fin']."'");
+        }
+        if($params['poblado_id']>0){
+            $this->db->where('rec_pob = ', $params['poblado_id']);
+        }
+        if($params['usuario_id']>0){
+            $this->db->where('v.id_vendedor = ', $params['usuario_id']);   
+        }
+        return $this->db->get()->result();
+    }
+    function getSumMedioPago($params, $condicion_pago)
+    {
+        $usu = $this->session->userdata('nUsuCodigo');
+        $this->db->select('cm.medio_pago, SUM(cm.saldo) as saldo');
+        $this->db->from('detalle_venta dv');
+        $this->db->join('venta v', 'v.venta_id=dv.id_venta');
+        $this->db->join('moneda m', 'v.id_moneda = m.id_moneda');
+        $this->db->join('producto p', 'dv.id_producto=p.producto_id');
+        $this->db->join('usuario_almacen ua', "v.local_id = ua.local_id AND ua.usuario_id = $usu");
+        $this->db->join('recarga r', 'v.venta_id = r.id_venta', 'left');
+        $this->db->join('caja_movimiento cm', 'v.venta_id = cm.ref_id');
+        $this->db->where("v.venta_status='COMPLETADO' AND v.fecha >= '".$params['fecha_ini']."' AND v.fecha <= '".$params['fecha_fin']."'");
+        $this->db->where("v.condicion_pago=", $condicion_pago);
+        if($params['local_id']>0)
+            $this->db->where("v.local_id=", $params['local_id']);
+        if($params['marca_id']>0)
+            $this->db->where("p.producto_marca=", $params['marca_id']);
+        if($params['grupo_id']>0)
+            $this->db->where("p.produto_grupo=", $params['grupo_id']);
+        if($params['familia_id']>0)
+            $this->db->where("p.producto_familia=", $params['familia_id']);
+        if(($params['linea_id']>0))
+            $this->db->where("p.producto_linea=", $params['linea_id']);
+        if($params['operador_id']>0)
+            $this->db->where("r.rec_ope=", $params['operador_id']);
+        if($params['producto_id']!='')
+            $this->db->where("p.producto_id IN(".implode(",", $params['producto_id']).")");
+        if($params['usuario_id']>0)
+            $this->db->where("v.id_vendedor=", $params['usuario_id']);
+        $this->db->group_by("v.condicion_pago, cm.medio_pago");
         return $this->db->get()->result();
     }
 }

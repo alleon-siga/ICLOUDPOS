@@ -547,10 +547,28 @@ $primary_nav = array(
             ),
             array(
                 'name' => 'Pagos',
-                'url' => $ruta . 'venta_new/pagosRecarga',
+                'url' => $ruta . 'reporte/pagosRecarga',
                 'icon' => 'fa fa-history',
                 'slug' => 'pagosRecarga'
             ),
+            array(
+                'name' => 'Recargas del d&iacute;a',
+                'url' => $ruta . 'reporte/recargaDia',
+                'icon' => 'fa fa-area-chart',
+                'slug' => 'recargaDia'
+            ),
+            array(
+                'name' => 'Cobranza del d&iacute;a',
+                'url' => $ruta . 'reporte/recargaCobranza',
+                'icon' => 'fa fa-area-chart',
+                'slug' => 'recargaCobranza'
+            ),
+            array(
+                'name' => 'Cuentas por cobrar',
+                'url' => $ruta . 'reporte/recargaCuentasC',
+                'icon' => 'fa fa-area-chart',
+                'slug' => 'recargaCuentasC'
+            )
         ),
     ),
 
