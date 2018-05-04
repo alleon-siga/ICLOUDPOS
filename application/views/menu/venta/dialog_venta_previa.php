@@ -42,7 +42,7 @@
                         </button>
                     <?php endif; ?>
 
-                    <button class="btn btn-primary btn_venta_imprimir imprimir"
+                    <button class="btn btn-primary btn_venta_imprimir"
                             type="button" data-nombre="nota_pedido"
                             id="btn_venta_imprimir_1"><i
                                 class="fa fa-print"></i> (F6) Pedido
@@ -418,7 +418,7 @@
 
             <div class="row">
                 <div class="col-md-12">
-                    <button class="btn btn-primary btn_venta_imprimir imprimir"
+                    <button class="btn btn-primary btn_venta_imprimir"
                             type="button"
                             data-nombre="nota_pedido"
                             id="btn_venta_imprimir_1"><i
@@ -533,17 +533,17 @@
             }
         });
 
-//        $(".btn_venta_imprimir").on('click', function () {
-//            $.bootstrapGrowl('<p>IMPRIMIENDO PEDIDO</p>', {
-//                type: 'success',
-//                delay: 2500,
-//                allow_dismiss: true
-//            });
-//
-//            var url = '<?//=base_url('venta_new/imprimir/' . $venta->venta_id . '/PEDIDO')?>//';
-//            $("#imprimir_frame").attr('src', url);
-//
-//        });
+        $(".btn_venta_imprimir").on('click', function () {
+            $.bootstrapGrowl('<p>IMPRIMIENDO PEDIDO</p>', {
+                type: 'success',
+                delay: 2500,
+                allow_dismiss: true
+            });
+
+            var url = '<?=base_url('venta_new/imprimir/' . $venta->venta_id . '/PEDIDO')?>';
+            $("#imprimir_frame").attr('src', url);
+
+        });
 //
 //        $(".btn_venta_imprimir_almacen").on('click', function () {
 //            $.bootstrapGrowl('<p>IMPRIMIENDO PEDIDO ALMACEN</p>', {
