@@ -127,7 +127,8 @@
                             <div class="input-group">
                                 <input type="hidden" id="correlativo">
                                 <div class="input-group-addon tipo_moneda"></div>
-                                <input style="text-align: right;" type="text" id="total_cuota" value="" class="form-control" readonly>
+                                <input style="text-align: right;" type="text" id="total_cuota" value=""
+                                       class="form-control" readonly>
                             </div>
                         </div>
                     </div>
@@ -188,7 +189,7 @@
                                             data-tasa="<?= $banco->tasa_soles ?>"
                                             data-moneda_id="<?= $banco->moneda_id ?>"
                                             data-moneda_nombre="<?= $banco->nombre ?>"
-                                    ><?= $banco->banco_nombre ?></option>
+                                    ><?= $banco->banco_nombre ?> | <?= $banco->descripcion ?></option>
                                 <?php endforeach ?>
                             </select>
                         </div>
@@ -250,10 +251,12 @@
                                 <input type="hidden" id="correlativo">
                                 <input type="hidden" id="venta_id">
                                 <input type="hidden" id="id_credito_cuota">
-                                <input type="number" id="cantidad_a_pagar" name="cantidad_a_pagar" value="" class="form-control">
+                                <input type="number" id="cantidad_a_pagar" name="cantidad_a_pagar" value=""
+                                       class="form-control">
                             </div>
                             <br>
-                            <input style="cursor: pointer;" type="checkbox" id="check_all"> <label style="cursor: pointer;" for="check_all">Cobrar todo</label>
+                            <input style="cursor: pointer;" type="checkbox" id="check_all"> <label
+                                    style="cursor: pointer;" for="check_all">Cobrar todo</label>
                         </div>
                     </div>
                 </form>
@@ -275,10 +278,10 @@
 </div>
 <script>
     $(document).ready(function () {
-        $('#check_all').on('click', function(){
-            if($(this).prop('checked')){
+        $('#check_all').on('click', function () {
+            if ($(this).prop('checked')) {
                 $('#cantidad_a_pagar').val($('#total_cuota').val());
-            }else{
+            } else {
                 $('#cantidad_a_pagar').val('');
             }
         });

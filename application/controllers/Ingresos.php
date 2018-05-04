@@ -374,7 +374,10 @@ class ingresos extends MY_Controller
                 ->get_where('pagos_ingreso', array('ingreso_credito_cuotas.ingreso_id' => $id_ingreso))->result();
 
             $dataresult['metodos'] = $this->metodos_pago_model->get_all();
-            $dataresult['bancos'] = $this->db->get_where('banco', array('banco_status' => 1))->result();
+            $dataresult['bancos'] = $this->db->join('caja_desglose', 'caja_desglose.id = banco.cuenta_id')
+                ->join('caja', 'caja.id = caja_desglose.caja_id')
+                ->join('moneda', 'moneda.id_moneda = caja.moneda_id')
+                ->get_where('banco', array('banco_status' => 1))->result();
             $dataresult['tarjetas'] = $this->db->get('tarjeta_pago')->result();
             $dataresult['cajas'] = $this->db->join('caja_desglose', 'caja_desglose.caja_id=caja.id')
                 ->get_where('caja', array(
