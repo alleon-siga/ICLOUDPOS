@@ -58,7 +58,7 @@
                         </div>
                         <div class="col-md-3">
                             <label class="control-label panel-admin-text">Fecha:</label>
-                            <input type="text" id="fecha" class="form-control" readonly style="cursor: pointer;" name="fecha" value="<?= date('d/m/Y') ?> - <?= date('d/m/Y') ?>"/>                            
+                            <input type="text" id="fecha" class="form-control" readonly style="cursor: pointer;" name="fecha" value="<?= date('d/m/Y') ?> - <?= date('d/m/Y') ?>"/>
                         </div>
                         <div class="col-md-3">
                             <label class="control-label panel-admin-text">Productos: </label>
@@ -80,10 +80,10 @@
                             <button type="button" id="btn_buscar" class="btn btn-default" onclick="buscar()">
                                 <i class="fa fa-search"></i> Buscar
                             </button>
-                        </div>                        
+                        </div>
                         <div class="col-md-2">
                             <div style="padding-top: 30px;"></div>
-                            <a id="traspasarProducto" class="btn btn-default" onclick="traspasarProducto()">
+                            <a id="traspasarProducto" class="btn btn-primary" onclick="traspasarProducto()">
                                 <i class="fa fa-tasks"></i> Traspasar >>
                             </a>
                         </div>

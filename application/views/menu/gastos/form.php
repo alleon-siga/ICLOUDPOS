@@ -81,7 +81,7 @@
                         </div>
                         <div class="col-md-7">
                             <select name="proveedor" id="proveedor" required="true" class="form-control">
-                                <option value="">Seleccione</option>   
+                                <option value="">Seleccione</option>
                                 <?php foreach ($proveedores as $proveedor): ?>
                                     <option
                                             value="<?php echo $proveedor->id_proveedor ?>"
