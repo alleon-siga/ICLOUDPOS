@@ -565,6 +565,39 @@ $(document).ready(function () {
         $("#stock_total").show();
     });
 
+    $("#precioUnitario").on('mouseleave', function () {
+        $("#popover_precioUnitario").hide();
+    });
+
+    $("#precioUnitario").on('mousemove', function () {
+        var data = {
+            'id_producto': $('#producto_id').val(),
+            'id_cliente':$('#cliente_id').val()
+        };
+        $.ajax({
+            url: ruta + 'venta_new/ultimasVentas',
+            data: data,
+            type: 'POST',
+            success: function(data){
+                let obj = JSON.parse(data);
+                let tabla = "<b>ULTIMOS PRECIOS UNITARIOS DE VENTAS</b>: <br><br>";
+                tabla += '<table class="table table-condensed">';
+                obj.map( function(data){
+                    tabla += '<tr style="color:#fff; font-weight:bold">';
+                    let fecha = data.fecha.split('-');
+                    let nuevaFecha = fecha[2]+'/'+fecha[1]+'/'+fecha[0];
+                    tabla += "<td>" + nuevaFecha + "</td>";
+                    tabla += "<td>" + data.simbolo + " " + data.precio + "</td>";
+                    tabla += "<td>" + parseInt(data.cantidad) + "</td>";
+                    tabla += "<td>" + data.nombre_unidad + "</td>";
+                    tabla += "</tr>";
+                });
+                tabla += "</table>"
+                $('#popover_precioUnitario').html(tabla);
+            }
+        })
+        $("#popover_precioUnitario").show();
+    });    
 });
 
 //FUNCIONES DE MANEJO DE LAS VENTAS

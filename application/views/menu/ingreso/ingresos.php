@@ -251,21 +251,29 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                                             <label for="Proveedor" class="control-label">Proveedor:</label>
                                         </div>
                                         <div class="col-md-4">
-                                            <div class="controls">
-                                                <select name="cboProveedor" id="cboProveedor"
-                                                        class='cho form-control' required="true" required="true">
-                                                    <?php if (count($lstProveedor) > 0): ?>
-                                                        <?php foreach ($lstProveedor as $pv): ?>
-                                                            <option
-                                                                    value="<?php echo $pv->id_proveedor; ?>"
-                                                                <?php if (isset($ingreso->id_proveedor) and $ingreso->id_proveedor == $pv->id_proveedor)
-                                                                    echo "selected"; ?>><?php echo $pv->proveedor_nombre; ?></option>
-                                                        <?php endforeach; ?>
-                                                    <?php endif; ?>
-                                                </select>
+                                            <div class="row">
+                                                <div class="col-md-10">
+                                                    <select name="cboProveedor" id="cboProveedor"
+                                                            class='cho form-control' required="true" required="true">
+                                                        <?php if (count($lstProveedor) > 0): ?>
+                                                            <?php foreach ($lstProveedor as $pv): ?>
+                                                                <option
+                                                                        value="<?php echo $pv->id_proveedor; ?>"
+                                                                    <?php if (isset($ingreso->id_proveedor) and $ingreso->id_proveedor == $pv->id_proveedor)
+                                                                        echo "selected"; ?>><?php echo $pv->proveedor_nombre; ?></option>
+                                                            <?php endforeach; ?>
+                                                        <?php endif; ?>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-2" style="padding-left:0;">
+                                                    <a class="btn btn-default" data-toggle="tooltip"
+                                                    title="Agregar Proveedor" data-original-title="Agregar Proveedor"
+                                                    href="#" onclick="agregarproveedor()">
+                                                    <i class="hi hi-plus-sign"></i>
+                                                    </a>
+                                                </div>
                                             </div>
-
-                                        </div>
+                                        </div>                              
                                     </div>
                                     <?php if ($costos === 'true'): ?>
                                         <div class="control-group">
@@ -384,7 +392,7 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                                         </div>
 
                                         <div class="col-md-6">
-                                            <div class="controls">
+                                            <div class="input-group">
                                                 <select name="cboProducto" id="cboProducto"
                                                         class='cho form-control'
                                                         required="true">
@@ -401,10 +409,12 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                                                     <?php else: ?>
                                                     <?php endif; ?>
                                                 </select>
+                                                <a id="refresh_productos" href="#" class="input-group-addon btn-default">
+                                                    <i class="fa fa-refresh"></i>
+                                                </a>
                                                 <input type="hidden" id="hiden_local">
                                             </div>
                                         </div>
-
                                     </div>
 
                                     <div class="control-group">
@@ -827,26 +837,42 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
         <!-- /.modal-content -->
     </div>
 </div>
-
+<div class="modal fade" id="loading_save_compra" tabindex="-1" role="dialog" style="top: 50px;"
+     aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false"
+     aria-hidden="true">
+    <div class="row" id="loading">
+        <div class="col-md-12 text-center">
+            <div class="loading-icon"></div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="agregarproveedor" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+</div>
 <script src="<?php echo $ruta; ?>recursos/js/Validacion.js"></script>
-
-
 <script src="<?php echo $ruta ?>recursos/js/pages/tablesDatatables.js"></script>
-
-
 <script>
+    var ruta = '<?php echo $ruta; ?>';
 
     $(function () {
-
         $("select").chosen({width: '100%'});
         $("#fecEmision").datepicker({format: 'dd-mm-yyyy'});
         //TablesDatatables.init();
+        $("#agregarproveedor").load(ruta + 'proveedor/form');
+    });
 
-    });</script>
+    function agregarproveedor() {
+        $("#formagregarproveedor").trigger("reset");
+        $('#agregarproveedor').modal('show');
+        setTimeout(function () {
+            $('#confirmar_boton_proveedor').removeAttr("onclick");
+            $('#confirmar_boton_proveedor').attr("onclick", "guardar_proveedor('producto')");
+        }, 10);
+    }
 
-
-<script>
-
-    var ruta = '<?php echo $ruta; ?>';
-
+    function update_proveedor(id, nombre) {
+        $('#cboProveedor').append('<option value="' + id + '">' + nombre + '</option>');
+        $('#cboProveedor').val(id)
+        $("#cboProveedor").trigger('chosen:updated');
+    }
 </script>

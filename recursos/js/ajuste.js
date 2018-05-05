@@ -3,7 +3,50 @@ var ruta = $("#base_url").val();
 var lst_producto = [];
 
 $(document).ready(function () {
+    $('#refresh_productos').on('click', function () {
+        $("#loading_save_venta").modal('show');
+        $.ajax({
+            url: ruta + 'venta_new/refresh_productos',
+            type: 'GET',
+            headers: {
+                Accept: 'application/json'
+            },
+            success: function (data) {
+                var select_producto = $('#producto_id');
+                var productos = data.productos;
 
+                select_producto.chosen('destroy');
+                select_producto.html('<option value=""></option>');
+                $('#close_add_producto').trigger('click');
+
+                for (var i = 0; i < productos.length; i++) {
+                    var temp = '<option value="' + productos[i].producto_id + '" data-impuesto="' + productos[i].porcentaje_impuesto + '">';
+                    if ($('#producto_what_codigo').val() == 'AUTO')
+                        temp += productos[i].producto_id + ' - ' + productos[i].producto_nombre;
+                    else
+                        temp += productos[i].codigo + ' - ' + productos[i].producto_nombre;
+
+                    if ($('#barra_activa').val() == 1 && productos[i].barra != "")
+                        temp += ' CB: ' + productos[i].barra;
+
+                    temp += '</option>';
+
+                    select_producto.append(temp);
+                }
+
+                $('#producto_id').chosen({
+                    search_contains: true
+                });
+                $('.chosen-container').css('width', '100%');
+            },
+            complete: function (data) {
+                $("#loading_save_venta").modal('hide');
+            },
+            error: function (data) {
+                alert('not');
+            }
+        });
+    });
     //CONFIGURACIONES INICIALES
     App.sidebar('close-sidebar');
 

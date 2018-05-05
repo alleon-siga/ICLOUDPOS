@@ -218,11 +218,16 @@
                     /*si retorno es producto, quiere decir que esta vista fue llamada desde el modulo de producto
                      * por lo tanto va allamar a update, y update esta en la vista de producto_form.
                      * Sino quiere decir que esta en su modulo normal, y retornara la vista nuevamente*/
-                    if(retorno=='producto') {
+                     if(retorno != 'proveedor'){
+                        update_proveedor(data.id,data.nombre);
+                     }
+                    /*if(retorno=='producto') {
                         update_proveedor(data.id,data.nombre);
                     }else if(retorno=='gasto') {
                         update_proveedor(data.id,data.nombre);
-                    }
+                    }else if(retorno=='compras') {
+                        update_proveedor(data.id,data.nombre);
+                    }*/
 
                     var growlType = 'success';
 

@@ -1306,4 +1306,16 @@ class venta_new_model extends CI_Model
         $this->db->update('cliente', $update);
         return $venta_id;
     }
+    public function ultimasVentas($venta)
+    {
+        $this->db->select('date(v.fecha) AS fecha, dv.precio, dv.cantidad, u.nombre_unidad, venta_id, m.simbolo');
+        $this->db->from('detalle_venta dv');
+        $this->db->join('venta v', 'v.venta_id=dv.id_venta');
+        $this->db->join('unidades u', 'dv.unidad_medida=u.id_unidad');
+        $this->db->join('moneda m', 'v.id_moneda = m.id_moneda');
+        $this->db->where('id_producto', $venta['id_producto']);
+        $this->db->where('id_cliente', $venta['id_cliente']);
+        $this->db->order_by('v.fecha DESC');
+        return $this->db->get()->result();
+    }
 }

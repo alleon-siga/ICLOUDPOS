@@ -568,6 +568,12 @@ $primary_nav = array(
                 'url' => $ruta . 'reporte/recargaCuentasC',
                 'icon' => 'fa fa-area-chart',
                 'slug' => 'recargaCuentasC'
+            ),
+            array(
+                'name' => 'Utilidades por producto',
+                'url' => $ruta . 'reporte/utilidadProducto',
+                'icon' => 'fa fa-area-chart',
+                'slug' => 'utilidadProducto'
             )
         ),
     ),
