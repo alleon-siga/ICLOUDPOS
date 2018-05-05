@@ -46,6 +46,7 @@
     <!--<img src="<?php //echo $ruta; ?>recursos/img/placeholders/headers/dashboard_header.jpg" alt="header image" class="animation-pulseSlow">-->
 </div>
 <!-- END Dashboard Header -->
+<?php if($this->usuarios_grupos_model->user_has_perm($this->session->userdata('nUsuCodigo'), 'reporteVentas') || $this->usuarios_grupos_model->user_has_perm($this->session->userdata('nUsuCodigo'), 'reporteCompras')) { ?>
 <div class="row">
     <div class="col-md-3">
         <a href="<?=$ruta?>ingresos?costos=true" class="widget widget-hover-effect1 menulink">
@@ -103,6 +104,7 @@
         <!-- END Widget -->
     </div>
 </div>
+<?php } ?>
 <!-- Mini Top Stats Row -->
 <div class="row">
     <?php if($this->usuarios_grupos_model->user_has_perm($this->session->userdata('nUsuCodigo'), 'nuevoproducto')) {?>

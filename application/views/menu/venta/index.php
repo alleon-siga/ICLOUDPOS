@@ -127,7 +127,6 @@
                             <div class="col-md-4">
                                 <label id="popover_stock" class="control-label badge label-info"
                                        style="width: 200% !important; font-size: 15px; cursor: pointer; display:none; float: left; position: absolute; z-index: 3000;">
-
                                 </label>
                                 <label id="stock_total" style="font-size: 15px; cursor: pointer;"
                                        class="control-label badge label-default"></label>
@@ -142,8 +141,6 @@
                             </div>
 
                         </div>
-
-
                         <br>
                         <!-- DESGLOSE DE LOS PRODUCTOS -->
                         <div class="row">
@@ -176,7 +173,9 @@
                         <!-- SECCION DE TIPO PRECIOS -->
                         <div class="row">
                             <div class="col-md-2 venta_input">
-                                <label class="control-label panel-admin-text">Precio Unitario:</label>
+                                <label class="control-label panel-admin-text">
+                                <a href="#" id="precioUnitario">Precio Unitario:</a>
+                                </label>
                                 <div style="display: none;">
                                     <!--<div class="help-key badge label-success" style="display: none;">4</div>-->
                                     <select name="precio_id" id="precio_id" class='form-control'>
@@ -188,24 +187,23 @@
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
-                            </div>
 
+                            </div>
                             <div class="col-md-8 row" id="loading_precio" style="display: none;">
                                 <div class="col-md-12 text-center">
                                     <div class="loading-icon"></div>
                                 </div>
                             </div>
+                            <div class="col-md-8">
+                                <label id="popover_precioUnitario" class="control-label badge label-info"
+                                style="width: 50% !important; font-size: 15px; cursor: pointer; display:none; float: left; position: absolute; z-index: 3000;"></label>
+                            </div>
                             <div id="producto_precio" class="col-md-8 row text-center venta_input">
-
                             </div>
-
                             <div class="col-md-2">
-
-                            </div>
+                            </div>              
                         </div>
-
                         <hr class="hr-margin-10">
-
                         <!-- SECCION DE PRECIO UNITARIO E IMPORTE -->
                         <div class="row">
                             <div class="col-md-2">

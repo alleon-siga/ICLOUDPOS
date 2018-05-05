@@ -1,7 +1,7 @@
+<?php $md = get_moneda_defecto() ?>
 <form name="formagregar" action="<?= base_url() ?>gastos/guardar" method="post" id="formagregar">
     <input type="hidden" name="id" id="" required="true"
            value="<?php if (isset($gastos['id_gastos'])) echo $gastos['id_gastos']; ?>">
-
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -9,7 +9,6 @@
                 <h4 class="modal-title">Nuevo Gasto</h4>
             </div>
             <div class="modal-body">
-
                 <div class="row">
                     <div class="form-group">
                         <div class="col-md-3">
@@ -19,19 +18,15 @@
                             <input type="text" name="fecha" id="fecha" required="true" readonly style="cursor: pointer;"
                                    class="input-small input-datepicker form-control"
                                    value="<?= isset($gastos['fecha']) ? $gastos['fecha'] : date('d-m-Y'); ?>"/>
-
-
                         </div>
                     </div>
                 </div>
-
                 <div class="row">
                     <div class="form-group">
                         <div class="col-md-3">
                             <label class="control-label panel-admin-text">Local</label>
                         </div>
                         <div class="col-md-9">
-
                             <select name="filter_local_id" id="filter_local_id" required="true"
                                     class="select_chosen form-control">
                                 <option value="">Seleccione</option>
@@ -40,7 +35,6 @@
                                             value="<?php echo $local->local_id ?>" <?= $local->local_id == $this->session->userdata('id_local') ? 'selected' : '' ?>><?= $local->local_nombre ?></option>
                                 <?php endforeach ?>
                             </select>
-
                         </div>
                     </div>
                 </div>
@@ -61,6 +55,72 @@
                         </div>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            <label class="control-label panel-admin-text">Persona afectada</label>
+                        </div>
+                        <div class="col-md-9">
+                            <select name="persona_gasto" id="persona_gasto" required="true"
+                                    class="select_chosen form-control">
+                                <option value="">Seleccione</option>
+                                <option value="1" <?= isset($gastos['proveedor_id']) && $gastos['proveedor_id'] != NULL ? 'selected' : '' ?>>
+                                    Proveedor
+                                </option>
+                                <option value="2" <?= isset($gastos['usuario_id']) && $gastos['usuario_id'] != NULL ? 'selected' : '' ?>>
+                                    Trabajador
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" id="proveedor_block" style="display: none;">
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            <label class="control-label panel-admin-text">Proveedor</label>
+                        </div>
+                        <div class="col-md-7">
+                            <select name="proveedor" id="proveedor" required="true" class="form-control">
+                                <option value="">Seleccione</option>   
+                                <?php foreach ($proveedores as $proveedor): ?>
+                                    <option
+                                            value="<?php echo $proveedor->id_proveedor ?>"
+                                        <?php if (isset($gastos['proveedor_id']) and $gastos['proveedor_id'] == $proveedor->id_proveedor) echo 'selected' ?>>
+                                        <?= $proveedor->proveedor_nombre ?>
+                                    </option>
+                                <?php endforeach ?>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <a class="btn btn-default" data-toggle="tooltip"
+                               title="Agregar Proveedor" data-original-title="Agregar Proveedor"
+                               href="#" onclick="agregarproveedor()">
+                                <i class="hi hi-plus-sign"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" id="usuario_block" style="display: none;">
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            <label class="control-label panel-admin-text">Trabajador</label>
+                        </div>
+                        <div class="col-md-9">
+
+                            <select name="usuario" id="usuario" required="true" class="form-control">
+                                <option value="">Seleccione</option>
+                                <?php foreach ($usuarios as $usuario): ?>
+                                    <option
+                                            value="<?php echo $usuario->nUsuCodigo ?>"
+                                        <?php if (isset($gastos['usuario_id']) and $gastos['usuario_id'] == $usuario->nUsuCodigo) echo 'selected' ?>>
+                                        <?= $usuario->nombre ?>
+                                    </option>
+                                <?php endforeach ?>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <hr>
                 <div class="row">
                     <div class="form-group">
                         <div class="col-md-3">
@@ -112,76 +172,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="form-group">
-                        <div class="col-md-3">
-                            <label class="control-label panel-admin-text">Persona afectada</label>
-                        </div>
-                        <div class="col-md-9">
-
-                            <select name="persona_gasto" id="persona_gasto" required="true"
-                                    class="select_chosen form-control">
-                                <option value="">Seleccione</option>
-                                <option value="1" <?= isset($gastos['proveedor_id']) && $gastos['proveedor_id'] != NULL ? 'selected' : '' ?>>
-                                    Proveedor
-                                </option>
-                                <option value="2" <?= isset($gastos['usuario_id']) && $gastos['usuario_id'] != NULL ? 'selected' : '' ?>>
-                                    Trabajador
-                                </option>
-                            </select>
-
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row" id="proveedor_block" style="display: none;">
-                    <div class="form-group">
-                        <div class="col-md-3">
-                            <label class="control-label panel-admin-text">Proveedor</label>
-                        </div>
-                        <div class="col-md-7">
-                            <select name="proveedor" id="proveedor" required="true" class="form-control">
-                                <option value="">Seleccione</option>   
-                                <?php foreach ($proveedores as $proveedor): ?>
-                                    <option
-                                            value="<?php echo $proveedor->id_proveedor ?>"
-                                        <?php if (isset($gastos['proveedor_id']) and $gastos['proveedor_id'] == $proveedor->id_proveedor) echo 'selected' ?>>
-                                        <?= $proveedor->proveedor_nombre ?>
-                                    </option>
-                                <?php endforeach ?>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <a class="btn btn-default" data-toggle="tooltip"
-                               title="Agregar Proveedor" data-original-title="Agregar Proveedor"
-                               href="#" onclick="agregarproveedor()">
-                                <i class="hi hi-plus-sign"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="row" id="usuario_block" style="display: none;">
-                    <div class="form-group">
-                        <div class="col-md-3">
-                            <label class="control-label panel-admin-text">Trabajador</label>
-                        </div>
-                        <div class="col-md-9">
-
-                            <select name="usuario" id="usuario" required="true" class="form-control">
-                                <option value="">Seleccione</option>
-                                <?php foreach ($usuarios as $usuario): ?>
-                                    <option
-                                            value="<?php echo $usuario->nUsuCodigo ?>"
-                                        <?php if (isset($gastos['usuario_id']) and $gastos['usuario_id'] == $usuario->nUsuCodigo) echo 'selected' ?>>
-                                        <?= $usuario->nombre ?>
-                                    </option>
-                                <?php endforeach ?>
-                            </select>
-
-                        </div>
-                    </div>
-                </div>
-
+                <hr>
                 <div class="row">
                     <div class="form-group">
                         <div class="col-md-3">
@@ -194,7 +185,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="row">
                     <div class="form-group">
                         <div class="col-md-3">
@@ -206,31 +196,29 @@
                         </div>
                     </div>
                 </div>
-
-
                 <div class="row">
                     <div class="form-group">
                         <div class="col-md-3">
                             <label class="control-label panel-admin-text">Total</label>
                         </div>
                         <div class="col-md-9">
-                            <input type="number" name="total" id="total" required="true" class="form-control"
-                                   value="<?php if (isset($gastos['total'])) echo $gastos['total']; ?>"
-                                   onkeydown="return soloDecimal(event);">
+                            <div class="input-group">
+                                <div class="input-group-addon"><?= $md->simbolo ?></div>
+                                <input type="number" name="total" id="total" required="true" class="form-control"
+                                       value="<?php if (isset($gastos['total'])) echo $gastos['total']; ?>"
+                                       onkeydown="return soloDecimal(event);">
+                            </div>
                         </div>
                     </div>
                 </div>
-
-
             </div>
-
             <div class="modal-footer">
-                <button type="button" id="" class="btn btn-primary" onclick="grupo.guardar()">Confirmar</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-
+                <button type="button" id="" class="btn btn-primary" onclick="grupo.guardar()">F6 Confirmar</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
             </div>
             <!-- /.modal-content -->
         </div>
+    </div>
 </form>
 <script>
     $("#fecha").datepicker({
@@ -248,6 +236,25 @@
     <?php endforeach;?>
 
     $(document).ready(function () {
+        $(document).off('keyup');
+        $(document).off('keydown');
+
+        var F6 = 117;
+
+        var disabled_save = false;
+        $(document).keydown(function (e) {
+            if (e.keyCode == F6) {
+                e.preventDefault();
+            }
+        });
+
+        $(document).keyup(function (e) {
+            if (e.keyCode == F6 && $("#agregar").is(":visible") == true) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                grupo.guardar();
+            }
+        });
         //$("#proveedor").chosen();
 
         setTimeout(function () {

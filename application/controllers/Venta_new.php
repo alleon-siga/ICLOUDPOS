@@ -828,4 +828,12 @@ class venta_new extends MY_Controller
         $datos = $this->cliente_model->get_by('id_cliente', $id);
         echo json_encode($datos);
     }
+
+    function ultimasVentas()
+    {
+        $venta['id_producto'] = $this->input->post('id_producto');
+        $venta['id_cliente'] = $this->input->post('id_cliente');
+        $data = $this->venta->ultimasVentas($venta);
+        echo json_encode($data);
+    }
 }

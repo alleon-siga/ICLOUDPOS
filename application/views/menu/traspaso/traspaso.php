@@ -4,10 +4,7 @@
     <li>Inventario</li>
     <li><a href="">Traspasos de Almacen</a></li>
 </ul>
-
-<style>#dtras {
-        margin-left: 10px;
-    }</style>
+<link rel="stylesheet" href="<?= $ruta ?>recursos/js/datepicker-range/daterangepicker.css">
 <div class="row">
     <div class="col-xs-12">
         <div class="alert alert-success alert-dismissable" id="success"
@@ -18,18 +15,13 @@
         </span>
     </div>
 </div>
-
-
 <input type="hidden" id="producto_id"/>
-
 <div class="row-fluid">
     <div class="span12">
         <div class="block">
             <form id="frmBuscar">
                 <div class="block-title">
                 </div>
-
-
                 <?php if (count($locales) == 1): ?>
                     <div class="alert alert-warning" style="margin-bottom: 2px;">
                         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">X</button>
@@ -46,106 +38,76 @@
                             </div>
                         </div>
                     </div>
-
                 <?php else: ?>
                     <div class="row">
-                        <div class="form-group">
-                            <label class="col-md-2 panel-admin-text">Local:</label>
-                            <div class="col-md-4"><select class="form-control" id="locales" name="locales"
-                                                          onchange="buscar()">
-                                    <option value="TODOS">TODOS</option>
-                                    <?php
-                                    $i = 0;
-                                    foreach ($locales as $local) {
-                                        ?>
-                                        <option value="<?= $local['int_local_id'] ?>" <?php if ($i == 0) {
-                                            echo "selected";
-                                            $i++;
-                                        } ?> >
-                                            <?= $local['local_nombre'] ?></option>
-                                    <?php } ?>
-
-                                </select>
-                            </div>
-                            <label class="col-md-2 panel-admin-text">Productos: </label>
-                            <div class="col-md-4"><select onchange="buscar()" class="form-control"
-                                                          id="productos_traspaso" name="productos_traspaso">
-                                    <option value="TODOS" selected>TODOS</option>
-                                    <?php if (count($productos) > 0):
-                                        foreach ($productos as $producto): ?>
-                                            <?php if ($n++ != 0): ?>
-                                                <option
-                                                    value="<?= $producto['producto_id'] ?>"><?= $producto['producto_nombre'] ?></option>
-                                            <?php endif; ?>
-                                        <?php endforeach; ?>
-                                    <?php endif; ?>
-                                </select></div>
-
-
-                        </div>
-                    </div>
-
-
-                    <div class="row">
-                        <label class="col-md-2 panel-admin-text">Desde:</label>
-                        <div class="col-md-4">
-
-                            <input type="text" name="fecIni" readonly onchange="buscar()" id="fecIni"
-                                   value="<?= date('d-m-Y') ?>" class='input-small form-control input-datepicker'>
-                        </div>
-                        <label class="col-md-2 panel-admin-text">Hasta:</label>
-                        <div class="col-md-4">
-                            <input type="text" name="fecFin" readonly onchange="buscar()" id="fecFin"
-                                   value="<?= date('d-m-Y') ?>" class='form-control input-datepicker'>
-                        </div>
-
-                    </div>
-
-                    <div class="row">
-                        <label class="col-md-2 panel-admin-text">Tipo de Movimiento:</label>
-                        <div class="col-md-4">
-
-                            <select onchange="buscar()" class="form-control" id="tipo_mov" name="tipo_mov">
-                                <option value="TODOS" selected>TODOS</option>
-                                <option value="ENTRADA">ENTRADA</option>
-                                <option value="SALIDA">SALIDA</option>
+                        <div class="col-md-2">
+                            <label class="control-label panel-admin-text">Local:</label>
+                            <select class="form-control" id="locales" name="locales">
+                                <option value="TODOS">TODOS</option>
+                                <?php
+                                $i = 0;
+                                foreach ($locales as $local) {
+                                    ?>
+                                    <option value="<?= $local['int_local_id'] ?>" <?php if ($i == 0) {
+                                        echo "selected";
+                                        $i++;
+                                    } ?> >
+                                        <?= $local['local_nombre'] ?></option>
+                                <?php } ?>
                             </select>
                         </div>
-
+                        <div class="col-md-3">
+                            <label class="control-label panel-admin-text">Fecha:</label>
+                            <input type="text" id="fecha" class="form-control" readonly style="cursor: pointer;" name="fecha" value="<?= date('d/m/Y') ?> - <?= date('d/m/Y') ?>"/>                            
+                        </div>
+                        <div class="col-md-3">
+                            <label class="control-label panel-admin-text">Productos: </label>
+                            <select class="form-control" id="productos_traspaso" name="productos_traspaso">
+                                <option value="TODOS" selected>TODOS</option>
+                                <?php if (count($productos) > 0):
+                                    foreach ($productos as $producto): ?>
+                                        <?php if ($n++ != 0): ?>
+                                            <option
+                                                value="<?= $producto['producto_id'] ?>"><?= $producto['producto_nombre'] ?></option>
+                                        <?php endif; ?>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </select>
+                        </div>
+                        <div class="col-md-1">
+                            <div style="padding-top: 30px;"></div>
+                            <input type="hidden" name="tipo_mov" id="tipo_mov" value="TODOS">
+                            <button type="button" id="btn_buscar" class="btn btn-default" onclick="buscar()">
+                                <i class="fa fa-search"></i> Buscar
+                            </button>
+                        </div>                        
+                        <div class="col-md-2">
+                            <div style="padding-top: 30px;"></div>
+                            <a id="traspasarProducto" class="btn btn-default" onclick="traspasarProducto()">
+                                <i class="fa fa-tasks"></i> Traspasar >>
+                            </a>
+                        </div>
                     </div>
-
                 <?php endif; ?>
             </form>
         </div>
     </div>
 </div>
-
-
 <div class="row-fluid">
     <div class="span12">
         <div class="block">
             <div class="block-title">
-
             </div>
             <div class="col-md-8"></div>
             <div class="col-md-4">
-                <div id="dtras"><a id="traspasarProducto" class="btn btn-default" onclick="traspasarProducto()">
-                        <i class="fa fa-tasks"></i> Traspasar >>
-                    </a></div>
             </div>
-
-
             <div id="lstTabla" class="table-responsive"></div>
         </div>
-
         <div class="block-section">
-
-
             <div id="pp_excel">
                 <form action="<?php echo $ruta; ?>exportar/toExcel_traspaso" name="frmExcel"
                       id="frmExcel" method="post">
-                    <input type="hidden" name="fecIni" id="fecIni1" class='input-small'>
-                    <input type="hidden" name="fecFin" id="fecFin1" class='input-small'>
+                    <input type="hidden" name="fecha" id="fecha1" class='input-small'>
                     <input type="hidden" name="local" id="local1" class='input-small'>
                     <input type="hidden" name="productos" id="producto1" class='input-small'>
                     <input type="hidden" name="tipo" id="tipo_mov1" class='input-small'>
@@ -155,13 +117,9 @@
             </div>
             <a href="#" onclick="generar_reporte_excel();" class=' btn btn-lg btn-default'
                title="Exportar a Excel"><i class="fa fa-file-excel-o"></i></a>
-
             <div id="pp_pdf">
-                <form name="frmPDF" id="frmPDF"
-                      action="<?php echo $ruta; ?>exportar/toPDF_traspaso" target="_blank"
-                      method="post">
-                    <input type="hidden" name="fecIni" id="fecIni2" class='input-small'>
-                    <input type="hidden" name="fecFin" id="fecFin2" class='input-small'>
+                <form name="frmPDF" id="frmPDF" action="<?php echo $ruta; ?>exportar/toPDF_traspaso" target="_blank" method="post">
+                    <input type="hidden" name="fecha" id="fecha2" class='input-small'>
                     <input type="hidden" name="local" id="local2" class='input-small'>
                     <input type="hidden" name="productos" id="producto2" class='input-small'>
                     <input type="hidden" name="tipo" id="tipo_mov2" class='input-small'>
@@ -170,12 +128,9 @@
             </div>
             <a href="#" onclick="generar_reporte_pdf();" class='btn btn-lg btn-default'
                title="Exportar a PDF"><i class="fa fa-file-pdf-o"></i> </a>
-
         </div>
     </div>
 </div>
-
-
 <div class="modal fade" id="advertencia" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
      aria-hidden="true" data-backdrop="static" data-keyboard="false" style="z-index: 99999999;">
     <div class="modal-dialog" style="width: 60%">
@@ -196,10 +151,7 @@
         </div>
     </div>
     <!-- /.modal-content -->
-
-
 </div>
-
 <div class="modal fade" id="confirmarcerrar" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
      aria-hidden="true">
     <form name="" id="" method="post">
@@ -220,19 +172,14 @@
                         Confirmar
                     </button>
                     <button type="button" class="btn btn-default" onclick="hide_modal_cerrar()"> Cancelar</button>
-
                 </div>
             </div>
             <!-- /.modal-content -->
         </div>
-
 </div>
-
 <div class="modal fade" id="traspasomodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
      aria-hidden="false" data-backdrop="static" data-keyboard="false">
-
 </div>
-
 <div class="modal fade" id="MsjPreg" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" data-backdrop="static" data-keyboard="false" style="z-index: 999999999;">
         <div class="modal-content">
@@ -392,10 +339,8 @@
 
     function buscar() {
         $('#cargando_modal').modal('show')
-        document.getElementById('fecIni1').value = $("#fecIni").val();
-        document.getElementById('fecFin1').value = $("#fecFin").val();
-        document.getElementById('fecIni2').value = $("#fecIni").val();
-        document.getElementById('fecFin2').value = $("#fecFin").val();
+        document.getElementById('fecha1').value = $("#fecha").val();
+        document.getElementById('fecha2').value = $("#fecha").val();
         document.getElementById('producto1').value = $("#productos_traspaso").val();
         document.getElementById('producto2').value = $("#productos_traspaso").val();
         document.getElementById('local1').value = $("#locales").val();
@@ -434,12 +379,49 @@
     }
 
 </script>
-
+<script src="<?php echo $ruta; ?>recursos/js/datepicker-range/moment.min.js"></script>
+<script src="<?php echo $ruta; ?>recursos/js/datepicker-range/daterangepicker.js"></script>
 <!-- Load and execute javascript code used only in this page -->
 <script src="<?php echo $ruta ?>recursos/js/pages/tablesDatatables.js"></script>
 
 <script>
     $(function () {
+        $('input[name="fecha"]').daterangepicker({
+            "locale": {
+                "format": "DD/MM/YYYY",
+                "separator": " - ",
+                "applyLabel": "Aplicar",
+                "cancelLabel": "Cancelar",
+                "fromLabel": "De",
+                "toLabel": "A",
+                "customRangeLabel": "Personalizado",
+                "daysOfWeek": [
+                    "Do",
+                    "Lu",
+                    "Ma",
+                    "Mi",
+                    "Ju",
+                    "Vi",
+                    "Sa"
+                ],
+                "monthNames": [
+                    "Enero",
+                    "Febrero",
+                    "Marzo",
+                    "Abril",
+                    "Mayo",
+                    "Junio",
+                    "Julio",
+                    "Agosto",
+                    "Septiembre",
+                    "Octubre",
+                    "Noviembre",
+                    "Diciembre"
+                ],
+                "firstDay": 1
+            }
+        });
+
         TablesDatatables.init();
 
         $('select').chosen();
