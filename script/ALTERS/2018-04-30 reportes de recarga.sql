@@ -11,10 +11,14 @@ CREATE TABLE `recarga` (
   PRIMARY KEY (`rec_cod`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-INSERT INTO opcion(nOpcion, nOpcionClase, cOpcionDescripcion, cOpcionNombre) VALUES(714,7,'pagosRecarga', 'Pagos recargas');
-UPDATE opcion SET cOpcionDescripcion='recargaDia', cOpcionNombre='Recargas del día' where nOpcion=714;
+INSERT INTO opcion(nOpcion, nOpcionClase, cOpcionDescripcion, cOpcionNombre) VALUES(308,3,'generarRecarga', 'Recargas');
+INSERT INTO opcion(nOpcion, nOpcionClase, cOpcionDescripcion, cOpcionNombre) VALUES(713,7,'hojaColecta', 'Hoja de colecta');
+INSERT INTO opcion(nOpcion, nOpcionClase, cOpcionDescripcion, cOpcionNombre) VALUES(714,7,'recargaDia', 'Recargas del día');
 INSERT INTO opcion(nOpcion, nOpcionClase, cOpcionDescripcion, cOpcionNombre) VALUES(715,7,'recargaCobranza', 'Cobranza del día');
 INSERT INTO opcion(nOpcion, nOpcionClase, cOpcionDescripcion, cOpcionNombre) VALUES(716,7,'recargaCuentasC', 'Cuentas por cobrar');
+
+ALTER TABLE `diccionario_termino`
+ADD COLUMN `grupo`  int NULL AFTER `activo`;
 
 update diccionario_termino set grupo=1 where id in(1,2);
 update diccionario_termino set grupo=2 where id in(3);

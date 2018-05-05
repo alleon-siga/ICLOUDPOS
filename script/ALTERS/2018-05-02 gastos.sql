@@ -4,7 +4,7 @@ ADD COLUMN `id_documento`  int NULL COMMENT 'DOCUMENTO' AFTER `gravable`,
 ADD COLUMN `serie`  varchar(255) NULL COMMENT 'NUMERO DE SERIE' AFTER `id_documento`,
 ADD COLUMN `numero`  varchar(255) NULL COMMENT 'NUMERO' AFTER `serie`;
 
-INSERT INTO documentos VALUES('7', 'RECIBO DE CAJA', '1', 'RC');
+INSERT INTO documentos VALUES('7', 'RECIBO DE CAJA', '1', 'RC','0', '0', '1');
 
 ALTER TABLE `documentos`
 ADD COLUMN `compras`  char(1) NULL DEFAULT 0 COMMENT '0=NO, 1=SI' AFTER `abr_doc`,
