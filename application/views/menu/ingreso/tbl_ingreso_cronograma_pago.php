@@ -61,12 +61,12 @@
 
                                                         <a class="btn btn-xs btn-primary"
                                                            onclick="abonar(
-                                                            <?= $ingreso->id_ingreso; ?>,
-                                                            <?= $i; ?>,
-                                                            <?= $pago->id ?>,
-                                                            <?= $pago->monto ?>,
-                                                            <?= $pago->monto_pagado?>,
-                                                            '<?= $ingreso->simbolo ?>')">
+                                                           <?= $ingreso->id_ingreso; ?>,
+                                                           <?= $i; ?>,
+                                                           <?= $pago->id ?>,
+                                                           <?= $pago->monto ?>,
+                                                           <?= $pago->monto_pagado ?>,
+                                                                   '<?= $ingreso->simbolo ?>')">
                                                             <i class="fa fa-paypal"></i> Pagar</a>
                                                     </td>
                                                     <?php $flag_pago = false; ?>
@@ -113,7 +113,8 @@
                             <div class="input-group">
                                 <input type="hidden" id="correlativo">
                                 <div class="input-group-addon tipo_moneda"></div>
-                                <input style="text-align: right;" type="text" id="total_cuota" value="" class="form-control" readonly>
+                                <input style="text-align: right;" type="text" id="total_cuota" value=""
+                                       class="form-control" readonly>
                             </div>
                         </div>
                     </div>
@@ -157,7 +158,9 @@
                                 <option value="">Seleccione</option>
                                 <?php foreach ($bancos as $banco): ?>
                                     <option
-                                            value="<?= $banco->banco_id ?>"><?= $banco->banco_nombre ?></option>
+                                            value="<?= $banco->banco_id ?>">
+                                        <?= $banco->banco_nombre ?> | <?= $banco->descripcion ?>
+                                    </option>
                                 <?php endforeach ?>
                             </select>
                         </div>
@@ -196,10 +199,12 @@
                                 <input type="hidden" id="correlativo">
                                 <input type="hidden" id="compra_id">
                                 <input type="hidden" id="id_credito_cuota">
-                                <input type="number" id="cantidad_a_pagar" name="cantidad_a_pagar" value="" class="form-control">
+                                <input type="number" id="cantidad_a_pagar" name="cantidad_a_pagar" value=""
+                                       class="form-control">
                             </div>
                             <br>
-                            <input style="cursor: pointer;" type="checkbox" id="check_all"> <label style="cursor: pointer;" for="check_all">Pagar todo</label>
+                            <input style="cursor: pointer;" type="checkbox" id="check_all"> <label
+                                    style="cursor: pointer;" for="check_all">Pagar todo</label>
                         </div>
                     </div>
                 </form>
@@ -219,10 +224,10 @@
 </div>
 <script>
     $(document).ready(function () {
-        $('#check_all').on('click', function(){
-            if($(this).prop('checked')){
+        $('#check_all').on('click', function () {
+            if ($(this).prop('checked')) {
                 $('#cantidad_a_pagar').val($('#total_cuota').val());
-            }else{
+            } else {
                 $('#cantidad_a_pagar').val('');
             }
         });
@@ -270,7 +275,7 @@
     function guardarPago() {
         var tipo = $('#metodo option:selected').attr('data-tipo_metodo');
 
-        if(tipo == 'BANCO' && $('#banco_id').val() == ""){
+        if (tipo == 'BANCO' && $('#banco_id').val() == "") {
             $.bootstrapGrowl('<h4>Debe ingresar un banco</h4>', {
                 type: 'warning',
                 delay: 2500,
@@ -279,7 +284,7 @@
             return false;
         }
 
-        if($("#metodo").val()=="7" && $("#tipo_tarjeta").val()==""){
+        if ($("#metodo").val() == "7" && $("#tipo_tarjeta").val() == "") {
             $.bootstrapGrowl('<h4>Debe ingresar un tipo de tarjeta</h4>', {
                 type: 'warning',
                 delay: 2500,
@@ -288,7 +293,7 @@
             return false;
         }
 
-        if($("#metodo").val()!="3" && $("#num_oper").val()==""){
+        if ($("#metodo").val() != "3" && $("#num_oper").val() == "") {
             $.bootstrapGrowl('<h4>Es necesario el numero de operacion</h4>', {
                 type: 'warning',
                 delay: 2500,
@@ -297,7 +302,7 @@
             return false;
         }
 
-        if(tipo == 'CAJA' && $('#caja_id').val() == ""){
+        if (tipo == 'CAJA' && $('#caja_id').val() == "") {
             $.bootstrapGrowl('<h4>Debe ingresar una cuenta</h4>', {
                 type: 'warning',
                 delay: 2500,
@@ -309,7 +314,7 @@
         var cantidad = parseFloat($("#cantidad_a_pagar").val());
         var total = parseFloat($("#total_cuota").val());
 
-        if(isNaN(cantidad) || cantidad <= 0){
+        if (isNaN(cantidad) || cantidad <= 0) {
             $.bootstrapGrowl('<h4>Cantidad no valida</h4>', {
                 type: 'warning',
                 delay: 2500,
@@ -318,7 +323,7 @@
             return false;
         }
 
-        if(cantidad > total){
+        if (cantidad > total) {
             $.bootstrapGrowl('<h4>Cantidad no puede ser mayor al total de la cuota</h4>', {
                 type: 'warning',
                 delay: 2500,
@@ -328,49 +333,49 @@
         }
 
         var params = {
-            'correlativo_cuota':  $("#correlativo").val(),
-            'ingreso_id':$("#compra_id").val(),
-            'montodescontar':$("#cantidad_a_pagar").val(),
+            'correlativo_cuota': $("#correlativo").val(),
+            'ingreso_id': $("#compra_id").val(),
+            'montodescontar': $("#cantidad_a_pagar").val(),
             'cuota_id': $("#id_credito_cuota").val(),
-            'metodo_pago':$("#metodo").val(),
+            'metodo_pago': $("#metodo").val(),
             'tipo_metodo': tipo,
-            'banco':null,
-            'cuenta_id':null,
-            'nro_operacion':null
+            'banco': null,
+            'cuenta_id': null,
+            'nro_operacion': null
 
         };
 
-        if($("#metodo").val()!="3")
+        if ($("#metodo").val() != "3")
             params['nro_operacion'] = $("#num_oper").val();
 
-        if(tipo == 'BANCO')
+        if (tipo == 'BANCO')
             params['banco'] = $("#banco_id").val();
         else
             params['cuenta_id'] = $("#caja_id").val();
 
-        if($("#metodo").val()=="7")
+        if ($("#metodo").val() == "7")
             params['banco'] = $("#tipo_tarjeta").val();
 
 
-        $("#guardarPago_pagospendiente").attr('disabled','disabled');
+        $("#guardarPago_pagospendiente").attr('disabled', 'disabled');
         $('#cargando_modal').modal('show');
 
         $.ajax({
             url: '<?= base_url()?>ingresos/pagoCuotaCredito',
             type: 'POST',
-            dataType:'json',
+            dataType: 'json',
             data: params,
             success: function (data) {
 
-                if(data.success==undefined){
+                if (data.success == undefined) {
                     $('#cargando_modal').modal('hide');
-                    $.bootstrapGrowl('<h4>'+data.error+'</h4>', {
+                    $.bootstrapGrowl('<h4>' + data.error + '</h4>', {
                         type: 'warning',
                         delay: 2500,
                         allow_dismiss: true
                     });
 
-                }else{
+                } else {
 
                     $.bootstrapGrowl('<h4>El pago se ha realizado satisfactoriamente</h4>', {
                         type: 'success',
@@ -387,7 +392,7 @@
                         success: function (data) {
                             $("#pagar_venta").html(data);
                         },
-                        complete: function(){
+                        complete: function () {
                             $('#cargando_modal').modal('hide');
                         }
                     });
@@ -395,7 +400,7 @@
                 }
 
             },
-            error : function(){
+            error: function () {
                 $('#cargando_modal').modal('hide');
                 $.bootstrapGrowl('<h4>Error al realizar la operacion</h4>', {
                     type: 'warning',
@@ -403,7 +408,7 @@
                     allow_dismiss: true
                 });
             },
-            complete: function(){
+            complete: function () {
                 $("#guardarPago_pagospendiente").removeAttr('disabled');
             }
         });
