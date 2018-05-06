@@ -862,15 +862,7 @@ class venta_new_model extends CI_Model
                 $detalle->unidad_id,
                 $detalle->cantidad
             );
-            //Guardando en tabla venta_devolucion
-            /*$this->db->insert('venta_devolucion', array(
-                'id_venta' => $venta_id,
-                'id_producto' => $detalle->producto_id,
-                'precio' => $detalle->precio,
-                'cantidad' => $detalle->cantidad,
-                'unidad_medida' => $detalle->unidad_id,
-                'detalle_importe' => $detalle->importe
-            ));*/
+
         }
         foreach ($cantidades as $key => $value) {
 
@@ -925,6 +917,8 @@ class venta_new_model extends CI_Model
 
         }
 
+        $venta_status = $venta->venta_estado;
+
         $this->db->where('venta_id', $venta_id);
         $this->db->update('venta', array('venta_status' => 'ANULADO'));
 
@@ -943,7 +937,8 @@ class venta_new_model extends CI_Model
             $total += $cobranzas->total;
         }
 
-        if ($total > 0) {
+
+        if ($total > 0 && $venta_status != 'CAJA') {
             $caja_desglose = array(
                 'monto' => $total,
                 'tipo' => 'VENTA_ANULADA',

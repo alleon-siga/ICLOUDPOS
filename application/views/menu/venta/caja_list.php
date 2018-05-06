@@ -115,6 +115,64 @@
          aria-hidden="true">
 
     </div>
+
+    <div class="modal fade" id="dialog_venta_confirm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Confirmaci&oacute;n</h4>
+                </div>
+
+                <div class="modal-body ">
+                    <h5 id="confirm_venta_text">Estas Seguro?</h5>
+
+                    <div class="row">
+                        <div class="col-md-4 col-md-offset-1">
+                            <label>Metodos Pago</label>
+                            <select id="metodo_pago" class="form-control">
+                                <?php foreach ($metodos_pago as $mp): ?>
+                                    <option value="<?= $mp->id_metodo ?>"><?= $mp->nombre_metodo ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="col-md-5">
+                            <label>Cuenta de Caja</label>
+                            <select id="cuenta_id" class="form-control">
+                                <?php foreach ($cuentas as $cuenta): ?>
+                                    <option value="<?= $cuenta->id ?>"><?= $cuenta->descripcion ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 col-md-offset-1">
+                            <label>Serie</label>
+                            <input type="text" id="documento_serie" class="form-control">
+                        </div>
+                        <div class="col-md-5">
+                            <label>Numero</label>
+                            <input type="text" id="documento_numero" class="form-control">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button id="confirm_venta_button" type="button" class="btn btn-primary">
+                        Aceptar
+                    </button>
+
+                    <button type="button" class="btn btn-danger"
+                            onclick="$('#dialog_venta_confirm').modal('hide');">
+                        Cancelar
+                    </button>
+
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
 </div>
 
 
@@ -125,7 +183,28 @@
             get_ventas();
         });
 
+
+
     });
+
+    function ver(venta_id) {
+
+        $("#dialog_venta_detalle").html($("#loading").html());
+        $("#dialog_venta_detalle").modal('show');
+
+        $.ajax({
+            url: '<?php echo $ruta . 'venta_new/get_venta_detalle/' . $venta_action; ?>',
+            type: 'POST',
+            data: {'venta_id': venta_id},
+
+            success: function (data) {
+                $("#dialog_venta_detalle").html(data);
+            },
+            error: function () {
+                alert('asd')
+            }
+        });
+    }
 
 
 </script>

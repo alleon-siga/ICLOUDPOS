@@ -49,6 +49,7 @@ class venta_new extends MY_Controller
             'bancos' => $this->db->get_where('banco', array('banco_status' => 1))->result()
         ), true);
 
+
         $dataCuerpo['cuerpo'] = $this->load->view('menu/venta/historial', $data, true);
         if ($this->input->is_ajax_request()) {
             echo $dataCuerpo['cuerpo'];
@@ -66,6 +67,16 @@ class venta_new extends MY_Controller
         $date_range = explode(" - ", $this->input->post('fecha'));
         $fecha_ini = str_replace("/", "-", $date_range[0]);
         $fecha_fin = str_replace("/", "-", $date_range[1]);
+
+        $data['metodos_pago'] = $this->db->get_where('metodos_pago', array('status_metodo' => 1))->result();
+
+        $data['cuentas'] = $this->db->select('caja_desglose.*')
+            ->from('caja_desglose')
+            ->join('caja', 'caja.id = caja_desglose.caja_id')
+            ->where('caja.local_id', $local_id)
+            ->where('caja.moneda_id', $this->input->post('moneda_id'))
+            ->where('caja_desglose.estado', 1)
+            ->get()->result();
 
 
         if ($action != 'caja') {
@@ -451,7 +462,9 @@ class venta_new extends MY_Controller
         $venta_id = $this->input->post('venta_id');
         $numero = $this->input->post('numero');
         $serie = $this->input->post('serie');
-        $this->venta->anular_venta($venta_id, $serie, $numero);
+        $metodo_pago = $this->input->post('metodo_pago');
+        $cuenta_id = $this->input->post('cuenta_id');
+        $this->venta->anular_venta($venta_id, $serie, $numero, $metodo_pago, $cuenta_id);
     }
 
     function get_venta_cobro()
