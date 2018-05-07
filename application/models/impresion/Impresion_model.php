@@ -88,6 +88,8 @@ class impresion_model extends CI_Model
 
     function getVenta($id)
     {
+        require './application/libraries/Numeroletra.php';
+
         $query = "
             SELECT 
                 c.razon_social AS cliente_nombre,
@@ -141,7 +143,7 @@ class impresion_model extends CI_Model
 
         foreach ($venta as $v) {
 
-            $v->importe_letra = numtoletras($v->importe);
+            $v->importe_letra = Numeroletra::convertir($v->importe);
 
             $query = "
             SELECT 

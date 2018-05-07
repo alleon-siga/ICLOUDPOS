@@ -31,6 +31,21 @@ class producto_model extends CI_Model
         $this->load->model('unidades_has_precio/unidades_has_precio_model');
     }
 
+    //DEVUELVE EL COSTO UNITARIO PROMEDIO DEL PRODUCTO SEGUN SUS INGRESOS
+    function get_costo_promedio($id, $um_id)
+    {
+        $costo = $this->db->select('(sum(total_detalle) / sum(cantidad * uhp.unidades)) as costo_promedio')
+            ->from('detalleingreso')
+            ->join('ingreso', 'ingreso.id_ingreso = detalleingreso.id_ingreso')
+            ->join('unidades_has_producto as uhp', 'uhp.id_unidad = detalleingreso.unidad_medida AND uhp.producto_id = detalleingreso.id_producto')
+            ->where('id_producto', $id)
+//            ->where('unidad_medida', $um_id)
+            ->where('ingreso_status', 'COMPLETADO')
+            ->get()->row();
+
+        return $costo->costo_promedio != NULL ? $costo->costo_promedio : 0;
+    }
+
     public function get_productos($data = array()){
         $query = "
             SELECT 
