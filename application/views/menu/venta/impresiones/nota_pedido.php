@@ -122,20 +122,20 @@
                 <hr style="color: #0b0b0b;">
             </td>
         </tr>
-        <tr>
+        <!--<tr>
             <td colspan="2">Subtotal:</td>
             <td style="text-align: right;"><?= $venta->moneda_simbolo . ' ' . $venta->subtotal ?></td>
-        </tr>
+        </tr>-->
         <?php if ($venta->descuento > 0): ?>
             <tr>
                 <td colspan="2">Descuento:</td>
                 <td style="text-align: right;"><?= $venta->moneda_simbolo . ' ' . number_format($venta->descuento, 2) ?></td>
             </tr>
         <?php endif; ?>
-        <tr>
+        <!--<tr>
             <td colspan="2"><?= $term[2]->valor ?>:</td>
             <td style="text-align: right;"><?= $venta->moneda_simbolo . ' ' . $venta->impuesto ?></td>
-        </tr>
+        </tr>-->
         <tr>
             <td colspan="2">Total a Pagar:</td>
             <td style="text-align: right;"><?= $venta->moneda_simbolo . ' ' . $venta->total ?></td>

@@ -22,6 +22,7 @@
                         <th>Cliente</th>
                         <th># Comprobante</th>
                         <th>Producto</th>
+                        <th>Estado</th>
                         <th>Operador</th>
                         <th>Condici&oacute;n</th>
                         <th>Precio unitario</th>
@@ -31,6 +32,21 @@
                 <tbody>
                 <?php $suma = 0;  ?>    
                 <?php foreach ($lists as $list): ?>
+                <?php
+                    $debe = 0;
+                    $estado = 'Cancelado';
+                    if($list->condicion_pago == 2){
+                        $debe = $list->monto_restante;
+                        if($debe == 0 && !empty($debe)){ //cuando no hay deuda
+                            $estado = 'Cancelado';
+                        }elseif(empty($debe)){ //cuando no hay ningun pago
+                            $debe = $list->total;
+                            $estado = 'Debe';
+                        }else{ //cuando hay deuda
+                            $estado = 'Debe';
+                        }
+                    }
+                ?>
                     <tr>
                         <td><?= $list->venta_id ?></td>
                         <td><?= date('d/m/Y H:i', strtotime($list->fecha)) ?></td>
@@ -39,6 +55,7 @@
                         <td><?= utf8_decode($list->razon_social) ?></td>
                         <td><?= $list->abr_doc . ' ' . $list->serie . '-' . sumCod($list->numero, 6) ?></td>
                         <td><?= utf8_decode($list->producto_nombre).' '.utf8_decode($list->nota) ?></td>
+                        <td><?= $estado ?></td>
                         <td><?= $list->valor ?></td>
                         <td><?= $list->condicion ?></td>
                         <td style="text-align: right;"><?= $list->simbolo ?> <?= number_format($list->precio, 2) ?></td>
@@ -68,15 +85,15 @@
                         }
                     ?>
                     <tr>
-                        <td colspan="10" style="text-align: right;"><b>TOTAL EFECTIVO</b></td>
+                        <td colspan="11" style="text-align: right;"><b>TOTAL EFECTIVO</b></td>
                         <td style="text-align: right;"><?= $md->simbolo.' '.number_format($totalEfectivo, 2) ?></td>
                     </tr>
                     <tr>                      
-                        <td colspan="10" style="text-align: right;"><b>TOTAL BANCARIZADO</b></td>
+                        <td colspan="11" style="text-align: right;"><b>TOTAL BANCARIZADO</b></td>
                         <td style="text-align: right;"><?= $md->simbolo.' '.number_format($totalBanco, 2) ?></td>
                     </tr>
                     <tr>
-                        <td colspan="10" style="text-align: right;"><b>TOTAL CREDITO</b></td>
+                        <td colspan="11" style="text-align: right;"><b>TOTAL CREDITO</b></td>
                         <td style="text-align: right;">
                         <?php
                             echo $md->simbolo.' '.number_format($suma - $totalEfectivo - $totalBanco,2);
@@ -89,7 +106,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="10" style="text-align: right;"><b>TOTAL VENTAS</b></td>
+                        <td colspan="11" style="text-align: right;"><b>TOTAL VENTAS</b></td>
                         <td style="text-align: right;"><?= !empty($list->simbolo)? $list->simbolo : $md->simbolo ?> <?= number_format($suma, 2) ?></td>
                     </tr>
                 </tfoot>
@@ -133,7 +150,8 @@
             'linea_id': $("#linea_id").val(),
             'familia_id': $("#familia_id").val(),
             'operador_id': $('#operador_id').val(),
-            'usuario_id': $('#usuario_id').val()
+            'usuario_id': $('#usuario_id').val(),
+            'estado_pago': $('#estado_pago').val()
         };
 
         var win = window.open('<?= base_url()?>reporte/hojaColecta/pdf?data=' + JSON.stringify(data), '_blank');
@@ -150,7 +168,8 @@
             'linea_id': $("#linea_id").val(),
             'familia_id': $("#familia_id").val(),
             'operador_id': $('#operador_id').val(),
-            'usuario_id': $('#usuario_id').val()
+            'usuario_id': $('#usuario_id').val(),
+            'estado_pago': $('#estado_pago').val()
         };
 
         var win = window.open('<?= base_url()?>reporte/hojaColecta/excel?data=' + JSON.stringify(data), '_blank');
