@@ -18,6 +18,7 @@ class venta_new_model extends CI_Model
         $this->load->model('cajas/cajas_model');
         $this->load->model('cajas/cajas_mov_model');
         $this->load->model('comprobante/comprobante_model');
+        $this->load->model('producto/producto_model');
     }
 
     function get_ventas($where = array(), $action = '')
@@ -691,6 +692,7 @@ class venta_new_model extends CI_Model
     function save_producto_detalles($venta_id, $doc_id, $local_id, $productos, $id_usuario)
     {
         //Preparo los detalles de la venta para insertarlo y sus historicos
+        $venta = $this->get_ventas(array('venta_id' => $venta_id));
         $cantidades = array();
         $venta_detalle = array();
         $venta_contable_detalle = array();
@@ -710,6 +712,11 @@ class venta_new_model extends CI_Model
                 ->join('impuestos', 'impuestos.id_impuesto=producto.producto_impuesto')
                 ->get_where('producto', array('producto_id' => $producto->id_producto))->row();
 
+            $costo_u = $this->db->get_where('producto_costo_unitario', array(
+                'producto_id' => $producto->id_producto,
+                'moneda_id' => $venta->moneda_id
+            ))->row();
+
             //preparo el detalle de la venta
             $producto_detalle = array(
                 'id_venta' => $venta_id,
@@ -718,7 +725,8 @@ class venta_new_model extends CI_Model
                 'cantidad' => $producto->cantidad,
                 'unidad_medida' => $producto->unidad_medida,
                 'detalle_importe' => $producto->detalle_importe,
-                'detalle_costo_promedio' => 0,
+                'detalle_costo_promedio' => $this->producto_model->get_costo_promedio($producto->id_producto, $producto->unidad_medida),
+                'detalle_costo_ultimo' => $costo_u != NULL ? $costo_u->costo : 0,
                 'detalle_utilidad' => 0,
                 'impuesto_id' => $p->id_impuesto,
                 'impuesto_porciento' => $p->porcentaje_impuesto,
@@ -747,7 +755,7 @@ class venta_new_model extends CI_Model
         if (validOption('ACTIVAR_SHADOW', 1) && $doc_id != 6)
             $this->db->insert_batch('venta_contable_detalle', $venta_contable_detalle);
 
-        $venta = $this->get_ventas(array('venta_id' => $venta_id));
+
         foreach ($cantidades as $key => $value) {
 
             $old_cantidad = $this->db->get_where('producto_almacen', array(
@@ -1205,7 +1213,7 @@ class venta_new_model extends CI_Model
             'nota' => null,
             'dni_garante' => null,
         );
-        if($venta['condicion_pago'] == '1'){
+        if ($venta['condicion_pago'] == '1') {
             $correlativo = $this->correlativos_model->get_correlativo($venta['local_id'], $venta['id_documento']);
             $data['fecha_facturacion'] = date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $venta['fecha_venta']) . date(" H:i:s")));
             $data['serie'] = $correlativo->serie;
@@ -1231,7 +1239,7 @@ class venta_new_model extends CI_Model
         //inserto en detalle
         $this->db->insert('detalle_venta', $data);
 
-        if($venta['condicion_pago']==2){ //Al credito
+        if ($venta['condicion_pago'] == 2) { //Al credito
             $data = array(
                 'id_venta' => $venta_id,
                 'int_credito_nrocuota' => 1,
@@ -1252,7 +1260,7 @@ class venta_new_model extends CI_Model
                 'ispagado' => '0'
             );
             $this->db->insert('credito_cuotas', $data);
-        }else{
+        } else {
             if ($venta['vc_forma_pago'] == 4 || $venta['vc_forma_pago'] == 8 || $venta['vc_forma_pago'] == 9 || $venta['vc_forma_pago'] == 7) {
                 $banco = $this->db->get_where('banco', array('banco_id' => $venta['vc_banco_id']))->row();
                 $cuenta_id = $banco->cuenta_id;
@@ -1301,6 +1309,7 @@ class venta_new_model extends CI_Model
         $this->db->update('cliente', $update);
         return $venta_id;
     }
+
     public function ultimasVentas($venta)
     {
         $this->db->select('date(v.fecha) AS fecha, dv.precio, dv.cantidad, u.nombre_unidad, venta_id, m.simbolo');
