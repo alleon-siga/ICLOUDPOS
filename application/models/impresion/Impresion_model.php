@@ -142,8 +142,11 @@ class impresion_model extends CI_Model
 
 
         foreach ($venta as $v) {
+            $n = $v->importe;
+            $aux = (string) $n;
+            $decimal = substr( $aux, strpos( $aux, ".") );
 
-            $v->importe_letra = Numeroletra::convertir($v->importe);
+            $v->importe_letra = Numeroletra::convertir($v->importe) . ' ' . strtoupper($v->moneda) . ' ' . str_replace('.', '', $decimal) . '/100';
 
             $query = "
             SELECT 
