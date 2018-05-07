@@ -15,6 +15,8 @@ class Impresion extends MY_Controller
 
     function get_venta($id)
     {
+        var_dump($this->impresion_model->getVenta($id));
+        return false;
         echo $this->impresion_model->create_xml($this->impresion_model->getVenta($id));
     }
 
