@@ -127,7 +127,7 @@
                         </select>
                     <?php endif; ?>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <label class="control-label panel-admin-text">Fecha Registro</label>
                     <input type="text" id="fecha" class="form-control" readonly style="cursor: pointer;" name="fecha" value="<?= date('d/m/Y') ?> - <?= date('d/m/Y') ?>"/>
                 </div>
@@ -152,6 +152,14 @@
                             <option value="<?= $usuario->nUsuCodigo ?>"><?= $usuario->nombre ?></option>
                         <?php endforeach; ?>
                     <?php } ?>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="control-label panel-admin-text">Estado</label>
+                    <select name="estado_pago" id="estado_pago" class='form-control'>
+                        <option value="0" selected="">Todos</option>
+                        <option value="1">Debe</option>
+                        <option value="2">Cancelado</option>
                     </select>
                 </div>
                 <div class="col-md-1">
@@ -275,7 +283,8 @@
                         'linea_id': $("#linea_id").val(),
                         'familia_id': $("#familia_id").val(),
                         'operador_id': $('#operador_id').val(),
-                        'usuario_id': $('#usuario_id').val()
+                        'usuario_id': $('#usuario_id').val(),
+                        'estado_pago': $('#estado_pago').val()
                     };
 
                     $.ajax({

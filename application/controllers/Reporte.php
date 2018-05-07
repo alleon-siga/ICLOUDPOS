@@ -692,6 +692,7 @@ class Reporte extends MY_Controller
                 $params['fecha_fin'] = date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])));
                 $params['operador_id'] = $this->input->post('operador_id');
                 $params['usuario_id'] = $this->input->post('usuario_id');
+                $params['estado_pago'] = $this->input->post('estado_pago');
                 $data['lists'] = $this->reporte_model->getHojaColecta($params);
                 $data['totalesCon'] = $this->reporte_model->getSumMedioPago($params, 1); //contado
                 $data['totalesCre'] = $this->reporte_model->getSumMedioPago($params, 2); //credito
@@ -711,12 +712,13 @@ class Reporte extends MY_Controller
                     'fecha_ini' => date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0]))),
                     'fecha_fin' => date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1]))),
                     'operador_id' => $params->operador_id,
-                    'usuario_id' => $params->usuario_id
+                    'usuario_id' => $params->usuario_id,
+                    'estado_pago' => $params->estado_pago
                 );
 
                 $data['lists'] = $this->reporte_model->getHojaColecta($input);
                 $data['totalesCon'] = $this->reporte_model->getSumMedioPago($input, 1); //contado
-                //$data['totalesCre'] = $this->reporte_model->getSumMedioPago($params, 2); //credito
+                $data['totalesCre'] = $this->reporte_model->getSumMedioPago($input, 2); //credito
                 $local = $this->db->get_where('local', array('int_local_id' => $input['local_id']))->row();
                 $data['local_nombre'] = !empty($local->local_nombre)? $local->local_nombre: 'TODOS';
                 $data['local_direccion'] = !empty($local->direccion)? $local->direccion: 'TODOS';
@@ -744,12 +746,13 @@ class Reporte extends MY_Controller
                     'fecha_ini' => date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0]))),
                     'fecha_fin' => date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1]))),
                     'operador_id' => $params->operador_id,
-                    'usuario_id' => $params->usuario_id
+                    'usuario_id' => $params->usuario_id,
+                    'estado_pago' => $params->estado_pago
                 );
 
                 $data['lists'] = $this->reporte_model->getHojaColecta($input);
                 $data['totalesCon'] = $this->reporte_model->getSumMedioPago($input, 1); //contado
-                //$data['totalesCre'] = $this->reporte_model->getSumMedioPago($params, 2); //credito
+                $data['totalesCre'] = $this->reporte_model->getSumMedioPago($input, 2); //credito
                 $local = $this->db->get_where('local', array('int_local_id' => $input['local_id']))->row();
                 $data['local_nombre'] = !empty($local->local_nombre)? $local->local_nombre: 'TODOS';
                 $data['local_direccion'] = !empty($local->direccion)? $local->direccion: 'TODOS';
@@ -1119,6 +1122,78 @@ class Reporte extends MY_Controller
                 }
                 break;
             }
-        }        
+        }
     }
+    function utilidadProducto($action = '')
+    {
+        switch ($action) {
+            case 'filter': {
+                $params['local_id'] = $this->input->post('local_id');
+                if(!empty($this->input->post('fecha'))){
+                    $date_range = explode(" - ", $this->input->post('fecha'));
+                    $params['fecha_ini'] = date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0])));
+                    $params['fecha_fin'] = date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])));
+                }
+                $data['lists'] = $this->reporte_model->getUtilidadProducto($params);
+
+                $this->load->view('menu/reportes/utilidadProducto_list', $data);
+                break;
+            }
+            case 'pdf': {
+                $params = json_decode($this->input->get('data'));
+                $date_range = explode(' - ', $params->fecha);
+                $input = array(
+                    'local_id' => $params->local_id,
+                    'fecha_ini' => date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0]))),
+                    'fecha_fin' => date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])))
+                );
+                $data['lists'] = $this->reporte_model->getUtilidadProducto($input);
+
+                $local = $this->db->get_where('local', array('int_local_id' => $input['local_id']))->row();
+                $data['local_nombre'] = !empty($local->local_nombre)? $local->local_nombre: 'TODOS';
+                $data['local_direccion'] = !empty($local->direccion)? $local->direccion: 'TODOS';
+
+                $data['fecha_ini'] = $input['fecha_ini'];
+                $data['fecha_fin'] = $input['fecha_fin'];
+                $data['condicion_pago'] = $input['condicion_pago'];
+                $this->load->library('mpdf53/mpdf');
+                $mpdf = new mPDF('utf-8', 'A4-L', 0, '', 5, 5, 5, 5, 5, 5);
+                $html = $this->load->view('menu/reportes/utilidadProducto_list_pdf', $data, true);
+                $mpdf->WriteHTML($html);
+                $mpdf->Output();
+                break;
+            }
+            case 'excel': {
+                $params = json_decode($this->input->get('data'));
+                $date_range = explode(' - ', $params->fecha);
+                $input = array(
+                    'local_id' => $params->local_id,
+                    'fecha_ini' => date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0]))),
+                    'fecha_fin' => date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])))
+                );
+                $data['lists'] = $this->reporte_model->getUtilidadProducto($input);
+
+                $local = $this->db->get_where('local', array('int_local_id' => $input['local_id']))->row();
+                $data['local_nombre'] = !empty($local->local_nombre)? $local->local_nombre: 'TODOS';
+                $data['local_direccion'] = !empty($local->direccion)? $local->direccion: 'TODOS';
+                echo $this->load->view('menu/reportes/utilidadProducto_list_excel', $data, true);
+                break;
+            }
+            default: {
+                if ($this->session->userdata('esSuper') == 1) {
+                    $data['locales'] = $this->local_model->get_all();
+                } else {
+                    $usu = $this->session->userdata('nUsuCodigo');
+                    $data['locales'] = $this->local_model->get_all_usu($usu);
+                }
+                $dataCuerpo['cuerpo'] = $this->load->view('menu/reportes/utilidadProducto', $data, true);
+                if ($this->input->is_ajax_request()) {
+                    echo $dataCuerpo['cuerpo'];
+                } else {
+                    $this->load->view('menu/template', $dataCuerpo);
+                }
+                break;
+            }
+        }        
+    }    
 }
