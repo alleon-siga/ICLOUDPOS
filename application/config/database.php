@@ -52,9 +52,9 @@ $query_builder = TRUE;
 $db['default'] = array(
     'dsn' => '',
     'hostname' => 'localhost',
-    'username' => 'user',
-    'password' => 'password',
-    'database' => DATABASE_HOST != false ? DATABASE_HOST : 'ip_newlevel',
+    'username' => 'root',
+    'password' => '',
+    'database' => DATABASE_HOST != false ? DATABASE_HOST : 'icloudpos_dev',
     'dbdriver' => 'mysqli',
     'dbprefix' => '',
     'pconnect' => FALSE,

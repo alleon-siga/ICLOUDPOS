@@ -951,3 +951,17 @@ function show_msg(type, msg) {
         allow_dismiss: true
     });
 }
+
+function agregarProducto() {
+    $("#agregarProducto").load(ruta + 'producto/agregar', function(){
+        $('#btnGuardar').removeAttr("onclick");
+        $('#btnGuardar').attr("onclick", "confirm_save('ajuste')");
+    });
+    $('#agregarProducto').modal('show');
+}
+
+function update_producto(id, nombre) {
+    $('#producto_id').append('<option value="' + id + '">' + nombre + '</option>');
+    $('#producto_id').val(id)
+    $("#producto_id").trigger('chosen:updated');
+}

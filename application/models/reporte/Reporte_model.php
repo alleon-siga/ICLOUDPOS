@@ -550,21 +550,38 @@ class reporte_model extends CI_Model
 
     function getUtilidadProducto($params)
     {
-        $this->db->select("v.venta_id, v.fecha, pr.proveedor_nombre, p.producto_nombre, unidades.nombre_unidad, detalle_venta.cantidad,
-            detalle_venta.detalle_costo_promedio, detalle_venta.precio");
-        $this->db->from('detalle_venta dv');
-        $this->db->join('venta v', 'v.venta_id=dv.id_venta');
-        $this->db->join('producto p', 'dv.id_producto=p.producto_id');
-        $this->db->join('proveedor pr', 'p.producto_proveedor=pr.id_proveedor', 'left');
-        $this->db->join('unidades_has_producto up', 'dv.id_producto=up.producto_id AND dv.unidad_medida=up.id_unidad');
-        $this->db->join('unidades_has_producto up2', 'dv.id_producto=up2.producto_id AND (select id_unidad from unidades_has_producto where unidades_has_producto.producto_id = detalle_venta.id_producto ORDER BY orden DESC LIMIT 1) = up2.id_unidad 
-            INNER JOIN unidades ON unidades.id_unidad = up2.id_unidad');
+        $where = "";
         if($params['local_id']>0){
-            $this->db->where('v.local_id = '.$params['local_id']);
+            $where = "venta.local_id = ".$params['local_id'];
         }
         if(!empty($params['fecha_ini']) && !empty($params['fecha_fin'])){
-            $this->db->where("v.fecha >= '".$params['fecha_ini']."' AND v.fecha <= '".$params['fecha_fin']."'");
+            if(!empty($where)){
+                $where .= " AND ";
+            }
+            $where .= "venta.fecha >= '".$params['fecha_ini']."' AND venta.fecha <= '".$params['fecha_fin']."'";
         }
-        return $this->db->get()->result();
+
+        $query = "SELECT venta.venta_id, venta.fecha, proveedor.proveedor_nombre, producto.producto_nombre, unidades.nombre_unidad, detalle_venta.cantidad,
+            detalle_venta.detalle_costo_promedio, detalle_venta.precio, local.local_nombre
+            FROM detalle_venta
+            INNER JOIN venta ON venta.venta_id=detalle_venta.id_venta 
+            INNER JOIN producto ON producto.producto_id=detalle_venta.id_producto 
+            INNER JOIN local ON venta.local_id = local.int_local_id
+            LEFT JOIN proveedor ON producto.producto_proveedor=proveedor.id_proveedor
+            INNER JOIN unidades_has_producto up ON detalle_venta.id_producto=up.producto_id 
+            AND detalle_venta.unidad_medida=up.id_unidad
+            INNER JOIN unidades_has_producto up2 ON detalle_venta.id_producto=up2.producto_id 
+            AND (
+                select id_unidad from unidades_has_producto 
+                where unidades_has_producto.producto_id = detalle_venta.id_producto
+                ORDER BY orden DESC LIMIT 1
+            ) = up2.id_unidad 
+            INNER JOIN unidades ON unidades.id_unidad=up2.id_unidad";
+
+        if(!empty($where)){
+            $query .= " WHERE ". $where;
+        }
+        $query .= " ORDER BY venta.venta_id";
+        return $this->db->query($query)->result();
     }
 }

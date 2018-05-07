@@ -1211,14 +1211,14 @@
         var ruta = '<?php echo $ruta; ?>';
 
 
-        function confirm_save() {
+        function confirm_save(retorno = "producto") {
 
             var tasa = $("#tasa_convert");
             var tasa_contable = $("#tasa_convert_contable");
 
             //alert(tasa.attr('data-value-s'));
 
-            guardarproducto();
+            guardarproducto(retorno);
 
             /*if (tasa.val() == '0.00' && tasa_contable.val() == '0.00') {
 
@@ -1241,8 +1241,7 @@
 
         }
 
-        function guardarproducto() {
-
+        function guardarproducto(retorno) {
 //            if ($("#tasa_convert").val() != '0.00' || $("#tasa_convert_contable").val() != '0.00') {
 //                $("#tasa_convert").val($("#tasa_input").val());
 //                $("#tasa_convert_contable").val($("#tasa_input").val());
@@ -1512,15 +1511,17 @@
                     var callback = getproductosbylocal;
                     var modal = "productomodal";
                     if (data.error == undefined) {
-                        $('#productomodal').modal('hide');
+                        if(retorno != 'producto'){
+                            update_producto(data.id,data.nombre);
+                        }
+                        /*$('#productomodal').modal('hide');
                         $.ajax({
                             url: ruta + 'producto',
                             success: function (data) {
                                 $('#page-content').html(data);
 
                             }
-                        });
-
+                        });*/
                         var growlType = 'success';
 
                         $.bootstrapGrowl('<h4>' + data.success + '</h4>', {
@@ -1528,7 +1529,7 @@
                             delay: 2500,
                             allow_dismiss: true
                         });
-
+                        retornar_producto(retorno);
                     } else {
                         $("#cargando_modal").modal('hide');
                         var growlType = 'warning';
@@ -1540,11 +1541,8 @@
                         });
 
                         $(this).prop('disabled', true);
-
-
                         /*$("#errorspan").text(data.error);
                          $("#error").css('display','block');*/
-
                     }
 
 
@@ -2164,9 +2162,20 @@
                     actualizartabla(nuevo_precio)
                 }
                 actualizar_columna_primero = true;
-
             }
-
         }
+        function retornar_producto(retorno){
+            $("#productomodal").modal('hide');
 
+            if(retorno=="producto") {
+                //$('body').removeClass('modal-open');
+                //$('.modal-backdrop').remove();
+                return $.ajax({
+                    url: ruta + 'producto',
+                    success: function (data) {
+                        $('#page-content').html(data);
+                    }
+                });
+            }
+        }
     </script>

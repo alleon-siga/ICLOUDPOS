@@ -57,6 +57,9 @@
                                     </option>
                                 <?php endforeach; ?>
                             </select>
+                            <a class="input-group-addon btn-default" data-toggle="tooltip" title="Agregar Producto" data-original-title="Agregar Producto" href="#" onclick="agregarProducto()">
+                                <i class="hi hi-plus-sign"></i>
+                            </a>
                             <a id="refresh_productos" href="#" class="input-group-addon btn-default">
                                 <i class="fa fa-refresh"></i>
                             </a>
@@ -455,14 +458,10 @@
         </div>
         <!-- /.modal-content -->
     </div>
-
-
 </div>
-
-
+<div class="modal fade" id="agregarProducto" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+</div>
 <script src="<?php echo base_url('recursos/js/pages/tablesDatatables.js') ?>"></script>
 <script src="<?php echo base_url('recursos/js/Validacion.js') ?>"></script>
 <script src="<?php echo base_url('recursos/js/ajuste.js') ?>"></script>
-<script>
-
-</script>
