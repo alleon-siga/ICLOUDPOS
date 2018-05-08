@@ -160,7 +160,7 @@ class Pedidos extends REST_Controller
         $serie = $this->input->post('serie');
         $id_usuario = $this->input->post('id_usuario');
 
-        $venta = $this->venta->anular_venta($venta_id, $serie, $numero, $id_usuario);
+        $venta = $this->venta->anular_venta($venta_id, $serie, $numero, 3, 0, $id_usuario);
 
         if ($venta) {
             $result['response'] = 'success';
