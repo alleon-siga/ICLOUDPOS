@@ -574,8 +574,10 @@ class producto extends MY_Controller
                 if ($cod == "AUTO")
                     $producto['producto_codigo_interno'] = $this->producto_model->calcCodigo($rs);
 
-                $up = $this->producto_model->actualizar_producto(array('producto_id' => $rs), array('producto_codigo_interno' => $producto['producto_codigo_interno']));
+                $up = $this->producto_model->actualizar_producto(array('producto_id' => $rs), array('producto_codigo_interno' => $producto['producto_nombre']));
             }
+            $json['id'] = $id;
+            $json['nombre'] = $producto['producto_nombre'];
         } else {
             $producto['producto_id'] = $id;
 

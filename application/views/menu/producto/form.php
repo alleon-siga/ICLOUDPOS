@@ -1514,14 +1514,18 @@
                         if(retorno != 'producto'){
                             update_producto(data.id,data.nombre);
                         }
-                        /*$('#productomodal').modal('hide');
-                        $.ajax({
-                            url: ruta + 'producto',
-                            success: function (data) {
-                                $('#page-content').html(data);
 
-                            }
-                        });*/
+                        $('#productomodal').modal('hide');
+                        $("#cargando_modal").modal('hide');
+                        if(retorno == 'producto'){
+                            $.ajax({
+                                url: ruta + 'producto',
+                                success: function (data) {
+                                    $('#page-content').html(data);
+                                }
+                            });
+                        }
+
                         var growlType = 'success';
 
                         $.bootstrapGrowl('<h4>' + data.success + '</h4>', {
@@ -1529,7 +1533,6 @@
                             delay: 2500,
                             allow_dismiss: true
                         });
-                        retornar_producto(retorno);
                     } else {
                         $("#cargando_modal").modal('hide');
                         var growlType = 'warning';
@@ -1541,8 +1544,11 @@
                         });
 
                         $(this).prop('disabled', true);
+
+
                         /*$("#errorspan").text(data.error);
                          $("#error").css('display','block');*/
+
                     }
 
 
@@ -2162,20 +2168,8 @@
                     actualizartabla(nuevo_precio)
                 }
                 actualizar_columna_primero = true;
-            }
-        }
-        function retornar_producto(retorno){
-            $("#productomodal").modal('hide');
 
-            if(retorno=="producto") {
-                //$('body').removeClass('modal-open');
-                //$('.modal-backdrop').remove();
-                return $.ajax({
-                    url: ruta + 'producto',
-                    success: function (data) {
-                        $('#page-content').html(data);
-                    }
-                });
             }
+
         }
     </script>
