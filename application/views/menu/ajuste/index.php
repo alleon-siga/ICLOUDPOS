@@ -53,7 +53,7 @@
                                 <?php foreach ($productos as $producto): ?>
                                     <option value="<?= $producto->producto_id ?>">
                                         <?php $barra = $barra_activa->activo == 1 && $producto->barra != "" ? "CB: " . $producto->barra : "" ?>
-                                        <?= getCodigoValue($producto->producto_id, $producto->codigo) . ' - ' . $producto->producto_nombre . " " . $barra ?>
+                                        <?= getCodigoValue(sumCod($producto->producto_id), $producto->codigo) . ' - ' . $producto->producto_nombre . " " . $barra ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>

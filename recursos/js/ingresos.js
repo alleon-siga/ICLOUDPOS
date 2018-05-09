@@ -239,7 +239,7 @@ $(document).ready(function () {
         else return parseFloat(val).toFixed(2);
     }
 
-    $("#btnGuardar").click(function () {
+    $("#btnGuardarCompra").click(function () {
         if ($("#costos").val() == 'false') {
             validar_registro_existencia()
         } else {
@@ -270,207 +270,7 @@ $(document).ready(function () {
 
     $('#cboProducto').on("change", function (e) {
         e.preventDefault();
-        $(".form_div").hide();
-
-        if ($(this).val() == "") {
-            return false;
-        }
-
-        var producto_id = $(this).val();
-
-        $("#loading").show();
-        $.ajax({
-            url: ruta + 'ingresos/get_unidades_has_producto',
-            type: 'POST',
-            headers: {
-                Accept: 'application/json'
-            },
-            data: {'id_producto': $(this).val(), 'moneda_id': $("#monedas").val()},
-            success: function (data) {
-
-                var form = $("#producto_form");
-                form.html('');
-                for (var i = 0; i < data.unidades.length; i++) {
-                    var template = '<div class="col-md-2">';
-
-                    var cost = get_costo_producto(producto_id, data.unidades[i].id_unidad, -1);
-                    if (cost == -1) {
-                        cost = data.unidades[i].costo;
-
-                        var oper = $("#monedas option:selected").attr('data-oper');
-                        var tasa = $("#monedas option:selected").attr('data-tasa');
-                        var tasa_per = $("#tasa_id").val();
-
-                        /*if (tasa != '0.00' && tasa != undefined) {
-
-                         if (oper == "/") {
-                         cost = ((parseFloat(cost) * parseFloat(tasa)) / parseFloat(tasa_per)).toFixed(2);
-                         }
-                         else if (oper == "*") {
-                         cost = ((parseFloat(cost) / parseFloat(tasa)) * parseFloat(tasa_per)).toFixed(2);
-                         }
-                         else return parseFloat(cost).toFixed(2);
-                         }*/
-
-                    }
-
-                    var cantidad_unidades = data.unidades[i].unidades;
-                    if ((i + 1) == data.unidades.length) {
-                        cantidad_unidades = 1;
-                        data.unidades[i].unidades = cantidad_unidades;
-                        $("#um_minimo").html(data.unidades[i].nombre_unidad);
-                    }
-
-                    template += '<div>';
-                    template += '<input type="number" class="input-square input-mini form-control text-center cantidad-input" ';
-                    template += 'id="cantidad_' + data.unidades[i].id_unidad + '" ';
-                    template += 'data-costo="' + cost + '" ';
-                    template += 'data-unidades="' + data.unidades[i].unidades + '" ';
-                    template += 'data-unidad_id="' + data.unidades[i].id_unidad + '" ';
-                    template += 'data-unidad_nombre="' + data.unidades[i].nombre_unidad + '" ';
-                    template += 'data-minimo="0" ';
-                    template += 'onkeydown="return soloDecimal(this, event);">';
-                    template += '</div>';
-
-                    template += '<h5>' + data.unidades[i].nombre_unidad + '</h5>';
-
-
-                    template += '<h6>' + cantidad_unidades + ' ' + data.unidades[data.unidades.length - 1].nombre_unidad + '</h6>';
-
-                    template += '</div>';
-
-
-                    form.append(template);
-
-                    var cantidad = $("#cantidad_" + data.unidades[i].id_unidad);
-                    var cant = get_value_producto(producto_id, data.unidades[i].id_unidad, -1);
-                    if (cant == -1) {
-                        cantidad.attr('value', '0');
-                        cantidad.attr('data-value', '0');
-                    }
-                    else {
-                        cantidad.attr('value', cant);
-                        cantidad.attr('data-value', cant);
-                    }
-
-                    if ((i + 1) == data.unidades.length)
-                        cantidad.attr('min', '1');
-
-                    if (data.unidades[i].producto_cualidad == "MEDIBLE") {
-                        cantidad.attr('min', '0');
-                        cantidad.attr('step', '1');
-
-
-                    } else {
-                        cantidad.attr('min', '0.0');
-                        cantidad.attr('step', '0.1');
-
-                    }
-                }
-
-                $(".cantidad-input").attr('data-um-minimo', data.unidades[data.unidades.length - 1].nombre_unidad)
-
-                //estructuro la cofiguracion inicial, el costo unitario de la unidad menor
-                var unidad_minima = $("#cantidad_" + data.unidades[data.unidades.length - 1].id_unidad);
-                unidad_minima.attr('data-minimo', '1');
-                var costo = unidad_minima.attr('data-costo');
-                $("#precio").val(parseFloat(costo).toFixed(3));
-
-
-                //Este ciclo es para los datos iniciales del total y el importe
-                var total = 0;
-                $(".cantidad-input").each(function () {
-                    var input = $(this);
-                    if (input.val() != 0) {
-                        total += parseFloat(input.val() * input.attr('data-unidades'));
-                    }
-                });
-                $("#total_unidades").val(total);
-                $("#total_precio").val(parseFloat($("#total_unidades").val() * costo).toFixed(2));
-
-
-                //AGREGO LOS EVENTOS
-                $(".cantidad-input").bind('keyup change click mouseleave', function () {
-                    var item = $(this);
-                    if (item.val() != item.attr('data-value')) {
-                        item.attr('data-value', item.val());
-                        var data_total = 0;
-                        $(".cantidad-input").each(function () {
-                            var input = $(this);
-                            if (input.val() != 0) {
-                                data_total += parseFloat(input.val() * input.attr('data-unidades'));
-                            }
-                        });
-
-                        $("#total_unidades").val(data_total);
-
-                        if ($("#precio_base").val() == 'COSTO')
-                            $("#precio").keyup();
-                        else if ($("#precio_base").val() == 'IMPORTE')
-                            $("#total_precio").keyup();
-
-
-                        //$("#total_precio").val(parseFloat($("#total_unidades").val() * $("#precio").val()).toFixed(2));
-                    }
-                });
-
-                $("#precio").keyup(function () {
-                    $("#total_precio").val(roundPrice(parseFloat($("#total_unidades").val() * $("#precio").val())));
-                });
-
-
-                $("#total_precio").keyup(function () {
-                    var total = $("#total_unidades").val();
-                    if (total > 0 && total != "")
-                        $("#precio").val(roundPrice(parseFloat($("#total_precio").val() / total), 3));
-                    else
-                        $("#precio").val('0');
-                });
-
-
-            },
-            complete: function (data) {
-                $("#loading").hide();
-                $("#botonconfirmar").show()
-                /*si costos es igual a true es porque es un ingreso normal, tambien entrara, cuando se este valorizando el ingreso*/
-                if ($("#costos").val() == 'true' && $("#ingreso_id").val() != "") {
-                    setTimeout(function () {
-
-                        $("#acomodar_boton_confirmar").remove();
-                        $("#mostrar_totales").show();
-                        $(".cantidad-input").prop('readonly', true);
-                        $(".form_div").show();
-
-                    }, 10);
-                }
-
-                if ($("#costos").val() == 'true' && $("#ingreso_id").val() != "" && $("#facturar").val() != "NO") {
-                    setTimeout(function () {
-
-                        $("#acomodar_boton_confirmar").remove();
-                        $("#mostrar_totales").show();
-                        $(".cantidad-input").prop('readonly', false);
-                        $(".form_div").show();
-
-                    }, 10);
-                }
-
-                if ($("#costos").val() == 'true' && $("#ingreso_id").val() == "") {
-                    $(".cantidad-input").prop('readonly', false);
-                    $("#acomodar_boton_confirmar").remove();
-                    $("#mostrar_totales").show();
-                    $(".form_div").show();
-                }
-                if ($("#costos").val() == 'false') {
-                    $(".cantidad-input").prop('readonly', false);
-                    $(".form_div").append('<div class="col-md-10" id="acomodar_boton_confirmar"> </div>');
-                    $("#mostrar_totales").show();
-                }
-
-            }
-        })
-
-
+        get_unidades_has_producto('change');
     });
 
 
@@ -1638,3 +1438,239 @@ function generar_reporte_pdf() {
     document.getElementById("frmPDF").submit();
 }
 
+function nuevoProducto() {
+    $('#cboProducto').val(0);
+    $("#cboProducto").trigger('chosen:updated');
+    $("#productomodal").load(ruta + 'producto/agregar', function(){
+        $('#btnGuardar').removeAttr("onclick");
+        $('#btnGuardar').attr("onclick", "confirm_save('ingresos')");
+    });
+    $('#productomodal').modal('show');
+}
+
+function update_producto(id, nombre, impuesto) {
+    $('#cboProducto').append('<option value="' + id + '" data-impuesto="'+ impuesto +'">' + id + ' - ' + nombre + '</option>');
+    $('#cboProducto').val(id);
+    $("#cboProducto").trigger('chosen:updated');
+    get_unidades_has_producto('click');
+}
+
+function getproductosbylocal() {
+    $("#cargando_modal").modal({
+        show: true,
+        backdrop: 'static'
+    });
+    $.ajax({
+        url: ruta + 'producto/getbylocal',
+        data: {'local': $("#locales").val()},
+        type: 'post',
+        success: function (data) {
+            $("#productostable").html(data);
+            $("#cargando_modal").modal('hide');
+        }
+    })
+}
+
+function get_unidades_has_producto(evento){
+    $(".form_div").hide();
+
+    if(evento=='change'){
+        if ($('#cboProducto').val() == "") {
+            return false;
+        }
+    }
+
+    var producto_id = $('#cboProducto').val();
+
+    $("#loading").show();
+    $.ajax({
+        url: ruta + 'ingresos/get_unidades_has_producto',
+        type: 'POST',
+        headers: {
+            Accept: 'application/json'
+        },
+        data: {'id_producto': $('#cboProducto').val(), 'moneda_id': $("#monedas").val()},
+        success: function (data) {
+
+            var form = $("#producto_form");
+            form.html('');
+            for (var i = 0; i < data.unidades.length; i++) {
+                var template = '<div class="col-md-2">';
+
+                var cost = get_costo_producto(producto_id, data.unidades[i].id_unidad, -1);
+                if (cost == -1) {
+                    cost = data.unidades[i].costo;
+
+                    var oper = $("#monedas option:selected").attr('data-oper');
+                    var tasa = $("#monedas option:selected").attr('data-tasa');
+                    var tasa_per = $("#tasa_id").val();
+
+                    /*if (tasa != '0.00' && tasa != undefined) {
+
+                     if (oper == "/") {
+                     cost = ((parseFloat(cost) * parseFloat(tasa)) / parseFloat(tasa_per)).toFixed(2);
+                     }
+                     else if (oper == "*") {
+                     cost = ((parseFloat(cost) / parseFloat(tasa)) * parseFloat(tasa_per)).toFixed(2);
+                     }
+                     else return parseFloat(cost).toFixed(2);
+                     }*/
+
+                }
+
+                var cantidad_unidades = data.unidades[i].unidades;
+                if ((i + 1) == data.unidades.length) {
+                    cantidad_unidades = 1;
+                    data.unidades[i].unidades = cantidad_unidades;
+                    $("#um_minimo").html(data.unidades[i].nombre_unidad);
+                }
+
+                template += '<div>';
+                template += '<input type="number" class="input-square input-mini form-control text-center cantidad-input" ';
+                template += 'id="cantidad_' + data.unidades[i].id_unidad + '" ';
+                template += 'data-costo="' + cost + '" ';
+                template += 'data-unidades="' + data.unidades[i].unidades + '" ';
+                template += 'data-unidad_id="' + data.unidades[i].id_unidad + '" ';
+                template += 'data-unidad_nombre="' + data.unidades[i].nombre_unidad + '" ';
+                template += 'data-minimo="0" ';
+                template += 'onkeydown="return soloDecimal(this, event);">';
+                template += '</div>';
+
+                template += '<h5>' + data.unidades[i].nombre_unidad + '</h5>';
+
+
+                template += '<h6>' + cantidad_unidades + ' ' + data.unidades[data.unidades.length - 1].nombre_unidad + '</h6>';
+
+                template += '</div>';
+
+
+                form.append(template);
+
+                var cantidad = $("#cantidad_" + data.unidades[i].id_unidad);
+                var cant = get_value_producto(producto_id, data.unidades[i].id_unidad, -1);
+                if (cant == -1) {
+                    cantidad.attr('value', '0');
+                    cantidad.attr('data-value', '0');
+                }
+                else {
+                    cantidad.attr('value', cant);
+                    cantidad.attr('data-value', cant);
+                }
+
+                if ((i + 1) == data.unidades.length)
+                    cantidad.attr('min', '1');
+
+                if (data.unidades[i].producto_cualidad == "MEDIBLE") {
+                    cantidad.attr('min', '0');
+                    cantidad.attr('step', '1');
+
+
+                } else {
+                    cantidad.attr('min', '0.0');
+                    cantidad.attr('step', '0.1');
+
+                }
+            }
+
+            $(".cantidad-input").attr('data-um-minimo', data.unidades[data.unidades.length - 1].nombre_unidad)
+
+            //estructuro la cofiguracion inicial, el costo unitario de la unidad menor
+            var unidad_minima = $("#cantidad_" + data.unidades[data.unidades.length - 1].id_unidad);
+            unidad_minima.attr('data-minimo', '1');
+            var costo = unidad_minima.attr('data-costo');
+            $("#precio").val(parseFloat(costo).toFixed(3));
+
+
+            //Este ciclo es para los datos iniciales del total y el importe
+            var total = 0;
+            $(".cantidad-input").each(function () {
+                var input = $(this);
+                if (input.val() != 0) {
+                    total += parseFloat(input.val() * input.attr('data-unidades'));
+                }
+            });
+            $("#total_unidades").val(total);
+            $("#total_precio").val(parseFloat($("#total_unidades").val() * costo).toFixed(2));
+
+
+            //AGREGO LOS EVENTOS
+            $(".cantidad-input").bind('keyup change click mouseleave', function () {
+                var item = $(this);
+                if (item.val() != item.attr('data-value')) {
+                    item.attr('data-value', item.val());
+                    var data_total = 0;
+                    $(".cantidad-input").each(function () {
+                        var input = $(this);
+                        if (input.val() != 0) {
+                            data_total += parseFloat(input.val() * input.attr('data-unidades'));
+                        }
+                    });
+
+                    $("#total_unidades").val(data_total);
+
+                    if ($("#precio_base").val() == 'COSTO')
+                        $("#precio").keyup();
+                    else if ($("#precio_base").val() == 'IMPORTE')
+                        $("#total_precio").keyup();
+
+
+                    //$("#total_precio").val(parseFloat($("#total_unidades").val() * $("#precio").val()).toFixed(2));
+                }
+            });
+
+            $("#precio").keyup(function () {
+                $("#total_precio").val(roundPrice(parseFloat($("#total_unidades").val() * $("#precio").val())));
+            });
+
+
+            $("#total_precio").keyup(function () {
+                var total = $("#total_unidades").val();
+                if (total > 0 && total != "")
+                    $("#precio").val(roundPrice(parseFloat($("#total_precio").val() / total), 3));
+                else
+                    $("#precio").val('0');
+            });
+
+
+        },
+        complete: function (data) {
+            $("#loading").hide();
+            $("#botonconfirmar").show()
+            /*si costos es igual a true es porque es un ingreso normal, tambien entrara, cuando se este valorizando el ingreso*/
+            if ($("#costos").val() == 'true' && $("#ingreso_id").val() != "") {
+                setTimeout(function () {
+
+                    $("#acomodar_boton_confirmar").remove();
+                    $("#mostrar_totales").show();
+                    $(".cantidad-input").prop('readonly', true);
+                    $(".form_div").show();
+
+                }, 10);
+            }
+
+            if ($("#costos").val() == 'true' && $("#ingreso_id").val() != "" && $("#facturar").val() != "NO") {
+                setTimeout(function () {
+
+                    $("#acomodar_boton_confirmar").remove();
+                    $("#mostrar_totales").show();
+                    $(".cantidad-input").prop('readonly', false);
+                    $(".form_div").show();
+
+                }, 10);
+            }
+
+            if ($("#costos").val() == 'true' && $("#ingreso_id").val() == "") {
+                $(".cantidad-input").prop('readonly', false);
+                $("#acomodar_boton_confirmar").remove();
+                $("#mostrar_totales").show();
+                $(".form_div").show();
+            }
+            if ($("#costos").val() == 'false') {
+                $(".cantidad-input").prop('readonly', false);
+                $(".form_div").append('<div class="col-md-10" id="acomodar_boton_confirmar"> </div>');
+                $("#mostrar_totales").show();
+            }
+
+        }
+    });
+}

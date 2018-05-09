@@ -114,7 +114,7 @@ $(document).ready(function () {
     });
 
     $("#producto_id").on('change', function (e) {
-        get_productos_unidades();
+        get_productos_unidades('change');
     });
 
     $("#moneda_id").on('change', function () {
@@ -860,7 +860,9 @@ function show_msg(type, msg) {
 }
 
 function agregarProducto() {
-    var a = get_productos_unidades();
+    $('#producto_id').val(0);
+    $("#producto_id").trigger('chosen:updated');
+    var a = get_productos_unidades('click');
     if(a != false){
         $("#productomodal").load(ruta + 'producto/agregar', function(){
             $('#btnGuardar').removeAttr("onclick");
@@ -872,9 +874,9 @@ function agregarProducto() {
 
 function update_producto(id, nombre) {
     $('#producto_id').append('<option value="' + id + '">' + id + ' - ' + nombre + '</option>');
-    $('#producto_id').val(id)
+    $('#producto_id').val(id);
     $("#producto_id").trigger('chosen:updated');
-    get_productos_unidades();
+    get_productos_unidades('click');
 }
 
 function getproductosbylocal() {
@@ -894,7 +896,7 @@ function getproductosbylocal() {
     })
 }
 
-function get_productos_unidades(){
+function get_productos_unidades(evento){
     //e.preventDefault();
 
     if ($("#tipo_operacion").val() == "") {
@@ -917,73 +919,76 @@ function get_productos_unidades(){
 
     $(".block_producto_unidades").hide();
 
-    if ($('#producto_id').val() == "") {
-        return false;
+    if(evento=='change'){
+        if ($('#producto_id').val() == "") {
+            return false;
+        }
     }
 
     var producto_id = $('#producto_id').val();
     var local_id = $("#local_id").val();
     var moneda_id = $("#moneda_id").val();
 
-    $("#loading").show();
-    $.ajax({
-        url: ruta + 'ajuste/get_productos_unidades',
-        type: 'POST',
-        headers: {
-            Accept: 'application/json'
-        },
-        data: {'producto_id': producto_id, 'moneda_id': moneda_id},
-        success: function (data) {
-            var form = $("#producto_form");
-            form.html('');
+    if ($('#producto_id').val() != null) {
+        $("#loading").show();
+        $.ajax({
+            url: ruta + 'ajuste/get_productos_unidades',
+            type: 'POST',
+            headers: {
+                Accept: 'application/json'
+            },
+            data: {'producto_id': producto_id, 'moneda_id': moneda_id},
+            success: function (data) {
+                var form = $("#producto_form");
+                form.html('');
 
-            if (data.unidades.length > 0) {
+                if (data.unidades.length > 0) {
 
-                var unidad_minima = data.unidades[data.unidades.length - 1];
-                $("#um_minimo").html(unidad_minima.nombre_unidad);
-                $("#um_minimo").attr('data-abr', unidad_minima.abr);
+                    var unidad_minima = data.unidades[data.unidades.length - 1];
+                    $("#um_minimo").html(unidad_minima.nombre_unidad);
+                    $("#um_minimo").attr('data-abr', unidad_minima.abr);
 
-                var index = 0;
-                for (var i = 0; i < data.unidades.length; i++) {
+                    var index = 0;
+                    for (var i = 0; i < data.unidades.length; i++) {
 
-                    if (data.unidades[i].presentacion == '1')
-                        form.append(create_unidades_template(index++, data.unidades[i], unidad_minima));
+                        if (data.unidades[i].presentacion == '1')
+                            form.append(create_unidades_template(index++, data.unidades[i], unidad_minima));
 
-                    prepare_unidades_value(producto_id, local_id, data.unidades[i]);
-                }
-
-
-                //Este ciclo es para los datos iniciales del total y el importe
-                var total = 0;
-                $(".cantidad-input").each(function () {
-                    var input = $(this);
-                    if (input.val() != 0) {
-                        total += parseFloat(input.val() * input.attr('data-unidades'));
+                        prepare_unidades_value(producto_id, local_id, data.unidades[i]);
                     }
-                });
-                $("#total_minimo").val(total);
-                console.log(data);
-                $('#costo_unitario').val(data.costo.costo);
-                set_stock_info();
 
 
-                //SUSCRIBOS EVENTOS
-                prepare_unidades_events();
+                    //Este ciclo es para los datos iniciales del total y el importe
+                    var total = 0;
+                    $(".cantidad-input").each(function () {
+                        var input = $(this);
+                        if (input.val() != 0) {
+                            total += parseFloat(input.val() * input.attr('data-unidades'));
+                        }
+                    });
+                    $("#total_minimo").val(total);
+                    console.log(data);
+                    $('#costo_unitario').val(data.costo.costo);
+                    set_stock_info();
 
-                refresh_right_panel();
-                refresh_totals();
+
+                    //SUSCRIBOS EVENTOS
+                    prepare_unidades_events();
+
+                    refresh_right_panel();
+                    refresh_totals();
+                }
+            },
+            complete: function (data) {
+                $("#loading").hide();
+                $(".block_producto_unidades").show();
+
+                $('.cantidad-input[data-index="0"]').first().trigger('focus');
+            },
+            error: function (data) {
+                alert('Ha ocurrido un Error Inesperado.');
             }
-            return true;
-        },
-        complete: function (data) {
-            $("#loading").hide();
-            $(".block_producto_unidades").show();
-
-            $('.cantidad-input[data-index="0"]').first().trigger('focus');
-        },
-        error: function (data) {
-            alert('Ha ocurrido un Error Inesperado.');
-            return false;
-        }
-    });    
+        });
+    }
+    return true;
 }

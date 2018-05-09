@@ -32,7 +32,7 @@
                     </div>
 
                     <div class="col-md-3" style="display: <?= $venta_action != 'caja' ? 'block' : 'none' ?>">
-                        <label class="control-label panel-admin-text">Fecha Registro</label>
+                        <label class="control-label panel-admin-text">Fecha Venta</label>
                         <input type="text" id="date_range" class="form-control" readonly style="cursor: pointer;"
                                name="daterange" value="<?= date('d/m/Y') ?> - <?= date('d/m/Y') ?>"/>
                     </div>

@@ -117,8 +117,8 @@ class venta_new_model extends CI_Model
                 $this->db->where('venta.venta_status', $where['estado']);
 
         if (isset($where['fecha_ini']) && isset($where['fecha_fin'])) {
-            $this->db->where('venta.created_at >=', date('Y-m-d H:i:s', strtotime($where['fecha_ini'] . " 00:00:00")));
-            $this->db->where('venta.created_at <=', date('Y-m-d H:i:s', strtotime($where['fecha_fin'] . " 23:59:59")));
+            $this->db->where('venta.fecha >=', date('Y-m-d H:i:s', strtotime($where['fecha_ini'] . " 00:00:00")));
+            $this->db->where('venta.fecha <=', date('Y-m-d H:i:s', strtotime($where['fecha_fin'] . " 23:59:59")));
         }
 
         if (isset($where['mes']) && isset($where['year']) && isset($where['dia_min']) && isset($where['dia_max'])) {
@@ -170,8 +170,8 @@ class venta_new_model extends CI_Model
                 $this->db->where('venta.venta_status = "COMPLETADO"');
 
         if (isset($where['fecha_ini']) && isset($where['fecha_fin'])) {
-            $this->db->where('venta.created_at >=', date('Y-m-d H:i:s', strtotime($where['fecha_ini'] . " 00:00:00")));
-            $this->db->where('venta.created_at <=', date('Y-m-d H:i:s', strtotime($where['fecha_fin'] . " 23:59:59")));
+            $this->db->where('venta.fecha >=', date('Y-m-d H:i:s', strtotime($where['fecha_ini'] . " 00:00:00")));
+            $this->db->where('venta.fecha <=', date('Y-m-d H:i:s', strtotime($where['fecha_fin'] . " 23:59:59")));
         }
 
         if (isset($where['mes']) && isset($where['year']) && isset($where['dia_min']) && isset($where['dia_max'])) {
@@ -179,8 +179,8 @@ class venta_new_model extends CI_Model
             if ($last_day > $where['dia_max'])
                 $last_day = $where['dia_max'];
 
-            $this->db->where('venta.created_at >=', $where['year'] . '-' . sumCod($where['mes'], 2) . '-' . $where['dia_min']);
-            $this->db->where('venta.created_at <=', $where['year'] . '-' . sumCod($where['mes'], 2) . '-' . $last_day);
+            $this->db->where('venta.fecha >=', $where['year'] . '-' . sumCod($where['mes'], 2) . '-' . $where['dia_min']);
+            $this->db->where('venta.fecha <=', $where['year'] . '-' . sumCod($where['mes'], 2) . '-' . $last_day);
         }
         if (isset($where['usuarios_id']) && !empty($where['usuarios_id'])) {
             $this->db->where('venta.id_vendedor', $where['usuarios_id']);
