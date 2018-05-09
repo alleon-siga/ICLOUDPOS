@@ -505,6 +505,7 @@ class producto extends MY_Controller
         $descripcion = $this->input->post('producto_descripcion');
         $producto_codigo_interno = $this->input->post('producto_codigo_interno');
         $producto_vencimiento = $this->input->post('producto_vencimiento');
+		$valor_importe = $this->input->post('valor_importe');
 
         if ($codigo_barra != "") {
             if (empty($id)) {
@@ -576,6 +577,9 @@ class producto extends MY_Controller
 
                 $up = $this->producto_model->actualizar_producto(array('producto_id' => $rs), array('producto_codigo_interno' => $producto['producto_codigo_interno']));
             }
+            $json['id'] = $producto['producto_codigo_interno'];
+            $json['nombre'] = $producto['producto_nombre'];
+			$json['impuesto'] = $valor_importe;
         } else {
             $producto['producto_id'] = $id;
 

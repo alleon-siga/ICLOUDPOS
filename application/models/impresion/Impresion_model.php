@@ -148,6 +148,8 @@ class impresion_model extends CI_Model
 
             $v->importe_letra = Numeroletra::convertir($v->importe) . ' ' . strtoupper($v->moneda) . ' ' . str_replace('.', '', $decimal) . '/100';
 
+            //$v->importe_letra = "";
+
             $query = "
             SELECT 
                 dv.id_producto AS id,

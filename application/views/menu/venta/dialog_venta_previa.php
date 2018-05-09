@@ -52,7 +52,7 @@
                             id="btn_venta_imprimir_almacen_1"><i
                                 class="fa fa-print"></i> Gu&iacute;a de Remisi&oacute;n
                     </button>
-                    <?php $imprimir_doc = ($venta->condicion_id == 1 || $venta->condicion_id == 2 && $venta->credito_estado == 'PagoCancelado'); ?>
+                    <?php $imprimir_doc = ($venta->condicion_id == 1 || $venta->condicion_id == 2); ?>
                     <?php if (($venta->factura_impresa == 0) && ($venta->documento_id == 1 || $venta->documento_id == 3) && $imprimir_doc): ?>
                         <button class="btn btn-primary btn_venta_imprimir_doc imprimir"
                                 data-nombre="factura"

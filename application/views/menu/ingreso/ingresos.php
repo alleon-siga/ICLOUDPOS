@@ -1,6 +1,6 @@
 <?php $ruta = base_url(); ?>
 <input id="precio_base" type="hidden" value="<?= valueOption('PRECIO_INGRESO', 'COSTO') ?>">
-<input id="producto_cualidad" type="hidden">
+<!--<input id="producto_cualidad" type="hidden">-->
 <input id="producto_serie_activo" value="<?php echo getProductoSerie() ?>" type="hidden">
 <input id="base_url" type="hidden" value="<?= $ruta ?>">
 
@@ -390,7 +390,6 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                                         <div class="col-md-3 text-right">
                                             <label class="control-label">Seleccione el Producto:</label>
                                         </div>
-
                                         <div class="col-md-6">
                                             <div class="input-group">
                                                 <select name="cboProducto" id="cboProducto"
@@ -409,6 +408,9 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                                                     <?php else: ?>
                                                     <?php endif; ?>
                                                 </select>
+                                                <a class="input-group-addon btn-warning" data-toggle="tooltip" title="Agregar Producto" data-original-title="Agregar Producto" href="#" onclick="nuevoProducto()">
+                                                    <i class="hi hi-plus-sign"></i>
+                                                </a>
                                                 <a id="refresh_productos" href="#" class="input-group-addon btn-default">
                                                     <i class="fa fa-refresh"></i>
                                                 </a>
@@ -649,7 +651,7 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
 
                     <div class="form-actions">
 
-                        <button class="btn" id="btnGuardar"
+                        <button class="btn" id="btnGuardarCompra"
                                 type="button"><i
                                     class="fa fa-save fa-3x text-info fa-fw"></i> <br>F6 Guardar
                         </button>
@@ -847,6 +849,9 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
     </div>
 </div>
 <div class="modal fade" id="agregarproveedor" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+</div>
+<div class="modal fade" id="productomodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
      aria-hidden="true">
 </div>
 <script src="<?php echo $ruta; ?>recursos/js/Validacion.js"></script>
