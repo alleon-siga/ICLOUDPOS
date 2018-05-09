@@ -1673,4 +1673,5 @@ function get_unidades_has_producto(evento){
 
         }
     });
+    $('.modal-backdrop').remove();
 }

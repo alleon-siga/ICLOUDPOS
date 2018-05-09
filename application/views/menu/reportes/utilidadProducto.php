@@ -1,7 +1,7 @@
 <?php $ruta = base_url(); ?>
 <ul class="breadcrumb breadcrumb-top">
     <li>Reporte</li>
-    <li><a href="">Utilidades por producto</a></li>
+    <li><a href="">Utilidades por venta</a></li>
 </ul>
 <link rel="stylesheet" href="<?= $ruta ?>recursos/css/plugins.css">
 <link rel="stylesheet" href="<?= $ruta ?>recursos/js/datepicker-range/daterangepicker.css">
