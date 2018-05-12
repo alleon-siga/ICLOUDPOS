@@ -30,7 +30,12 @@
                     </tr>
                 </thead>
                 <tbody>
-                <?php $suma = 0;  ?>    
+                <?php
+                    $suma = 0;
+                    foreach ($countLists as $count) {
+                        $suma += $count->detalle_importe;
+                    }
+                ?>
                 <?php foreach ($lists as $list): ?>
                 <?php
                     $debe = 0;
@@ -61,8 +66,9 @@
                         <td style="text-align: right;"><?= $list->simbolo ?> <?= number_format($list->precio, 2) ?></td>
                         <td style="text-align: right;"><?= $list->simbolo ?> <?= number_format($list->detalle_importe, 2) ?></td>
                     </tr>
-                <?php $suma += $list->detalle_importe ?>
-                <?php endforeach ?>
+                <?php
+                    endforeach;
+                ?>
                 </tbody>
                 <tfoot>
                     <?php 
@@ -97,11 +103,6 @@
                         <td style="text-align: right;">
                         <?php
                             echo $md->simbolo.' '.number_format($suma - $totalEfectivo - $totalBanco,2);
-                            /*if(isset($totalesCre->saldo)){
-                                echo $md->simbolo.' '.number_format($totalesCre->saldo, 2);
-                            }else{
-                                echo $md->simbolo.' '.number_format(0, 2);
-                            }*/
                         ?>
                         </td>
                     </tr>
@@ -128,7 +129,7 @@
 </div>-->
 <script type="text/javascript">
     $(document).ready(function () {
-        TablesDatatables.init(0, 'asc');
+        TablesDatatables.init(0, 'asc'); //NO MODIFICAR ESTO !!!!
 
 
         $('#exportar_excel').on('click', function () {
