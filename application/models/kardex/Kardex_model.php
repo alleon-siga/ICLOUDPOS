@@ -68,12 +68,12 @@ class kardex_model extends CI_Model
             if ($last_day > $where['dia_max'])
                 $last_day = $where['dia_max'];
 
-            $this->db->where('fecha >=', $where['year'] . '-' . sumCod($where['mes'], 2) . '-' . $where['dia_min']);
-            $this->db->where('fecha <=', $where['year'] . '-' . sumCod($where['mes'], 2) . '-' . $last_day);
+            $this->db->where('date(fecha) >=', $where['year'] . '-' . sumCod($where['mes'], 2) . '-' . $where['dia_min']);
+            $this->db->where('date(fecha) <=', $where['year'] . '-' . sumCod($where['mes'], 2) . '-' . $last_day);
         }
         elseif (isset($where['fecha_ini']) && isset($where['fecha_fin'])){
-            $this->db->where('fecha >=', $where['fecha_ini'] . ' ');
-            $this->db->where('fecha <=', $where['fecha_fin'] . ' ');
+            $this->db->where('date(fecha) >=', $where['fecha_ini'] . ' ');
+            $this->db->where('date(fecha) <=', $where['fecha_fin'] . ' ');
         }
 
         return $this->db->get()->result();
