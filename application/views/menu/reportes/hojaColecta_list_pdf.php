@@ -67,11 +67,11 @@
         <tr>
             <td><?= $list->venta_id ?></td>
             <td><?= date('d/m/Y H:i', strtotime($list->fecha)) ?></td>
-            <td><?= utf8_decode($list->local_nombre) ?></td>
-            <td><?= utf8_decode($list->nombre) ?></td>
-            <td><?= utf8_decode($list->razon_social) ?></td>
+            <td><?= $list->local_nombre ?></td>
+            <td><?= $list->nombre ?></td>
+            <td><?= $list->razon_social ?></td>
             <td><?= $list->abr_doc . ' ' . $list->serie . '-' . sumCod($list->numero, 6) ?></td>
-            <td><?= utf8_decode($list->producto_nombre).' '.utf8_decode($list->nota) ?></td>
+            <td><?= $list->producto_nombre.' '.$list->nota ?></td>
             <td><?= $estado ?></td>
             <td><?= $list->valor ?></td>
             <td><?= $list->condicion ?></td>

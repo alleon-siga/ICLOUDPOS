@@ -538,6 +538,7 @@ class reporte_model extends CI_Model
         $this->db->join('caja_movimiento cm', 'v.venta_id = cm.ref_id');
         $this->db->where("v.venta_status='COMPLETADO' AND v.fecha >= '".$params['fecha_ini']."' AND v.fecha <= '".$params['fecha_fin']."'");
         $this->db->where("v.condicion_pago=", $condicion_pago);
+        $this->db->where("cm.operacion=", 'VENTA');
         if($params['local_id']>0)
             $this->db->where("v.local_id=", $params['local_id']);
         /*if($params['marca_id']>0)
