@@ -443,6 +443,7 @@ class reporte_model extends CI_Model
         $this->db->join('usuario u', 'v.id_vendedor = u.nUsuCodigo');
         $this->db->join('credito cr', 'v.venta_id = cr.id_venta', 'left');
         $this->db->join('credito_cuotas cru', 'v.venta_id = cru.id_venta', 'left');
+        $this->db->where("v.venta_status='COMPLETADO'");
         if($params['local_id']>0){
             $this->db->where('v.local_id = '.$params['local_id']);
         }
@@ -475,6 +476,7 @@ class reporte_model extends CI_Model
         $this->db->join('usuario u', 'v.id_vendedor = u.nUsuCodigo');
         $this->db->join('credito cr', 'v.venta_id = cr.id_venta');
         $this->db->join('credito_cuotas cru', 'v.venta_id = cru.id_venta');
+        $this->db->where("v.venta_status='COMPLETADO'");
         $this->db->where('v.condicion_pago = 2');
         $this->db->where('DATE(v.fecha) <> DATE(cru.ultimo_pago)');
         if($params['local_id']>0){
@@ -509,6 +511,7 @@ class reporte_model extends CI_Model
         $this->db->join('usuario u', 'v.id_vendedor = u.nUsuCodigo');
         $this->db->join('credito cr', 'v.venta_id = cr.id_venta');
         $this->db->join('credito_cuotas cru', 'v.venta_id = cru.id_venta');
+        $this->db->where("v.venta_status='COMPLETADO'");
         $this->db->where('ispagado = 0');
         if($params['local_id']>0){
             $this->db->where('v.local_id = '.$params['local_id']);
