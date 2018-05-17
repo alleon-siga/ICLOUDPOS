@@ -24,7 +24,7 @@
                     <?php endif; ?>
                 </div>
                 <div class="col-md-3">
-                    <label class="control-label panel-admin-text">Fecha Registro</label>
+                    <label class="control-label panel-admin-text">Fecha Pago</label>
                     <div class="row">
                         <div class="col-md-10">
                             <input type="text" id="fecha" class="form-control" readonly style="cursor: pointer;" name="fecha" value="<?= date('d/m/Y') ?> - <?= date('d/m/Y') ?>"/>

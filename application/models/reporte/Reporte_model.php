@@ -473,17 +473,18 @@ class reporte_model extends CI_Model
         $this->db->join('local l', 'v.local_id = l.int_local_id');
         $this->db->join('recarga r', 'v.venta_id = r.id_venta');
         $this->db->join('diccionario_termino dt', 'r.rec_ope = dt.id');
-        $this->db->join('usuario u', 'v.id_vendedor = u.nUsuCodigo');
         $this->db->join('credito cr', 'v.venta_id = cr.id_venta');
         $this->db->join('credito_cuotas cru', 'v.venta_id = cru.id_venta');
+        $this->db->join('credito_cuotas_abono cca', 'cru.id_credito_cuota = cca.credito_cuota_id','left');
+        $this->db->join('usuario u', 'cca.usuario_pago = u.nUsuCodigo', 'left');
         $this->db->where("v.venta_status='COMPLETADO'");
         $this->db->where('v.condicion_pago = 2');
-        $this->db->where('DATE(v.fecha) <> DATE(cru.ultimo_pago)');
+        $this->db->where('v.fecha <> cru.ultimo_pago');
         if($params['local_id']>0){
             $this->db->where('v.local_id = '.$params['local_id']);
         }
         if(!empty($params['fecha_ini']) && !empty($params['fecha_fin'])){
-            $this->db->where("cru.ultimo_pago >= '".$params['fecha_ini']."' AND cru.ultimo_pago <= '".$params['fecha_fin']."'");
+            $this->db->where("DATE(cru.ultimo_pago) >= '".$params['fecha_ini']."' AND DATE(cru.ultimo_pago) <= '".$params['fecha_fin']."'");
         }
         if($params['estado_pago']==1){ //deben
             $this->db->where('ispagado = 0');
@@ -494,7 +495,7 @@ class reporte_model extends CI_Model
             $this->db->where('rec_pob = ', $params['poblado_id']);
         }
         if($params['usuario_id']>0){
-            $this->db->where('v.id_vendedor = ', $params['usuario_id']);   
+            $this->db->where('u.nUsuCodigo = ', $params['usuario_id']);   
         }
         return $this->db->get()->result();
     }
