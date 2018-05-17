@@ -10,6 +10,15 @@ class cajas_model extends CI_Model
         $this->load->model('cajas/cajas_mov_model');
     }
 
+    function get_caja(){
+        return $this->db->select('caja.*, moneda.*, local.local_nombre as local_nombre')
+        ->from('caja')
+        ->join('local', 'local.int_local_id = caja.local_id')
+        ->join('moneda', 'moneda.id_moneda = caja.moneda_id')
+        ->where('estado', 1)
+        ->get()->result();      
+    }
+
     function sync_cajas($data = array())
     {
 

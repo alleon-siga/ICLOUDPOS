@@ -848,11 +848,17 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
         </div>
     </div>
 </div>
-<div class="modal fade" id="agregarproveedor" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-     aria-hidden="true">
+<div class="modal fade" id="productomodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 </div>
-<div class="modal fade" id="productomodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-     aria-hidden="true">
+<div class="modal fade" id="agregarproveedor" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+</div>
+<div class="modal fade" id="agregarmarca" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+</div>
+<div class="modal fade" id="agregargrupo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+</div>
+<div class="modal fade" id="agregarfamilia" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+</div>
+<div class="modal fade" id="agregarlinea" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 </div>
 <script src="<?php echo $ruta; ?>recursos/js/Validacion.js"></script>
 <script src="<?php echo $ruta ?>recursos/js/pages/tablesDatatables.js"></script>
@@ -864,7 +870,40 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
         $("#fecEmision").datepicker({format: 'dd-mm-yyyy'});
         //TablesDatatables.init();
         $("#agregarproveedor").load(ruta + 'proveedor/form');
+        $("#agregarmarca").load(ruta + 'marca/form');
+        $("#agregargrupo").load(ruta + 'grupo/form');
+        $("#agregarfamilia").load(ruta + 'familia/form');
+        $("#agregarlinea").load(ruta + 'linea/form');
     });
+
+    function agregarfamilia() {
+        $("#formagregarfamilia").trigger("reset");
+        $('#agregarfamilia').modal('show');
+        setTimeout(function () {
+            $('#confirmar_boton_familia').removeAttr("onclick");
+            $('#confirmar_boton_familia').attr("onclick", "guardar_familia('producto')");
+
+        }, 10);
+    }
+
+    function agregarmarca() {
+        $("#formagregarmarca").trigger("reset");
+        $('#agregarmarca').modal('show');
+        setTimeout(function () {
+            $('#confirmar_boton_marca').removeAttr("onclick");
+            $('#confirmar_boton_marca').attr("onclick", "guardar_marca('producto')");
+
+        }, 10);
+    }
+
+    function agregargrupo() {
+        $("#formagregargrupo").trigger("reset");
+        $('#agregargrupo').modal('show');
+        setTimeout(function () {
+            $('#confirmar_boton_grupo').removeAttr("onclick");
+            $('#confirmar_boton_grupo').attr("onclick", "guardar_grupo('producto')");
+        }, 10);
+    }
 
     function agregarproveedor() {
         $("#formagregarproveedor").trigger("reset");
@@ -872,6 +911,15 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
         setTimeout(function () {
             $('#confirmar_boton_proveedor').removeAttr("onclick");
             $('#confirmar_boton_proveedor').attr("onclick", "guardar_proveedor('producto')");
+        }, 10);
+    }
+
+    function agregarlinea() {
+        $("#formagregarlinea").trigger("reset");
+        $('#agregarlinea').modal('show');
+        setTimeout(function () {
+            $('#confirmar_boton_linea').removeAttr("onclick");
+            $('#confirmar_boton_linea').attr("onclick", "guardar_linea('producto')");
         }, 10);
     }
 

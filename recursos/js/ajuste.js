@@ -3,6 +3,12 @@ var ruta = $("#base_url").val();
 var lst_producto = [];
 
 $(document).ready(function () {
+    $("#agregarproveedor").load(ruta + 'proveedor/form');
+    $("#agregarmarca").load(ruta + 'marca/form');
+    $("#agregargrupo").load(ruta + 'grupo/form');
+    $("#agregarfamilia").load(ruta + 'familia/form');
+    $("#agregarlinea").load(ruta + 'linea/form');
+
     $('#refresh_productos').on('click', function () {
         $("#loading_save_venta").modal('show');
         $.ajax({
@@ -872,6 +878,53 @@ function agregarProducto() {
     }
 }
 
+function agregarfamilia() {
+    $("#formagregarfamilia").trigger("reset");
+    $('#agregarfamilia').modal('show');
+    setTimeout(function () {
+        $('#confirmar_boton_familia').removeAttr("onclick");
+        $('#confirmar_boton_familia').attr("onclick", "guardar_familia('producto')");
+
+    }, 10);
+}
+
+function agregarmarca() {
+    $("#formagregarmarca").trigger("reset");
+    $('#agregarmarca').modal('show');
+    setTimeout(function () {
+        $('#confirmar_boton_marca').removeAttr("onclick");
+        $('#confirmar_boton_marca').attr("onclick", "guardar_marca('producto')");
+
+    }, 10);
+}
+
+function agregargrupo() {
+    $("#formagregargrupo").trigger("reset");
+    $('#agregargrupo').modal('show');
+    setTimeout(function () {
+        $('#confirmar_boton_grupo').removeAttr("onclick");
+        $('#confirmar_boton_grupo').attr("onclick", "guardar_grupo('producto')");
+    }, 10);
+}
+
+function agregarproveedor() {
+    $("#formagregarproveedor").trigger("reset");
+    $('#agregarproveedor').modal('show');
+    setTimeout(function () {
+        $('#confirmar_boton_proveedor').removeAttr("onclick");
+        $('#confirmar_boton_proveedor').attr("onclick", "guardar_proveedor('producto')");
+    }, 10);
+}
+
+function agregarlinea() {
+    $("#formagregarlinea").trigger("reset");
+    $('#agregarlinea').modal('show');
+    setTimeout(function () {
+        $('#confirmar_boton_linea').removeAttr("onclick");
+        $('#confirmar_boton_linea').attr("onclick", "guardar_linea('producto')");
+    }, 10);
+}
+
 function update_producto(id, nombre) {
     $('#producto_id').append('<option value="' + id + '">' + id + ' - ' + nombre + '</option>');
     $('#producto_id').val(id);
@@ -982,8 +1035,8 @@ function get_productos_unidades(evento){
             complete: function (data) {
                 $("#loading").hide();
                 $(".block_producto_unidades").show();
-
                 $('.cantidad-input[data-index="0"]').first().trigger('focus');
+                $(".modal-backdrop").remove();
             },
             error: function (data) {
                 alert('Ha ocurrido un Error Inesperado.');

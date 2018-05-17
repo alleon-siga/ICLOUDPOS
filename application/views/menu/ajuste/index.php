@@ -459,8 +459,17 @@
         <!-- /.modal-content -->
     </div>
 </div>
-<div class="modal fade" id="productomodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-     aria-hidden="true">
+<div class="modal fade" id="productomodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+</div>
+<div class="modal fade" id="agregarproveedor" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+</div>
+<div class="modal fade" id="agregarmarca" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+</div>
+<div class="modal fade" id="agregargrupo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+</div>
+<div class="modal fade" id="agregarfamilia" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+</div>
+<div class="modal fade" id="agregarlinea" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 </div>
 <script src="<?php echo base_url('recursos/js/pages/tablesDatatables.js') ?>"></script>
 <script src="<?php echo base_url('recursos/js/Validacion.js') ?>"></script>

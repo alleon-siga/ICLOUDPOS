@@ -574,6 +574,12 @@ $primary_nav = array(
                 'url' => $ruta . 'reporte/utilidadProducto',
                 'icon' => 'fa fa-area-chart',
                 'slug' => 'utilidadProducto'
+            ),
+            array(
+                'name' => 'Gastos del d&iacute;a',
+                'url' => $ruta . 'reporte/gastosDia',
+                'icon' => 'fa fa-area-chart',
+                'slug' => 'gastosDia'
             )
         ),
     ),
