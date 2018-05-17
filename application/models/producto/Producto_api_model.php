@@ -8,6 +8,21 @@ class Producto_api_model extends CI_Model
         $this->load->database();
     }
 
+    function get_productos_fav($str_producto)
+    {
+        $result = $this->db->select('producto_id, producto_codigo_interno as codigo, producto_nombre, producto_codigo_barra as barra')
+            ->from('producto')
+            ->join('unidades_has_precio', 'unidades_has_precio.id_producto = producto.producto_id')
+            ->where('producto.producto_id', $str_producto)
+            ->where('producto.producto_estatus', '1')
+            ->where('producto.producto_estado', '1')
+            ->where('unidades_has_precio.id_precio', 3)
+            ->group_by('producto.producto_id')
+            ->get()->result_array();
+
+        return $result;
+    }
+
     function get_productos_listall($str_producto)
     {
         $result = $this->db->select('producto_id, producto_codigo_interno as codigo, producto_nombre, producto_codigo_barra as barra')
