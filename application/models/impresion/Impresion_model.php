@@ -264,7 +264,7 @@ class impresion_model extends CI_Model
     }
 
 
-    function getVentaNotaCredito($id)
+    function getVentaNotaCredito($param)
     {
         require './application/libraries/Numeroletra.php';
 
@@ -313,7 +313,7 @@ class impresion_model extends CI_Model
                     JOIN
                 moneda AS m ON m.id_moneda = v.id_moneda
             WHERE
-                v.venta_id = " . $id . "
+                v.venta_id = " . $param['id'] . "
         ";
 
         $venta = $this->db->query($query)->result();
@@ -344,18 +344,22 @@ class impresion_model extends CI_Model
                 p.producto_nombre AS nombre,
                 u.nombre_unidad AS unidad,
                 u.abreviatura AS unidad_abr,
-                FORMAT(dv.cantidad, 0) AS cantidad,
+                FORMAT((k.cantidad * - 1), 0) AS cantidad,
                 dv.precio AS precio,
-                dv.detalle_importe AS importe,
+                (k.cantidad * - 1) * dv.precio AS importe,
                 dv.precio_venta AS precio_venta
             FROM
                 detalle_venta AS dv
                     JOIN
                 producto AS p ON p.producto_id = dv.id_producto
                     JOIN
-                unidades AS u ON u.id_unidad = dv.unidad_medida
+                kardex AS k ON k.ref_id = dv.id_venta AND k.producto_id = dv.id_producto
+                    JOIN
+                unidades AS u ON u.id_unidad = k.unidad_id
             WHERE
-                dv.id_venta = " . $id . "
+                k.io = 2 AND k.tipo = 7 AND k.operacion = 5 AND 
+                k.serie='".$param['serie']."' AND k.numero='".$param['numero']."' AND
+                dv.id_venta = " . $param['id'] . "
         ";
 
             $v->productos = $this->db->query($query)->result();

@@ -164,6 +164,7 @@ function save_venta_contado(imprimir){
 
 function save_venta_credito(imprimir){
     $("#loading2").html($("#loading").html());
+    $('#terminar_venta').attr('disabled', 'disabled');
     $.ajax({
         url: ruta + 'venta_new/save_recarga/',
         type: 'POST',
@@ -189,7 +190,7 @@ function save_venta_credito(imprimir){
             show_msg('danger', '<h4>Error. </h4><p>Ha ocurrido un error insperado al guardar la venta.</p>');
         },
         complete: function (data) {
-            $('.save_venta_contado').removeAttr('disabled');
+            $('#terminar_venta').removeAttr('disabled');
         }
     });
 }
