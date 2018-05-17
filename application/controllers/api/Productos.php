@@ -52,9 +52,15 @@ class Productos extends REST_Controller
     public function index_post() {
         $id_usuario = $this->input->post('id_usuario');
         $str_producto = $this->input->post('str_producto');
+        $favorito = $this->input->post('favorito');
 
         $data = array();
-        $productos = $this->producto_api_model->get_productos_listall($str_producto);
+        if ($favorito == "SI") {
+            $productos = $this->producto_api_model->get_productos_fav($str_producto);
+
+        } else {
+            $productos = $this->producto_api_model->get_productos_listall($str_producto);
+        }
 
         foreach ($productos as $prod) {
             $producto['producto_id'] = $prod['producto_id'];
@@ -63,7 +69,7 @@ class Productos extends REST_Controller
 
             $producto['unidad_precio'] = $this->producto_api_model->get_productos_unidprec($prod['producto_id'], 3);
 
-            $producto['stock_total'] = $this->set_stock($prod['producto_id']);
+            //$producto['stock_total'] = $this->set_stock($prod['producto_id']);
 
             $producto['stock_desglose'] = $this->set_stock_desglose($id_usuario, $prod['producto_id']);
 
