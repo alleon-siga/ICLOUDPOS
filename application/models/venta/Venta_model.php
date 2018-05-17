@@ -2055,11 +2055,11 @@ FROM (`detalle_venta`) JOIN `venta` ON `venta`.`venta_id`=`detalle_venta`.`id_ve
         $query = $this->db->query("UPDATE credito c SET c.dec_credito_montocuota=c.dec_credito_montocuota-" . $montodescontar . " WHERE c.id_venta=" . $venta_id . " ");
     }
 
-    public function get_nota_credito()
+    public function get_nota_credito($params)
     {
-        $venta_id = $this->input->post('venta_id');
-        $serie = $this->input->post('serie');
-        $numero = $this->input->post('numero');
+        $venta_id = $params['venta_id'];
+        $serie = $params['serie'];
+        $numero = $params['numero'];
 
         $this->db->select('k.id, p.producto_nombre, (k.cantidad * - 1) AS cantidad, u.nombre_unidad, up.precio');
         $this->db->from('kardex AS k');

@@ -18,4 +18,11 @@ class Impresion extends MY_Controller
         echo $this->impresion_model->create_xml($this->impresion_model->getVenta($id));
     }
 
+    function get_nota_credito()
+    {
+        $param['id'] = $this->input->post('venta_id');
+        $param['serie'] = $this->input->post('serie');
+        $param['numero'] = $this->input->post('numero');
+        echo $this->impresion_model->createXmlNotaCredito($this->impresion_model->getVentaNotaCredito($param['id']));
+    }
 }
