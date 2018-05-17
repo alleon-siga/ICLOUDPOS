@@ -1043,7 +1043,7 @@
             <div class="modal-footer">
                 <div class="row">
                     <div class="col-md-offset-8 col-md-2">
-                        <button class="btn btn-default" type="button" onclick="confirm_save()" id="btnGuardar"><i
+                        <button class="btn btn-default" type="button" onclick="confirm_save('producto')" id="btnGuardar"><i
                                     class="fa fa-save"></i> Guardar
                         </button>
                     </div>
@@ -1211,14 +1211,14 @@
         var ruta = '<?php echo $ruta; ?>';
 
 
-        function confirm_save() {
+        function confirm_save(retorno) {
 
             var tasa = $("#tasa_convert");
             var tasa_contable = $("#tasa_convert_contable");
 
             //alert(tasa.attr('data-value-s'));
 
-            guardarproducto();
+            guardarproducto(retorno);
 
             /*if (tasa.val() == '0.00' && tasa_contable.val() == '0.00') {
 
@@ -1241,13 +1241,11 @@
 
         }
 
-        function guardarproducto() {
-
+        function guardarproducto(retorno) {
 //            if ($("#tasa_convert").val() != '0.00' || $("#tasa_convert_contable").val() != '0.00') {
 //                $("#tasa_convert").val($("#tasa_input").val());
 //                $("#tasa_convert_contable").val($("#tasa_input").val());
 //            }
-
             var unidad_min_index = $('.unidades').length - 1;
             if ($("#unidad\\[" + unidad_min_index + "\\]").val() > 1) {
                 var growlType = 'warning';
@@ -1512,14 +1510,21 @@
                     var callback = getproductosbylocal;
                     var modal = "productomodal";
                     if (data.error == undefined) {
-                        $('#productomodal').modal('hide');
-                        $.ajax({
-                            url: ruta + 'producto',
-                            success: function (data) {
-                                $('#page-content').html(data);
+                        if(retorno != 'producto'){
+                            update_producto(data.id,data.nombre, data.impuesto);
+                        }
 
-                            }
-                        });
+                        $('#productomodal').modal('hide');
+                        $("#cargando_modal").modal('hide');
+						$(".modal-backdrop").remove();
+                        if(retorno == 'producto'){
+                            $.ajax({
+                                url: ruta + 'producto',
+                                success: function (data) {
+                                    $('#page-content').html(data);
+                                }
+                            });
+                        }
 
                         var growlType = 'success';
 
@@ -1528,7 +1533,6 @@
                             delay: 2500,
                             allow_dismiss: true
                         });
-
                     } else {
                         $("#cargando_modal").modal('hide');
                         var growlType = 'warning';
@@ -2168,5 +2172,4 @@
             }
 
         }
-
     </script>

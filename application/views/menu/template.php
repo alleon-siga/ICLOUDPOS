@@ -570,7 +570,7 @@ $primary_nav = array(
                 'slug' => 'recargaCuentasC'
             ),
             array(
-                'name' => 'Utilidades por producto',
+                'name' => 'Utilidades por venta',
                 'url' => $ruta . 'reporte/utilidadProducto',
                 'icon' => 'fa fa-area-chart',
                 'slug' => 'utilidadProducto'

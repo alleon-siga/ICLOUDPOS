@@ -3102,7 +3102,11 @@ JOIN detalleingreso ON detalleingreso.id_ingreso=ingreso.id_ingreso WHERE detall
 
     public function get_nota_credito()
     {
-        $data['data'] = $this->venta_model->get_nota_credito();
+        $params['venta_id'] = $this->input->post('venta_id');
+        $params['serie'] = $this->input->post('serie');
+        $params['numero'] = $this->input->post('numero');
+        
+        $data['data'] = $this->venta_model->get_nota_credito($params);
         $this->load->view('menu/ventas/vista_nota_credito', $data);
     }
 }

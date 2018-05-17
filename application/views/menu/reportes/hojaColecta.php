@@ -169,10 +169,10 @@
                     </button>
                 </div>
                 <div class="col-md-1">
-                    <div style="padding-top: 30px;"></div>
+                    <!--<div style="padding-top: 30px;"></div>
                     <button type="button" class="btn btn-primary tcharm-trigger form-control">
                         <i class="fa fa-plus"></i>
-                    </button>
+                    </button>-->
                 </div>
             </div>
             <br>

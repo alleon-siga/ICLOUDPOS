@@ -175,6 +175,9 @@
      aria-hidden="true"
      data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog" style="width: 60%">
+        <input type="hidden" name="hd_venta_id" id="hd_venta_id" value="">
+        <input type="hidden" name="hd_serie" id="hd_serie" value="">
+        <input type="hidden" name="hd_credito" id="hd_credito" value="">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" onclick="$('#nc_modal').modal('hide');" aria-hidden="true">
@@ -186,6 +189,9 @@
 
             </div>
             <div class="modal-footer">
+                <button class="btn btn-primary btn_venta_imprimir imprimir" type="button" data-nombre="nota_credito">
+                    <i class="fa fa-print"></i> Imprimir
+                </button>
                 <a href="#" class="btn btn-danger" id="cerrar_pago_modal"
                    onclick="$('#nc_modal').modal('hide');">Cerrar</a>
             </div>
@@ -255,6 +261,46 @@
 </div>
 <script type="text/javascript">
     $(function () {
+        $('.imprimir').on('click', function () {
+            var input = $('.btn_venta_imprimir');
+            var nombre = $(this).attr('data-nombre');
+
+            input.html('<i class="fa fa-print"></i> IMPRIMIENDO...');
+            input.attr('disabled', 'disabled');
+
+            var data = {
+                'venta_id' : $('#hd_venta_id').val(),
+                'serie' : $('#hd_serie').val(),
+                'numero' : $('#hd_credito').val()
+            }
+
+            $.ajax({
+                url: '<?= base_url()?>impresion/get_nota_credito',
+                data: data,
+                type: 'POST',
+                success: function (data) {
+                    $.ajax({
+                        url: '<?= valueOptionDB('HOST_IMPRESION', 'http://localhost:8080') ?>',
+                        method: 'POST',
+                        data: {
+                            documento: nombre,
+                            dataset: data
+                        },
+                        success: function (data) {
+                            show_msg('success', 'La nota de credito se esta imprimiendo');
+                        },
+                        error: function (data) {
+                            alert('Error de impresion')
+                        },
+                        complete: function (data) {
+                            input.removeAttr('disabled');
+                            input.html('<i class="fa fa-print"></i> Nota de credito');
+                        }
+
+                    })
+                }
+            })
+        });
 
         $('#exportar_excel').on('click', function (e) {
             e.preventDefault();
@@ -318,6 +364,10 @@
 
     function ver_nc(venta_id, serie, numero) {
         $("#nc_modal").modal('show');
+        $('#hd_venta_id').attr('value', venta_id);
+        $('#hd_serie').attr('value', serie);
+        $('#hd_credito').attr('value', numero);
+        $("#nc_modal_body").html($("#loading").html());
         $.ajax({
             url: '<?php echo $ruta ?>venta/get_nota_credito/',
             type: 'POST',

@@ -693,6 +693,8 @@ class Reporte extends MY_Controller
                 $params['operador_id'] = $this->input->post('operador_id');
                 $params['usuario_id'] = $this->input->post('usuario_id');
                 $params['estado_pago'] = $this->input->post('estado_pago');
+                $data['estado_pago'] = $params['estado_pago'];
+                $data['countLists'] = $this->reporte_model->getHojaColecta($params, true); //Total de ventas
                 $data['lists'] = $this->reporte_model->getHojaColecta($params);
                 $data['totalesCon'] = $this->reporte_model->getSumMedioPago($params, 1); //contado
                 $data['totalesCre'] = $this->reporte_model->getSumMedioPago($params, 2); //credito
@@ -717,6 +719,7 @@ class Reporte extends MY_Controller
                 );
 
                 $data['lists'] = $this->reporte_model->getHojaColecta($input);
+                $data['countLists'] = $this->reporte_model->getHojaColecta($input, true); //Total de ventas
                 $data['totalesCon'] = $this->reporte_model->getSumMedioPago($input, 1); //contado
                 $data['totalesCre'] = $this->reporte_model->getSumMedioPago($input, 2); //credito
                 $local = $this->db->get_where('local', array('int_local_id' => $input['local_id']))->row();
@@ -751,6 +754,7 @@ class Reporte extends MY_Controller
                 );
 
                 $data['lists'] = $this->reporte_model->getHojaColecta($input);
+                $data['countLists'] = $this->reporte_model->getHojaColecta($input, true); //Total de ventas
                 $data['totalesCon'] = $this->reporte_model->getSumMedioPago($input, 1); //contado
                 $data['totalesCre'] = $this->reporte_model->getSumMedioPago($input, 2); //credito
                 $local = $this->db->get_where('local', array('int_local_id' => $input['local_id']))->row();

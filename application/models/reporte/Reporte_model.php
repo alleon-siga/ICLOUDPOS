@@ -384,7 +384,7 @@ class reporte_model extends CI_Model
         return $this->db->query($query)->result_array();
     }
 
-    function getHojaColecta($params)
+    function getHojaColecta($params, $count = false)
     {
         $local_id = $marca_id = $grupo_id = $familia_id = $linea_id = $producto_id = $operador_id = $usuario_id = '';
         $usu = $this->session->userdata('nUsuCodigo');
@@ -397,8 +397,11 @@ class reporte_model extends CI_Model
         $producto_id .= ($params['producto_id']!='')? " AND p.producto_id IN(".implode(",", $params['producto_id']).")" : "";
         $usuario_id .= ($params['usuario_id']>0)? " AND v.id_vendedor=".$params['usuario_id'] : "";
         $search = $local_id.$marca_id.$grupo_id.$familia_id.$linea_id.$operador_id.$producto_id.$usuario_id;
-
-        $this->db->select("v.venta_id, c.razon_social, v.serie, v.numero, p.producto_nombre, dv.cantidad, dv.precio, dv.detalle_importe, l.local_nombre, d.abr_doc, m.simbolo, v.fecha, v.nota, dt.valor, u.nombre, IF(v.condicion_pago=2,'CREDITO', 'CONTADO') AS condicion, v.condicion_pago, (cr.dec_credito_montocuota - cr.dec_credito_montodebito) AS monto_restante, v.total");
+        if($count == false){
+            $this->db->select("v.venta_id, c.razon_social, v.serie, v.numero, p.producto_nombre, dv.cantidad, dv.precio, dv.detalle_importe, l.local_nombre, d.abr_doc, m.simbolo, v.fecha, v.nota, dt.valor, u.nombre, IF(v.condicion_pago=2,'CREDITO', 'CONTADO') AS condicion, v.condicion_pago, (cr.dec_credito_montocuota - cr.dec_credito_montodebito) AS monto_restante, v.total, dv.id_producto");
+        }else{
+            $this->db->select("dv.detalle_importe");
+        }        
         $this->db->from('detalle_venta dv');
         $this->db->join('venta v', 'v.venta_id=dv.id_venta');
         $this->db->join('recarga r', 'v.venta_id = r.id_venta', 'left');
@@ -413,12 +416,18 @@ class reporte_model extends CI_Model
         $this->db->join('credito cr', 'v.venta_id = cr.id_venta', 'left');
         $this->db->join('credito_cuotas cru', 'v.venta_id = cru.id_venta', 'left');
         $this->db->where("v.venta_status='COMPLETADO' AND v.fecha >= '".$params['fecha_ini']."' AND v.fecha <= '".$params['fecha_fin']."' $search");
-        if($params['estado_pago']==1){ //deben
-            $this->db->where('ispagado = 0');
-        }elseif($params['estado_pago']==2){ //Cancelado
-            $this->db->where('(ispagado = 1 OR ispagado IS NULL)');
+        if($count == false){
+            if($params['estado_pago']==1){ //deben
+                $this->db->where('ispagado = 0');
+            }elseif($params['estado_pago']==2){ //Cancelado
+                $this->db->where('(ispagado = 1 OR ispagado IS NULL)');
+                $this->db->where("((cr.dec_credito_montocuota - cr.dec_credito_montodebito) IS NULL OR (cr.dec_credito_montocuota - cr.dec_credito_montodebito)=0)");
+            }
+            $this->db->group_by("v.venta_id, dv.id_producto");
+            $this->db->order_by('v.local_id, v.venta_id DESC');
+        }else{
+            $this->db->group_by("dv.id_detalle");
         }
-        $this->db->order_by('v.local_id, v.venta_id DESC');
         return $this->db->get()->result();
     }
 
@@ -434,6 +443,7 @@ class reporte_model extends CI_Model
         $this->db->join('usuario u', 'v.id_vendedor = u.nUsuCodigo');
         $this->db->join('credito cr', 'v.venta_id = cr.id_venta', 'left');
         $this->db->join('credito_cuotas cru', 'v.venta_id = cru.id_venta', 'left');
+        $this->db->where("v.venta_status='COMPLETADO'");
         if($params['local_id']>0){
             $this->db->where('v.local_id = '.$params['local_id']);
         }
@@ -466,6 +476,7 @@ class reporte_model extends CI_Model
         $this->db->join('usuario u', 'v.id_vendedor = u.nUsuCodigo');
         $this->db->join('credito cr', 'v.venta_id = cr.id_venta');
         $this->db->join('credito_cuotas cru', 'v.venta_id = cru.id_venta');
+        $this->db->where("v.venta_status='COMPLETADO'");
         $this->db->where('v.condicion_pago = 2');
         $this->db->where('DATE(v.fecha) <> DATE(cru.ultimo_pago)');
         if($params['local_id']>0){
@@ -500,6 +511,7 @@ class reporte_model extends CI_Model
         $this->db->join('usuario u', 'v.id_vendedor = u.nUsuCodigo');
         $this->db->join('credito cr', 'v.venta_id = cr.id_venta');
         $this->db->join('credito_cuotas cru', 'v.venta_id = cru.id_venta');
+        $this->db->where("v.venta_status='COMPLETADO'");
         $this->db->where('ispagado = 0');
         if($params['local_id']>0){
             $this->db->where('v.local_id = '.$params['local_id']);
@@ -519,29 +531,31 @@ class reporte_model extends CI_Model
     {
         $usu = $this->session->userdata('nUsuCodigo');
         $this->db->select('cm.medio_pago, SUM(cm.saldo) as saldo');
-        $this->db->from('detalle_venta dv');
-        $this->db->join('venta v', 'v.venta_id=dv.id_venta');
+        $this->db->from('venta v');
+        //$this->db->from('detalle_venta dv');
+        //$this->db->join('venta v', 'v.venta_id=dv.id_venta');
         $this->db->join('moneda m', 'v.id_moneda = m.id_moneda');
-        $this->db->join('producto p', 'dv.id_producto=p.producto_id');
+        //$this->db->join('producto p', 'dv.id_producto=p.producto_id');
         $this->db->join('usuario_almacen ua', "v.local_id = ua.local_id AND ua.usuario_id = $usu");
         $this->db->join('recarga r', 'v.venta_id = r.id_venta', 'left');
         $this->db->join('caja_movimiento cm', 'v.venta_id = cm.ref_id');
         $this->db->where("v.venta_status='COMPLETADO' AND v.fecha >= '".$params['fecha_ini']."' AND v.fecha <= '".$params['fecha_fin']."'");
         $this->db->where("v.condicion_pago=", $condicion_pago);
+        $this->db->where("cm.operacion=", 'VENTA');
         if($params['local_id']>0)
             $this->db->where("v.local_id=", $params['local_id']);
-        if($params['marca_id']>0)
+        /*if($params['marca_id']>0)
             $this->db->where("p.producto_marca=", $params['marca_id']);
         if($params['grupo_id']>0)
             $this->db->where("p.produto_grupo=", $params['grupo_id']);
         if($params['familia_id']>0)
             $this->db->where("p.producto_familia=", $params['familia_id']);
         if(($params['linea_id']>0))
-            $this->db->where("p.producto_linea=", $params['linea_id']);
+            $this->db->where("p.producto_linea=", $params['linea_id']);*/
         if($params['operador_id']>0)
             $this->db->where("r.rec_ope=", $params['operador_id']);
-        if($params['producto_id']!='')
-            $this->db->where("p.producto_id IN(".implode(",", $params['producto_id']).")");
+        /*if($params['producto_id']!='')
+            $this->db->where("p.producto_id IN(".implode(",", $params['producto_id']).")");*/
         if($params['usuario_id']>0)
             $this->db->where("v.id_vendedor=", $params['usuario_id']);
         $this->db->group_by("v.condicion_pago, cm.medio_pago");
@@ -550,21 +564,36 @@ class reporte_model extends CI_Model
 
     function getUtilidadProducto($params)
     {
-        $this->db->select("v.venta_id, v.fecha, pr.proveedor_nombre, p.producto_nombre, unidades.nombre_unidad, detalle_venta.cantidad,
-            detalle_venta.detalle_costo_promedio, detalle_venta.precio");
-        $this->db->from('detalle_venta dv');
-        $this->db->join('venta v', 'v.venta_id=dv.id_venta');
-        $this->db->join('producto p', 'dv.id_producto=p.producto_id');
-        $this->db->join('proveedor pr', 'p.producto_proveedor=pr.id_proveedor', 'left');
-        $this->db->join('unidades_has_producto up', 'dv.id_producto=up.producto_id AND dv.unidad_medida=up.id_unidad');
-        $this->db->join('unidades_has_producto up2', 'dv.id_producto=up2.producto_id AND (select id_unidad from unidades_has_producto where unidades_has_producto.producto_id = detalle_venta.id_producto ORDER BY orden DESC LIMIT 1) = up2.id_unidad 
-            INNER JOIN unidades ON unidades.id_unidad = up2.id_unidad');
+        $where = "v.venta_status='COMPLETADO' AND ";
         if($params['local_id']>0){
-            $this->db->where('v.local_id = '.$params['local_id']);
+            $where .= "v.local_id = ".$params['local_id'];
         }
         if(!empty($params['fecha_ini']) && !empty($params['fecha_fin'])){
-            $this->db->where("v.fecha >= '".$params['fecha_ini']."' AND v.fecha <= '".$params['fecha_fin']."'");
+            if(!empty($where)){
+                $where .= " AND ";
+            }
+            $where .= "v.fecha >= '".$params['fecha_ini']."' AND v.fecha <= '".$params['fecha_fin']."'";
         }
-        return $this->db->get()->result();
+
+        $query = "SELECT v.venta_id, DATE_FORMAT(v.fecha, '%d/%m/%Y') AS fecha, pr.proveedor_nombre, p.producto_nombre, u.nombre_unidad, SUM(up.unidades * dv.cantidad) AS cantidad, dv.detalle_costo_promedio, dv.detalle_importe, l.local_nombre, dv.detalle_costo_ultimo, dv.impuesto_porciento, v.tipo_impuesto
+            FROM detalle_venta dv
+            INNER JOIN venta v ON v.venta_id=dv.id_venta 
+            INNER JOIN producto p ON p.producto_id=dv.id_producto 
+            INNER JOIN `local` l ON v.local_id = l.int_local_id
+            LEFT JOIN proveedor pr ON p.producto_proveedor=pr.id_proveedor
+            INNER JOIN unidades_has_producto up ON dv.id_producto=up.producto_id 
+            AND dv.unidad_medida=up.id_unidad
+            INNER JOIN unidades_has_producto up2 ON dv.id_producto=up2.producto_id 
+            AND (
+                select id_unidad from unidades_has_producto 
+                where unidades_has_producto.producto_id = dv.id_producto
+                ORDER BY orden DESC LIMIT 1
+            ) = up2.id_unidad 
+            INNER JOIN unidades u ON u.id_unidad=up2.id_unidad";
+        if(!empty($where)){
+            $query .= " WHERE ". $where;
+        }
+        $query .= " GROUP BY v.venta_id, dv.id_detalle ORDER BY v.venta_id";
+        return $this->db->query($query)->result();
     }
 }

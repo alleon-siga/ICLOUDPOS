@@ -550,11 +550,11 @@ class cliente extends MY_Controller
 
 
         $columna_pdf[0] = "ID";
-        $columna_pdf[1] = "Raz�n social";
+        $columna_pdf[1] = "Razon social";
         $columna_pdf[2] = "DNI o RUC";
         $columna_pdf[3] = "Grupo";
         $columna_pdf[4] = "Direccion";
-        $columna_pdf[5] = "Tel�fono ";
+        $columna_pdf[5] = "Telefono ";
         $columna_pdf[6] = "Email";
 
 
@@ -578,7 +578,7 @@ class cliente extends MY_Controller
                 ->setCellValueByColumnAndRow($col, $row, $cliente['razon_social']);
                 $col++;
             }else{
-                $nombre_apellido = $cliente['nombres']." ".$cliente['apellido_paterno']." ".$familia['apellido_paterno'];
+                $nombre_apellido = $cliente['nombres']." ".$cliente['apellido_paterno']." ".$cliente['apellido_paterno'];
                 $this->phpexcel->setActiveSheetIndex(0)
                 ->setCellValueByColumnAndRow($col, $row, $nombre_apellido);
                 $col++;
