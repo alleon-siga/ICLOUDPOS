@@ -275,7 +275,7 @@ class venta_new_model extends CI_Model
         return $correlativo->serie . ' - ' . sumCod($correlativo->correlativo, 6);
     }
 
-    function facturar_venta($venta_id)
+    function facturar_venta($venta_id, $iddoc)
     {
         $venta = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
         $correlativo = $this->correlativos_model->get_correlativo($venta->local_id, $venta->id_documento);
@@ -285,8 +285,16 @@ class venta_new_model extends CI_Model
         $this->correlativos_model->sumar_correlativo($venta->local_id, $venta->id_documento);
 
         // Hago la facturacion de comprobantes
-        if ($venta->comprobante_id > 0)
+        if ($venta->comprobante_id > 0){
             $this->comprobante_model->facturar($venta->venta_id, $venta->comprobante_id);
+        }
+
+        if($iddoc != 6){ //Si es diferente a la nota de pedido
+            //Correlativo para la guia de remision
+            $correlativo = $this->correlativos_model->get_correlativo($venta->local_id, 8);
+            $this->correlativos_model->sumar_correlativo($venta->local_id, 8);
+            $update_venta['nro_guia'] = $correlativo->correlativo;
+        }
 
         $this->db->where('venta_id', $venta_id);
         $this->db->update('venta', $update_venta);
@@ -299,7 +307,6 @@ class venta_new_model extends CI_Model
             'serie' => $update_venta['serie'],
             'numero' => sumCod($update_venta['numero'], 6)
         ));
-
     }
 
     function save_venta_caja($venta)
@@ -445,6 +452,12 @@ class venta_new_model extends CI_Model
             $venta_contado['numero'] = $correlativo->correlativo;
 
             $this->correlativos_model->sumar_correlativo($venta['local_id'], $venta['id_documento']);
+            if($venta['id_documento'] != 6){ //Si es diferente a la nota de pedido
+                //Correlativo para la guia de remision
+                $correlativo = $this->correlativos_model->get_correlativo($venta['local_id'], 8);
+                $this->correlativos_model->sumar_correlativo($venta['local_id'], 8);
+                $venta_contado['nro_guia'] = $correlativo->correlativo;
+            }
         }
 
 

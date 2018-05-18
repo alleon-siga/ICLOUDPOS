@@ -163,7 +163,8 @@ class venta_new extends MY_Controller
     function facturar_venta()
     {
         $venta_id = $this->input->post('venta_id');
-        $this->venta->facturar_venta($venta_id);
+        $iddoc = $this->input->post('iddoc');
+        $this->venta->facturar_venta($venta_id, $iddoc);
     }
 
 

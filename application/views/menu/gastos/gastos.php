@@ -81,17 +81,25 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
             <div class="col-md-1"></div>
 
             <div class="col-md-3">
-                <label class="control-label panel-admin-text">Tipo de Gasto:</label>
-                <select
-                        id="tipo_gasto_id"
-                        class="form-control select_chosen" name="tipo_gasto_id">
-                    <option value="-">TODOS</option>
-                    <?php foreach ($tipos_gastos as $gasto): ?>
-                        <option
-                                value="<?php echo $gasto['id_tipos_gasto'] ?>" <?php if (isset($gastos['tipo_gasto']) and $gastos['tipo_gasto'] == $gasto['id_tipos_gasto']) echo 'selected' ?>><?= $gasto['nombre_tipos_gasto'] ?></option>
-                    <?php endforeach ?>
-                </select>
-
+                <div class="col-md-12">
+                    <label class="control-label panel-admin-text">Tipo de Gasto:</label>
+                </div>
+                <div class="col-md-12">
+                    <div class="input-group">
+                        <select
+                                id="tipo_gasto_id"
+                                class="form-control select_chosen" name="tipo_gasto_id">
+                            <option value="-">TODOS</option>
+                            <?php foreach ($tipos_gastos as $gasto): ?>
+                                <option
+                                        value="<?php echo $gasto['id_tipos_gasto'] ?>" <?php if (isset($gastos['tipo_gasto']) and $gastos['tipo_gasto'] == $gasto['id_tipos_gasto']) echo 'selected' ?>><?= $gasto['nombre_tipos_gasto'] ?></option>
+                            <?php endforeach ?>
+                        </select>
+                        <a class="input-group-addon btn-warning" data-toggle="tooltip" title="Agregar Tipo de Gasto" data-original-title="Agregar Tipo de Gasto" href="#" onclick="agregarTipoGasto()">
+                            <i class="hi hi-plus-sign"></i>
+                        </a>
+                    </div>
+                </div>
             </div>
 
 
@@ -504,6 +512,8 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
 <div class="modal fade" id="agregarproveedor" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
      aria-hidden="true">
 </div>
+<div class="modal fade" id="tipoGastoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+</div>
 <script src="<?php echo $ruta ?>recursos/js/pages/tablesDatatables.js"></script>
 <script type="text/javascript">
     $(function () {
@@ -517,5 +527,21 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
             $('#confirmar_boton_proveedor').removeAttr("onclick");
             $('#confirmar_boton_proveedor').attr("onclick", "guardar_proveedor('producto')");
         }, 10);
-    }    
+    }
+
+    function agregarTipoGasto() {
+        $('#tipo_gasto_id').val(0);
+        $("#tipo_gasto_id").trigger('chosen:updated');
+        $("#tipoGastoModal").load(ruta + 'tiposdegasto/form', function(){
+            $('#btnGuardarTipoGasto').removeAttr("onclick");
+            $('#btnGuardarTipoGasto').attr("onclick", "grupo.guardar('gasto')");
+        });
+        $('#tipoGastoModal').modal('show');
+    }
+
+    function update_tipoGasto(id, nombre){
+        $('#tipo_gasto_id').append('<option value="' + id + '">' + nombre + '</option>');
+        $('#tipo_gasto_id').val(id);
+        $("#tipo_gasto_id").trigger('chosen:updated');
+    }
 </script>

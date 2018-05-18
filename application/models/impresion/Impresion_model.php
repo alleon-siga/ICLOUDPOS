@@ -51,7 +51,7 @@ class impresion_model extends CI_Model
             $page->addChild('pagado', isset($doc->pagado) ? $doc->moneda_simbolo . ' ' . $doc->pagado : '');
             $page->addChild('importe_letra', isset($doc->importe_letra) ? $doc->importe_letra : '');
             $page->addChild('inicial', isset($doc->inicial) ? $doc->moneda_simbolo . ' ' . $doc->inicial : '');
-
+            $page->addChild('nro_guia', isset($doc->nro_guia) ? $doc->nro_guia : '');
 
             $productos = $page->addChild('productos');
             foreach ($doc->productos as $prod) {
@@ -117,7 +117,8 @@ class impresion_model extends CI_Model
                 FORMAT(v.total_impuesto, 2) AS impuesto,
                 FORMAT(v.vuelto, 2) AS vuelto,
                 FORMAT(v.pagado, 2) AS pagado,
-                FORMAT(IFNULL(v.inicial, 0), 2) AS inicial
+                FORMAT(IFNULL(v.inicial, 0), 2) AS inicial,
+                v.nro_guia AS nro_guia
             FROM
                 venta AS v
                     JOIN

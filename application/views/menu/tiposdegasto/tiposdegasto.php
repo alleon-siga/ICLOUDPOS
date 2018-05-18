@@ -127,7 +127,10 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
 
             })
         },
-        guardar : function () {
+        retorno: function(){
+            //update_tipoGasto();
+        },
+        guardar : function (retorno) {
             if ($("#nombre_tipos_gasto").val() == '') {
                 var growlType = 'warning';
 
@@ -141,7 +144,11 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
 
                 return false;
             }
-            App.formSubmitAjax($("#formagregar").attr('action'), this.ajaxgrupo, 'agregar', 'formagregar');
+            if(retorno != 'gasto'){
+                App.formSubmitAjax($("#formagregar").attr('action'), this.ajaxgrupo, 'agregar', 'formagregar');
+            }else{
+                App.formSubmitAjax($("#formagregar").attr('action'), this.retorno, 'agregar', 'formagregar');
+            }
         }
     }
 

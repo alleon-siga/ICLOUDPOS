@@ -36,7 +36,10 @@
                         $suma += $count->detalle_importe;
                     }
                 ?>
-                <?php foreach ($lists as $list): ?>
+                <?php
+                    $venta_id_ant = '';
+                    foreach ($lists as $list):
+                ?>
                 <?php
                     $debe = 0;
                     $estado = 'Cancelado';
@@ -59,7 +62,11 @@
                         <td><?= utf8_decode($list->nombre) ?></td>
                         <td><?= utf8_decode($list->razon_social) ?></td>
                         <td><?= $list->abr_doc . ' ' . $list->serie . '-' . sumCod($list->numero, 6) ?></td>
+                    <?php if($venta_id_ant != $list->venta_id){ ?>
                         <td><?= utf8_decode($list->producto_nombre).' '.utf8_decode($list->nota) ?></td>
+                    <?php }else{ ?>
+                        <td><?= utf8_decode($list->producto_nombre) ?></td>
+                    <?php } ?>
                         <td><?= $estado ?></td>
                         <td><?= $list->valor ?></td>
                         <td><?= $list->condicion ?></td>
@@ -67,6 +74,7 @@
                         <td style="text-align: right;"><?= $list->simbolo ?> <?= number_format($list->detalle_importe, 2) ?></td>
                     </tr>
                 <?php
+                    $venta_id_ant = $list->venta_id;
                     endforeach;
                 ?>
                 </tbody>
