@@ -577,6 +577,7 @@ class producto extends MY_Controller
 
                 $up = $this->producto_model->actualizar_producto(array('producto_id' => $rs), array('producto_codigo_interno' => $producto['producto_codigo_interno']));
             }
+            $json['producto_id'] = $id;
             $json['id'] = $producto['producto_codigo_interno'];
             $json['nombre'] = $producto['producto_nombre'];
 			$json['impuesto'] = $valor_importe;

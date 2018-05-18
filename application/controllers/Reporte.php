@@ -782,10 +782,10 @@ class Reporte extends MY_Controller
                 $data["productos"] = $this->producto_model->get_productos_list2();
                 $data['barra_activa'] = $this->db->get_where('columnas', array('id_columna' => 36))->row();
                 $data['operadore'] = $this->diccionario_termino_model->get_all_operador();
-                if ($this->session->userdata('grupo') == 8) { //perfil de vendedor
-                    $data['usuarios'] = $this->usuario_model->buscar_id($usu);
-                }else{
+                if ($this->session->userdata('grupo') == 2 || $this->session->userdata('grupo') == 9) { //perfil de administrador y gerente
                     $data['usuarios'] = $this->usuario_model->select_all_user();
+                }else{
+                    $data['usuarios'] = $this->usuario_model->buscar_id($usu);
                 }
                 $dataCuerpo['cuerpo'] = $this->load->view('menu/reportes/hojaColecta', $data, true);
                 if ($this->input->is_ajax_request()) {
@@ -896,10 +896,10 @@ class Reporte extends MY_Controller
                 }
                 $data['condiciones_pagos'] = $this->db->get_where('condiciones_pago', array('status_condiciones' => 1))->result();
                 $data['poblados'] = $this->clientes_grupos_model->get_all();
-                if ($this->session->userdata('grupo') == 8) { //perfil de vendedor
-                    $data['usuarios'] = $this->usuario_model->buscar_id($usu);
-                }else{
+                if ($this->session->userdata('grupo') == 2 || $this->session->userdata('grupo') == 9) { //perfil de administrador y gerente
                     $data['usuarios'] = $this->usuario_model->select_all_user();
+                }else{
+                    $data['usuarios'] = $this->usuario_model->buscar_id($usu);
                 }
                 $dataCuerpo['cuerpo'] = $this->load->view('menu/reportes/recargaDia', $data, true);
                 if ($this->input->is_ajax_request()) {
@@ -1009,10 +1009,10 @@ class Reporte extends MY_Controller
                 }
                 $data['condiciones_pagos'] = $this->db->get_where('condiciones_pago', array('status_condiciones' => 1))->result();
                 $data['poblados'] = $this->clientes_grupos_model->get_all();
-                if ($this->session->userdata('grupo') == 8) { //perfil de vendedor
-                    $data['usuarios'] = $this->usuario_model->buscar_id($usu);
-                }else{
+                if ($this->session->userdata('grupo') == 2 || $this->session->userdata('grupo') == 9) { //perfil de administrador y gerente
                     $data['usuarios'] = $this->usuario_model->select_all_user();
+                }else{
+                    $data['usuarios'] = $this->usuario_model->buscar_id($usu);
                 }
                 $dataCuerpo['cuerpo'] = $this->load->view('menu/reportes/recargaCobranza', $data, true);
                 if ($this->input->is_ajax_request()) {
@@ -1114,10 +1114,10 @@ class Reporte extends MY_Controller
                 }
                 $data['condiciones_pagos'] = $this->db->get_where('condiciones_pago', array('status_condiciones' => 1))->result();
                 $data['poblados'] = $this->clientes_grupos_model->get_all();
-                if ($this->session->userdata('grupo') == 8) { //perfil de vendedor
-                    $data['usuarios'] = $this->usuario_model->buscar_id($usu);
-                }else{
+                if ($this->session->userdata('grupo') == 2 || $this->session->userdata('grupo') == 9) { //perfil de administrador y gerente
                     $data['usuarios'] = $this->usuario_model->select_all_user();
+                }else{
+                    $data['usuarios'] = $this->usuario_model->buscar_id($usu);
                 }
                 $dataCuerpo['cuerpo'] = $this->load->view('menu/reportes/recargaCuentasC', $data, true);
                 if ($this->input->is_ajax_request()) {

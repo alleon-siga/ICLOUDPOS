@@ -1511,7 +1511,7 @@
                     var modal = "productomodal";
                     if (data.error == undefined) {
                         if(retorno != 'producto'){
-                            update_producto(data.id,data.nombre, data.impuesto);
+                            update_producto(data.id,data.nombre, data.impuesto, data.producto_id);
                         }
 
                         $('#productomodal').modal('hide');

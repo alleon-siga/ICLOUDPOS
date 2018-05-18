@@ -11,12 +11,12 @@
         <div class="block">
             <!-- Progress Bars Wizard Title -->
             <div class="row">
-                <div class="col-md-2">
-                    <?php if (isset($locales)): ?>
+                <div class="col-md-3">
+                    <?php if (isset($cajas)): ?>
                         <label class="control-label panel-admin-text">Caja</label>
                         <select id="caja_select" name="caja_select" class="form-control">
                             <?php foreach ($cajas as $caja): ?>
-                                <option <?= $caja->id == $caja_actual->id ? 'selected' : '' ?>
+                                <option 
                                         value="<?= $caja->id ?>"
                                         data-moneda_id="<?= $caja->moneda_id ?>"
                                         data-simbolo="<?= $caja->simbolo ?>">

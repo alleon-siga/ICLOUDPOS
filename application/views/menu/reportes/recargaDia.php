@@ -56,11 +56,11 @@
                     <label class="control-label panel-admin-text">Usuario</label>
                     <select name="usuario_id" id="usuario_id" class='form-control'>
                     <?php if(isset($usuarios->nUsuCodigo)){ ?>
-                        <option value="<?= $usuarios->nUsuCodigo ?>"><?= $usuarios->nombre ?></option>
+                        <option value="<?= $usuarios->nUsuCodigo ?>"><?= $usuarios->username ?></option>
                     <?php }else{ ?>
                         <option value="0">TODOS</option>
                         <?php foreach ($usuarios as $usuario): ?>
-                            <option value="<?= $usuario->nUsuCodigo ?>"><?= $usuario->nombre ?></option>
+                            <option value="<?= $usuario->nUsuCodigo ?>"><?= $usuario->username ?></option>
                         <?php endforeach; ?>
                     <?php } ?>
                     </select>

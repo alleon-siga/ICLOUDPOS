@@ -398,7 +398,7 @@ class reporte_model extends CI_Model
         $usuario_id .= ($params['usuario_id']>0)? " AND v.id_vendedor=".$params['usuario_id'] : "";
         $search = $local_id.$marca_id.$grupo_id.$familia_id.$linea_id.$operador_id.$producto_id.$usuario_id;
         if($count == false){
-            $this->db->select("v.venta_id, c.razon_social, v.serie, v.numero, p.producto_nombre, dv.cantidad, dv.precio, dv.detalle_importe, l.local_nombre, d.abr_doc, m.simbolo, v.fecha, v.nota, dt.valor, u.nombre, IF(v.condicion_pago=2,'CREDITO', 'CONTADO') AS condicion, v.condicion_pago, (cr.dec_credito_montocuota - cr.dec_credito_montodebito) AS monto_restante, v.total, dv.id_producto");
+            $this->db->select("v.venta_id, c.razon_social, v.serie, v.numero, p.producto_nombre, dv.cantidad, dv.precio, dv.detalle_importe, l.local_nombre, d.abr_doc, m.simbolo, v.fecha, v.nota, dt.valor, u.username AS nombre, IF(v.condicion_pago=2,'CREDITO', 'CONTADO') AS condicion, v.condicion_pago, (cr.dec_credito_montocuota - cr.dec_credito_montodebito) AS monto_restante, v.total, dv.id_producto");
         }else{
             $this->db->select("dv.detalle_importe");
         }        
@@ -433,7 +433,7 @@ class reporte_model extends CI_Model
 
     function getRecargaDia($params)
     {
-        $this->db->select("v.venta_id, v.fecha, c.razon_social, c.nota, r.rec_nro, r.rec_trans, v.total, cru.ultimo_pago AS fecha_abono, cr.dec_credito_montodebito AS monto_abono, l.local_nombre, IF(v.condicion_pago=2,'CREDITO', 'CONTADO') AS condicion, v.condicion_pago, cru.ispagado, dt.valor, (cr.dec_credito_montocuota - cr.dec_credito_montodebito) AS monto_restante, u.nombre");
+        $this->db->select("v.venta_id, v.fecha, c.razon_social, c.nota, r.rec_nro, r.rec_trans, v.total, cru.ultimo_pago AS fecha_abono, cr.dec_credito_montodebito AS monto_abono, l.local_nombre, IF(v.condicion_pago=2,'CREDITO', 'CONTADO') AS condicion, v.condicion_pago, cru.ispagado, dt.valor, (cr.dec_credito_montocuota - cr.dec_credito_montodebito) AS monto_restante, u.username AS nombre");
         $this->db->from('venta v');
         $this->db->join('detalle_venta dv', 'v.venta_id = dv.id_venta');
         $this->db->join('cliente c', 'c.id_cliente = v.id_cliente');
@@ -466,7 +466,7 @@ class reporte_model extends CI_Model
 
     function getRecargaCobranza($params)
     {
-        $this->db->select("v.venta_id, v.fecha, c.razon_social, c.nota, r.rec_nro, r.rec_trans, v.total, cru.ultimo_pago AS fecha_abono, cr.dec_credito_montodebito AS monto_abono, l.local_nombre, IF(v.condicion_pago=2,'CREDITO', 'CONTADO') AS condicion, v.condicion_pago, cru.ispagado, dt.valor, (cr.dec_credito_montocuota - cr.dec_credito_montodebito) AS monto_restante, u.nombre");
+        $this->db->select("v.venta_id, v.fecha, c.razon_social, c.nota, r.rec_nro, r.rec_trans, v.total, cru.ultimo_pago AS fecha_abono, cr.dec_credito_montodebito AS monto_abono, l.local_nombre, IF(v.condicion_pago=2,'CREDITO', 'CONTADO') AS condicion, v.condicion_pago, cru.ispagado, dt.valor, (cr.dec_credito_montocuota - cr.dec_credito_montodebito) AS monto_restante, u.username AS nombre");
         $this->db->from('venta v');
         $this->db->join('detalle_venta dv', 'v.venta_id = dv.id_venta');
         $this->db->join('cliente c', 'c.id_cliente = v.id_cliente');
@@ -502,7 +502,7 @@ class reporte_model extends CI_Model
 
     function getRecargaCuentasC($params)
     {
-        $this->db->select("v.venta_id, v.fecha, c.razon_social, c.nota, r.rec_nro, r.rec_trans, v.total, cru.ultimo_pago AS fecha_abono, cr.dec_credito_montodebito AS monto_abono, l.local_nombre, IF(v.condicion_pago=2,'CREDITO', 'CONTADO') AS condicion, v.condicion_pago, cru.ispagado, dt.valor, (cr.dec_credito_montocuota - cr.dec_credito_montodebito) AS monto_restante, u.nombre");
+        $this->db->select("v.venta_id, v.fecha, c.razon_social, c.nota, r.rec_nro, r.rec_trans, v.total, cru.ultimo_pago AS fecha_abono, cr.dec_credito_montodebito AS monto_abono, l.local_nombre, IF(v.condicion_pago=2,'CREDITO', 'CONTADO') AS condicion, v.condicion_pago, cru.ispagado, dt.valor, (cr.dec_credito_montocuota - cr.dec_credito_montodebito) AS monto_restante, u.username AS nombre");
         $this->db->from('venta v');
         $this->db->join('detalle_venta dv', 'v.venta_id = dv.id_venta');
         $this->db->join('cliente c', 'c.id_cliente = v.id_cliente');

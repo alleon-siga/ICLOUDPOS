@@ -925,9 +925,9 @@ function agregarlinea() {
     }, 10);
 }
 
-function update_producto(id, nombre) {
-    $('#producto_id').append('<option value="' + id + '">' + id + ' - ' + nombre + '</option>');
-    $('#producto_id').val(id);
+function update_producto(id, nombre, impuesto, producto_id) {
+    $('#producto_id').append('<option value="' + producto_id + '">' + id + ' - ' + nombre + '</option>');
+    $('#producto_id').val(producto_id);
     $("#producto_id").trigger('chosen:updated');
     get_productos_unidades('click');
 }
