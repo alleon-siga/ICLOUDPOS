@@ -96,7 +96,7 @@ class gastos extends MY_Controller
         $data["proveedores"] = $this->proveedor_model->select_all_proveedor();
         $data["usuarios"] = $this->db->get_where('usuario', array('activo' => 1))->result();
         $data["documentos"] = $this->db->get_where('documentos', array('gastos' => 1))->result();
-        $data['cuentas'] = $this->db->select('caja_desglose.*, caja.local_id, caja.moneda_id, moneda.nombre AS moneda_nombre')
+        $data['cuentas'] = $this->db->select('caja_desglose.*, caja.local_id, caja.moneda_id, moneda.nombre AS moneda_nombre, moneda.simbolo')
             ->from('caja_desglose')
             ->join('caja', 'caja.id = caja_desglose.caja_id')
             ->join('moneda', 'moneda.id_moneda = caja.moneda_id')

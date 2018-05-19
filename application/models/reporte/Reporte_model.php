@@ -398,7 +398,19 @@ class reporte_model extends CI_Model
         $usuario_id .= ($params['usuario_id']>0)? " AND v.id_vendedor=".$params['usuario_id'] : "";
         $search = $local_id.$marca_id.$grupo_id.$familia_id.$linea_id.$operador_id.$producto_id.$usuario_id;
         if($count == false){
-            $this->db->select("v.venta_id, c.razon_social, v.serie, v.numero, p.producto_nombre, dv.cantidad, dv.precio, dv.detalle_importe, l.local_nombre, d.abr_doc, m.simbolo, v.fecha, v.nota, dt.valor, u.username AS nombre, IF(v.condicion_pago=2,'CREDITO', 'CONTADO') AS condicion, v.condicion_pago, (cr.dec_credito_montocuota - cr.dec_credito_montodebito) AS monto_restante, v.total, dv.id_producto");
+            $this->db->select("v.venta_id, c.razon_social, v.serie, v.numero, p.producto_nombre, dv.cantidad, dv.precio, dv.detalle_importe, l.local_nombre, d.abr_doc, m.simbolo, v.fecha, v.nota, dt.valor, u.username AS nombre, IF(v.condicion_pago=2,'CREDITO', 'CONTADO') AS condicion, v.condicion_pago, (cr.dec_credito_montocuota - cr.dec_credito_montodebito) AS monto_restante, v.total, dv.id_producto, 
+                (
+                    SELECT SUM(up.unidades * dv2.cantidad)
+                    FROM detalle_venta AS dv2
+                    INNER JOIN venta v2 ON v2.venta_id=dv2.id_venta
+                    INNER JOIN producto p2 ON dv2.id_producto=p2.producto_id
+                    INNER JOIN unidades_has_producto up ON dv2.id_producto=up.producto_id AND dv2.unidad_medida=up.id_unidad
+                    INNER JOIN unidades_has_producto up2 ON dv2.id_producto=up2.producto_id 
+                    AND (select id_unidad from unidades_has_producto where unidades_has_producto.producto_id = dv2.id_producto  ORDER BY orden DESC LIMIT 1) = up2.id_unidad
+                    INNER JOIN unidades u ON up2.id_unidad=u.id_unidad
+                    WHERE dv2.id_detalle = dv.id_detalle AND v2.venta_status='COMPLETADO' AND v2.fecha >= '".$params['fecha_ini']."' AND v2.fecha <= '".$params['fecha_fin']."'
+                ) AS cantidad2
+                ");
         }else{
             $this->db->select("dv.detalle_importe");
         }        

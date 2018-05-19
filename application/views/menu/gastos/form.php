@@ -1,4 +1,3 @@
-<?php $md = get_moneda_defecto() ?>
 <form name="formagregar" action="<?= base_url() ?>gastos/guardar" method="post" id="formagregar">
     <input type="hidden" name="id" id="" required="true"
            value="<?php if (isset($gastos['id_gastos'])) echo $gastos['id_gastos']; ?>">
@@ -203,7 +202,7 @@
                         </div>
                         <div class="col-md-9">
                             <div class="input-group">
-                                <div class="input-group-addon"><?= $md->simbolo ?></div>
+                                <div class="input-group-addon" id="idMoneda"></div>
                                 <input type="number" name="total" id="total" required="true" class="form-control"
                                        value="<?php if (isset($gastos['total'])) echo $gastos['total']; ?>"
                                        onkeydown="return soloDecimal(event);">
@@ -231,6 +230,7 @@
         id: <?= $cuenta->id ?>,
         local_id: <?= $cuenta->local_id ?>,
         moneda_nombre: '<?= $cuenta->moneda_nombre ?>',
+        simbolo: '<?= $cuenta->simbolo ?>',
         descripion: '<?= $cuenta->descripcion ?>'
     });
     <?php endforeach;?>
@@ -277,12 +277,16 @@
             if ($(this).val() != "") {
                 for (var i = 0; i < cuentas.length; i++) {
                     if (cuentas[i].local_id == $(this).val()) {
-                        cuenta_select.append('<option value="' + cuentas[i].id + '">' + cuentas[i].descripion + ' | ' + cuentas[i].moneda_nombre + '</option>');
+                        cuenta_select.append('<option data-moneda="'+ cuentas[i].simbolo +'" value="' + cuentas[i].id + '">' + cuentas[i].descripion + ' | ' + cuentas[i].moneda_nombre + '</option>');
                     }
                 }
             }
 
             cuenta_select.chosen();
+        });
+
+        $('#cuenta_id').on('change', function(){
+            $('#idMoneda').text($(this).find(':selected').data('moneda'));
         });
 
     });

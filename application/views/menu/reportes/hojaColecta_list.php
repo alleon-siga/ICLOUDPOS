@@ -26,6 +26,7 @@
                         <th>Operador</th>
                         <th>Condici&oacute;n</th>
                         <th>Precio unitario</th>
+                        <th>Cantidad</th>
                         <th>Importe</th>
                     </tr>
                 </thead>
@@ -71,6 +72,7 @@
                         <td><?= $list->valor ?></td>
                         <td><?= $list->condicion ?></td>
                         <td style="text-align: right;"><?= $list->simbolo ?> <?= number_format($list->precio, 2) ?></td>
+                        <td style="text-align: right;"><?= number_format($list->cantidad2, 0) ?></td>
                         <td style="text-align: right;"><?= $list->simbolo ?> <?= number_format($list->detalle_importe, 2) ?></td>
                     </tr>
                 <?php
@@ -99,15 +101,15 @@
                         }
                     ?>
                     <tr>
-                        <td colspan="11" style="text-align: right;"><b>TOTAL EFECTIVO</b></td>
+                        <td colspan="12" style="text-align: right;"><b>TOTAL EFECTIVO</b></td>
                         <td style="text-align: right;"><?= $md->simbolo.' '.number_format($totalEfectivo, 2) ?></td>
                     </tr>
                     <tr>                      
-                        <td colspan="11" style="text-align: right;"><b>TOTAL BANCARIZADO</b></td>
+                        <td colspan="12" style="text-align: right;"><b>TOTAL BANCARIZADO</b></td>
                         <td style="text-align: right;"><?= $md->simbolo.' '.number_format($totalBanco, 2) ?></td>
                     </tr>
                     <tr>
-                        <td colspan="11" style="text-align: right;"><b>TOTAL CREDITO</b></td>
+                        <td colspan="12" style="text-align: right;"><b>TOTAL CREDITO</b></td>
                         <td style="text-align: right;">
                         <?php
                             echo $md->simbolo.' '.number_format($suma - $totalEfectivo - $totalBanco,2);
@@ -115,7 +117,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="11" style="text-align: right;"><b>TOTAL VENTAS</b></td>
+                        <td colspan="12" style="text-align: right;"><b>TOTAL VENTAS</b></td>
                         <td style="text-align: right;"><?= !empty($list->simbolo)? $list->simbolo : $md->simbolo ?> <?= number_format($suma, 2) ?></td>
                     </tr>
                 </tfoot>

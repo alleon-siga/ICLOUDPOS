@@ -1106,19 +1106,19 @@ class Reporte extends MY_Controller
                 break;
             }
             default: {
-                if ($this->session->userdata('esSuper') == 1) {
+                //if ($this->session->userdata('esSuper') == 1) {
                     $data['locales'] = $this->local_model->get_all();
-                } else {
-                    $usu = $this->session->userdata('nUsuCodigo');
-                    $data['locales'] = $this->local_model->get_all_usu($usu);
-                }
+                //} else {
+                    //$usu = $this->session->userdata('nUsuCodigo');
+                    //$data['locales'] = $this->local_model->get_all_usu($usu);
+                //}
                 $data['condiciones_pagos'] = $this->db->get_where('condiciones_pago', array('status_condiciones' => 1))->result();
                 $data['poblados'] = $this->clientes_grupos_model->get_all();
-                if ($this->session->userdata('grupo') == 2 || $this->session->userdata('grupo') == 9) { //perfil de administrador y gerente
+                //if ($this->session->userdata('grupo') == 2 || $this->session->userdata('grupo') == 9) { //perfil de administrador y gerente
                     $data['usuarios'] = $this->usuario_model->select_all_user();
-                }else{
-                    $data['usuarios'] = $this->usuario_model->buscar_id($usu);
-                }
+                //}else{
+                //    $data['usuarios'] = $this->usuario_model->buscar_id($usu);
+                //}
                 $dataCuerpo['cuerpo'] = $this->load->view('menu/reportes/recargaCuentasC', $data, true);
                 if ($this->input->is_ajax_request()) {
                     echo $dataCuerpo['cuerpo'];
