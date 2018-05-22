@@ -11,7 +11,7 @@
         <div class="block">
             <!-- Progress Bars Wizard Title -->
             <div class="row">
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <label class="control-label panel-admin-text">Moneda</label>
                     <select name="moneda_id" id="moneda_id" class='ctrl form-control'>
                         <?php foreach ($monedas as $moneda): ?>

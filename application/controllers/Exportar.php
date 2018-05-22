@@ -516,6 +516,7 @@ class exportar extends MY_Controller
                 ->from('caja_movimiento')
                 ->join('caja_desglose', 'caja_desglose.id = caja_movimiento.caja_desglose_id')
                 ->join('caja', 'caja.id = caja_desglose.caja_id')
+                ->join('venta', 'venta.venta_id = caja_movimiento.ref_id')
                 ->where('caja.moneda_id', $mon["id_moneda"])
                 ->where('caja_movimiento.fecha_mov >=', $fecha)
                 ->where('caja_movimiento.fecha_mov <', $fechadespues)
@@ -527,7 +528,7 @@ class exportar extends MY_Controller
             }
 
             if ($id_usuario != 0) {
-                $this->db->where('caja_movimiento.usuario_id', $id_usuario);
+                $this->db->where('venta.id_vendedor', $id_usuario);
             }
 
             $ingreso_efectivo = $this->db->get()->row();
