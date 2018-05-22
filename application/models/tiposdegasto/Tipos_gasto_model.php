@@ -33,13 +33,13 @@ class tipos_gasto_model extends CI_Model
 
             $this->db->trans_start();
             $this->db->insert('tipos_gasto', $tiposgasto);
-
+            $id = $this->db->insert_id();
             $this->db->trans_complete();
 
             if ($this->db->trans_status() === FALSE)
                 return FALSE;
             else
-                return TRUE;
+                return $id;
         } else {
             return NOMBRE_EXISTE;
         }

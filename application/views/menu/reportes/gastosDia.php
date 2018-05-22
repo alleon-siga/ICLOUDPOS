@@ -12,20 +12,28 @@
             <!-- Progress Bars Wizard Title -->
             <div class="row">
                 <div class="col-md-3">
-                    <?php if (isset($cajas)): ?>
-                        <label class="control-label panel-admin-text">Caja</label>
-                        <select id="caja_select" name="caja_select" class="form-control">
-                            <?php foreach ($cajas as $caja): ?>
-                                <option 
-                                        value="<?= $caja->id ?>"
-                                        data-moneda_id="<?= $caja->moneda_id ?>"
-                                        data-simbolo="<?= $caja->simbolo ?>">
-                                    <?= $caja->local_nombre ?>
-                                    <?= ' | ' . $caja->nombre ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    <?php endif; ?>
+                    <label class="control-label panel-admin-text">Moneda</label>
+                    <select name="moneda_id" id="moneda_id" class='ctrl form-control'>
+                        <?php foreach ($monedas as $moneda): ?>
+                            <option value="<?= $moneda->id_moneda ?>"
+                                    data-simbolo="<?= $moneda->simbolo ?>"
+                                <?= $moneda->id_moneda == MONEDA_DEFECTO ? 'selected' : '' ?>><?= $moneda->nombre ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="control-label panel-admin-text">Caja</label>
+                    <select id="caja_select" name="caja_select" class="ctrl form-control">
+                        <?php foreach ($cajas as $caja): ?>
+                            <option 
+                                    value="<?= $caja->id ?>"
+                                    data-moneda_id="<?= $caja->moneda_id ?>"
+                                    data-simbolo="<?= $caja->simbolo ?>">
+                                <?= $caja->local_nombre ?>
+                                <?= ' | ' . $caja->nombre ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
                 <div class="col-md-3">
                     <label class="control-label panel-admin-text">Fecha Operaci&oacute;n</label>

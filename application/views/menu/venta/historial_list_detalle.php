@@ -127,7 +127,7 @@
                                     <tr>
                                         <td><?= getCodigoValue($detalle->producto_id, $detalle->producto_codigo_interno) ?></td>
                                         <td><?= $detalle->producto_nombre ?></td>
-                                        <td><?= $detalle->cantidad ?></td>
+                                        <td><?= number_format($detalle->cantidad, 0) ?></td>
                                         <td><?= $detalle->unidad_nombre ?></td>
                                         <td style="text-align: right"><?= $detalle->precio ?></td>
                                         <td style="text-align: right"><?= $venta->moneda_simbolo . " " . $detalle->importe ?></td>
@@ -273,7 +273,7 @@
                                     <tr>
                                         <td><?= getCodigoValue($detalle->producto_id, $detalle->producto_codigo_interno) ?></td>
                                         <td><?= $detalle->producto_nombre ?></td>
-                                        <td><?= $detalle->cantidad ?></td>
+                                        <td><?= number_format($detalle->cantidad, 0) ?></td>
                                         <td><?= $detalle->unidad_nombre ?></td>
                                         <td style="text-align: right"><?= $detalle->precio ?></td>
                                         <td style="text-align: right"><?= $venta->moneda_simbolo . " " . $detalle->importe ?></td>

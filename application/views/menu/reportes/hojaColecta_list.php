@@ -25,8 +25,8 @@
                         <th>Estado</th>
                         <th>Operador</th>
                         <th>Condici&oacute;n</th>
-                        <th>Precio unitario</th>
                         <th>Cantidad</th>
+                        <th>Precio unitario</th>
                         <th>Importe</th>
                     </tr>
                 </thead>
@@ -71,8 +71,8 @@
                         <td><?= $estado ?></td>
                         <td><?= $list->valor ?></td>
                         <td><?= $list->condicion ?></td>
-                        <td style="text-align: right;"><?= $list->simbolo ?> <?= number_format($list->precio, 2) ?></td>
                         <td style="text-align: right;"><?= number_format($list->cantidad2, 0) ?></td>
+                        <td style="text-align: right;"><?= $list->simbolo ?> <?= number_format($list->precio, 2) ?></td>
                         <td style="text-align: right;"><?= $list->simbolo ?> <?= number_format($list->detalle_importe, 2) ?></td>
                     </tr>
                 <?php

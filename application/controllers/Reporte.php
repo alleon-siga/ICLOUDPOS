@@ -1258,6 +1258,7 @@ class Reporte extends MY_Controller
             }
             default: {
                 $data['cajas'] = $this->cajas_model->get_caja();
+                $data['monedas'] = $this->db->get_where('moneda', array('status_moneda' => 1))->result();
                 $dataCuerpo['cuerpo'] = $this->load->view('menu/reportes/gastosDia', $data, true);
                 if ($this->input->is_ajax_request()) {
                     echo $dataCuerpo['cuerpo'];

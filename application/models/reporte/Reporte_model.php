@@ -519,8 +519,8 @@ class reporte_model extends CI_Model
         $this->db->join('detalle_venta dv', 'v.venta_id = dv.id_venta');
         $this->db->join('cliente c', 'c.id_cliente = v.id_cliente');
         $this->db->join('local l', 'v.local_id = l.int_local_id');
-        $this->db->join('recarga r', 'v.venta_id = r.id_venta');
-        $this->db->join('diccionario_termino dt', 'r.rec_ope = dt.id');
+        $this->db->join('recarga r', 'v.venta_id = r.id_venta', 'left');
+        $this->db->join('diccionario_termino dt', 'r.rec_ope = dt.id', 'left');
         $this->db->join('usuario u', 'v.id_vendedor = u.nUsuCodigo');
         $this->db->join('credito cr', 'v.venta_id = cr.id_venta');
         $this->db->join('credito_cuotas cru', 'v.venta_id = cru.id_venta');

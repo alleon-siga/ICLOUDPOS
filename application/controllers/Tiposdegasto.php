@@ -62,6 +62,8 @@ class tiposdegasto extends MY_Controller
 
         if ($resultado == TRUE) {
             $json['success'] = 'Solicitud Procesada con exito';
+            $json['id']=$resultado;
+            $json['nombre'] = $this->input->post('nombre_tipos_gasto');
         } else {
             $json['error'] = 'Ha ocurrido un error al procesar la solicitud';
         }

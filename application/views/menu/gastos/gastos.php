@@ -532,16 +532,64 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
     function agregarTipoGasto() {
         $('#tipo_gasto_id').val(0);
         $("#tipo_gasto_id").trigger('chosen:updated');
-        $("#tipoGastoModal").load(ruta + 'tiposdegasto/form', function(){
+        $("#tipoGastoModal").load('<?= $ruta ?>tiposdegasto/form', function(){
             $('#btnGuardarTipoGasto').removeAttr("onclick");
-            $('#btnGuardarTipoGasto').attr("onclick", "grupo.guardar('gasto')");
+            $('#btnGuardarTipoGasto').attr("onclick", "guardar_tipoGasto()");
         });
         $('#tipoGastoModal').modal('show');
     }
 
-    function update_tipoGasto(id, nombre){
+    function updateSelect(id, nombre){
         $('#tipo_gasto_id').append('<option value="' + id + '">' + nombre + '</option>');
         $('#tipo_gasto_id').val(id);
         $("#tipo_gasto_id").trigger('chosen:updated');
+    }
+
+    function guardar_tipoGasto(){
+        if ($("#nombre_tipos_gasto").val() == '') {
+            var growlType = 'warning';
+
+            $.bootstrapGrowl('<h4>Debe seleccionar el nombre</h4>', {
+                type: growlType,
+                delay: 2500,
+                allow_dismiss: true
+            });
+            return false;
+        }
+
+        $('#load_div').show();
+        $.ajax({
+            url: '<?= $ruta ?>tiposdegasto/guardar',
+            type: 'POST',
+            headers: {
+                Accept: 'application/json'
+            },
+            dataType:'json',
+            data: $("#formagregar").serialize(),
+            success: function (data) {
+                var growlType = 'success';
+                $.bootstrapGrowl('<h4>'+data.success+'</h4>', {
+                    type: growlType,
+                    delay: 2500,
+                    allow_dismiss: true
+                });
+                updateSelect(data.id, data.nombre);
+                $('#tipoGastoModal').modal('hide');
+                setTimeout(function () {
+                    $('#load_div').hide()
+                }, 2000);
+            },
+            error: function(data){
+                var growlType = 'warning';
+                $.bootstrapGrowl('<h4>' + data.error + '</h4>', {
+                    type: growlType,
+                    delay: 2500,
+                    allow_dismiss: true
+                });
+                setTimeout(function () {
+                    $('#load_div').hide()
+                }, 2000)
+            }
+        });
     }
 </script>
