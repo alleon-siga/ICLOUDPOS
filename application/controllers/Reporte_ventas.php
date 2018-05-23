@@ -27,7 +27,7 @@ class Reporte_ventas extends MY_Controller
                     'fecha_fin' => date('Y-m-d', strtotime($this->input->post('fecha_fin'))),
                     'fecha_flag' => $this->input->post('fecha_flag'),
                     'vendedor_id' => $this->input->post('vendedor_id'),
-                    'cliente_id' => $this->input->post('cliente_id'),
+                    'cliente_id' => !empty($this->input->post('cliente_id'))? implode(",", $this->input->post('cliente_id')): '',
                     'moneda_id' => $this->input->post('moneda_id'),
                     'local_id' => $this->input->post('local_id'),
                     'estado' => $this->input->post('estado')
@@ -48,7 +48,7 @@ class Reporte_ventas extends MY_Controller
                     'fecha_fin' => date('Y-m-d', strtotime($params->fecha_fin)),
                     'fecha_flag' => $params->fecha_flag,
                     'vendedor_id' => $params->vendedor_id,
-                    'cliente_id' => $params->cliente_id,
+                    'cliente_id' => !empty($params->cliente_id)? implode(",", $params->cliente_id): '',
                     'moneda_id' => $params->moneda_id,
                     'local_id' => $params->local_id,
                     'estado' => $params->estado
@@ -79,7 +79,7 @@ class Reporte_ventas extends MY_Controller
                     'fecha_fin' => date('Y-m-d', strtotime($params->fecha_fin)),
                     'fecha_flag' => $params->fecha_flag,
                     'vendedor_id' => $params->vendedor_id,
-                    'cliente_id' => $params->cliente_id,
+                    'cliente_id' => !empty($params->cliente_id)? implode(",", $params->cliente_id): '',
                     'moneda_id' => $params->moneda_id,
                     'local_id' => $params->local_id,
                     'estado' => $params->estado

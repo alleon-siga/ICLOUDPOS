@@ -29,6 +29,7 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                 <label class="control-label panel-admin-text">Ubicaci&oacute;n:</label>
                 <?php if (isset($locales)): ?>
                     <select id="local_id" class="form-control select_chosen">
+                        <option value="0">TODOS</option>
                         <?php foreach ($locales as $local): ?>
                             <option <?php if ($this->session->userdata('id_local') == $local->local_id) echo "selected"; ?>
                                     value="<?= $local->local_id; ?>"> <?= $local->local_nombre ?> </option>

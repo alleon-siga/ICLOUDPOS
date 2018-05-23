@@ -509,6 +509,7 @@ class reporte_model extends CI_Model
         if($params['usuario_id']>0){
             $this->db->where('u.nUsuCodigo = ', $params['usuario_id']);   
         }
+        $this->db->group_by("v.venta_id");
         return $this->db->get()->result();
     }
 

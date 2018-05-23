@@ -45,7 +45,7 @@ class Rcliente_estado_model extends CI_Model
         }
 
         if (isset($params['cliente_id']) && $params['cliente_id'] != 0)
-            $this->db->where('cliente.id_cliente', $params['cliente_id']);
+            $this->db->where_in('cliente.id_cliente', explode(",", $params['cliente_id']));
 
         if (isset($params['vendedor_id']) && $params['vendedor_id'] != 0)
             $this->db->where('usuario.nUsuCodigo', $params['vendedor_id']);

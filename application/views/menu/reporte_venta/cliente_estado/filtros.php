@@ -28,6 +28,7 @@
         color: #333333;
     }
 </style>
+<link rel="stylesheet" href="<?= base_url('recursos/css/multiple-select.css') ?>" />
 <form id="form_filter">
     <div id="charm" class="tcharm">
         <div class="tcharm-header">
@@ -88,8 +89,7 @@
 
             <div class="row">
                 <label class="control-label">Cliente:</label>
-                <select id="cliente_id" name="cliente_id" class="form-control">
-                    <option value="0">Todos</option>
+                <select id="cliente_id" name="cliente_id" multiple="multiple">
                     <?php foreach ($clientes as $cliente): ?>
                         <option
                                 value="<?= $cliente->id_cliente ?>"
@@ -153,10 +153,14 @@
     </div>
 </form>
 <script src="<?= base_url('recursos/js/tcharm.js') ?>"></script>
-
+<script src="<?= base_url('recursos/js/multiple-select.js') ?>"></script>
 <script>
 
     $(document).ready(function () {
+        $("#cliente_id").multipleSelect({
+            filter: true,
+            width: '100%'
+        });
 
         $("#vendedor_id, #cliente_id").chosen();
 
@@ -181,6 +185,7 @@
 
         $("#btn_filter_reset").on('click', function () {
             $('#vendedor_id').val('0').trigger('chosen:updated');
+            $('#cliente_id').multipleSelect('uncheckAll');
             $('#vendedor_id').change();
             $('#estado').val('0');
             filter_cobranzas();

@@ -54,7 +54,6 @@ class gastos extends MY_Controller
         $fecha_fin = str_replace("/", "-", $date_range[1]);
 
         $params = array(
-            'local_id' => $this->input->post('local_id'),
             'fecha_ini' => date('Y-m-d H:i:s', strtotime($fecha_ini . ' 00:00:00')),
             'fecha_fin' => date('Y-m-d H:i:s', strtotime($fecha_fin . ' 23:59:59')),
             'persona_gasto' => $this->input->post('persona_gasto'),
@@ -76,6 +75,11 @@ class gastos extends MY_Controller
             $usuario = $usuario = $this->input->post('usuario');
             if ($usuario != "-")
                 $params['usuario'] = $usuario;
+        }
+
+        $local_id = $this->input->post('local_id');
+        if ($local_id != "0"){
+            $params['local_id'] = $local_id;        
         }
 
         $data['moneda'] = $this->db->get_where('moneda', array('id_moneda' => $params['id_moneda']))->row();
@@ -187,7 +191,6 @@ class gastos extends MY_Controller
         $fecha_fin = str_replace("/", "-", $date_range[1]);
 
         $params = array(
-            'local_id' => $get->local_id,
             'fecha_ini' => date('Y-m-d H:i:s', strtotime($fecha_ini . ' 00:00:00')),
             'fecha_fin' => date('Y-m-d H:i:s', strtotime($fecha_fin . ' 23:59:59')),
             'persona_gasto' => $get->persona_gasto,
@@ -209,6 +212,10 @@ class gastos extends MY_Controller
             $usuario = $usuario = $get->usuario;
             if ($usuario != "-")
                 $params['usuario'] = $usuario;
+        }
+        $local_id = $this->input->post('local_id');
+        if ($local_id != "0"){
+            $params['local_id'] = $local_id;        
         }
 
         $data['moneda'] = $this->db->get_where('moneda', array('id_moneda' => $params['id_moneda']))->row();
@@ -234,7 +241,6 @@ class gastos extends MY_Controller
         $fecha_fin = str_replace("/", "-", $date_range[1]);
 
         $params = array(
-            'local_id' => $get->local_id,
             'fecha_ini' => date('Y-m-d H:i:s', strtotime($fecha_ini . ' 00:00:00')),
             'fecha_fin' => date('Y-m-d H:i:s', strtotime($fecha_fin . ' 23:59:59')),
             'persona_gasto' => $get->persona_gasto,
@@ -257,7 +263,10 @@ class gastos extends MY_Controller
             if ($usuario != "-")
                 $params['usuario'] = $usuario;
         }
-
+        $local_id = $this->input->post('local_id');
+        if ($local_id != "0"){
+            $params['local_id'] = $local_id;
+        }
         $data['moneda'] = $this->db->get_where('moneda', array('id_moneda' => $params['id_moneda']))->row();
         $data['gastoss'] = $this->gastos_model->get_all($params);
         $data['gastos_totales'] = $this->gastos_model->get_totales_gasto($params);
