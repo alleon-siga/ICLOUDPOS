@@ -291,8 +291,8 @@ class venta_new_model extends CI_Model
 
         if($iddoc != 6){ //Si es diferente a la nota de pedido
             //Correlativo para la guia de remision
-            $correlativo = $this->correlativos_model->get_correlativo($venta->local_id, 8);
-            $this->correlativos_model->sumar_correlativo($venta->local_id, 8);
+            $correlativo = $this->correlativos_model->get_correlativo($venta->local_id, 4);
+            $this->correlativos_model->sumar_correlativo($venta->local_id, 4);
             $update_venta['nro_guia'] = $correlativo->correlativo;
         }
 
@@ -454,8 +454,8 @@ class venta_new_model extends CI_Model
             $this->correlativos_model->sumar_correlativo($venta['local_id'], $venta['id_documento']);
             if($venta['id_documento'] != 6){ //Si es diferente a la nota de pedido
                 //Correlativo para la guia de remision
-                $correlativo = $this->correlativos_model->get_correlativo($venta['local_id'], 8);
-                $this->correlativos_model->sumar_correlativo($venta['local_id'], 8);
+                $correlativo = $this->correlativos_model->get_correlativo($venta['local_id'], 4);
+                $this->correlativos_model->sumar_correlativo($venta['local_id'], 4);
                 $venta_contado['nro_guia'] = $correlativo->correlativo;
             }
         }
