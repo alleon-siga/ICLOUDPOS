@@ -1,4 +1,4 @@
-<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 /*
 |--------------------------------------------------------------------------
@@ -27,29 +27,29 @@ define('DIR_WRITE_MODE', 0777);
 |
 */
 
-define('FOPEN_READ',							'rb');
-define('FOPEN_READ_WRITE',						'r+b');
-define('FOPEN_WRITE_CREATE_DESTRUCTIVE',		'wb'); // truncates existing file data, use with care
-define('FOPEN_READ_WRITE_CREATE_DESTRUCTIVE',	'w+b'); // truncates existing file data, use with care
-define('FOPEN_WRITE_CREATE',					'ab');
-define('FOPEN_READ_WRITE_CREATE',				'a+b');
-define('FOPEN_WRITE_CREATE_STRICT',				'xb');
-define('FOPEN_READ_WRITE_CREATE_STRICT',		'x+b');
+define('FOPEN_READ', 'rb');
+define('FOPEN_READ_WRITE', 'r+b');
+define('FOPEN_WRITE_CREATE_DESTRUCTIVE', 'wb'); // truncates existing file data, use with care
+define('FOPEN_READ_WRITE_CREATE_DESTRUCTIVE', 'w+b'); // truncates existing file data, use with care
+define('FOPEN_WRITE_CREATE', 'ab');
+define('FOPEN_READ_WRITE_CREATE', 'a+b');
+define('FOPEN_WRITE_CREATE_STRICT', 'xb');
+define('FOPEN_READ_WRITE_CREATE_STRICT', 'x+b');
 
 
-define('COMPLETADO',		'COMPLETADO');
-define('ESPERA',		'EN ESPERA');
+define('COMPLETADO', 'COMPLETADO');
+define('ESPERA', 'EN ESPERA');
 
-define('NOTAVENTA',		'NOTA DE PEDIDO');
-define('BOLETAVENTA',		'BOLETA DE VENTA');
-define('FACTURA',		'FACTURA');
+define('NOTAVENTA', 'NOTA DE PEDIDO');
+define('BOLETAVENTA', 'BOLETA DE VENTA');
+define('FACTURA', 'FACTURA');
 
-define('DONACION',		'DONACION');
-define('COMPRA',		'COMPRA');
+define('DONACION', 'DONACION');
+define('COMPRA', 'COMPRA');
 
 
-define('PESABLE',		'PESABLE');
-define('MEDIBLE',		'MEDIBLE');
+define('PESABLE', 'PESABLE');
+define('MEDIBLE', 'MEDIBLE');
 
 // DEV para desarrollo y PROD para produccion
 define('MONEDA_DEFECTO', '1029');
@@ -60,25 +60,31 @@ define('IMPUESTO', 18);
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */
 
+/* ********************************************
+TIPO DE PRICESO DE LA FACTURACION ELECTRONICA
+1 => PRODUCCION
+3 => BETA
+***********************************************/
+define('FACTURACION_PROCESO', 3);
 
 /******CONFIGURACIONES************/
 
-define('EMPRESA_NOMBRE',		'EMPRESA_NOMBRE');
-define('EMPRESA_DIRECCION',		'EMPRESA_DIRECCION');
-define('EMPRESA_TELEFONO',		'EMPRESA_TELEFONO');
-define('DATABASE_IP',		'DATABASE_IP');
-define('DATABASE_NAME',		'DATABASE_NAME');
-define('DATABASE_USERNAME',		'DATABASE_USERNAME');
-define('DATABASE_PASWORD',		'DATABASE_PASWORD');
+define('EMPRESA_NOMBRE', 'EMPRESA_NOMBRE');
+define('EMPRESA_DIRECCION', 'EMPRESA_DIRECCION');
+define('EMPRESA_TELEFONO', 'EMPRESA_TELEFONO');
+define('DATABASE_IP', 'DATABASE_IP');
+define('DATABASE_NAME', 'DATABASE_NAME');
+define('DATABASE_USERNAME', 'DATABASE_USERNAME');
+define('DATABASE_PASWORD', 'DATABASE_PASWORD');
 
 
-define('NOMBRE_EXISTE',		'El nombre ingresado ya existe');
-define('MODELO_EXISTE',		'El Modelo de este producto ya existe');
-define('MODELO_ACTIVAR',		'Modelo esta configurado como campo unico. Por favor activelo en columnas');
-define('CODIGO_EXISTE',		'El Codigo Interno ya existe');
-define('CEDULA_EXISTE',		'La identificacion ingresada ya existe');
-define('USERNAME_EXISTE',		'El username ingresado ya existe');
-define('RAZON_SOCIAL_EXISTE',		'La Razon Social ingresada ya existe');
+define('NOMBRE_EXISTE', 'El nombre ingresado ya existe');
+define('MODELO_EXISTE', 'El Modelo de este producto ya existe');
+define('MODELO_ACTIVAR', 'Modelo esta configurado como campo unico. Por favor activelo en columnas');
+define('CODIGO_EXISTE', 'El Codigo Interno ya existe');
+define('CEDULA_EXISTE', 'La identificacion ingresada ya existe');
+define('USERNAME_EXISTE', 'El username ingresado ya existe');
+define('RAZON_SOCIAL_EXISTE', 'La Razon Social ingresada ya existe');
 
 
 define('CREDITO_DEBE', 'PagoPendiente');

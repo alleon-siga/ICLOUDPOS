@@ -28,10 +28,12 @@
                         <div class="col-md-4"><label class="control-label">Documento:</label></div>
                         <div class="col-md-8" style="margin-left: 0; padding-left: 14;">
                             <select id="cboDoc" class="form-control">
-                            <?php foreach ($comprobante as $dato): ?>
-                                <option value="<?= $dato->id_doc ?>" <?php if($venta->documento_id == $dato->id_doc){ echo "selected"; } ?>>
-                                    <?= $dato->des_doc ?></option>
-                            <?php endforeach; ?>
+                                <?php foreach ($comprobante as $dato): ?>
+                                    <option value="<?= $dato->id_doc ?>" <?php if ($venta->documento_id == $dato->id_doc) {
+                                        echo "selected";
+                                    } ?>>
+                                        <?= $dato->des_doc ?></option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
                     </div>
@@ -85,29 +87,43 @@
         $('#facturar_btn').on('click', function () {
             if ($("#cboDoc").val() == 1 && $("#tipo_cliente").val() == 0) {
                 show_msg('warning', '<h4>Error. </h4><p>El Cliente no tiene ruc para realizar venta en factura.</p>');
-            }else{
+            } else {
+                $('#barloadermodal').modal('show');
                 $.ajax({
                     url: '<?php echo base_url() . 'venta_new/facturar_venta'; ?>',
                     type: 'POST',
+                    dataType: 'json',
                     data: {
                         'venta_id': '<?= $venta->venta_id ?>',
                         'iddoc': $('#cboDoc').val()
                     },
-                    success: function () {
+                    success: function (data) {
                         $('#dialog_venta_confirm').modal('hide');
                         $('#dialog_venta_facturar').modal('hide');
                         $(".modal-backdrop").remove();
                         show_msg('success', '<h4>Correcto.</h4> <p>Venta facturada con exito.</p>');
+
+                        if ($('#facturacion_electronica').val() == 1 && (data.venta.id_documento == 1 || data.venta.id_documento == 3)) {
+                            if (data.venta.facturacion == 1) {
+                                show_msg('success', '<h4>Facturacion Electronica:</h4> ' + data.venta.facturacion_nota);
+                            }
+                            else {
+                                show_msg('danger', '<h4>Facturacion Electronica:</h4> ' + data.venta.facturacion_nota);
+                            }
+                        }
+
+                        $('#barloadermodal').modal('hide');
                         get_ventas();
                     },
                     error: function () {
                         alert('Error inesperado');
+                        $('#barloadermodal').modal('hide');
                     }
                 });
             }
         })
 
-        $('#cboDoc').on('change', function(){
+        $('#cboDoc').on('change', function () {
             $.ajax({
                 url: '<?= base_url() ?>venta_new/getDocumentoNumero',
                 type: 'POST',
@@ -115,7 +131,7 @@
                     'iddoc': $('#cboDoc').val(),
                     'local_id': '<?= $venta->local_id ?>'
                 },
-                success: function(data){
+                success: function (data) {
                     $('#docNum').text(data);
                 }
             });

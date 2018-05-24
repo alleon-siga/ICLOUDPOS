@@ -81,7 +81,7 @@
                         <?php if ($venta->numero == '' && $venta_action != 'comision' && $venta_action != 'anular'): ?>
 
                             <a class="btn btn-warning" data-toggle="tooltip" style="margin-right: 5px;"
-                               title="Ver" data-original-title="Facturar"
+                               title="Facturar" data-original-title="Facturar"
                                href="#"
                                onclick="facturar('<?= $venta->venta_id ?>');">
                                 <i class="fa fa-file-text"></i>
@@ -229,7 +229,7 @@
                         </select>
                     </div>
                 </div>
-
+                <br>
                 <div class="row">
                     <div class="col-md-4 col-md-offset-1">
                         <label>Serie</label>
@@ -238,6 +238,31 @@
                     <div class="col-md-5">
                         <label>Numero</label>
                         <input type="text" id="documento_numero" class="form-control">
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-md-9 col-md-offset-1">
+                        <?php
+                        $motivos = array(
+                            '01' => 'Anulaci&oacute;n de la operaci&oacute;n',
+                            '02' => 'Anulaci&oacute;n por error en el RUC',
+                            '03' => 'Correcci&oacute;n por error en la descripci&oacute;n',
+                            '04' => 'Descuento global',
+                            '05' => 'Descuento por item',
+                            '06' => 'Devoluci&oacute;n total',
+                            '07' => 'Devoluci&oacute;n por item',
+                            '08' => 'Bonificaci&oacute;n',
+                            '09' => 'Disminuci&oacute;n en el valor'
+                        );
+                        ?>
+                        <label>Motivo</label>
+                        <select id="motivo" class="form-control">
+                            <option value=""></option>
+                            <?php foreach ($motivos as $key => $val): ?>
+                                <option value="<?= $key ?>"><?= $val ?></option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
                 </div>
             </div>

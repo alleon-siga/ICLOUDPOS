@@ -1,6 +1,7 @@
 <?php $ruta = base_url(); ?>
 
 <input type="hidden" name="venta_action" id="venta_action" value="<?= $venta_action ?>">
+<input type="hidden" id="facturacion_electronica" value="<?= valueOptionDB('FACTURACION', 0) ?>">
 <ul class="breadcrumb breadcrumb-top">
     <li>Venta</li>
     <li><a href="">
@@ -303,7 +304,7 @@
                             $("#dialog_venta_facturar").html(data);
                         },
                         error: function () {
-                            alert('asd')
+                            alert('Error inesperado')
                         }
                     });
                 }
@@ -395,7 +396,7 @@
                         'banco': $("#vc_banco_id").val()
                     };
 
-                    $("#loading_save_venta").modal('show');
+                    $("#barloadermodal").modal('show');
                     $("#dialog_venta_contado").modal('hide');
                     $('.save_venta_contado').attr('disabled', 'disabled');
 
@@ -408,6 +409,16 @@
 
                             if (data.success == '1') {
                                 show_msg('success', '<h4>Correcto. </h4><p>La venta numero ' + data.venta.venta_id + ' se ha pagado con exito.</p>');
+
+                                if ($('#facturacion_electronica').val() == 1 && data.venta.condicion_pago == 1 && (data.venta.id_documento == 1 || data.venta.id_documento == 3)) {
+                                    if (data.venta.facturacion == 1) {
+                                        show_msg('success', '<h4>Facturacion Electronica:</h4> ' + data.venta.facturacion_nota);
+                                    }
+                                    else {
+                                        show_msg('danger', '<h4>Facturacion Electronica:</h4> ' + data.venta.facturacion_nota);
+                                    }
+                                }
+
                                 if (imprimir == '1') {
                                     $("#dialog_venta_imprimir").html('');
                                     $("#dialog_venta_imprimir").modal('show');
@@ -419,14 +430,16 @@
 
                                         success: function (data) {
                                             $("#dialog_venta_imprimir").html(data);
-                                            $("#loading_save_venta").modal('hide');
+                                            $("#barloadermodal").modal('hide');
                                         }
                                     });
                                 } else {
+                                    $("#barloadermodal").modal('hide');
                                     get_ventas();
                                 }
                             }
                             else {
+                                $("#barloadermodal").modal('hide');
                                 if (data.msg)
                                     show_msg('danger', '<h4>Error. </h4><p>' + data.msg + '</p>');
                                 else
@@ -435,7 +448,7 @@
                             }
                         },
                         error: function (data) {
-
+                            $("#barloadermodal").modal('hide');
                             show_msg('danger', '<h4>Error. </h4><p>Ha ocurrido un error insperado al guardar la venta.</p>');
                         },
                         complete: function (data) {
@@ -490,23 +503,54 @@
                 }
 
                 function anular_venta(venta_id) {
-
-                    if ($("#documento_serie").val() == "" || $("#documento_numero").val() == "") {
+                    var serie = $("#documento_serie").val();
+                    var numero = $("#documento_numero").val();
+                    if (serie == "" || numero == "") {
                         show_msg('warning', 'Complete la serie y numero del documento');
                         return false;
                     }
+
+                    if (serie.length != 3) {
+                        show_msg('warning', 'La serie tiene que tener 3 caracteres alfanumericos');
+                        return false;
+                    }
+
+                    if (!Number.isInteger(parseFloat(numero))) {
+                        show_msg('warning', 'El correlativo tiene que ser numerico');
+                        return false;
+                    }
+
+                    if (parseFloat(numero) <= 0) {
+                        show_msg('warning', 'El correlativo no puede ser negativo');
+                        return false;
+                    }
+
+                    if (numero.length > 8) {
+                        show_msg('warning', 'El correlativo no puede ser mayor que 8 caracteres numericos');
+                        return false;
+                    }
+
+                    if ($("#motivo").val() == "") {
+                        show_msg('warning', 'El motivo es requerido');
+                        return false;
+                    }
+
 
                     $("#confirm_venta_text").html($("#loading").html());
 
                     $.ajax({
                         url: '<?php echo $ruta . 'venta_new/anular_venta'; ?>',
                         type: 'POST',
+                        headers: {
+                            Accept: 'application/json'
+                        },
                         data: {
                             'venta_id': venta_id,
                             'serie': $("#documento_serie").val(),
                             'numero': $("#documento_numero").val(),
                             'metodo_pago': $("#metodo_pago").val(),
-                            'cuenta_id': $("#cuenta_id").val()
+                            'cuenta_id': $("#cuenta_id").val(),
+                            'motivo': $("#motivo").val()
                         },
 
                         success: function (data) {
@@ -517,6 +561,15 @@
                                 delay: 5000,
                                 allow_dismiss: true
                             });
+
+                            if ($('#facturacion_electronica').val() == 1 && (data.venta.id_documento == 1 || data.venta.id_documento == 3) && data.venta.numero != null) {
+                                if (data.venta.facturacion == 1) {
+                                    show_msg('success', '<h4>Facturacion Electronica:</h4> ' + data.venta.facturacion_nota);
+                                }
+                                else {
+                                    show_msg('danger', '<h4>Facturacion Electronica:</h4> ' + data.venta.facturacion_nota);
+                                }
+                            }
 
                             get_ventas();
                         },

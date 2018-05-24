@@ -473,6 +473,18 @@ $(document).ready(function () {
             return false;
         }
 
+        if ($("#cliente_id").val() == 1 && $("#tipo_documento").val() == 1) {
+            show_msg('warning', '<h4>Error. </h4><p>El Cliente frecuente puede realizar facturas.</p>');
+            select_productos(49);
+            return false;
+        }
+
+        if ($("#cliente_id").val() == 1 && $("#tipo_documento").val() == 3 && parseFloat($('#total_importe').val()) > 700) {
+            show_msg('warning', '<h4>Error. </h4><p>El Cliente frecuente no puede realizar ventas mayores a 700.</p>');
+            select_productos(49);
+            return false;
+        }
+
         if ($("#tipo_documento").val() == 1 && $("#cliente_id option:selected").attr('data-ruc') != 2) {
             show_msg('warning', '<h4>Error. </h4><p>El Cliente no tiene ruc para realizar venta en factura.</p>');
             select_productos(49);
@@ -572,20 +584,20 @@ $(document).ready(function () {
     $("#precioUnitario").on('mousemove', function () {
         var data = {
             'id_producto': $('#producto_id').val(),
-            'id_cliente':$('#cliente_id').val()
+            'id_cliente': $('#cliente_id').val()
         };
         $.ajax({
             url: ruta + 'venta_new/ultimasVentas',
             data: data,
             type: 'POST',
-            success: function(data){
+            success: function (data) {
                 let obj = JSON.parse(data);
                 let tabla = "<b>ULTIMOS PRECIOS UNITARIOS DE VENTAS</b>: <br><br>";
                 tabla += '<table class="table table-condensed">';
-                obj.map( function(data){
+                obj.map(function (data) {
                     tabla += '<tr style="color:#fff; font-weight:bold">';
                     let fecha = data.fecha.split('-');
-                    let nuevaFecha = fecha[2]+'/'+fecha[1]+'/'+fecha[0];
+                    let nuevaFecha = fecha[2] + '/' + fecha[1] + '/' + fecha[0];
                     tabla += "<td>" + nuevaFecha + "</td>";
                     tabla += "<td>" + data.simbolo + " " + data.precio + "</td>";
                     tabla += "<td>" + parseInt(data.cantidad) + "</td>";
@@ -597,7 +609,7 @@ $(document).ready(function () {
             }
         })
         $("#popover_precioUnitario").show();
-    });    
+    });
 });
 
 //FUNCIONES DE MANEJO DE LAS VENTAS
@@ -656,7 +668,7 @@ function end_venta() {
     }
 
     if (flag == false) {
-        show_msg('warning', '<h4>Error. </h4><p>Debe configurar los parametros correctamente. Por favo reviselos.</p>');
+        show_msg('warning', '<h4>Error. </h4><p>Debe configurar los parametros correctamente. Por favor reviselos.</p>');
     }
 
 }
@@ -783,6 +795,15 @@ function save_venta_contado(imprimir) {
 
             if (data.success == '1') {
                 show_msg('success', '<h4>Correcto. </h4><p>La venta numero ' + data.venta.venta_id + ' se ha guardado con exito.</p>');
+
+                if ($('#facturacion_electronica').val() == 1 && data.venta.venta_status == 'COMPLETADO' && (data.venta.id_documento == 1 || data.venta.id_documento == 3)) {
+                    if (data.venta.facturacion == 1) {
+                        show_msg('success', '<h4>Facturacion Electronica:</h4> ' + data.venta.facturacion_nota);
+                    }
+                    else{
+                        show_msg('danger', '<h4>Facturacion Electronica:</h4> ' + data.venta.facturacion_nota);
+                    }
+                }
                 if (imprimir == '1') {
                     $("#dialog_venta_imprimir").html('');
 
