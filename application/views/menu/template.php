@@ -312,6 +312,25 @@ $primary_nav = array(
         )
     ),
 
+    array(
+        'name' => 'FACTURACI&Oacute;N',
+        'slug' => 'facturacion',
+        'sub' => array(
+            array(
+                'name' => 'Comprobantes',
+                'url' => $ruta . 'facturacion/emision',
+                'icon' => 'fa fa-list',
+                'slug' => 'facturacion_comprobantes'
+            ),
+            array(
+                'name' => 'Configurar Emisor',
+                'url' => $ruta . 'facturacion/emisor',
+                'icon' => 'fa fa-cogs',
+                'slug' => 'facturacion_emisor'
+            ),
+        )
+    ),
+
 
     array(
         'name' => 'CLIENTES',

@@ -147,10 +147,10 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                 $('.docs').each(function () {
                     var id = $(this).attr('data-id');
 
-                    $("#serie_" + id).val('0001');
+                    $("#serie_" + id).val('001');
                     $("#next_" + id).val(1);
 
-                    if(id == 6){
+                    if (id == 6) {
                         $("#next_" + id).attr('readonly', 'readonly');
                     }
                 });
@@ -171,7 +171,6 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
 
     function save_correlativos() {
         var correlativos = [];
-                $('#load_div').show()
         $('.docs').each(function () {
             var id = $(this).attr('data-id');
             var correlativo = {};
@@ -184,7 +183,31 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
             correlativos.push(correlativo);
         });
 
-console.log(JSON.stringify(correlativos))
+        for (var i = 0; i < correlativos.length; i++) {
+            if(correlativos[i].serie.length != 3){
+                show_msg('warning', 'La series tiene que tener 3 caracteres alfanumericos');
+                return false;
+            }
+
+            if(!Number.isInteger(parseFloat(correlativos[i].correlativo))){
+                show_msg('warning', 'Los correlativos tienen que ser numerico');
+                return false;
+            }
+
+            if(parseFloat(correlativos[i].correlativo) <= 0){
+                show_msg('warning', 'Los correlativos no pueden ser negativos');
+                return false;
+            }
+
+            if(correlativos[i].correlativo.length > 8){
+                show_msg('warning', 'Los correlativos no pueden ser mayor que 8 caracteres numericos');
+                return false;
+            }
+        }
+
+        $('#load_div').show()
+
+        console.log(JSON.stringify(correlativos))
 
         $.ajax({
             url: '<?= $ruta ?>local/save_correlativos/' + $("#local_nombre_almacen").attr('local-id'),
@@ -194,7 +217,7 @@ console.log(JSON.stringify(correlativos))
                 Accept: 'application/json'
             },
             success: function (data) {
-                if(data.success == '1'){
+                if (data.success == '1') {
                     $.bootstrapGrowl('<h4>Correlativos Guardados</h4>', {
                         type: 'success',
                         delay: 2500,
@@ -202,7 +225,7 @@ console.log(JSON.stringify(correlativos))
                     });
                     $("#dialog_correlativo").modal('hide');
                 }
-                else{
+                else {
                     $.bootstrapGrowl('<h4>Ocurrio un Problema al Guardar</h4>', {
                         type: 'danger',
                         delay: 2500,
@@ -211,7 +234,7 @@ console.log(JSON.stringify(correlativos))
                 }
                 setTimeout(function () {
                     $('#load_div').hide()
-                }, 2000)   
+                }, 2000)
 
             }
         });
@@ -240,15 +263,15 @@ console.log(JSON.stringify(correlativos))
     var grupo = {
 
         ajaxgrupo: function () {
-        $('#load_div').show()
+            $('#load_div').show()
             return $.ajax({
                 url: '<?= base_url()?>local'
 
             })
 
             setTimeout(function () {
-                        $('#load_div').hide()
-                    }, 2000)
+                $('#load_div').hide()
+            }, 2000)
 
         },
         guardar: function () {
@@ -262,8 +285,8 @@ console.log(JSON.stringify(correlativos))
                 });
 
                 $(this).prop('disabled', true);
-                    
-                    
+
+
                 return false;
             }
             App.formSubmitAjax($("#formagregar").attr('action'), this.ajaxgrupo, 'agregar', 'formagregar');
@@ -281,32 +304,32 @@ console.log(JSON.stringify(correlativos))
             url: "<?= $ruta ?>local/eliminar",
             type: "POST",
             dataType: "json",
-            data: {'id':$("#id_borrar").val(), 'nombre':$("#nom_borrar").val()},
-            success: function(data) {
-              setTimeout(function () {
-                $('#load_div').hide()
-                }, 2000)     
+            data: {'id': $("#id_borrar").val(), 'nombre': $("#nom_borrar").val()},
+            success: function (data) {
+                setTimeout(function () {
+                    $('#load_div').hide()
+                }, 2000)
                 $('#borrar').modal('toggle')
-                    if (data != '') {
-                              
+                if (data != '') {
 
-                        $.bootstrapGrowl('<h4>'+data[Object.keys(data)]+'</h4>', {
-                            type: Object.keys(data),
-                            delay: 2500,
-                            allow_dismiss: true
-                        });
-                        if(Object.keys(data) == 'success'){
-                            $('.eliminar_'+$("#id_borrar").val()).remove()
-                            $('.acciones_'+$("#id_borrar").val()).append('<a onclick="activar_local('+$("#id_borrar").val()+');" href="#" data-original-title="Activar" title="Activar" data-toggle="tooltip" class="btn btn-default btn-default btn-default activar_'+$("#id_borrar").val()+'"><i class="fa fa-edit"></i></a>')
 
-                        }else{
-                            return false
-                        
-                        }
+                    $.bootstrapGrowl('<h4>' + data[Object.keys(data)] + '</h4>', {
+                        type: Object.keys(data),
+                        delay: 2500,
+                        allow_dismiss: true
+                    });
+                    if (Object.keys(data) == 'success') {
+                        $('.eliminar_' + $("#id_borrar").val()).remove()
+                        $('.acciones_' + $("#id_borrar").val()).append('<a onclick="activar_local(' + $("#id_borrar").val() + ');" href="#" data-original-title="Activar" title="Activar" data-toggle="tooltip" class="btn btn-default btn-default btn-default activar_' + $("#id_borrar").val() + '"><i class="fa fa-edit"></i></a>')
 
-                    
+                    } else {
+                        return false
+
                     }
+
+
                 }
+            }
         });
 
     }

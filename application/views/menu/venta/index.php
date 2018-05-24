@@ -17,6 +17,7 @@
         <input type="hidden" id="moneda_simbolo" value="<?= $md->simbolo ?>">
         <input type="hidden" id="barra_activa" value="<?= $barra_activa->activo ?>">
         <input type="hidden" id="producto_what_codigo" value="<?= getCodigo() ?>">
+        <input type="hidden" id="facturacion_electronica" value="<?= valueOptionDB('FACTURACION', 0) ?>">
 
         <div class="row">
 
@@ -174,7 +175,7 @@
                         <div class="row">
                             <div class="col-md-2 venta_input">
                                 <label class="control-label panel-admin-text">
-                                <a href="#" id="precioUnitario">Precio Unitario:</a>
+                                    <a href="#" id="precioUnitario">Precio Unitario:</a>
                                 </label>
                                 <div style="display: none;">
                                     <!--<div class="help-key badge label-success" style="display: none;">4</div>-->
@@ -196,12 +197,12 @@
                             </div>
                             <div class="col-md-8">
                                 <label id="popover_precioUnitario" class="control-label badge label-info"
-                                style="width: 50% !important; font-size: 15px; cursor: pointer; display:none; float: left; position: absolute; z-index: 3000;"></label>
+                                       style="width: 50% !important; font-size: 15px; cursor: pointer; display:none; float: left; position: absolute; z-index: 3000;"></label>
                             </div>
                             <div id="producto_precio" class="col-md-8 row text-center venta_input">
                             </div>
                             <div class="col-md-2">
-                            </div>              
+                            </div>
                         </div>
                         <hr class="hr-margin-10">
                         <!-- SECCION DE PRECIO UNITARIO E IMPORTE -->
@@ -439,8 +440,8 @@
                         <div class="help-key badge label-success" style="display: none;">7</div>
                         <select name="tipo_documento" id="tipo_documento" class="form-control">
                             <?php foreach ($tipo_documentos as $key => $value): ?>
-                                    <option <?= $value->id_doc == 3 ? 'selected="selected"' : '' ?>
-                                            value="<?= $value->id_doc ?>"><?= $value->des_doc ?></option>
+                                <option <?= $value->id_doc == 3 ? 'selected="selected"' : '' ?>
+                                        value="<?= $value->id_doc ?>"><?= $value->des_doc ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>

@@ -19,6 +19,7 @@ class venta_new_model extends CI_Model
         $this->load->model('cajas/cajas_mov_model');
         $this->load->model('comprobante/comprobante_model');
         $this->load->model('producto/producto_model');
+        $this->load->model('facturacion/facturacion_model');
     }
 
     function get_ventas($where = array(), $action = '')
@@ -40,6 +41,8 @@ class venta_new_model extends CI_Model
             venta.id_cliente as cliente_id,
             cliente.razon_social as cliente_nombre,
             cliente.identificacion as ruc,
+            cliente.ruc as cliente_tipo_identificacion,
+            cliente.direccion as cliente_direccion,
             venta.id_vendedor as vendedor_id,
             usuario.username as vendedor_nombre,
             venta.condicion_pago as condicion_id,
@@ -60,6 +63,8 @@ class venta_new_model extends CI_Model
             credito.periodo_gracia as periodo_gracia,
             venta.serie as serie,
             venta.numero as numero,
+            venta.fecha_facturacion as fecha_facturacion,
+            venta.facturacion as facturacion,
             venta.nota as nota,
             venta.dni_garante as nombre_caja,
             venta.tipo_impuesto as tipo_impuesto,
@@ -307,6 +312,11 @@ class venta_new_model extends CI_Model
             'serie' => $update_venta['serie'],
             'numero' => sumCod($update_venta['numero'], 6)
         ));
+
+        if (valueOptionDB('FACTURACION', 0) == 1 && ($venta->id_documento == 1 || $venta->id_documento == 3)) {
+            $resp = $this->facturacion_model->facturarVenta($venta_id);
+        }
+
     }
 
     function save_venta_caja($venta)
@@ -392,6 +402,12 @@ class venta_new_model extends CI_Model
 
         $this->db->where('venta_id', $venta['venta_id']);
         $this->db->update('venta', $update_venta);
+
+        if ($venta_actual->condicion_pago == 1) {
+            if (valueOptionDB('FACTURACION', 0) == 1 && ($venta_actual->id_documento == 1 || $venta_actual->id_documento == 3)) {
+                $resp = $this->facturacion_model->facturarVenta($venta['venta_id']);
+            }
+        }
 
         return true;
     }
@@ -518,6 +534,12 @@ class venta_new_model extends CI_Model
         }
 
         $this->recalc_totales($venta_id);
+
+        if (valueOptionDB('FACTURACION', 0) == 1 && ($venta['id_documento'] == 1 || $venta['id_documento'] == 3)) {
+            if ($venta['venta_status'] != 'CAJA') {
+                $resp = $this->facturacion_model->facturarVenta($venta_id);
+            }
+        }
 
         return $venta_id;
 
@@ -867,7 +889,7 @@ class venta_new_model extends CI_Model
     }
 
     public
-    function anular_venta($venta_id, $serie, $numero, $metodo_pago, $cuenta_id, $id_usuario = false)
+    function anular_venta($venta_id, $serie, $numero, $metodo_pago, $cuenta_id, $motivo, $id_usuario = false)
     {
         $venta = $this->get_venta_detalle($venta_id);
 
@@ -941,7 +963,11 @@ class venta_new_model extends CI_Model
         $venta_status = $venta->venta_estado;
 
         $this->db->where('venta_id', $venta_id);
-        $this->db->update('venta', array('venta_status' => 'ANULADO'));
+        $this->db->update('venta', array(
+            'venta_status' => 'ANULADO',
+            'facturacion' => 0,
+            'facturacion_nota' => 'No enviado',
+        ));
 
         $venta = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
 
@@ -974,6 +1000,10 @@ class venta_new_model extends CI_Model
             $caja_desglose['cuenta_id'] = $cuenta_id;
 
             $this->cajas_model->save_pendiente($caja_desglose);
+        }
+
+        if (valueOptionDB('FACTURACION', 0) == 1 && ($venta->id_documento == 1 || $venta->id_documento == 3) && $venta->numero != null) {
+            $resp = $this->facturacion_model->anularVenta($venta_id, $serie . '-' . $numero, $motivo);
         }
 
 
@@ -1021,7 +1051,7 @@ class venta_new_model extends CI_Model
     }
 
     public
-    function devolver_venta($venta_id, $total_importe, $devoluciones, $serie, $numero, $metodo_pago, $cuenta_id, $id_usuario = false)
+    function devolver_venta($venta_id, $total_importe, $devoluciones, $serie, $numero, $metodo_pago, $cuenta_id, $motivo, $id_usuario = false)
     {
         $venta = $this->get_venta_detalle($venta_id);
 
@@ -1036,6 +1066,9 @@ class venta_new_model extends CI_Model
                 $detalle->unidad_id,
                 $detalle->devolver
             );
+
+            $detalle_temp = $this->db->get_where('detalle_venta', array('id_detalle' => $detalle->detalle_id))->row();
+            $detalle->impuesto_porciento = $detalle_temp->impuesto_porciento;
 
             if ($detalle->new_cantidad == 0) {
                 $this->db->where('id_detalle', $detalle->detalle_id);
@@ -1133,6 +1166,10 @@ class venta_new_model extends CI_Model
             'ref_val' => $metodo_pago,
             'id_usuario' => $id_usuario == false ? $this->session->userdata('nUsuCodigo') : $id_usuario
         ));
+
+        if (valueOptionDB('FACTURACION', 0) == 1 && ($venta->documento_id == 1 || $venta->documento_id == 3) && $venta->numero != null) {
+            $resp = $this->facturacion_model->devolverVenta($venta_id, $devoluciones, $serie . '-' . $numero, $motivo);
+        }
     }
 
     public

@@ -1945,9 +1945,9 @@ JOIN detalleingreso ON detalleingreso.id_ingreso=ingreso.id_ingreso WHERE detall
             $data['moneda'] = $this->input->post("moneda", true);
 
             $params = array();
-            if ($data['local'] != 'TODOS'){
+            if ($data['local'] != 'TODOS') {
                 $params['local_id'] = $data['local'];
-            }else{
+            } else {
                 $usu = $this->session->userdata('nUsuCodigo');
                 $dataLocal = $this->local_model->get_all_usu($usu);
                 $arr = array();
@@ -3042,7 +3042,13 @@ JOIN detalleingreso ON detalleingreso.id_ingreso=ingreso.id_ingreso WHERE detall
             $montodescontar = false;
         }
 
+        $venta_old = $this->db->get_where('venta', array('venta_id' => $idVenta))->row();
         $return = $this->credito_cuotas_abono_model->registrar($idCuota, $montodescontar, $moneda_saldo, $metodo_pago, $idVenta, $anticipado, $numero_ope, $banco, $tipo_metodo, $cuenta_id);
+
+        $venta_new = $this->db->get_where('venta', array('venta_id' => $idVenta))->row();
+        if ($venta_old->numero == null && $venta_new->numero != null) {
+            $dataresul['venta'] = $venta_new;
+        }
 
         if ($return == true) {
             $dataresul['success'] = "El pago se ha realizado satisfactoriamente";

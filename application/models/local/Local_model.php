@@ -89,9 +89,19 @@ class local_model extends CI_Model
         if ($validar_nombre < 1) {
             //$this->db->trans_start();
             $this->db->insert('local', $local);
-
-            $this->update_principal($this->db->insert_id(), $local['principal']);
+            $id = $this->db->insert_id();
+            $this->update_principal($id, $local['principal']);
             //$this->db->trans_complete();
+
+            $documentos = $this->db->get('documentos')->result();
+            foreach ($documentos as $d) {
+                $this->db->insert('correlativos', array(
+                    'id_local' => $id,
+                    'id_documento' => $d->id_doc,
+                    'serie' => '001',
+                    'correlativo' => 1
+                ));
+            }
 
             if ($this->db->trans_status() === FALSE)
                 return FALSE;
@@ -145,11 +155,6 @@ class local_model extends CI_Model
         } else {
             return false;
         }
-    
-
-
-
-
 
 
     }

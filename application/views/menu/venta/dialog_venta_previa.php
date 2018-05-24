@@ -19,6 +19,18 @@
 
             <div class="row">
                 <div class="col-md-4" style="margin: 0; text-align: left;">
+                    <?php if (valueOption('FACTURACION', '0') == 1 && $facturacion_venta != null): ?>
+                        <h4>Facturaci&oacute;n Electr&oacute;nica:</h4>
+                        <button class="btn btn-xs btn-primary" onclick="imprimir_fe(<?= $facturacion_venta->id ?>)"
+                                type="button"><i class="fa fa-file-pdf-o"></i> PDF
+                        </button>
+
+                        <button class="btn btn-xs btn-primary"
+                                onclick="imprimir_ticket_fe(<?= $facturacion_venta->id ?>)"
+                                type="button"
+                                id="fe_imprimir_pdf"><i class="fa fa-print"></i> COMPROBANTE
+                        </button>
+                    <?php endif; ?>
                     <?php if (validOption('ACTIVAR_SHADOW', 1) && $venta->documento_id != 6): ?>
                         <button class="btn btn-default btn_venta_imprimir_sc"
                                 type="button"
@@ -34,7 +46,7 @@
                         </button>
                     <?php endif; ?>
                 </div>
-                <div class="col-md-12">
+                <div class="col-md-8">
                     <?php if (ENV == 'DEV' && false): ?>
                         <button class="btn btn-primary" data-id="<?= $venta->venta_id ?>"
                                 type="button"
@@ -48,7 +60,7 @@
                                 class="fa fa-print"></i> (F6) Pedido
                     </button>
                     <button class="btn btn-primary btn_venta_imprimir_almacen imprimir"
-                            type="button"  data-nombre="guia"
+                            type="button" data-nombre="guia"
                             id="btn_venta_imprimir_almacen_1"><i
                                 class="fa fa-print"></i> Gu&iacute;a de Remisi&oacute;n
                     </button>
@@ -380,9 +392,23 @@
                             </table>
                         <?php endif; ?>
 
-                        <?php if ($venta->nota != NULL): ?>
-                            <h4>Notas:</h4>
-                            <?= $venta->nota ?>
+                        <?php if (valueOption('FACTURACION', '0') == 1 && count($facturacion_notas) > 0): ?>
+                            <h4>Notas Electr&oacute;nicas Asociadas:</h4>
+
+                            <?php foreach ($facturacion_notas as $fn): ?>
+                                <h5><?= $fn->documento_numero ?>
+                                    <button class="btn btn-xs btn-primary" onclick="imprimir_fe(<?= $fn->id ?>)"
+                                            type="button"><i class="fa fa-file-pdf-o"></i> PDF
+                                    </button>
+
+                                    <button class="btn btn-xs btn-primary"
+                                            onclick="imprimir_ticket_fe(<?= $fn->id ?>)"
+                                            type="button"
+                                            id="fe_imprimir_pdf"><i class="fa fa-print"></i> COMPROBANTE
+                                    </button>
+                                </h5>
+
+                            <?php endforeach; ?>
                         <?php endif; ?>
                     </div>
                     <div class="col-md-4 text-right">
@@ -470,6 +496,23 @@
 
 
 <script>
+
+    function imprimir_fe(id) {
+
+        var win = window.open('<?= base_url()?>facturacion/imprimir/' + id, '_blank');
+        win.focus();
+    }
+
+    function imprimir_ticket_fe(id) {
+        $.bootstrapGrowl('<p>IMPRIMIENDO PEDIDO</p>', {
+            type: 'success',
+            delay: 2500,
+            allow_dismiss: true
+        });
+
+        var url = '<?=base_url('facturacion/imprimir_ticket')?>/' + id;
+        $("#imprimir_frame").attr('src', url);
+    }
 
     function close_previa_modal() {
         $('#dialog_venta_imprimir').modal('hide');

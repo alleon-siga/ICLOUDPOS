@@ -579,8 +579,35 @@
         }
 
         function devolver_venta() {
-            if ($("#documento_serie").val() == "" || $("#documento_numero").val() == "") {
+            var serie = $("#documento_serie").val();
+            var numero = $("#documento_numero").val();
+            if (serie == "" || numero == "") {
                 show_msg('warning', 'Complete la serie y numero del documento');
+                return false;
+            }
+
+            if (serie.length != 3) {
+                show_msg('warning', 'La serie tiene que tener 3 caracteres alfanumericos');
+                return false;
+            }
+
+            if (!Number.isInteger(parseFloat(numero))) {
+                show_msg('warning', 'El correlativo tiene que ser numerico');
+                return false;
+            }
+
+            if (parseFloat(numero) <= 0) {
+                show_msg('warning', 'El correlativo no puede ser negativo');
+                return false;
+            }
+
+            if (numero.length > 8) {
+                show_msg('warning', 'El correlativo no puede ser mayor que 8 caracteres numericos');
+                return false;
+            }
+
+            if ($("#motivo").val() == "") {
+                show_msg('warning', 'El motivo es requerido');
                 return false;
             }
 
@@ -607,10 +634,11 @@
                     'total_importe': total_importe,
                     'devoluciones': devoluciones,
                     'serie': $("#documento_serie").val(),
-                    'numero': $("#documento_numero").val()
+                    'numero': $("#documento_numero").val(),
+                    'motivo': $("#motivo").val()
                 },
 
-                success: function () {
+                success: function (data) {
                     $('#dialog_venta_confirm').modal('hide');
                     $('#dialog_venta_detalle').modal('hide');
                     $(".modal-backdrop").remove();
@@ -619,6 +647,16 @@
                         delay: 5000,
                         allow_dismiss: true
                     });
+
+                    if ($('#facturacion_electronica').val() == 1 && (data.venta.id_documento == 1 || data.venta.id_documento == 3) && data.venta.numero != null) {
+                        if (data.venta.facturacion == 1) {
+                            show_msg('success', '<h4>Facturacion Electronica:</h4> ' + data.venta.facturacion_nota);
+                        }
+                        else {
+                            show_msg('danger', '<h4>Facturacion Electronica:</h4> ' + data.venta.facturacion_nota);
+                        }
+                    }
+
                     get_ventas();
                 },
                 error: function () {
