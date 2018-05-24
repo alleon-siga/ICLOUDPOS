@@ -345,7 +345,7 @@ class ingreso_model extends CI_Model
                         $tipo = 3;
 
                     $values = array(
-                        'fecha' => $compra['fecha_emision'],
+                        'fecha' => date('Y-m-d H:i:s'), //$compra['fecha_emision'],
                         'local_id' => $local_id,
                         'producto_id' => $key,
                         'cantidad' => $value,

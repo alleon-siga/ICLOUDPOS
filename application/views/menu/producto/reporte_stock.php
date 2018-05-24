@@ -19,10 +19,10 @@
         text-align: center;
     }
 </style>
-
-<h2>Stock de Productos</h2>
-
-<h3>Ubicaci&oacute;n: <?php echo $local["local_nombre"]; ?></h3>
+<h4 style="text-align: center;">STOCK DE PRODUCTOS</h4>
+<h5>EMPRESA: <?= valueOption('EMPRESA_NOMBRE') ?></h5>
+<h5>DIRECCI&Oacute;N: <?php echo empty($local["direccion"])? 'TODOS' : $local["direccion"] ?></h5>
+<h5>UBICACION: <?php echo empty($local["local_nombre"])? 'TODOS' : $local["local_nombre"] ?></h5>
 
 <table cellpadding="5">
     <thead>

@@ -82,10 +82,11 @@
         <div class="col-md-3">
             <div class="form-group">
             <?php if (count($locales) == 1): ?>
+                <input type="hidden" id="locales" value="<?= $locales[0]['int_local_id'] ?>">
                 <h4><?php echo $locales[0]['local_nombre'] ?></h4>
             <?php else: ?>
                 <select class="form-control" id="locales">
-                        <option value="TODOS">Todos</option>
+                        <option value="TODOS">TODOS</option>
                     <?php foreach ($locales as $local) { ?>
                         <option value="<?= $local['int_local_id'] ?>"
                             <?=$local_selected == $local['int_local_id'] ? 'selected' : ''?>><?= $local['local_nombre'] ?></option>
@@ -100,9 +101,10 @@
 
         <div class="col-md-3">
             <div class="form-group" id="detalle_div" style="display: <?=$local_selected == false ? 'block' : 'none'?>;">
+            <?php if (count($locales) > 1): ?>
                 <input type="checkbox" name="mostrar_detalles" id="mostrar_detalles" <?=$detalle_checked==1 ? 'checked' : ''?>>
-
                 <label for="mostrar_detalles" style="cursor: pointer;">Mostrar Detalles</label>
+            <?php endif; ?>
             </div>
         </div>
 
@@ -111,7 +113,6 @@
         </div>
     </div>
     <br>
-
     <div class="table-responsive" id="productostable">
         <table class='table table-striped dataTable table-bordered table-responsive' id="table" style="width: 100%;">
             <thead>

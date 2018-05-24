@@ -752,6 +752,7 @@ class producto_model extends CI_Model
 
     function get_stock_productos($local = false)
     {
+        $nUsuCodigo = $this->session->userdata('nUsuCodigo');
         $query = '
         SELECT
         `producto`.`producto_nombre` AS `nombre`,
@@ -824,8 +825,8 @@ class producto_model extends CI_Model
             AS inventario ON `inventario`.`id_producto` = `producto`.`producto_id`
             ';
         }
-
-        $query .= 'WHERE
+        $query .= 'INNER JOIN usuario_almacen ua ON inventario.id_local = ua.local_id AND usuario_id = '.$nUsuCodigo;
+        $query .= ' WHERE
             `producto`.`producto_estatus` = 1
             AND `producto_estado` = 1 ';
 

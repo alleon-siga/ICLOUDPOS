@@ -1019,6 +1019,10 @@ class producto extends MY_Controller
 
     function excel_stock($local = 0, $detalle = 0)
     {
+        $local1 = $this->db->get_where('local', array('int_local_id' => $local))->row();
+        $local_nombre = !empty($local1->local_nombre)? $local1->local_nombre : 'TODOS';
+        $local_direccion = !empty($local1->direccion)? $local1->direccion : 'TODOS';
+
         if ($local == 0)
             $local = false;
 
@@ -1047,27 +1051,34 @@ class producto extends MY_Controller
 
         $i = 0;
 
+        $this->phpexcel->setActiveSheetIndex(0)->mergeCells('A1:K1');
+        $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow(0, 1, "EMPRESA: ".valueOption('EMPRESA_NOMBRE'));
+        $this->phpexcel->setActiveSheetIndex(0)->mergeCells('A2:K2');
+        $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow(0, 2, "DIRECCION: ".$local_direccion);
+        $this->phpexcel->setActiveSheetIndex(0)->mergeCells('A3:K3');
+        $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow(0, 3, "UBICACION: ".$local_nombre);
+
         if (canShowCodigo())
-            $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($i++, 1, getCodigoNombre());
+            $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($i++, 4, getCodigoNombre());
 
 
         foreach ($columnas as $col) {
             if ($col->mostrar == TRUE && $col->nombre_columna != 'producto_estado' && $col->nombre_columna != 'producto_codigo_interno' && $col->nombre_columna != 'producto_id') {
 
-                $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($i++, 1, $col->nombre_mostrar);
+                $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($i++, 4, $col->nombre_mostrar);
             }
         }
 
-        $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($i++, 1, "UM");
+        $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($i++, 4, "UM");
 
-        $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($i++, 1, "CANTIDAD");
+        $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($i++, 4, "CANTIDAD");
 
-        $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($i++, 1, "FRACCION");
+        $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($i++, 4, "FRACCION");
 
         if ($local == false && $detalle == 1)
-            $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($i++, 1, "LOCAL");
+            $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($i++, 4, "LOCAL");
 
-        $row = 2;
+        $row = 5;
         // var_dump($columnas);
         if (count($lstProducto) > 0) {
             foreach ($lstProducto as $pd) {

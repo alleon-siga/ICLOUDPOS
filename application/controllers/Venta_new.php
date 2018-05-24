@@ -342,14 +342,14 @@ class venta_new extends MY_Controller
         $old_cantidad_min = $old_cantidad != NULL ? $this->unidades_model->convert_minimo_um($producto_id, $old_cantidad->cantidad, $old_cantidad->fraccion) : 0;
         $data['stock_actual'] = $this->unidades_model->get_cantidad_fraccion($producto_id, $old_cantidad_min - $stock_minimo);
 
-        $all_cantidad = $this->db->join('local', 'local.int_local_id = producto_almacen.id_local')
-            ->where(array('id_producto' => $producto_id, 'local_status' => '1'))
-            ->get('producto_almacen')->result();
+        $locales = $this->local_model->get_local_by_user($this->session->userdata('nUsuCodigo'));
         $all_cantidad_min = 0;
-        foreach ($all_cantidad as $cantidad) {
+        foreach ($locales as $local) {
+            $cantidad = $this->db->get_where('producto_almacen', array('id_producto' => $producto_id, 'id_local' => $local->local_id))->row();
             $temp = $cantidad != NULL ? $this->unidades_model->convert_minimo_um($producto_id, $cantidad->cantidad, $cantidad->fraccion) : 0;
             $all_cantidad_min += $temp;
         }
+
         $data['stock_total'] = $this->unidades_model->get_cantidad_fraccion($producto_id, $all_cantidad_min - $stock_total_minimo);
 
         $data['stock_minimo'] = $old_cantidad_min;

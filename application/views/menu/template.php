@@ -204,14 +204,14 @@ $primary_nav = array(
                 'icon' => 'gi gi-cart_in',
                 'slug' => 'registraringreo'
             ),
-            /*
-            array(
+            
+            /*array(
                 'name' => 'Registro de existencia',
-                'slug' => 'ingresoexistencia',
+                'slug' => 'registraringreo',
                 'icon' => 'fa fa-share',
                 'url' => $ruta . 'ingresos?costos=false',
-            ),
-            */
+            ),*/
+            
             array(
                 'name' => 'Consultar Compras',
                 'url' => $ruta . 'ingresos/consultarCompras',

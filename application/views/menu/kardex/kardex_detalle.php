@@ -28,7 +28,7 @@
                 </tr>
                 <tr>
                     <th>Id</th>
-                    <th>Fecha</th>
+                    <th>Fecha Registro</th>
                     <th>Tipo</th>
                     <th>Serie</th>
                     <th>Numero</th>

@@ -69,8 +69,9 @@ class gastos_model extends CI_Model
             ->from('gastos');
 
         $this->set_gastos_where($data);
-        $this->db->where('status_gastos', 1);
-
+        if(!empty($data['status_gastos'])){
+            $this->db->where('status_gastos', $data['status_gastos']);    
+        }
         return $this->db->get()->row();
     }
 

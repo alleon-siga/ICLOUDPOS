@@ -61,7 +61,8 @@ class kardex_model extends CI_Model
         $this->db->select('*')->from('kardex');
         $this->db->join('usuario', 'usuario.nUsuCodigo = kardex.usuario_id')
             ->where('producto_id', $where['producto_id'])
-            ->where('local_id', $where['local_id']);
+            ->where('local_id', $where['local_id'])
+            ->order_by('id');
 
         if (isset($where['mes']) && isset($where['year']) && isset($where['dia_min']) && isset($where['dia_max'])) {
             $last_day = last_day($where['year'], sumCod($where['mes'], 2));

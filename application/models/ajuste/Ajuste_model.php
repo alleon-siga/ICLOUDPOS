@@ -115,6 +115,7 @@ class ajuste_model extends CI_Model
 
             //CREAR EL HISTORICO DE LA VENTA *************************************
             $values = array(
+                'fecha' => date('Y-m-d H:i:s'),
                 'local_id' => $local_id,
                 'producto_id' => $key,
                 'cantidad' => $value,

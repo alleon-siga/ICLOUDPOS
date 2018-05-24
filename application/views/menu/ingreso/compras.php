@@ -15,8 +15,8 @@
                 <?php if (isset($locales)): ?>
                     <select id="local_id" class="form-control">
                         <?php foreach ($locales as $local): ?>
-                            <option <?php if ($this->session->userdata('id_local') == $local['int_local_id']) echo "selected"; ?>
-                                    value="<?= $local['int_local_id']; ?>"> <?= $local['local_nombre'] ?> </option>
+                            <option <?php if ($this->session->userdata('id_local') == $local->local_id) echo "selected"; ?>
+                                    value="<?= $local->local_id; ?>"> <?= $local->local_nombre ?> </option>
                         <?php endforeach; ?>
                     </select>
                 <?php endif; ?>

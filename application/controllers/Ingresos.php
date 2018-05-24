@@ -277,8 +277,7 @@ class ingresos extends MY_Controller
 
     function consultarCompras()
     {
-
-        $data['locales'] = $this->local_model->get_all();
+        $data['locales'] = $this->local_model->get_local_by_user($this->session->userdata('nUsuCodigo'));
         $data['monedas'] = $this->db->get_where('moneda', array('status_moneda' => 1))->result();
         $dataCuerpo['cuerpo'] = $this->load->view('menu/ingreso/compras', $data, true);
         if ($this->input->is_ajax_request()) {
