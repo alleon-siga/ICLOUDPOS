@@ -49,13 +49,18 @@
 
                     <td class="center">
                         <div class="btn-group">
-                            <?php if ($gastos['status_gastos'] == 1): ?>
-                                <?php echo '<a class="btn btn-danger" data-toggle="tooltip"
-                                     title="Eliminar" data-original-title="fa fa-comment-o"
-                                     onclick="borrar(' . $gastos['id_gastos'] . ');">'; ?>
-                                <i class="fa fa-trash-o"></i>
-                                </a>
-                            <?php endif; ?>
+                        <?php if ($gastos['status_gastos'] == 1): ?>
+                            <?php echo '<a class="btn btn-default" data-toggle="tooltip"
+                                                title="Editar" data-original-title="fa fa-comment-o"
+                                                href="#" onclick="editar(' . $gastos['id_gastos'] . ');">'; ?>
+                            <i class="fa fa-edit"></i>
+                            </a>
+                            <?php echo '<a class="btn btn-danger" data-toggle="tooltip"
+                                 title="Eliminar" data-original-title="fa fa-comment-o"
+                                 onclick="borrar(' . $gastos['id_gastos'] . ');">'; ?>
+                            <i class="fa fa-trash-o"></i>
+                            </a>
+                        <?php endif; ?>
                         </div>
                     </td>
                 </tr>

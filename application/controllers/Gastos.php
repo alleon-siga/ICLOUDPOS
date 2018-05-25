@@ -116,7 +116,7 @@ class gastos extends MY_Controller
     function guardar()
     {
 
-        $id = $this->input->post('id');
+        $id = $this->input->post('gastos_id');
 
         $persona_gasto = $this->input->post('persona_gasto');
         if ($persona_gasto == 1) {
@@ -148,8 +148,9 @@ class gastos extends MY_Controller
 
         if (empty($id)) {
             $resultado = $this->gastos_model->insertar($gastos);
-
-
+        } else {
+            $gastos['id_gastos'] = $id;
+            $resultado = $this->gastos_model->update($gastos);
         }
 
         if ($resultado != FALSE) {

@@ -77,6 +77,8 @@ class gastos_model extends CI_Model
 
     function get_by($campo, $valor)
     {
+        $this->db->select('gastos.*, caja_pendiente.monto, caja_pendiente.caja_desglose_id');
+        $this->db->join('caja_pendiente', 'gastos.id_gastos = caja_pendiente.ref_id');
         $this->db->where($campo, $valor);
         $query = $this->db->get('gastos');
         return $query->row_array();
@@ -129,12 +131,38 @@ class gastos_model extends CI_Model
             return $id;
     }
 
-    function update($gastos)
+    function update($data)
     {
-
         $this->db->trans_start();
-        $this->db->where('id_gastos', $gastos['id_gastos']);
+        $cuenta = $this->db->join('caja', 'caja.id = caja_desglose.caja_id')
+            ->get_where('caja_desglose', array('caja_desglose.id' => $data['cuenta_id']))->row();
+
+        $gastos = array(
+            'fecha' => $data['fecha'],
+            'fecha_registro' => $data['fecha_registro'],
+            'descripcion' => $data['descripcion'],
+            'total' => $data['total'],
+            'tipo_gasto' => $data['tipo_gasto'],
+            'local_id' => $data['local_id'],
+            'gasto_usuario' => $data['gasto_usuario'],
+            'id_moneda' => $cuenta->moneda_id,
+            'tasa_cambio' => 0,
+            'proveedor_id' => $data['proveedor_id'],
+            'usuario_id' => $data['usuario_id'],
+            'responsable_id' => $data['responsable_id'],
+            'gravable' => $data['gravable'],
+            'id_documento' => $data['id_documento'],
+            'serie' => $data['serie'],
+            'numero' => $data['numero']
+        );        
+        $this->db->where('id_gastos', $data['id_gastos']);
         $this->db->update('gastos', $gastos);
+
+        $this->cajas_model->editar_pendiente(array(
+            'id' => $data['id_gastos'],
+            'cuenta_id' => $data['cuenta_id'],
+            'monto' => $data['total']
+        ));
 
         $this->db->trans_complete();
 

@@ -118,7 +118,7 @@ class impresion_model extends CI_Model
                 FORMAT(v.vuelto, 2) AS vuelto,
                 FORMAT(v.pagado, 2) AS pagado,
                 FORMAT(IFNULL(v.inicial, 0), 2) AS inicial,
-                v.nro_guia AS nro_guia
+                CONCAT(co.serie, '-', LPAD(v.nro_guia, 7, '0')) AS nro_guia
             FROM
                 venta AS v
                     JOIN
@@ -135,6 +135,8 @@ class impresion_model extends CI_Model
                 condiciones_pago AS cp ON cp.id_condiciones = v.condicion_pago
                     JOIN
                 moneda AS m ON m.id_moneda = v.id_moneda
+                    LEFT JOIN
+                correlativos co ON v.local_id = co.id_local AND co.id_documento = 4
             WHERE
                 v.venta_id = " . $id . "
         ";
