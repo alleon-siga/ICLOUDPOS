@@ -13,6 +13,8 @@ class RucSunat
 
     public function consultarRuc($ruc)
     {
+        error_reporting(0);
+        ini_set('display_errors', 0);
         $sunat = new \RucSunat\Sunat(true, true);
         if (strlen($ruc) == 11 && $sunat->valid($ruc)) {
             $result = $sunat->search($ruc);
