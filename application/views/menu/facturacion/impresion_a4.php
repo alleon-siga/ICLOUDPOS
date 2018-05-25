@@ -151,10 +151,10 @@
                 </div>
                 <div id="tipo_dcumento">
                     <?php
-                    if ($facturacion->documento_tipo == '01') echo 'FACTURA';
-                    if ($facturacion->documento_tipo == '03') echo 'BOLETA DE VENTA';
-                    if ($facturacion->documento_tipo == '07') echo 'NOTA DE CR&Eacute;DITO';
-                    if ($facturacion->documento_tipo == '08') echo 'NOTA DE D&Eacute;BITO';
+                    if ($facturacion->documento_tipo == '01') echo 'FACTURA ELECTR&Oacute;NICA';
+                    if ($facturacion->documento_tipo == '03') echo 'BOLETA ELECTR&Oacute;NICA';
+                    if ($facturacion->documento_tipo == '07') echo 'NOTA DE CR&Eacute;DITO ELECTR&Oacute;NICA';
+                    if ($facturacion->documento_tipo == '08') echo 'NOTA DE D&Eacute;BITO ELECTR&Oacute;NICA';
                     ?>
                 </div>
                 <div id="numero_documento">
