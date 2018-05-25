@@ -1,5 +1,5 @@
 <form name="formagregar" action="<?= base_url() ?>gastos/guardar" method="post" id="formagregar">
-    <input type="hidden" name="id" id="" required="true"
+    <input type="hidden" name="gastos_id" id="id" required="true"
            value="<?php if (isset($gastos['id_gastos'])) echo $gastos['id_gastos']; ?>">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -16,7 +16,7 @@
                         <div class="col-md-9">
                             <input type="text" name="fecha" id="fecha" required="true" readonly style="cursor: pointer;"
                                    class="input-small input-datepicker form-control"
-                                   value="<?= isset($gastos['fecha']) ? $gastos['fecha'] : date('d-m-Y'); ?>"/>
+                                   value="<?= isset($gastos['fecha']) ? date('d-m-Y', strtotime($gastos['fecha'])) : date('d-m-Y'); ?>"/>
                         </div>
                     </div>
                 </div>
@@ -31,7 +31,7 @@
                                 <option value="">Seleccione</option>
                                 <?php foreach ($local as $local): ?>
                                     <option
-                                            value="<?php echo $local->local_id ?>" <?= $local->local_id == $this->session->userdata('id_local') ? 'selected' : '' ?>><?= $local->local_nombre ?></option>
+                                            value="<?php echo $local->local_id ?>" <?php if (isset($gastos['local_id']) and $local->local_id == $gastos['local_id']) echo 'selected'; ?>><?= $local->local_nombre ?></option>
                                 <?php endforeach ?>
                             </select>
                         </div>
@@ -43,14 +43,19 @@
                             <label class="control-label panel-admin-text">Tipo de Gasto</label>
                         </div>
                         <div class="col-md-9">
-                            <select name="tipo_gasto" id="tipo_gasto" required="true"
-                                    class="select_chosen form-control">
-                                <option value="">Seleccione</option>
-                                <?php foreach ($tiposdegasto as $gasto): ?>
-                                    <option
-                                            value="<?php echo $gasto['id_tipos_gasto'] ?>" <?php if (isset($gastos['tipo_gasto']) and $gastos['tipo_gasto'] == $gasto['id_tipos_gasto']) echo 'selected' ?>><?= $gasto['nombre_tipos_gasto'] ?></option>
-                                <?php endforeach ?>
-                            </select>
+                            <div class="input-group">
+                                <select name="tipo_gasto" id="tipo_gasto" required="true"
+                                        class="select_chosen form-control">
+                                    <option value="">Seleccione</option>
+                                    <?php foreach ($tiposdegasto as $gasto): ?>
+                                        <option
+                                                value="<?php echo $gasto['id_tipos_gasto'] ?>" <?php if (isset($gastos['tipo_gasto']) and $gastos['tipo_gasto'] == $gasto['id_tipos_gasto']) echo 'selected' ?>><?= $gasto['nombre_tipos_gasto'] ?></option>
+                                    <?php endforeach ?>
+                                </select>
+                                <a class="input-group-addon btn-default" data-toggle="tooltip" title="Agregar Tipo de Gasto" data-original-title="Agregar Tipo de Gasto" href="#" onclick="agregarTipoGasto()">
+                                    <i class="hi hi-plus-sign"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -73,39 +78,38 @@
                         </div>
                     </div>
                 </div>
-                <div class="row" id="proveedor_block" style="display: none;">
+                <div class="row" id="proveedor_block" <?= isset($gastos['proveedor_id']) && $gastos['proveedor_id'] != NULL ? 'style="display: block;"' : 'style="display: none;"' ?>>
                     <div class="form-group">
                         <div class="col-md-3">
                             <label class="control-label panel-admin-text">Proveedor</label>
                         </div>
-                        <div class="col-md-7">
-                            <select name="proveedor" id="proveedor" required="true" class="form-control">
-                                <option value="">Seleccione</option>
-                                <?php foreach ($proveedores as $proveedor): ?>
-                                    <option
-                                            value="<?php echo $proveedor->id_proveedor ?>"
-                                        <?php if (isset($gastos['proveedor_id']) and $gastos['proveedor_id'] == $proveedor->id_proveedor) echo 'selected' ?>>
-                                        <?= $proveedor->proveedor_nombre ?>
-                                    </option>
-                                <?php endforeach ?>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <a class="btn btn-default" data-toggle="tooltip"
-                               title="Agregar Proveedor" data-original-title="Agregar Proveedor"
-                               href="#" onclick="agregarproveedor()">
-                                <i class="hi hi-plus-sign"></i>
-                            </a>
+                        <div class="col-md-9">
+                            <div class="input-group">
+                                <select name="proveedor" id="proveedor" required="true" class="form-control">
+                                    <option value="">Seleccione</option>
+                                    <?php foreach ($proveedores as $proveedor): ?>
+                                        <option
+                                                value="<?php echo $proveedor->id_proveedor ?>"
+                                            <?php if (isset($gastos['proveedor_id']) and $gastos['proveedor_id'] == $proveedor->id_proveedor) echo 'selected' ?>>
+                                            <?= $proveedor->proveedor_nombre ?>
+                                        </option>
+                                    <?php endforeach ?>
+                                </select>
+                                <a class="input-group-addon btn-default" data-toggle="tooltip"
+                                   title="Agregar Proveedor" data-original-title="Agregar Proveedor"
+                                   href="#" onclick="agregarproveedor()">
+                                    <i class="hi hi-plus-sign"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="row" id="usuario_block" style="display: none;">
+                <div class="row" id="usuario_block" <?= isset($gastos['usuario_id']) && $gastos['usuario_id'] != NULL ? 'style="display: block;"' : 'style="display: none;"' ?>>
                     <div class="form-group">
                         <div class="col-md-3">
                             <label class="control-label panel-admin-text">Trabajador</label>
                         </div>
                         <div class="col-md-9">
-
                             <select name="usuario" id="usuario" required="true" class="form-control">
                                 <option value="">Seleccione</option>
                                 <?php foreach ($usuarios as $usuario): ?>
@@ -148,7 +152,7 @@
                         <div class="col-md-9">
                             <select name="cboDocumento" id="cboDocumento" class="form-control">
                             <?php foreach ($documentos as $documento) { ?>
-                                <option value="<?= $documento->id_doc ?>"><?= $documento->des_doc ?></option>
+                                <option value="<?= $documento->id_doc ?>" <?php if (isset($gastos['id_documento']) and $gastos['id_documento'] == $documento->id_doc) echo 'selected' ?>><?= $documento->des_doc ?></option>
                             <?php } ?>
                             </select>
                         </div>
@@ -162,10 +166,10 @@
                         <div class="col-md-9">
                             <div class="row">
                                 <div class="col-md-3">
-                                    <input type="text" name="doc_serie" id="doc_serie" value="" class="form-control">
+                                    <input type="text" name="doc_serie" id="doc_serie" value="<?php if (isset($gastos['serie'])) echo $gastos['serie']; ?>" class="form-control">
                                 </div>
                                 <div class="col-md-9">
-                                    <input type="text" name="doc_numero" id="doc_numero" value="" class="form-control">
+                                    <input type="text" name="doc_numero" id="doc_numero" value="<?php if (isset($gastos['numero'])) echo $gastos['numero']; ?>" class="form-control">
                                 </div>
                             </div>
                         </div>
@@ -220,9 +224,9 @@
     </div>
 </form>
 <script>
-    $("#fecha").datepicker({
+    /*$("#fecha").datepicker({
         format: 'dd-mm-yyyy'
-    });
+    });*/
 
     var cuentas = [];
     <?php foreach ($cuentas as $cuenta):?>
@@ -275,11 +279,16 @@
             cuenta_select.html('<option value="">Seleccione</option>');
 
             if ($(this).val() != "") {
+                var slt = "";
                 for (var i = 0; i < cuentas.length; i++) {
                     if (cuentas[i].local_id == $(this).val()) {
-                        cuenta_select.append('<option data-moneda="'+ cuentas[i].simbolo +'" value="' + cuentas[i].id + '">' + cuentas[i].descripion + ' | ' + cuentas[i].moneda_nombre + '</option>');
+                        if(cuentas[i].id == '<?php echo (isset($gastos['caja_desglose_id']))? $gastos['caja_desglose_id'] : ""; ?>'){
+                            slt = "selected";
+                        }
+                        cuenta_select.append('<option data-moneda="'+ cuentas[i].simbolo +'" value="' + cuentas[i].id + '" '+ slt +'>' + cuentas[i].descripion + ' | ' + cuentas[i].moneda_nombre + '</option>');
                     }
                 }
+                $('#idMoneda').text($('#cuenta_id').find(':selected').data('moneda'));
             }
 
             cuenta_select.chosen();
@@ -299,19 +308,30 @@
             $("#proveedor").val("");
             $("#usuario").val("");
         }
-        if ($('#persona_gasto').val() == '1') {
+        if ($('#persona_gasto').val() == '1' && $('#id').val() == '') {
             $("#proveedor").val("");
             $('#proveedor_block').show();
             $('#usuario_block').hide();
             $("#proveedor").chosen();
         }
-        if ($('#persona_gasto').val() == '2') {
+        if ($('#persona_gasto').val() == '2' && $('#id').val() == '') {
             $("#usuario").val("");
             $('#proveedor_block').hide();
             $('#usuario_block').show();
             $("#usuario").chosen();
         }
-
+        if ($('#persona_gasto').val() == '1' && $('#id').val() != '') {
+            $('#usuario_block').hide();
+            $("#usuario").hide();
+            $('#proveedor_block').show();
+            $('#proveedor').show();
+        }
+        if ($('#persona_gasto').val() == '2' && $('#id').val() != '') {
+            $('#proveedor').hide();
+            $('#proveedor_block').hide();
+            $('#usuario_block').show();
+            $("#usuario").show();
+        }
     }
 
     function update_proveedor(id, nombre) {

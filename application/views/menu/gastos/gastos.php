@@ -96,9 +96,6 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                                         value="<?php echo $gasto['id_tipos_gasto'] ?>" <?php if (isset($gastos['tipo_gasto']) and $gastos['tipo_gasto'] == $gasto['id_tipos_gasto']) echo 'selected' ?>><?= $gasto['nombre_tipos_gasto'] ?></option>
                             <?php endforeach ?>
                         </select>
-                        <a class="input-group-addon btn-warning" data-toggle="tooltip" title="Agregar Tipo de Gasto" data-original-title="Agregar Tipo de Gasto" href="#" onclick="agregarTipoGasto()">
-                            <i class="hi hi-plus-sign"></i>
-                        </a>
                     </div>
                 </div>
             </div>
@@ -531,19 +528,20 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
     }
 
     function agregarTipoGasto() {
-        $('#tipo_gasto_id').val(0);
-        $("#tipo_gasto_id").trigger('chosen:updated');
         $("#tipoGastoModal").load('<?= $ruta ?>tiposdegasto/form', function(){
             $('#btnGuardarTipoGasto').removeAttr("onclick");
             $('#btnGuardarTipoGasto').attr("onclick", "guardar_tipoGasto()");
+            $('#nombre_tipos_gasto').focus();
         });
         $('#tipoGastoModal').modal('show');
     }
 
     function updateSelect(id, nombre){
         $('#tipo_gasto_id').append('<option value="' + id + '">' + nombre + '</option>');
-        $('#tipo_gasto_id').val(id);
         $("#tipo_gasto_id").trigger('chosen:updated');
+        $('#tipo_gasto').append('<option value="' + id + '">' + nombre + '</option>');
+        $('#tipo_gasto').val(id);
+        $("#tipo_gasto").trigger('chosen:updated');
     }
 
     function guardar_tipoGasto(){

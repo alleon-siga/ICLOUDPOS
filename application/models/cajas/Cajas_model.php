@@ -390,6 +390,18 @@ class cajas_model extends CI_Model
         ));
     }
 
+    function editar_pendiente($data)
+    {
+        $this->db->where('ref_id', $data['id']);
+        $this->db->where('tipo', 'GASTOS');
+        $this->db->update('caja_pendiente', array(
+            'caja_desglose_id' => $data['cuenta_id'],
+            'usuario_id' => $this->session->userdata('nUsuCodigo'),
+            'monto' => $data['monto'],
+            'estado' => 0,
+        ));
+    }
+
     function update_pendiente($data)
     {
 
