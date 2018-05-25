@@ -12,12 +12,8 @@ class Producto_api_model extends CI_Model
     {
         $result = $this->db->select('producto_id, producto_codigo_interno as codigo, producto_nombre, producto_codigo_barra as barra')
             ->from('producto')
-            ->join('unidades_has_precio', 'unidades_has_precio.id_producto = producto.producto_id')
-            ->where('producto.producto_id', $str_producto)
-            ->where('producto.producto_estatus', '1')
-            ->where('producto.producto_estado', '1')
-            ->where('unidades_has_precio.id_precio', 3)
-            ->group_by('producto.producto_id')
+            ->where('producto_id', $str_producto)
+            ->group_by('producto_id')
             ->get()->result_array();
 
         return $result;
@@ -28,12 +24,12 @@ class Producto_api_model extends CI_Model
         $result = $this->db->select('producto_id, producto_codigo_interno as codigo, producto_nombre, producto_codigo_barra as barra')
             ->from('producto')
             ->join('unidades_has_precio', 'unidades_has_precio.id_producto = producto.producto_id')
+            ->where('producto_estatus', '1')
+            ->where('producto_estado', '1')
+            ->where('unidades_has_precio.id_precio', 3)
             ->like('producto_nombre', $str_producto)
             ->or_like('producto_codigo_interno', $str_producto)
-            ->where('producto.producto_estatus', '1')
-            ->where('producto.producto_estado', '1')
-            ->where('unidades_has_precio.id_precio', 3)
-            ->group_by('producto.producto_id')
+            ->group_by('producto_id')
             ->limit(500)
             ->get()->result_array();
 
