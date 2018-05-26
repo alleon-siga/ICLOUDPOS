@@ -164,7 +164,7 @@ class producto extends MY_Controller
     }
 
 
-    function stock($local = 0, $detalle = 0)
+    function stock($local = 0, $detalle = 0, $unidadMinima = 0)
     {
         $data = $this->_prepareFlashData();
 
@@ -178,6 +178,7 @@ class producto extends MY_Controller
         $data['columnas'] = $this->columnas;
         $data['local_selected'] = $local;
         $data['detalle_checked'] = $detalle;
+        $data['unidadMinima'] = $unidadMinima;
 
         $data["lstProducto"] = $this->_getUnidades($data['lstProducto'], false);
 
@@ -977,7 +978,7 @@ class producto extends MY_Controller
 
     }
 
-    function pdf_stock($local = 0, $detalle = 0)
+    function pdf_stock($local = 0, $detalle = 0, $unidadMinima = 0)
     {
 
         $this->load->library('mpdf53/mpdf');
@@ -994,6 +995,7 @@ class producto extends MY_Controller
         $data["local"] = $this->local_model->get_by('int_local_id', $local);
         $data['local_selected'] = $local;
         $data['detalle_checked'] = $detalle;
+        $data['unidadMinima'] = $unidadMinima;
 
         $mpdf = new mPDF('utf-8', 'A4-L');
         $condicion = null;
@@ -1017,122 +1019,22 @@ class producto extends MY_Controller
 
     }
 
-    function excel_stock($local = 0, $detalle = 0)
+    function excel_stock($local = 0, $detalle = 0, $unidadMinima = 0)
     {
-        $local1 = $this->db->get_where('local', array('int_local_id' => $local))->row();
-        $local_nombre = !empty($local1->local_nombre)? $local1->local_nombre : 'TODOS';
-        $local_direccion = !empty($local1->direccion)? $local1->direccion : 'TODOS';
-
         if ($local == 0)
             $local = false;
 
-        $lstProducto = $this->producto_model->get_stock_productos($local);
+        $data["lstProducto"] = $this->producto_model->get_stock_productos($local);
         if ($local == false && $detalle == 0) {
-            $lstProducto = $this->_sinDetalles($lstProducto);
+            $data["lstProducto"] = $this->_sinDetalles($data["lstProducto"]);
         }
-
-        $columnas = $this->columnas;
-        $lstProducto = $this->_getUnidades($lstProducto, false);
-
-
-        // configuramos las propiedades del documento
-
-        $this->phpexcel->getProperties()
-            //->setCreator("Arkos Noem Arenom")
-            //->setLastModifiedBy("Arkos Noem Arenom")
-
-            ->
-            setTitle("STOCK")
-            ->setSubject("STOCK")
-            ->setDescription("STOCK")
-            ->setKeywords("STOCK")
-            ->setCategory("STOCK");
-
-
-        $i = 0;
-
-        $this->phpexcel->setActiveSheetIndex(0)->mergeCells('A1:K1');
-        $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow(0, 1, "EMPRESA: ".valueOption('EMPRESA_NOMBRE'));
-        $this->phpexcel->setActiveSheetIndex(0)->mergeCells('A2:K2');
-        $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow(0, 2, "DIRECCION: ".$local_direccion);
-        $this->phpexcel->setActiveSheetIndex(0)->mergeCells('A3:K3');
-        $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow(0, 3, "UBICACION: ".$local_nombre);
-
-        if (canShowCodigo())
-            $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($i++, 4, getCodigoNombre());
-
-
-        foreach ($columnas as $col) {
-            if ($col->mostrar == TRUE && $col->nombre_columna != 'producto_estado' && $col->nombre_columna != 'producto_codigo_interno' && $col->nombre_columna != 'producto_id') {
-
-                $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($i++, 4, $col->nombre_mostrar);
-            }
-        }
-
-        $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($i++, 4, "UM");
-
-        $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($i++, 4, "CANTIDAD");
-
-        $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($i++, 4, "FRACCION");
-
-        if ($local == false && $detalle == 1)
-            $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($i++, 4, "LOCAL");
-
-        $row = 5;
-        // var_dump($columnas);
-        if (count($lstProducto) > 0) {
-            foreach ($lstProducto as $pd) {
-                $col = 0;
-                if (canShowCodigo())
-                    $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($col++, $row, getCodigoValue(sumCod($pd['producto_id']), $pd['producto_codigo_interno']));
-
-                foreach ($columnas as $colum):
-                    if (array_key_exists($colum->nombre_columna, $pd) and $colum->mostrar == TRUE) {
-                        if ($colum->nombre_columna != 'producto_estado' && $colum->nombre_columna != 'producto_codigo_interno' && $colum->nombre_columna != 'producto_id')
-                            $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($col++, $row, $pd[$colum->nombre_join]);
-                    }
-
-                endforeach;
-                $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($col++, $row, $pd['nombre_unidad']);
-
-                $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($col++, $row, $pd['cantidad']);
-
-
-                if ($pd['fraccion'] != null) {
-
-                    if ($pd['nombre_fraccion'] != "") {
-
-                        $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($col++, $row, $pd['fraccion'] . " " . $pd['nombre_fraccion']);
-                    } else {
-                        $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($col++, $row, $pd['fraccion']);
-                    }
-                }
-
-                if ($local == false && $detalle == 1)
-                    $this->phpexcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($col++, $row, $pd['local_nombre']);
-
-                $row++;
-            }
-        }
-// Renombramos la hoja de trabajo
-        $this->phpexcel->getActiveSheet()->setTitle('STOCK');
-
-
-// configuramos el documento para que la hoja
-// de trabajo nÃºmero 0 sera la primera en mostrarse
-// al abrir el documento
-        $this->phpexcel->setActiveSheetIndex(0);
-
-
-// redireccionamos la salida al navegador del cliente (Excel2007)
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="STOCK.xlsx"');
-        header('Cache-Control: max-age=0');
-
-        $objWriter = PHPExcel_IOFactory::createWriter($this->phpexcel, 'Excel2007');
-        $objWriter->save('php://output');
-
-
+        $data['columnas'] = $this->columnas;
+        $data["lstProducto"] = $this->_getUnidades($data['lstProducto'], false);
+        $data["local"] = $this->local_model->get_by('int_local_id', $local);
+        $data['local_selected'] = $local;
+        $data['detalle_checked'] = $detalle;
+        $data['unidadMinima'] = $unidadMinima;
+        echo $this->load->view('menu/producto/reporte_stock_excel', $data, true);
     }
 
 }

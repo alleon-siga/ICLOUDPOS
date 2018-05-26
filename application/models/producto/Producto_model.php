@@ -768,7 +768,8 @@ class producto_model extends CI_Model
         `familia`.`nombre_familia`,
         `grupos`.`nombre_grupo`,
         `proveedor`.`proveedor_nombre`,
-        `impuestos`.`nombre_impuesto`
+        `impuestos`.`nombre_impuesto`,
+        `unidades_has_producto`.`unidades`
         FROM
         `producto`
             LEFT JOIN

@@ -1,39 +1,23 @@
-<style type="text/css">
-    table {
-        width: 100%;
-        border-color: #111 1px solid;
-    }
-
-    thead, th {
-        background: #585858;
-        /* #e7e6e6*/
-        border-color: #111 1px solid;
-        color: #fff;
-    }
-
-    tbody tr {
-        border-color: #111 1px solid;
-    }
-
-    h2 {
-        text-align: center;
-    }
-</style>
-<h4 style="text-align: center;">STOCK DE PRODUCTOS</h4>
-<h5>EMPRESA: <?= valueOption('EMPRESA_NOMBRE') ?></h5>
-<h5>DIRECCI&Oacute;N: <?php echo empty($local["direccion"])? 'TODOS' : $local["direccion"] ?></h5>
-<h5>UBICACION: <?php echo empty($local["local_nombre"])? 'TODOS' : $local["local_nombre"] ?></h5>
-
+<?php
+    header("Content-type: application/octet-stream");
+    header("Content-Disposition: attachment; filename=stock.xls");
+    header("Pragma: no-cache");
+    header("Expires: 0");
+?>
+<h4 style="text-align: center; margin: 0;">STOCK DE PRODUCTOS</h4>
+<h5 style="margin: 0;">EMPRESA: <?= valueOption('EMPRESA_NOMBRE') ?></h5>
+<h5 style="margin: 0;">DIRECCI&Oacute;N: <?php echo empty($local["direccion"])? 'TODOS' : $local["direccion"] ?></h5>
+<h5 style="margin: 0;">UBICACION: <?php echo empty($local["local_nombre"])? 'TODOS' : $local["local_nombre"] ?></h5>
 <table cellpadding="5">
     <thead>
         <tr>
             <?php if (canShowCodigo()): ?>
-                <th><?php echo getCodigoNombre() ?></th>
+                <th><?php echo utf8_decode(getCodigoNombre()) ?></th>
             <?php endif; ?>
             <?php foreach ($columnas as $col): ?>
                 <?php
                 if ($col->mostrar == TRUE && $col->nombre_columna != 'producto_estado' && $col->nombre_columna != 'producto_codigo_interno' && $col->nombre_columna != 'producto_id') {
-                    echo " <th>" . $col->nombre_mostrar . "</th>";
+                    echo " <th>" . utf8_decode($col->nombre_mostrar) . "</th>";
                 }
 
                 ?>

@@ -1688,14 +1688,13 @@ $primary_nav = array(
                             <div class="controls col-md-8">
                                 <select class="form-control" id="usuarios" name="usuarios" class='cho form-control'
                                         required="true">
-                                    <?php if ($this->session->userdata('grupo') != 8): ?>
+                                    <?php if ($this->session->userdata('grupo') != 8 && $this->session->userdata('grupo') != 11): ?>
                                         <option value="0">TODOS</option>
                                     <?php endif; ?>
                                     <?php foreach ($usuarios as $usuario) { ?>
                                         <option
                                                 value="<?= $usuario->nUsuCodigo ?>"><?= $usuario->nombre ?></option>
                                     <?php } ?>
-
                                 </select>
                             </div>
                         </div>

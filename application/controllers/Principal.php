@@ -46,7 +46,7 @@ class principal extends MY_Controller
         $data['locales'] = $this->local_model->get_all_usu($this->session->userdata('nUsuCodigo'));
         $data['monedas'] = $this->db->get_where('moneda', array('status_moneda' => '1'))->result();
 
-        if ($this->session->userdata('grupo') != 8) {
+        if ($this->session->userdata('grupo') != 8 && $this->session->userdata('grupo') != 11) {
             $data['usuarios'] = $this->db->query("
                 SELECT 
                     *
