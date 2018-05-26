@@ -8,7 +8,12 @@ define('ARCHIVOS_PATH', __DIR__ . '/archivos/');
 
 class FacturacionSunat
 {
-    public $qr_path = ARCHIVOS_PATH . 'qr/';
+
+    public function __construct()
+    {
+        $this->qr_path = ARCHIVOS_PATH . 'qr/';
+    }
+
     // Proceso y envio el documento a la SUNAT
     /*=============================================================================================
 
