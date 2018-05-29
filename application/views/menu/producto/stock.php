@@ -41,27 +41,6 @@
                  <i class="fa fa-angle-double-up "> Duplicar</i>
              </a>
          </div>-->
-
-        <div class="col-md-3">
-            <a class="btn btn-default" onclick="unidadesycostos();">
-                <i class="fa fa-list-ol"> Unidades y costos</i>
-            </a>
-        </div>
-
-
-        <div class="col-md-3">
-            <a class="btn btn-default" onclick="ver_imagen();">
-                <i class="fa fa-columns "> Ver Imagen</i>
-            </a>
-        </div>
-
-        <?php if (getProductoSerie() == "SI"): ?>
-            <div class="col-md-3">
-                <a class="btn btn-default" onclick="ver_serie();">
-                    <i class="fa fa-barcode"> Ver Series</i>
-                </a>
-            </div>
-        <?php endif; ?>
         <!--<div class="col-md-1">
             <a class="btn btn-default" onclick="confirmar();">
                 <i class="fa fa-remove"> Eliminar</i>
@@ -77,38 +56,53 @@
 
     <div class="row">
         <div class="col-md-2">
-            <label class="panel-admin-text">Ubicaci&oacute;n Inventario:</label>
+            <label class="control-label panel-admin-text">Ubicaci&oacute;n Inventario:</label>
+        <?php if (count($locales) == 1): ?>
+            <input type="hidden" id="locales" value="<?= $locales[0]['int_local_id'] ?>">
+            <h4><?php echo $locales[0]['local_nombre'] ?></h4>
+        <?php else: ?>
+            <select class="form-control" id="locales">
+                    <option value="TODOS">TODOS</option>
+                <?php foreach ($locales as $local) { ?>
+                    <option value="<?= $local['int_local_id'] ?>"
+                        <?=$local_selected == $local['int_local_id'] ? 'selected' : ''?>><?= $local['local_nombre'] ?></option>
+                <?php } ?>
+
+            </select>
+        <?php endif; ?>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
+            <div style="padding-top: 30px;"></div>
             <div class="form-group">
-            <?php if (count($locales) == 1): ?>
-                <input type="hidden" id="locales" value="<?= $locales[0]['int_local_id'] ?>">
-                <h4><?php echo $locales[0]['local_nombre'] ?></h4>
-            <?php else: ?>
-                <select class="form-control" id="locales">
-                        <option value="TODOS">TODOS</option>
-                    <?php foreach ($locales as $local) { ?>
-                        <option value="<?= $local['int_local_id'] ?>"
-                            <?=$local_selected == $local['int_local_id'] ? 'selected' : ''?>><?= $local['local_nombre'] ?></option>
-                    <?php } ?>
-
-                </select>
-            <?php endif; ?>
+                <div id="detalle_div" style="display: <?=$local_selected == false ? 'block' : 'none'?>;">
+                    <?php if (count($locales) > 1): ?>
+                    <input type="checkbox" name="mostrar_detalles" id="mostrar_detalles" <?=$detalle_checked==1 ? 'checked' : ''?>>
+                    <label for="mostrar_detalles" style="cursor: pointer;">Mostrar Detalles</label>
+                    <?php endif; ?>
+                </div>
+                <input type="checkbox" name="unidades_minimas" id="unidades_minimas" <?=$unidadMinima==1 ? 'checked' : ''?>>
+                <label for="unidades_minimas" style="cursor: pointer;">Unidades m&iacute;nimas</label>
             </div>
         </div>
-
-        <div class="col-md-1"></div>
-
-        <div class="col-md-3">
-            <div class="form-group" id="detalle_div" style="display: <?=$local_selected == false ? 'block' : 'none'?>;">
-            <?php if (count($locales) > 1): ?>
-                <input type="checkbox" name="mostrar_detalles" id="mostrar_detalles" <?=$detalle_checked==1 ? 'checked' : ''?>>
-                <label for="mostrar_detalles" style="cursor: pointer;">Mostrar Detalles</label>
-            <?php endif; ?>
-            </div>
+        <div class="col-md-4">
+            <div style="padding-top: 30px;"></div>
+            <a class="btn btn-default" onclick="unidadesycostos();">
+                <i class="fa fa-list-ol"> Unidades y costos</i>
+            </a>
+            <a class="btn btn-warning" onclick="ver_imagen();">
+                <i class="fa fa-columns "> Ver Imagen</i>
+            </a>
         </div>
-
-        <div class="col-md-3">
+        <div class="col-md-2">
+        <?php if (getProductoSerie() == "SI"): ?>
+            <div style="padding-top: 30px;"></div>
+            <a class="btn btn-default" onclick="ver_serie();">
+                <i class="fa fa-barcode"> Ver Series</i>
+            </a>
+        <?php endif; ?>
+        </div>
+        <div class="col-md-2">
+            <div style="padding-top: 30px;"></div>
             <input type="button" value="Buscar" id="buscar_stock" class="btn btn-primary">
         </div>
     </div>
@@ -130,7 +124,9 @@
                 <?php endforeach; ?>
                 <th>UM</th>
                 <th>Cantidad</th>
+            <?php if($unidadMinima==0){ ?>
                 <th>Fracci&oacute;n</th>
+            <?php } ?>
                 <th>Estado</th>
                 <?php if($local_selected == false && $detalle_checked == 1):?>
                     <th>Ubicaci&oacute;n</th>
@@ -159,15 +155,21 @@
                             }
                         } ?>
                     <?php endforeach; ?>
-
                     <td>
-                        <?php echo $pd['nombre_unidad']; ?>
-
+                <?php if($unidadMinima == 0){ ?>
+                    <?php echo $pd['nombre_unidad']; ?>
+                <?php }else{ ?>
+                    <?php echo !empty($pd['nombre_fraccion'])? $pd['nombre_fraccion'] : $pd['nombre_unidad']; ?>
+                <?php } ?>
                     </td>
                     <td id="cantidad_prod_<?php echo $pd['producto_id'] ?>">
-                        <?php echo $pd['cantidad']; ?>
-
+                <?php if($unidadMinima == 0){ ?>
+                    <?php echo $pd['cantidad']; ?>
+                <?php }else{ ?>
+                    <?php echo ($pd['unidades'] * $pd['cantidad']) + $pd['fraccion']; ?>
+                <?php } ?>
                     </td>
+                    <?php if($unidadMinima == 0){ ?>
                     <td>
                         <?php if ($pd['fraccion'] != null) {
                             echo $pd['fraccion'];
@@ -175,9 +177,8 @@
                                 echo " " . $pd['nombre_fraccion'];
                             }
                         } ?>
-
                     </td>
-
+                    <?php } ?>
                     <td>
                         <?php if ($pd['producto_estado'] == 0) {
                             echo "INACTIVO";
@@ -354,7 +355,7 @@
         TablesDatatables.init();
 
 
-        $("#locales, #mostrar_detalles").on('change', function(){
+        $("#locales, #mostrar_detalles, #unidades_minimas").on('change', function(){
             $("#productostable").hide();
             $("#pdf").hide();
             $("#excel").hide();
@@ -370,12 +371,18 @@
         $("#pdf").click(function (e) {
             var url = '<?=base_url('producto/pdf_stock')?>';
             if($("#locales").val() != "TODOS"){
-                url += '/' + $('#locales').val();
-            }
-            else{
+                url += '/' + $('#locales').val() + '/0';
+            }else{
                 if($("#mostrar_detalles").prop('checked')){
                     url += '/0/1';
+                }else{
+                    url += '/0/0';    
                 }
+            }
+            if($("#unidades_minimas").prop('checked')){
+                url += '/1';
+            }else{
+                url += '/0';
             }
             $("#pdf").attr('href', url);
             return true;
@@ -384,12 +391,18 @@
         $("#excel").click(function (e) {
             var url = '<?=base_url('producto/excel_stock')?>';
             if($("#locales").val() != "TODOS"){
-                url += '/' + $('#locales').val();
-            }
-            else{
+                url += '/' + $('#locales').val() + '/0';
+            }else{
                 if($("#mostrar_detalles").prop('checked')){
                     url += '/0/1';
+                }else{
+                    url += '/0/0';    
                 }
+            }
+            if($("#unidades_minimas").prop('checked')){
+                url += '/1';
+            }else{
+                url += '/0';
             }
 
             $("#excel").attr('href', url);
@@ -403,16 +416,20 @@
                 show: true,
                 backdrop: 'static'
             });
-
             if($("#locales").val() != "TODOS"){
-                url += '/' + $('#locales').val();
-            }
-            else{
+                url += '/' + $('#locales').val() + '/0';
+            }else{
                 if($("#mostrar_detalles").prop('checked')){
                     url += '/0/1';
+                }else{
+                    url += '/0/0';    
                 }
             }
-
+            if($("#unidades_minimas").prop('checked')){
+                url += '/1';
+            }else{
+                url += '/0';
+            }
             $.ajax({
                 url: url,
                 success: function (data) {

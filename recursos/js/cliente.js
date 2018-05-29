@@ -528,9 +528,9 @@ function validar_ruc_n(){
     var consigue_ruc=false;
     $(".ruc").each(function(){
         var ruc =$(this).val();
-        if($(this).val()!="") {
+        //if($(this).val()!="") {
            // if (ruc.length<11 || ruc.length>11) {
-            if (ruc.length == 11) {
+            //if (ruc.length == 11) {
 
                 if (consigue_ruc == false) {
                     $.ajax({
@@ -547,8 +547,14 @@ function validar_ruc_n(){
                                 }, 1);
 
                                 var growlType = 'warning';
+                                var a = '';
+                                if($('#tipo_cliente').val()==1){ //empresa
+                                    a = $('#lblIdenRuc').text();
+                                }else{
+                                    a = $('#lblIdenDni').text();
+                                }
 
-                                $.bootstrapGrowl('<h4>El Ruc ingresado ya existe, por favor coloque otro</h4>', {
+                                $.bootstrapGrowl('<h4>El '+ a +' ingresado ya existe, por favor coloque otro</h4>', {
                                     type: growlType,
                                     delay: 2500,
                                     allow_dismiss: true
@@ -560,7 +566,7 @@ function validar_ruc_n(){
                         }
                     })
                 }
-            }else{
+            /*}else{
                 setTimeout(function () {
                     $(this).focus()
                 }, 1);
@@ -572,8 +578,8 @@ function validar_ruc_n(){
                     allow_dismiss: true
                 });
                 consigue_ruc = true
-            }
-        }else{
+            }*/
+        /*}else{
             setTimeout(function () {
                 $(this).focus()
             }, 1);
@@ -585,9 +591,7 @@ function validar_ruc_n(){
                 allow_dismiss: true
             });
             consigue_ruc = true
-        }
-
-
+        }*/
     });
     if(consigue_ruc==true){
         return consigue_ruc;
@@ -596,7 +600,7 @@ function validar_ruc_n(){
 
     var consigue_razon=false;
     $(".razon_social").each(function(){
-        if($(this).val()!="") {
+        //if($(this).val()!="") {
             if (consigue_ruc == false) {
                 $.ajax({
                     url: base_url + 'cliente/validar_razon_social',
@@ -625,7 +629,7 @@ function validar_ruc_n(){
                     }
                 })
             }
-        }else{
+        /*}else{
             setTimeout(function () {
                 $(this).focus()
             }, 1);
@@ -638,7 +642,7 @@ function validar_ruc_n(){
             });
             consigue_razon = true
 
-        }
+        }*/
 
     });
     return consigue_razon;
@@ -646,21 +650,22 @@ function validar_ruc_n(){
 }
 
 function guardarcliente() {
-    /*if($("#tipo_cliente").val()=='1'){
-        validar_ruc_n();
-    }*/
-        if ($('#tipo_cliente').val() == "") {
-                
-                var growlType = 'warning';
+    var documento = validar_ruc_n();
+    if(documento==true){
+        return false;
+    }
+    if ($('#tipo_cliente').val() == "") {
+            
+            var growlType = 'warning';
 
-                $.bootstrapGrowl('<h4>Debe seleccionar el tipo de cliente</h4>', {
-                    type: growlType,
-                    delay: 2500,
-                    allow_dismiss: true
-                });
+            $.bootstrapGrowl('<h4>Debe seleccionar el tipo de cliente</h4>', {
+                type: growlType,
+                delay: 2500,
+                allow_dismiss: true
+            });
 
-            return false
-        }
+        return false
+    }
         //alert($('#tipo_cliente').val());
 
         if ($("#razon_social_j").val() == '' && $('#tipo_cliente').val()=='1') {

@@ -9,6 +9,7 @@ class ajuste_model extends CI_Model
         $this->load->database();
         $this->load->model('kardex/kardex_model');
         $this->load->model('unidades/unidades_model');
+        $this->load->model('correlativos/correlativos_model');
     }
 
 
@@ -150,4 +151,9 @@ class ajuste_model extends CI_Model
         }
     }
 
+    function getGuiaRemision($local){
+        //Correlativo para la guia de remision
+        $correlativo = $this->correlativos_model->get_correlativo($local, 4);
+        return $correlativo;
+    }
 }

@@ -1680,7 +1680,7 @@ $primary_nav = array(
                         </div>
 
                         <div class="control-group row"
-                             style="display: <?= ($this->session->userdata('grupo') == 2 || $this->session->userdata('grupo') == 9) ? 'block' : 'none' ?>">
+                             style="display: <?= ($this->session->userdata('grupo') != 2 && $this->session->userdata('grupo') != 9) ? 'none' : 'block' ?>">
                             <br>
                             <div class="col-md-1"></div>
                             <label for="fecha" class="control-label col-md-2">Usuarios:</label>
@@ -1688,14 +1688,13 @@ $primary_nav = array(
                             <div class="controls col-md-8">
                                 <select class="form-control" id="usuarios" name="usuarios" class='cho form-control'
                                         required="true">
-                                    <?php if ($this->session->userdata('grupo') != 8): ?>
+                                    <?php if (!($this->session->userdata('grupo') != 2 && $this->session->userdata('grupo') != 9)): ?>
                                         <option value="0">TODOS</option>
                                     <?php endif; ?>
                                     <?php foreach ($usuarios as $usuario) { ?>
                                         <option
                                                 value="<?= $usuario->nUsuCodigo ?>"><?= $usuario->nombre ?></option>
                                     <?php } ?>
-
                                 </select>
                             </div>
                         </div>

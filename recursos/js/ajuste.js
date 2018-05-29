@@ -178,10 +178,20 @@ $(document).ready(function () {
 
     $("#tipo_documento").on('change', function () {
         $("#documento_text").html($("#tipo_documento option:selected").text());
-    });
-
-    $("#tipo_movimiento").on('change', function () {
-        $("#movimiento_text").html($("#tipo_movimiento option:selected").text());
+        if($(this).val()=='09'){
+            var local_id = $("#local_id").val();
+            $.ajax({
+                url: ruta + 'ajuste/getGuiaRemision/' + local_id,
+                dataType: 'json',
+                success: function(data){
+                    $('#serie_doc').attr('value', data.serie);
+                    $('#numero_doc').attr('value', data.correlativo);
+                }
+            })
+        }else{
+            $('#serie_doc').attr('value', '');
+            $('#numero_doc').attr('value', '');
+        }
     });
 
 

@@ -1,4 +1,4 @@
-<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+    <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 class venta_new_model extends CI_Model
 {
@@ -280,7 +280,7 @@ class venta_new_model extends CI_Model
         return $correlativo->serie . ' - ' . sumCod($correlativo->correlativo, 6);
     }
 
-    function facturar_venta($venta_id, $iddoc)
+    function facturar_venta($venta_id, $iddoc = '')
     {
         $venta = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
         $correlativo = $this->correlativos_model->get_correlativo($venta->local_id, $venta->id_documento);
