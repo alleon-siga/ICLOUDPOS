@@ -228,9 +228,7 @@ class venta_new extends MY_Controller
         $data['productos'] = $this->producto_model->get_productos_list();
         if ($this->session->userdata('grupo') == 2) { //perfil de administrador
             $data['usuarios'] = $this->usuario_model->select_all_user(8);
-        }else{
-            $data['usuarios'] = $this->usuario_model->buscar_id($usu);
-        }        
+        }
         $data['barra_activa'] = $this->db->get_where('columnas', array('id_columna' => 36))->row();
         $data["clientes"] = $this->cliente_model->get_all();
         $data["monedas"] = $this->monedas_model->get_all();

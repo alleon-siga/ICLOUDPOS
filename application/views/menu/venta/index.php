@@ -96,21 +96,6 @@
                         </div>
                     </div>
                 </div>
-                <hr class="hr-margin-10">
-                <div class="row">
-                    <div class="col-md-2">
-                        <label class="control-label panel-admin-text">Vendedor:</label>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="help-key badge label-success" style="display: none;">2</div>
-                        <select name="vendedor_id" id="vendedor_id" class='form-control'>
-                            <?php foreach ($usuarios as $usuario): ?>
-                                <option <?= $usuario->nUsuCodigo == $this->session->userdata('nUsuCodigo') ? 'selected="selected"' : '' ?>
-                                        value="<?= $usuario->nUsuCodigo ?>"><?= $usuario->username ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                </div>
                 <!--SECCION COMPLETA DE LA AGREGACION DE PRODUCTOS-->
                 <div class="row" id="loading" style="display: none;">
                     <div class="col-md-12 text-center">
@@ -240,7 +225,6 @@
                                 <h6 id="precio_unitario_um"
                                     style="text-align: center; margin-bottom: 0; margin-top: 2px;"></h6>
                             </div>
-
                             <div class="col-md-1 text-right" style="padding-right: 2px;">
                                 <label class="control-label panel-admin-text">Descuento:</label>
                             </div>
@@ -254,7 +238,6 @@
                                     <div class="input-group-addon">%</div>
                                 </div>
                             </div>
-
                             <div class="col-md-1 text-right" style="padding-right: 2px;">
                                 <label class="control-label panel-admin-text">SubTotal:</label>
                             </div>
@@ -315,7 +298,23 @@
                                value="<?= date('d/m/Y') ?>" readonly>
                     </div>
                 </div>
-
+                <?php if(isset($usuarios)){ ?>
+                <div class="row">
+                    <div class="col-md-5 label-title">
+                        <label class="control-label">Vendedor:</label>
+                    </div>
+                    <div class="col-md-7" id="moneda_block_text">
+                        <select name="vendedor_id" id="vendedor_id" class='form-control'>
+                            <?php foreach ($usuarios as $usuario): ?>
+                                <option <?= $usuario->nUsuCodigo == $this->session->userdata('nUsuCodigo') ? 'selected="selected"' : '' ?>
+                                        value="<?= $usuario->nUsuCodigo ?>"><?= $usuario->username ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+                <?php }else{ ?>
+                <input type="hidden" name="vendedor_id" id="vendedor_id" value="<?= $this->session->userdata('nUsuCodigo') ?>">
+                <?php } ?>
                 <!--SELECCION MONEDA-->
                 <div class="row">
                     <div class="col-md-5 label-title">
@@ -338,7 +337,6 @@
                         </select>
                     </div>
                 </div>
-
                 <!--SELECCION TASA DE LA MONEDA-->
                 <div id="block_tasa" style="display:none;" class="row">
                     <div class="col-md-5 label-title">
