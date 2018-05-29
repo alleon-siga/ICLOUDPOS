@@ -46,7 +46,9 @@ class principal extends MY_Controller
         $data['locales'] = $this->local_model->get_all_usu($this->session->userdata('nUsuCodigo'));
         $data['monedas'] = $this->db->get_where('moneda', array('status_moneda' => '1'))->result();
 
-        if ($this->session->userdata('grupo') != 8 && $this->session->userdata('grupo') != 11) {
+        if($this->session->userdata('grupo') != 2 && $this->session->userdata('grupo') != 9){
+            $data['usuarios'] = $this->db->get_where('usuario', array('nUsuCodigo' => $this->session->userdata('nUsuCodigo')))->result();
+        }else{
             $data['usuarios'] = $this->db->query("
                 SELECT 
                     *
@@ -60,9 +62,8 @@ class principal extends MY_Controller
                         WHERE
                             usuario_id = " . $this->session->userdata('nUsuCodigo') . ")
             ")->result();
-        } else {
-            $data['usuarios'] = $this->db->get_where('usuario', array('nUsuCodigo' => $this->session->userdata('nUsuCodigo')))->result();
         }
+
 //        $data = _prepareFlashData();
         //$data['ventashoy'] = count($this->venta_model->get_ventas_by(array('DATE(fecha)'=>date('Y-m-d'),'venta_status'=>COMPLETADO)));
         $data['ventashoy'] = 0;

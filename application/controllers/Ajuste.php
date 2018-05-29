@@ -167,6 +167,10 @@ class Ajuste extends MY_Controller
 
         $ajuste_id = $this->ajuste_model->save_ajuste($ajuste, $detalles_productos, $otros_val);
 
+        if($ajuste['documento'] == '09'){ //Si es la guia de remision
+            //Correlativo para la guia de remision
+            $this->correlativos_model->sumar_correlativo($ajuste['local_id'], 4);
+        }
 
         if ($ajuste_id) {
             $data['success'] = '1';
@@ -264,6 +268,11 @@ class Ajuste extends MY_Controller
         $data = array();
 
         $this->load->view('menu/ajuste/reporte_list', $data);
+    }
+
+    function getGuiaRemision($local_id){
+        $data = $this->ajuste_model->getGuiaRemision($local_id);
+        echo json_encode($data);
     }
 
 }

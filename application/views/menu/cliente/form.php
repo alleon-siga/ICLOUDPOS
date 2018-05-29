@@ -116,8 +116,8 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <label class="control-label panel-admin-text"><?= $term[0]->valor ?></label>
-                                <input type="text" name="ruc_j" value="<?php if (isset($cliente['identificacion'])) echo  $cliente['identificacion']; ?>" id="ruc_j" typeClass="DNI" class="form-control dni" />
+                                <label id="lblIdenDni" class="control-label panel-admin-text"><?= $term[0]->valor ?></label>
+                                <input type="text" name="ruc_j" value="<?php if (isset($cliente['identificacion'])) echo  $cliente['identificacion']; ?>" id="ruc_j" typeClass="DNI" class="form-control dni ruc" />
                             </div>
                         </div>
                         <div class="row">
@@ -402,7 +402,7 @@
 
                         <div class="row">
                             <div class="col-md-12">
-                                <label class="control-label panel-admin-text"><?= $term[1]->valor ?></label>
+                                <label id="lblIdenRuc" class="control-label panel-admin-text"><?= $term[1]->valor ?></label>
                                 <input type="text" name="ruc_j" value="<?php if (isset($cliente['identificacion'])) echo  $cliente['identificacion']; ?>" id="ruc_j" class="form-control ruc" />
                             </div>
                         </div>

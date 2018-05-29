@@ -23,6 +23,7 @@ class venta_new extends MY_Controller
             $this->load->model('metodosdepago/metodos_pago_model');
             $this->load->model('diccionario_termino/diccionario_termino_model');
             $this->load->model('clientesgrupos/clientes_grupos_model');
+            $this->load->model('usuario/usuario_model');
         } else {
             redirect(base_url(), 'refresh');
         }
@@ -225,6 +226,11 @@ class venta_new extends MY_Controller
 
         $data['locales'] = $this->local_model->get_local_by_user($this->session->userdata('nUsuCodigo'));
         $data['productos'] = $this->producto_model->get_productos_list();
+        if ($this->session->userdata('grupo') == 2) { //perfil de administrador
+            $data['usuarios'] = $this->usuario_model->select_all_user(8);
+        }else{
+            $data['usuarios'] = $this->usuario_model->buscar_id($usu);
+        }        
         $data['barra_activa'] = $this->db->get_where('columnas', array('id_columna' => 36))->row();
         $data["clientes"] = $this->cliente_model->get_all();
         $data["monedas"] = $this->monedas_model->get_all();
@@ -262,7 +268,7 @@ class venta_new extends MY_Controller
         $venta['local_id'] = $this->input->post('local_venta_id');
         $venta['id_documento'] = $this->input->post('tipo_documento');
         $venta['id_cliente'] = $this->input->post('cliente_id');
-        $venta['id_usuario'] = $this->session->userdata('nUsuCodigo');
+        $venta['id_usuario'] = $this->input->post('vendedor_id'); //$this->session->userdata('nUsuCodigo');
         $venta['condicion_pago'] = $this->input->post('tipo_pago');
         $venta['id_moneda'] = $this->input->post('moneda_id');
         $venta['tasa_cambio'] = $this->input->post('tasa');

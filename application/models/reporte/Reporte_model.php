@@ -578,9 +578,9 @@ class reporte_model extends CI_Model
 
     function getUtilidadProducto($params)
     {
-        $where = "v.venta_status='COMPLETADO' AND ";
+        $where = "v.venta_status='COMPLETADO'";
         if($params['local_id']>0){
-            $where .= "v.local_id = ".$params['local_id'];
+            $where .= " AND v.local_id = ".$params['local_id'];
         }
         if(!empty($params['fecha_ini']) && !empty($params['fecha_fin'])){
             if(!empty($where)){
@@ -589,7 +589,7 @@ class reporte_model extends CI_Model
             $where .= "v.fecha >= '".$params['fecha_ini']."' AND v.fecha <= '".$params['fecha_fin']."'";
         }
 
-        $query = "SELECT v.venta_id, DATE_FORMAT(v.fecha, '%d/%m/%Y') AS fecha, pr.proveedor_nombre, p.producto_nombre, u.nombre_unidad, SUM(up.unidades * dv.cantidad) AS cantidad, dv.detalle_costo_promedio, dv.detalle_importe, l.local_nombre, dv.detalle_costo_ultimo, dv.impuesto_porciento, v.tipo_impuesto
+        $query = "SELECT v.venta_id, DATE_FORMAT(v.fecha, '%d/%m/%Y') AS fecha, pr.proveedor_nombre, p.producto_nombre, u.nombre_unidad, SUM(up.unidades * dv.cantidad) AS cantidad, dv.detalle_costo_promedio, dv.detalle_importe, l.local_nombre, IF(dv.detalle_costo_ultimo>0, dv.detalle_costo_ultimo, pcu.costo) AS detalle_costo_ultimo, dv.impuesto_porciento, v.tipo_impuesto
             FROM detalle_venta dv
             INNER JOIN venta v ON v.venta_id=dv.id_venta 
             INNER JOIN producto p ON p.producto_id=dv.id_producto 
@@ -603,7 +603,8 @@ class reporte_model extends CI_Model
                 where unidades_has_producto.producto_id = dv.id_producto
                 ORDER BY orden DESC LIMIT 1
             ) = up2.id_unidad 
-            INNER JOIN unidades u ON u.id_unidad=up2.id_unidad";
+            INNER JOIN unidades u ON u.id_unidad=up2.id_unidad
+            INNER JOIN producto_costo_unitario pcu ON  p.producto_id = pcu.producto_id AND v.id_moneda = pcu.moneda_id AND activo=1 ";
         if(!empty($where)){
             $query .= " WHERE ". $where;
         }

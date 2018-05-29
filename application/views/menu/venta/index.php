@@ -96,7 +96,21 @@
                         </div>
                     </div>
                 </div>
-
+                <hr class="hr-margin-10">
+                <div class="row">
+                    <div class="col-md-2">
+                        <label class="control-label panel-admin-text">Vendedor:</label>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="help-key badge label-success" style="display: none;">2</div>
+                        <select name="vendedor_id" id="vendedor_id" class='form-control'>
+                            <?php foreach ($usuarios as $usuario): ?>
+                                <option <?= $usuario->nUsuCodigo == $this->session->userdata('nUsuCodigo') ? 'selected="selected"' : '' ?>
+                                        value="<?= $usuario->nUsuCodigo ?>"><?= $usuario->username ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
                 <!--SECCION COMPLETA DE LA AGREGACION DE PRODUCTOS-->
                 <div class="row" id="loading" style="display: none;">
                     <div class="col-md-12 text-center">
