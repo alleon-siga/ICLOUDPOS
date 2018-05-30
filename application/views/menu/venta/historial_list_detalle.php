@@ -415,7 +415,7 @@
                                     <td id="producto_codigo_<?= $detalle->detalle_id ?>"><?= getCodigoValue($detalle->producto_id, $detalle->producto_codigo_interno) ?></td>
                                     <td id="producto_nombre_<?= $detalle->detalle_id ?>"><?= $detalle->producto_nombre ?></td>
                                     <td id="cantidad_<?= $detalle->detalle_id ?>"
-                                        data-cantidad="<?= $detalle->cantidad ?>"><?= $detalle->cantidad ?></td>
+                                        data-cantidad="<?= number_format($detalle->cantidad, 0) ?>"><?= number_format($detalle->cantidad, 0) ?></td>
                                     <td style="width: 150px;">
                                         <input class="form-control devolver_input"
                                                id="cantidad_devuelta_<?= $detalle->detalle_id ?>"
@@ -477,7 +477,7 @@
             var cantidad_td = $('#cantidad_' + id);
             var subtotal_td = $('#subtotal_' + id);
 
-            cantidad_td.html(parseFloat(cantidad - devolver).toFixed(2));
+            cantidad_td.html(parseFloat(cantidad - devolver).toFixed(0));
             subtotal_td.html(parseFloat((cantidad - devolver) * precio).toFixed(2));
 
             var subtotales = 0;

@@ -132,7 +132,7 @@ class usuario extends MY_Controller
             //$local = $this->session->userdata('id_local');
             $grupo = $this->input->post('grupo', true);
             $identificacion = $this->input->post('identificacion', true);
-            $activo = !empty($activo) ? true : false;
+            $activo = !empty($activo) ? 1 : 0;
             $local_array = $this->input->post('chlocales', true);
             $porcentaje_comision = $this->input->post('comision',true);
 
@@ -142,8 +142,7 @@ class usuario extends MY_Controller
                 $usuario['grupo'] = $grupo;
             if (!empty($identificacion))
                 $usuario['identificacion'] = $identificacion;
-            if (!empty($activo))
-                $usuario['activo'] = $activo;
+            $usuario['activo'] = $activo;
             if (!empty($porcentaje_comision))
                 $usuario['porcentaje_comision'] = $porcentaje_comision;
             else

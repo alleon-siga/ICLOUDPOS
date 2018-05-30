@@ -303,7 +303,7 @@
                     <div class="col-md-5 label-title">
                         <label class="control-label">Vendedor:</label>
                     </div>
-                    <div class="col-md-7" id="moneda_block_text">
+                    <div class="col-md-7">
                         <select name="vendedor_id" id="vendedor_id" class='form-control'>
                             <?php foreach ($usuarios as $usuario): ?>
                                 <option <?= $usuario->nUsuCodigo == $this->session->userdata('nUsuCodigo') ? 'selected="selected"' : '' ?>

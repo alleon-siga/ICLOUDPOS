@@ -112,21 +112,5 @@
                 $('input[data-id='+id+']').prop('checked', false);
             }
         });
-        /*$('.chk_hijo').on('click', function(){
-            var id = $(this).attr('data-id');
-            var chk = $('.chk_hijo[data-id='+id+']').length;
-            var cont = 0;
-            $('.chk_hijo[data-id='+id+']').each(function(){
-                if($(this).is(':checked')){
-                    cont++;
-                }
-            });
-
-            if(chk==cont){
-                $('.chk_all[data-id='+id+']').prop('checked', true);
-            }else{
-                $('.chk_all[data-id='+id+']').prop('checked', false);
-            }
-        });*/
     });
 </script>

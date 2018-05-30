@@ -3,6 +3,12 @@ var ruta = $("#base_url").val();
 var lst_producto = [];
 
 $(document).ready(function () {
+    //Nuevo producto
+    /*$("#agregarproveedor").load(ruta + 'proveedor/form');
+    $("#agregarmarca").load(ruta + 'marca/form');
+    $("#agregargrupo").load(ruta + 'grupo/form');
+    $("#agregarfamilia").load(ruta + 'familia/form');
+    $("#agregarlinea").load(ruta + 'linea/form');*/
 
     $(document).off('keyup');
     $(document).off('keydown');
