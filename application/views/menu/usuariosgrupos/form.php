@@ -50,7 +50,7 @@
                                             </td>
 
                                             <td>
-                                                <input name="perms[]" type="checkbox"
+                                                <input title="Seleccionar todos" name="perms[]" data-id="<?= $perm->nOpcion ?>" class="chk_all" type="checkbox"
                                                        value="<?php echo $perm->nOpcion; ?>" <?php echo ($perm->var_opcion_usuario_estado == TRUE) ? 'checked="checked"' : NULL; ?>>
 
                                                 </input>
@@ -63,7 +63,7 @@
 
                                                 </td>
                                                 <td>
-                                                    <input name="perms[]" type="checkbox"
+                                                    <input name="perms[]" class="chk_hijo" type="checkbox" data-id="<?= $permhijo->nOpcionClase ?>"
                                                            value="<?php echo $permhijo->nOpcion; ?>" <?php echo ($permhijo->var_opcion_usuario_estado == TRUE) ? 'checked="checked"' : NULL; ?>>
 
                                                     </input>
@@ -102,3 +102,31 @@
             <!-- /.modal-content -->
         </div>
 </form>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('.chk_all').on('click', function(){
+            var id = $(this).attr('data-id');
+            if($(this).is(':checked')){
+                $('input[data-id='+id+']').prop('checked', true);
+            }else{
+                $('input[data-id='+id+']').prop('checked', false);
+            }
+        });
+        /*$('.chk_hijo').on('click', function(){
+            var id = $(this).attr('data-id');
+            var chk = $('.chk_hijo[data-id='+id+']').length;
+            var cont = 0;
+            $('.chk_hijo[data-id='+id+']').each(function(){
+                if($(this).is(':checked')){
+                    cont++;
+                }
+            });
+
+            if(chk==cont){
+                $('.chk_all[data-id='+id+']').prop('checked', true);
+            }else{
+                $('.chk_all[data-id='+id+']').prop('checked', false);
+            }
+        });*/
+    });
+</script>
