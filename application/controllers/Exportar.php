@@ -216,7 +216,7 @@ class exportar extends MY_Controller
             }
 
             if ($id_usuario != 0) {
-                $this->db->where('venta.id_vendedor', $id_usuario);
+                $this->db->where('caja_movimiento.usuario_id', $id_usuario);
             }
 
             $data['venta_inicial'][$mon['id_moneda']] = $this->db->get()->row();
@@ -236,7 +236,7 @@ class exportar extends MY_Controller
             }
 
             if ($id_usuario != 0) {
-                $this->db->where('venta.id_vendedor', $id_usuario);
+                $this->db->where('caja_movimiento.usuario_id', $id_usuario);
             }
 
             $ventas = $this->db->get()->result();
@@ -279,7 +279,7 @@ class exportar extends MY_Controller
             }
 
             if ($id_usuario != 0) {
-                $this->db->where('venta.id_vendedor', $id_usuario);
+                $this->db->where('caja_movimiento.usuario_id', $id_usuario);
             }
 
             $temp = $this->db->get()->result();
@@ -305,7 +305,7 @@ class exportar extends MY_Controller
             }
 
             if ($id_usuario != 0) {
-                $this->db->where('venta.id_vendedor', $id_usuario);
+                $this->db->where('caja_movimiento.usuario_id', $id_usuario);
             }
 
             $ventas = $this->db->group_by('caja_movimiento.id')->get()->result();
@@ -517,6 +517,7 @@ class exportar extends MY_Controller
                 ->join('caja_desglose', 'caja_desglose.id = caja_movimiento.caja_desglose_id')
                 ->join('caja', 'caja.id = caja_desglose.caja_id')
                 ->join('venta', 'venta.venta_id = caja_movimiento.ref_id')
+                ->where("venta.venta_status != 'ANULADO'")
                 ->where('caja.moneda_id', $mon["id_moneda"])
                 ->where('caja_movimiento.fecha_mov >=', $fecha)
                 ->where('caja_movimiento.fecha_mov <', $fechadespues)
@@ -528,7 +529,7 @@ class exportar extends MY_Controller
             }
 
             if ($id_usuario != 0) {
-                $this->db->where('venta.id_vendedor', $id_usuario);
+                $this->db->where('caja_movimiento.usuario_id', $id_usuario);
             }
 
             $ingreso_efectivo = $this->db->get()->row();
