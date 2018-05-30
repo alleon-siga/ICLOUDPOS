@@ -228,7 +228,11 @@ $(document).ready(function () {
                         form.append(create_unidades_template(index++, data.unidades[i], unidad_minima));
 
                     form_precio.append(create_precio_template(i, data.unidades[i]));
-                    prepare_unidades_value(producto_id, local_id, data.unidades[i]);
+                    var def_value = 0;
+                    if (unidad_minima.id_unidad == data.unidades[i].id_unidad)
+                        def_value = 1;
+
+                    prepare_unidades_value(producto_id, local_id, data.unidades[i], def_value);
                 }
 
 
@@ -252,14 +256,17 @@ $(document).ready(function () {
 
                 refresh_right_panel();
                 refresh_totals();
-            },
-            complete: function (data) {
+// alert(index);
                 $("#loading").hide();
                 $(".block_producto_unidades").show();
 
-                $('.cantidad-input[data-index="0"]').first().trigger('focus');
+                $('.cantidad-input[data-index="' + (--index) + '"]').first().trigger('focus');
+            },
+            complete: function (data) {
             },
             error: function (data) {
+                $("#loading").hide();
+                $(".block_producto_unidades").show();
                 alert('not');
             }
         });
@@ -800,7 +807,7 @@ function save_venta_contado(imprimir) {
                     if (data.venta.facturacion == 1) {
                         show_msg('success', '<h4>Facturacion Electronica:</h4> ' + data.venta.facturacion_nota);
                     }
-                    else{
+                    else {
                         show_msg('danger', '<h4>Facturacion Electronica:</h4> ' + data.venta.facturacion_nota);
                     }
                 }
@@ -1513,13 +1520,13 @@ function create_unidades_template(index, unidad, unidad_minima) {
 }
 
 //preparo los valores de las unidades
-function prepare_unidades_value(producto_id, local_id, unidad) {
+function prepare_unidades_value(producto_id, local_id, unidad, def_value) {
 
     var cantidad = $("#cantidad_" + unidad.id_unidad);
     var cant = get_value_producto(producto_id, local_id, unidad.id_unidad, -1);
     if (cant == -1) {
-        cantidad.attr('value', 0);
-        cantidad.attr('data-value', 0);
+        cantidad.attr('value', def_value);
+        cantidad.attr('data-value', def_value);
     }
     else {
         cantidad.attr('value', cant);
