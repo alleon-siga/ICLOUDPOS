@@ -1,6 +1,7 @@
 ;
 var ruta = $("#base_url").val();
 var lst_producto = [];
+var operaciones = [];
 
 $(document).ready(function () {
     $("#agregarproveedor").load(ruta + 'proveedor/form');
@@ -8,6 +9,18 @@ $(document).ready(function () {
     $("#agregargrupo").load(ruta + 'grupo/form');
     $("#agregarfamilia").load(ruta + 'familia/form');
     $("#agregarlinea").load(ruta + 'linea/form');
+
+    $('#tipo_operacion option').each(function (key, val) {
+        var item = $(val);
+        if (item.val() != '') {
+            operaciones.push({
+                id: item.val(),
+                nombre: item.text()
+            });
+        }
+    });
+
+    $('#tipo_operacion').html('');
 
     $('#refresh_productos').on('click', function () {
         $("#loading_save_venta").modal('show');
@@ -59,7 +72,7 @@ $(document).ready(function () {
     $('.date-picker').datepicker({format: 'dd/mm/yyyy'});
     $('.date-picker').css('cursor', 'pointer');
 
-    $('#producto_id, #local_id, #moneda_id, #tipo_operacion, #tipo_documento').chosen({
+    $('#producto_id, #local_id, #moneda_id, #tipo_documento').chosen({
         search_contains: true
     });
     $('.chosen-container').css('width', '100%');
@@ -151,44 +164,58 @@ $(document).ready(function () {
         $(this).select();
     });
 
+    $('#tipo_movimiento').on('change', function () {
+        var tipo_movimiento = $(this);
+        var tipo_operacion = $('#tipo_operacion');
+        $('#movimiento_text').html($("#tipo_movimiento option:selected").text());
+
+        $('#otros_valor_block').hide();
+        $('#otros_val').val('');
+        tipo_operacion.html('<option></option>');
+
+        if (tipo_movimiento.val() == 1) {
+            for (var i = 0; i < operaciones.length; i++) {
+                if (operaciones[i].id == '09' || operaciones[i].id == '99' || operaciones[i].id == '16') {
+                    tipo_operacion.append('<option value="' + operaciones[i].id + '">' + operaciones[i].nombre + '</option>')
+                }
+            }
+        }
+        if (tipo_movimiento.val() == 2) {
+            for (var i = 0; i < operaciones.length; i++) {
+                if (operaciones[i].id == '07' || operaciones[i].id == '12' || operaciones[i].id == '13' || operaciones[i].id == '14' || operaciones[i].id == '15' || operaciones[i].id == '09' || operaciones[i].id == '99') {
+                    tipo_operacion.append('<option value="' + operaciones[i].id + '">' + operaciones[i].nombre + '</option>')
+                }
+            }
+        }
+    });
+
     $("#tipo_operacion").on('change', function () {
         $("#operacion_text").html($("#tipo_operacion option:selected").text());
         var oper = $(this).val();
 
-        var entrada = '<option value="1">Entrada</option>';
-        var salida = '<option value="2">Salida</option>';
         $('#otros_valor_block').hide();
         $('#otros_val').val('');
 
-        if (oper == '07' || oper == '12' || oper == '13' || oper == '14' || oper == '15') {
-            $("#tipo_movimiento").html(salida);
+        if (oper == '99') {
+            $('#otros_valor_block').show();
         }
-        else if (oper == '09' || oper == '99') {
-            $("#tipo_movimiento").html(entrada + salida);
 
-            if (oper == '99') {
-                $('#otros_valor_block').show();
-            }
-        }
-        else if (oper == '16') {
-            $("#tipo_movimiento").html(entrada);
-        }
 
     });
 
     $("#tipo_documento").on('change', function () {
         $("#documento_text").html($("#tipo_documento option:selected").text());
-        if($(this).val()=='09'){
+        if ($(this).val() == '09') {
             var local_id = $("#local_id").val();
             $.ajax({
                 url: ruta + 'ajuste/getGuiaRemision/' + local_id,
                 dataType: 'json',
-                success: function(data){
+                success: function (data) {
                     $('#serie_doc').attr('value', data.serie);
                     $('#numero_doc').attr('value', data.correlativo);
                 }
             })
-        }else{
+        } else {
             $('#serie_doc').attr('value', '');
             $('#numero_doc').attr('value', '');
         }
@@ -921,8 +948,8 @@ function agregarProducto() {
     $('#producto_id').val(0);
     $("#producto_id").trigger('chosen:updated');
     var a = get_productos_unidades('click');
-    if(a != false){
-        $("#productomodal").load(ruta + 'producto/agregar', function(){
+    if (a != false) {
+        $("#productomodal").load(ruta + 'producto/agregar', function () {
             $('#btnGuardar').removeAttr("onclick");
             $('#btnGuardar').attr("onclick", "confirm_save('ajuste')");
         });
@@ -1001,7 +1028,7 @@ function getproductosbylocal() {
     })
 }
 
-function get_productos_unidades(evento){
+function get_productos_unidades(evento) {
     //e.preventDefault();
 
     if ($("#tipo_operacion").val() == "") {
@@ -1024,7 +1051,7 @@ function get_productos_unidades(evento){
 
     $(".block_producto_unidades").hide();
 
-    if(evento=='change'){
+    if (evento == 'change') {
         if ($('#producto_id').val() == "") {
             return false;
         }

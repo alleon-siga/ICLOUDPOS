@@ -46,7 +46,8 @@ class producto_model extends CI_Model
         return $costo->costo_promedio != NULL ? $costo->costo_promedio : 0;
     }
 
-    public function get_productos($data = array()){
+    public function get_productos($data = array())
+    {
         $query = "
             SELECT 
                 l.int_local_id AS local_id,
@@ -97,40 +98,41 @@ class producto_model extends CI_Model
 
         ";
 
-        if(isset($data['local_id']))
-            $query .= " WHERE l.int_local_id = ".$data['local_id'];
+        if (isset($data['local_id']))
+            $query .= " WHERE l.int_local_id = " . $data['local_id'];
 
         return $this->db->query($query)->result();
     }
 
-    public function check_operaciones($data){
+    public function check_operaciones($data)
+    {
 
-        if(!isset($data['producto_id']))
+        if (!isset($data['producto_id']))
             return FALSE;
 
         //compras
         $this->db->where('id_producto', $data['producto_id']);
-        if(isset($data['unidad_id']))
+        if (isset($data['unidad_id']))
             $this->db->where('unidad_medida', $data['unidad_id']);
         $this->db->from('detalleingreso');
         $counter = $this->db->count_all_results();
-        if($counter > 0) return FALSE;
+        if ($counter > 0) return FALSE;
 
         //ventas
         $this->db->where('id_producto', $data['producto_id']);
-        if(isset($data['unidad_id']))
+        if (isset($data['unidad_id']))
             $this->db->where('unidad_medida', $data['unidad_id']);
         $this->db->from('detalle_venta');
         $counter = $this->db->count_all_results();
-        if($counter > 0) return FALSE;
+        if ($counter > 0) return FALSE;
 
         //ajustes
         $this->db->where('producto_id', $data['producto_id']);
-        if(isset($data['unidad_id']))
+        if (isset($data['unidad_id']))
             $this->db->where('unidad_id', $data['unidad_id']);
         $this->db->from('ajuste_detalle');
         $counter = $this->db->count_all_results();
-        if($counter > 0) return FALSE;
+        if ($counter > 0) return FALSE;
 
         return TRUE;
     }
@@ -173,15 +175,15 @@ class producto_model extends CI_Model
                     AND (select id_unidad from unidades_has_producto where unidades_has_producto.producto_id = dv.id_producto  ORDER BY orden DESC LIMIT 1) = up2.id_unidad 
             WHERE 
                 v.venta_status='COMPLETADO' AND producto_estatus='1' AND producto_estado='1'";
-        if(!empty($params)){
-            if($params['marca_id']>0)
-                $query .= " AND producto_marca = ".$params['marca_id'];
-            if($params['grupo_id']>0)
-                $query .= " AND produto_grupo = ".$params['grupo_id'];
-            if($params['familia_id']>0)
-                $query .= " AND producto_familia = ".$params['familia_id'];
-            if($params['linea_id']>0)
-                $query .= " AND producto_linea = ".$params['linea_id'];
+        if (!empty($params)) {
+            if ($params['marca_id'] > 0)
+                $query .= " AND producto_marca = " . $params['marca_id'];
+            if ($params['grupo_id'] > 0)
+                $query .= " AND produto_grupo = " . $params['grupo_id'];
+            if ($params['familia_id'] > 0)
+                $query .= " AND producto_familia = " . $params['familia_id'];
+            if ($params['linea_id'] > 0)
+                $query .= " AND producto_linea = " . $params['linea_id'];
         }
         $query .= " GROUP BY dv.id_producto ORDER BY ventas DESC";
         return $this->db->query($query)->result();
@@ -266,7 +268,6 @@ class producto_model extends CI_Model
                 $validar = -1;
 
         }
-
 
 
         if ($validar == 0) {
@@ -371,6 +372,7 @@ class producto_model extends CI_Model
         $col = $this->columnas_model->getColumn('producto_modelo');
         $valor = getValorUnico();
 
+
         $produc_exite = $this->get_by('producto_codigo_interno', $producto['producto_codigo_interno'], true);
 
         if ($producto['producto_codigo_interno'] == "") {
@@ -402,6 +404,11 @@ class producto_model extends CI_Model
             }
         }
 
+        //convierto los inventarios anteriores en minimo
+        $inventarios = $this->db->get_where('producto_almacen', array('id_producto' => $producto['producto_id']))->result();
+        foreach ($inventarios as $inventario) {
+            $inventario->minimo = $this->unidades_model->convert_minimo_um($inventario->id_producto, $inventario->cantidad, $inventario->fraccion);
+        }
 
         if ($validar == 0 or ($validar > 0 and ($produc_exite ['producto_id'] == $producto ['producto_id']))) {
             $this->db->trans_start();
@@ -543,6 +550,19 @@ class producto_model extends CI_Model
 
                 }
 
+            }
+
+            //arreglo las cantidades de inventario
+            $this->db->where('id_producto', $producto['producto_id']);
+            $this->db->delete('producto_almacen');
+            foreach ($inventarios as $inventario) {
+                $maximo = $this->unidades_model->get_cantidad_fraccion($inventario->id_producto, $inventario->minimo);
+                $this->db->insert('producto_almacen', array(
+                    'id_local' => $inventario->id_local,
+                    'id_producto' => $inventario->id_producto,
+                    'cantidad' => $maximo['cantidad'],
+                    'fraccion' => $maximo['fraccion']
+                ));
             }
 
 
@@ -791,7 +811,7 @@ class producto_model extends CI_Model
         `unidades` ON `unidades`.`id_unidad` = `unidades_has_producto`.`id_unidad`
         ';
 
-        if($local != false){
+        if ($local != false) {
             $query .= '
             JOIN
             (SELECT
@@ -804,12 +824,11 @@ class producto_model extends CI_Model
                 producto_almacen inventario
             JOIN local ON local.int_local_id = inventario.id_local
             WHERE
-                inventario.id_local = '.$local.' AND
+                inventario.id_local = ' . $local . ' AND
                 inventario.cantidad + inventario.fraccion > 0)
             AS inventario ON `inventario`.`id_producto` = `producto`.`producto_id`
             ';
-        }
-        else{
+        } else {
             $query .= '
             JOIN
             (SELECT
@@ -826,12 +845,12 @@ class producto_model extends CI_Model
             AS inventario ON `inventario`.`id_producto` = `producto`.`producto_id`
             ';
         }
-        $query .= 'INNER JOIN usuario_almacen ua ON inventario.id_local = ua.local_id AND usuario_id = '.$nUsuCodigo;
+        $query .= 'INNER JOIN usuario_almacen ua ON inventario.id_local = ua.local_id AND usuario_id = ' . $nUsuCodigo;
         $query .= ' WHERE
             `producto`.`producto_estatus` = 1
             AND `producto_estado` = 1 ';
 
-        if($local != false)
+        if ($local != false)
             $query .= 'GROUP BY `producto_id` ';
         else
             $query .= 'ORDER BY `producto_nombre` ';
@@ -899,7 +918,7 @@ class producto_model extends CI_Model
 
     function get_all_by_local_producto($local)
     {
-        if ($this->session->userdata('esSuper') == 1){
+        if ($this->session->userdata('esSuper') == 1) {
             $query = $this->db->where('local_status', 1)->get('local')->row();
             $local = $query->int_local_id;
         }
@@ -914,7 +933,7 @@ class producto_model extends CI_Model
         $this->db->join('grupos', 'grupos.id_grupo=producto.' . $this->grupo, 'left');
         $this->db->join('proveedor', 'proveedor.id_proveedor=producto.' . $this->proveedor, 'left');
         $this->db->join('impuestos', 'impuestos.id_impuesto=producto.' . $this->impuesto, 'left');
-        $this->db->join('producto_almacen', 'producto_almacen.id_local = '.$local.' and producto_almacen.id_producto = producto.producto_id', 'left');
+        $this->db->join('producto_almacen', 'producto_almacen.id_local = ' . $local . ' and producto_almacen.id_producto = producto.producto_id', 'left');
         $this->db->join('unidades_has_producto', 'unidades_has_producto.producto_id=producto.' . $this->id . ' and unidades_has_producto.orden=1', 'left');
         $this->db->join('unidades', 'unidades.id_unidad=unidades_has_producto.id_unidad', 'left');
         $this->db->group_by('producto_id');
@@ -965,24 +984,24 @@ class producto_model extends CI_Model
             descripcion");
         $this->db->from('v_lista_precios');
 
-        if(isset($data['marca_id']) && $data['marca_id'] != 0)
+        if (isset($data['marca_id']) && $data['marca_id'] != 0)
             $this->db->where('marca_id', $data['marca_id']);
 
-        if(isset($data['grupo_id']) && $data['grupo_id'] != 0)
+        if (isset($data['grupo_id']) && $data['grupo_id'] != 0)
             $this->db->where('grupo_id', $data['grupo_id']);
 
-        if(isset($data['familia_id']) && $data['familia_id'] != 0)
+        if (isset($data['familia_id']) && $data['familia_id'] != 0)
             $this->db->where('familia_id', $data['familia_id']);
 
-        if(isset($data['linea_id']) && $data['linea_id'] != 0)
+        if (isset($data['linea_id']) && $data['linea_id'] != 0)
             $this->db->where('linea_id', $data['linea_id']);
 
-        if(isset($data['proveedor_id']) && $data['proveedor_id'] != 0)
+        if (isset($data['proveedor_id']) && $data['proveedor_id'] != 0)
             $this->db->where('proveedor_id', $data['proveedor_id']);
 
-        if(strlen($filter) >= 3){
-            $query = "(producto_codigo_interno LIKE '%".$filter."%' ESCAPE '!' OR 
-                producto_codigo_barra LIKE '%".$filter."%' ESCAPE '!'";
+        if (strlen($filter) >= 3) {
+            $query = "(producto_codigo_interno LIKE '%" . $filter . "%' ESCAPE '!' OR 
+                producto_codigo_barra LIKE '%" . $filter . "%' ESCAPE '!'";
 
             //$this->db->like('producto_codigo_interno', $filter);
 
@@ -990,9 +1009,9 @@ class producto_model extends CI_Model
             foreach (preg_split('/[\s,]+/', $filter) as $word) {
                 if ($word != "") {
                     if ($n++ == 0)
-                        $query .= " OR criterio LIKE '%".$word."%' ESCAPE '!'";
+                        $query .= " OR criterio LIKE '%" . $word . "%' ESCAPE '!'";
                     else
-                        $query .= " AND criterio LIKE '%".$word."%' ESCAPE '!'";
+                        $query .= " AND criterio LIKE '%" . $word . "%' ESCAPE '!'";
                 }
             }
             $query .= ')';

@@ -84,7 +84,8 @@
                                 <option value=""></option>
                                 <?php foreach ($productos as $producto): ?>
                                     <option value="<?= $producto->producto_id ?>"
-                                            data-impuesto="<?= $producto->porcentaje_impuesto ?>">
+                                            data-impuesto="<?= $producto->porcentaje_impuesto ?>"
+                                            data-cb="<?= $barra_activa->activo == 1 && $producto->barra != "" ? $producto->barra : "" ?>">
                                         <?php $barra = $barra_activa->activo == 1 && $producto->barra != "" ? "CB: " . $producto->barra : "" ?>
                                         <?= getCodigoValue($producto->producto_id, $producto->codigo) . ' - ' . $producto->producto_nombre . " " . $barra ?>
                                     </option>
@@ -310,10 +311,23 @@
                                         value="<?= $usuario->nUsuCodigo ?>"><?= $usuario->username ?></option>
                             <?php endforeach; ?>
                         </select>
+                <?php if (isset($usuarios)) { ?>
+                    <div class="row">
+                        <div class="col-md-5 label-title">
+                            <label class="control-label">Vendedor:</label>
+                        </div>
+                        <div class="col-md-7" id="moneda_block_text">
+                            <select name="vendedor_id" id="vendedor_id" class='form-control'>
+                                <?php foreach ($usuarios as $usuario): ?>
+                                    <option <?= $usuario->nUsuCodigo == $this->session->userdata('nUsuCodigo') ? 'selected="selected"' : '' ?>
+                                            value="<?= $usuario->nUsuCodigo ?>"><?= $usuario->username ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
                     </div>
-                </div>
-                <?php }else{ ?>
-                <input type="hidden" name="vendedor_id" id="vendedor_id" value="<?= $this->session->userdata('nUsuCodigo') ?>">
+                <?php } else { ?>
+                    <input type="hidden" name="vendedor_id" id="vendedor_id"
+                           value="<?= $this->session->userdata('nUsuCodigo') ?>">
                 <?php } ?>
                 <!--SELECCION MONEDA-->
                 <div class="row">
@@ -612,6 +626,10 @@
     </div>
 </form>
 
+<iframe style="display: block;" id="imprimir_frame_venta" src="" frameborder="YES" height="0" width="0"
+        border="0" scrolling=no>
+
+</iframe>
 
 <div class="block">
 

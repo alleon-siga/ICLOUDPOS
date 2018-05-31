@@ -1,7 +1,7 @@
 <?php $md = get_moneda_defecto() ?>
 <input type="hidden" id="caja_venta_id" value="">
 <input type="hidden" id="contado_tipo_pago" value="">
-<div class="modal-dialog" style="width: 40%">
+<div class="modal-dialog" style="width: 60%">
     <div class="modal-content">
         <div class="modal-header">
             <h4>Terminar Venta</h4>
@@ -163,9 +163,14 @@
                                 class="fa fa-save"></i> Guardar
                     </button>
                     <a href="#" class="btn btn-default save_venta_contado ocultar_caja"
+                       id="btn_venta_contado_imprimir_2" data-imprimir="2" type="button"><i
+                                class="fa fa-print"></i> (F6)Guardar & Imprimir
+                    </a>
+
+                    <a href="#" class="btn btn-default save_venta_contado ocultar_caja"
                        id="btn_venta_contado_imprimir" data-imprimir="1" type="button"><i
-                                class="fa fa-print"></i> (F6)Guardar e imprimir
-                    </a>    
+                                class="fa fa-print"></i> Guardar & Detalles
+                    </a>
                     <button class="btn btn-danger"
                             type="button"
                             onclick="$('#dialog_venta_contado').modal('hide');"><i
