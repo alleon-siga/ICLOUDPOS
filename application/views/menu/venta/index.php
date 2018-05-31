@@ -614,6 +614,10 @@
     </div>
 </form>
 
+<iframe style="display: block;" id="imprimir_frame_venta" src="" frameborder="YES" height="0" width="0"
+        border="0" scrolling=no>
+
+</iframe>
 
 <div class="block">
 

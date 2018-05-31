@@ -113,14 +113,14 @@ $(document).ready(function () {
         if (e.keyCode == 117 && $("#dialog_venta_contado").is(":visible") == true && ($("#venta_estado").val() == 'COMPLETADO' || $("#caja_imprimir").val() == '1')) {
             e.preventDefault();
             e.stopImmediatePropagation();
-            $('.save_venta_contado[data-imprimir="1"]').first().click();
+            $('.save_venta_contado[data-imprimir="2"]').first().click();
         }
 
         var saldo_inicial_comp = isNaN(parseFloat($("#c_saldo_inicial").val())) ? 0 : parseFloat($("#c_saldo_inicial").val());
         if (e.keyCode == 117 && $("#dialog_venta_credito").is(":visible") == true && saldo_inicial_comp == 0) {
             e.preventDefault();
             e.stopImmediatePropagation();
-            $('.save_venta_credito[data-imprimir="1"]').first().click();
+            $('.save_venta_credito[data-imprimir="2"]').first().click();
         }
     });
 
@@ -858,7 +858,30 @@ function save_venta_contado(imprimir) {
                             $("#dialog_venta_imprimir").modal('show');
                         }
                     });
-                } else {
+                }
+                else if (imprimir == '2') {
+                    var venta_id = data.venta.venta_id;
+                    $.ajax({
+                        url: ruta + 'venta_new',
+                        success: function (data) {
+                            $("#loading_save_venta").modal('hide');
+                            $(".modal-backdrop").remove();
+                            $('#page-content').html(data);
+
+                            $.bootstrapGrowl('<p>IMPRIMIENDO PEDIDO</p>', {
+                                type: 'success',
+                                delay: 2500,
+                                allow_dismiss: true
+                            });
+
+                            var url = ruta + 'venta_new/imprimir/' + venta_id + '/PEDIDO';
+                            $("#imprimir_frame_venta").attr('src', url);
+                        }
+                    });
+
+
+                }
+                else {
                     $.ajax({
                         url: ruta + 'venta_new',
                         success: function (data) {
@@ -969,7 +992,28 @@ function save_venta_credito(imprimir) {
                             }
                         });
                     }, 500);
-                } else {
+                }
+                else if (imprimir == '2') {
+                    var venta_id = data.venta.venta_id;
+                    $.ajax({
+                        url: ruta + 'venta_new',
+                        success: function (data) {
+                            $("#loading_save_venta").modal('hide');
+                            $(".modal-backdrop").remove();
+                            $('#page-content').html(data);
+
+                            $.bootstrapGrowl('<p>IMPRIMIENDO PEDIDO</p>', {
+                                type: 'success',
+                                delay: 2500,
+                                allow_dismiss: true
+                            });
+
+                            var url = ruta + 'venta_new/imprimir/' + venta_id + '/PEDIDO';
+                            $("#imprimir_frame_venta").attr('src', url);
+                        }
+                    });
+                }
+                else {
                     $.ajax({
                         url: ruta + 'venta_new',
                         success: function (data) {

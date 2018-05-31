@@ -317,19 +317,27 @@
             <div class="modal-footer">
 
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div class="row" style="text-align: left;">
                             <div class="col-md-6">
-                                <h4>Total Importe: <span class="tipo_moneda"><?= $md->simbolo ?></span> <span
-                                            id="c_total_deuda">0</span></h4>
+                                <h4>Total Importe:
+                                    <span style="white-space: nowrap;"><span
+                                                class="tipo_moneda"><?= $md->simbolo ?></span> <span
+                                                id="c_total_deuda">0</span>
+                                    </span>
+                                </h4>
                             </div>
                             <div class="col-md-6">
-                                <h4>Total Saldo: <span class="tipo_moneda"><?= $md->simbolo ?></span> <span
-                                            id="c_total_saldo">0</span></h4>
+                                <h4>Total Saldo:
+                                    <span style="white-space: nowrap;">
+                                        <span class="tipo_moneda"><?= $md->simbolo ?></span> <span
+                                                id="c_total_saldo">0</span>
+                                </span>
+                                </h4>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-8">
                         <span id="continuar_venta_block">
                     <button class="btn btn-primary continuar_venta" data-imprimir="0"
                             type="button"
@@ -344,10 +352,16 @@
                                 id="btn_venta_credito"><i
                                     class="fa fa-save"></i> Guardar
                         </button>
-                        <button type="button" class="btn btn-default save_venta_credito" data-imprimir="1"
-                                id="btn_venta_credito_imprimir"
+                        <button type="button" class="btn btn-default save_venta_credito" data-imprimir="2"
+                                id="btn_venta_credito_imprimir_2"
                         ><i
-                                    class="fa fa-print"></i> (F6) Grabar e imprimir
+                                    class="fa fa-print"></i> (F6) Grabar & Imprimir
+                        </button>
+
+                            <button type="button" class="btn btn-default save_venta_credito" data-imprimir="1"
+                                    id="btn_venta_credito_imprimir"
+                            ><i
+                                        class="fa fa-print"></i> Grabar & Detalles
                         </button>
                         </span>
                         <button type="button" class="btn btn-danger"
@@ -442,8 +456,14 @@
 
                             <a href="#" class="btn btn-default save_venta_credito"
                                style="margin-bottom:5px"
+                               id="btn_venta_credito_simple_imprimir_2" data-imprimir="2" type="button"><i
+                                        class="fa fa-print"></i> (F6)Guardar & Imprimir
+                            </a>
+
+                            <a href="#" class="btn btn-default save_venta_credito"
+                               style="margin-bottom:5px"
                                id="btn_venta_credito_simple_imprimir" data-imprimir="1" type="button"><i
-                                        class="fa fa-print"></i> (F6)Guardar e imprimir
+                                        class="fa fa-print"></i> Guardar & Detalles
                             </a>
                             <button class="btn btn-default" style="margin-bottom:5px"
                                     type="button"

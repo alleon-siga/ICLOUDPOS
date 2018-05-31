@@ -130,6 +130,11 @@
                 <?php echo isset($dialog_venta_contado) ? $dialog_venta_contado : '' ?>
 
             </div>
+
+            <iframe style="display: block;" id="imprimir_frame_venta" src="" frameborder="YES" height="0" width="0"
+                    border="0" scrolling=no>
+
+            </iframe>
             <script src="<?php echo $ruta; ?>recursos/js/datepicker-range/moment.min.js"></script>
             <script src="<?php echo $ruta; ?>recursos/js/datepicker-range/daterangepicker.js"></script>
             <script src="<?php echo $ruta; ?>recursos/js/Validacion.js"></script>
@@ -151,7 +156,7 @@
                         if (e.keyCode == 117 && $("#dialog_venta_contado").is(":visible") == true) {
                             e.preventDefault();
                             e.stopImmediatePropagation();
-                            $('.save_venta_contado[data-imprimir="1"]').first().click();
+                            $('.save_venta_contado[data-imprimir="2"]').first().click();
                         }
                     });
 
@@ -433,7 +438,21 @@
                                             $("#barloadermodal").modal('hide');
                                         }
                                     });
-                                } else {
+                                }
+                                else if (imprimir == '2') {
+                                    $.bootstrapGrowl('<p>IMPRIMIENDO PEDIDO</p>', {
+                                        type: 'success',
+                                        delay: 2500,
+                                        allow_dismiss: true
+                                    });
+
+                                    var url = ruta + 'venta_new/imprimir/' + data.venta.venta_id + '/PEDIDO';
+                                    $("#imprimir_frame_venta").attr('src', url);
+
+                                    $("#barloadermodal").modal('hide');
+                                    get_ventas();
+                                }
+                                else {
                                     $("#barloadermodal").modal('hide');
                                     get_ventas();
                                 }
