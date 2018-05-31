@@ -50,6 +50,9 @@ $(document).ready(function () {
     var letra_up = 38, letra_down = 40;
     var F6 = 117;
 
+    var cb = '';
+
+
     var disabled_save = false;
     $(document).keydown(function (e) {
 
@@ -133,6 +136,15 @@ $(document).ready(function () {
 
     // EVENTOS FUNCIONALES
 
+    $('#producto_id_chosen > div > div > input[type="text"]').on('keyup', function (e) {
+        if (e.which == 13) {
+
+        }
+        else {
+            cb = $(this).val();
+        }
+    });
+
     $('#refresh_productos').on('click', function () {
 
         $("#loading_save_venta").modal('show');
@@ -197,6 +209,13 @@ $(document).ready(function () {
             return false;
         }
 
+        var producto_cb = $('#producto_id option:selected').attr('data-cb');
+        var go_enter = false;
+        if (producto_cb != '') {
+            go_enter = producto_cb == cb;
+        }
+        cb = '';
+
         var producto_id = $(this).val();
         var precio_id = $("#precio_id").val();
         var local_id = $("#local_id").val();
@@ -233,6 +252,15 @@ $(document).ready(function () {
                         def_value = 1;
 
                     prepare_unidades_value(producto_id, local_id, data.unidades[i], def_value);
+
+                    if (go_enter && data.unidades.length == 1) {
+                        var cant = get_value_producto(producto_id, local_id, data.unidades[i].id_unidad, -1);
+                        if (cant != -1) {
+                            var cantidad_plus = $("#cantidad_" + data.unidades[i].id_unidad);
+                            cantidad_plus.attr('value', parseFloat(cant) + 1);
+                            cantidad_plus.attr('data-value', parseFloat(cant) + 1);
+                        }
+                    }
                 }
 
 
@@ -261,6 +289,10 @@ $(document).ready(function () {
                 $(".block_producto_unidades").show();
 
                 $('.cantidad-input[data-index="' + (--index) + '"]').first().trigger('focus');
+
+                if (go_enter && data.unidades.length == 1) {
+                    $('#add_producto').click();
+                }
             },
             complete: function (data) {
             },
