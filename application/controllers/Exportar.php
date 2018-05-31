@@ -143,7 +143,7 @@ class exportar extends MY_Controller
             );
         }
 
-        $fecha = date('Y-m-d', strtotime(str_replace('/', '-', $this->input->post('fecha', true))));
+        $fecha = date('Y-m-d', strtotime(str_replace('/', '-', $this->input->post('fecha_cuadre_caja', true))));
         $fechadespues = date('Y-m-d', strtotime('+1 day', strtotime($fecha)));
         foreach ($data['monedas'] as $mon) {
 

@@ -25,7 +25,7 @@ class cajas_mov_model extends CI_Model
         $this->db->select('
             caja_movimiento.*,
             moneda.*,
-            usuario.nombre as usuario_nombre,
+            usuario.username as usuario_nombre,
             caja.moneda_id as moneda_id,
             local.local_nombre as local_nombre
         ')

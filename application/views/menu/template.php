@@ -987,7 +987,7 @@ $primary_nav = array(
                                      alt="avatar">
                             </a>
                         </div>
-                        <div class="sidebar-user-name"><?= $this->session->userdata('nombre') ?></div>
+                        <div class="sidebar-user-name"><?= $this->session->userdata('username') ?></div>
                         <div class="sidebar-user-links">
                             <!-- <a href="page_ready_user_profile.php" data-toggle="tooltip" data-placement="bottom"
                                 title="Profile"><i class="gi gi-user"></i></a>
@@ -1653,7 +1653,7 @@ $primary_nav = array(
                             <label for="fecha" class="control-label col-md-2">Fecha:</label>
 
                             <div class="controls col-md-8">
-                                <input type="text" name="fecha" id="fecha_cuadre_caja" style="cursor:pointer;"
+                                <input type="text" name="fecha_cuadre_caja" id="fecha_cuadre_caja" style="cursor:pointer;"
                                        class='input-small form-control' readonly
                                        value="<?php echo date('d/m/Y') ?>"
                                 >
