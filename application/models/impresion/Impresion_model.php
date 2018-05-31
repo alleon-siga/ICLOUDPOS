@@ -370,4 +370,172 @@ class impresion_model extends CI_Model
 
         return $venta;
     }
+
+    function createXmlGuiaRemision($documents)
+    {
+        $xml = new SimpleXMLElement('<DocumentElement/>');
+
+        foreach ($documents as $doc) {
+            $page = $xml->addChild('documento');
+
+            $page->addChild('empresa_nombre', htmlspecialchars(valueOption('EMPRESA_NOMBRE', '')));
+            $page->addChild('empresa_direccion', htmlspecialchars(valueOption('EMPRESA_DIRECCION', '')));
+            $page->addChild('empresa_correo', htmlspecialchars(valueOption('EMPRESA_CORREO', '')));
+            $page->addChild('empresa_telefono', htmlspecialchars(valueOption('EMPRESA_TELEFONO', '')));
+
+            $page->addChild('cliente_nombre', isset($doc->cliente_nombre) ? htmlspecialchars($doc->cliente_nombre) : '');
+            $page->addChild('cliente_tipo', isset($doc->cliente_tipo) ? htmlspecialchars($doc->cliente_tipo) : '');
+            $page->addChild('cliente_identificacion', isset($doc->cliente_identificacion) ? $doc->cliente_identificacion : '');
+            $page->addChild('cliente_direccion', isset($doc->cliente_direccion) ? htmlspecialchars($doc->cliente_direccion) : '');
+            $page->addChild('cliente_grupo', isset($doc->cliente_grupo) ? htmlspecialchars($doc->cliente_grupo) : '');
+
+            $page->addChild('proveedor_nombre', isset($doc->proveedor_nombre) ? htmlspecialchars($doc->proveedor_nombre) : '');
+            $page->addChild('proveedor_ruc', isset($doc->proveedor_ruc) ? $doc->proveedor_ruc : '');
+            $page->addChild('proveedor_direccion', isset($doc->proveedor_direccion) ? htmlspecialchars($doc->proveedor_direccion) : '');
+            $page->addChild('proveedor_telefono', isset($doc->proveedor_telefono) ? $doc->proveedor_telefono : '');
+            $page->addChild('proveedor_correo', isset($doc->proveedor_correo) ? $doc->proveedor_correo : '');
+
+            $page->addChild('vendedor_nombre', isset($doc->vendedor_nombre) ? htmlspecialchars($doc->vendedor_nombre) : '');
+
+            $page->addChild('local', isset($doc->local) ? $doc->local : '');
+            $page->addChild('documento_nombre', isset($doc->documento_nombre) ? htmlspecialchars($doc->documento_nombre) : '');
+            $page->addChild('numero', isset($doc->numero) ? $doc->numero : '');
+            $page->addChild('fecha_emision', isset($doc->fecha_emision) ? $doc->fecha_emision : '');
+            $page->addChild('tipo_pago', isset($doc->tipo_pago) ? $doc->tipo_pago : '');
+            $page->addChild('estado', isset($doc->estado) ? $doc->estado : '');
+            $page->addChild('moneda', isset($doc->moneda) ? $doc->moneda : '');
+            $page->addChild('moneda_simbolo', isset($doc->moneda_simbolo) ? $doc->moneda_simbolo : '');
+            $page->addChild('importe', isset($doc->importe) ? $doc->moneda_simbolo . ' ' . $doc->importe : '');
+            $page->addChild('importe_deuda', isset($doc->importe_deuda) ? $doc->moneda_simbolo . ' ' . $doc->importe_deuda : '');
+            $page->addChild('subtotal', isset($doc->subtotal) ? $doc->moneda_simbolo . ' ' . $doc->subtotal : '0.00');
+            $page->addChild('impuesto', isset($doc->impuesto) ? $doc->moneda_simbolo . ' ' . $doc->impuesto : '');
+            $page->addChild('descuento', isset($doc->descuento) ? $doc->moneda_simbolo . ' ' . $doc->descuento : '');
+            $page->addChild('vuelto', isset($doc->vuelto) ? $doc->moneda_simbolo . ' ' . $doc->vuelto : '');
+            $page->addChild('pagado', isset($doc->pagado) ? $doc->moneda_simbolo . ' ' . $doc->pagado : '');
+            $page->addChild('importe_letra', isset($doc->importe_letra) ? $doc->importe_letra : '');
+            $page->addChild('inicial', isset($doc->inicial) ? $doc->moneda_simbolo . ' ' . $doc->inicial : '');
+
+
+            $productos = $page->addChild('productos');
+            foreach ($doc->productos as $prod) {
+                $producto = $productos->addChild('producto');
+                $producto->addAttribute('id', $prod->id);
+                $producto->addChild('codigo', isset($prod->codigo) ? $prod->codigo : '');
+                $producto->addChild('nombre', isset($prod->nombre) ? htmlspecialchars($prod->nombre) : '');
+                $producto->addChild('presentacion', isset($prod->presentacion) ? htmlspecialchars($prod->presentacion) : '');
+                $producto->addChild('unidad', isset($prod->unidad) ? $prod->unidad : '');
+                $producto->addChild('unidad_abr', isset($prod->unidad_abr) ? $prod->unidad_abr : '');
+                $producto->addChild('cantidad', isset($prod->cantidad) ? $prod->cantidad : '');
+                $producto->addChild('precio', isset($prod->precio) ? $doc->moneda_simbolo . ' ' . $prod->precio : '');
+                $producto->addChild('importe', isset($prod->importe) ? $doc->moneda_simbolo . ' ' . $prod->importe : '');
+                $producto->addChild('precio_venta', isset($prod->precio_venta) ? $doc->moneda_simbolo . ' ' . $prod->precio_venta : '');
+            }
+
+            if (isset($doc->cuotas)) {
+                $cuotas = $page->addChild('cuotas');
+                foreach ($doc->cuotas as $c) {
+                    $cuota = $cuotas->addChild('cuota');
+                    $cuota->addAttribute('id', $c->id);
+                    $cuota->addChild('letra', isset($c->letra) ? $prod->letra : '');
+                    $cuota->addChild('fecha', isset($c->fecha) ? $prod->fecha : '');
+                    $cuota->addChild('monto', isset($c->monto) ? $doc->moneda_simbolo . '' . $prod->monto : '');
+                }
+            }
+
+        }
+
+        return $xml->asXML();
+
+    }
+
+    function getVentaGuiaRemision($param)
+    {
+        require './application/libraries/Numeroletra.php';
+
+        $query = "
+            SELECT 
+                '' AS cliente_nombre,
+                '' AS cliente_tipo,
+                '' AS cliente_identificacion,
+                '' AS cliente_direccion,
+                '' AS cliente_grupo,
+                u.nombre AS vendedor_nombre,
+                l.local_nombre AS local,
+                'GUIA DE REMISION' AS documento_nombre,
+                CONCAT(v.serie, ' - ', LPAD(v.numero, 6, '0')) AS numero,
+                DATE_FORMAT(v.fecha, '%d/%m/%Y') AS fecha_emision,
+                '' AS tipo_pago,
+                '' AS estado,
+                m.nombre AS moneda,
+                m.simbolo AS moneda_simbolo,
+                '' AS importe,
+                '' AS importe_deuda,
+                '' AS subtotal,
+                '' AS impuesto,
+                '' AS vuelto,
+                '' AS pagado,
+                '' AS inicial
+            FROM
+                ajuste AS v
+                    JOIN
+                usuario AS u ON u.nUsuCodigo = v.usuario_id
+                    JOIN
+                local AS l ON l.int_local_id = v.local_id
+                    JOIN
+                moneda AS m ON m.id_moneda = v.moneda_id
+            WHERE
+                v.id = " . $param['id'] . "
+        ";
+
+        $venta = $this->db->query($query)->result();
+
+
+        foreach ($venta as $v) {
+            $n = $v->importe;
+            $aux = (string) $n;
+            $decimal = substr( $aux, strpos( $aux, ".") );
+
+            $v->importe_letra = Numeroletra::convertir($v->importe) . ' ' . strtoupper($v->moneda) . ' ' . str_replace('.', '', $decimal) . '/100';
+
+            //$v->importe_letra = "";
+
+            $query = "
+            SELECT 
+                dv.producto_id AS id,
+                IF((SELECT 
+                            COUNT(*)
+                        FROM
+                            configuraciones
+                        WHERE
+                            config_key = 'CODIGO_DEFAULT'
+                                AND config_value = 'AUTO'
+                        LIMIT 1) > 0,
+                    LPAD(dv.producto_id, 4, '0'),
+                    p.producto_codigo_interno) AS codigo,
+                p.producto_nombre AS nombre,
+                u.nombre_unidad AS unidad,
+                u.abreviatura AS unidad_abr,
+                FORMAT((k.cantidad), 0) AS cantidad,
+                '' AS precio,
+                '' AS importe,
+                '' AS precio_venta
+            FROM
+                ajuste_detalle AS dv
+                    JOIN
+                producto AS p ON p.producto_id = dv.producto_id
+                    JOIN
+                kardex AS k ON k.ref_id = dv.ajuste_id AND k.producto_id = dv.producto_id
+                    JOIN
+                unidades AS u ON u.id_unidad = k.unidad_id
+            WHERE
+                k.io = 2 AND k.tipo = 9 AND k.operacion = ".$param['operacion']." AND 
+                k.serie='".$param['serie']."' AND k.numero='".$param['numero']."' AND
+                dv.ajuste_id = " . $param['id'] . "
+        ";
+
+            $v->productos = $this->db->query($query)->result();
+        }
+
+        return $venta;
+    }
 }
