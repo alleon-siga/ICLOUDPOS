@@ -27,7 +27,7 @@
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 
-            <h4 class="modal-title">Nuevo Cliente</h4>
+            <h4 class="modal-title"><?php if(isset($cliente)){ ?>Modificar <?php }else{ ?>Nuevo <?php } ?> Cliente</h4>
         </div>
         <div class="modal-body">
             <ul class="nav nav-pills nav-justified">
@@ -117,7 +117,8 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <label id="lblIdenDni" class="control-label panel-admin-text"><?= $term[0]->valor ?></label>
-                                <input type="text" name="ruc_j" value="<?php if (isset($cliente['identificacion'])) echo  $cliente['identificacion']; ?>" id="ruc_j" typeClass="DNI" class="form-control dni ruc" />
+                                <input type="number" autocomplete="true" name="ruc_j" value="<?php if (isset($cliente['identificacion'])) echo  $cliente['identificacion']; ?>" id="ruc_j" typeClass="DNI" class="form-control dni ruc" />
+                                <input type="hidden" name="ruc_j_bk" value="<?php if (isset($cliente['identificacion'])) echo  $cliente['identificacion']; ?>">
                             </div>
                         </div>
                         <div class="row">
@@ -403,7 +404,8 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <label id="lblIdenRuc" class="control-label panel-admin-text"><?= $term[1]->valor ?></label>
-                                <input type="text" name="ruc_j" value="<?php if (isset($cliente['identificacion'])) echo  $cliente['identificacion']; ?>" id="ruc_j" class="form-control ruc" />
+                                <input type="number" autocomplete="true" name="ruc_j" value="<?php if (isset($cliente['identificacion'])) echo  $cliente['identificacion']; ?>" id="ruc_j" class="form-control ruc" />
+                                <input type="hidden" name="ruc_j_bk" value="<?php if (isset($cliente['identificacion'])) echo  $cliente['identificacion']; ?>">
                             </div>
                         </div>
                         <div class="row">

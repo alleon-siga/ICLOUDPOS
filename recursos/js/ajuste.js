@@ -296,6 +296,40 @@ $(document).ready(function () {
         $('#dialog_venta_confirm').modal('show');
     });
 
+    $('#confirm_venta_imprimir').on('click', function(){
+        var datos = {
+            'ajuste_id': $('#hdAjusteId').val(),
+            'serie': $('#hdSerie').val(),
+            'numero': $('#hdNumero').val(),
+            'operacion': $('#hdOperacion').val()
+        };
+
+        $.ajax({
+            url: ruta + 'impresion/get_guia_remision',
+            data: datos,
+            type: 'POST',
+            success: function (data) {
+                console.log(data);
+                $.ajax({
+                    url: 'http://localhost:8080',
+                    method: 'POST',
+                    data: {
+                        documento: 'guia',
+                        dataset: data
+                    },
+                    success: function (data) {
+                        show_msg('success', 'La guia de remisi&oacute;on se esta imprimiendo');
+                    },
+                    error: function (data) {
+                        alert('Error de impresion')
+                    },
+                    complete: function (data) {
+                    }
+
+                })
+            }
+        });
+    });
 });
 
 //FUNCIONES DE MANEJO DE LOS AJUSTES
@@ -340,7 +374,8 @@ function prepare_detalles_productos() {
 function save_ajuste() {
 
     $("#loading_save_venta").modal('show');
-
+    var tipo_movimiento = $('#tipo_movimiento').val();
+    var tipo_documento = $('#tipo_documento').val();
     var form = $('#form_venta').serialize();
     var detalles_productos = prepare_detalles_productos();
 
@@ -355,15 +390,22 @@ function save_ajuste() {
                 show_msg('success', '<h4>Correcto. </h4><p>El ajuste se ha guardado con exito.</p>');
                 $.ajax({
                     url: ruta + 'ajuste',
-                    success: function (data) {
+                    success: function (datos) {
                         $("#loading_save_venta").modal('hide');
                         $(".modal-backdrop").remove();
-                        $('#page-content').html(data);
+                        $('#page-content').html(datos);
                         $('#producto_id').trigger('chosen:open');
+
+                        if(tipo_movimiento=='2' && tipo_documento=='09'){ //Salida y guia de remision
+                            $("#dialog_venta_imprimir").modal('show');
+                            $('#hdAjusteId').attr('value', data.ajuste.id);
+                            $('#hdSerie').attr('value', data.ajuste.serie);
+                            $('#hdNumero').attr('value', data.ajuste.numero);
+                            $('#hdOperacion').attr('value', data.ajuste.operacion);
+                        }
                     }
                 });
-            }
-            else {
+            } else {
                 show_msg('danger', '<h4>Error. </h4><p>Ha ocurrido un error insperado al guardar la venta.</p>');
             }
         },

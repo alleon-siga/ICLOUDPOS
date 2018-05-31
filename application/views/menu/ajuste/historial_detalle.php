@@ -18,7 +18,10 @@
             <h4 class="modal-title">Detalle del Ajuste</h4>
         </div>
         <div class="modal-body">
-
+            <input type="hidden" id="hdId" value="<?= $ajuste->id ?>">  
+            <input type="hidden" id="hdSerie" value="<?= $ajuste->serie ?>">
+            <input type="hidden" id="hdNumero" value="<?= $ajuste->numero ?>">
+            <input type="hidden" id="hdOperacion" value="<?= $ajuste->operacion ?>">
             <div class="table-responsive">
                 <table class="table datatable datatables_filter table-striped tableStyle" id="tabledetail">
 
@@ -83,6 +86,11 @@
         <div class="modal-footer">
             <div class="row">
                 <div class="col-md-12 text-right">
+                <?php if($ajuste->io=='2' && $ajuste->documento=='09'){ //Si es salida y guia de remision ?>
+                    <button class="btn btn-primary imprimir" type="button" data-nombre="guia">
+                        <i class="fa fa-print"></i> Imprimir
+                    </button>
+                <?php } ?>
                     <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
                 </div>
             </div>
@@ -91,4 +99,50 @@
     </div>
     <!-- /.modal-content -->
 </div>
+<script type="text/javascript">
+    $(document).ready(function () {
 
+        $('.imprimir').on('click', function () {
+            var input = $(this);
+            var nombre = $(this).attr('data-nombre');
+
+            input.html('<i class="fa fa-print"></i> IMPRIMIENDO...');
+            input.attr('disabled', 'disabled');
+
+            var datos = {
+                'ajuste_id': $('#hdId').val(),
+                'serie': $('#hdSerie').val(),
+                'numero': $('#hdNumero').val(),
+                'operacion': $('#hdOperacion').val()
+            };
+
+            $.ajax({
+                url: '<?= base_url()?>impresion/get_guia_remision',
+                data: datos,
+                type: 'POST',
+                success: function (data) {
+                    console.log(data);
+                    $.ajax({
+                        url: '<?= valueOptionDB('HOST_IMPRESION', 'http://localhost:8080') ?>',
+                        method: 'POST',
+                        data: {
+                            documento: nombre,
+                            dataset: data
+                        },
+                        success: function (data) {
+                            show_msg('success', 'La guia de remisi&oacute;on se esta imprimiendo');
+                        },
+                        error: function (data) {
+                            alert('Error de impresion')
+                        },
+                        complete: function (data) {
+                            input.removeAttr('disabled');
+                            input.html('<i class="fa fa-print"></i> Imprimir');
+                        }
+
+                    })
+                }
+            })
+        });
+    });
+</script>

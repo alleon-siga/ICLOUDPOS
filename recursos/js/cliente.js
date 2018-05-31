@@ -528,6 +528,13 @@ function validar_ruc_n(){
     var consigue_ruc=false;
     $(".ruc").each(function(){
         var ruc =$(this).val();
+        var idcliente = $('#idClientes').val();
+        var numDoc = '';
+        if($("#tipo_cliente").val()=='0'){ //persona
+            numDoc = document.formagregar.ruc_j.value;
+        }else{ //empresa
+            numDoc = document.formagregarE.ruc_j.value;
+        }
         //if($(this).val()!="") {
            // if (ruc.length<11 || ruc.length>11) {
             //if (ruc.length == 11) {
@@ -537,7 +544,7 @@ function validar_ruc_n(){
                         url: base_url + 'cliente/validar_ruc',
                         type: "post",
                         dataType: "json",
-                        data: {ruc: $(this).val()},
+                        data: {ruc: numDoc},
                         async: false,
                         success: function (data) {
 
@@ -650,7 +657,25 @@ function validar_ruc_n(){
 }
 
 function guardarcliente() {
-    var documento = validar_ruc_n();
+    var idcliente = $('#idClientes').val();
+    var numDoc = numDocBk = '';
+    var documento = false;
+    if($("#tipo_cliente").val()=='0'){ //persona
+        numDoc = document.formagregar.ruc_j.value;
+        numDocBk = document.formagregar.ruc_j_bk.value;
+    }else{ //empresa
+        numDoc = document.formagregarE.ruc_j.value;
+        numDocBk = document.formagregar.ruc_j_bk.value;
+    }
+
+    if(idcliente != ''){ //modificar
+        if(numDoc != numDocBk){
+            documento = validar_ruc_n();    
+        }
+    }else{ //nuevo
+        documento = validar_ruc_n();
+    }
+    
     if(documento==true){
         return false;
     }

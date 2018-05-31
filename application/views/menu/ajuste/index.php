@@ -5,7 +5,6 @@
     <label id="save_venta_load" style="font-size: 12px; float: right; display: none;"
            class="control-label badge label-primary">Guardando el Ajuste...</label>
 </ul>
-
 <form id="form_venta" method="POST" action="<?= base_url('ajuste/save_ajuste') ?>">
     <div class="block">
 
@@ -457,6 +456,32 @@
             </div>
         </div>
         <!-- /.modal-content -->
+    </div>
+</div>
+<div class="modal fade" id="dialog_venta_imprimir" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Imprimir</h4>
+            </div>
+            <div class="modal-body">
+                <center>
+                    <input type="hidden" id="hdAjusteId" value="">
+                    <input type="hidden" id="hdSerie" value="">
+                    <input type="hidden" id="hdNumero" value="">
+                    <input type="hidden" id="hdOperacion" value="">
+                    <button class="btn btn-primary" type="button" data-nombre="guia" id="confirm_venta_imprimir">
+                        <i class="fa fa-print"></i> Imprimir
+                    </button>
+                </center>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" onclick="$('#dialog_venta_imprimir').modal('hide');">
+                    Cerrar
+                </button>
+            </div>
+        </div>
     </div>
 </div>
 <div class="modal fade" id="productomodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
