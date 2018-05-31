@@ -227,7 +227,7 @@ class venta_new extends MY_Controller
         $data['locales'] = $this->local_model->get_local_by_user($this->session->userdata('nUsuCodigo'));
         $data['productos'] = $this->producto_model->get_productos_list();
         if ($this->session->userdata('grupo') == 2) { //perfil de administrador
-            $data['usuarios'] = $this->usuario_model->select_all_user(8);
+            $data['usuarios'] = $this->usuario_model->select_all_user(array(8, 2, 9));
         }
         $data['barra_activa'] = $this->db->get_where('columnas', array('id_columna' => 36))->row();
         $data["clientes"] = $this->cliente_model->get_all();

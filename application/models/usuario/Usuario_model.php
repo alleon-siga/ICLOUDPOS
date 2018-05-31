@@ -147,8 +147,13 @@ class usuario_model extends CI_Model
         $this->db->from('usuario');
         $this->db->join('grupos_usuarios', 'grupos_usuarios.id_grupos_usuarios=usuario.grupo');
 
-        if ($grupo != false)
-            $this->db->where('usuario.grupo', $grupo);
+        if(is_array($grupo)){
+            $this->db->where_in('usuario.grupo', $grupo);
+        }else{
+            if ($grupo != false){
+                $this->db->where('usuario.grupo', $grupo);
+            }
+        }
 
         $this->db->where('usuario.deleted', 0);
         $query = $this->db->get();
