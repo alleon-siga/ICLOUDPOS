@@ -1614,19 +1614,19 @@
                 "</tr>"
             );
 
-            $('.unidad_select').off('change');
-            $('.unidad_select').on('change', function () {
-                var nombre = $(this).find('option:selected').text();
-                var id = $(this).attr('data-row');
-                $('#unidad[' + id + ']').val(1);
-                if (nombre == 'UNIDAD')
-                    $('input[id="unidad[' + id + ']"]').val(1);
-                if (nombre == 'DOCENA')
-                    $('input[id="unidad[' + id + ']"]').val(12);
-
-            });
-
-            $('.unidad_select').trigger('change');
+//            $('.unidad_select').off('change');
+//            $('.unidad_select').on('change', function () {
+//                var nombre = $(this).find('option:selected').text();
+//                var id = $(this).attr('data-row');
+//                $('#unidad[' + id + ']').val(1);
+//                if (nombre == 'UNIDAD')
+//                    $('input[id="unidad[' + id + ']"]').val(1);
+//                if (nombre == 'DOCENA')
+//                    $('input[id="unidad[' + id + ']"]').val(12);
+//
+//            });
+//
+//            $('.unidad_select').trigger('change');
 
 
             unidadcount++;
@@ -1696,18 +1696,18 @@
             }
 
 
-            $('.unidad_select').off('change');
-            $('.unidad_select').on('change', function () {
-                var nombre = $(this).find('option:selected').text();
-                var id = $(this).attr('data-row');
-                $('#unidad[' + id + ']').val(1);
-                if (nombre == 'UNIDAD')
-                    $('input[id="unidad[' + id + ']"]').val(1);
-                if (nombre == 'DOCENA')
-                    $('input[id="unidad[' + id + ']"]').val(12);
-
-
-            });
+//            $('.unidad_select').off('change');
+//            $('.unidad_select').on('change', function () {
+//                var nombre = $(this).find('option:selected').text();
+//                var id = $(this).attr('data-row');
+//                $('#unidad[' + id + ']').val(1);
+//                if (nombre == 'UNIDAD')
+//                    $('input[id="unidad[' + id + ']"]').val(1);
+//                if (nombre == 'DOCENA')
+//                    $('input[id="unidad[' + id + ']"]').val(12);
+//
+//
+//            });
 
             $('.unidad_select').trigger('change');
 
@@ -1773,14 +1773,14 @@
                     countprecio++;
                 });
 
-                if ($("#trunidad" + count + " input[name^='precio_valor_'" + count + "]").find('.precio_unitario').length) {
-                    $("#trunidad" + count + " input[name^='precio_valor_'" + count + "]").find('.precio_unitario').attr('id', 'precio_unitario' + count);
+                if ($('#trunidad' + count).find('.precio_unitario').length) {
+                    $('#trunidad' + count).find('.precio_unitario').attr('id', 'precio_unitario' + count);
                 }
-                else if ($("#trunidad" + count + " input[name^='precio_valor_'" + count + "]").find('.precio_venta')) {
-                    $("#trunidad" + count + " input[name^='precio_valor_'" + count + "]").find('.precio_venta').attr('id', 'precio_venta' + count);
+                else if ($('#trunidad' + count).find('.precio_venta').length) {
+                    $('#trunidad' + count).find('.precio_venta').attr('id', 'precio_venta' + count);
                 }
-                else if ($("#trunidad" + count + " input[name^='precio_valor_'" + count + "]").find('.precio_descuento')) {
-                    $("#trunidad" + count + " input[name^='precio_valor_'" + count + "]").find('.precio_descuento').attr('id', 'precio_venta' + count);
+                else if ($('#trunidad' + count).find('.precio_descuento').length) {
+                    $('#trunidad' + count).find('.precio_descuento').attr('id', 'precio_descuento' + count);
                 }
 
                 $("#trunidad" + count + " input[name^='precio_valor_']").attr('data-row', count);
@@ -1793,20 +1793,20 @@
             })
 
 
-            $('.unidad_select').off('change');
-            $('.unidad_select').on('change', function () {
-                var nombre = $(this).find('option:selected').text();
-                var id = $(this).attr('data-row');
-                $('#unidad[' + id + ']').val(1);
-                if (nombre == 'UNIDAD')
-                    $('input[id="unidad[' + id + ']"]').val(1);
-                if (nombre == 'DOCENA')
-                    $('input[id="unidad[' + id + ']"]').val(12);
-
-
-            });
-
-            $('.unidad_select').trigger('change');
+//            $('.unidad_select').off('change');
+//            $('.unidad_select').on('change', function () {
+//                var nombre = $(this).find('option:selected').text();
+//                var id = $(this).attr('data-row');
+//                $('#unidad[' + id + ']').val(1);
+//                if (nombre == 'UNIDAD')
+//                    $('input[id="unidad[' + id + ']"]').val(1);
+//                if (nombre == 'DOCENA')
+//                    $('input[id="unidad[' + id + ']"]').val(12);
+//
+//
+//            });
+//
+//            $('.unidad_select').trigger('change');
 
             $(".precio_unitario").keyup(function () {
                 var row = $(this).attr('data-row');
@@ -1885,20 +1885,20 @@
                 "color": false //Button to change color of font
             });
 
-            $('.unidad_select').off('change');
-            $('.unidad_select').on('change', function () {
-                var nombre = $(this).find('option:selected').text();
-                var id = $(this).attr('data-row');
-                $('#unidad[' + id + ']').val(1);
-                if (nombre == 'UNIDAD')
-                    $('input[id="unidad[' + id + ']"]').val(1);
-                if (nombre == 'DOCENA')
-                    $('input[id="unidad[' + id + ']"]').val(12);
-
-
-            });
-
-            $('.unidad_select').trigger('change');
+//            $('.unidad_select').off('change');
+//            $('.unidad_select').on('change', function () {
+//                var nombre = $(this).find('option:selected').text();
+//                var id = $(this).attr('data-row');
+//                $('#unidad[' + id + ']').val(1);
+//                if (nombre == 'UNIDAD')
+//                    $('input[id="unidad[' + id + ']"]').val(1);
+//                if (nombre == 'DOCENA')
+//                    $('input[id="unidad[' + id + ']"]').val(12);
+//
+//
+//            });
+//
+//            $('.unidad_select').trigger('change');
 
             $(".precio_unitario").keyup(function () {
                 var row = $(this).attr('data-row');

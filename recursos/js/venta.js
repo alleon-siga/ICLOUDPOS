@@ -273,7 +273,7 @@ $(document).ready(function () {
                     }
                 });
                 $("#total_minimo").val(total);
-                set_stock_info();
+                set_stock_info(producto_id);
 
 
                 //SUSCRIBOS EVENTOS
@@ -1477,9 +1477,15 @@ function set_stock_info() {
 
     var producto_id = $("#producto_id").val();
     var stock_total_minimo = 0;
-    for (var i = 0; i < lst_producto.length; i++)
-        if (lst_producto[i].producto_id == producto_id)
+    var total_minimo = 0;
+    for (var i = 0; i < lst_producto.length; i++) {
+        if (lst_producto[i].producto_id == producto_id) {
+
             stock_total_minimo += lst_producto[i].total_minimo;
+            total_minimo = lst_producto[i].total_local['local' + $("#local_id").val()];
+        }
+    }
+
     $.ajax({
         url: ruta + 'venta_new/set_stock',
         type: 'POST',
@@ -1487,7 +1493,7 @@ function set_stock_info() {
             Accept: 'application/json'
         },
         data: {
-            'stock_minimo': $("#total_minimo").val(),
+            'stock_minimo': total_minimo,
             'stock_total_minimo': stock_total_minimo,
             'producto_id': producto_id,
             'local_id': $("#local_id").val()
