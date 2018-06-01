@@ -114,7 +114,7 @@
             </tr>
             <tr>
                 <td style="text-align:left; width: 100%;">
-                    <span>Fecha: </span><?= date('d/m/Y H:i:s'); ?></td>
+                    <span>Fecha: </span><?= date('d/m/Y', strtotime($fecha)); ?></td>
             </tr>
             <tr>
                 <td style="text-align:left; width: 100%;">
