@@ -1665,7 +1665,7 @@ $primary_nav = array(
                             <label for="fecha" class="control-label col-md-2">Locales:</label>
 
                             <div class="controls col-md-8">
-                                <select class="form-control" id="locales" name="locales" class='cho form-control'
+                                <select class="form-control" id="locales_cuadre_caja" name="locales_cuadre_caja" class='cho form-control'
                                         required="true">
                                     <option value="0">TODOS</option>
                                     <?php foreach ($locales as $local) { ?>
@@ -1684,9 +1684,8 @@ $primary_nav = array(
                             <br>
                             <div class="col-md-1"></div>
                             <label for="fecha" class="control-label col-md-2">Usuarios:</label>
-
                             <div class="controls col-md-8">
-                                <select class="form-control" id="usuarios" name="usuarios" class='cho form-control'
+                                <select class="form-control" id="usuarios_cuadre_caja" name="usuarios_cuadre_caja" class='cho form-control'
                                         required="true">
                                     <?php if (!($this->session->userdata('grupo') != 2 && $this->session->userdata('grupo') != 9)): ?>
                                         <option value="0">TODOS</option>
@@ -1704,7 +1703,7 @@ $primary_nav = array(
                             <label for="fecha" class="control-label col-md-2">Monedas:</label>
 
                             <div class="controls col-md-8">
-                                <select class="form-control" id="monedas" name="monedas" class='cho form-control'
+                                <select class="form-control" id="monedas_cuadre_caja" name="monedas_cuadre_caja" class='cho form-control'
                                         required="true">
                                     <option value="0">TODOS</option>
                                     <?php foreach ($monedas as $moneda) { ?>

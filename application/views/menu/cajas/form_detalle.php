@@ -24,7 +24,8 @@
                     <th>ID</th>
                     <th>Fecha</th>
                     <th>Operacion</th>
-                    <th>Usuario</th>
+                    <th>Usuario registra</th>
+                    <th>Usuario aprueba</th>
                     <th>Forma de Pago</th>
                     <th>Numero</th>
                     <th>Observacion</th>
@@ -49,6 +50,7 @@
                         <td><?= date('d/m/Y H:i', strtotime($mov->created_at)) ?></td>
                         <td><?= $mov->operacion_nombre ?></td>
                         <td><?= $mov->usuario_nombre ?></td>
+                        <td></td>
                         <td><?= $mov->medio_pago_nombre ?></td>
                         <td><?= $mov->numero ?></td>
                         <td><?= $mov->ref_val ?></td>

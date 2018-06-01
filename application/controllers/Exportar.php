@@ -108,9 +108,9 @@ class exportar extends MY_Controller
     function toPDF_cuadre_caja()
     {
 
-        $id_local = $this->input->post('locales', true);
-        $id_usuario = $this->input->post('usuarios', true);
-        $id_moneda = $this->input->post('monedas', true);
+        $id_local = $this->input->post('locales_cuadre_caja', true);
+        $id_usuario = $this->input->post('usuarios_cuadre_caja', true);
+        $id_moneda = $this->input->post('monedas_cuadre_caja', true);
 
         if ($id_moneda == '0') {
             $data['moneda_nombre'] = 'Todos';
@@ -216,7 +216,7 @@ class exportar extends MY_Controller
             }
 
             if ($id_usuario != 0) {
-                $this->db->where('caja_movimiento.usuario_id', $id_usuario);
+                $this->db->where('venta.id_vendedor', $id_usuario);
             }
 
             $data['venta_inicial'][$mon['id_moneda']] = $this->db->get()->row();
@@ -236,7 +236,7 @@ class exportar extends MY_Controller
             }
 
             if ($id_usuario != 0) {
-                $this->db->where('caja_movimiento.usuario_id', $id_usuario);
+                $this->db->where('venta.id_vendedor', $id_usuario);
             }
 
             $ventas = $this->db->get()->result();
@@ -517,7 +517,7 @@ class exportar extends MY_Controller
                 ->join('caja_desglose', 'caja_desglose.id = caja_movimiento.caja_desglose_id')
                 ->join('caja', 'caja.id = caja_desglose.caja_id')
                 ->join('venta', 'venta.venta_id = caja_movimiento.ref_id')
-                ->where("venta.venta_status != 'ANULADO'")
+                //->where("venta.venta_status != 'ANULADO'")
                 ->where('caja.moneda_id', $mon["id_moneda"])
                 ->where('caja_movimiento.fecha_mov >=', $fecha)
                 ->where('caja_movimiento.fecha_mov <', $fechadespues)

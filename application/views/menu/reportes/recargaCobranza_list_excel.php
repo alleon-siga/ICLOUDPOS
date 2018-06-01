@@ -25,10 +25,10 @@
             <th>Operador</th>
             <th># Recarga</th>
             <th># Transacci&oacute;n</th>
-            <th>Fecha recarga</th>
-            <th>Monto Recarga</th>
+            <th>Fecha venta</th>
+            <th>Importe venta</th>
             <th>Fecha pago</th>
-            <th>Monto pagado</th>
+            <th>Monto cobrado</th>
             <th>Pendiente pago</th>
             <th>Local</th>
             <th>Condici&oacute;n</th>

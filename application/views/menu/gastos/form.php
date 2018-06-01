@@ -279,9 +279,10 @@
             cuenta_select.html('<option value="">Seleccione</option>');
 
             if ($(this).val() != "") {
-                var slt = "";
+                var slt;
                 for (var i = 0; i < cuentas.length; i++) {
                     if (cuentas[i].local_id == $(this).val()) {
+                        slt = "";
                         if(cuentas[i].id == '<?php echo (isset($gastos['caja_desglose_id']))? $gastos['caja_desglose_id'] : ""; ?>'){
                             slt = "selected";
                         }

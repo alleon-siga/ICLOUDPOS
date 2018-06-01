@@ -483,8 +483,8 @@ class reporte_model extends CI_Model
         $this->db->join('detalle_venta dv', 'v.venta_id = dv.id_venta');
         $this->db->join('cliente c', 'c.id_cliente = v.id_cliente');
         $this->db->join('local l', 'v.local_id = l.int_local_id');
-        $this->db->join('recarga r', 'v.venta_id = r.id_venta');
-        $this->db->join('diccionario_termino dt', 'r.rec_ope = dt.id');
+        $this->db->join('recarga r', 'v.venta_id = r.id_venta', 'left');
+        $this->db->join('diccionario_termino dt', 'r.rec_ope = dt.id', 'left');
         $this->db->join('credito cr', 'v.venta_id = cr.id_venta');
         $this->db->join('credito_cuotas cru', 'v.venta_id = cru.id_venta');
         $this->db->join('credito_cuotas_abono cca', 'cru.id_credito_cuota = cca.credito_cuota_id','left');
@@ -530,15 +530,16 @@ class reporte_model extends CI_Model
         if($params['local_id']>0){
             $this->db->where('v.local_id = '.$params['local_id']);
         }
-        if(!empty($params['fecha_ini']) && !empty($params['fecha_fin'])){
+        /*if(!empty($params['fecha_ini']) && !empty($params['fecha_fin'])){
             $this->db->where("v.fecha >= '".$params['fecha_ini']."' AND v.fecha <= '".$params['fecha_fin']."'");
-        }
+        }*/
         if($params['poblado_id']>0){
             $this->db->where('rec_pob = ', $params['poblado_id']);
         }
         if($params['usuario_id']>0){
             $this->db->where('v.id_vendedor = ', $params['usuario_id']);   
         }
+        $this->db->group_by("v.venta_id");
         return $this->db->get()->result();
     }
     function getSumMedioPago($params, $condicion_pago)

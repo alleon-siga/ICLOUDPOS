@@ -28,7 +28,7 @@
                 <th>Monto Recarga</th>
                 <th>Fecha pago</th>
                 <th>Monto pagado</th>
-                <th>Pendiente pago</th>
+                <th>Pendiente cobro</th>
                 <th>Local</th>
                 <th>Condici&oacute;n</th>
                 <th>Estado</th>
@@ -132,7 +132,7 @@
 </div>
 <script type="text/javascript">
     $(document).ready(function () {
-        TablesDatatables.init(1, 'asc');
+        TablesDatatables.init(0, 'asc');
 
         $('#exportar_excel').on('click', function () {
             exportar_excel();
