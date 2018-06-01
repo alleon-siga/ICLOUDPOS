@@ -162,7 +162,10 @@ class exportar extends MY_Controller
                 ->where('venta.id_moneda', $mon["id_moneda"])
                 ->where('caja_movimiento.fecha_mov >=', $fecha)
                 ->where('caja_movimiento.fecha_mov <', $fechadespues)
-                ->where('venta.venta_status', "COMPLETADO")
+                ->where('(venta.venta_status = "COMPLETADO" OR 
+                (SELECT caja_pendiente.estado from caja_pendiente 
+                where caja_pendiente.ref_id = venta.venta_id AND (caja_pendiente.tipo = "VENTA_ANULADA" OR
+                 caja_pendiente.tipo = "VENTA_DEVUELTA") LIMIT 1) = 0)')
                 ->where('venta.condicion_pago', 1);
 
             if ($id_local != 0) {
@@ -181,7 +184,10 @@ class exportar extends MY_Controller
                 ->where('venta.id_moneda', $mon["id_moneda"])
                 ->where('caja_movimiento.fecha_mov >=', $fecha)
                 ->where('caja_movimiento.fecha_mov <', $fechadespues)
-                ->where('venta.venta_status', "COMPLETADO")
+                ->where('(venta.venta_status = "COMPLETADO" OR 
+                (SELECT caja_pendiente.estado from caja_pendiente 
+                where caja_pendiente.ref_id = venta.venta_id AND (caja_pendiente.tipo = "VENTA_ANULADA" OR
+                 caja_pendiente.tipo = "VENTA_DEVUELTA") LIMIT 1) = 0)')
                 ->where('venta.condicion_pago', 1)
                 ->where('caja_movimiento.operacion', 'VENTA');
 
@@ -465,50 +471,100 @@ class exportar extends MY_Controller
             $this->db->select_sum('caja_movimiento.saldo', 'total')
                 ->from('caja_movimiento')
                 ->join('caja_desglose', 'caja_desglose.id = caja_movimiento.caja_desglose_id')
+                ->join('caja_pendiente', 'caja_pendiente.id = caja_movimiento.ref_id')
+                ->join('venta', 'venta.venta_id = caja_pendiente.ref_id')
                 ->join('caja', 'caja.id = caja_desglose.caja_id')
                 ->where('caja_movimiento.fecha_mov >=', $fecha)
                 ->where('caja_movimiento.fecha_mov <', $fechadespues)
                 ->where('caja.moneda_id', $mon["id_moneda"])
                 ->where("(caja_movimiento.operacion = 'VENTA_ANULADA' OR caja_movimiento.operacion = 'VENTA_DEVUELTA')")
-                ->where('caja_desglose.estado', 1);
+                ->where('caja_desglose.estado', 1)
+                ->where('caja_pendiente.estado', 1);
 
             if ($id_local != 0) {
                 $this->db->where('caja.local_id', $id_local);
             }
 
             if ($id_usuario != 0) {
-                $this->db->where('caja_movimiento.usuario_id', $id_usuario);
+                $this->db->where('venta.id_vendedor', $id_usuario);
             }
 
             $data['anulacion_egreso'][$mon['id_moneda']] = $this->db->get()->row();
 
 
-
-
             $data['detalle_ingreso'][$mon['id_moneda']] = $detalle_ingreso;
 
             //EGRESO EFECTIVO Y CHEQUE
-            $this->db->select_sum('caja_movimiento.saldo', 'total')
+            $this->db->select('caja_movimiento.*, caja_pendiente.ref_id as my_ref, caja_pendiente.tipo')
                 ->from('caja_movimiento')
                 ->join('caja_desglose', 'caja_desglose.id = caja_movimiento.caja_desglose_id')
+                ->join('caja_pendiente', 'caja_pendiente.id = caja_movimiento.ref_id')
                 ->join('caja', 'caja.id = caja_desglose.caja_id')
                 ->where('caja.moneda_id', $mon["id_moneda"])
                 ->where('caja_movimiento.fecha_mov >=', $fecha)
                 ->where('caja_movimiento.fecha_mov <', $fechadespues)
                 ->where('caja_movimiento.movimiento', 'EGRESO')
+                ->where('caja_pendiente.estado', '1')
                 ->where('(caja_movimiento.medio_pago = 3 OR caja_movimiento.medio_pago = 5)');
 
             if ($id_local != 0) {
                 $this->db->where('caja.local_id', $id_local);
             }
 
-            if ($id_usuario != 0) {
-                $this->db->where('caja_movimiento.usuario_id', $id_usuario);
+            $egreso_efectivo = $this->db->get()->result();
+
+            $total_egresos = 0;
+            foreach ($egreso_efectivo as $ef) {
+                if ($ef->tipo == 'VENTA_ANULADA' || $ef->tipo == 'VENTA_DEVUELTA') {
+                    if ($id_usuario != 0) {
+                        $temp = $this->db->get_where('venta', array(
+                            'id_vendedor' => $id_usuario,
+                            'venta_id' => $ef->my_ref
+                        ))->row();
+                        if ($temp != NULL)
+                            $total_egresos += $ef->saldo;
+                    } else {
+                        $total_egresos += $ef->saldo;
+                    }
+                } elseif ($ef->tipo == 'COMPRA') {
+                    if ($id_usuario != 0) {
+                        $temp = $this->db->get_where('ingreso', array(
+                            'nUsuCodigo' => $id_usuario,
+                            'id_ingreso' => $ef->my_ref
+                        ))->row();
+                        if ($temp != NULL)
+                            $total_egresos += $ef->saldo;
+                    } else {
+                        $total_egresos += $ef->saldo;
+                    }
+                } elseif ($ef->tipo == 'PAGOS') {
+                    if ($id_usuario != 0) {
+                        $temp = $this->db->get_where('pagos_ingreso', array(
+                            'pagoingreso_usuario' => $id_usuario,
+                            'pagoingreso_id' => $ef->my_ref
+                        ))->row();
+                        if ($temp != NULL)
+                            $total_egresos += $ef->saldo;
+                    } else {
+                        $total_egresos += $ef->saldo;
+                    }
+                } elseif ($ef->tipo == 'GASTOS') {
+                    if ($id_usuario != 0) {
+                        $temp = $this->db->get_where('gastos', array(
+                            'gasto_usuario' => $id_usuario,
+                            'id_gastos' => $ef->my_ref
+                        ))->row();
+                        if ($temp != NULL)
+                            $total_egresos += $ef->saldo;
+                    } else {
+                        $total_egresos += $ef->saldo;
+                    }
+                } else {
+                    $total_egresos += $ef->saldo;
+                }
             }
 
-            $egreso_efectivo = $this->db->get()->row();
-
-            $data['total_egreso_efectivo'][$mon['id_moneda']] = $egreso_efectivo != NULL ? $egreso_efectivo->total : 0;
+            $data['total_egreso_efectivo'][$mon['id_moneda']] = $total_egresos;
 
 
             //INGRESO EFECTIVO Y CHEQUE
@@ -517,7 +573,7 @@ class exportar extends MY_Controller
                 ->join('caja_desglose', 'caja_desglose.id = caja_movimiento.caja_desglose_id')
                 ->join('caja', 'caja.id = caja_desglose.caja_id')
                 ->join('venta', 'venta.venta_id = caja_movimiento.ref_id')
-                //->where("venta.venta_status != 'ANULADO'")
+                ->where("venta.venta_status != 'ANULADO'")
                 ->where('caja.moneda_id', $mon["id_moneda"])
                 ->where('caja_movimiento.fecha_mov >=', $fecha)
                 ->where('caja_movimiento.fecha_mov <', $fechadespues)

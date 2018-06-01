@@ -114,16 +114,16 @@
             </tr>
             <tr>
                 <td style="text-align:left; width: 100%;">
-                    <span>Fecha: </span><?php echo $this->input->post('fecha', true) . " " . date('H:i:s'); ?></td>
+                    <span>Fecha: </span><?= date('d/m/Y H:i:s'); ?></td>
             </tr>
             <tr>
                 <td style="text-align:left; width: 100%;">
-                    <span>Almacen: </span><?php echo $local_nombre ?>
+                    <span>Almacen: </span><?= $local_nombre ?>
                 </td>
             </tr>
             <tr>
                 <td style="text-align:left; width: 100%;">
-                    <span>Usuario: </span><?php echo $usuario_nombre ?>
+                    <span>Usuario: </span><?= $usuario_nombre ?>
                 </td>
             </tr>
         </table>
