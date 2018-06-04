@@ -149,7 +149,7 @@ class impresion_model extends CI_Model
             $aux = (string) $n;
             $decimal = substr( $aux, strpos( $aux, ".") );
 
-            $v->importe_letra = Numeroletra::convertir($v->importe) . ' ' . strtoupper($v->moneda) . ' ' . str_replace('.', '', $decimal) . '/100';
+            $v->importe_letra = Numeroletra::convertir($v->importe) . ' ' .  str_replace('.', '', $decimal) . '/100 '.strtoupper($v->moneda);
 
             //$v->importe_letra = "";
 
@@ -327,7 +327,7 @@ class impresion_model extends CI_Model
             $aux = (string) $n;
             $decimal = substr( $aux, strpos( $aux, ".") );
 
-            $v->importe_letra = Numeroletra::convertir($v->importe) . ' ' . strtoupper($v->moneda) . ' ' . str_replace('.', '', $decimal) . '/100';
+            $v->importe_letra = Numeroletra::convertir($v->importe) . ' ' .  str_replace('.', '', $decimal) . '/100 '.strtoupper($v->moneda);
 
             //$v->importe_letra = "";
 
@@ -495,7 +495,7 @@ class impresion_model extends CI_Model
             $aux = (string) $n;
             $decimal = substr( $aux, strpos( $aux, ".") );
 
-            $v->importe_letra = Numeroletra::convertir($v->importe) . ' ' . strtoupper($v->moneda) . ' ' . str_replace('.', '', $decimal) . '/100';
+            $v->importe_letra = Numeroletra::convertir($v->importe) . ' ' . str_replace('.', '', $decimal) . '/100 '.strtoupper($v->moneda);
 
             //$v->importe_letra = "";
 
