@@ -52,7 +52,17 @@ class Pedidos extends REST_Controller
     {
         $estado = $this->input->post('estado');
 
-        $where = array('estado' => $estado);
+        if ($estado == "COMPLETADO") {
+            $fecha_ini = $this->input->post('fecha_ini');
+            $fecha_fin = $this->input->post('fecha_fin');
+
+            $where = array('fecha_ini' => date('Y-m-d', strtotime($fecha_ini)),
+                'fecha_fin' => date('Y-m-d', strtotime($fecha_fin)),
+                'estado' => $estado);
+
+        } else {
+            $where = array('estado' => $estado);
+        }
 
         $ventas = $this->venta->get_ventas($where, "caja");
 
@@ -63,7 +73,7 @@ class Pedidos extends REST_Controller
             $data['ventas'][] = $v;
         }
 
-        $this->response($data, 200);
+       $this->response($data, 200);
     }
 
     public function last_venta_get()
