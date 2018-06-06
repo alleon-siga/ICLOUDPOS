@@ -287,7 +287,7 @@
                     <br>
                     <div class="row">
                         <div class="col-md-8">
-                            <?php if (count($kardex) > 0): ?>
+                            <?php if (isset($kardex) && count($kardex) > 0): ?>
                                 <h4>Anulaciones</h4>
                                 <?php foreach ($kardex as $k): ?>
                                     <h5>

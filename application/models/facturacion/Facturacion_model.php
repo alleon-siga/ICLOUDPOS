@@ -37,7 +37,7 @@ class facturacion_model extends CI_Model
             $result->documento_numero_ceros = $numero_cero[0] . '-' . sumCod($numero_cero[1], 8);
 
             $result->documento_mod_numero_ceros = null;
-            if($result->documento_tipo == '07' || $result->documento_tipo == '08'){
+            if ($result->documento_tipo == '07' || $result->documento_tipo == '08') {
                 $numero_cero = explode('-', $result->documento_mod_numero);
                 $result->documento_mod_numero_ceros = $numero_cero[0] . '-' . sumCod($numero_cero[1], 8);
             }
@@ -83,6 +83,7 @@ class facturacion_model extends CI_Model
     function emitir($id)
     {
 
+        log_message('debug', 'Facturacion Electronica. Emitiendo comprobante ' . $id);
         $facturacion = new FacturacionSunat();
         $facturacion->qr_path = './recursos/qr/';
 
@@ -211,6 +212,10 @@ class facturacion_model extends CI_Model
 
             if (isset($resp['mensaje']))
                 $error = $resp['mensaje'];
+            $log_error = 'Facturacion error. ' . $error;
+            $log_error .= ' SUNAT: ' . $resp['cod_sunat'];
+            if (isset($resp['cod_sunat']))
+                log_message('error', $log_error);
 
             $this->db->where('venta_id', $comprobante->ref_id);
             $this->db->update('venta', array(
@@ -231,7 +236,7 @@ class facturacion_model extends CI_Model
     function facturarVenta($venta_id)
     {
         $this->load->model('venta_new/venta_new_model');
-
+        log_message('debug', 'Facturacion Electronica. Guardando venta ' . $venta_id);
         $venta = $this->venta_new_model->get_venta_detalle($venta_id);
 
         $tipo_doc = '';
@@ -257,6 +262,7 @@ class facturacion_model extends CI_Model
             if ($cambio != null) {
                 $cambio_dolar = $cambio->venta;
             } else {
+                log_message('error', 'Facturacion error, No se ha podido recuperar el cambio de dolar');
                 return array(
                     'respuesta' => 'error',
                     'msg_validacion' => 'No se ha podido recuperar el cambio de dolar'
@@ -299,7 +305,7 @@ class facturacion_model extends CI_Model
 
             $this->db->insert('facturacion_detalle', array(
                 'facturacion_id' => $facturacion_id,
-                'producto_codigo' => getCodigoValue($d->producto_id, $d->producto_codigo_interno),
+                'producto_codigo' => getCodigoValue(sumCod($d->producto_id, 4), $d->producto_codigo_interno),
                 'producto_descripcion' => $d->producto_nombre,
                 'um' => "NIU",
                 'cantidad' => $d->cantidad,

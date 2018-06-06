@@ -540,6 +540,9 @@ class venta_new_model extends CI_Model
                 $resp = $this->facturacion_model->facturarVenta($venta_id);
             }
         }
+        elseif(valueOptionDB('FACTURACION', 0) == 1){
+            log_message('debug', 'Facturacion electronica. Documento erroneo. Doc: '. $venta['id_documento']);
+        }
 
         return $venta_id;
 

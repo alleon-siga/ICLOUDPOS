@@ -597,11 +597,19 @@ class SunatWS
 
                 //=============hash CDR=================
                 $doc_cdr = new DOMDocument();
-                $doc_cdr->load($ruta_archivo_cdr . 'R-' . $archivo . '.XML');
-                $resp['respuesta'] = 'ok';
-                $resp['cod_sunat'] = $doc_cdr->getElementsByTagName('ResponseCode')->item(0)->nodeValue;
-                $resp['mensaje'] = $doc_cdr->getElementsByTagName('Description')->item(0)->nodeValue;
-                $resp['hash_cdr'] = $doc_cdr->getElementsByTagName('DigestValue')->item(0)->nodeValue;
+                if($doc_cdr->load($ruta_archivo_cdr . 'R-' . $archivo . '.XML') == TRUE){
+                    $resp['respuesta'] = 'ok';
+                    $resp['cod_sunat'] = $doc_cdr->getElementsByTagName('ResponseCode')->item(0)->nodeValue;
+                    $resp['mensaje'] = $doc_cdr->getElementsByTagName('Description')->item(0)->nodeValue;
+                    $resp['hash_cdr'] = $doc_cdr->getElementsByTagName('DigestValue')->item(0)->nodeValue;
+                }
+                else{
+                    $resp['respuesta'] = 'error';
+                    $resp['cod_sunat'] = '';
+                    $resp['mensaje'] = 'Error inesperado. No se ha podido recuperar el xml respuesta de SUNAT';
+                    $resp['hash_cdr'] = null;
+                }
+
             } else {
                 $resp['respuesta'] = 'error';
                 $resp['cod_sunat'] = $doc->getElementsByTagName('faultcode')->item(0)->nodeValue;

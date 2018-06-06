@@ -185,10 +185,8 @@
         </tr>
         <tr>
             <td style="border: 0;">
-                Autorizado mediante Resolución de
-                Intendencia N° 032-005-0001476/SUNAT Representación
-                impresa de la Boleta Electrónica.<br>
-                HASH: <?= $facturacion->hash_cpe ?>
+                CDR: <?= $facturacion->hash_cdr ?><br>
+                CPE: <?= $facturacion->hash_cpe ?>
             </td>
         </tr>
     </table>
