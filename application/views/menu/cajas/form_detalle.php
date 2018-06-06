@@ -25,7 +25,7 @@
                     <th>Fecha</th>
                     <th>Operacion</th>
                     <th>Usuario registra</th>
-                    <th>Usuario aprueba</th>
+                    <th>Usuario confirma</th>
                     <th>Forma de Pago</th>
                     <th>Numero</th>
                     <th>Observacion</th>
@@ -49,8 +49,8 @@
                         <td><?= $mov->id ?></td>
                         <td><?= date('d/m/Y H:i', strtotime($mov->created_at)) ?></td>
                         <td><?= $mov->operacion_nombre ?></td>
+                        <td><?= $mov->usuario_registra ?></td>
                         <td><?= $mov->usuario_nombre ?></td>
-                        <td></td>
                         <td><?= $mov->medio_pago_nombre ?></td>
                         <td><?= $mov->numero ?></td>
                         <td><?= $mov->ref_val ?></td>
@@ -70,7 +70,7 @@
                 <?php endforeach; ?>
 
                 <tr>
-                    <td colspan="7" style="font-weight: bold; color: #00CC00;">SALDO FINAL (<?= $fecha_fin ?>)</td>
+                    <td colspan="8" style="font-weight: bold; color: #00CC00;">SALDO FINAL (<?= $fecha_fin ?>)</td>
                     <td style="font-weight: bold; color: #0d70b7;"><?= $cuenta->simbolo . ' ' . number_format($total_ingreso, 2) ?></td>
                     <td style="font-weight: bold; color: #ff0000;"><?= $cuenta->simbolo . ' ' . number_format($total_egreso, 2) ?></td>
                     <td style="font-weight: bold; color: #00CC00;"><?= $cuenta->simbolo . ' ' . number_format($saldo_anterior, 2) ?></td>

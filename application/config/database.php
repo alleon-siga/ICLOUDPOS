@@ -54,7 +54,7 @@ $db['default'] = array(
     'hostname' => '10.1.1.3',
     'username' => 'user',
     'password' => 'password',
-    'database' => DATABASE_HOST != false ? DATABASE_HOST : 'ip_newlevel',
+    'database' => DATABASE_HOST != false ? DATABASE_HOST : 'crdigital',
     'dbdriver' => 'mysqli',
     'dbprefix' => '',
     'pconnect' => FALSE,

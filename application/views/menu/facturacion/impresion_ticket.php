@@ -185,8 +185,9 @@
         </tr>
         <tr>
             <td style="border: 0;">
-                CDR: <?= $facturacion->hash_cdr ?><br>
-                CPE: <?= $facturacion->hash_cpe ?>
+                Autorizado mediante Resoluci&oacute;n Nro: 0180050000804/SUNAT.
+                Representac&oacute;n impresa del comprobante de venta electr&oacute;nica.<br>
+                HASH: <?= $facturacion->hash_cpe ?>
             </td>
         </tr>
     </table>

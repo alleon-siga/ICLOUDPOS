@@ -25,19 +25,19 @@
 
     #emisor_ruc {
         padding-top: 20px;
-        font-size: 25px;
+        font-size: 22px;
         text-align: center;
     }
 
     #tipo_dcumento {
         padding-top: 20px;
-        font-size: 20px;
+        font-size: 18px;
         text-align: center;
     }
 
     #numero_documento {
         padding-top: 10px;
-        font-size: 20px;
+        font-size: 18px;
         text-align: center;
     }
 
@@ -46,20 +46,20 @@
 
     #emisor_nombre_comercial {
         padding-top: 5px;
-        font-size: 12px;
+        font-size: 11px;
     }
 
     #emisor_razon_social {
-        font-size: 12px;
+        font-size: 11px;
         text-decoration: underline;
     }
 
     #emisor_telefono, #emisor_correo {
-        font-size: 11px;
+        font-size: 10px;
     }
 
     #emisor_direccion {
-        font-size: 11px;
+        font-size: 10px;
     }
 
     #header_1 div {
@@ -79,7 +79,7 @@
         padding: 6px;
         border: 1px solid #000;
         width: 100%;
-        font-size: 10px;
+        font-size: 9px;
     }
 
     #table_header tr th {
@@ -98,12 +98,12 @@
         width: 100%;
         margin-top: 20px;
         border: 1px solid #000;
-        font-size: 10px;
+        font-size: 9px;
     }
 
     .td-data td {
         text-transform: uppercase;
-        font-size: 10px;
+        font-size: 9px;
     }
 
     #producto_detalles thead tr {
@@ -113,7 +113,7 @@
 
     #producto_detalles th {
         text-transform: uppercase;
-        font-size: 10px;
+        font-size: 9px;
         padding: 4px 4px;
         border: 1px solid #000;
         color: #212121;
@@ -269,14 +269,15 @@
                 <img id="qr_image"
                      src="<?= base_url('recursos/qr/' . $emisor->ruc . '/' . $facturacion->documento_tipo . '-' . $facturacion->documento_numero . '.png') ?>">
             </td>
-            <td style="border: 0; font-size: 10px;">
-                CDR: <?= $facturacion->hash_cdr ?><br><br>
-                CPE: <?= $facturacion->hash_cpe ?>
+            <td style="border: 0; font-size: 9px;">
+                Autorizado mediante Resoluci&oacute;n Nro: 0180050000804/SUNAT.
+                Representac&oacute;n impresa del comprobante de venta electr&oacute;nica.<br><br>
+                HASH: <?= $facturacion->hash_cpe ?>
             </td>
         </tr>
         <tr>
             <td colspan="2">
-                <p style="font-size: 10px;">Consulte su comprobante
+                <p style="font-size: 9px;">Consulte su comprobante
                     aqui: <?= base_url() . 'facturacion/consulta/' . md5($facturacion->id) ?></p>
             </td>
         </tr>
