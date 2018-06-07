@@ -45,6 +45,7 @@ class cajas_mov_model extends CI_Model
         foreach ($movimientos as $mov) {
             $mov->numero = '';
             $mov->operacion_nombre = $mov->operacion;
+            $mov->usuario_registra = $mov->usuario_nombre;
 
             $metodo = $this->db->get_where('metodos_pago', array('id_metodo' => $mov->medio_pago))->row();
             $mov->medio_pago_nombre = $metodo != NULL ? $metodo->nombre_metodo : '';
@@ -61,14 +62,13 @@ class cajas_mov_model extends CI_Model
                     $mov->ref_val = 'NO FACTURADO';
                 }
                 $mov->numero = 'NP ' . $mov->ref_id . ' (' . date('d/m/Y', strtotime($venta->fecha)) . ')';
-
-
             }
 
             if ($mov->operacion == 'COMPRA') {
 
                 $caja_pendiente = $this->db->get_where('caja_pendiente', array('id' => $mov->ref_id))->row();
-                $ingreso = $this->db->get_where('ingreso', array('id_ingreso' => $caja_pendiente->ref_id))->row();
+                $ingreso = $this->db->join('usuario', 'usuario.nUsuCodigo = ingreso.nUsuCodigo')
+                    ->get_where('ingreso', array('id_ingreso' => $caja_pendiente->ref_id))->row();
 
                 $doc = 'NP ';
                 if ($ingreso->tipo_documento == 'BOLETA DE VENTA') $doc = 'BO ';
@@ -76,11 +76,14 @@ class cajas_mov_model extends CI_Model
 
                 $mov->numero = $doc . $ingreso->documento_serie . ' - ' . $ingreso->documento_numero;
                 $mov->ref_val = 'Registro: ' . date('d/m/Y', strtotime($ingreso->fecha_registro));
+
+                $mov->usuario_registra = $ingreso->username;
             }
 
             if ($mov->operacion == 'VENTA_ANULADA' || $mov->operacion == 'VENTA_DEVUELTA') {
                 $caja_pendiente = $this->db->get_where('caja_pendiente', array('id' => $mov->ref_id))->row();
-                $venta = $this->db->get_where('venta', array('venta_id' => $caja_pendiente->ref_id))->row();
+                $venta = $this->db->join('usuario', 'usuario.nUsuCodigo = venta.id_vendedor')
+                    ->get_where('venta', array('venta_id' => $caja_pendiente->ref_id))->row();
 
                 $kardex = $this->db->get_where('kardex', array(
                     'io' => 2,
@@ -95,6 +98,8 @@ class cajas_mov_model extends CI_Model
                 }else
                 $mov->numero = 'NO DEFINIDO';
                 $mov->ref_val = 'NP ' . $caja_pendiente->ref_id . ' (' . date('d/m/Y', strtotime($venta->fecha)) . ')';
+
+                $mov->usuario_registra = $venta->username;
             }
 
             if ($mov->operacion == 'INGRESO_ANULADO') {
@@ -118,13 +123,16 @@ class cajas_mov_model extends CI_Model
 
             if ($mov->operacion == 'GASTOS') {
                 $caja_pendiente = $this->db->get_where('caja_pendiente', array('id' => $mov->ref_id))->row();
-                $gasto = $this->db->join('tipos_gasto', 'tipos_gasto.id_tipos_gasto = gastos.tipo_gasto')
+                $gasto = $this->db->join('usuario', 'usuario.nUsuCodigo = gastos.gasto_usuario')
+                    ->join('tipos_gasto', 'tipos_gasto.id_tipos_gasto = gastos.tipo_gasto')
                     ->get_where('gastos', array('id_gastos' => $caja_pendiente->ref_id))->row();
 
                 $mov->operacion_nombre = $mov->operacion_nombre . ' (' . $gasto->nombre_tipos_gasto . ')';
                 $mov->ref_val = $gasto->descripcion;
 
                 $mov->numero = 'Registro: ' . date('d/m/Y', strtotime($gasto->fecha_registro));
+
+                $mov->usuario_registra = $gasto->username;
             }
 
             if ($mov->operacion == 'CUOTA') {
@@ -147,7 +155,8 @@ class cajas_mov_model extends CI_Model
                 $mov->operacion_nombre = 'PAGO PROVEEDORES';
 
                 $caja_pendiente = $this->db->get_where('caja_pendiente', array('id' => $mov->ref_id))->row();
-                $pago_ingreso = $this->db->get_where('pagos_ingreso', array('pagoingreso_id' => $caja_pendiente->ref_id))->row();
+                $pago_ingreso = $this->db->join('usuario', 'usuario.nUsuCodigo = pagos_ingreso.pagoingreso_usuario')
+                    ->get_where('pagos_ingreso', array('pagoingreso_id' => $caja_pendiente->ref_id))->row();
                 $ingreso_credito_cuotas = $this->db->get_where('ingreso_credito_cuotas', array('id' => $pago_ingreso->pagoingreso_ingreso_id))->row();
                 $ingreso = $this->db->get_where('ingreso', array('id_ingreso' => $ingreso_credito_cuotas->ingreso_id))->row();
 
@@ -158,6 +167,8 @@ class cajas_mov_model extends CI_Model
                 $mov->numero = $doc . $ingreso->documento_serie . ' - ' . $ingreso->documento_numero . ' (' . date('d/m/Y', strtotime($ingreso->fecha_registro)) . ')';
 
                 $mov->ref_val = 'Monto: ' . $ingreso_credito_cuotas->monto . ' | Letra: ' . $ingreso_credito_cuotas->letra;
+
+                $mov->usuario_registra = $pago_ingreso->username;
             }
 
             if ($mov->operacion == 'AJUSTE') {
