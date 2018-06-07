@@ -13,6 +13,7 @@ class gastos extends MY_Controller
             $this->load->model('monedas/monedas_model');
             $this->load->model('cajas/cajas_model');
             $this->load->model('proveedor/proveedor_model');
+            $this->load->model('impuesto/impuestos_model');
         } else {
             redirect(base_url(), 'refresh');
         }
@@ -94,6 +95,7 @@ class gastos extends MY_Controller
 
         $data = array();
         $data['gastos'] = array();
+        $data["impuestos"] = $this->impuestos_model->get_impuestos();
         $data['tiposdegasto'] = $this->tipos_gasto_model->get_all();
         $data['local'] = $this->local_model->get_local_by_user($this->session->userdata('nUsuCodigo'));
         $data["monedas"] = $this->monedas_model->get_all();
@@ -143,7 +145,10 @@ class gastos extends MY_Controller
             'gravable' => $this->input->post('gravable'),
             'id_documento' => $this->input->post('cboDocumento'),
             'serie' => $this->input->post('doc_serie'),
-            'numero' => $this->input->post('doc_numero')
+            'numero' => $this->input->post('doc_numero'),
+            'id_impuesto' => $this->input->post('id_impuesto'),
+            'subtotal' => $this->input->post('subtotal'),
+            'impuesto' => $this->input->post('impuesto')
         );
 
         if (empty($id)) {

@@ -108,7 +108,10 @@ class gastos_model extends CI_Model
             'gravable' => $data['gravable'],
             'id_documento' => $data['id_documento'],
             'serie' => $data['serie'],
-            'numero' => $data['numero']
+            'numero' => $data['numero'],
+            'id_impuesto' => $data['id_impuesto'],
+            'subtotal' => $data['subtotal'],
+            'impuesto' => $data['impuesto']
         );
 
         $this->db->insert('gastos', $gastos);
@@ -153,7 +156,10 @@ class gastos_model extends CI_Model
             'gravable' => $data['gravable'],
             'id_documento' => $data['id_documento'],
             'serie' => $data['serie'],
-            'numero' => $data['numero']
+            'numero' => $data['numero'],
+            'id_impuesto' => $data['id_impuesto'],
+            'subtotal' => $data['subtotal'],
+            'impuesto' => $data['impuesto']
         );        
         $this->db->where('id_gastos', $data['id_gastos']);
         $this->db->update('gastos', $gastos);

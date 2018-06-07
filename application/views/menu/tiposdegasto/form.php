@@ -11,18 +11,26 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="form-group">
-                        <div class="col-md-2">
-                            <label>Nombre</label>
-                        </div>
-                        <div class="col-md-10">
-                            <input type="text" name="nombre_tipos_gasto" id="nombre_tipos_gasto" required="true"
-                                   class="form-control"
-                                   value="<?php if (isset($tiposgasto['nombre_tipos_gasto'])) echo $tiposgasto['nombre_tipos_gasto']; ?>">
-                        </div>
-
+                    <div class="col-md-2">
+                        <label>Nombre</label>
                     </div>
-
+                    <div class="col-md-10">
+                        <input type="text" name="nombre_tipos_gasto" id="nombre_tipos_gasto" required="true"
+                               class="form-control"
+                               value="<?php if (isset($tiposgasto['nombre_tipos_gasto'])) echo $tiposgasto['nombre_tipos_gasto']; ?>">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
+                        <label>Tipo</label>
+                    </div>
+                    <div class="col-md-10">
+                        <select class="form-control" name="tipo_tipos_gasto" id="tipo_tipos_gasto">
+                            <option value="">Seleccione</option>
+                            <option value="0" <?= ($tiposgasto['tipo_tipos_gasto']=='0')? 'selected':'' ?>>Variable</option>
+                            <option value="1" <?= ($tiposgasto['tipo_tipos_gasto']=='1')? 'selected':'' ?>>Fijo</option>
+                        </select>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">

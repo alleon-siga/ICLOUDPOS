@@ -33,21 +33,25 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
 
                 <th>ID</th>
                 <th>Nombre</th>
-
+                <th>Tipo</th>
                 <th class="desktop">Acciones</th>
-
             </tr>
             </thead>
             <tbody>
-            <?php if (count($tipos) > 0) {
-
-                foreach ($tipos as $tipo) {
-                    ?>
+            <?php 
+                if (count($tipos) > 0) {
+                    foreach ($tipos as $tipo) {
+                        $tipo_tipos_gasto = $tipo['tipo_tipos_gasto'];
+                        if($tipo_tipos_gasto=='0'){
+                            $tipo_tipos_gasto = 'Variable';
+                        }elseif($tipo_tipos_gasto=='1'){
+                            $tipo_tipos_gasto = 'Fijo';
+                        }
+            ?>
                     <tr>
-
                         <td class="center"><?= $tipo['id_tipos_gasto'] ?></td>
                         <td><?= $tipo['nombre_tipos_gasto'] ?></td>
-
+                        <td><?= $tipo_tipos_gasto ?></td>
 
                         <td class="center">
                             <div class="btn-group">
@@ -67,8 +71,10 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                             </div>
                         </td>
                     </tr>
-                <?php }
-            } ?>
+            <?php 
+                    }
+                }
+            ?>
 
             </tbody>
         </table>
@@ -132,6 +138,20 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                 var growlType = 'warning';
 
                 $.bootstrapGrowl('<h4>Debe seleccionar el nombre</h4>', {
+                    type: growlType,
+                    delay: 2500,
+                    allow_dismiss: true
+                });
+
+                $(this).prop('disabled', true);
+
+                return false;
+            }
+
+            if ($("#tipo_tipos_gasto").val() == '') {
+                var growlType = 'warning';
+
+                $.bootstrapGrowl('<h4>Debe seleccionar el tipo</h4>', {
                     type: growlType,
                     delay: 2500,
                     allow_dismiss: true

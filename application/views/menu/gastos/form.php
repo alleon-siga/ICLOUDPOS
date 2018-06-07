@@ -127,26 +127,6 @@
                 <div class="row">
                     <div class="form-group">
                         <div class="col-md-3">
-                            <label class="control-label panel-admin-text">Gravable</label>
-                        </div>
-                        <div class="col-md-9">
-                            <?php
-                                if(!isset($gastos['gravable'])){
-                                    $gravable = 0;
-                                }else{
-                                    $gravable = $gastos['gravable'];
-                                }
-                            ?>
-                            <select name="gravable" id="gravable" class="select_chosen form-control">
-                                <option value="0" <?php if($gravable == '0'){ echo "selected"; } ?>>NO</option>
-                                <option value="1" <?php if($gravable == '1'){ echo "selected"; } ?>>SI</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="form-group">
-                        <div class="col-md-3">
                             <label class="control-label panel-admin-text">Documento</label>
                         </div>
                         <div class="col-md-9">
@@ -202,11 +182,95 @@
                 <div class="row">
                     <div class="form-group">
                         <div class="col-md-3">
+                            <label class="control-label panel-admin-text">Gravable</label>
+                        </div>
+                        <div class="col-md-9">
+                            <?php
+                                if(!isset($gastos['gravable'])){
+                                    $gravable = 0;
+                                }else{
+                                    $gravable = $gastos['gravable'];
+                                }
+                            ?>
+                            <select name="gravable" id="gravable" class="select_chosen form-control">
+                                <option value="0" <?php if($gravable == '0'){ echo "selected"; } ?>>NO</option>
+                                <option value="1" <?php if($gravable == '1'){ echo "selected"; } ?>>SI</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <?php
+                    $display = '';
+                    if(!isset($gastos['gravable'])){
+                        $display = 'style="display: none;"';
+                    }elseif($gastos['gravable']=='0'){
+                        $display = 'style="display: none;"';
+                    }
+                ?>
+                <div class="row" id="idImp" <?= $display ?>>
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            <label class="control-label panel-admin-text">Impuesto</label>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <select name="id_impuesto" id="id_impuesto" class='form-control'>
+                                        <option value="">Seleccione</option>
+                                        <?php if (count($impuestos) > 0): ?>
+                                            <?php 
+                                                foreach ($impuestos as $impuesto):
+                                                    $selected = '';
+                                                    if(isset($gastos['id_impuesto'])){ 
+                                                        if($gastos['id_impuesto']==$impuesto['id_impuesto']){ 
+                                                            $selected = 'selected="selected"';
+                                                        }
+                                                    }else{
+                                                        if($impuesto['id_impuesto']=='1'){
+                                                            $selected = 'selected="selected"';
+                                                        }
+                                                    }
+                                            ?>
+                                                <option value="<?php echo $impuesto['id_impuesto']; ?>" data-impuesto="<?= $impuesto['porcentaje_impuesto'] ?>" <?= $selected ?>>
+                                                    <?php echo $impuesto['nombre_impuesto']; ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <div class="input-group-addon idMoneda" id="idMoneda"></div>
+                                        <input type="number" name="impuesto" id="impuesto" class="form-control" value="<?php if (isset($gastos['impuesto'])) echo $gastos['impuesto']; ?>" readonly="readonly">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" id="idSt" <?= $display ?>>
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            <label class="control-label panel-admin-text">Subtotal</label>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="input-group">
+                                <div class="input-group-addon idMoneda" id="idMoneda"></div>
+                                <input readonly="readonly" type="number" name="subtotal" id="subtotal" required="true" class="form-control"
+                                       value="<?php if (isset($gastos['subtotal'])) echo $gastos['subtotal']; ?>"
+                                       onkeydown="return soloDecimal(event);">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <div class="col-md-3">
                             <label class="control-label panel-admin-text">Total</label>
                         </div>
                         <div class="col-md-9">
                             <div class="input-group">
-                                <div class="input-group-addon" id="idMoneda"></div>
+                                <div class="input-group-addon idMoneda" id="idMoneda"></div>
                                 <input type="number" name="total" id="total" required="true" class="form-control"
                                        value="<?php if (isset($gastos['total'])) echo $gastos['total']; ?>"
                                        onkeydown="return soloDecimal(event);">
@@ -289,16 +353,69 @@
                         cuenta_select.append('<option data-moneda="'+ cuentas[i].simbolo +'" value="' + cuentas[i].id + '" '+ slt +'>' + cuentas[i].descripion + ' | ' + cuentas[i].moneda_nombre + '</option>');
                     }
                 }
-                $('#idMoneda').text($('#cuenta_id').find(':selected').data('moneda'));
+                $('.idMoneda').text($('#cuenta_id').find(':selected').data('moneda'));
             }
 
             cuenta_select.chosen();
         });
 
         $('#cuenta_id').on('change', function(){
-            $('#idMoneda').text($(this).find(':selected').data('moneda'));
+            $('.idMoneda').text($(this).find(':selected').data('moneda'));
         });
 
+        $('#gravable').on('change', function(){
+            var growlType = 'warning';
+            if($('#filter_local_id').val()==''){
+                $.bootstrapGrowl('<h4> Seleccione el local</h4>', {
+                    type: growlType,
+                    delay: 2500,
+                    allow_dismiss: true
+                });
+                $('#gravable').val(0);
+                $("#gravable").trigger('chosen:updated');
+            }else if($('#cuenta_id').val()==''){
+                $.bootstrapGrowl('<h4> Seleccione la cuenta</h4>', {
+                    type: growlType,
+                    delay: 2500,
+                    allow_dismiss: true
+                });
+                $('#gravable').val(0);
+                $("#gravable").trigger('chosen:updated');
+            }else{
+                if($(this).val()=='1'){
+                    $('#idSt').show();
+                    $('#idImp').show();
+                }else{
+                    $('#idSt').hide();
+                    $('#idImp').hide();
+                    $('#id_impuesto').val(1);
+                    $("#id_impuesto").trigger('chosen:updated');
+                    $('#subtotal').attr('value', '0');
+                    $('#impuesto').attr('value', '0');
+                }
+            }
+        });
+
+        $('#total').keyup(function (e) {
+            var impuesto = (($('#id_impuesto option:selected').attr('data-impuesto') / 100) + 1);
+            var total = $('#total').val();
+            $('#subtotal').attr('value', parseFloat(total / impuesto).toFixed(2));
+            $('#impuesto').attr('value', parseFloat(total - (total / impuesto)).toFixed(2));
+        });
+
+        $('#total').click(function (e) {
+            var impuesto = (($('#id_impuesto option:selected').attr('data-impuesto') / 100) + 1);
+            var total = $('#total').val();
+            $('#subtotal').attr('value', parseFloat(total / impuesto).toFixed(2));
+            $('#impuesto').attr('value', parseFloat(total - (total / impuesto)).toFixed(2));
+        });
+
+        $('#id_impuesto').on('change', function(){
+            var impuesto = (($('#id_impuesto option:selected').attr('data-impuesto') / 100) + 1);
+            var total = $('#total').val();
+            $('#subtotal').attr('value', parseFloat(total / impuesto).toFixed(2));
+            $('#impuesto').attr('value', parseFloat(total - (total / impuesto)).toFixed(2));
+        });
     });
 
     function get_persona_gasto() {

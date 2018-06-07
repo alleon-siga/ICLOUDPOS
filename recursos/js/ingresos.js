@@ -1439,13 +1439,22 @@ function generar_reporte_pdf() {
 }
 
 function nuevoProducto() {
-    $('#cboProducto').val(0);
-    $("#cboProducto").trigger('chosen:updated');
-    $("#productomodal").load(ruta + 'producto/agregar', function(){
-        $('#btnGuardar').removeAttr("onclick");
-        $('#btnGuardar').attr("onclick", "confirm_save('ingresos')");
-    });
-    $('#productomodal').modal('show');
+    if($('#config_moneda').attr('data-action')=='1'){
+        var growlType = 'warning';
+        $.bootstrapGrowl('<h4> Primero debe confirmar la moneda</h4>', {
+            type: growlType,
+            delay: 2500,
+            allow_dismiss: true
+        });
+    }else{
+        $('#cboProducto').val(0);
+        $("#cboProducto").trigger('chosen:updated');
+        $("#productomodal").load(ruta + 'producto/agregar', function(){
+            $('#btnGuardar').removeAttr("onclick");
+            $('#btnGuardar').attr("onclick", "confirm_save('ingresos')");
+        });
+        $('#productomodal').modal('show');
+    }
 }
 
 function update_producto(id, nombre, impuesto, producto_id) {

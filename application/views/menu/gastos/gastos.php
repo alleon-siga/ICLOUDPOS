@@ -304,15 +304,19 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
 
 
     function editar(id) {
-
-        $("#agregar").load('<?= $ruta ?>gastos/form/' + id);
-        $('#agregar').modal('show');
+        $('#load_div').show();
+        $("#agregar").load('<?= $ruta ?>gastos/form/' + id, function(){
+            $('#agregar').modal('show');
+            $('#load_div').hide();
+        });
     }
 
     function agregar() {
-
-        $("#agregar").load('<?= $ruta ?>gastos/form');
-        $('#agregar').modal('show');
+        $('#load_div').show();
+        $("#agregar").load('<?= $ruta ?>gastos/form', function(){
+            $('#agregar').modal('show');
+            $('#load_div').hide();
+        });
     }
 
 
@@ -443,6 +447,27 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
 
                 return false;
             }
+
+            if ($("#gravable").val() == '1') {
+                if ($("#id_impuesto").val() == '') {
+                    var growlType = 'warning';
+
+                    $.bootstrapGrowl('<h4>Debe seleccionar el impuesto</h4>', {
+                        type: growlType,
+                        delay: 2500,
+                        allow_dismiss: true
+                    });
+
+                    $(this).prop('disabled', true);
+
+                    return false;
+                }
+            }
+
+            var impuesto = (($('#id_impuesto option:selected').attr('data-impuesto') / 100) + 1);
+            var total = $('#total').val();
+            $('#subtotal').attr('value', parseFloat(total / impuesto).toFixed(2));
+            $('#impuesto').attr('value', parseFloat(total - (total / impuesto)).toFixed(2));
 
             App.formSubmitAjax($("#formagregar").attr('action'), get_gastos, 'agregar', 'formagregar');
         }

@@ -73,30 +73,37 @@ class exportar extends MY_Controller
 
     function toExcel_pagoPendiente()
     {
-
-        $condicion = 'v.venta_status="COMPLETADO" ';
-
-        if ($this->input->post('cboCliente1', true) != -1) {
-            $condicion .= ' and v.Cliente_Id =' . $this->input->post("cboCliente1", true) . " ";
-        }
-        if ($_POST['fecIni1'] != "") {
-            $condicion .= 'and v.fecha >="' . date('Y-m-d', strtotime($_POST['fecIni1'])) . '" ';
-        }
-
-        if ($_POST['fecFin1'] != "") {
-            $condicion .= ' and v.fecha <="' . date('Y-m-d', strtotime($_POST['fecFin1'])) . '" ';
-        }
-
-        $order = " order by `v`.`fecha` desc ";
-        if ($this->input->post("local", true) == "TODOS") {
-            $order .= ',  `v`.`local_id` desc ';
-        } else {
-            $condicion .= ' and `v`.`local_id`=' . $this->input->post("local", true) . '';
-        }
-
         $data['local'] = $this->input->post("local", true);
+        $data['cliente_id'] = $this->input->post("cboCliente1", true);
+        $data['moneda'] = $this->input->post("moneda1", true);
 
-        $data['pago_pendiente'] = $this->v->get_pagos_pendientes($condicion, $order);
+        $params = array();
+        if ($data['local'] != 'TODOS') {
+            $params['local_id'] = $data['local'];
+            $local = $this->db->get_where('local', array('int_local_id' => $params['local_id']))->row();
+            $data['local_nombre'] = $local->local_nombre;
+            $data['local_direccion'] = $local->direccion;
+        } else {
+            $usu = $this->session->userdata('nUsuCodigo');
+            $dataLocal = $this->l->get_all_usu($usu);
+            $arr = array();
+            foreach ($dataLocal as $value) {
+                $arr[] = $value['int_local_id'];
+            }
+            $params['local_id'] = implode(",", $arr);
+            $data['local_nombre'] = 'TODOS';
+            $data['local_direccion'] = 'TODOS';
+        }
+
+        if ($data['cliente_id'] != '-1')
+            $params['cliente_id'] = $data['cliente_id'];
+
+        $params['moneda_id'] = $data['moneda'];
+
+        //var_dump($this->input->post("vence_deuda", 2));
+        $params['vence_deuda'] = $this->input->post("vence_deuda", 2);
+
+        $data['pago_pendiente'] = $this->v->get_pagos_pendientes($params);
 
         $data['fecInicio'] = date("Y-m-d", strtotime($this->input->post('fecIni1', true)));
         $data['fecFin'] = date("Y-m-d", strtotime($this->input->post('fecFin1', true)));
@@ -191,7 +198,8 @@ class exportar extends MY_Controller
                 where caja_pendiente.ref_id = venta.venta_id AND (caja_pendiente.tipo = "VENTA_ANULADA" OR
                  caja_pendiente.tipo = "VENTA_DEVUELTA") LIMIT 1) = 0)')
                 ->where('venta.condicion_pago', 1)
-                ->where('caja_movimiento.operacion', 'VENTA');
+                ->where('caja_movimiento.operacion', 'VENTA')
+                ->where('venta.venta_status', 'COMPLETADO');
 
             if ($id_local != 0) {
                 $this->db->where('venta.local_id', $id_local);

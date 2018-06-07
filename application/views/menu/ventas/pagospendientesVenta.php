@@ -54,12 +54,15 @@
 
     function generar_reporte_excel() {
         $("#abrir_local_excel").append('<input type"hidden" name="local" value="' + $("#local").val() + '">');
-
+        $('#cboCliente1').attr('value', $('#cliente_id').val());
+        $('#moneda1').attr('value', $('#moneda').val());
         document.getElementById("frmExcel").submit();
     }
 
     function generar_reporte_pdf() {
         $("#abrir_local_pdf").append('<input type"hidden" name="local" value="' + $("#local").val() + '">');
+        $('#cboCliente2').attr('value', $('#cliente_id').val());
+        $('#moneda2').attr('value', $('#moneda').val());
         document.getElementById("frmPDF").submit();
     }
 
@@ -238,33 +241,33 @@
                     <div id="lstTabla"></div>
                 </div>
 
-                <div class="block-section" style="display: none;">
+                <div class="block-section" style="">
 
 
                     <div id="pp_excel">
                         <form action="<?php echo $ruta; ?>exportar/toExcel_pagoPendiente" name="frmExcel"
                               id="frmExcel" method="post">
-                            <input type="hidden" name="fecIni1" id="fecIni1" class='input-small'>
-                            <input type="hidden" name="fecFin1" id="fecFin1" class='input-small'>
                             <input type="hidden" name="cboCliente1" id="cboCliente1" class='input-small'>
+                            <input type="hidden" name="moneda1" id="moneda1" class='input-small'>
                             <div id="abrir_local_excel"></div>
                         </form>
                     </div>
                     <a href="#" onclick="generar_reporte_excel();" class=' btn btn-lg btn-default'
                        title="Exportar a Excel"><i class="fa fa-file-excel-o"></i></a>
 
-                    <div id="pp_pdf">
+                    <!--<div id="pp_pdf">
                         <form name="frmPDF" id="frmPDF"
-                              action="<?php echo $ruta; ?>exportar/toPDF_pagoPendiente" target="_blank"
+                              action="<?php $ruta; ?>exportar/toPDF_pagoPendiente" target="_blank"
                               method="post">
                             <input type="hidden" name="fecIni2" id="fecIni2" class='input-small'>
                             <input type="hidden" name="fecFin2" id="fecFin2" class='input-small'>
                             <input type="hidden" name="cboCliente2" id="cboCliente2" class='input-small'>
+                            <input type="hidden" name="moneda2" id="moneda1" class='input-small'>
                             <div id="abrir_local_pdf"></div>
                         </form>
                     </div>
                     <a href="#" onclick="generar_reporte_pdf();" class='btn btn-lg btn-default'
-                       title="Exportar a PDF"><i class="fa fa-file-pdf-o"></i> </a>
+                       title="Exportar a PDF"><i class="fa fa-file-pdf-o"></i> </a>-->
 
                 </div>
             </div>

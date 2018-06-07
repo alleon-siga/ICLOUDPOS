@@ -90,7 +90,10 @@ class cajas_mov_model extends CI_Model
                 ))->row();
 
                 $mov->operacion_nombre = $mov->operacion == 'VENTA_ANULADA' ? 'VENTA ANULADA' : 'VENTA DEVUELTA';
+                if (isset($kardex->serie) && isset($kardex->numero)) {
                 $mov->numero = 'NC ' . $kardex->serie . ' - ' . $kardex->numero;
+                }else
+                $mov->numero = 'NO DEFINIDO';
                 $mov->ref_val = 'NP ' . $caja_pendiente->ref_id . ' (' . date('d/m/Y', strtotime($venta->fecha)) . ')';
             }
 

@@ -1,8 +1,7 @@
 <div class="modal-dialog" style="width: 70%;">
     <div class="modal-content">
         <div class="modal-header">
-            <button type="button" class="close" onclick="$('#dialog_form').modal('hide');"
-                    aria-hidden="true">&times;</button>
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
             <h4 class="modal-title">Saldos Pendientes de la cuenta <?= $cuenta->descripcion ?></h4>
         </div>
         <div class="modal-body">
@@ -12,6 +11,8 @@
                 <tr>
                     <th>ID</th>
                     <th>Fecha</th>
+                    <th>Proveedor</th>
+                    <th>Cliente</th>
                     <th>Responsable</th>
                     <th>Tipo</th>
                     <th>Operacion</th>
@@ -25,6 +26,8 @@
                     <tr>
                         <td><?= $mov->id ?></td>
                         <td><?= date('d/m/Y H:i', strtotime($mov->created_at)) ?></td>
+                        <td><?= $mov->nombre ?></td>
+                        <td><?= $mov->nombre ?></td>
                         <td><?= $mov->nombre ?></td>
                         <td><?= $mov->tipo ?></td>
                         <td><?= $mov->IO == 2 ? 'Salida' : 'Entrada' ?></td>

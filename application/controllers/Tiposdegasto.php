@@ -51,6 +51,7 @@ class tiposdegasto extends MY_Controller
 
         $tiposgasto = array(
             'nombre_tipos_gasto' => $this->input->post('nombre_tipos_gasto'),
+            'tipo_tipos_gasto' => $this->input->post('tipo_tipos_gasto')
         );
 
         if (empty($id)) {

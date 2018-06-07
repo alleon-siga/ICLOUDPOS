@@ -4,76 +4,62 @@ header("Content-Disposition: attachment; filename=pago_pendiente.xls");
 header("Pragma: no-cache");
 header("Expires: 0");
 ?>
-<table>
-    <tr>
-        <td style="font-weight: bold;text-align: center; font-size:1.5em; background-color:#BA5A41; color: #fff;"
-            colspan="9">LISTA DE CUENTAS POR COBRAR
-        </td>
-    </tr>
-    <tr>
-        <td colspan="8"></td>
-    </tr>
+<h4 style="text-align: center; margin: 0;">Lista de cuentas por cobrar</h4>
 
-    <tr>
-    </tr>
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-
-
-        <td style="font-weight: bold;">Fecha Emision:</td>
-        <td><?php echo date("Y-m-d H:i:s") ?> </td>
-    </tr>
-    <tr>
-        <td colspan="8"></td>
-    </tr>
-</table>
+<h5 style="margin: 0;">EMPRESA: <?= valueOption('EMPRESA_NOMBRE') ?></h5>
+<h5 style="margin: 0;">DIRECCI&Oacute;N: <?= $local_direccion ?></h5>
+<h5 style="margin: 0;">SUCURSAL: <?= $local_nombre ?></h5>
 <table border="1">
     <thead>
-    <tr>
-        <th>Documento</th>
-        <th>Nro Venta</th>
-        <th>Cliente</th>
-        <th class='tip' title="Fecha Registro">Fecha Reg.</th>
-        <?php $md = get_moneda_defecto(); ?>
-        <th class='tip' title="Monto Credito Solicitado">Monto Cred <?php echo $md->simbolo ?></th>
-        <th class='tip' title="Monto Cancelado">Monto Abonado <?php echo $md->simbolo ?></th>
-        <th class='tip' title="Monto Cancelado">Restante <?php echo $md->simbolo ?></th>
+        <tr>
+            <th># Venta</th>
+            <th class='tip' title="Fecha Venta">Fecha Venta</th>
+            <th># Comprobante</th>
+            <th>Cliente</th>
+            <th class='tip' title="Monto Credito Solicitado">Importe Venta</th>
+            <th class='tip' title="Monto Cancelado">Importe Abonado</th>
+            <th class='tip' title="Monto Cancelado">Pendiente de pago</th>
+            <th class='tip' title="Monto Cancelado">Cuotas</th>
 
-        <th class='tip' title="Total">Días de atraso a hoy <?= date('d-m-Y') ?></th>
-        <?php if($local=="TODOS"){?>
-            <th>Local</th>
-        <?php } ?>
-        <th>Estatus de la deuda</th>
-
-    </tr>
+            <th class='tip' title="Total" tool># Cuotas Atrasado</th>
+            <?php if ($local == "TODOS") { ?>
+                <th>Local</th>
+            <?php } ?>
+        </tr>
     </thead>
     <tbody>
     <?php if (count($pago_pendiente) > 0): ?>
         <?php foreach ($pago_pendiente as $v): ?>
             <tr>
-                <td style="text-align: center;"><?php echo $v->TipoDocumento; ?></td>
-                <td style="text-align: center;"><?php echo $v->NroVenta; ?></td>
-                <td><?php echo $v->Cliente; ?></td>
-                <td style="text-align: center;"><?php echo date("d-m-Y", strtotime($v->FechaReg)) ?></td>
+                <td><?php echo $v->Venta_id; ?></td>
+                <td style="text-align: center;"><span
+                            style="display: none"><?= date('YmdHis', strtotime($v->FechaReg)) ?></span><?php echo date("d/m/Y", strtotime($v->FechaReg)) ?>
+                </td>
+                <td style="text-align: center;">
+                    <?php
+                    $doc = '';
+                    if ($v->TipoDocumento == 1) $doc = "FA";
+                    if ($v->TipoDocumento == 2) $doc = "NC";
+                    if ($v->TipoDocumento == 3) $doc = "BO";
+                    if ($v->TipoDocumento == 4) $doc = "GR";
+                    if ($v->TipoDocumento == 5) $doc = "PCV";
+                    if ($v->TipoDocumento == 6) $doc = "NP";
 
-                <td style="text-align: center;"><?php echo $v->MontoTotal; ?></td>
-                <td style="text-align: center;"><?php echo $v->MontoCancelado; ?></td>
-                <td style="text-align: center;"><?php echo $v->MontoTotal - $v->MontoCancelado; ?></td>
-                <td style="text-align: center;"><?php
-                    $days = (strtotime(date('d-m-Y')) - strtotime($v->FechaReg)) / (60 * 60 * 24);
-                    echo floor($days);
-                    ?></td>
-                <?php if($local=="TODOS"){?>
+                    if ($v->correlativo != '')
+                        echo $doc . ' ' . $v->serie . '-' . sumCod($v->correlativo, 6);
+                    else
+                        echo '<span style="color: #0000FF">NO FACTURADO</span>';
+                    ?>
+                </td>
+                <td><?php echo $v->Cliente; ?></td>
+                <td style="text-align: right;"><?php echo $v->Simbolo . ' ' . number_format($v->MontoTotal, 2) ?></td>
+                <td style="text-align: right;"><?php echo $v->Simbolo . ' ' . number_format($v->MontoCancelado, 2) ?></td>
+                <td style="text-align: right;"><?php echo $v->Simbolo . ' ' . number_format($v->MontoTotal - $v->MontoCancelado, 2) ?></td>
+                <td style="text-align: center;"><?= $v->nro_cuotas ?></td>
+                <td style="text-align: center;"><?= $v->cuotas_atrasadas ?></td>
+                <?php if ($local == "TODOS") { ?>
                     <td style="text-align: center;"><?php echo $v->local; ?></td>
                 <?php } ?>
-                <td style="text-align: center;"><?php echo $v->Estado; ?></td>
-
             </tr>
         <?php endforeach; ?>
     <?php else : ?>
