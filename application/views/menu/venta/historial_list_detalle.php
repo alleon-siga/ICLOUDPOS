@@ -291,9 +291,9 @@
                                 <h4>Anulaciones</h4>
                                 <?php foreach ($kardex as $k): ?>
                                     <h5>
-                                    <a href="javascript:ver_nc('<?= $venta->venta_id ?>','<?= $k->serie ?>','<?= $k->numero ?>')"><?= 'NC ' . $k->serie . ' - ' . $k->numero ?></a>
-                                    <br><br>
-                                    <span style="color: red">Fecha y hora de anulaci&oacute;n: <b><?= date('d/m/Y H:i', strtotime($k->fecha)).'</b> Anulado por: '.'<b>'.$k->nombre.'</b>' ?></span>
+                                        <a href="javascript:ver_nc('<?= $venta->venta_id ?>','<?= $k->serie ?>','<?= $k->numero ?>')"><?= 'NC ' . $k->serie . ' - ' . $k->numero ?></a>
+                                        <br><br>
+                                        <span style="color: red">Fecha y hora de anulaci&oacute;n: <b><?= date('d/m/Y H:i', strtotime($k->fecha)) . '</b> Anulado por: ' . '<b>' . $k->nombre . '</b>' ?></span>
                                     </h5>
                                 <?php endforeach; ?>
                             <?php endif; ?>
@@ -530,7 +530,19 @@
             $("#documento_serie").val("");
             $("#documento_numero").val("");
 
-            $('#dialog_venta_confirm').modal('show');
+            $.ajax({
+                url: '<?php echo base_url() . 'local/get_notas_correlativo'; ?>/' + parseInt($('#venta_numero').html().trim()),
+                type: 'GET',
+                headers: {
+                    Accept: 'application/json'
+                },
+                success: function (data) {
+                    $("#documento_serie").val(data.correlativos.serie);
+                    $("#documento_numero").val(data.correlativos.correlativo);
+                    $('#dialog_venta_confirm').modal('show');
+                }
+            });
+
         });
 
         function validar_venta() {

@@ -97,7 +97,7 @@
                                         <?php if ($columna->activo == TRUE or ($columna->nombre_columna == 'producto_id' or $columna->nombre_columna == 'producto_nombre' or
                                                 $columna->nombre_columna == 'producto_codigo_interno' or $columna->nombre_columna == 'producto_impuesto' or $columna->nombre_columna == 'producto_cualidad' or $columna->nombre_columna == 'producto_estado')
                                         ) echo 'checked' ?>
-                                        <?php if ($columna->nombre_columna == 'producto_id' or $columna->nombre_columna == 'producto_codigo_interno' or
+                                        <?php if ($columna->nombre_columna == 'producto_id' or $columna->nombre_columna == 'producto_codigo_interno' or $columna->nombre_columna == 'producto_afectacion_impuesto' or
                                         $columna->nombre_columna == 'producto_nombre' or $columna->nombre_columna == 'producto_id' or $columna->nombre_columna == 'producto_impuesto' or $columna->nombre_columna == 'producto_cualidad' or $columna->nombre_columna == 'producto_estado'
                                     ) echo 'disabled' ?>>
                                 </td>

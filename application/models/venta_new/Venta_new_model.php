@@ -1,4 +1,4 @@
-    <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 class venta_new_model extends CI_Model
 {
@@ -221,6 +221,7 @@ class venta_new_model extends CI_Model
             unidades.nombre_unidad as unidad_nombre,
             unidades.abreviatura as unidad_abr,
             detalle_venta.detalle_importe as importe,
+            detalle_venta.afectacion_impuesto as afectacion_impuesto,
             detalle_venta.impuesto_porciento as impuesto_porciento
             ')
             ->from('detalle_venta')
@@ -290,11 +291,11 @@ class venta_new_model extends CI_Model
         $this->correlativos_model->sumar_correlativo($venta->local_id, $venta->id_documento);
 
         // Hago la facturacion de comprobantes
-        if ($venta->comprobante_id > 0){
+        if ($venta->comprobante_id > 0) {
             $this->comprobante_model->facturar($venta->venta_id, $venta->comprobante_id);
         }
 
-        if($iddoc != 6){ //Si es diferente a la nota de pedido
+        if ($iddoc != 6) { //Si es diferente a la nota de pedido
             //Correlativo para la guia de remision
             $correlativo = $this->correlativos_model->get_correlativo($venta->local_id, 4);
             $this->correlativos_model->sumar_correlativo($venta->local_id, 4);
@@ -468,7 +469,7 @@ class venta_new_model extends CI_Model
             $venta_contado['numero'] = $correlativo->correlativo;
 
             $this->correlativos_model->sumar_correlativo($venta['local_id'], $venta['id_documento']);
-            if($venta['id_documento'] != 6){ //Si es diferente a la nota de pedido
+            if ($venta['id_documento'] != 6) { //Si es diferente a la nota de pedido
                 //Correlativo para la guia de remision
                 $correlativo = $this->correlativos_model->get_correlativo($venta['local_id'], 4);
                 $this->correlativos_model->sumar_correlativo($venta['local_id'], 4);
@@ -539,9 +540,8 @@ class venta_new_model extends CI_Model
             if ($venta['venta_status'] != 'CAJA') {
                 $resp = $this->facturacion_model->facturarVenta($venta_id);
             }
-        }
-        elseif(valueOptionDB('FACTURACION', 0) == 1){
-            log_message('debug', 'Facturacion electronica. Documento erroneo. Doc: '. $venta['id_documento']);
+        } elseif (valueOptionDB('FACTURACION', 0) == 1) {
+            log_message('debug', 'Facturacion electronica. Documento erroneo. Doc: ' . $venta['id_documento']);
         }
 
         return $venta_id;
@@ -755,6 +755,8 @@ class venta_new_model extends CI_Model
                 'moneda_id' => $venta->moneda_id
             ))->row();
 
+            $prod = $this->db->get_where('producto', array('producto_id' => $producto->id_producto))->row();
+
             //preparo el detalle de la venta
             $producto_detalle = array(
                 'id_venta' => $venta_id,
@@ -767,6 +769,7 @@ class venta_new_model extends CI_Model
                 'detalle_costo_ultimo' => $costo_u != NULL ? $costo_u->costo : 0,
                 'detalle_utilidad' => 0,
                 'impuesto_id' => $p->id_impuesto,
+                'afectacion_impuesto' => $prod->producto_afectacion_impuesto,
                 'impuesto_porciento' => $p->porcentaje_impuesto,
                 'precio_venta' => $producto->precio_venta,
             );
@@ -1009,6 +1012,14 @@ class venta_new_model extends CI_Model
             $resp = $this->facturacion_model->anularVenta($venta_id, $serie . '-' . $numero, $motivo);
         }
 
+        if ($venta->id_documento == '1') {
+            $this->correlativos_model->sumar_correlativo($venta->local_id, 9);
+        } elseif ($venta->id_documento == '3') {
+            $this->correlativos_model->sumar_correlativo($venta->local_id, 8);
+        } elseif ($venta->id_documento == '6') {
+            $this->correlativos_model->sumar_correlativo($venta->local_id, 2);
+        }
+
 
         return $venta_id;
     }
@@ -1028,15 +1039,19 @@ class venta_new_model extends CI_Model
 
         if ($venta->tipo_impuesto == 1) {
             foreach ($detalles as $d) {
-                $factor = (100 + $d->impuesto_porciento) / 100;
-                $impuesto += ($d->cantidad * $d->precio) - (($d->cantidad * $d->precio) / $factor);
+                if ($d->afectacion_impuesto == OP_GRAVABLE) {
+                    $factor = (100 + $d->impuesto_porciento) / 100;
+                    $impuesto += ($d->cantidad * $d->precio) - (($d->cantidad * $d->precio) / $factor);
+                }
             }
             $subtotal = $total - $impuesto;
         } elseif ($venta->tipo_impuesto == 2) {
             $subtotal = $total;
             foreach ($detalles as $d) {
-                $factor = (100 + $d->impuesto_porciento) / 100;
-                $impuesto += (($d->cantidad * $d->precio) * $factor) - ($d->cantidad * $d->precio);
+                if ($d->afectacion_impuesto == OP_GRAVABLE) {
+                    $factor = (100 + $d->impuesto_porciento) / 100;
+                    $impuesto += (($d->cantidad * $d->precio) * $factor) - ($d->cantidad * $d->precio);
+                }
             }
             $total = $subtotal + $impuesto;
         } else {
@@ -1172,6 +1187,17 @@ class venta_new_model extends CI_Model
 
         if (valueOptionDB('FACTURACION', 0) == 1 && ($venta->documento_id == 1 || $venta->documento_id == 3) && $venta->numero != null) {
             $resp = $this->facturacion_model->devolverVenta($venta_id, $devoluciones, $serie . '-' . $numero, $motivo);
+        }
+
+        $venta = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
+        header('Content-Type: application/json');
+
+        if ($venta->id_documento == '1') {
+            $this->correlativos_model->sumar_correlativo($venta->local_id, 9);
+        } elseif ($venta->id_documento == '3') {
+            $this->correlativos_model->sumar_correlativo($venta->local_id, 8);
+        } elseif ($venta->id_documento == '6') {
+            $this->correlativos_model->sumar_correlativo($venta->local_id, 2);
         }
     }
 

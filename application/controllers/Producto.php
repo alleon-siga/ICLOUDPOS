@@ -33,6 +33,7 @@ class producto extends MY_Controller
             redirect(base_url(), 'refresh');
         }
 
+
         $this->columnas = $this->columnas_model->get_by('tabla', 'producto');
     }
 
@@ -499,6 +500,7 @@ class producto extends MY_Controller
         $familia = $this->input->post('producto_familia');
         $grupo = $this->input->post('produto_grupo');
         $proveedor = $this->input->post('producto_proveedor');
+        $afectacion_impuesto = $this->input->post('afectacion_impuesto');
         $impuesto = $this->input->post('producto_impuesto');
         $incluir_precio = $this->input->post('incluir_precio');
         $cualidad = $this->input->post('producto_cualidad');
@@ -539,6 +541,7 @@ class producto extends MY_Controller
             'produto_grupo' => !empty($grupo) ? $grupo : null,
             'producto_proveedor' => !empty($proveedor) ? $proveedor : null,
             'producto_stockminimo' => $this->input->post('producto_stockminimo') != "" ? $this->input->post('producto_stockminimo') : 0,
+            'producto_afectacion_impuesto' => !empty($afectacion_impuesto) ? $afectacion_impuesto : 1,
             'producto_impuesto' => !empty($impuesto) ? $impuesto : null,
             'producto_largo' => $this->input->post('producto_largo'),
             'producto_ancho' => $this->input->post('producto_ancho'),

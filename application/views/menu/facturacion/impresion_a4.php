@@ -221,17 +221,17 @@
         <tr>
             <td colspan="4" style="border-top: 1px solid #000;"> </td>
             <th style="text-align: left;">Gravadas</th>
-            <th style="text-align: right;white-space: nowrap;"><?= $emisor->moneda_simbolo ?> <?= number_format($facturacion->subtotal, 2) ?></th>
+            <th style="text-align: right;white-space: nowrap;"><?= $emisor->moneda_simbolo ?> <?= number_format($facturacion->total_gravadas, 2) ?></th>
         </tr>
         <tr>
             <td colspan="4"> </td>
             <th style="text-align: left;">Inafectas</th>
-            <th style="text-align: right;white-space: nowrap;"><?= $emisor->moneda_simbolo ?> <?= number_format(0, 2) ?></th>
+            <th style="text-align: right;white-space: nowrap;"><?= $emisor->moneda_simbolo ?> <?= number_format($facturacion->total_inafectas, 2) ?></th>
         </tr>
         <tr>
             <td colspan="4"> </td>
             <th style="text-align: left;">Exoneradas</th>
-            <th style="text-align: right;white-space: nowrap;"><?= $emisor->moneda_simbolo ?> <?= number_format(0, 2) ?></th>
+            <th style="text-align: right;white-space: nowrap;"><?= $emisor->moneda_simbolo ?> <?= number_format($facturacion->total_exoneradas, 2) ?></th>
         </tr>
         <tr>
             <td colspan="4"> </td>
@@ -244,6 +244,11 @@
             <th style="text-align: right;white-space: nowrap;"><?= $emisor->moneda_simbolo ?> <?= number_format(0, 2) ?></th>
         </tr>
         <tr>
+            <td colspan="4"> </td>
+            <th style="text-align: left;">Subtotal</th>
+            <th style="text-align: right;white-space: nowrap;"><?= $emisor->moneda_simbolo ?> <?= number_format($facturacion->subtotal, 2) ?></th>
+        </tr>
+        <tr>
             <td rowspan="2" colspan="4" style="border: 1px solid #000;">
                 <?php
                 $n = $facturacion->total;
@@ -252,7 +257,7 @@
                 ?>
                 SON: <?= $facturacion->total_letra . ' ' . $emisor->moneda_letra . ' ' . str_replace('.', '', $decimal) . '/100' ?>
             </td>
-            <th style="text-align: left;">Impuesto</th>
+            <th style="text-align: left;">IGV</th>
             <th style="text-align: right;white-space: nowrap;"><?= $emisor->moneda_simbolo ?> <?= number_format($facturacion->impuesto, 2) ?></th>
         </tr>
         <tr>

@@ -97,9 +97,9 @@ class facturacion_model extends CI_Model
         $comprobante_detalle = $this->db->get_where('facturacion_detalle', array('facturacion_id' => $id))->result();
 
         $data_comprobante = array(
-            'TOTAL_GRAVADAS' => number_format($comprobante->subtotal, 2, '.', ''),
-            'TOTAL_INAFECTA' => "0",
-            'TOTAL_EXONERADAS' => "0",
+            'TOTAL_GRAVADAS' => number_format($comprobante->total_gravadas, 2, '.', ''),
+            'TOTAL_INAFECTA' => number_format($comprobante->total_inafectas, 2, '.', ''),
+            'TOTAL_EXONERADAS' => number_format($comprobante->total_exoneradas, 2, '.', ''),
             'TOTAL_GRATUITAS' => "0",
             'TOTAL_PERCEPCIONES' => "0",
             'TOTAL_RETENCIONES' => "0",
@@ -171,7 +171,7 @@ class facturacion_model extends CI_Model
             $detalle = new stdClass();
 
             $detalle->txt_item = $n++;
-            $detalle->txt_unidad_medida = $d->um;
+            $detalle->txt_unidad_medida = "NIU";
             $detalle->txt_cantidad = number_format($d->cantidad, 3, '.', '');
             $detalle->txt_precio = number_format($d->precio, 2, '.', '');
             $detalle->txt_importe = number_format($d->cantidad * $d->precio, 2, '.', '');
@@ -196,6 +196,7 @@ class facturacion_model extends CI_Model
             $this->db->where('id', $comprobante->id);
             $this->db->update('facturacion', array(
                 'estado' => 1,
+                'sunat_codigo' => $resp['cod_sunat'],
                 'nota' => $resp['msj_sunat'],
                 'hash_cpe' => $resp['hash_cpe'],
                 'hash_cdr' => $resp['hash_cdr']
@@ -270,6 +271,21 @@ class facturacion_model extends CI_Model
             }
         }
 
+        $total_gravadas = 0;
+        $total_exoneradas = 0;
+        $total_inafectas = 0;
+
+        foreach ($venta->detalles as $d) {
+
+            if ($d->afectacion_impuesto == OP_GRAVABLE)
+                $total_gravadas += $d->cantidad * $d->precio;
+
+            if ($d->afectacion_impuesto == OP_EXONERADA)
+                $total_exoneradas += $d->cantidad * $d->precio;
+
+            if ($d->afectacion_impuesto == OP_INAFECTA)
+                $total_inafectas += $d->cantidad * $d->precio;
+        }
 
         $this->db->insert('facturacion', array(
             'local_id' => $venta->local_id,
@@ -283,6 +299,9 @@ class facturacion_model extends CI_Model
             'cliente_identificacion' => $venta->ruc,
             'cliente_nombre' => $venta->cliente_nombre,
             'cliente_direccion' => $venta->cliente_direccion,
+            'total_gravadas' => $total_gravadas * $cambio_dolar,
+            'total_exoneradas' => $total_exoneradas * $cambio_dolar,
+            'total_inafectas' => $total_inafectas * $cambio_dolar,
             'subtotal' => $venta->subtotal * $cambio_dolar,
             'impuesto' => $venta->impuesto * $cambio_dolar,
             'total' => $venta->total * $cambio_dolar,
@@ -296,18 +315,20 @@ class facturacion_model extends CI_Model
         foreach ($venta->detalles as $d) {
 
             $impuesto = 0;
-            $factor = (100 + $d->impuesto_porciento) / 100;
-            if ($venta->tipo_impuesto == 1) {
-                $impuesto = ($d->cantidad * $d->precio) - (($d->cantidad * $d->precio) / $factor);
-            } elseif ($venta->tipo_impuesto == 2) {
-                $impuesto = (($d->cantidad * $d->precio) * $factor) - ($d->cantidad * $d->precio);
+            if ($d->afectacion_impuesto == OP_GRAVABLE) {
+                $factor = (100 + $d->impuesto_porciento) / 100;
+                if ($venta->tipo_impuesto == 1) {
+                    $impuesto = ($d->cantidad * $d->precio) - (($d->cantidad * $d->precio) / $factor);
+                } elseif ($venta->tipo_impuesto == 2) {
+                    $impuesto = (($d->cantidad * $d->precio) * $factor) - ($d->cantidad * $d->precio);
+                }
             }
 
             $this->db->insert('facturacion_detalle', array(
                 'facturacion_id' => $facturacion_id,
                 'producto_codigo' => getCodigoValue(sumCod($d->producto_id, 4), $d->producto_codigo_interno),
                 'producto_descripcion' => $d->producto_nombre,
-                'um' => "NIU",
+                'um' => $d->unidad_abr,
                 'cantidad' => $d->cantidad,
                 'precio' => $d->precio * $cambio_dolar,
                 'impuesto' => $impuesto * $cambio_dolar
@@ -356,6 +377,22 @@ class facturacion_model extends CI_Model
             }
         }
 
+        $total_gravadas = 0;
+        $total_exoneradas = 0;
+        $total_inafectas = 0;
+
+        foreach ($venta->detalles as $d) {
+
+            if ($d->afectacion_impuesto == OP_GRAVABLE)
+                $total_gravadas += $d->cantidad * $d->precio;
+
+            if ($d->afectacion_impuesto == OP_EXONERADA)
+                $total_exoneradas += $d->cantidad * $d->precio;
+
+            if ($d->afectacion_impuesto == OP_INAFECTA)
+                $total_inafectas += $d->cantidad * $d->precio;
+        }
+
 
         $this->db->insert('facturacion', array(
             'local_id' => $venta->local_id,
@@ -369,6 +406,9 @@ class facturacion_model extends CI_Model
             'cliente_identificacion' => $venta->ruc,
             'cliente_nombre' => $venta->cliente_nombre,
             'cliente_direccion' => $venta->cliente_direccion,
+            'total_gravadas' => $total_gravadas * $cambio_dolar,
+            'total_exoneradas' => $total_exoneradas * $cambio_dolar,
+            'total_inafectas' => $total_inafectas * $cambio_dolar,
             'subtotal' => $venta->subtotal * $cambio_dolar,
             'impuesto' => $venta->impuesto * $cambio_dolar,
             'total' => $venta->total * $cambio_dolar,
@@ -382,18 +422,20 @@ class facturacion_model extends CI_Model
         foreach ($venta->detalles as $d) {
 
             $impuesto = 0;
-            $factor = (100 + $d->impuesto_porciento) / 100;
-            if ($venta->tipo_impuesto == 1) {
-                $impuesto = ($d->cantidad * $d->precio) - (($d->cantidad * $d->precio) / $factor);
-            } elseif ($venta->tipo_impuesto == 2) {
-                $impuesto = (($d->cantidad * $d->precio) * $factor) - ($d->cantidad * $d->precio);
+            if ($d->afectacion_impuesto == OP_GRAVABLE) {
+                $factor = (100 + $d->impuesto_porciento) / 100;
+                if ($venta->tipo_impuesto == 1) {
+                    $impuesto = ($d->cantidad * $d->precio) - (($d->cantidad * $d->precio) / $factor);
+                } elseif ($venta->tipo_impuesto == 2) {
+                    $impuesto = (($d->cantidad * $d->precio) * $factor) - ($d->cantidad * $d->precio);
+                }
             }
 
             $this->db->insert('facturacion_detalle', array(
                 'facturacion_id' => $facturacion_id,
                 'producto_codigo' => getCodigoValue($d->producto_id, $d->producto_codigo_interno),
                 'producto_descripcion' => $d->producto_nombre,
-                'um' => "NIU",
+                'um' => $d->unidad_abr,
                 'cantidad' => $d->cantidad,
                 'precio' => $d->precio * $cambio_dolar,
                 'impuesto' => $impuesto * $cambio_dolar
@@ -442,8 +484,24 @@ class facturacion_model extends CI_Model
             }
         }
 
+        $total_gravadas = 0;
+        $total_exoneradas = 0;
+        $total_inafectas = 0;
+
+        foreach ($devoluciones as $d) {
+            $producto = $this->db->get_where('producto', array('producto_id' => $d->producto_id))->row();
+
+            if ($producto->producto_afectacion_impuesto == OP_GRAVABLE)
+                $total_gravadas += $d->devolver * $d->precio;
+
+            if ($producto->producto_afectacion_impuesto == OP_EXONERADA)
+                $total_exoneradas += $d->devolver * $d->precio;
+
+            if ($producto->producto_afectacion_impuesto == OP_INAFECTA)
+                $total_inafectas += $d->devolver * $d->precio;
+        }
+
         $impuesto = 0;
-        $subtotal = 0;
         $total = 0;
         foreach ($devoluciones as $d) {
             $total += $d->devolver * $d->precio;
@@ -452,15 +510,21 @@ class facturacion_model extends CI_Model
 
         if ($venta->tipo_impuesto == 1) {
             foreach ($devoluciones as $d) {
-                $factor = (100 + $d->impuesto_porciento) / 100;
-                $impuesto += ($d->devolver * $d->precio) - (($d->devolver * $d->precio) / $factor);
+                $producto = $this->db->get_where('producto', array('producto_id' => $d->producto_id))->row();
+                if ($producto->producto_afectacion_impuesto == OP_GRAVABLE) {
+                    $factor = (100 + $d->impuesto_porciento) / 100;
+                    $impuesto += ($d->devolver * $d->precio) - (($d->devolver * $d->precio) / $factor);
+                }
             }
             $subtotal = $total - $impuesto;
         } elseif ($venta->tipo_impuesto == 2) {
             $subtotal = $total;
             foreach ($devoluciones as $d) {
-                $factor = (100 + $d->impuesto_porciento) / 100;
-                $impuesto += (($d->devolver * $d->precio) * $factor) - ($d->devolver * $d->precio);
+                $producto = $this->db->get_where('producto', array('producto_id' => $d->producto_id))->row();
+                if ($producto->producto_afectacion_impuesto == OP_GRAVABLE) {
+                    $factor = (100 + $d->impuesto_porciento) / 100;
+                    $impuesto += (($d->devolver * $d->precio) * $factor) - ($d->devolver * $d->precio);
+                }
             }
             $total = $subtotal + $impuesto;
         } else {
@@ -480,6 +544,10 @@ class facturacion_model extends CI_Model
             'cliente_identificacion' => $venta->ruc,
             'cliente_nombre' => $venta->cliente_nombre,
             'cliente_direccion' => $venta->cliente_direccion,
+            'total_gravadas' => $total_gravadas * $cambio_dolar,
+            'total_exoneradas' => $total_exoneradas * $cambio_dolar,
+            'total_inafectas' => $total_inafectas * $cambio_dolar,
+
             'subtotal' => $subtotal * $cambio_dolar,
             'impuesto' => $impuesto * $cambio_dolar,
             'total' => $total * $cambio_dolar,
@@ -502,12 +570,12 @@ class facturacion_model extends CI_Model
 
             $producto = $this->db->get_where('producto', array('producto_id' => $d->producto_id))->row();
 
-
+            $unidad = $this->db->get_where('unidades', array('id_unidad' => $d->unidad_id))->row();
             $this->db->insert('facturacion_detalle', array(
                 'facturacion_id' => $facturacion_id,
                 'producto_codigo' => getCodigoValue($producto->producto_id, $producto->producto_codigo_interno),
                 'producto_descripcion' => $producto->producto_nombre,
-                'um' => "NIU",
+                'um' => $unidad->abreviatura,
                 'cantidad' => $d->devolver,
                 'precio' => $d->precio * $cambio_dolar,
                 'impuesto' => $impuesto * $cambio_dolar
