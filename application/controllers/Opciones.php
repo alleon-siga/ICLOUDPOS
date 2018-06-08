@@ -107,7 +107,7 @@ class opciones extends MY_Controller
 
             $config = array();
             $config ['upload_path'] = $directorio;
-            $config['allowed_types'] = 'jpg|png|bmp';
+            $config['allowed_types'] = 'jpg|png|bmp|jpeg';
             //$config ['file_path'] = './prueba/';
             $config ['max_size'] = '0';
             $config ['overwrite'] = TRUE;
@@ -115,6 +115,7 @@ class opciones extends MY_Controller
             $this->load->library('upload', $config);
 
             if (!$this->upload->do_upload('userfile')) {
+                log_message('error', $this->upload->display_errors());
                 echo $this->upload->display_errors();
             } else {
                 return md5(SERVER_NAME) . '.' . $extension;
