@@ -3115,4 +3115,38 @@ JOIN detalleingreso ON detalleingreso.id_ingreso=ingreso.id_ingreso WHERE detall
         $data['data'] = $this->venta_model->get_nota_credito($params);
         $this->load->view('menu/ventas/vista_nota_credito', $data);
     }
+
+    function calendarioCuentasCobrar($action = '')
+    {
+        switch ($action) {
+            case 'filter': {
+                $params['local_id'] = $this->input->post('local_id');
+                $date_range = explode(" - ", $this->input->post('fecha'));
+                $params['fecha_ini'] = date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0])));
+                $params['fecha_fin'] = date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])));
+                $data['lists'] = $this->credito_cuotas_model->get_cronograma_by_fecha($params);
+                $this->load->view('menu/venta/calendarioCuentasCobrar_list', $data);
+                break;
+            }
+            case 'pdf': {
+            }
+            case 'excel': {
+            }
+            default: {
+                $usu = $this->session->userdata('nUsuCodigo');
+                if ($this->session->userdata('esSuper') == 1) {
+                    $data['locales'] = $this->local_model->get_all();
+                } else {
+                    $data['locales'] = $this->local_model->get_all_usu($usu);
+                }
+                $dataCuerpo['cuerpo'] = $this->load->view('menu/venta/calendarioCuentasCobrar', $data, true);
+                if ($this->input->is_ajax_request()) {
+                    echo $dataCuerpo['cuerpo'];
+                } else {
+                    $this->load->view('menu/template', $dataCuerpo);
+                }
+                break;
+            }
+        }
+    }
 }
