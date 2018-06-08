@@ -96,6 +96,24 @@ class credito_cuotas_model extends CI_Model {
 
     }
 
+    function get_cronograma_by_fecha($params)
+    {
+        $this->db->select("v.venta_id, cl.razon_social, DATE(fecha_vencimiento) AS fecha_vencimiento, IF(cca.monto_restante IS NULL, monto ,monto - c.dec_credito_montodebito ) AS pago_pendiente, cc.nro_letra");
+        $this->db->from('venta v');
+        $this->db->join('cliente cl', 'cl.id_cliente = v.id_cliente');
+        $this->db->join('credito c', 'v.venta_id = c.id_venta');
+        $this->db->join('credito_cuotas cc', 'v.venta_id = cc.id_venta');
+        $this->db->join('credito_cuotas_abono cca', 'cca.credito_cuota_id = cc.id_credito_cuota', 'left');
+        $this->db->where("v.venta_status='COMPLETADO'");
+        $this->db->where('cc.ispagado = 0');
+        $this->db->where("date(cc.fecha_vencimiento) >= '".$params['fecha_ini']."' AND date(cc.fecha_vencimiento) <= '".$params['fecha_fin']."'");
+        if($params['local_id']>0){
+            $this->db->where('v.local_id = '.$params['local_id']);
+        }
+        $this->db->group_by("cc.id_credito_cuota");
+        return $this->db->get()->result();
+    }
+
     public function update($where,$data){
         $this->db->trans_start();
         $this->db->where($where);

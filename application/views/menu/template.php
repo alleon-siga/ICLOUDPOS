@@ -368,6 +368,12 @@ $primary_nav = array(
                 'icon' => 'fa fa-pie-chart',
                 'slug' => 'estadocuenta'
             ),
+            array(
+                'name' => 'Calendario Cuentas',
+                'url' => $ruta . 'venta/calendarioCuentasCobrar',
+                'icon' => 'fa fa-calendar',
+                'slug' => 'calendarioCuentasCobrar'
+            )            
 
             /* array(
                  'name' => 'Cronograma Pago',
@@ -735,10 +741,8 @@ $primary_nav = array(
     <!-- Bootstrap is included in its original form, unaltered -->
     <link rel="stylesheet" href="<?php echo $ruta; ?>recursos/css/jquery-ui.css">
     <link rel="stylesheet" href="<?php echo $ruta; ?>recursos/css/bootstrap.min.css">
-
     <!-- Related styles of various icon packs and plugins -->
     <link rel="stylesheet" href="<?php echo $ruta; ?>recursos/css/plugins.css">
-
     <!-- The main stylesheet of this template. All Bootstrap overwrites are defined in here -->
     <link rel="stylesheet" href="<?php echo $ruta; ?>recursos/css/main.css">
 
