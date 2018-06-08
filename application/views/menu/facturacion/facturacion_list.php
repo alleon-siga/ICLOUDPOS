@@ -51,7 +51,18 @@
                     <td><?= $f->cliente_nombre ?></td>
                     <td><?= ($f->documento_tipo == '07' || $f->documento_tipo == '08') ? $f->documento_mod_numero : '-'
                         ?></td>
-                    <td><?= $f->estado == 1 ? 'ACEPTADA' : 'PENDIENTE' ?></td>
+                    <td>
+                        <?php
+                        if ($f->estado == 1) {
+                            if ($f->sunat_codigo != '-99') {
+                                echo 'ACEPTADA';
+                            } else {
+                                echo 'EMITIDA';
+                            }
+                        } else {
+                            echo 'PENDIENTE';
+                        }
+                        ?></td>
                     <td style="text-align: right;"><?= $emisor->moneda_simbolo ?> <?= number_format($f->total, 2) ?></td>
                     <td style="text-align: center;">
                         <a class="btn btn-xs btn-default" data-toggle="tooltip" style="margin-right: 5px;"
@@ -191,7 +202,6 @@
             }
         });
     }
-
 
 
     function emitir(id) {

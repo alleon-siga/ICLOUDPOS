@@ -305,6 +305,30 @@
                             </div>
                         <?php } ?>
 
+                        <?php if ($columna->nombre_columna == 'producto_afectacion_impuesto'): ?>
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    <label for="afectacion_impuesto" class="control-label">Afectacion del
+                                        Impuesto:</label>
+                                </div>
+                                <div class="col-md-8">
+                                    <select name="afectacion_impuesto" id="afectacion_impuesto"
+                                            class='cho form-control'>
+                                        <option value="">Seleccione</option>
+
+                                        <option value="<?= OP_GRAVABLE ?>"
+                                            <?= isset($producto['producto_afectacion_impuesto']) && $producto['producto_afectacion_impuesto'] == OP_GRAVABLE ? 'selected' : ''?>>GRAVABLE</option>
+
+                                        <option value="<?= OP_EXONERADA ?>"
+                                            <?= isset($producto['producto_afectacion_impuesto']) && $producto['producto_afectacion_impuesto'] == OP_EXONERADA ? 'selected' : ''?>>EXONERADA</option>
+
+                                        <option value="<?= OP_INAFECTA ?>"
+                                            <?= isset($producto['producto_afectacion_impuesto']) && $producto['producto_afectacion_impuesto'] == OP_INAFECTA ? 'selected' : ''?>>INAFECTA</option>
+                                    </select>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+
                         <?php if ($columna->nombre_columna == 'producto_impuesto') {
                             $impuesto_ivg = "";
                             if (count($impuestos) > 0):
@@ -1043,7 +1067,8 @@
             <div class="modal-footer">
                 <div class="row">
                     <div class="col-md-offset-8 col-md-2">
-                        <button class="btn btn-default" type="button" onclick="confirm_save('producto')" id="btnGuardar"><i
+                        <button class="btn btn-default" type="button" onclick="confirm_save('producto')"
+                                id="btnGuardar"><i
                                     class="fa fa-save"></i> Guardar
                         </button>
                     </div>
@@ -1297,6 +1322,20 @@
                 return false;
             }
 
+            if ($('#afectacion_impuesto').val() == '') {
+                var growlType = 'warning';
+
+                $.bootstrapGrowl('<h4>Debe seleccionar la afectacion del impuesto</h4>', {
+                    type: growlType,
+                    delay: 2500,
+                    allow_dismiss: true
+                });
+
+                $(this).prop('disabled', true);
+
+                return false;
+            }
+
             if (producto_impuesto.val() == '') {
                 var growlType = 'warning';
 
@@ -1510,14 +1549,14 @@
                     var callback = getproductosbylocal;
                     var modal = "productomodal";
                     if (data.error == undefined) {
-                        if(retorno != 'producto'){
-                            update_producto(data.id,data.nombre, data.impuesto, data.producto_id);
+                        if (retorno != 'producto') {
+                            update_producto(data.id, data.nombre, data.impuesto, data.producto_id);
                         }
 
                         $('#productomodal').modal('hide');
                         $("#cargando_modal").modal('hide');
-						$(".modal-backdrop").remove();
-                        if(retorno == 'producto'){
+                        $(".modal-backdrop").remove();
+                        if (retorno == 'producto') {
                             $.ajax({
                                 url: ruta + 'producto',
                                 success: function (data) {

@@ -67,6 +67,10 @@ TIPO DE PRICESO DE LA FACTURACION ELECTRONICA
 ***********************************************/
 define('FACTURACION_PROCESO', 3);
 
+define('OP_GRAVABLE', 1);
+define('OP_EXONERADA', 2);
+define('OP_INAFECTA', 3);
+
 /******CONFIGURACIONES************/
 
 define('EMPRESA_NOMBRE', 'EMPRESA_NOMBRE');

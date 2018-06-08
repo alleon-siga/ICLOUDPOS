@@ -19,7 +19,7 @@ class columnas_model extends CI_Model
     function get_by($campo, $valor)
     {
         $this->db->where($campo, $valor);
-        $query = $this->db->get($this->table);
+        $query = $this->db->order_by('orden', 'asc')->get($this->table);
         $query = $query->result();
         $data = array();
         foreach ($query as $q) {

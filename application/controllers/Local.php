@@ -15,7 +15,7 @@ class local extends MY_Controller
             $this->load->model('usuario/usuario_model');
             $this->load->model('correlativos/correlativos_model');
             $this->load->model('cajas/cajas_model');
-        }else{
+        } else {
             redirect(base_url(), 'refresh');
         }
     }
@@ -46,6 +46,31 @@ class local extends MY_Controller
         }
     }
 
+    function get_notas_correlativo($venta_id)
+    {
+        $venta = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
+        header('Content-Type: application/json');
+
+        if ($venta->id_documento == '1') {
+            $data['correlativos'] = $this->db->get_where('correlativos', array(
+                'id_local' => $venta->local_id,
+                'id_documento' => 9
+            ))->row();
+        } elseif ($venta->id_documento == '3') {
+            $data['correlativos'] = $this->db->get_where('correlativos', array(
+                'id_local' => $venta->local_id,
+                'id_documento' => 8
+            ))->row();
+        } elseif ($venta->id_documento == '6') {
+            $data['correlativos'] = $this->db->get_where('correlativos', array(
+                'id_local' => $venta->local_id,
+                'id_documento' => 2
+            ))->row();
+        }
+
+        echo json_encode($data);
+    }
+
     function get_correlativos($local_id)
     {
 
@@ -56,15 +81,16 @@ class local extends MY_Controller
             ))));
     }
 
-    function save_correlativos($local_id){
+    function save_correlativos($local_id)
+    {
         $correlativos = json_decode($this->input->post('correlativos'));
 
         $this->cajas_model->sync_cajas();
         header('Content-Type: application/json');
-        if($this->correlativos_model->save_correlativos($local_id, $correlativos))
-            echo json_encode(array('success'=>'1'));
+        if ($this->correlativos_model->save_correlativos($local_id, $correlativos))
+            echo json_encode(array('success' => '1'));
         else
-            echo json_encode(array('success'=>'0'));
+            echo json_encode(array('success' => '0'));
     }
 
     function form($id = FALSE)
@@ -143,8 +169,8 @@ class local extends MY_Controller
             else
                 $json['success'] = '0';
 
-        header('Content-Type: application/json');
-        echo json_encode($json);
+            header('Content-Type: application/json');
+            echo json_encode($json);
         }
     }
 }

@@ -85,6 +85,7 @@
                                 <?php foreach ($productos as $producto): ?>
                                     <option value="<?= $producto->producto_id ?>"
                                             data-impuesto="<?= $producto->porcentaje_impuesto ?>"
+                                            data-afectacion_impuesto="<?= $producto->producto_afectacion_impuesto ?>"
                                             data-cb="<?= $barra_activa->activo == 1 && $producto->barra != "" ? $producto->barra : "" ?>">
                                         <?php $barra = $barra_activa->activo == 1 && $producto->barra != "" ? "CB: " . $producto->barra : "" ?>
                                         <?= getCodigoValue($producto->producto_id, $producto->codigo) . ' - ' . $producto->producto_nombre . " " . $barra ?>
@@ -518,7 +519,6 @@
                         <select name="tipo_impuesto" id="tipo_impuesto" class="form-control">
                             <option value="1">Incluye impuesto</option>
                             <option value="2">Agregar impuesto</option>
-                            <option value="3">No considerar impuesto</option>
                         </select>
                     </div>
                 </div>

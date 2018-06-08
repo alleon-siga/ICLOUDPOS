@@ -518,7 +518,19 @@
                     $("#documento_serie").val("");
                     $("#documento_numero").val("");
 
-                    $('#dialog_venta_confirm').modal('show');
+                    $.ajax({
+                        url: '<?php echo $ruta . 'local/get_notas_correlativo'; ?>/' + venta_id,
+                        type: 'GET',
+                        headers: {
+                            Accept: 'application/json'
+                        },
+                        success: function (data) {
+                            $("#documento_serie").val(data.correlativos.serie);
+                            $("#documento_numero").val(data.correlativos.correlativo);
+                            $('#dialog_venta_confirm').modal('show');
+                        }
+                    });
+
                 }
 
                 function anular_venta(venta_id) {

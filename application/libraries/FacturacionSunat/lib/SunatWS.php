@@ -597,16 +597,27 @@ class SunatWS
 
                 //=============hash CDR=================
                 $doc_cdr = new DOMDocument();
-                if($doc_cdr->load($ruta_archivo_cdr . 'R-' . $archivo . '.XML') == TRUE){
+                if ($doc_cdr->load($ruta_archivo_cdr . 'R-' . $archivo . '.XML') == TRUE) {
                     $resp['respuesta'] = 'ok';
                     $resp['cod_sunat'] = $doc_cdr->getElementsByTagName('ResponseCode')->item(0)->nodeValue;
                     $resp['mensaje'] = $doc_cdr->getElementsByTagName('Description')->item(0)->nodeValue;
                     $resp['hash_cdr'] = $doc_cdr->getElementsByTagName('DigestValue')->item(0)->nodeValue;
-                }
-                else{
-                    $resp['respuesta'] = 'error';
-                    $resp['cod_sunat'] = '';
-                    $resp['mensaje'] = 'Error inesperado. No se ha podido recuperar el xml respuesta de SUNAT';
+                } else {
+                    $archivo_array = explode('-', $archivo);
+                    $documento_numero = $archivo_array[2] . '-' . $archivo_array[3];
+                    $doc_name = 'El Comprobante';
+                    if ($archivo_array[1] == '01')
+                        $doc_name = 'La Factura';
+                    if ($archivo_array[1] == '03')
+                        $doc_name = 'La Boleta';
+                    if ($archivo_array[1] == '07')
+                        $doc_name = 'La Nota de Credito';
+                    if ($archivo_array[1] == '08')
+                        $doc_name = 'La Nota de Debito';
+
+                    $resp['respuesta'] = 'ok';
+                    $resp['cod_sunat'] = '-99';
+                    $resp['mensaje'] = $doc_name . ' numero ' . $documento_numero . ', ha sido emitida pero no puedo recibir el XML de respuesta. Consulte SUNAT';
                     $resp['hash_cdr'] = null;
                 }
 
