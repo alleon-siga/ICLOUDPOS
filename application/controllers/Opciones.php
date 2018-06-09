@@ -56,7 +56,7 @@ class opciones extends MY_Controller
             }
 
             $logo = $this->upload_image();
-            if ($logo == 1) {
+            if ($logo != '') {
                 $configuraciones[] = array(
                     'config_key' => 'EMPRESA_LOGO',
                     'config_value' => $logo
@@ -87,81 +87,40 @@ class opciones extends MY_Controller
     function upload_image()
     {
 
-        if (!empty($_FILES) and $_FILES['userfile']['size'] != '0') {
-
-            $this->load->library('upload');
-            $files = $_FILES;
-            $contador = 1;
-            $mayor = 0;
-
+        if (!empty($_FILES['userfile']) && $_FILES['userfile']['size'] != '0') {
+//            var_dump($_FILES['userfile']);
             $directorio = './recursos/img/logo/';
 
-            if (is_dir($directorio)) {
-                $arreglo_img = scandir($directorio);
-                natsort($arreglo_img);
-                $mayor = array_pop($arreglo_img);
-                $mayor = substr($mayor, 0, -4);
+            $size = getimagesize($_FILES ['userfile'] ['tmp_name']);
+
+            switch ($size['mime']) {
+                case "image/jpeg":
+                    $extension = "jpg";
+                    break;
+                case "image/png":
+                    $extension = "png";
+                    break;
+                case "image/bmp":
+                    $extension = "bmp";
+                    break;
+            }
+
+            $config = array();
+            $config ['upload_path'] = $directorio;
+            $config['allowed_types'] = 'jpg|png|bmp|jpeg';
+            //$config ['file_path'] = './prueba/';
+            $config ['max_size'] = '0';
+            $config ['overwrite'] = TRUE;
+            $config ['file_name'] = md5(SERVER_NAME) . '.' . $extension;
+            $this->load->library('upload', $config);
+
+            if (!$this->upload->do_upload('userfile')) {
+                log_message('error', $this->upload->display_errors());
+                echo $this->upload->display_errors();
             } else {
-                $arreglo_img[0] = ".";
-            }
-            $sumando = 1;
-            for ($j = 0; $j < count($files['userfile']['name']); $j++) {
-
-                if ($files['userfile']['name'][$j] != "") {
-
-                    if ($arreglo_img[0] == ".") {
-                        $contador = $mayor + ($sumando);
-                        $sumando++;
-                    }
-                    $_FILES ['userfile'] ['name'] = $files ['userfile'] ['name'][$j];
-                    $_FILES ['userfile'] ['type'] = $files ['userfile'] ['type'][$j];
-                    $_FILES ['userfile'] ['tmp_name'] = $files ['userfile'] ['tmp_name'][$j];
-                    $_FILES ['userfile'] ['error'] = $files ['userfile'] ['error'][$j];
-                    $_FILES ['userfile'] ['size'] = $files ['userfile'] ['size'][$j];
-
-                    $size = getimagesize($_FILES ['userfile'] ['tmp_name']);
-
-                    switch ($size['mime']) {
-                        case "image/jpeg":
-                            $extension = "jpg";
-                            break;
-                        case "image/png":
-                            $extension = "png";
-                            break;
-                        case "image/bmp":
-                            $extension = "bmp";
-                            break;
-                    }
-
-                    $this->upload->initialize($this->set_upload_options($contador, $extension));
-                    $this->upload->do_upload();
-                    return $contador . '.' . $extension;
-                    $contador++;
-                } else {
-
-                }
+                return md5(SERVER_NAME) . '.' . $extension;
             }
         }
-    }
-
-    function set_upload_options($name, $extension)
-    {
-        // upload an image options
-        $this->load->helper('path');
-        $dir = './recursos/img/logo/';
-
-        if (!is_dir($dir)) {
-            mkdir($dir, 0755);
-        }
-        $config = array();
-        $config ['upload_path'] = $dir;
-        //$config ['file_path'] = './prueba/';
-        $config ['allowed_types'] = $extension;
-        $config ['max_size'] = '0';
-        $config ['overwrite'] = TRUE;
-        $config ['file_name'] = $name;
-
-        return $config;
     }
 
 }

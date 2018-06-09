@@ -69,7 +69,8 @@
                 Fecha: <?= date('d/m/Y h:i a', strtotime($venta->venta_fecha)) ?></td>
         </tr>
         <tr>
-            <td style="text-transform: uppercase;"><?= ($venta->tipo_cliente == '1')? $term[1]->valor : $term[0]->valor ?> : <?= $venta->ruc ?></td>
+            <td style="text-transform: uppercase;"><?= ($venta->tipo_cliente == '1') ? $term[1]->valor : $term[0]->valor ?>
+                : <?= $venta->ruc ?></td>
         </tr>
         <tr>
             <td style="text-transform: uppercase;">Cliente: <?= $venta->cliente_nombre ?></td>
@@ -215,6 +216,41 @@
     </div>
     <br>
 
+    <?php if (SERVER_NAME == SERVER_CRDIGITAL): ?>
+        <style>
+            .crdigital td {
+                border: 1px solid #000000;;
+            }
+        </style>
+        <table class="crdigital" cellspacing="0" cellpadding="5">
+            <tr>
+                <td style="height: 100px; text-align: center; vertical-align: bottom;">
+                    -------------------------<br>
+                    p. CR DIGITALL SCRL
+                </td>
+                <td style="padding-left:5px; width: 40%; text-align: left; vertical-align: bottom; position: relative;">
+                    <div style="position: absolute; top: -14px; width: 100%; text-align: center;">GARANTE</div>
+                    Frima: -------------------------<br><br>
+                    Nombre: <br><br>
+                    Domicilio: <br>
+
+                </td>
+                <td style="text-align: center; vertical-align: bottom;">
+                    -------------------------<br>
+                    COMPRADOR
+                </td>
+                <td style="text-align: center; vertical-align: bottom;">
+                    -------------------------<br>
+                    COMPRADOR
+                </td>
+            </tr>
+        </table>
+        <div style="font-size: 8px;">-	El Garante es fiador solidario con el deudor y renuncia expresamente al beneficio de su excusión.
+            <br>-	El Comprador y Garante aceptan voluntariamente que ante la falta de pago. C.R DIGITALL S.C.R.L o el tenedor legitimado realice el llenado de una de las letras por el total de la deuda impaga más intereses y gastos administrativos, para su protesto y cobro judicial respectivo (Artº 10 Ley 27287) Ley de Títulos y Valores.
+            <br>-	El Comprador acepta que el bien materia del crédito será de propiedad de C.R DIGITALL S.C.R.L, hasta la cancelación total de la deuda y por esta razón se promete a conservar en buenas condiciones el bien adquirido, por lo que ante su devolución por falta de pago pagara una penalidad ascendente al menoscabo del bien que será merituado por C.R DIGITALL S.C.R.L
+            <br>-	La Garantía del bien solamente cubre defectos de fábrica y no los daños provocados por el uso inapropiado del mismo.
+        </div>
+    <?php endif; ?>
 
 </div>
 <script>

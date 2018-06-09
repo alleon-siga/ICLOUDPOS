@@ -99,7 +99,7 @@
             <div class="input-prepend input-append input-group">
                 <span class="input-group-addon"><i class="fa fa-folder"></i> </span>
                 <input type="file" onchange="asignar_imagen(0)" class="form-control input_imagen"
-                       data-count="0" name="userfile[]" accept="image/*"
+                       data-count="0" name="userfile" accept="image/*"
                        id="input_imagen0">
 
             </div>

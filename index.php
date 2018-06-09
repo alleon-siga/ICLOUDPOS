@@ -1,11 +1,18 @@
 <?php
+define('SERVER_VYM', 'vym.grupocd.pe');
+define('SERVER_CRDIGITAL', 'crdigital.teayudo.pe');
+define('SERVER_TEST', 'apps.teayudo.pe/dev/');
 
 $env = 'PROD';
-if ($_SERVER['SERVER_NAME'] == 'vym.grupocd.pe')
+$server_name = SERVER_CRDIGITAL;
+if ($_SERVER['SERVER_NAME'] == SERVER_VYM) {
+    $server_name = SERVER_VYM;
     define('DATABASE_HOST', 'grupocd_vym');
-elseif ($_SERVER['SERVER_NAME'] == 'lg.grupocd.pe')
-    define('DATABASE_HOST', 'grupocd_lg');
-elseif ($_SERVER['SERVER_NAME'] == 'apps.teayudo.pe/dev/') {
+} elseif ($_SERVER['SERVER_NAME'] == SERVER_CRDIGITAL) {
+    $server_name = SERVER_CRDIGITAL;
+    define('DATABASE_HOST', 'teayudop_crdigital');
+} elseif ($_SERVER['SERVER_NAME'] == SERVER_TEST) {
+    $server_name = SERVER_TEST;
     define('DATABASE_HOST', '25.36.257.45');
     $env = 'DEV';
 } else {
@@ -14,6 +21,7 @@ elseif ($_SERVER['SERVER_NAME'] == 'apps.teayudo.pe/dev/') {
 }
 
 define('ENV', $env);
+define('SERVER_NAME', $server_name);
 
 /**
  * CodeIgniter
