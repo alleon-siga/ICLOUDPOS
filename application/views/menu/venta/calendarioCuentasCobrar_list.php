@@ -37,7 +37,8 @@
         cliente: '<?= $list->razon_social ?>',
         fecha_venc: '<?= $list->fecha_vencimiento ?>',
         pago_pendiente: '<?= $list->pago_pendiente ?>',
-        nro_letra: '<?= $list->nro_letra ?>'
+        nro_letra: '<?= $list->nro_letra ?>',
+        simbolo: '<?= $list->simbolo ?>'
     });
     <?php endforeach;?>
 
@@ -61,7 +62,7 @@
     for(let i=0; i < eventos.length; i++){
       var datos = [];
       datos['id'] = eventos[i].venta_id;
-      datos['title'] = eventos[i].cliente + '\n' + eventos[i].pago_pendiente + '\n' + eventos[i].nro_letra;
+      datos['title'] = eventos[i].cliente + '\n' + eventos[i].simbolo + ' ' + eventos[i].pago_pendiente + '\n' + eventos[i].nro_letra;
       datos['start'] = eventos[i].fecha_venc;
       options.events.push(datos);
     }    
