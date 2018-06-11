@@ -1,1 +1,0 @@
-INSERT INTO opcion(nOpcionClase, cOpcionDescripcion, cOpcionNombre) VALUES(7,'gastosDia', 'Gastos del dia');

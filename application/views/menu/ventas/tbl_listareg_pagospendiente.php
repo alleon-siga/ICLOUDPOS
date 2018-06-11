@@ -371,8 +371,8 @@
         else
             params['cuenta_id'] = $("#caja_id").val();
 
-        if ($("#metodo").val() == "7")
-            params['banco'] = $("#tipo_tarjeta").val();
+        //if ($("#metodo").val() == "7")
+            //params['banco'] = $("#tipo_tarjeta").val();
 
 
         $("#guardarPago_pagospendiente").attr('disabled', 'disabled');
