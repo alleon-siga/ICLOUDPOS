@@ -709,8 +709,20 @@ class venta_new extends MY_Controller
             $data['identificacion'] = $this->db->get_where('configuraciones', array('config_key' => 'EMPRESA_IDENTIFICACION'))->row();
             $total = $data['venta']->total;
             $data['totalLetras'] = numtoletras($total, $moneda->nombre);
-            $this->load->view('menu/venta/impresiones/nota_pedido', $data);
-            //$this->venta->imprimir_pedido($data);
+
+
+            if (SERVER_NAME == SERVER_CRDIGITAL) {
+                $this->load->library('mpdf53/mpdf');
+                $mpdf = new mPDF('utf-8', 'A4', 0, '', 5, 5, 5, 5, 5, 5);
+                $html = $this->load->view('menu/venta/impresiones/nota_pedido_crdigital', $data, true);
+//echo $html;
+                $mpdf->WriteHTML($html);
+                $mpdf->Output();
+            } else {
+                $this->load->view('menu/venta/impresiones/nota_pedido', $data);
+            }
+
+
         } elseif ($tipo_impresion == 'ALMACEN') {
             $pedido = $this->venta->get_venta_detalle($venta_id);
             $detalles = array();
@@ -747,6 +759,7 @@ class venta_new extends MY_Controller
             $data['totalLetras'] = numtoletras($total, $moneda->nombre);
             $this->load->view('menu/venta/impresiones/pedido_almacen', $data);
             //$this->venta->imprimir_pedido($data);
+
 
         } elseif ($tipo_impresion == 'DOCUMENTO' || $tipo_impresion == 'SC') {
             $data['venta'] = $this->venta->get_venta_detalle($venta_id);

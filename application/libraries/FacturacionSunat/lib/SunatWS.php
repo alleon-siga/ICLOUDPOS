@@ -597,7 +597,7 @@ class SunatWS
 
                 //=============hash CDR=================
                 $doc_cdr = new DOMDocument();
-                if ($doc_cdr->load($ruta_archivo_cdr . 'R-' . $archivo . '.XML') == TRUE) {
+                if (file_exists($ruta_archivo_cdr . 'R-' . $archivo . '.XML') && $doc_cdr->load($ruta_archivo_cdr . 'R-' . $archivo . '.XML') == TRUE) {
                     $resp['respuesta'] = 'ok';
                     $resp['cod_sunat'] = $doc_cdr->getElementsByTagName('ResponseCode')->item(0)->nodeValue;
                     $resp['mensaje'] = $doc_cdr->getElementsByTagName('Description')->item(0)->nodeValue;

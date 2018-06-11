@@ -43,6 +43,7 @@ class venta_new_model extends CI_Model
             cliente.identificacion as ruc,
             cliente.ruc as cliente_tipo_identificacion,
             cliente.direccion as cliente_direccion,
+            cliente.telefono1 as cliente_telefono,
             venta.id_vendedor as vendedor_id,
             usuario.username as vendedor_nombre,
             venta.condicion_pago as condicion_id,
@@ -195,7 +196,11 @@ class venta_new_model extends CI_Model
 
     function get_last_id()
     {
-        $last_id = $this->db->select('venta_id')->order_by('venta_id', "desc")->limit(1)->get('venta')->row();
+        $last_id = $this->db->select('venta_id')
+            ->from('venta')
+            ->order_by('venta_id', "desc")
+            ->limit(1)
+            ->get()->row();
 
         return $last_id;
     }
