@@ -26,8 +26,8 @@
                     <tr>
                         <td><?= $mov->id ?></td>
                         <td><?= date('d/m/Y H:i', strtotime($mov->created_at)) ?></td>
-                        <td><?= $mov->nombre ?></td>
-                        <td><?= $mov->nombre ?></td>
+                        <td><?= $mov->proveedor ?></td>
+                        <td><?= $mov->cliente ?></td>
                         <td><?= $mov->nombre ?></td>
                         <td><?= $mov->tipo ?></td>
                         <td><?= $mov->IO == 2 ? 'Salida' : 'Entrada' ?></td>
