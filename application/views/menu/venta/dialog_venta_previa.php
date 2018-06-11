@@ -583,8 +583,13 @@
                 allow_dismiss: true
             });
 
+            <?php if (SERVER_NAME == SERVER_CRDIGITAL): ?>
+            var win = window.open('<?=base_url('venta_new/imprimir/' . $venta->venta_id . '/PEDIDO')?>', '_blank');
+            win.focus();
+            <?php else:?>
             var url = '<?=base_url('venta_new/imprimir/' . $venta->venta_id . '/PEDIDO')?>';
             $("#imprimir_frame").attr('src', url);
+            <?php endif; ?>
 
         });
 //

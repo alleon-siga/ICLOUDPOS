@@ -43,6 +43,7 @@ class venta_new_model extends CI_Model
             cliente.identificacion as ruc,
             cliente.ruc as cliente_tipo_identificacion,
             cliente.direccion as cliente_direccion,
+            cliente.telefono1 as cliente_telefono,
             venta.id_vendedor as vendedor_id,
             usuario.username as vendedor_nombre,
             venta.condicion_pago as condicion_id,
