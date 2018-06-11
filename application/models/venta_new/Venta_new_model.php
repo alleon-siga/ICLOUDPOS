@@ -196,7 +196,11 @@ class venta_new_model extends CI_Model
 
     function get_last_id()
     {
-        $last_id = $this->db->select('venta_id')->order_by('venta_id', "desc")->limit(1)->get('venta')->row();
+        $last_id = $this->db->select('venta_id')
+            ->from('venta')
+            ->order_by('venta_id', "desc")
+            ->limit(1)
+            ->get()->row();
 
         return $last_id;
     }

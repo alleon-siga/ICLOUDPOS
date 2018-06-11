@@ -78,9 +78,17 @@ class Pedidos extends REST_Controller
 
     public function last_venta_get()
     {
+        $data = array();
         $last_id = $this->venta->get_last_id();
 
-        $this->response($last_id, 200);
+        if ($last_id) {
+            $data['last'] = $last_id;
+            $this->response($data, 200);
+
+        } else {
+            $data['last'] = array();
+            $this->response($data, 200);
+        }
     }
 
     public function save_post()
