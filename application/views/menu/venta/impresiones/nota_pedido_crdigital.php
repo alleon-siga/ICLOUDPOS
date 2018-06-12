@@ -42,11 +42,20 @@
     }
 
     .td_productos td {
-        height: 35px;
+        height: 30px;
+    }
+
+    .cuotas {
+        width: 100%;
+    }
+
+    .cuotas td {
+        border: 0;
+        border-bottom: 1px solid #000000;
     }
 
     .crdigital td {
-        border: 1px solid #000000;;
+        border: 1px solid #000000;
     }
 </style>
 
@@ -67,7 +76,8 @@
             </div>
         </div>
         <div class="col" style="width: 25%; border: 1px solid #000; border-radius: 8px; float: right; padding: 10px;">
-            <div style="text-align: center; font-size: 14px; border-bottom: 1px solid #000; padding-bottom: 12px;">RUC
+            <div style="text-align: center; font-size: 14px; border-bottom: 1px solid #000; padding-bottom: 12px;">
+                RUC: <?= valueOption('EMPRESA_IDENTIFICACION', '20490961195') ?>
             </div>
             <div style="text-align: center; font-size: 14px; border-bottom: 1px solid #000; padding-bottom: 12px; padding-top: 12px;">
                 PEDIDO COMPRA-VENTA
@@ -118,12 +128,12 @@
                     <td><?= getCodigoValue($detalle->producto_id, $detalle->producto_codigo_interno) ?></td>
                     <td><?= number_format($detalle->cantidad, 0) ?></td>
                     <td><?= $detalle->unidad_abr ?></td>
-                    <td><?= $detalle->producto_nombre ?></td>
+                    <td style="width: 425px;"><?= $detalle->producto_nombre ?></td>
                     <td style="text-align: right; white-space: nowrap;"><?= $venta->moneda_simbolo . ' ' . $detalle->precio ?></td>
                     <td style="text-align: right; white-space: nowrap;"><?= $venta->moneda_simbolo . ' ' . $detalle->importe ?></td>
                 </tr>
             <?php endforeach; ?>
-            <?php for($i = count($venta->detalles); $i < 13; $i++):?>
+            <?php for ($i = count($venta->detalles); $i < 11; $i++): ?>
                 <tr class="td_productos">
                     <td> </td>
                     <td> </td>
@@ -132,19 +142,56 @@
                     <td> </td>
                     <td> </td>
                 </tr>
-            <?php endfor;?>
+            <?php endfor; ?>
             <tr>
                 <td colspan="6" style="text-align: center; border: 1px solid #000; border-left: 0px;">CONDICIONES DE
                     PAGO
                 </td>
             </tr>
             <tr>
-                <td colspan="6" style="border: 1px solid #000; border-left: 0px; border-top: 0px;">Inicial:</td>
+                <td colspan="3" style="border: 1px solid #000; border-left: 0px; border-top: 0px;">
+                    <strong>Inicial:</strong> <?= $venta->moneda_simbolo . ' ' . number_format($venta->inicial, 2) ?>
+                </td>
+                <td colspan="3" style="border: 1px solid #000; border-left: 0px; border-top: 0px;">
+                    <strong>Deuda
+                        Pendiente:</strong>
+                    <?php if ($venta->condicion_id == 2): ?>
+                        <?= $venta->moneda_simbolo . ' ' . number_format($venta->total - $venta->inicial, 2) ?>
+                    <?php else: ?>
+                        <?= $venta->moneda_simbolo . ' ' . number_format(0, 2) ?>
+                    <?php endif; ?>
+                </td>
             </tr>
-
             <tr>
-                <td colspan="5" style="border-bottom: 0; height: 100px; vertical-align: bottom;"> SON:
+                <td colspan="5" style="height: 200px; vertical-align: top;">
+                    <table class="cuotas" cellspacing="0" cellpadding="2">
+                        <tr>
+                            <td style="font-weight:bold; width:200px;border-bottom: 1px solid #000000; border-top: 1px solid #000000;">
+                                LETRA
+                            </td>
+                            <td style="font-weight:bold; width:200px;border-bottom: 1px solid #000000; border-top: 1px solid #000000;">
+                                VENCE
+                            </td>
+                            <td style="font-weight:bold; border-bottom: 1px solid #000000; border-top: 1px solid #000000;text-align: right;">
+                                MONTO
+                            </td>
+                        </tr>
+                        <?php foreach ($venta->cuotas as $cuota): ?>
+                            <tr>
+                                <td><?= $cuota->nro_letra ?></td>
+                                <td><?= date('d/m/Y', strtotime($cuota->fecha_vencimiento)) ?></td>
+                                <td style="text-align: right;"><?= $venta->moneda_simbolo . ' ' . number_format($cuota->monto, 2) ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4" style="border-bottom: 0;"> SON:
                     <span style="text-transform: uppercase;"><?= $totalLetras; ?></span>
+                </td>
+                <td style="text-transform: uppercase;">
+                    <strong>Total</strong>
                 </td>
                 <td style="border-bottom: 0; white-space: nowrap; vertical-align: bottom;">
                     <?= $venta->moneda_simbolo . ' ' . $venta->total ?>
