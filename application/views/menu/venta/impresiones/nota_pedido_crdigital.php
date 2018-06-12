@@ -133,7 +133,7 @@
                     <td style="text-align: right; white-space: nowrap;"><?= $venta->moneda_simbolo . ' ' . $detalle->importe ?></td>
                 </tr>
             <?php endforeach; ?>
-            <?php for ($i = count($venta->detalles); $i < 11; $i++): ?>
+            <?php for ($i = count($venta->detalles); $i < 13; $i++): ?>
                 <tr class="td_productos">
                     <td> </td>
                     <td> </td>
@@ -163,27 +163,65 @@
                 </td>
             </tr>
             <tr>
-                <td colspan="5" style="height: 200px; vertical-align: top;">
-                    <table class="cuotas" cellspacing="0" cellpadding="2">
+                <td colspan="5" style="height: 150px; vertical-align: top;">
+                    <table>
                         <tr>
-                            <td style="font-weight:bold; width:200px;border-bottom: 1px solid #000000; border-top: 1px solid #000000;">
-                                LETRA
+                            <td style="width: 325px; border: 0;">
+                                <?php if (isset($venta->cuotas[0])): ?>
+                                    <table class="cuotas" cellspacing="0" cellpadding="2">
+                                        <tr>
+                                            <td style="width: 100px;font-weight:bold;border-bottom: 1px solid #000000; border-top: 1px solid #000000;">
+                                                LETRA
+                                            </td>
+                                            <td style="width: 100px;font-weight:bold;border-bottom: 1px solid #000000; border-top: 1px solid #000000;">
+                                                VENCE
+                                            </td>
+                                            <td style="font-weight:bold; border-bottom: 1px solid #000000; border-top: 1px solid #000000;text-align: right;">
+                                                MONTO
+                                            </td>
+                                        </tr>
+                                        <?php for ($i = 0; $i < 6; $i++): ?>
+                                            <?php if (isset($venta->cuotas[$i])): ?>
+                                                <tr>
+                                                    <td><?= $venta->cuotas[$i]->nro_letra ?></td>
+                                                    <td><?= date('d/m/Y', strtotime($venta->cuotas[$i]->fecha_vencimiento)) ?></td>
+                                                    <td style="text-align: right;"><?= $venta->moneda_simbolo . ' ' . number_format($venta->cuotas[$i]->monto, 2) ?></td>
+                                                </tr>
+                                            <?php endif; ?>
+                                        <?php endfor; ?>
+                                    </table>
+                                <?php endif; ?>
                             </td>
-                            <td style="font-weight:bold; width:200px;border-bottom: 1px solid #000000; border-top: 1px solid #000000;">
-                                VENCE
-                            </td>
-                            <td style="font-weight:bold; border-bottom: 1px solid #000000; border-top: 1px solid #000000;text-align: right;">
-                                MONTO
+                            <td style="width: 300px; border: 0;">
+                                <?php if (isset($venta->cuotas[6])): ?>
+                                    <table class="cuotas" cellspacing="0" cellpadding="2">
+                                        <tr>
+                                            <td style="width: 100px;font-weight:bold;border-bottom: 1px solid #000000; border-top: 1px solid #000000;">
+                                                LETRA
+                                            </td>
+                                            <td style="width: 100px;font-weight:bold;border-bottom: 1px solid #000000; border-top: 1px solid #000000;">
+                                                VENCE
+                                            </td>
+                                            <td style="font-weight:bold; border-bottom: 1px solid #000000; border-top: 1px solid #000000;text-align: right;">
+                                                MONTO
+                                            </td>
+                                        </tr>
+                                        <?php for ($i = 6; $i < 12; $i++): ?>
+                                            <?php if (isset($venta->cuotas[$i])): ?>
+                                                <tr>
+                                                    <td><?= $venta->cuotas[$i]->nro_letra ?></td>
+                                                    <td><?= date('d/m/Y', strtotime($venta->cuotas[$i]->fecha_vencimiento)) ?></td>
+                                                    <td style="text-align: right;"><?= $venta->moneda_simbolo . ' ' . number_format($venta->cuotas[$i]->monto, 2) ?></td>
+                                                </tr>
+                                            <?php endif; ?>
+                                        <?php endfor; ?>
+                                    </table>
+                                <?php endif; ?>
                             </td>
                         </tr>
-                        <?php foreach ($venta->cuotas as $cuota): ?>
-                            <tr>
-                                <td><?= $cuota->nro_letra ?></td>
-                                <td><?= date('d/m/Y', strtotime($cuota->fecha_vencimiento)) ?></td>
-                                <td style="text-align: right;"><?= $venta->moneda_simbolo . ' ' . number_format($cuota->monto, 2) ?></td>
-                            </tr>
-                        <?php endforeach; ?>
                     </table>
+
+
                 </td>
             </tr>
             <tr>
