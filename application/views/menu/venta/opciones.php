@@ -111,22 +111,6 @@
         </div>
     </div>
 
-
-<!--    <div class="row form-group">-->
-<!--        <div class="col-md-4">-->
-<!--            <label class="control-label panel-admin-text">Facturaci&oacute;n Electr&oacute;nica:</label>-->
-<!--        </div>-->
-<!--        <div class="col-md-8">-->
-<!--            <div class="form-control">-->
-<!--                <input type="radio" name="FACTURACION" id="" class='' value="1"-->
-<!--                    --><?php //echo validOption("FACTURACION", '1', '0') ? 'checked' : '' ?><!--> SI-->
-<!--                &nbsp;&nbsp;&nbsp;-->
-<!--                <input type="radio" name="FACTURACION" id="" class='' value="0"-->
-<!--                    --><?php //echo validOption("FACTURACION", '0', '0') ? 'checked' : '' ?><!--> NO-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-
     <?php if (validOption('ACTIVAR_SHADOW', 1)): ?>
         <div class="row form-group">
             <div class="col-md-4">
