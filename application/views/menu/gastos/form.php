@@ -124,6 +124,21 @@
                     </div>
                 </div>
                 <hr>
+                <!--<div class="row">
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            <label class="control-label panel-admin-text">Condici&oacute;n</label>
+                        </div>
+                        <div class="col-md-9">
+                            <select name="tipo_pago" id="tipo_pago" class='form-control'>
+                                <?php // foreach ($tipo_pagos as $pago): ?>
+                                    <option
+                                            value="<? // $pago['id_condiciones'] ?>"><?= $pago['nombre_condiciones'] ?></option>
+                                <?php //endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                </div>-->
                 <div class="row">
                     <div class="form-group">
                         <div class="col-md-3">
@@ -280,6 +295,8 @@
                 </div>
             </div>
             <div class="modal-footer">
+                <a href="javascript:agregarDetalle()">Agregar detalle</a>
+                <br>
                 <button type="button" id="" class="btn btn-primary" onclick="grupo.guardar()">F6 Confirmar</button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
             </div>
@@ -288,9 +305,9 @@
     </div>
 </form>
 <script>
-    /*$("#fecha").datepicker({
+    $("#fecha").datepicker({
         format: 'dd-mm-yyyy'
-    });*/
+    });
 
     var cuentas = [];
     <?php foreach ($cuentas as $cuenta):?>
