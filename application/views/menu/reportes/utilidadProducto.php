@@ -25,7 +25,7 @@
                 </div>
                 <div class="col-md-3">
                     <label class="control-label panel-admin-text">Fecha</label>
-                    <input type="text" id="fecha" class="form-control" readonly style="cursor: pointer;" name="fecha" value="<?= date('01/m/Y') ?> - <?= date('d/m/Y') ?>"/>
+                    <input type="text" id="fecha" class="form-control" readonly style="cursor: pointer;" name="fecha" value="<?= date('d/m/Y') ?> - <?= date('d/m/Y') ?>"/>
                 </div>
                 <div class="col-md-2">
                 </div>

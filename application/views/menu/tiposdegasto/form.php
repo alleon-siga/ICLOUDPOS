@@ -27,8 +27,18 @@
                     <div class="col-md-10">
                         <select class="form-control" name="tipo_tipos_gasto" id="tipo_tipos_gasto">
                             <option value="">Seleccione</option>
-                            <option value="0" <?= ($tiposgasto['tipo_tipos_gasto']=='0')? 'selected':'' ?>>Variable</option>
-                            <option value="1" <?= ($tiposgasto['tipo_tipos_gasto']=='1')? 'selected':'' ?>>Fijo</option>
+                        <?php
+                        $slt1 = $slt2 = '';
+                            if(isset($tiposgasto)){
+                                if($tiposgasto['tipo_tipos_gasto']=='0'){
+                                    $slt1 = "selected";
+                                }elseif($tiposgasto['tipo_tipos_gasto']=='1'){
+                                    $slt2 = "selected";
+                                }
+                            }
+                        ?>
+                            <option value="0" <?= $slt1 ?>>Variable</option>
+                            <option value="1" <?= $slt2 ?>>Fijo</option>
                         </select>
                     </div>
                 </div>
