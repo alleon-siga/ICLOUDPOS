@@ -482,130 +482,130 @@ $primary_nav = array(
             ),
             */
             array(
-                'name' => 'Resumen de ventas',
-                'url' => $ruta . 'estadisticas',
-                'icon' => 'fa fa-pie-chart',
-                'slug' => 'resumenventas'
-            ),
-
-            array(
-                'name' => 'Valorización inventario',
-                'url' => $ruta . 'inventario/valorizacion_inventario',
+                'name' => 'Inventario',
                 'icon' => 'fa fa-money',
-                'slug' => 'valorizacioneinventario'
+                'slug' => 'inventariopadre',
+                'sub' => array(
+                    array(
+                        'name' => 'Valorización inventario',
+                        'url' => $ruta . 'inventario/valorizacion_inventario',
+                        'slug' => 'valorizacioneinventario'
+                    ),
+                    array(
+                        'name' => 'Entradas & Salidas',
+                        'url' => $ruta . 'ajuste/historial',
+                        'slug' => 'entradasysalidas'
+                    ),
+                    array(
+                        'name' => 'Stock y ventas',
+                        'url' => $ruta . 'reporte/stockVentas',
+                        'slug' => 'stockventas'
+                    ),
+                    array(
+                        'name' => 'Ingreso Detallado',
+                        'url' => $ruta . 'ingresos/ingreso_detallado',
+                        'slug' => 'ingresodetallado'
+                    ),
+                )
             ),
+            array(
+                'name' => 'Venta',
+                'icon' => 'fa fa-area-chart',
+                'slug' => 'ventapadre',
+                'sub' => array(
+                    array(
+                        'name' => 'Resumen de ventas',
+                        'url' => $ruta . 'estadisticas',
+                        'slug' => 'resumenventas'
+                    ),
+                    array(
+                        'name' => 'Comision x Vendedor',
+                        'url' => $ruta . 'reporte_ventas/comision',
+                        'slug' => 'comisionxvendedor'
+                    ),
+                    array(
+                        'name' => 'Ventas x Comprobante',
+                        'url' => $ruta . 'reporte_ventas/comprobante',
+                        'slug' => 'ventaxcomprobante'
+                    ),
+                    array(
+                        'name' => 'Productos + vendidos',
+                        'url' => $ruta . 'reporte/productoVendido',
+                        'slug' => 'productovendido'
+                    ),
+                    array(
+                        'name' => 'Ventas x sucursal',
+                        'url' => $ruta . 'reporte/ventaSucursal',
+                        'slug' => 'ventaSucursal'
+                    ),
 
-            array(
-                'name' => 'Entradas & Salidas',
-                'url' => $ruta . 'ajuste/historial',
-                'icon' => 'fa fa-pie-chart',
-                'slug' => 'entradasysalidas'
+                    array(
+                        'name' => 'Ventas x empleado',
+                        'url' => $ruta . 'reporte/ventaEmpleado',
+                        'slug' => 'ventaEmpleado'
+                    ),
+                    array(
+                        'name' => 'Margen de utilidad',
+                        'url' => $ruta . 'reporte/margenUtilidad',
+                        'icon' => 'fa fa-area-chart',
+                        'slug' => 'margenutilidad'
+                    ),
+                    array(
+                        'name' => 'Utilidades por venta',
+                        'url' => $ruta . 'reporte/utilidadProducto',
+                        'icon' => 'fa fa-area-chart',
+                        'slug' => 'utilidadProducto'
+                    ),
+                    array(
+                        'name' => 'Hoja de colecta',
+                        'url' => $ruta . 'reporte/hojaColecta',
+                        'icon' => 'fa fa-area-chart',
+                        'slug' => 'hojaColecta'
+                    ),
+                    array(
+                        'name' => 'Recargas del d&iacute;a',
+                        'url' => $ruta . 'reporte/recargaDia',
+                        'icon' => 'fa fa-area-chart',
+                        'slug' => 'recargaDia'
+                    ),
+                    array(
+                        'name' => 'Cobranza del d&iacute;a',
+                        'url' => $ruta . 'reporte/recargaCobranza',
+                        'icon' => 'fa fa-area-chart',
+                        'slug' => 'recargaCobranza'
+                    ),
+                    array(
+                        'name' => 'Cuentas por cobrar',
+                        'url' => $ruta . 'reporte/recargaCuentasC',
+                        'icon' => 'fa fa-area-chart',
+                        'slug' => 'recargaCuentasC'
+                    ),
+                )
             ),
-
             array(
-                'name' => 'Ingreso Detallado',
-                'url' => $ruta . 'ingresos/ingreso_detallado',
-                'icon' => 'fa fa-money',
-                'slug' => 'ingresodetallado'
-            ),
-
-
-            array(
-                'name' => 'Comision x Vendedor',
-                'url' => $ruta . 'reporte_ventas/comision',
-                'icon' => 'fa fa-pie-chart',
-                'slug' => 'comisionxvendedor'
-            ),
-            array(
-                'name' => 'Ventas x Comprobante',
-                'url' => $ruta . 'reporte_ventas/comprobante',
-                'icon' => 'fa fa-pie-chart',
-                'slug' => 'ventaxcomprobante'
-            ),
-
-            array(
-                'name' => 'Productos + vendidos',
-                'url' => $ruta . 'reporte/productoVendido',
+                'name' => 'Compra',
                 'icon' => 'fa fa-area-chart',
-                'slug' => 'productovendido'
+                'slug' => 'comprapadre',
+                'sub' => array(
+                    array(
+                        'name' => 'Pago a proveedores',
+                        'url' => $ruta . 'reporte_compras/proveedor_estado',
+                        'slug' => 'pagoproveedores'
+                    ),
+                )
             ),
-
             array(
-                'name' => 'Ventas x sucursal',
-                'url' => $ruta . 'reporte/ventaSucursal',
+                'name' => 'Caja',
                 'icon' => 'fa fa-area-chart',
-                'slug' => 'ventaSucursal'
+                'slug' => 'cajapadre',
+                'sub' => array(
+                    array(
+                        'name' => 'Gastos del d&iacute;a',
+                        'url' => $ruta . 'reporte/gastosDia',
+                        'slug' => 'gastosDia'
+                    )
+                )
             ),
-
-            array(
-                'name' => 'Ventas x empleado',
-                'url' => $ruta . 'reporte/ventaEmpleado',
-                'icon' => 'fa fa-area-chart',
-                'slug' => 'ventaEmpleado'
-            ),
-
-            array(
-                'name' => 'Stock y ventas',
-                'url' => $ruta . 'reporte/stockVentas',
-                'icon' => 'fa fa-area-chart',
-                'slug' => 'stockventas'
-            ),
-
-            array(
-                'name' => 'Pago a proveedores',
-                'url' => $ruta . 'reporte_compras/proveedor_estado',
-                'icon' => 'fa fa-pie-chart',
-                'slug' => 'pagoproveedores'
-            ),
-
-            array(
-                'name' => 'Margen de utilidad',
-                'url' => $ruta . 'reporte/margenUtilidad',
-                'icon' => 'fa fa-area-chart',
-                'slug' => 'margenutilidad'
-            ),
-            array(
-                'name' => 'Hoja de colecta',
-                'url' => $ruta . 'reporte/hojaColecta',
-                'icon' => 'fa fa-area-chart',
-                'slug' => 'hojaColecta'
-            ),
-            array(
-                'name' => 'Pagos',
-                'url' => $ruta . 'reporte/pagosRecarga',
-                'icon' => 'fa fa-history',
-                'slug' => 'pagosRecarga'
-            ),
-            array(
-                'name' => 'Recargas del d&iacute;a',
-                'url' => $ruta . 'reporte/recargaDia',
-                'icon' => 'fa fa-area-chart',
-                'slug' => 'recargaDia'
-            ),
-            array(
-                'name' => 'Cobranza del d&iacute;a',
-                'url' => $ruta . 'reporte/recargaCobranza',
-                'icon' => 'fa fa-area-chart',
-                'slug' => 'recargaCobranza'
-            ),
-            array(
-                'name' => 'Cuentas por cobrar',
-                'url' => $ruta . 'reporte/recargaCuentasC',
-                'icon' => 'fa fa-area-chart',
-                'slug' => 'recargaCuentasC'
-            ),
-            array(
-                'name' => 'Utilidades por venta',
-                'url' => $ruta . 'reporte/utilidadProducto',
-                'icon' => 'fa fa-area-chart',
-                'slug' => 'utilidadProducto'
-            ),
-            array(
-                'name' => 'Gastos del d&iacute;a',
-                'url' => $ruta . 'reporte/gastosDia',
-                'icon' => 'fa fa-area-chart',
-                'slug' => 'gastosDia'
-            )
         ),
     ),
 

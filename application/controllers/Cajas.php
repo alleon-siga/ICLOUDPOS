@@ -265,50 +265,7 @@ class cajas extends MY_Controller
     function caja_pendiente_form($id)
     {
         $data['cuenta'] = $this->cajas_model->get_cuenta($id);
-
-        $saldos_pendientes = $this->db->select('caja_pendiente.*, moneda.*, caja.moneda_id, usuario.nombre')
-            ->from('caja_pendiente')
-            ->join('usuario', 'usuario.nUsuCodigo = caja_pendiente.usuario_id')
-            ->join('caja_desglose', 'caja_desglose.id = caja_pendiente.caja_desglose_id')
-            ->join('caja', 'caja.id = caja_desglose.caja_id')
-            ->join('moneda', 'moneda.id_moneda = caja.moneda_id')
-            ->where(array(
-                'caja_pendiente.estado' => 0,
-                'caja_desglose_id' => $id
-            ))->get()->result();
-
-        for($x=0; $x<count($saldos_pendientes); $x++){
-            if($saldos_pendientes[$x]->tipo=='GASTOS'){
-                $this->db->select('proveedor_nombre');
-                $this->db->from('gastos g');
-                $this->db->join('proveedor p', 'g.proveedor_id = p.id_proveedor');
-                $this->db->where('id_gastos', $saldos_pendientes[$x]->ref_id);
-                $proveedor = $this->db->get()->row();
-                $saldos_pendientes[$x]->cliente = '';
-                $saldos_pendientes[$x]->proveedor = $proveedor->proveedor_nombre;
-            }elseif($saldos_pendientes[$x]->tipo=='COMPRA' || $saldos_pendientes[$x]->tipo=='PAGOS_CUOTAS'){
-                $this->db->select('proveedor_nombre');
-                $this->db->from('ingreso i');
-                $this->db->join('proveedor p', 'i.int_Proveedor_id = p.id_proveedor');
-                $this->db->where('id_ingreso', $saldos_pendientes[$x]->ref_id);
-                $proveedor = $this->db->get()->row();
-                $saldos_pendientes[$x]->cliente = '';
-                $saldos_pendientes[$x]->proveedor = $proveedor->proveedor_nombre;
-            }elseif($saldos_pendientes[$x]->tipo=='VENTA_ANULADA' || $saldos_pendientes[$x]->tipo=='VENTA_DEVUELTA'){
-                $this->db->select('razon_social');
-                $this->db->from('venta v');
-                $this->db->join('cliente c', 'v.id_cliente = c.id_cliente');
-                $this->db->where('v.venta_id', $saldos_pendientes[$x]->ref_id);
-                $cliente = $this->db->get()->row();
-                $saldos_pendientes[$x]->cliente = $cliente->razon_social;
-                $saldos_pendientes[$x]->proveedor = '';
-            }else{
-                $saldos_pendientes[$x]->cliente = '';
-                $saldos_pendientes[$x]->proveedor = '';
-            }
-        }
-        $data['saldos_pendientes'] = $saldos_pendientes;
-
+        $data['saldos_pendientes'] = $this->cajas_model->getSaldosPendientes($id);
         $this->load->view('menu/cajas/form_pendiente', $data);
     }
 
