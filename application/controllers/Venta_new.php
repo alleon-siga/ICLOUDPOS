@@ -581,8 +581,7 @@ class venta_new extends MY_Controller
             'COTIZACION_INFORMACION',
             'COTIZACION_CONDICION',
             'COTIZACION_PIE_PAGINA',
-            'COMPROBANTE',
-            'FACTURACION'
+            'COMPROBANTE'
         );
 
         if ($action == 'get') {
