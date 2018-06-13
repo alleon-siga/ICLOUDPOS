@@ -4,7 +4,7 @@ define('SERVER_CRDIGITAL', 'crdigital.teayudo.pe');
 define('SERVER_TEST', 'apps.teayudo.pe/dev/');
 
 $env = 'PROD';
-$server_name = SERVER_CRDIGITAL;
+$server_name = null;
 if ($_SERVER['SERVER_NAME'] == SERVER_VYM) {
     $server_name = SERVER_VYM;
     define('DATABASE_HOST', 'grupocd_vym');
