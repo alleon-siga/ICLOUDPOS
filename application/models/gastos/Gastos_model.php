@@ -84,7 +84,7 @@ class gastos_model extends CI_Model
         return $query->row_array();
     }
 
-    function insertar($data)
+    function insertar($data, $detalle)
     {
 
         $this->db->trans_start();
@@ -116,6 +116,17 @@ class gastos_model extends CI_Model
 
         $this->db->insert('gastos', $gastos);
         $id = $this->db->insert_id();
+
+        for($x=0; $x<count($detalle); $x++){
+            $gastosDetalle = array(
+                'id_gastos' => $id,
+                'descripcion' => $detalle[$x]['descripcion'],
+                'cantidad' => $detalle[$x]['cantidad'],
+                'precio' => $detalle[$x]['precio'],
+                'total_detalle' => $detalle[$x]['total_detalle']
+            );
+            $this->db->insert('gastos_detalle', $gastosDetalle);
+        }
 
         $this->cajas_model->save_pendiente(array(
             'monto' => $data['total'],

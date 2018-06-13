@@ -124,21 +124,21 @@
                     </div>
                 </div>
                 <hr>
-                <!--<div class="row">
+                <div class="row">
                     <div class="form-group">
                         <div class="col-md-3">
                             <label class="control-label panel-admin-text">Condici&oacute;n</label>
                         </div>
                         <div class="col-md-9">
                             <select name="tipo_pago" id="tipo_pago" class='form-control'>
-                                <?php // foreach ($tipo_pagos as $pago): ?>
+                                <?php foreach ($tipo_pagos as $pago): ?>
                                     <option
-                                            value="<? // $pago['id_condiciones'] ?>"><?= $pago['nombre_condiciones'] ?></option>
-                                <?php //endforeach; ?>
+                                            value="<?= $pago['id_condiciones'] ?>"><?= $pago['nombre_condiciones'] ?></option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
                     </div>
-                </div>-->
+                </div>
                 <div class="row">
                     <div class="form-group">
                         <div class="col-md-3">
@@ -303,6 +303,7 @@
             <!-- /.modal-content -->
         </div>
     </div>
+    <div class="modal fade" id="detalleModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static"></div>
 </form>
 <script>
     $("#fecha").datepicker({
@@ -313,7 +314,7 @@
     <?php foreach ($cuentas as $cuenta):?>
     cuentas.push({
         id: <?= $cuenta->id ?>,
-        local_id: <?= $cuenta->local_id ?>,
+        local_id: <?= $cuenta->local_id ?>,   
         moneda_nombre: '<?= $cuenta->moneda_nombre ?>',
         simbolo: '<?= $cuenta->simbolo ?>',
         descripion: '<?= $cuenta->descripcion ?>'
@@ -321,6 +322,7 @@
     <?php endforeach;?>
 
     $(document).ready(function () {
+        $("#detalleModal").load('<?= base_url() ?>gastos/detalle');
         $(document).off('keyup');
         $(document).off('keydown');
 
@@ -473,5 +475,9 @@
         $('#proveedor').append('<option value="' + id + '">' + nombre + '</option>');
         $('#proveedor').val(id)
         $("#proveedor").trigger('chosen:updated');
+    }
+
+    function agregarDetalle(){
+        $('#detalleModal').modal('show');
     }
 </script>
