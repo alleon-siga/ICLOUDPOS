@@ -55,11 +55,6 @@ class Locales extends REST_Controller
     {
         $id_usuario = $this->input->post('id_usuario');
 
-        $res = $this->usuario_api_model->get_super_user($id_usuario);
-        if ($res) {
-            $id_usuario = null;
-        }
-
         $data = array();
         $data['locales'] = $this->local_api_model->get_local_by_user($id_usuario);
 

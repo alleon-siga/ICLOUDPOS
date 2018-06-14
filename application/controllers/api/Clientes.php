@@ -66,19 +66,16 @@ class Clientes extends REST_Controller
     // Cities
     public function cities_get()
     {
-        $data = array();
-
+        $data['estados'] = array();
         $data['estados'] = $this->cliente_api_model->get_estados();
 
+        $data['ciudades'] = array();
         $data['ciudades'] = $this->cliente_api_model->get_ciudades();
 
+        $data['distritos'] = array();
         $data['distritos'] = $this->cliente_api_model->get_distritos();
 
-        if ($data) {
-            $this->response($data, 200);
-        } else {
-            $this->response(array(), 200);
-        }
+        $this->response($data, 200);
     }
 
     // Save

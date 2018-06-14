@@ -148,15 +148,15 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
             </div>
         </div>
     </div>
-
-
-    <div id="tabla_lista">
-
+    <div id="load_div" style="display: none;">
+        <div class="row" id="loading" style="position: relative; top: 50px; z-index: 500000;">
+            <div class="col-md-12 text-center">
+                <div class="loading-icon"></div>
+            </div>
+        </div>
     </div>
-
+    <div id="tabla_lista"></div>
 </div>
-
-
 <!-- Modales for Messages -->
 <div class="modal hide" id="mOK">
     <div class="modal-header">
@@ -172,15 +172,6 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
            onclick="javascript:window.location.reload();">Close</a>
     </div>
 </div>
-
-<div id="load_div" style="display: none;">
-    <div class="row" id="loading" style="position: relative; top: 50px; z-index: 500000;">
-        <div class="col-md-12 text-center">
-            <div class="loading-icon"></div>
-        </div>
-    </div>
-</div>
-
 <script src="<?php echo $ruta; ?>recursos/js/datepicker-range/moment.min.js"></script>
 <script src="<?php echo $ruta; ?>recursos/js/datepicker-range/daterangepicker.js"></script>
 <script src="<?php echo $ruta; ?>recursos/js/Validacion.js"></script>
@@ -243,7 +234,6 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
     });
 
     function get_gastos() {
-        $('#tabla_lista').html($('#load_div').html());
         var data = {
             'local_id': $('#local_id').val(),
             'tipo_gasto': $('#tipo_gasto_id').val(),
@@ -255,12 +245,13 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
             'moneda_id': $('#moneda_id').val(),
             'estado_id': $('#estado_id').val()
         };
-
+        $('#load_div').show();
         $.ajax({
             url: '<?= base_url()?>gastos/lista_gasto',
             data: data,
             type: 'POST',
             success: function (datos) {
+                $('#load_div').hide();
                 $("#tabla_lista").html(datos);
             },
             error: function () {
@@ -269,6 +260,7 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                     delay: 5000,
                     allow_dismiss: true
                 });
+                $('#load_div').hide();
                 $("#tabla_lista").html('');
             }
         });
@@ -493,9 +485,8 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
 
 
 </script>
-<div class="modal fade" id="agregar" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+<div class="modal fade" id="agregar" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
 </div>
-
 <div class="modal fade" id="borrar" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
      aria-hidden="true">
     <form name="formeliminar" id="formeliminar" method="post" action="<?= $ruta ?>gastos/eliminar">
@@ -523,24 +514,21 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                 <div class="modal-footer">
                     <button type="button" id="confirmar" class="btn btn-primary" onclick="eliminar()">Confirmar</button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-
                 </div>
             </div>
             <!-- /.modal-content -->
         </div>
-
 </div>
 <!-- /.modal-dialog -->
 </div>
-<div class="modal fade" id="agregarproveedor" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-     aria-hidden="true">
-</div>
-<div class="modal fade" id="tipoGastoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-</div>
+<div class="modal fade" id="agregarproveedor" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
+<div class="modal fade" id="tipoGastoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
+
 <script src="<?php echo $ruta ?>recursos/js/pages/tablesDatatables.js"></script>
 <script type="text/javascript">
     $(function () {
         $("#agregarproveedor").load('<?= $ruta ?>proveedor/form');
+        
     });
     
     function agregarproveedor() {

@@ -11,6 +11,7 @@ class Pedidos extends REST_Controller
 
         $this->load->model('venta_new/venta_new_model', 'venta');
         $this->load->model('inventario/inventario_model');
+        $this->load->model('usuario/usuario_api_model');
         $this->load->model('api/api_model', 'api');
 
         $this->very_auth();
@@ -51,14 +52,25 @@ class Pedidos extends REST_Controller
     public function ultimos_post()
     {
         $estado = $this->input->post('estado');
+        $id_usuario = $this->input->post('id_usuario');
 
+        $data = array();
         if ($estado == "COMPLETADO") {
             $fecha_ini = $this->input->post('fecha_ini');
             $fecha_fin = $this->input->post('fecha_fin');
 
+            $res = $this->usuario_api_model->get_venta_user($id_usuario);
+            if (empty($res)) {
+                $id_usuario = null;
+            }
+
             $where = array('fecha_ini' => date('Y-m-d', strtotime($fecha_ini)),
                 'fecha_fin' => date('Y-m-d', strtotime($fecha_fin)),
-                'estado' => $estado);
+                'estado' => $estado,
+                'usuarios_id' => $id_usuario);
+
+            $data['today']['count'] = count($this->db->get_where('venta', array('fecha >=' => date('Y-m-d 00:00:00'),
+                'fecha <=' => date('Y-m-d 23:59:59')))->result());
 
         } else {
             $where = array('estado' => $estado);
@@ -66,7 +78,7 @@ class Pedidos extends REST_Controller
 
         $ventas = $this->venta->get_ventas($where, "caja");
 
-        $data = array();
+        $data['ventas'] = array();
         foreach ($ventas as $venta) {
             $v = $this->venta->get_venta_detalle($venta->venta_id);
 

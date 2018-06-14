@@ -14,6 +14,7 @@ class gastos extends MY_Controller
             $this->load->model('cajas/cajas_model');
             $this->load->model('proveedor/proveedor_model');
             $this->load->model('impuesto/impuestos_model');
+            $this->load->model('condicionespago/condiciones_pago_model');
         } else {
             redirect(base_url(), 'refresh');
         }
@@ -95,6 +96,7 @@ class gastos extends MY_Controller
 
         $data = array();
         $data['gastos'] = array();
+        $data["tipo_pagos"] = $this->condiciones_pago_model->get_all();
         $data["impuestos"] = $this->impuestos_model->get_impuestos();
         $data['tiposdegasto'] = $this->tipos_gasto_model->get_all();
         $data['local'] = $this->local_model->get_local_by_user($this->session->userdata('nUsuCodigo'));
@@ -129,7 +131,6 @@ class gastos extends MY_Controller
             $usuario = $this->input->post('usuario');
         }
 
-
         $gastos = array(
             'fecha' => date('Y-m-d', strtotime($this->input->post('fecha'))) . " " . date("H:i:s"),
             'fecha_registro' => date('Y-m-d H:i:s'),
@@ -150,12 +151,24 @@ class gastos extends MY_Controller
             'subtotal' => $this->input->post('subtotal'),
             'impuesto' => $this->input->post('impuesto')
         );
+        
+        $detalle = array();
+        if(!empty($this->input->post('txtDesc')[0])){
+            for($x=0; $x<count($this->input->post('txtDesc')); $x++){
+                $detalle[$x] = array(
+                    'descripcion' => $this->input->post('txtDesc')[$x],
+                    'cantidad' => $this->input->post('txtCant')[$x],
+                    'precio' => $this->input->post('txtPrec')[$x],
+                    'total_detalle' => $this->input->post('txtSub')[$x]
+                );
+            }
+        }
 
         if (empty($id)) {
-            $resultado = $this->gastos_model->insertar($gastos);
+            $resultado = $this->gastos_model->insertar($gastos, $detalle);
         } else {
             $gastos['id_gastos'] = $id;
-            $resultado = $this->gastos_model->update($gastos);
+            $resultado = $this->gastos_model->update($gastos, $detalle);
         }
 
         if ($resultado != FALSE) {
@@ -283,5 +296,9 @@ class gastos extends MY_Controller
         echo $this->load->view('menu/gastos/gasto_lista_excel', $data, true);
     }
 
-
+    function detalle()
+    {
+        $data['prueba'] = "sasas";
+        echo $this->load->view('menu/gastos/detalle',  $data, true);
+    }
 }
