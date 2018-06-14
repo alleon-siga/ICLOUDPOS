@@ -9,12 +9,14 @@ class Usuario_api_model extends CI_Model
         $this->load->database();
     }
 
-    function get_super_user($id)
+    function get_venta_user($id)
     {
-        $this->db->where('nUsuCodigo', $id);
-        $this->db->where('esSuper', 1);
-        $query = $this->db->get('usuario');
+        $result = $this->db->select('*')
+            ->from('usuario')
+            ->where('nUsuCodigo', $id)
+            ->where('grupo', 8)
+            ->get()->row();
 
-        return $query->row();
+        return $result;
     }
 }

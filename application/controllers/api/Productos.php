@@ -54,7 +54,6 @@ class Productos extends REST_Controller
         $str_producto = $this->input->post('str_producto');
         $favorito = $this->input->post('favorito');
 
-        $data = array();
         if ($favorito == "SI") {
             $productos = $this->producto_api_model->get_productos_fav($str_producto);
 
@@ -62,6 +61,7 @@ class Productos extends REST_Controller
             $productos = $this->producto_api_model->get_productos_listall($str_producto);
         }
 
+        $data['productos'] = array();
         foreach ($productos as $prod) {
             $producto['producto_id'] = $prod['producto_id'];
             $producto['codigo'] = $prod['codigo'];
@@ -76,11 +76,7 @@ class Productos extends REST_Controller
             $data['productos'][] = $producto;
         }
 
-        if ($data) {
-            $this->response($data, 200);
-        } else {
-            $this->response(array(), 200);
-        }
+        $this->response($data, 200);
     }
 
     function set_stock($prod, $stock_tot_min = 0)
