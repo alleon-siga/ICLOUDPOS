@@ -628,11 +628,22 @@ class SunatWS
                 $resp['hash_cdr'] = "";
             }
         } else {
-            //echo "no responde web";
-            $resp['respuesta'] = 'error';
-            $resp['cod_sunat'] = "0000";
-            $resp['mensaje'] = $response == 0 ? 'SUNAT FUERA DE SERVICIO' : $response;
-            $resp['hash_cdr'] = "";
+            $doc = new DOMDocument();
+            $doc->loadXML($response);
+            if(isset($doc->getElementsByTagName('faultcode')->item(0)->nodeValue)){
+                $resp['respuesta'] = 'error';
+                $resp['cod_sunat'] = $doc->getElementsByTagName('faultcode')->item(0)->nodeValue;
+                $resp['mensaje'] = $doc->getElementsByTagName('faultstring')->item(0)->nodeValue;
+                $resp['hash_cdr'] = "";
+            }
+            else{
+                //echo "no responde web";
+                $resp['respuesta'] = 'error';
+                $resp['cod_sunat'] = "0000";
+                $resp['mensaje'] = 'SUNAT FUERA DE SERVICIO';
+                $resp['hash_cdr'] = "";
+            }
+
         }
         return $resp;
     }
