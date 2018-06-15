@@ -214,9 +214,11 @@ class facturacion_model extends CI_Model
             if (isset($resp['mensaje']))
                 $error = $resp['mensaje'];
             $log_error = 'Facturacion error. ' . $error;
-            $log_error .= ' SUNAT: ' . $resp['cod_sunat'];
+
             if (isset($resp['cod_sunat']))
-                log_message('error', $log_error);
+                $log_error .= ' SUNAT: ' . $resp['cod_sunat'];
+
+            log_message('error', $log_error);
 
             $this->db->where('venta_id', $comprobante->ref_id);
             $this->db->update('venta', array(
