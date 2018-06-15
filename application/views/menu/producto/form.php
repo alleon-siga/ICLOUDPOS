@@ -317,13 +317,19 @@
                                         <option value="">Seleccione</option>
 
                                         <option value="<?= OP_GRAVABLE ?>"
-                                            <?= isset($producto['producto_afectacion_impuesto']) && $producto['producto_afectacion_impuesto'] == OP_GRAVABLE ? 'selected' : ''?>>GRAVABLE</option>
+                                            <?= isset($producto['producto_afectacion_impuesto']) && $producto['producto_afectacion_impuesto'] == OP_GRAVABLE ? 'selected' : '' ?>>
+                                            GRAVABLE
+                                        </option>
 
                                         <option value="<?= OP_EXONERADA ?>"
-                                            <?= isset($producto['producto_afectacion_impuesto']) && $producto['producto_afectacion_impuesto'] == OP_EXONERADA ? 'selected' : ''?>>EXONERADA</option>
+                                            <?= isset($producto['producto_afectacion_impuesto']) && $producto['producto_afectacion_impuesto'] == OP_EXONERADA ? 'selected' : '' ?>>
+                                            EXONERADA
+                                        </option>
 
                                         <option value="<?= OP_INAFECTA ?>"
-                                            <?= isset($producto['producto_afectacion_impuesto']) && $producto['producto_afectacion_impuesto'] == OP_INAFECTA ? 'selected' : ''?>>INAFECTA</option>
+                                            <?= isset($producto['producto_afectacion_impuesto']) && $producto['producto_afectacion_impuesto'] == OP_INAFECTA ? 'selected' : '' ?>>
+                                            INAFECTA
+                                        </option>
                                     </select>
                                 </div>
                             </div>
@@ -1533,6 +1539,13 @@
              return false;
 
              }*/
+
+            var last_precio = $('.precio_unitario').length - 1;
+            var precio_unitario = parseFloat($('#precio_unitario' + last_precio).val());
+            var costo_unitario = parseFloat($('#costo_unitario').val());
+
+            if (costo_unitario >= precio_unitario)
+                show_msg('warning', '<h3><strong>El precio unitario de venta es menor o igual a su costo</strong></h3>');
 
 
             $("#cargando_modal").modal('show');

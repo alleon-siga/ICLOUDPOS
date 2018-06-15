@@ -57,10 +57,6 @@ class Auth extends CI_Controller
 				$clientes = $this->cliente_api_model->get_all();
 
 				//Locales
-				$res = $this->usuario_api_model->get_super_user($auth['nUsuCodigo']);
-				if ($res) {
-					$id_usuario = null;
-				}
 				$locales = $this->local_api_model->get_local_by_user($auth['nUsuCodigo']);
 
 				//Monedas
