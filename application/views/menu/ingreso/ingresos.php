@@ -173,10 +173,6 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                                                     <option
                                                             value="<?= COMPRA ?>" <?php if (isset($ingreso->tipo_ingreso) and $ingreso->tipo_ingreso == COMPRA)
                                                         echo "selected"; ?>><?= COMPRA ?></option>
-                                                    <option value="<?= DONACION ?>"
-                                                        <?php if (isset($ingreso->tipo_ingreso) and $ingreso->tipo_ingreso == DONACION)
-                                                            echo "selected"; ?>><?= DONACION ?></option>
-
                                                 </select>
                                             </div>
                                         </div>

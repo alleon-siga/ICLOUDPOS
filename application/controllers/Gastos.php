@@ -132,6 +132,7 @@ class gastos extends MY_Controller
         }
 
         $gastos = array(
+            'id_gastos' => $id,
             'fecha' => date('Y-m-d', strtotime($this->input->post('fecha'))) . " " . date("H:i:s"),
             'fecha_registro' => date('Y-m-d H:i:s'),
             'descripcion' => $this->input->post('descripcion'),
@@ -156,10 +157,13 @@ class gastos extends MY_Controller
         if(!empty($this->input->post('txtDesc')[0])){
             for($x=0; $x<count($this->input->post('txtDesc')); $x++){
                 $detalle[$x] = array(
+                    'id' => $this->input->post('txtId')[$x],
                     'descripcion' => $this->input->post('txtDesc')[$x],
                     'cantidad' => $this->input->post('txtCant')[$x],
                     'precio' => $this->input->post('txtPrec')[$x],
-                    'total_detalle' => $this->input->post('txtSub')[$x]
+                    'impuesto' => $this->input->post('txtImp')[$x],
+                    'subtotal' => $this->input->post('txtSub')[$x],
+                    'total' => $this->input->post('txtTot')[$x]
                 );
             }
         }
@@ -167,7 +171,6 @@ class gastos extends MY_Controller
         if (empty($id)) {
             $resultado = $this->gastos_model->insertar($gastos, $detalle);
         } else {
-            $gastos['id_gastos'] = $id;
             $resultado = $this->gastos_model->update($gastos, $detalle);
         }
 
@@ -180,7 +183,6 @@ class gastos extends MY_Controller
         echo json_encode($json);
 
     }
-
 
     function eliminar()
     {
@@ -296,9 +298,47 @@ class gastos extends MY_Controller
         echo $this->load->view('menu/gastos/gasto_lista_excel', $data, true);
     }
 
-    function detalle()
+    function detalle($id = '')
     {
-        $data['prueba'] = "sasas";
+        $data['detalles'] = $this->gastos_model->get_detalle('id_gastos', $id);
         echo $this->load->view('menu/gastos/detalle',  $data, true);
+    }
+
+    function editarDetalle(){
+        $detalle = array();
+        if(!empty($this->input->post('txtDesc')[0])){
+            for($x=0; $x<count($this->input->post('txtDesc')); $x++){
+                $detalle[$x] = array(
+                    'id' => $this->input->post('txtId')[$x],
+                    'descripcion' => $this->input->post('txtDesc')[$x],
+                    'cantidad' => $this->input->post('txtCant')[$x],
+                    'precio' => $this->input->post('txtPrec')[$x],
+                    'impuesto' => $this->input->post('txtImp')[$x],
+                    'subtotal' => $this->input->post('txtSub')[$x],
+                    'total' => $this->input->post('txtTot')[$x]
+                );
+                $resultado = $this->gastos_model->editarDetalle($detalle);
+            }
+        }
+
+        if ($resultado != FALSE) {
+            $json['success'] = 'Solicitud Procesada con exito';
+        } else {
+            $json['error'] = 'Ha ocurrido un error al procesar la solicitud';
+        }
+
+        echo json_encode($json);
+    }
+
+    function deleteDetalle($id)
+    {
+        $resultado = $this->gastos_model->deleteDetalle($id);
+        if ($resultado != FALSE) {
+            $json['success'] = 'Solicitud Procesada con exito';
+        } else {
+            $json['error'] = 'Ha ocurrido un error al procesar la solicitud';
+        }
+
+        echo json_encode($json);
     }
 }

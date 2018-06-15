@@ -12,6 +12,9 @@
         background-color: #F78181;
         color: #fff;
     }
+    .negativo{
+        color: red;
+    }
 </style>
 <div class="table-responsive">
     <table class='table dataTable table-bordered no-footer tableStyle' style="overflow:scroll">
@@ -79,28 +82,33 @@
             $totalImpuestoV += $impVenta;
             $totalVentaTotal += $precioVenta;
             $totalUtilidadTotal += $utilidadTotal;
+
+            $clase = "";
+            if($utilidadTotal<0){
+                $clase = "negativo";
+            }
     ?>
             <tr>
-                <td style="text-align: right;"><?= $ingreso->venta_id ?></td>
-                <td><?= $ingreso->local_nombre ?></td>
-                <td><?= $ingreso->fecha ?></td>
-                <td><?= $ingreso->proveedor_nombre ?></td>
-                <td><?= $ingreso->producto_nombre ?></td>
-                <td><?= $ingreso->nombre_unidad ?></td>
-                <td style="text-align: right;"><?= number_format($costoCompraSi, 2) ?></td>
-                <td style="text-align: right;"><?= number_format($impCompra, 2) ?></td>
-                <td style="text-align: right;"><?= number_format($costoCompra, 2) ?></td>
-                <td style="text-align: right;"><?= number_format($impuesto, 2) ?></td>
-                <td style="text-align: right;"><?= number_format($costoVentaSi, 2) ?></td>
-                <td style="text-align: right;"><?= number_format($costoVenta, 2) ?></td>
-                <td style="text-align: right;"><?= number_format($costoTotal, 2) ?></td>
-                <td style="text-align: right;"><?= $cantidad ?></td>
-                <td style="text-align: right;"><?= number_format($subtotal, 2) ?></td>
-                <td style="text-align: right;"><?= number_format($impVenta, 2) ?></td>
-                <td style="text-align: right;"><?= number_format($precioVenta, 2) ?></td>
-                <td style="text-align: right;"><?= number_format($utilidadXund, 2) ?></td>
-                <td style="text-align: right;"><?= number_format($utilidadTotal, 2) ?></td>
-                <td style="text-align: right;"><?= number_format($porRenta, 2) ?></td>
+                <td class="<?= $clase ?>" style="text-align: right;"><?= $ingreso->venta_id ?></td>
+                <td class="<?= $clase ?>"><?= $ingreso->local_nombre ?></td>
+                <td class="<?= $clase ?>"><?= $ingreso->fecha ?></td>
+                <td class="<?= $clase ?>"><?= $ingreso->proveedor_nombre ?></td>
+                <td class="<?= $clase ?>"><?= $ingreso->producto_nombre ?></td>
+                <td class="<?= $clase ?>"><?= $ingreso->nombre_unidad ?></td>
+                <td class="<?= $clase ?>" style="text-align: right;"><?= number_format($costoCompraSi, 2) ?></td>
+                <td class="<?= $clase ?>" style="text-align: right;"><?= number_format($impCompra, 2) ?></td>
+                <td class="<?= $clase ?>" style="text-align: right;"><?= number_format($costoCompra, 2) ?></td>
+                <td class="<?= $clase ?>" style="text-align: right;"><?= number_format($impuesto, 2) ?></td>
+                <td class="<?= $clase ?>" style="text-align: right;"><?= number_format($costoVentaSi, 2) ?></td>
+                <td class="<?= $clase ?>" style="text-align: right;"><?= number_format($costoVenta, 2) ?></td>
+                <td class="<?= $clase ?>" style="text-align: right;"><?= number_format($costoTotal, 2) ?></td>
+                <td class="<?= $clase ?>" style="text-align: right;"><?= $cantidad ?></td>
+                <td class="<?= $clase ?>" style="text-align: right;"><?= number_format($subtotal, 2) ?></td>
+                <td class="<?= $clase ?>" style="text-align: right;"><?= number_format($impVenta, 2) ?></td>
+                <td class="<?= $clase ?>" style="text-align: right;"><?= number_format($precioVenta, 2) ?></td>
+                <td class="<?= $clase ?>" style="text-align: right;"><?= number_format($utilidadXund, 2) ?></td>
+                <td class="<?= $clase ?>" style="text-align: right;"><?= number_format($utilidadTotal, 2) ?></td>
+                <td class="<?= $clase ?>" style="text-align: right;"><?= number_format($porRenta, 2) ?></td>
             </tr>
     <?php
         endforeach;
