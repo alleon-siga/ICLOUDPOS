@@ -178,7 +178,6 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
 <script type="text/javascript">
 
     $(document).ready(function () {
-
         $('input[name="daterange"]').daterangepicker({
             "locale": {
                 "format": "DD/MM/YYYY",
@@ -485,7 +484,7 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
 
 
 </script>
-<div class="modal fade" id="agregar" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+<div class="modal fade" id="agregar" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-keyboard="false">
 </div>
 <div class="modal fade" id="borrar" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
      aria-hidden="true">
@@ -523,12 +522,10 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
 </div>
 <div class="modal fade" id="agregarproveedor" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
 <div class="modal fade" id="tipoGastoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
-
 <script src="<?php echo $ruta ?>recursos/js/pages/tablesDatatables.js"></script>
 <script type="text/javascript">
     $(function () {
         $("#agregarproveedor").load('<?= $ruta ?>proveedor/form');
-        
     });
     
     function agregarproveedor() {

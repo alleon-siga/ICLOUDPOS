@@ -123,7 +123,9 @@ class gastos_model extends CI_Model
                 'descripcion' => $detalle[$x]['descripcion'],
                 'cantidad' => $detalle[$x]['cantidad'],
                 'precio' => $detalle[$x]['precio'],
-                'total_detalle' => $detalle[$x]['total_detalle']
+                'impuesto' => $detalle[$x]['impuesto'],
+                'subtotal' => $detalle[$x]['subtotal'],
+                'total' => $detalle[$x]['total']
             );
             $this->db->insert('gastos_detalle', $gastosDetalle);
         }
@@ -145,7 +147,7 @@ class gastos_model extends CI_Model
             return $id;
     }
 
-    function update($data)
+    function update($data, $detalle)
     {
         $this->db->trans_start();
         $cuenta = $this->db->join('caja', 'caja.id = caja_desglose.caja_id')
@@ -249,5 +251,43 @@ class gastos_model extends CI_Model
             return $query->row_array();
         }
 
+    }
+
+    function get_detalle($campo, $valor)
+    {
+        $this->db->select('id, descripcion, cantidad, precio, impuesto, subtotal, total');
+        $this->db->where($campo, $valor);
+        $query = $this->db->get('gastos_detalle');
+        return $query->result();
+    }
+
+    function editarDetalle($detalle)
+    {
+        $this->db->trans_start();
+        for($x=0; $x<count($detalle); $x++){
+            $gastosDetalle = array(
+                'descripcion' => $detalle[$x]['descripcion'],
+                'cantidad' => $detalle[$x]['cantidad'],
+                'precio' => $detalle[$x]['precio'],
+                'impuesto' => $detalle[$x]['impuesto'],
+                'subtotal' => $detalle[$x]['subtotal'],
+                'total' => $detalle[$x]['total']
+            );
+            $this->db->where('id', $detalle[$x]['id']);
+            $this->db->update('gastos_detalle', $gastosDetalle);
+        }
+        $this->db->trans_complete();
+        if ($this->db->trans_status() === FALSE){
+            return FALSE;
+        }else{
+            return TRUE;
+        }
+    }
+
+    function deleteDetalle($id)
+    {
+        $this->db->where('id', $id);
+        $this->db->delete('gastos_detalle');
+        return true;
     }
 }

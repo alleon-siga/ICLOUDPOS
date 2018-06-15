@@ -954,7 +954,8 @@ function updateView(type) {
         '<th>Producto</th>' +
         '<th>Unidad de Medida</th>' +
         '<th>Cantidad</th>' +
-        '<th>Precio U.</th>' +
+        '<th>Prec. sin Imp</th>' +
+        '<th>Prec. con Imp</th>' +
         '<th>Subtotal</th>' +
         '<th>Opciones</th>' +
         '</tr>');
@@ -1054,13 +1055,33 @@ function get_index_array(array, element) {
 
 //añade un elemento a la tabla, tiene sus variaciones dependiendo del tipo de vista
 function addTable(producto, type) {
-    var template = '<tr>';
+    var template = '<tr id="' + producto.index + '">';
 
     template += '<td>' + (producto.index + 1) + '</td>';
     template += '<td>' + decodeURIComponent(producto.producto_nombre) + '</td>';
     template += '<td style="text-align: center;">' + producto.unidad_nombre + '</td>';
     template += '<td style="text-align: center;">' + producto.cantidad + '</td>';
-    template += '<td style="text-align: right;">' + parseFloat(producto.costo_unitario).toFixed(3) + '</td>';
+    var cboImp = $('#tipo_impuesto option:selected').val();
+    var impuesto = (producto.producto_impuesto / 100) + 1;
+    if(producto.producto_impuesto==0){
+        impuesto = 0;
+    }else{
+        impuesto = (producto.producto_impuesto / 100) + 1;
+    }
+    
+    if(cboImp=='1'){
+        sinImp = parseFloat(producto.costo_unitario / impuesto);
+        conImp = parseFloat(producto.costo_unitario);
+    }else if(cboImp=='2'){
+        sinImp = parseFloat(producto.costo_unitario);
+        conImp = parseFloat(producto.costo_unitario * impuesto);  
+    }else{
+        sinImp = parseFloat(producto.costo_unitario);
+        conImp = parseFloat(producto.costo_unitario);
+    }
+    template += '<input type="hidden" name="hdImp" class="hdImp" value="'+impuesto+'">';
+    template += '<td style="text-align: right;" class="sinImp">' + parseFloat(sinImp).toFixed(3) + '</td>';
+    template += '<td style="text-align: right;" class="conImp">' + parseFloat(conImp).toFixed(3) + '</td>';
     template += '<td style="text-align: right;">' + parseFloat(producto.importe).toFixed(2) + '</td>';
 
     template += '<td class="actions" style="text-align: center;">';
@@ -1100,6 +1121,29 @@ function calcular_pago() {
     var total_importe = 0;
     for (var i = 0; i < lst_producto.length; i++) {
         total_importe = parseFloat(total_importe) + parseFloat(lst_producto[i].importe);
+        //Actualizamos los precios, segun el impuesto seleccionado
+        var cboImp = $('#tipo_impuesto option:selected').val();
+        var impuesto = parseFloat($('#'+i).find('.hdImp').val());
+        if(cboImp=='1'){
+            if(impuesto==0){
+                sinImp = parseFloat(lst_producto[i].costo_unitario);
+            }else{
+                sinImp = parseFloat(lst_producto[i].costo_unitario / impuesto);
+            }
+            conImp = parseFloat(lst_producto[i].costo_unitario);
+        }else if(cboImp=='2'){
+            sinImp = parseFloat(lst_producto[i].costo_unitario);
+            if(impuesto==0){
+                conImp = parseFloat(lst_producto[i].costo_unitario);
+            }else{
+                conImp = parseFloat(lst_producto[i].costo_unitario * impuesto);
+            }
+        }else{
+            sinImp = parseFloat(lst_producto[i].costo_unitario);
+            conImp = parseFloat(lst_producto[i].costo_unitario);
+        }
+        $('#'+i).find('.sinImp').text(sinImp.toFixed(3));
+        $('#'+i).find('.conImp').text(conImp.toFixed(3));
     }
 
     var total = 0;
@@ -1136,7 +1180,7 @@ function calcular_pago() {
     }
 
 
-    $('#totApagar').val(formatPrice(total));
+    $('#totApagar').val(total.toFixed(2));
     $('#montoigv').val(impuesto.toFixed(2));
     $('#subTotal').val(sub_total.toFixed(2));
 }
@@ -1329,7 +1373,7 @@ function accionGuardar() {
             index: lst_producto[i].index,
             producto_id: lst_producto[i].producto_id,
             cantidad: lst_producto[i].cantidad,
-            costo_unitario: lst_producto[i].costo_unitario,
+            costo_unitario: $('#'+i).find('.conImp').text(),//lst_producto[i].costo_unitario,
             importe: lst_producto[i].importe,
             unidad: lst_producto[i].unidad,
             unidades: lst_producto[i].unidades,

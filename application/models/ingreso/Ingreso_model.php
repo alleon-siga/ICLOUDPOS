@@ -264,7 +264,7 @@ class ingreso_model extends CI_Model
                 if (!isset($costo_unitario[$row->producto_id]))
                     $costo_unitario[$row->producto_id] = array();
                 $costo_unitario[$row->producto_id][] = array(
-                    'costo' => $row->importe / $row->cantidad,
+                    'costo' => $row->costo_unitario, //$row->importe / $row->cantidad,
                     'um_id' => $row->unidad
                 );
 
