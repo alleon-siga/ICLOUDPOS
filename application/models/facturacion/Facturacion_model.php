@@ -60,9 +60,12 @@ class facturacion_model extends CI_Model
     function get_emisor()
     {
         $result = $this->db->get('facturacion_emisor')->row();
-        $result->moneda_simbolo = 'S/';
-        $result->moneda_letra = 'SOLES';
-        return $result;
+        if ($result != NULL) {
+            $result->moneda_simbolo = 'S/';
+            $result->moneda_letra = 'SOLES';
+            return $result;
+        }
+        return NULL;
     }
 
     function get_tipo_cambio()
@@ -88,6 +91,18 @@ class facturacion_model extends CI_Model
             ->join('ciudades', 'ciudades.ciudad_id = facturacion_emisor.provincia_id')
             ->join('distrito', 'distrito.id = facturacion_emisor.distrito_id')
             ->get('facturacion_emisor')->row();
+
+        if ($emisor == NULL) {
+            $this->db->where('id', $id);
+            $this->db->update('facturacion', array(
+                'sunat_codigo' => '-2',
+                'hash_cpe' => null,
+                'nota' => 'Emisor no configurado',
+                'estado' => 0
+            ));
+
+            return FALSE;
+        }
 
         $facturador = new Facturador(array(
             'NRO_DOCUMENTO' => $emisor->ruc,
@@ -166,6 +181,8 @@ class facturacion_model extends CI_Model
             'nota' => $response['MENSAJE'],
             'estado' => $response['CODIGO'] == 0 ? 1 : 0
         ));
+
+        return TRUE;
     }
 
     function facturarVenta($venta_id)

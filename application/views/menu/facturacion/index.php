@@ -59,6 +59,9 @@
             </div>
             <br>
 
+            <?php if (!isset($emisor)): ?>
+                <h4 class="alert alert-danger text-center">Emisor no configurado</h4>
+            <?php endif; ?>
 
             <div class="row-fluid">
                 <div class="span12">
@@ -131,12 +134,12 @@
                 });
 
                 function get_facturacion() {
+                    <?php if (isset($emisor) != NULL): ?>
                     $("#facturacion_list").html($("#loading").html());
 
                     var local_id = $("#local_id").val();
                     var estado = $("#estado").val();
                     var fecha = $('#date_range').val();
-
                     $.ajax({
                         url: '<?= base_url()?>facturacion/emision/filter',
                         data: {
@@ -157,9 +160,9 @@
                             $("#facturacion_list").html('');
                         }
                     });
+                    <?php endif;?>
 
                 }
-
 
 
             </script>

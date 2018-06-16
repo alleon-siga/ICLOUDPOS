@@ -65,8 +65,6 @@ class venta_new_model extends CI_Model
             venta.serie as serie,
             venta.numero as numero,
             venta.fecha_facturacion as fecha_facturacion,
-            venta.facturacion as facturacion,
-            venta.nota as nota,
             venta.dni_garante as nombre_caja,
             venta.tipo_impuesto as tipo_impuesto,
             cliente.tipo_cliente as tipo_cliente,
