@@ -6,7 +6,7 @@ class facturacion_model extends CI_Model
     function __construct()
     {
         parent::__construct();
-        require_once(APPPATH . 'libraries/FacturacionSunat/FacturacionSunat.php');
+        require_once(APPPATH . 'libraries/Facturador/Facturador.php');
         require APPPATH . 'libraries/Numeroletra.php';
     }
 
@@ -54,7 +54,6 @@ class facturacion_model extends CI_Model
     function save_emisor($data)
     {
         $this->db->empty_table('facturacion_emisor');
-
         $this->db->insert('facturacion_emisor', $data);
     }
 
@@ -80,12 +79,9 @@ class facturacion_model extends CI_Model
         return TIPO_NOTA_CREDITO::get($codigo);
     }
 
-    function emitir($id)
+    function crearXml($id)
     {
-
-        log_message('debug', 'Facturacion Electronica. Emitiendo comprobante ' . $id);
-        $facturacion = new FacturacionSunat();
-        $facturacion->qr_path = './recursos/qr/';
+        log_message('debug', 'Facturacion Electronica. creando comprobante ' . $id);
 
         $emisor = $this->db
             ->join('estados', 'estados.estados_id = facturacion_emisor.departamento_id')
@@ -93,147 +89,83 @@ class facturacion_model extends CI_Model
             ->join('distrito', 'distrito.id = facturacion_emisor.distrito_id')
             ->get('facturacion_emisor')->row();
 
+        $facturador = new Facturador(array(
+            'NRO_DOCUMENTO' => $emisor->ruc,
+            'RAZON_SOCIAL' => $emisor->razon_social,
+            'NOMBRE_COMERCIAL' => $emisor->nombre_comercial,
+            'DIRECCION' => $emisor->direccion,
+            'UBIGEO' => $emisor->ubigeo,
+            'URBANIZACION' => '-',
+            'DISTRITO' => strtoupper($emisor->nombre),
+            'PROVINCIA' => strtoupper($emisor->ciudad_nombre),
+            'DEPARTAMENTO' => strtoupper($emisor->estados_nombre),
+            'PAIS_CODIGO' => 'PE',
+            'CERT_PASS' => $emisor->pass_sign,
+            'SOL_USER' => $emisor->user_sol,
+            'SOL_PASS' => $emisor->pass_sol,
+            'ENV' => $emisor->env,
+            'PATH_QR' => './recursos/qr/',
+        ));
+
         $comprobante = $this->db->get_where('facturacion', array('id' => $id))->row();
         $comprobante_detalle = $this->db->get_where('facturacion_detalle', array('facturacion_id' => $id))->result();
 
-        $data_comprobante = array(
-            'TOTAL_GRAVADAS' => number_format($comprobante->total_gravadas, 2, '.', ''),
-            'TOTAL_INAFECTA' => number_format($comprobante->total_inafectas, 2, '.', ''),
-            'TOTAL_EXONERADAS' => number_format($comprobante->total_exoneradas, 2, '.', ''),
-            'TOTAL_GRATUITAS' => "0",
-            'TOTAL_PERCEPCIONES' => "0",
-            'TOTAL_RETENCIONES' => "0",
-            'TOTAL_DETRACCIONES' => "0",
-            'TOTAL_BONIFICACIONES' => "0",
-            'TOTAL_DESCUENTO' => "0",
+        $cabecera = array(
+            'FECHA_EMISION' => date('Y-m-d', strtotime($comprobante->fecha)),
+            'TIPO_DOCUMENTO' => $comprobante->documento_tipo,
+            'NUMERO_DOCUMENTO' => $comprobante->documento_numero,
 
-            'SUB_TOTAL' => number_format($comprobante->subtotal, 2, '.', ''),
-            'TOTAL_IGV' => number_format($comprobante->impuesto, 2, '.', ''),
-            'TOTAL_ISC' => "0",
-            'TOTAL_OTR_IMP' => "0",
+            'NOTA_NUMERO_DOCUMENTO' => $comprobante->documento_mod_numero,
+            'NOTA_TIPO_DOCUMENTO' => $comprobante->documento_mod_tipo,
+            'NOTA_MOTIVO_CODIGO' => $comprobante->documento_mod_motivo,
+            'NOTA_MOTIVO_DESCRIPCION' => TIPO_NOTA_CREDITO::get($comprobante->documento_mod_motivo),
 
-            'TOTAL' => number_format($comprobante->total, 2, '.', ''),
-            'TOTAL_LETRAS' => Numeroletra::convertir($comprobante->total),
-            //==============================================
-            'NRO_GUIA_REMISION' => "",
-            'COD_GUIA_REMISION' => "",
-            'NRO_OTR_COMPROBANTE' => "",
-            'COD_OTR_COMPROBANTE' => "",
-            //==============================================
-            'TIPO_COMPROBANTE_MODIFICA' => $comprobante->documento_mod_tipo,
-            'NRO_DOCUMENTO_MODIFICA' => $comprobante->documento_mod_numero,
-            'COD_TIPO_MOTIVO' => $comprobante->documento_mod_motivo,
-            'DESCRIPCION_MOTIVO' => TIPO_NOTA_CREDITO::get($comprobante->documento_mod_motivo),
-            //===============================================
-            'NRO_COMPROBANTE' => $comprobante->documento_numero,
-            'FECHA_DOCUMENTO' => date("Y-m-d", strtotime($comprobante->fecha)),
-            'COD_TIPO_DOCUMENTO' => $comprobante->documento_tipo,
-            'COD_MONEDA' => $emisor->moneda,
-            //==================================================
-            'TIPO_DOCUMENTO_CLIENTE' => $comprobante->cliente_tipo, //RUC
-            'NRO_DOCUMENTO_CLIENTE' => $comprobante->cliente_identificacion,
-            'RAZON_SOCIAL_CLIENTE' => $comprobante->cliente_nombre,
-            'DIRECCION_CLIENTE' => $comprobante->cliente_direccion,
-            'CIUDAD_CLIENTE' => 'LIMA',
-            'COD_PAIS_CLIENTE' => "PE",
-            //===============================================
-            'TIPO_DOCUMENTO_EMPRESA' => TIPO_IDENTIDAD::$RUC, //RUC
-            'NRO_DOCUMENTO_EMPRESA' => $emisor->ruc,
-            'NOMBRE_COMERCIAL_EMPRESA' => $emisor->nombre_comercial,
-            'RAZON_SOCIAL_EMPRESA' => $emisor->razon_social,
-            'CODIGO_UBIGEO_EMPRESA' => $emisor->ubigeo,
-            'DIRECCION_EMPRESA' => $emisor->direccion,
-            'DEPARTAMENTO_EMPRESA' => strtoupper($emisor->estados_nombre),
-            'PROVINCIA_EMPRESA' => strtoupper($emisor->ciudad_nombre),
-            'DISTRITO_EMPRESA' => strtoupper($emisor->nombre),
-            'CODIGO_PAIS_EMPRESA' => "PE",
-            //====================INFORMACION PARA ANTICIPO=====================//
-            'FLG_ANTICIPO' => "0",
-            //====================REGULAR ANTICIPO=====================//
-            'FLG_REGU_ANTICIPO' => "0",
-            'NRO_COMPROBANTE_REF_ANT' => "",
-            'MONEDA_REGU_ANTICIPO' => "",
-            'MONTO_REGU_ANTICIPO' => "0",
-            'TIPO_DOCUMENTO_EMP_REGU_ANT' => "",
-            'NRO_DOCUMENTO_EMP_REGU_ANT' => "",
-            //===================CLAVES SOL EMISOR====================//
-            'EMISOR_RUC' => $emisor->ruc,
-            'EMISOR_USUARIO_SOL' => $emisor->user_sol,
-            'EMISOR_PASS_SOL' => $emisor->pass_sol,
-            'CERTIFICADO_PASS' => $emisor->pass_sign
+            'CLIENTE_NRO_DOCUMENTO' => $comprobante->cliente_identificacion,
+            'CLIENTE_TIPO_IDENTIDAD' => $comprobante->cliente_tipo,
+            'CLIENTE_NOMBRE' => $comprobante->cliente_nombre,
+
+            'CODIGO_MONEDA' => 'PEN',
+            'TOTAL_GRAVADAS' => $comprobante->total_gravadas,
+            'TOTAL_INAFECTAS' => $comprobante->total_inafectas,
+            'TOTAL_EXONERADAS' => $comprobante->total_exoneradas,
+            'TOTAL_GRATUITAS' => '0.00',
+            'TOTAL_DESCUENTOS' => '0.00',
+
+            'TOTAL_TRIBUTO_IGV' => $comprobante->impuesto,
+            'TOTAL_TRIBUTO_ISC' => '0.00',
+            'TOTAL_TRIBUTO_OTROS' => '0.00',
+
+            'TOTAL_DESCUENTO_GLOBAL' => '0.00',
+            'TOTAL_OTROS_CARGOS' => '0.00',
+            'TOTAL_VENTA' => $comprobante->total,
+            'TOTAL_VENTA_LETRAS' => Numeroletra::convertir($comprobante->total)
         );
-
 
         $items_detalle = array();
 
-        $n = 1;
         foreach ($comprobante_detalle as $d) {
-            $detalle = new stdClass();
-
-            $detalle->txt_item = $n++;
-            $detalle->txt_unidad_medida = "NIU";
-            $detalle->txt_cantidad = number_format($d->cantidad, 3, '.', '');
-            $detalle->txt_precio = number_format($d->precio, 2, '.', '');
-            $detalle->txt_importe = number_format($d->cantidad * $d->precio, 2, '.', '');
-            $detalle->txt_precio_tipo_codigo = "01";
-            $detalle->txt_igv = number_format($d->impuesto, 2, '.', '');
-            $detalle->txt_isc = "0";
-            $detalle->txt_cod_tipo_operacion = "10";
-            $detalle->txt_codigo = $d->producto_codigo;
-            $detalle->txt_descripcion = $d->producto_descripcion;
-
-            $items_detalle[] = $detalle;
+            $items_detalle[] = array(
+                'CODIGO' => $d->producto_codigo,
+                'CANTIDAD' => $d->cantidad,
+                'UNIDAD_MEDIDA' => "NIU",
+                'DESCRIPCION' => $d->producto_descripcion,
+                'PRECIO_VALOR' => $d->precio,
+                'PRECIO_VENTA' => $d->precio,
+                'TIPO_PRECIO' => '01',
+                'DETALLE_TRIBUTO_IGV' => $d->impuesto,
+                'TIPO_TRIBUTO_IGV' => '10',
+            );
         }
 
-        $resp = $facturacion->procesarDocumento($comprobante->documento_tipo, $data_comprobante, $items_detalle, FACTURACION_PROCESO);
-        if ($resp['respuesta'] == 'ok') {
-            $this->db->where('venta_id', $comprobante->ref_id);
-            $this->db->update('venta', array(
-                'facturacion' => 1,
-                'facturacion_nota' => $resp['msj_sunat']
-            ));
+        $response = $facturador->crearComprobante($comprobante->documento_tipo, $cabecera, $items_detalle);
 
-            $this->db->where('id', $comprobante->id);
-            $this->db->update('facturacion', array(
-                'estado' => 1,
-                'sunat_codigo' => $resp['cod_sunat'],
-                'nota' => $resp['msj_sunat'],
-                'hash_cpe' => $resp['hash_cpe'],
-                'hash_cdr' => $resp['hash_cdr']
-            ));
-            return $resp;
-        } else {
-            $error = 'Error no identificado';
-
-            if (isset($resp['msg_validacion']))
-                $error = $resp['msg_validacion'];
-
-            if (isset($resp['msj_sunat']))
-                $error = $resp['msj_sunat'];
-
-            if (isset($resp['mensaje']))
-                $error = $resp['mensaje'];
-            $log_error = 'Facturacion error. ' . $error;
-
-            if (isset($resp['cod_sunat']))
-                $log_error .= ' SUNAT: ' . $resp['cod_sunat'];
-
-            log_message('error', $log_error);
-
-            $this->db->where('venta_id', $comprobante->ref_id);
-            $this->db->update('venta', array(
-                'facturacion' => 0,
-                'facturacion_nota' => $error,
-            ));
-
-            $this->db->where('id', $comprobante->id);
-            $this->db->update('facturacion', array(
-                'estado' => 0,
-                'nota' => $error,
-            ));
-
-            return $resp;
-        }
+        $this->db->where('id', $id);
+        $this->db->update('facturacion', array(
+            'sunat_codigo' => $response['CODIGO'],
+            'hash_cpe' => isset($response['HASH_CPE']) ? $response['HASH_CPE'] : null,
+            'nota' => $response['MENSAJE'],
+            'estado' => $response['CODIGO'] == 0 ? 1 : 0
+        ));
     }
 
     function facturarVenta($venta_id)
@@ -337,7 +269,7 @@ class facturacion_model extends CI_Model
             ));
         }
 
-        return $this->emitir($facturacion_id);
+        return $this->crearXml($facturacion_id);
 
     }
 
@@ -444,7 +376,7 @@ class facturacion_model extends CI_Model
             ));
         }
 
-        return $this->emitir($facturacion_id);
+        return $this->crearXml($facturacion_id);
 
     }
 
@@ -584,7 +516,7 @@ class facturacion_model extends CI_Model
             ));
         }
 
-        return $this->emitir($facturacion_id);
+        return $this->crearXml($facturacion_id);
 
     }
 }

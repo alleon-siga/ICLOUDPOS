@@ -127,6 +127,7 @@ class facturacion extends MY_Controller
             'distrito_id' => $this->input->post('distrito'),
             'ubigeo' => $this->input->post('codigo_ubigeo'),
             'moneda' => $this->input->post('moneda'),
+            'env' => 'BETA',
             'user_sol' => $this->input->post('user_sol'),
             'pass_sol' => $this->input->post('pass_sol'),
             'pass_sign' => $this->input->post('pass_sign')
@@ -162,7 +163,7 @@ class facturacion extends MY_Controller
     {
         if (isset($_FILES['certificado']) && $_FILES['certificado']['size'] != 0) {
             $extension = "pfx";
-            $dir = './application/libraries/FacturacionSunat/archivos/certificados/produccion/';
+            $dir = './application/libraries/Facturador/files/certificates/';
             if (!is_dir($dir)) {
                 mkdir($dir, 0755);
             }
@@ -179,15 +180,7 @@ class facturacion extends MY_Controller
             if (!$this->upload->do_upload('certificado')) {
                 echo $this->upload->display_errors();
             } else {
-                $dir_beta = './application/libraries/FacturacionSunat/archivos/certificados/beta/';
-                if (!is_dir($dir_beta)) {
-                    mkdir($dir_beta, 0755);
-                }
 
-                $filename = $ruc . '.' . $extension;
-                if (!copy($dir . $filename, $dir_beta . $filename)) {
-                    echo 'Error en copiar el archivo';
-                }
             }
 
             return $ruc . '.' . $extension;

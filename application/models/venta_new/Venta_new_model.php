@@ -289,10 +289,13 @@ class venta_new_model extends CI_Model
     function facturar_venta($venta_id, $iddoc = '')
     {
         $venta = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
-        $correlativo = $this->correlativos_model->get_correlativo($venta->local_id, $venta->id_documento);
+        $iddoc = $iddoc == '' ? $venta->id_documento : $iddoc;
+        $correlativo = $this->correlativos_model->get_correlativo($venta->local_id, $iddoc);
         $update_venta['fecha_facturacion'] = date('Y-m-d H:i:s');
         $update_venta['serie'] = $correlativo->serie;
         $update_venta['numero'] = $correlativo->correlativo;
+        if ($iddoc != '')
+            $update_venta['id_documento'] = $iddoc;
         $this->correlativos_model->sumar_correlativo($venta->local_id, $venta->id_documento);
 
         // Hago la facturacion de comprobantes
@@ -1014,7 +1017,19 @@ class venta_new_model extends CI_Model
         }
 
         if (valueOptionDB('FACTURACION', 0) == 1 && ($venta->id_documento == 1 || $venta->id_documento == 3) && $venta->numero != null) {
-            $resp = $this->facturacion_model->anularVenta($venta_id, $serie . '-' . $numero, $motivo);
+            $facturacion = $this->db->get_where('facturacion', array(
+                'ref_id' => $venta_id,
+                'documento_tipo' => sumCod($venta->id_documento, 2)
+            ))->row();
+
+            if ($facturacion != null) {
+                if ($facturacion->estado != 0) {
+                    $resp = $this->facturacion_model->anularVenta($venta_id, $serie . '-' . $numero, $motivo);
+                } else {
+                    $this->db->where('id', $facturacion->id);
+                    $this->db->delete('facturacion');
+                }
+            }
         }
 
         if ($venta->id_documento == '1') {
@@ -1191,7 +1206,21 @@ class venta_new_model extends CI_Model
         ));
 
         if (valueOptionDB('FACTURACION', 0) == 1 && ($venta->documento_id == 1 || $venta->documento_id == 3) && $venta->numero != null) {
-            $resp = $this->facturacion_model->devolverVenta($venta_id, $devoluciones, $serie . '-' . $numero, $motivo);
+            $facturacion = $this->db->get_where('facturacion', array(
+                'ref_id' => $venta_id,
+                'documento_tipo' => sumCod($venta->documento_id, 2)
+            ))->row();
+
+            if ($facturacion != null) {
+                if ($facturacion->estado != 0) {
+                    $resp = $this->facturacion_model->devolverVenta($venta_id, $devoluciones, $serie . '-' . $numero, $motivo);
+                } else {
+                    $this->db->where('id', $facturacion->id);
+                    $this->db->delete('facturacion');
+                }
+            }
+
+
         }
 
         $venta = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();

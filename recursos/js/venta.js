@@ -855,11 +855,11 @@ function save_venta_contado(imprimir) {
                 show_msg('success', '<h4>Correcto. </h4><p>La venta numero ' + data.venta.venta_id + ' se ha guardado con exito.</p>');
 
                 if ($('#facturacion_electronica').val() == 1 && data.venta.venta_status == 'COMPLETADO' && (data.venta.id_documento == 1 || data.venta.id_documento == 3)) {
-                    if (data.venta.facturacion == 1) {
-                        show_msg('success', '<h4>Facturacion Electronica:</h4> ' + data.venta.facturacion_nota);
+                    if (data.facturacion.estado == 1) {
+                        show_msg('success', '<h4>Facturacion Electronica:</h4> ' + data.facturacion.nota);
                     }
                     else {
-                        show_msg('danger', '<h4>Facturacion Electronica:</h4> ' + data.venta.facturacion_nota);
+                        show_msg('danger', '<h4>Facturacion Electronica:</h4> ' + data.facturacion.nota);
                     }
                 }
                 if (imprimir == '1') {
