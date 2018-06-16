@@ -34,6 +34,7 @@ class facturacion extends MY_Controller
                 $data['facturaciones'] = $this->facturacion_model->get_facturacion($data);
                 $data['emisor'] = $this->facturacion_model->get_emisor();
 
+
                 echo $this->load->view('menu/facturacion/facturacion_list', $data, true);
                 break;
             }
@@ -46,7 +47,6 @@ class facturacion extends MY_Controller
                 }
 
                 $data['monedas'] = $this->db->get_where('moneda', array('status_moneda' => 1))->result();
-
 
                 $dataCuerpo['cuerpo'] = $this->load->view('menu/facturacion/index', $data, true);
                 if ($this->input->is_ajax_request()) {
@@ -78,7 +78,8 @@ class facturacion extends MY_Controller
         echo json_encode($data);
     }
 
-    function imprimir_ticket($id){
+    function imprimir_ticket($id)
+    {
 
         $data['facturacion'] = $this->facturacion_model->get_facturacion(array('id' => $id));
         $data['emisor'] = $this->facturacion_model->get_emisor();
