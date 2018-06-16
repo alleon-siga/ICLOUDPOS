@@ -977,9 +977,7 @@ class venta_new_model extends CI_Model
 
         $this->db->where('venta_id', $venta_id);
         $this->db->update('venta', array(
-            'venta_status' => 'ANULADO',
-            'facturacion' => 0,
-            'facturacion_nota' => 'No enviado',
+            'venta_status' => 'ANULADO'
         ));
 
         $venta = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
