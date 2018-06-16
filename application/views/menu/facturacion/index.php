@@ -59,10 +59,6 @@
             </div>
             <br>
 
-            <?php if (!isset($emisor)): ?>
-                <h4 class="alert alert-danger text-center">Emisor no configurado</h4>
-            <?php endif; ?>
-
             <div class="row-fluid">
                 <div class="span12">
                     <div id="facturacion_list" class="block">
@@ -134,7 +130,6 @@
                 });
 
                 function get_facturacion() {
-                    <?php if (isset($emisor) != NULL): ?>
                     $("#facturacion_list").html($("#loading").html());
 
                     var local_id = $("#local_id").val();
@@ -160,7 +155,6 @@
                             $("#facturacion_list").html('');
                         }
                     });
-                    <?php endif;?>
 
                 }
 
