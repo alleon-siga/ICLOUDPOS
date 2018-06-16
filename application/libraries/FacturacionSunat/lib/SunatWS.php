@@ -622,21 +622,20 @@ class SunatWS
                 }
 
             } else {
-                $resp['respuesta'] = 'error';
-                $resp['cod_sunat'] = $doc->getElementsByTagName('faultcode')->item(0)->nodeValue;
-                $resp['mensaje'] = $doc->getElementsByTagName('faultstring')->item(0)->nodeValue;
+                $resp['respuesta'] = 'ok';
+                $resp['cod_sunat'] = '-99';
+                $resp['mensaje'] = $doc->getElementsByTagName('faultcode')->item(0)->nodeValue . ' -- ' . $doc->getElementsByTagName('faultstring')->item(0)->nodeValue;
                 $resp['hash_cdr'] = "";
             }
         } else {
             $doc = new DOMDocument();
-            $doc->loadXML($response);
-            if(isset($doc->getElementsByTagName('faultcode')->item(0)->nodeValue)){
+            @$doc->loadXML($response);
+            if (isset($doc->getElementsByTagName('faultcode')->item(0)->nodeValue)) {
                 $resp['respuesta'] = 'error';
                 $resp['cod_sunat'] = $doc->getElementsByTagName('faultcode')->item(0)->nodeValue;
                 $resp['mensaje'] = $doc->getElementsByTagName('faultstring')->item(0)->nodeValue;
                 $resp['hash_cdr'] = "";
-            }
-            else{
+            } else {
                 //echo "no responde web";
                 $resp['respuesta'] = 'error';
                 $resp['cod_sunat'] = "0000";
