@@ -24,11 +24,11 @@
                 <th>Fecha</th>
                 <th>Documento</th>
                 <th>Numero</th>
-                <th>Cliente</th>
-                <th>Documento Afect.</th>
+                <th style="width: 35%;">Cliente</th>
                 <th>Estado</th>
                 <th>Total</th>
                 <th>Acciones</th>
+                <th>Impresi&oacute;n</th>
             </tr>
             </thead>
             <tbody>
@@ -52,52 +52,110 @@
                         <td><?= $f->documento_numero ?>
                         </td>
                         <td><?= $f->cliente_nombre ?></td>
-                        <td><?= ($f->documento_tipo == '07' || $f->documento_tipo == '08') ? $f->documento_mod_numero : '-'
-                            ?></td>
                         <td>
+
                             <?php
-                            if ($f->estado == 1) {
-                                if ($f->sunat_codigo != '-99') {
-                                    echo 'ACEPTADA';
-                                } else {
-                                    echo 'EMITIDA';
-                                }
-                            } else {
-                                echo 'PENDIENTE';
+                            $estado = '';
+                            $estado_class = '';
+                            if ($f->estado == 0) {
+                                $estado_class = 'label-warning';
+                                $estado = 'NO GENERADO';
+                            } elseif ($f->estado == 1) {
+                                $estado_class = 'label-info';
+                                $estado = 'GENERADO';
+                            } elseif ($f->estado == 2) {
+                                $estado_class = 'label-warning';
+                                $estado = 'ENVIADO';
+                            } elseif ($f->estado == 3) {
+                                $estado_class = 'label-success';
+                                $estado = 'ACEPTADO';
+                            } elseif ($f->estado == 4) {
+                                $estado_class = 'label-danger';
+                                $estado = 'RECHAZADO';
                             }
-                            ?></td>
+
+                            ?>
+                            <div
+                                    title="Descripci&oacute;n del Estado" data-content="<?= $f->nota ?>"
+                                    data-toggle="popover"
+                                    class="label <?= $estado_class ?>"
+                                    data-placement="top"
+                                    style="font-size: 1em; padding: 2px; cursor: pointer; white-space: normal;">
+                                <?= $estado ?>
+                            </div>
+                        </td>
                         <td style="text-align: right;"><?= $emisor->moneda_simbolo ?> <?= number_format($f->total, 2) ?></td>
                         <td style="text-align: center;">
-                            <a class="btn btn-xs btn-default" data-toggle="tooltip" style="margin-right: 5px;"
-                               title="Ver" data-original-title="Ver"
-                               href="#"
-                               onclick="ver('<?= $f->id ?>');">
-                                <i class="fa fa-search"></i> Detalles
-                            </a>
-
                             <?php if ($f->estado == 0): ?>
-                                <a class="btn btn-xs btn-warning" data-toggle="tooltip" style="margin-right: 5px;"
-                                   title="Emitir Comprobante" data-original-title="Emitir Comprobante"
+                                <a class="btn btn-sm btn-warning" data-toggle="tooltip" style="margin-right: 5px;"
+                                   title="Actualizar estado" data-original-title="Actualizar estado"
                                    href="#"
-                                   onclick="emitir('<?= $f->id ?>');">
-                                    <i class="fa fa-mail-forward"></i> Enviar
+                                   onclick="generarComprobante('<?= $f->id ?>');">
+                                    <i class="fa fa-refresh"></i>
                                 </a>
                             <?php endif; ?>
 
                             <?php if ($f->estado == 1): ?>
-                            <a class="btn btn-xs btn-primary" data-toggle="tooltip" style="margin-right: 5px;"
-                               title="Exportar Pdf" data-original-title="Exportar Pdf"
+                                <a class="btn btn-sm btn-default" data-toggle="tooltip" style="margin-right: 5px;"
+                                   title="Emitir comprobante a SUNAT" data-original-title="Emitir comprobante a SUNAT"
+                                   href="#"
+                                   onclick="emitir('<?= $f->id ?>');">
+                                    <i class="fa fa-mail-forward"></i>
+                                </a>
+                            <?php endif; ?>
+
+                            <?php if ($f->estado == 2): ?>
+                                <a class="btn btn-sm btn-warning" data-toggle="tooltip" style="margin-right: 5px;"
+                                   title="Actualizar estado" data-original-title="Actualizar estado"
+                                   href="#"
+                                   onclick="emitir('<?= $f->id ?>');">
+                                    <i class="fa fa-refresh"></i>
+                                </a>
+                            <?php endif; ?>
+
+                            <?php if ($f->estado == 3): ?>
+                                <a class="btn btn-sm btn-default" data-toggle="tooltip" style="margin-right: 5px;"
+                                   title="Descargar comprobante XML" data-original-title="Descargar comprobante XML"
+                                   href="#"
+                                   onclick="descargar('<?= $f->id ?>');">
+                                    <i class="fa fa-download"></i>
+                                </a>
+                            <?php endif; ?>
+
+
+                            <?php if ($f->estado == 4): ?>
+                                <a class="btn btn-sm btn-danger" data-toggle="tooltip" style="margin-right: 5px;"
+                                   title="Reintentar envio" data-original-title="Reintentar envio"
+                                   href="#"
+                                   onclick="reemitir('<?= $f->id ?>');">
+                                    <i class="fa fa-refresh"></i>
+                                </a>
+                            <?php endif; ?>
+
+                        </td>
+                        <td>
+                            <a class="btn btn-sm btn-primary" data-toggle="tooltip" style="margin-right: 5px;"
+                               title="Ver Detalles" data-original-title="Ver Detalles"
                                href="#"
-                               onclick="imprimir('<?= $f->id ?>');">
-                                <i class="fa fa-file-pdf-o"></i> PDF
+                               onclick="ver('<?= $f->id ?>');">
+                                <i class="fa fa-list"></i>
+                            </a>
+
+                            <?php if ($f->estado != 0): ?>
+                                <a class="btn btn-sm btn-primary" data-toggle="tooltip" style="margin-right: 5px;"
+                                   title="Imprimir PDF (A4)" data-original-title="Imprimir PDF (A4)"
+                                   href="#"
+                                   onclick="imprimir('<?= $f->id ?>');">
+                                    <i class="fa fa-file-pdf-o"></i>
+                                </a>
 
                                 <a class="btn btn-sm btn-primary" data-toggle="tooltip" style="margin-right: 5px;"
-                                   title="Imprimir" data-original-title="Imprimir"
+                                   title="Imprimir Ticket" data-original-title="Imprimir Ticket"
                                    href="#"
                                    onclick="imprimir_ticket('<?= $f->id ?>');">
                                     <i class="fa fa-print"></i>
-                                    <?php endif; ?>
                                 </a>
+                            <?php endif; ?>
                         </td>
                     </tr>
                 <?php endforeach ?>
@@ -105,17 +163,6 @@
 
             </tbody>
         </table>
-
-
-        <a id="exportar_pdf"
-           href="#"
-           class="btn  btn-default btn-lg" data-toggle="tooltip" title="Exportar a PDF"
-           data-original-title="fa fa-file-pdf-o"><i class="fa fa-file-pdf-o fa-fw"></i></a>
-
-        <a id="exportar_excel"
-           href="#"
-           class="btn btn-default btn-lg" data-toggle="tooltip" title="Exportar a Excel"
-           data-original-title="fa fa-file-excel-o"><i class="fa fa-file-excel-o fa-fw"></i></a>
 
 
         <div class="modal fade" id="dialog_venta_detalle" tabindex="-1" role="dialog"
@@ -148,6 +195,11 @@
     <script type="text/javascript">
         $(function () {
 
+            $('[data-toggle="tooltip"]').tooltip();
+            $('[data-toggle="popover"]').popover({
+                trigger: 'hover'
+            });
+
             $('#exportar_excel').on('click', function (e) {
                 e.preventDefault();
                 exportar_excel();
@@ -162,28 +214,34 @@
 
         });
 
-        function exportar_pdf() {
+        //        function exportar_pdf() {
+        //
+        //            var data = {
+        //                'local_id': $("#local_id").val(),
+        //                'esatdo': $("#estado").val(),
+        //                'fecha': $("#date_range").val(),
+        //                'moneda_id': $("#moneda_id").val(),
+        //            };
+        //
+        //            var win = window.open('<?//= base_url()?>//facturacion/historial_pdf?data=' + JSON.stringify(data), '_blank');
+        //            win.focus();
+        //        }
+        //
+        //        function exportar_excel() {
+        //            var data = {
+        //                'local_id': $("#local_id").val(),
+        //                'esatdo': $("#estado").val(),
+        //                'fecha': $("#date_range").val(),
+        //                'moneda_id': $("#moneda_id").val(),
+        //            };
+        //
+        //            var win = window.open('<?//= base_url()?>//facturacion/historial_excel?data=' + JSON.stringify(data), '_blank');
+        //            win.focus();
+        //        }
 
-            var data = {
-                'local_id': $("#local_id").val(),
-                'esatdo': $("#estado").val(),
-                'fecha': $("#date_range").val(),
-                'moneda_id': $("#moneda_id").val(),
-            };
+        function descargar(id) {
 
-            var win = window.open('<?= base_url()?>facturacion/historial_pdf?data=' + JSON.stringify(data), '_blank');
-            win.focus();
-        }
-
-        function exportar_excel() {
-            var data = {
-                'local_id': $("#local_id").val(),
-                'esatdo': $("#estado").val(),
-                'fecha': $("#date_range").val(),
-                'moneda_id': $("#moneda_id").val(),
-            };
-
-            var win = window.open('<?= base_url()?>facturacion/historial_excel?data=' + JSON.stringify(data), '_blank');
+            var win = window.open('<?= base_url()?>facturacion/descargar_xml/' + id, '_blank');
             win.focus();
         }
 
@@ -207,12 +265,12 @@
         }
 
 
-        function emitir(id) {
+        function generarComprobante(id) {
 
             $("#barloadermodal").modal('show');
 
             $.ajax({
-                url: '<?php echo $ruta . 'facturacion/emitir_comprobante'; ?>',
+                url: '<?php echo $ruta . 'facturacion/generar_comprobante'; ?>',
                 type: 'POST',
                 data: {'id': id},
 
@@ -230,6 +288,62 @@
                 },
                 error: function () {
                     alert('Error inesperado')
+                    $("#barloadermodal").modal('hide');
+                }
+            });
+        }
+
+        function emitir(id) {
+
+            $("#barloadermodal").modal('show');
+
+            $.ajax({
+                url: '<?php echo $ruta . 'facturacion/emitir_comprobante'; ?>',
+                type: 'POST',
+                data: {'id': id},
+
+                success: function (data) {
+
+                    if (data.facturacion.estado == 3) {
+                        show_msg('success', '<h4>Facturacion Electronica:</h4> ' + data.facturacion.nota);
+                    }
+                    else {
+                        show_msg('danger', '<h4>Facturacion Electronica:</h4> ' + data.facturacion.nota);
+                    }
+
+                    $("#barloadermodal").modal('hide');
+                    get_facturacion();
+                },
+                error: function () {
+                    alert('Error inesperado');
+                    $("#barloadermodal").modal('hide');
+                }
+            });
+        }
+
+        function reemitir(id) {
+
+            $("#barloadermodal").modal('show');
+
+            $.ajax({
+                url: '<?php echo $ruta . 'facturacion/reemitir_comprobante'; ?>',
+                type: 'POST',
+                data: {'id': id},
+
+                success: function (data) {
+
+                    if (data.facturacion.estado == 3) {
+                        show_msg('success', '<h4>Facturacion Electronica:</h4> ' + data.facturacion.nota);
+                    }
+                    else {
+                        show_msg('danger', '<h4>Facturacion Electronica:</h4> ' + data.facturacion.nota);
+                    }
+
+                    $("#barloadermodal").modal('hide');
+                    get_facturacion();
+                },
+                error: function () {
+                    alert('Error inesperado');
                     $("#barloadermodal").modal('hide');
                 }
             });
