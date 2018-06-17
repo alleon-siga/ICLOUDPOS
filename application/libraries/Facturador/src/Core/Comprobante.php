@@ -172,7 +172,7 @@ abstract class Comprobante
 //        $venta_totales->appendChild($total);
 
         //Leyenda del total en letras
-        if (isset($data['TOTAL_VENTA_LETRAS'])) {
+        if (isset($data['TOTAL_VENTA_LETRAS']) && $data['TOTAL_VENTA_LETRAS'] != '') {
             $total = $this->xml->createElement('sac:AdditionalProperty');
             $total->appendChild($this->xml->createElement('cbc:ID', '1000'));
             $total->appendChild($this->xml->createElement('cbc:Value', $data['TOTAL_VENTA_LETRAS']));

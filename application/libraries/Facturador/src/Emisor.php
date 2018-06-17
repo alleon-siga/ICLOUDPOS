@@ -65,7 +65,16 @@ class Emisor
             $objDSig->addReference($doc, \XMLSecurityDSig::SHA1, array('http://www.w3.org/2000/09/xmldsig#enveloped-signature'), $options);
             $objKey = new \XMLSecurityKey(\XMLSecurityKey::RSA_SHA1, array('type' => 'private'));
 
-            $pfx = file_get_contents($this->path_cert . DIRECTORY_SEPARATOR . $this->get('NRO_DOCUMENTO') . '.pfx');
+            if (file_exists($this->path_cert . DIRECTORY_SEPARATOR . $this->get('NRO_DOCUMENTO') . '.pfx'))
+                $pfx = file_get_contents($this->path_cert . DIRECTORY_SEPARATOR . $this->get('NRO_DOCUMENTO') . '.pfx');
+            else{
+                Logger::write('error', '-1: Archivo no encontrado. '. $this->path_cert . DIRECTORY_SEPARATOR . $this->get('NRO_DOCUMENTO') . '.pfx');
+                return array(
+                    'CODIGO' => '-1',
+                    'MENSAJE' => 'Certificado no encontrado',
+                    'HASH_CPE' => NULL
+                );
+            }
             $key = array();
 
             if (openssl_pkcs12_read($pfx, $key, $this->get('CERT_PASS'))) {
@@ -93,20 +102,16 @@ class Emisor
                 $comp = explode('-', $file);
                 $txt = '';
 
-                if($comp[1] == '01'){
-                    $txt = 'La Factura '.$comp[2].'-'.$comp[3].' ha sido generada correctamente';
-                }
-                elseif($comp[1] == '03'){
-                    $txt = 'La Boleta '.$comp[2].'-'.$comp[3].' ha sido generada correctamente';
-                }
-                elseif($comp[1] == '07'){
-                    $txt = 'La Nota de Credito '.$comp[2].'-'.$comp[3].' ha sido generada correctamente';
-                }
-                elseif($comp[1] == '08'){
-                    $txt = 'La Nota de Debito '.$comp[2].'-'.$comp[3].' ha sido generada correctamente';
-                }
-                else{
-                    $txt = 'El comprobante '.$file.' ha sido generado correctamente';
+                if ($comp[1] == '01') {
+                    $txt = 'La Factura ' . $comp[2] . '-' . $comp[3] . ' ha sido generada correctamente';
+                } elseif ($comp[1] == '03') {
+                    $txt = 'La Boleta ' . $comp[2] . '-' . $comp[3] . ' ha sido generada correctamente';
+                } elseif ($comp[1] == '07') {
+                    $txt = 'La Nota de Credito ' . $comp[2] . '-' . $comp[3] . ' ha sido generada correctamente';
+                } elseif ($comp[1] == '08') {
+                    $txt = 'La Nota de Debito ' . $comp[2] . '-' . $comp[3] . ' ha sido generada correctamente';
+                } else {
+                    $txt = 'El comprobante ' . $file . ' ha sido generado correctamente';
                 }
 
                 return array(
@@ -199,8 +204,6 @@ class Emisor
         else
             $soap_url = Config::get('soap_url_beta');
 
-        echo $soap_url;
-
         // PHP cURL  for https connection with auth
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
@@ -217,8 +220,7 @@ class Emisor
         $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
         curl_close($ch);
-        echo $httpcode;
-        var_dump($response);
+
         if ($httpcode == 200) {
             $doc = new \DOMDocument();
             $doc->loadXML($response);
@@ -249,7 +251,7 @@ class Emisor
                 } else {
                     Logger::write('warning', '9999: El comprobante ' . $file_name . ' fue emitido pero no recibio respuesta.');
                     return array(
-                        'CODIGO' => '0',
+                        'CODIGO' => '9999',
                         'MENSAJE' => 'El comprobante ' . $file_name . ' fue emitido pero no recibio respuesta.',
                         'HASH_CDR' => NULL,
                     );
@@ -279,15 +281,25 @@ class Emisor
         } else {
             unlink($file . '.ZIP');
             $doc = new \DOMDocument();
-            $doc->loadXML($response);
-            $sunat_codigo = $doc->getElementsByTagName('faultcode')->item(0)->nodeValue;
-            $error = $doc->getElementsByTagName('faultstring')->item(0)->nodeValue;
-            Logger::write('error', $sunat_codigo . ': ' . $error);
-            return array(
-                'CODIGO' => $sunat_codigo,
-                'MENSAJE' => $error,
-                'HASH_CDR' => NULL,
-            );
+            @$doc->loadXML($response);
+            if (isset($doc->getElementsByTagName('faultcode')->item(0)->nodeValue)) {
+
+                $sunat_codigo = $doc->getElementsByTagName('faultcode')->item(0)->nodeValue;
+                $error = $doc->getElementsByTagName('faultstring')->item(0)->nodeValue;
+                Logger::write('error', $sunat_codigo . ': ' . $error);
+                return array(
+                    'CODIGO' => $sunat_codigo,
+                    'MENSAJE' => $error,
+                    'HASH_CDR' => NULL,
+                );
+            } else {
+                Logger::write('error', '-3: SUNAT FUERA DE SERVICIO');
+                return array(
+                    'CODIGO' => '-3',
+                    'MENSAJE' => 'SUNAT FUERA DE SERVICIO',
+                    'HASH_CDR' => NULL,
+                );
+            }
 
         }
 

@@ -68,24 +68,8 @@ class facturacion_model extends CI_Model
         return NULL;
     }
 
-    function get_tipo_cambio()
+    function getFacturador()
     {
-        require_once(APPPATH . 'libraries/TipoCambioSunat/TipoCambioSunat.php');
-        $tipo_cambio = new TipoCambioSunat();
-
-        $result = $tipo_cambio->consultarTipoCambio();
-        return isset($result[0]) ? $result[0] : null;
-    }
-
-    function get_nota_credito_motivo($codigo = false)
-    {
-        return TIPO_NOTA_CREDITO::get($codigo);
-    }
-
-    function crearXml($id)
-    {
-        log_message('debug', 'Facturacion Electronica. creando comprobante ' . $id);
-
         $emisor = $this->db
             ->join('estados', 'estados.estados_id = facturacion_emisor.departamento_id')
             ->join('ciudades', 'ciudades.ciudad_id = facturacion_emisor.provincia_id')
@@ -93,14 +77,6 @@ class facturacion_model extends CI_Model
             ->get('facturacion_emisor')->row();
 
         if ($emisor == NULL) {
-            $this->db->where('id', $id);
-            $this->db->update('facturacion', array(
-                'sunat_codigo' => '-2',
-                'hash_cpe' => null,
-                'nota' => 'Emisor no configurado',
-                'estado' => 0
-            ));
-
             return FALSE;
         }
 
@@ -121,6 +97,101 @@ class facturacion_model extends CI_Model
             'ENV' => $emisor->env,
             'PATH_QR' => './recursos/qr/',
         ));
+
+        return $facturador;
+    }
+
+    function get_tipo_cambio()
+    {
+        require_once(APPPATH . 'libraries/TipoCambioSunat/TipoCambioSunat.php');
+        $tipo_cambio = new TipoCambioSunat();
+
+        $result = $tipo_cambio->consultarTipoCambio();
+        return isset($result[0]) ? $result[0] : null;
+    }
+
+    function get_nota_credito_motivo($codigo = false)
+    {
+        return TIPO_NOTA_CREDITO::get($codigo);
+    }
+
+    function emitirXml($id)
+    {
+
+        $facturador = $this->getFacturador();
+
+        if ($facturador === FALSE) {
+            $this->db->where('id', $id);
+            $this->db->update('facturacion', array(
+                'sunat_codigo' => '-2',
+                'hash_cpe' => null,
+                'nota' => 'Emisor no configurado',
+                'estado' => 0
+            ));
+
+            return FALSE;
+        }
+
+        $pre_fact = $this->db->get_where('facturacion', array('id' => $id))->row();
+        if($pre_fact->hash_cdr != null){
+            $this->db->where('id', $id);
+            $this->db->update('facturacion', array(
+                'estado' => 3
+            ));
+
+            return FALSE;
+        }
+
+        $this->db->where('id', $id);
+        $this->db->update('facturacion', array(
+            'nota' => 'El comprobante esta enviado',
+            'estado' => 2
+        ));
+
+        $comprobante = $this->db->get_where('facturacion', array('id' => $id))->row();
+
+        $response = $facturador->enviarComprobante($comprobante->documento_tipo, array(
+            'NUMERO_DOCUMENTO' => $comprobante->documento_numero
+        ));
+
+        $codigo = $response['CODIGO'];
+
+        if ($codigo == '0') {
+            $estado = 3;
+        } elseif ($codigo == '9999' || $codigo == '-3') {
+            $estado = 2;
+        } else {
+            $estado = 4;
+        }
+
+        $this->db->where('id', $id);
+        $this->db->update('facturacion', array(
+            'sunat_codigo' => $response['CODIGO'],
+            'hash_cdr' => isset($response['HASH_CDR']) ? $response['HASH_CDR'] : null,
+            'nota' => $response['MENSAJE'],
+            'estado' => $estado
+        ));
+
+        return TRUE;
+    }
+
+    function crearXml($id)
+    {
+        log_message('debug', 'Facturacion Electronica. creando comprobante ' . $id);
+
+        $facturador = $this->getFacturador();
+
+        if ($facturador === FALSE) {
+            $this->db->where('id', $id);
+            $this->db->update('facturacion', array(
+                'sunat_codigo' => '-2',
+                'hash_cpe' => null,
+                'nota' => 'Emisor no configurado',
+                'estado' => 0
+            ));
+
+            return FALSE;
+        }
 
         $comprobante = $this->db->get_where('facturacion', array('id' => $id))->row();
         $comprobante_detalle = $this->db->get_where('facturacion_detalle', array('facturacion_id' => $id))->result();

@@ -66,18 +66,61 @@ class facturacion extends MY_Controller
         echo $this->load->view('menu/facturacion/facturacion_list_detalle', $data, TRUE);
     }
 
-    function emitir_comprobante()
+    function generar_comprobante()
     {
         $id = $this->input->post('id');
 
-        $resp = $this->facturacion_model->emitir($id);
+        $resp = $this->facturacion_model->crearXml($id);
         $data['facturacion'] = $this->db->get_where('facturacion', array('id' => $id))->row();
 
         header('Content-Type: application/json');
         echo json_encode($data);
     }
 
-    function imprimir_ticket($id){
+    function emitir_comprobante()
+    {
+        $id = $this->input->post('id');
+
+        $resp = $this->facturacion_model->emitirXml($id);
+        $data['facturacion'] = $this->db->get_where('facturacion', array('id' => $id))->row();
+
+        header('Content-Type: application/json');
+        echo json_encode($data);
+    }
+
+    function reemitir_comprobante()
+    {
+        $id = $this->input->post('id');
+
+        $resp = $this->facturacion_model->crearXml($id);
+        $resp = $this->facturacion_model->emitirXml($id);
+        $data['facturacion'] = $this->db->get_where('facturacion', array('id' => $id))->row();
+
+        header('Content-Type: application/json');
+        echo json_encode($data);
+    }
+
+    function descargar_xml($id)
+    {
+        $emisor = $this->db->get('facturacion_emisor')->row();
+        $f = $this->db->get_where('facturacion', array('id' => $id))->row();
+        $name = $emisor->ruc . '-' . $f->documento_tipo . '-' . $f->documento_numero . '.XML';
+        header('Content-Description: File Transfer');
+        header('Content-Type: xml');
+        header('Content-Disposition: attachment; filename='. $name);
+        header('Content-Transfer-Encoding: binary');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate');
+        header('Pragma: public');
+        header('Content-Length: '.filesize('./application/libraries/Facturador/files/xmls/'.$emisor->ruc.'/'.$name));
+        ob_clean();
+        flush();
+        readfile('./application/libraries/Facturador/files/xmls/'.$emisor->ruc.'/'.$name)or die('error!');
+
+    }
+
+    function imprimir_ticket($id)
+    {
 
         $data['facturacion'] = $this->facturacion_model->get_facturacion(array('id' => $id));
         $data['emisor'] = $this->facturacion_model->get_emisor();
