@@ -1505,7 +1505,6 @@ function update_producto(id, nombre, impuesto, producto_id) {
     $('#cboProducto').append('<option value="' + producto_id + '" data-impuesto="'+ impuesto +'">' + id + ' - ' + nombre + '</option>');
     $('#cboProducto').val(producto_id);
     $("#cboProducto").trigger('chosen:updated');
-    $(".modal-backdrop").remove();
     get_unidades_has_producto('click');
 }
 

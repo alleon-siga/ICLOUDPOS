@@ -287,25 +287,45 @@ class ingresos extends MY_Controller
         }
     }
 
-    function lista_compra()
+    function lista_compra($action = "")
     {
+        switch ($action) {
+            case 'filter': {
+                $date_range = explode(" - ", $this->input->post('fecha'));
+                $fecha_ini = str_replace("/", "-", $date_range[0]);
+                $fecha_fin = str_replace("/", "-", $date_range[1]);
 
-        $date_range = explode(" - ", $this->input->post('fecha'));
-        $fecha_ini = str_replace("/", "-", $date_range[0]);
-        $fecha_fin = str_replace("/", "-", $date_range[1]);
-
-        $params = array(
-            'local_id' => $this->input->post('local_id'),
-            'moneda_id' => $this->input->post('moneda_id'),
-            'fecha_ini' => $fecha_ini,
-            'fecha_fin' => $fecha_fin
-        );
-
-        $data['moneda'] = $this->db->get_where('moneda', array('id_moneda' => $params['moneda_id']))->row();
-        $data['ingresos'] = $this->ingreso_model->get_compras($params);
-        $data['ingreso_totales'] = $this->ingreso_model->get_totales_compra($params);
-
-        $this->load->view('menu/ingreso/lista_compra', $data);
+                $params = array(
+                    'local_id' => $this->input->post('local_id'),
+                    'moneda_id' => $this->input->post('moneda_id'),
+                    'fecha_ini' => $fecha_ini,
+                    'fecha_fin' => $fecha_fin
+                );
+                $data['moneda'] = $this->db->get_where('moneda', array('id_moneda' => $params['moneda_id']))->row();
+                $data['ingresos'] = $this->ingreso_model->get_compras($params);
+                $data['ingreso_totales'] = $this->ingreso_model->get_totales_compra($params);
+                $this->load->view('menu/ingreso/lista_compra', $data);
+                break;
+            }
+            case 'excel':{
+                $params = json_decode($this->input->get('data'));
+                $date_range = explode(' - ', $params->fecha);
+                $input = array(
+                    'local_id' => $params->local_id,
+                    'fecha_ini' => str_replace("/", "-", $date_range[0]),
+                    'fecha_fin' => str_replace("/", "-", $date_range[1]),
+                    'moneda_id' => $params->moneda_id
+                );
+                $data['moneda'] = $this->db->get_where('moneda', array('id_moneda' => $input['moneda_id']))->row();
+                $data['ingresos'] = $this->ingreso_model->get_compras($input);
+                $data['ingreso_totales'] = $this->ingreso_model->get_totales_compra($input);
+                $local = $this->db->get_where('local', array('int_local_id' => $input['local_id']))->row();
+                $data['local_nombre'] = !empty($local->local_nombre)? $local->local_nombre: 'TODOS';
+                $data['local_direccion'] = !empty($local->direccion)? $local->direccion: 'TODOS';
+                echo $this->load->view('menu/ingreso/lista_compra_excel', $data, true);
+                break;
+            }
+        }
     }
 
 
