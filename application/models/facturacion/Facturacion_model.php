@@ -101,6 +101,30 @@ class facturacion_model extends CI_Model
         return $facturador;
     }
 
+    function getCdr($id)
+    {
+        $facturador = $this->getFacturador();
+
+        if ($facturador === FALSE) {
+            $this->db->where('id', $id);
+            $this->db->update('facturacion', array(
+                'sunat_codigo' => '-2',
+                'hash_cpe' => null,
+                'nota' => 'Emisor no configurado',
+                'estado' => 0
+            ));
+
+            return FALSE;
+        }
+
+        $comprobante = $this->db->get_where('facturacion', array('id' => $id))->row();
+
+        return $facturador->getEstadoCDR(array(
+            'TIPO_DOCUMENTO' => $comprobante->documento_tipo,
+            'NUMERO_DOCUMENTO' => $comprobante->documento_numero,
+        ));
+    }
+
     function get_tipo_cambio()
     {
         require_once(APPPATH . 'libraries/TipoCambioSunat/TipoCambioSunat.php');
@@ -133,7 +157,7 @@ class facturacion_model extends CI_Model
         }
 
         $pre_fact = $this->db->get_where('facturacion', array('id' => $id))->row();
-        if($pre_fact->hash_cdr != null){
+        if ($pre_fact->hash_cdr != null) {
             $this->db->where('id', $id);
             $this->db->update('facturacion', array(
                 'estado' => 3
@@ -142,17 +166,22 @@ class facturacion_model extends CI_Model
             return FALSE;
         }
 
-        $this->db->where('id', $id);
-        $this->db->update('facturacion', array(
-            'nota' => 'El comprobante esta enviado',
-            'estado' => 2
-        ));
+        if ($pre_fact->estado == 2) {
+            $response = $this->getCdr($id);
+        } else {
+            $this->db->where('id', $id);
+            $this->db->update('facturacion', array(
+                'nota' => 'El comprobante esta enviado',
+                'estado' => 2
+            ));
 
-        $comprobante = $this->db->get_where('facturacion', array('id' => $id))->row();
+            $comprobante = $this->db->get_where('facturacion', array('id' => $id))->row();
 
-        $response = $facturador->enviarComprobante($comprobante->documento_tipo, array(
-            'NUMERO_DOCUMENTO' => $comprobante->documento_numero
-        ));
+            $response = $facturador->enviarComprobante($comprobante->documento_tipo, array(
+                'NUMERO_DOCUMENTO' => $comprobante->documento_numero
+            ));
+        }
+
 
         $codigo = $response['CODIGO'];
 
