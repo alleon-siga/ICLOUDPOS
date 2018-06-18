@@ -1430,6 +1430,12 @@ $primary_nav = array(
                                     <a class="menulink" href="#cuadre_caja" data-toggle="modal">Corte de Caja</a>
                                 </li>
                             <?php } ?>
+                            <?php if ($this->usuarios_grupos_model->user_has_perm($this->session->userdata('nUsuCodigo'), 'cobraencaja')) { ?>
+
+                                <li>
+                                    <a class="menulink" href="<?= $ruta ?>venta_new/historial/caja" data-toggle="modal">Cobrar en Caja</a>
+                                </li>
+                            <?php } ?>
                         </ul>
                         <!--  <form action="page_ready_search_results.php" class="navbar-form navbar-left" role="search">
                               <div class="form-group">

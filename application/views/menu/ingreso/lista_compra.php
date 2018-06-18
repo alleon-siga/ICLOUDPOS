@@ -18,8 +18,6 @@
         </div>
     </div>
     <div class="table-responsive" id="tabla">
-
-
         <table class="table table-striped dataTable table-bordered tableStyle" id="tablaresultado">
             <thead>
             <tr>
@@ -77,7 +75,14 @@
             </tbody>
         </table>
     </div>
-
+    <div class="row">
+        <div class="col-md-12">
+            <button type="button" id="exportar_excel" title="Exportar Excel" class="btn btn-primary">
+                <i class="fa fa-file-excel-o fa-fw"></i>
+            </button>
+        </div>
+    </div>
+    <br>
     <div class="modal fade" id="ingresomodal" style="width: 85%; overflow: auto;
   margin: auto;" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
          aria-hidden="true">
@@ -111,7 +116,23 @@
     <script type="text/javascript">
         $(document).ready(function () {
             TablesDatatables.init();
+
+            $('#exportar_excel').on('click', function () {
+                exportar_excel();
+            });
         });
+
+        function exportar_excel() {
+            var data = {
+                'local_id': $('#local_id').val(),
+                'estado': $('#estado').val(),
+                'fecha': $('#date_range').val(),
+                'moneda_id': $('#moneda_id').val()
+            };
+
+            var win = window.open('<?= base_url()?>ingresos/lista_compra/excel?data=' + JSON.stringify(data), '_blank');
+            win.focus();
+        }
 
         function verCompra(id) {
 

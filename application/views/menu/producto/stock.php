@@ -84,26 +84,22 @@
                 <label for="unidades_minimas" style="cursor: pointer;">Unidades m&iacute;nimas</label>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-5">
             <div style="padding-top: 30px;"></div>
+            <button id="buscar_stock" class="btn btn-default btn-md">
+                <i class="fa fa-search"></i>
+            </button>
             <a class="btn btn-default" onclick="unidadesycostos();">
                 <i class="fa fa-list-ol"> Unidades y costos</i>
             </a>
             <a class="btn btn-warning" onclick="ver_imagen();">
                 <i class="fa fa-columns "> Ver Imagen</i>
             </a>
-        </div>
-        <div class="col-md-2">
-        <?php if (getProductoSerie() == "SI"): ?>
-            <div style="padding-top: 30px;"></div>
-            <a class="btn btn-default" onclick="ver_serie();">
-                <i class="fa fa-barcode"> Ver Series</i>
-            </a>
-        <?php endif; ?>
-        </div>
-        <div class="col-md-2">
-            <div style="padding-top: 30px;"></div>
-            <input type="button" value="Buscar" id="buscar_stock" class="btn btn-primary">
+            <?php if (getProductoSerie() == "SI"): ?>
+                <a class="btn btn-default" onclick="ver_serie();">
+                    <i class="fa fa-barcode"> Ver Series</i>
+                </a>
+            <?php endif; ?>
         </div>
     </div>
     <br>
