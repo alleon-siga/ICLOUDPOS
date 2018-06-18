@@ -92,16 +92,6 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                     </select>
                 </div>
                 <div class="row">
-                    <label class="control-label">Tipo de Gasto:</label>
-                    <select id="tipo_gasto_id" class="form-control select_chosen" name="tipo_gasto_id">
-                        <option value="-">TODOS</option>
-                        <?php foreach ($tipos_gastos as $gasto): ?>
-                            <option
-                                    value="<?php echo $gasto['id_tipos_gasto'] ?>" <?php if (isset($gastos['tipo_gasto']) and $gastos['tipo_gasto'] == $gasto['id_tipos_gasto']) echo 'selected' ?>><?= $gasto['nombre_tipos_gasto'] ?></option>
-                        <?php endforeach ?>
-                    </select>
-                </div>
-                <div class="row">
                     <label class="control-label">Persona Afectada:</label>
                     <select name="persona_gasto_filter" id="persona_gasto_filter" required="true" class="select_chosen form-control">
                         <option value="1">Proveedor</option>
@@ -134,7 +124,23 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                         <?php endforeach ?>
                     </select>
                 </div>
+                <div class="row">
+                    <label class="control-label">Tipo de Gasto:</label>
+                    <select id="tipo_gasto_id" class="form-control select_chosen" name="tipo_gasto_id">
+                        <option value="-">TODOS</option>
+                        <?php foreach ($tipos_gastos as $gasto): ?>
+                            <option
+                                    value="<?php echo $gasto['id_tipos_gasto'] ?>" <?php if (isset($gastos['tipo_gasto']) and $gastos['tipo_gasto'] == $gasto['id_tipos_gasto']) echo 'selected' ?>><?= $gasto['nombre_tipos_gasto'] ?></option>
+                        <?php endforeach ?>
+                    </select>
+                </div>                
             </div>
+        </div>
+        <div class="col-md-1">
+            <div style="padding-top: 30px;"></div>
+            <button id="btn_buscar" class="btn btn-primary" onclick="agregar();">
+                <i class="fa fa-plus "> Nuevo</i>
+            </button>
         </div>
         <div class="col-md-3">
             <label class="control-label panel-admin-text">Ubicaci&oacute;n:</label>
@@ -158,10 +164,8 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
             <button id="btn_buscar" class="btn btn-default">
                 <i class="fa fa-search"></i>
             </button>
-                        <button id="btn_buscar" class="btn btn-primary" onclick="agregar();">
-                <i class="fa fa-plus "> Nuevo</i>
-            </button>
         </div>
+        <div class="col-md-2"></div>
         <div class="col-md-1">
             <div style="padding-top: 30px;"></div>
             <button type="button" class="btn btn-primary tcharm-trigger form-control">
@@ -264,6 +268,7 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
 
 
         $("#btn_buscar, .btn_buscar").on('click', function () {
+            $("#charm").tcharm('hide');
             get_gastos();
         });
 
