@@ -596,8 +596,6 @@
 
                 if (parseFloat($(this).val() + tecla) > 100 || parseFloat($(this).val() + tecla) < 0)
                     return false;
-
-                return soloDecimal($(this), e);
             });
 
             $("#c_saldo_inicial").on('keydown', function (e) {
@@ -696,14 +694,18 @@
 
 
             if (trigger == 2) {
+
                 var saldo_porciento = isNaN(parseFloat($("#c_saldo_inicial_por").val())) ? 0 : parseFloat($("#c_saldo_inicial_por").val());
                 var saldo_inicial = parseFloat((precio_contado * saldo_porciento) / 100);
                 $("#c_saldo_inicial").val(formatPrice(saldo_inicial));
             }
-            else if (trigger == 1 || trigger == undefined) {
-                var saldo_inicial = isNaN(parseFloat($("#c_saldo_inicial").val())) ? 0 : parseFloat($("#c_saldo_inicial").val());
-                var saldo_porciento = parseFloat((saldo_inicial * 100) / precio_contado);
-                $("#c_saldo_inicial_por").val(parseFloat(saldo_porciento).toFixed(2));
+            else {
+                if (trigger == 1 || trigger == undefined) {
+
+                    var saldo_inicial = isNaN(parseFloat($("#c_saldo_inicial").val())) ? 0 : parseFloat($("#c_saldo_inicial").val());
+                    var saldo_porciento = parseFloat((saldo_inicial * 100) / precio_contado);
+                    $("#c_saldo_inicial_por").val(parseFloat(saldo_porciento).toFixed(0));
+                }
             }
 
             precio_credito = parseFloat((((precio_contado - saldo_inicial) * tasa_interes) / 100) + (precio_contado - saldo_inicial));
@@ -712,7 +714,7 @@
             $("#c_total_deuda").html(formatPrice(precio_credito + saldo_inicial));
             $("#c_total_saldo").html(formatPrice(precio_credito));
 
-            generar_proyeccion(precio_credito);
+            generar_proyeccion(precio_credito, trigger);
 
             if ($('#c_pago_periodo').val() == 6)
                 generar_rangos(parseInt($("#c_numero_cuotas").val()));

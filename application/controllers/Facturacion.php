@@ -33,7 +33,6 @@ class facturacion extends MY_Controller
 
                 $data['facturaciones'] = $this->facturacion_model->get_facturacion($data);
                 $data['emisor'] = $this->facturacion_model->get_emisor();
-
                 echo $this->load->view('menu/facturacion/facturacion_list', $data, true);
                 break;
             }
@@ -67,18 +66,61 @@ class facturacion extends MY_Controller
         echo $this->load->view('menu/facturacion/facturacion_list_detalle', $data, TRUE);
     }
 
-    function emitir_comprobante()
+    function generar_comprobante()
     {
         $id = $this->input->post('id');
 
-        $resp = $this->facturacion_model->emitir($id);
+        $resp = $this->facturacion_model->crearXml($id);
         $data['facturacion'] = $this->db->get_where('facturacion', array('id' => $id))->row();
 
         header('Content-Type: application/json');
         echo json_encode($data);
     }
 
-    function imprimir_ticket($id){
+    function emitir_comprobante()
+    {
+        $id = $this->input->post('id');
+
+        $resp = $this->facturacion_model->emitirXml($id);
+        $data['facturacion'] = $this->db->get_where('facturacion', array('id' => $id))->row();
+
+        header('Content-Type: application/json');
+        echo json_encode($data);
+    }
+
+    function reemitir_comprobante()
+    {
+        $id = $this->input->post('id');
+
+        $resp = $this->facturacion_model->crearXml($id);
+        $resp = $this->facturacion_model->emitirXml($id);
+        $data['facturacion'] = $this->db->get_where('facturacion', array('id' => $id))->row();
+
+        header('Content-Type: application/json');
+        echo json_encode($data);
+    }
+
+    function descargar_xml($id)
+    {
+        $emisor = $this->db->get('facturacion_emisor')->row();
+        $f = $this->db->get_where('facturacion', array('id' => $id))->row();
+        $name = $emisor->ruc . '-' . $f->documento_tipo . '-' . $f->documento_numero . '.XML';
+        header('Content-Description: File Transfer');
+        header('Content-Type: xml');
+        header('Content-Disposition: attachment; filename='. $name);
+        header('Content-Transfer-Encoding: binary');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate');
+        header('Pragma: public');
+        header('Content-Length: '.filesize('./application/libraries/Facturador/files/xmls/'.$emisor->ruc.'/'.$name));
+        ob_clean();
+        flush();
+        readfile('./application/libraries/Facturador/files/xmls/'.$emisor->ruc.'/'.$name)or die('error!');
+
+    }
+
+    function imprimir_ticket($id)
+    {
 
         $data['facturacion'] = $this->facturacion_model->get_facturacion(array('id' => $id));
         $data['emisor'] = $this->facturacion_model->get_emisor();
@@ -127,6 +169,7 @@ class facturacion extends MY_Controller
             'distrito_id' => $this->input->post('distrito'),
             'ubigeo' => $this->input->post('codigo_ubigeo'),
             'moneda' => $this->input->post('moneda'),
+            'env' => 'BETA',
             'user_sol' => $this->input->post('user_sol'),
             'pass_sol' => $this->input->post('pass_sol'),
             'pass_sign' => $this->input->post('pass_sign')
@@ -162,7 +205,7 @@ class facturacion extends MY_Controller
     {
         if (isset($_FILES['certificado']) && $_FILES['certificado']['size'] != 0) {
             $extension = "pfx";
-            $dir = './application/libraries/FacturacionSunat/archivos/certificados/produccion/';
+            $dir = './application/libraries/Facturador/files/certificates/';
             if (!is_dir($dir)) {
                 mkdir($dir, 0755);
             }
@@ -179,15 +222,7 @@ class facturacion extends MY_Controller
             if (!$this->upload->do_upload('certificado')) {
                 echo $this->upload->display_errors();
             } else {
-                $dir_beta = './application/libraries/FacturacionSunat/archivos/certificados/beta/';
-                if (!is_dir($dir_beta)) {
-                    mkdir($dir_beta, 0755);
-                }
 
-                $filename = $ruc . '.' . $extension;
-                if (!copy($dir . $filename, $dir_beta . $filename)) {
-                    echo 'Error en copiar el archivo';
-                }
             }
 
             return $ruc . '.' . $extension;

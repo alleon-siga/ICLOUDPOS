@@ -3046,8 +3046,12 @@ JOIN detalleingreso ON detalleingreso.id_ingreso=ingreso.id_ingreso WHERE detall
         $return = $this->credito_cuotas_abono_model->registrar($idCuota, $montodescontar, $moneda_saldo, $metodo_pago, $idVenta, $anticipado, $numero_ope, $banco, $tipo_metodo, $cuenta_id);
 
         $venta_new = $this->db->get_where('venta', array('venta_id' => $idVenta))->row();
+        $dataresul['venta'] = $venta_new;
         if ($venta_old->numero == null && $venta_new->numero != null) {
-            $dataresul['venta'] = $venta_new;
+            $dataresul['facturacion'] = $this->db->get_where('facturacion', array(
+                'documento_tipo' => sumCod($venta_new->id_documento, 2),
+                'ref_id' => $venta_new->venta_id
+            ))->row();
         }
 
         if ($return == true) {
@@ -3111,7 +3115,7 @@ JOIN detalleingreso ON detalleingreso.id_ingreso=ingreso.id_ingreso WHERE detall
         $params['venta_id'] = $this->input->post('venta_id');
         $params['serie'] = $this->input->post('serie');
         $params['numero'] = $this->input->post('numero');
-        
+
         $data['data'] = $this->venta_model->get_nota_credito($params);
         $this->load->view('menu/ventas/vista_nota_credito', $data);
     }

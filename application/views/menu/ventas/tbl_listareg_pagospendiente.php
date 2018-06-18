@@ -400,13 +400,14 @@
                         delay: 2500,
                         allow_dismiss: true
                     });
-                    if ($('#facturacion_electronica').val() == 1) {
-                        if (data.venta != undefined) {
-                            if (data.venta.facturacion == 1) {
-                                show_msg('success', '<h4>Facturacion Electronica: </h4> ' + data.venta.facturacion_nota);
+
+                    if ($('#facturacion_electronica').val() == 1 && data.venta.venta_status == 'COMPLETADO' && (data.venta.id_documento == 1 || data.venta.id_documento == 3)) {
+                        if (data.facturacion != undefined) {
+                            if (data.facturacion.estado == 1) {
+                                show_msg('success', '<h4>Facturacion Electronica:</h4> ' + data.facturacion.nota);
                             }
                             else {
-                                show_msg('success', '<h4>Facturacion Electronica: </h4> ' + data.venta.facturacion_nota);
+                                show_msg('danger', '<h4>Facturacion Electronica:</h4> ' + data.facturacion.nota);
                             }
                         }
                     }

@@ -1,0 +1,16 @@
+{
+  "name": "toni/facturador",
+  "authors": [
+    {
+      "name": "Antonio Martin",
+      "email": "tonitim13@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Facturador\\": "src/"
+    }
+  },
+  "require": {
+  }
+}

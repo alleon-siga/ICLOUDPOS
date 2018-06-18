@@ -40,8 +40,11 @@
                         <label class="control-label panel-admin-text">Estado:</label>
                         <select id="estado" class="form-control filter-input" name="estado">
                             <option value="">TODOS</option>
-                            <option value="0">PENDIENTES</option>
-                            <option value="1">FACTURADO</option>
+                            <option value="0">NO GENERADOS</option>
+                            <option value="1">GENERADOS</option>
+                            <option value="2">ENVIADOS</option>
+                            <option value="3">ACEPTADOS</option>
+                            <option value="4">RECHAZADOS</option>
                         </select>
 
                     </div>
@@ -58,7 +61,6 @@
                 </div>
             </div>
             <br>
-
 
             <div class="row-fluid">
                 <div class="span12">
@@ -136,7 +138,6 @@
                     var local_id = $("#local_id").val();
                     var estado = $("#estado").val();
                     var fecha = $('#date_range').val();
-
                     $.ajax({
                         url: '<?= base_url()?>facturacion/emision/filter',
                         data: {
@@ -159,7 +160,6 @@
                     });
 
                 }
-
 
 
             </script>

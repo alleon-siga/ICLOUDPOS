@@ -1,0 +1,22 @@
+ERROR - 2018-06-14 19:41:02 --> Probando
+ERROR - 2018-06-14 19:43:22 --> soap-env:Client.2406: Existe mas de un tag sac:AdditionalMonetaryTotal con el mismo ID - Detalle: xxx.xxx.xxx value='ticket: 1528998202313 error: INFO : 2406 (nodo: "sac:AdditionalMonetaryTotal/cbc:ID" valor: "1003")'
+ERROR - 2018-06-14 19:49:00 --> soap-env:Client.2406: Existe mas de un tag sac:AdditionalMonetaryTotal con el mismo ID - Detalle: xxx.xxx.xxx value='ticket: 1528998541001 error: INFO : 2406 (nodo: "sac:AdditionalMonetaryTotal/cbc:ID" valor: "1003")'
+ERROR - 2018-06-14 19:49:08 --> soap-env:Client.2406: Existe mas de un tag sac:AdditionalMonetaryTotal con el mismo ID - Detalle: xxx.xxx.xxx value='ticket: 1528998548648 error: INFO : 2406 (nodo: "sac:AdditionalMonetaryTotal/cbc:ID" valor: "1003")'
+ERROR - 2018-06-14 19:49:56 --> soap-env:Client.2406: Existe mas de un tag sac:AdditionalMonetaryTotal con el mismo ID - Detalle: xxx.xxx.xxx value='ticket: 1528998597002 error: INFO : 2406 (nodo: "sac:AdditionalMonetaryTotal/cbc:ID" valor: "1003")'
+ERROR - 2018-06-14 20:01:29 --> soap-env:Client.2406: Existe mas de un tag sac:AdditionalMonetaryTotal con el mismo ID - Detalle: xxx.xxx.xxx value='ticket: 1528999289490 error: INFO : 2406 (nodo: "sac:AdditionalMonetaryTotal/cbc:ID" valor: "1003")'
+WARNING - 2018-06-14 20:02:30 --> El comprobante 15602744393-01-F001-500 fue emitido pero no recibio respuesta.
+WARNING - 2018-06-14 20:04:07 --> El comprobante 15602744393-01-F001-500 fue emitido pero no recibio respuesta.
+ERROR - 2018-06-14 20:31:24 --> SUNAT FUERA DE SERVICIO
+ERROR - 2018-06-14 20:31:57 --> SUNAT FUERA DE SERVICIO
+ERROR - 2018-06-14 20:32:26 --> SUNAT FUERA DE SERVICIO
+ERROR - 2018-06-14 20:34:24 --> Ha ocurrido un error al firmar el certificado. openssl_pkcs12_read() return FALSE;
+ERROR - 2018-06-14 20:34:25 --> SUNAT FUERA DE SERVICIO
+ERROR - 2018-06-14 20:36:57 --> -1: Archivo no encontrado. E:\xampp\htdocs\Facturador\src\..\files\xmls\15602744393\15602744393-01-F001-500.XMLl
+ERROR - 2018-06-14 20:36:58 --> SUNAT FUERA DE SERVICIO
+ERROR - 2018-06-14 20:43:00 --> -1: Archivo no encontrado. E:\xampp\htdocs\Facturador\src\..\files\xmls\15602744393\15602744393-01-F001-500.XML
+ERROR - 2018-06-14 20:45:05 --> -1: Ha ocurrido un error al firmar el certificado. openssl_pkcs12_read() return FALSE;
+ERROR - 2018-06-14 20:45:06 --> SUNAT FUERA DE SERVICIO
+ERROR - 2018-06-14 23:13:06 --> SUNAT FUERA DE SERVICIO
+ERROR - 2018-06-14 23:14:58 --> SUNAT FUERA DE SERVICIO
+ERROR - 2018-06-14 23:24:39 --> soap-env:Client.0111: No tiene el perfil para enviar comprobantes electronicos - Detalle: Rejected by policy.
+ERROR - 2018-06-14 23:28:06 --> -1: Archivo no encontrado. E:\xampp\htdocs\Facturador\src\..\files\xmls\15602744393\15602744393-03-B001-500.XML
