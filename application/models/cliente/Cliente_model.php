@@ -37,6 +37,7 @@ class cliente_model extends CI_Model
     function get_by($campo, $valor)
     {
         $this->db->join('grupos_cliente', 'grupos_cliente.id_grupos_cliente=cliente.grupo_id');
+        $this->db->where('cliente.cliente_status', '1');
         $this->db->where($campo, $valor);
         //$this->db->join('usuario', 'usuario.nUsuCodigo=cliente.vendedor_a','left');
         $query = $this->db->get('cliente');

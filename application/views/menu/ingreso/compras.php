@@ -158,7 +158,7 @@
         };
 
         $.ajax({
-            url: '<?= base_url()?>ingresos/lista_compra',
+            url: '<?= base_url()?>ingresos/lista_compra/filter',
             data: data,
             type: 'POST',
             success: function (data) {

@@ -1565,10 +1565,9 @@
                         if (retorno != 'producto') {
                             update_producto(data.id, data.nombre, data.impuesto, data.producto_id);
                         }
-
+                        $(".modal-backdrop").remove();
                         $('#productomodal').modal('hide');
                         $("#cargando_modal").modal('hide');
-                        $(".modal-backdrop").remove();
                         if (retorno == 'producto') {
                             $.ajax({
                                 url: ruta + 'producto',
