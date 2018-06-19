@@ -16,7 +16,18 @@ class facturacion extends MY_Controller
 
     function test()
     {
-//        var_dump($this->facturacion_model->emitir(24));
+        $this->db->update('facturacion', array('estado' => 0));
+        $fact = $this->db->get('facturacion')->result();
+        foreach ($fact as $f) {
+            $this->facturacion_model->crearXml($f->id);
+        }
+        $this->db->update('facturacion', array(
+            'estado' => 2,
+            'hash_cdr' => NULL
+        ));
+        foreach ($fact as $f) {
+            $this->facturacion_model->emitirXml($f->id);
+        }
     }
 
     function emision($action = '')
@@ -107,15 +118,15 @@ class facturacion extends MY_Controller
         $name = $emisor->ruc . '-' . $f->documento_tipo . '-' . $f->documento_numero . '.XML';
         header('Content-Description: File Transfer');
         header('Content-Type: xml');
-        header('Content-Disposition: attachment; filename='. $name);
+        header('Content-Disposition: attachment; filename=' . $name);
         header('Content-Transfer-Encoding: binary');
         header('Expires: 0');
         header('Cache-Control: must-revalidate');
         header('Pragma: public');
-        header('Content-Length: '.filesize('./application/libraries/Facturador/files/xmls/'.$emisor->ruc.'/'.$name));
+        header('Content-Length: ' . filesize('./application/libraries/Facturador/files/xmls/' . $emisor->ruc . '/' . $name));
         ob_clean();
         flush();
-        readfile('./application/libraries/Facturador/files/xmls/'.$emisor->ruc.'/'.$name)or die('error!');
+        readfile('./application/libraries/Facturador/files/xmls/' . $emisor->ruc . '/' . $name) or die('error!');
 
     }
 

@@ -1,2 +1,4 @@
 ERROR - 2018-06-16 00:22:55 --> soap-env:Client.0151: El nombre del archivo ZIP es incorrecto - Detalle: xxx.xxx.xxx value='ticket: 1529101376085 error: Validation ZIP Filename error: 20490961195-RA-20180616-4.ZIP'
 ERROR - 2018-06-16 01:22:27 --> -1: Archivo no encontrado. /var/www/html/icloudpos/application/libraries/Facturador/src/../files/xmls/20490961195/20490961195-03-B001-8.XML.XML
+ERROR - 2018-06-16 23:56:25 --> soap-env:Client.2335: El documento electrónico ingresado ha sido alterado - Detalle: Incorrect reference digest value
+ERROR - 2018-06-16 23:58:29 --> soap-env:Client.2335: El documento electrónico ingresado ha sido alterado - Detalle: Incorrect reference digest value

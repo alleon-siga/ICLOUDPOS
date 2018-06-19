@@ -75,6 +75,17 @@ class Validador
                 $cabecera['CLIENTE_NOMBRE'] = '-';
             }
         }
+
+        if (isset($cabecera['NOTA_TIPO_DOCUMENTO'])) {
+            if ($cabecera['NOTA_TIPO_DOCUMENTO'] == \TIPO_COMPROBANTE::$BOLETA) {
+                if ($cabecera['TOTAL_VENTA'] <= 700) {
+                    $cabecera['CLIENTE_NRO_DOCUMENTO'] = '-';
+                    $cabecera['CLIENTE_TIPO_IDENTIDAD'] = '-';
+                    $cabecera['CLIENTE_NOMBRE'] = '-';
+                }
+            }
+        }
+
         return $cabecera;
     }
 
@@ -203,14 +214,16 @@ class Validador
                     return $resp;
                 }
 
-                if (!self::identificacion($cabecera['CLIENTE_TIPO_IDENTIDAD'], $cabecera['CLIENTE_NRO_DOCUMENTO'])) {
-                    $resp['MENSAJE'] = 'Identificacion del cliente no valida';
-                    return $resp;
-                }
+                if ($cabecera['TOTAL_VENTA'] > 700 && $cabecera['NOTA_TIPO_DOCUMENTO'] == \TIPO_COMPROBANTE::$BOLETA) {
+                    if (!self::identificacion($cabecera['CLIENTE_TIPO_IDENTIDAD'], $cabecera['CLIENTE_NRO_DOCUMENTO'])) {
+                        $resp['MENSAJE'] = 'Identificacion del cliente no valida';
+                        return $resp;
+                    }
 
-                if (!isset($cabecera['CLIENTE_NOMBRE']) && $cabecera['CLIENTE_NOMBRE'] = '') {
-                    $resp['MENSAJE'] = 'Nombre del cliente es requerido';
-                    return $resp;
+                    if (!isset($cabecera['CLIENTE_NOMBRE']) && $cabecera['CLIENTE_NOMBRE'] = '') {
+                        $resp['MENSAJE'] = 'Nombre del cliente es requerido';
+                        return $resp;
+                    }
                 }
 
                 if (!isset($cabecera['TOTAL_VENTA']) && $cabecera['TOTAL_VENTA'] = '' && $cabecera['TOTAL_VENTA'] > 0) {

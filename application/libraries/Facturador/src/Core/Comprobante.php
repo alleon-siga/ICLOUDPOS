@@ -1,7 +1,7 @@
 <?php
 
 namespace Facturador\Core;
-
+require __DIR__ . '/../../lib/phpqrcode/qrlib.php';
 use Facturador\Emisor;
 
 abstract class Comprobante
@@ -36,7 +36,6 @@ abstract class Comprobante
 
     protected function generateQr($cabecera)
     {
-        require __DIR__ . '/../../lib/phpqrcode/qrlib.php';
         $ruta = $this->emisor->getPathQr() . DIRECTORY_SEPARATOR . $this->emisor->get('NRO_DOCUMENTO');
         if (!is_dir($ruta)) {
             mkdir($ruta);

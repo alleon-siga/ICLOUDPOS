@@ -67,13 +67,13 @@
                     <?php $imprimir_doc = ($venta->condicion_id == 1 || $venta->condicion_id == 2); ?>
                     <?php if (($venta->factura_impresa == 0) && ($venta->documento_id == 1 || $venta->documento_id == 3) && $imprimir_doc): ?>
                         <button class="btn btn-primary btn_venta_imprimir_doc imprimir"
-                                data-nombre="factura"
+                                data-nombre="<?= $venta->documento_id == 1 ? 'factura' : 'boleta' ?>"
                                 type="button"><i
                                     class="fa fa-print"></i> <?= $venta->documento_id == 1 ? 'Factura' : 'Boleta' ?>
                         </button>
                     <?php elseif (($venta->factura_impresa != 0) && ($venta->documento_id == 1 || $venta->documento_id == 3) && $imprimir_doc): ?>
                         <button class="btn btn-warning btn_venta_imprimir_doc imprimir"
-                                data-nombre="factura"
+                                data-nombre="<?= $venta->documento_id == 1 ? 'factura' : 'boleta' ?>"
                                 type="button"><i
                                     class="fa fa-print"></i> <?= $venta->documento_id == 1 ? 'Factura' : 'Boleta' ?>
                         </button>
@@ -460,13 +460,13 @@
 
                     <?php if (($venta->factura_impresa == 0) && ($venta->documento_id == 1 || $venta->documento_id == 3) && $imprimir_doc): ?>
                         <button class="btn btn-primary btn_venta_imprimir_doc imprimir"
-                                data-nombre="factura"
+                                data-nombre="<?= $venta->documento_id == 1 ? 'factura' : 'boleta' ?>"
                                 type="button"><i
                                     class="fa fa-print"></i> <?= $venta->documento_id == 1 ? 'Factura' : 'Boleta' ?>
                         </button>
                     <?php elseif (($venta->factura_impresa != 0) && ($venta->documento_id == 1 || $venta->documento_id == 3) && $imprimir_doc): ?>
                         <button class="btn btn-warning btn_venta_imprimir_doc imprimir"
-                                data-nombre="factura"
+                                data-nombre="<?= $venta->documento_id == 1 ? 'factura' : 'boleta' ?>"
                                 type="button"><i
                                     class="fa fa-print"></i> <?= $venta->documento_id == 1 ? 'Factura' : 'Boleta' ?>
                         </button>

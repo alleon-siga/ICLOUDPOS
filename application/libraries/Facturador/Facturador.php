@@ -71,4 +71,24 @@ class Facturador
         return $baja->enviarBaja($cabecera, $detalles);
     }
 
+    public function getEstadoCDR($data)
+    {
+        $emisor = new Emisor($this->emisor_data);
+        $r_xml = $emisor->getPathXml() . DIRECTORY_SEPARATOR . $emisor->get('NRO_DOCUMENTO') . DIRECTORY_SEPARATOR .
+            'R-' . $emisor->get('NRO_DOCUMENTO') . '-' . $data['TIPO_DOCUMENTO'] . '-' . $data['NUMERO_DOCUMENTO'] . '.XML';
+        if (file_exists($r_xml)) {
+            $xml = new DOMDocument();
+            $xml->load($r_xml);
+            return array(
+                'CODIGO' => $xml->getElementsByTagName('ResponseCode')->item(0)->nodeValue,
+                'MENSAJE' => $xml->getElementsByTagName('Description')->item(0)->nodeValue,
+                'HASH_CDR' => $xml->getElementsByTagName('DigestValue')->item(0)->nodeValue,
+                'FROM' => 'FILE'
+            );
+        }
+        $response = $emisor->getStatusCdr($data);
+        $response['FROM'] = 'SUNAT';
+        return $response;
+    }
+
 }

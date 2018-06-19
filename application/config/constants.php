@@ -60,12 +60,7 @@ define('IMPUESTO', 18);
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */
 
-/* ********************************************
-TIPO DE PRICESO DE LA FACTURACION ELECTRONICA
-1 => PRODUCCION
-3 => BETA
-***********************************************/
-define('FACTURACION_PROCESO', 3);
+/* ******** CONSTANTES DE FACTURACION ELECTRONICA ****************/
 
 define('OP_GRAVABLE', 1);
 define('OP_EXONERADA', 2);
