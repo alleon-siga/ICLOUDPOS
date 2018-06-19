@@ -1020,7 +1020,7 @@ class venta_new_model extends CI_Model
             ))->row();
 
             if ($facturacion != null) {
-                if ($facturacion->estado != 0) {
+                if ($facturacion->estado == 3 || $facturacion->estado == 2) {
                     $resp = $this->facturacion_model->anularVenta($venta_id, $serie . '-' . $numero, $motivo);
                 } else {
                     $this->db->where('id', $facturacion->id);
@@ -1209,7 +1209,7 @@ class venta_new_model extends CI_Model
             ))->row();
 
             if ($facturacion != null) {
-                if ($facturacion->estado != 0) {
+                if ($facturacion->estado == 3 || $facturacion->estado == 2) {
                     $resp = $this->facturacion_model->devolverVenta($venta_id, $devoluciones, $serie . '-' . $numero, $motivo);
                 } else {
                     $this->db->where('id', $facturacion->id);

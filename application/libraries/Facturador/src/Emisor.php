@@ -67,8 +67,8 @@ class Emisor
 
             if (file_exists($this->path_cert . DIRECTORY_SEPARATOR . $this->get('NRO_DOCUMENTO') . '.pfx'))
                 $pfx = file_get_contents($this->path_cert . DIRECTORY_SEPARATOR . $this->get('NRO_DOCUMENTO') . '.pfx');
-            else{
-                Logger::write('error', '-1: Archivo no encontrado. '. $this->path_cert . DIRECTORY_SEPARATOR . $this->get('NRO_DOCUMENTO') . '.pfx');
+            else {
+                Logger::write('error', '-1: Archivo no encontrado. ' . $this->path_cert . DIRECTORY_SEPARATOR . $this->get('NRO_DOCUMENTO') . '.pfx');
                 return array(
                     'CODIGO' => '-1',
                     'MENSAJE' => 'Certificado no encontrado',
@@ -232,7 +232,14 @@ class Emisor
 
                 $zip = new \ZipArchive;
                 if ($zip->open($path_response . '.ZIP') === TRUE) {
-                    $zip->extractTo($this->path_xml . DIRECTORY_SEPARATOR . $this->get('NRO_DOCUMENTO'), 'R-' . $file_name . '.XML');
+                    if ($zip->extractTo($this->path_xml . DIRECTORY_SEPARATOR . $this->get('NRO_DOCUMENTO'), 'R-' . $file_name . '.XML') == FALSE) {
+                        if ($zip->extractTo($this->path_xml . DIRECTORY_SEPARATOR . $this->get('NRO_DOCUMENTO'), 'R-' . $file_name . '.xml') == TRUE) {
+                            rename(
+                                $this->path_xml . DIRECTORY_SEPARATOR . $this->get('NRO_DOCUMENTO') . DIRECTORY_SEPARATOR . 'R-' . $file_name . '.xml',
+                                $this->path_xml . DIRECTORY_SEPARATOR . $this->get('NRO_DOCUMENTO') . DIRECTORY_SEPARATOR . 'R-' . $file_name . '.XML'
+                            );
+                        }
+                    }
                     $zip->close();
                 }
 
@@ -305,32 +312,208 @@ class Emisor
 
     }
 
-    public function getPathXml()
+    /*
+     * $data = array(
+     *  'TIPO_DOCUMENTO'=>'01',
+     *  'NUMERO_DOCUMENTO'=>'F001-25'
+     * )
+     * */
+    public function getStatusCdr($data)
+    {
+        $file_name = $this->get('NRO_DOCUMENTO') . '-' . $data['TIPO_DOCUMENTO'] . '-' . $data['NUMERO_DOCUMENTO'];
+        $file = $this->path_xml . DIRECTORY_SEPARATOR . $this->get('NRO_DOCUMENTO') . DIRECTORY_SEPARATOR . $file_name;
+
+        $xml = new \DOMDocument("1.0", "ISO-8859-1");
+        $root = $xml->createElement("soapenv:Envelope");
+        $root->setAttribute("xmlns:soapenv", "http://schemas.xmlsoap.org/soap/envelope/");
+        $root->setAttribute("xmlns:SOAP-ENV", "http://schemas.xmlsoap.org/soap/envelope/");
+        $root->setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+        $root->setAttribute("xmlns:xsd", "http://www.w3.org/2001/XMLSchema");
+        $root->setAttribute("xmlns:wsse", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd");
+        $xml->appendChild($root);
+
+        //Header
+        $header = $xml->createElement('SOAP-ENV:Header');
+        $header->setAttribute('xmlns:soapenv', "http://schemas.xmlsoap.org/soap/envelope");
+
+        $user_token = $header->appendChild($xml->createElement('wsse:Security'))
+            ->appendChild($xml->createElement('wsse:UsernameToken'));
+
+        $user_token->appendChild(
+            $xml->createElement('wsse:Username', $this->get('NRO_DOCUMENTO') . $this->get('SOL_USER')));
+        $user_token->appendChild(
+            $xml->createElement('wsse:Password', $this->get('SOL_PASS')));
+
+        $root->appendChild($header);
+
+        //Body
+        $body = $xml->createElement('SOAP-ENV:Body');
+
+        $numero = explode('-', $data['NUMERO_DOCUMENTO']);
+        $content = $body->appendChild($xml->createElement('m:getStatusCdr'));
+        $content->setAttribute('xmlns:m', 'http://service.sunat.gob.pe');
+        $content->appendChild($xml->createElement('rucComprobante', $this->get('NRO_DOCUMENTO')));
+        $content->appendChild($xml->createElement('tipoComprobante', $data['TIPO_DOCUMENTO']));
+        $content->appendChild($xml->createElement('serieComprobante', $numero[0]));
+        $content->appendChild($xml->createElement('numeroComprobante', $numero[1]));
+
+        $root->appendChild($body);
+
+        $xml_post_string = $xml->saveXML();
+
+        $headers = array(
+            "Content-type: text/xml;charset=\"utf-8\"",
+            "Accept: text/xml",
+            "Cache-Control: no-cache",
+            "Pragma: no-cache",
+            "SOAPAction: ",
+            "Content-length: " . strlen($xml_post_string),
+        );
+
+
+        $soap_url = Config::get('soap_url_cdr');
+        // PHP cURL  for https connection with auth
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
+        curl_setopt($ch, CURLOPT_URL, $soap_url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $xml_post_string); // the SOAP request
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        // converting
+        $response = curl_exec($ch);
+        $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+        curl_close($ch);
+
+        if ($httpcode == 200) {
+            $doc = new \DOMDocument();
+            $doc->loadXML($response);
+
+            if (isset($doc->getElementsByTagName('content')->item(0)->nodeValue)) {
+                $xmlCDR = $doc->getElementsByTagName('content')->item(0)->nodeValue;
+
+
+                $path_response = $this->path_xml . DIRECTORY_SEPARATOR . $this->get('NRO_DOCUMENTO') . DIRECTORY_SEPARATOR . 'R-' . $file_name;
+                file_put_contents($path_response . '.ZIP', base64_decode($xmlCDR));
+
+                $zip = new \ZipArchive;
+                if ($zip->open($path_response . '.ZIP') === TRUE) {
+
+                    if ($zip->extractTo($this->path_xml . DIRECTORY_SEPARATOR . $this->get('NRO_DOCUMENTO'), 'R-' . $file_name . '.XML') == FALSE) {
+                        if ($zip->extractTo($this->path_xml . DIRECTORY_SEPARATOR . $this->get('NRO_DOCUMENTO'), 'R-' . $file_name . '.xml') == TRUE) {
+                            rename(
+                                $this->path_xml . DIRECTORY_SEPARATOR . $this->get('NRO_DOCUMENTO') . DIRECTORY_SEPARATOR . 'R-' . $file_name . '.xml',
+                                $this->path_xml . DIRECTORY_SEPARATOR . $this->get('NRO_DOCUMENTO') . DIRECTORY_SEPARATOR . 'R-' . $file_name . '.XML'
+                            );
+                        }
+                    }
+                    $zip->close();
+                }
+
+                unlink($path_response . '.ZIP');
+
+                $response_xml = $this->path_xml . DIRECTORY_SEPARATOR . $this->get('NRO_DOCUMENTO') . DIRECTORY_SEPARATOR . 'R-' . $file_name . '.XML';
+                if (file_exists($response_xml)) {
+                    $doc_cdr = new \DOMDocument();
+                    $doc_cdr->load($response_xml);
+
+//                    header('Content-Type: text/xml');
+//                    print $doc_cdr->saveXML();
+
+                    return array(
+                        'CODIGO' => $doc_cdr->getElementsByTagName('ResponseCode')->item(0)->nodeValue,
+                        'MENSAJE' => $doc_cdr->getElementsByTagName('Description')->item(0)->nodeValue,
+                        'HASH_CDR' => $doc_cdr->getElementsByTagName('DigestValue')->item(0)->nodeValue,
+                    );
+                } else {
+                    Logger::write('warning', '9999: El comprobante ' . $file_name . ' fue emitido pero no recibio respuesta.');
+                    return array(
+                        'CODIGO' => '9999',
+                        'MENSAJE' => 'El comprobante ' . $file_name . ' fue emitido pero no recibio respuesta.',
+                        'HASH_CDR' => NULL,
+                    );
+                }
+            } else {
+                if (isset($doc->getElementsByTagName('faultcode')->item(0)->nodeValue)) {
+                    $sunat_codigo = $doc->getElementsByTagName('faultcode')->item(0)->nodeValue;
+                    $error = $doc->getElementsByTagName('faultstring')->item(0)->nodeValue;
+                    Logger::write('error', $sunat_codigo . ': ' . $error);
+                    return array(
+                        'CODIGO' => $sunat_codigo,
+                        'MENSAJE' => $error,
+                        'HASH_CDR' => NULL,
+                    );
+                } else {
+                    Logger::write('error', '-3: SUNAT FUERA DE SERVICIO');
+                    return array(
+                        'CODIGO' => '-3',
+                        'MENSAJE' => 'SUNAT FUERA DE SERVICIO',
+                        'HASH_CDR' => NULL,
+                    );
+                }
+
+            }
+        } else {
+            $doc = new \DOMDocument();
+            @$doc->loadXML($response);
+            if (isset($doc->getElementsByTagName('faultcode')->item(0)->nodeValue)) {
+
+                $sunat_codigo = $doc->getElementsByTagName('faultcode')->item(0)->nodeValue;
+                $error = $doc->getElementsByTagName('faultstring')->item(0)->nodeValue;
+                Logger::write('error', $sunat_codigo . ': ' . $error);
+                return array(
+                    'CODIGO' => $sunat_codigo,
+                    'MENSAJE' => $error,
+                    'HASH_CDR' => NULL,
+                );
+            } else {
+                Logger::write('error', '-3: SUNAT FUERA DE SERVICIO');
+                return array(
+                    'CODIGO' => '-3',
+                    'MENSAJE' => 'SUNAT FUERA DE SERVICIO',
+                    'HASH_CDR' => NULL,
+                );
+            }
+
+        }
+    }
+
+    public
+    function getPathXml()
     {
         return $this->path_xml;
     }
 
-    public function getPathCert()
+    public
+    function getPathCert()
     {
         return $this->path_cert;
     }
 
-    public function getPathQr()
+    public
+    function getPathQr()
     {
         return $this->path_qr;
     }
 
-    public function getData()
+    public
+    function getData()
     {
         return $this->data;
     }
 
-    public function get($key)
+    public
+    function get($key)
     {
         return isset($this->data[$key]) ? $this->data[$key] : null;
     }
 
-    public function set($key, $value)
+    public
+    function set($key, $value)
     {
         $this->data[$key] = $value;
     }

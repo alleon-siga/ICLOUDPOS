@@ -51,8 +51,8 @@
                             ?></td>
                         <td><?= $f->documento_numero ?>
                         </td>
-                        <td><?= $f->cliente_nombre ?></td>
-                        <td>
+                        <td style="white-space: normal;"><?= $f->cliente_nombre ?></td>
+                        <td style="white-space: nowrap;">
 
                             <?php
                             $estado = '';
@@ -80,7 +80,7 @@
                                     data-toggle="popover"
                                     class="label <?= $estado_class ?>"
                                     data-placement="top"
-                                    style="font-size: 1em; padding: 2px; cursor: pointer; white-space: normal;">
+                                    style="font-size: 1em; padding: 2px; cursor: pointer; white-space: nowrap;">
                                 <?= $estado ?>
                             </div>
                         </td>
@@ -114,7 +114,7 @@
                             <?php endif; ?>
 
                             <?php if ($f->estado == 3): ?>
-                                <a class="btn btn-sm btn-default" data-toggle="tooltip" style="margin-right: 5px;"
+                                <a class="btn btn-sm btn-info" data-toggle="tooltip" style="margin-right: 5px;"
                                    title="Descargar comprobante XML" data-original-title="Descargar comprobante XML"
                                    href="#"
                                    onclick="descargar('<?= $f->id ?>');">
@@ -124,12 +124,7 @@
 
 
                             <?php if ($f->estado == 4): ?>
-                                <a class="btn btn-sm btn-danger" data-toggle="tooltip" style="margin-right: 5px;"
-                                   title="Reintentar envio" data-original-title="Reintentar envio"
-                                   href="#"
-                                   onclick="reemitir('<?= $f->id ?>');">
-                                    <i class="fa fa-refresh"></i>
-                                </a>
+
                             <?php endif; ?>
 
                         </td>

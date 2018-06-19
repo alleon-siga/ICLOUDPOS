@@ -33,9 +33,6 @@
                     </div>
 
 
-                    <div class="col-md-1">
-
-                    </div>
                     <div class="col-md-3">
                         <label class="control-label panel-admin-text">Estado:</label>
                         <select id="estado" class="form-control filter-input" name="estado">
@@ -49,12 +46,18 @@
 
                     </div>
 
-                    <div class="col-md-1"></div>
 
-                    <div class="col-md-2">
+                    <div class="col-md-1">
                         <label class="control-label panel-admin-text" style="color: #fff;">.</label><br>
                         <button id="btn_buscar" class="btn btn-default">
-                            <i class="fa fa-search"></i>
+                            <i class="fa fa-search"></i> Buscar
+                        </button>
+                    </div>
+
+                    <div class="col-md-2 text-right">
+                        <label class="control-label panel-admin-text" style="color: #fff;">.</label><br>
+                        <button type="button" class="btn btn-info" onclick="$('#leyenda_modal').modal('show')">
+                            <i class="fa fa-info"></i> Leyenda
                         </button>
                     </div>
 
@@ -74,6 +77,168 @@
             <div class="row" id="loading" style="display: none;">
                 <div class="col-md-12 text-center">
                     <div class="loading-icon"></div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="leyenda_modal" tabindex="-1" role="dialog"
+                 aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false"
+                 aria-hidden="true">
+                <div class="modal-dialog" style="width: 60%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>Leyenda</h3>
+                        </div>
+                        <div class="modal-body">
+                            <h3>Estados del Comprobante</h3>
+                            <table class="table" cellpadding="15">
+                                <tr>
+                                    <th>Estado</th>
+                                    <th style="width: 50%;">Descripci&oacute;n</th>
+                                    <th style="width: 35%;">Acciones a Realizar</th>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div
+                                                class="label label-warning"
+                                                data-placement="top"
+                                                style="font-size: 1em; padding: 2px; cursor: pointer; white-space: nowrap;">
+                                            NO GENERADO
+                                        </div>
+                                    </td>
+                                    <td>
+                                        En este estado el comprobante electr&oacute;nico no ha sido generado correctamente.
+                                        Consultar en detalles
+                                        <span class="btn btn-xs btn-primary">
+                                            <i class="fa fa-list"></i>
+                                        </span>
+                                        para mas informaci&oacute;n acerca del error causado.
+                                    </td>
+                                    <td>
+                                        <span class="btn btn-xs btn-warning">
+                                            <i class="fa fa-refresh"></i>
+                                        </span> <strong>Actualizar estado.</strong>
+                                        Esta acci&oacute;n intentar&aacute; volver a generar el comprobante
+                                        una vez halla sido corregido el error de validaci&oacute;n.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div
+                                                class="label label-primary"
+                                                data-placement="top"
+                                                style="font-size: 1em; padding: 2px; cursor: pointer; white-space: nowrap;">
+                                            GENERADO
+                                        </div>
+                                    </td>
+                                    <td>
+                                        En este estado el comprobante electr&oacute;nico ha sido generado correctamente
+                                        y firmado con su certificado digital.
+                                        Ya puede imprimir en formato A4
+                                        <span class="btn btn-xs btn-primary">
+                                            <i class="fa fa-file-pdf-o"></i>
+                                        </span> o formato ticket
+                                        <span class="btn btn-xs btn-primary">
+                                            <i class="fa fa-print"></i>
+                                        </span>.
+                                    </td>
+                                    <td>
+                                        <span class="btn btn-xs btn-default">
+                                            <i class="fa fa-mail-forward"></i>
+                                        </span> <strong>Emitir comprobante a SUNAT.</strong> Esta acci&oacute;n enviara su comprobante
+                                        a SUNAT para ser declarado. Posteriormente recibira su aceptaci&oacute;n o rechazo del mismo.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div
+                                                class="label label-warning"
+                                                data-placement="top"
+                                                style="font-size: 1em; padding: 2px; cursor: pointer; white-space: nowrap;">
+                                            ENVIADO
+                                        </div>
+                                    </td>
+                                    <td>
+                                        Cuando el comprobante electr&oacute;nico se encuentra en estado enviado quiere decir
+                                        que fue emitido pero no recibio una respuesta de aceptaci&oacute;n o rechazo por parte
+                                        de la SUNAT.
+                                        Consultar en detalles
+                                        <span class="btn btn-xs btn-primary">
+                                            <i class="fa fa-list"></i>
+                                        </span>
+                                        para mas informaci&oacute;n acerca del error causado. Las posibles causas de este estado
+                                        puede ser errores de conexi&oacute;n con SUNAT o error de validaci&oacute;n del comprobante.
+                                    </td>
+                                    <td>
+                                        <span class="btn btn-xs btn-warning">
+                                            <i class="fa fa-refresh"></i>
+                                        </span> <strong>Actualizar estado.</strong>
+                                        Esta acci&oacute;n intentar&aacute; volver a enviar el comprobante. Si tras varios
+                                        intentos no ha podido enviar el comprobante y recibir una aceptaci&oacute;n o rechazo
+                                        consulte con el administrador del sistema.
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>
+                                        <div
+                                                class="label label-success"
+                                                data-placement="top"
+                                                style="font-size: 1em; padding: 2px; cursor: pointer; white-space: nowrap;">
+                                            ACEPTADO
+                                        </div>
+                                    </td>
+                                    <td>
+                                        Este estado identifica a un comprobante electr&oacute;nico valido y declarado a SUNAT.
+                                        Tanto el emisor como el adquiriente del servicio o producto podran consultar su comprobante de
+                                        pago a traves de los distintos servicio de consulta que la SUNAT ofrece.
+                                    </td>
+                                    <td>
+                                        <span class="btn btn-xs btn-info">
+                                            <i class="fa fa-download"></i>
+                                        </span> <strong>Descargar comprobante XML.</strong> Aqui podr&aacute; descargar
+                                        el comprobante electr&oacute;nico en su formato digital (XML).
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>
+                                        <div
+                                                class="label label-danger"
+                                                data-placement="top"
+                                                style="font-size: 1em; padding: 2px; cursor: pointer; white-space: nowrap;">
+                                            RECHAZADO
+                                        </div>
+                                    </td>
+                                    <td>
+                                        Este estado identifica a un comprobante electr&oacute;nico rechazado por SUNAT
+                                        y por lo tanto no es un comprobante valido.
+                                        Consultar en detalles
+                                        <span class="btn btn-xs btn-primary">
+                                            <i class="fa fa-list"></i>
+                                        </span>
+                                        para mas informaci&oacute;n acerca del motivo del rechazo.
+                                    </td>
+                                    <td>
+                                        Generar un nuevo comprobante electr&oacute;nico que cumpla con los requerimientos
+                                        tributarios de la SUNAT.
+                                    </td>
+                                </tr>
+                            </table>
+
+                        </div>
+
+                        <div class="modal-footer" align="right">
+                            <div class="row">
+                                <div class="text-right">
+                                    <div class="col-md-12">
+                                        <input type="button" class='btn btn-danger' value="Cerrar"
+                                               data-dismiss="modal">
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
