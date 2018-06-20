@@ -27,7 +27,7 @@
             <th># Venta</th>
             <th class='tip' title="Fecha Venta">Fecha Venta</th>
             <th># Comprobante</th>
-            <th>Cliente</th>
+            <th width="30%">Cliente</th>
             <th class='tip' title="Monto Credito Solicitado">Importe Venta</th>
             <th class='tip' title="Monto Cancelado">Importe Abonado</th>
             <th class='tip' title="Monto Cancelado">Pendiente de pago</th>
@@ -37,7 +37,7 @@
             <?php if ($local == "TODOS") { ?>
                 <th>Local</th>
             <?php } ?>
-            <th>Accion</th>
+            <th width="30%">Accion</th>
         </tr>
         </thead>
         <tbody>
@@ -64,7 +64,7 @@
                             echo '<span style="color: #0000FF">NO FACTURADO</span>';
                         ?>
                     </td>
-                    <td><?php echo $v->Cliente; ?></td>
+                    <td style="white-space: normal;"><?php echo $v->Cliente; ?></td>
                     <td style="text-align: right;"><?php echo $v->Simbolo . ' ' . number_format($v->MontoTotal, 2) ?></td>
                     <td style="text-align: right;"><?php echo $v->Simbolo . ' ' . number_format($v->MontoCancelado, 2) ?></td>
                     <td style="text-align: right;"><?php echo $v->Simbolo . ' ' . number_format($v->MontoTotal - $v->MontoCancelado, 2) ?></td>
@@ -73,7 +73,7 @@
                     <?php if ($local == "TODOS") { ?>
                         <td style="text-align: center;"><?php echo $v->local; ?></td>
                     <?php } ?>
-                    <td class='actions_big'>
+                    <td class='actions_big' style="white-space: nowrap;">
                         <div class="btn-group">
                             <a class='btn btn-xs btn-default tip' title="Ver Venta"
                                onclick="visualizar(<?= $v->Venta_id; ?>)"><i

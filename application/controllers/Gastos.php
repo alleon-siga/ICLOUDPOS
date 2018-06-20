@@ -15,6 +15,8 @@ class gastos extends MY_Controller
             $this->load->model('proveedor/proveedor_model');
             $this->load->model('impuesto/impuestos_model');
             $this->load->model('condicionespago/condiciones_pago_model');
+            $this->load->model('ingreso/ingreso_model');
+            $this->load->model('documentos/documentos_model');
         } else {
             redirect(base_url(), 'refresh');
         }
@@ -37,8 +39,6 @@ class gastos extends MY_Controller
         $data["proveedores"] = $this->proveedor_model->select_all_proveedor();
         $data["usuarios"] = $this->db->get_where('usuario', array('activo' => 1))->result();
         $data['monedas'] = $this->db->get_where('moneda', array('status_moneda' => 1))->result();
-
-
         $dataCuerpo['cuerpo'] = $this->load->view('menu/gastos/gastos', $data, true);
 
         if ($this->input->is_ajax_request()) {
@@ -104,6 +104,7 @@ class gastos extends MY_Controller
         $data["proveedores"] = $this->proveedor_model->select_all_proveedor();
         $data["usuarios"] = $this->db->get_where('usuario', array('activo' => 1))->result();
         $data["documentos"] = $this->db->get_where('documentos', array('gastos' => 1))->result();
+        $data['dialog_gasto_credito'] = $this->load->view('menu/gastos/dialog_gasto_credito', array(), true);
         $data['cuentas'] = $this->db->select('caja_desglose.*, caja.local_id, caja.moneda_id, moneda.nombre AS moneda_nombre, moneda.simbolo')
             ->from('caja_desglose')
             ->join('caja', 'caja.id = caja_desglose.caja_id')
@@ -119,7 +120,6 @@ class gastos extends MY_Controller
 
     function guardar()
     {
-
         $id = $this->input->post('gastos_id');
 
         $persona_gasto = $this->input->post('persona_gasto');
@@ -130,6 +130,9 @@ class gastos extends MY_Controller
             $proveedor = NULL;
             $usuario = $this->input->post('usuario');
         }
+
+        $cuenta = $this->db->join('caja', 'caja.id = caja_desglose.caja_id')
+            ->get_where('caja_desglose', array('caja_desglose.id' => $this->input->post('cuenta_id')))->row();
 
         $gastos = array(
             'id_gastos' => $id,
@@ -150,7 +153,9 @@ class gastos extends MY_Controller
             'numero' => $this->input->post('doc_numero'),
             'id_impuesto' => $this->input->post('id_impuesto'),
             'subtotal' => $this->input->post('subtotal'),
-            'impuesto' => $this->input->post('impuesto')
+            'impuesto' => $this->input->post('impuesto'),
+            'moneda_id' => $cuenta->moneda_id,
+            'tipo_pago' => $this->input->post('tipo_pago')
         );
         
         $detalle = array();
@@ -166,6 +171,53 @@ class gastos extends MY_Controller
                     'total' => $this->input->post('txtTot')[$x]
                 );
             }
+        }
+
+        //Cuando es al credito
+        if($this->input->post('tipo_pago')=='2'){
+            if($this->input->post('persona_gasto')=='1'){ //Proveedor
+                $cboProveedor = $this->input->post('proveedor', true);
+            }else{ //Trabajador
+                $cboProveedor = $this->input->post('usuario', true);
+            }
+
+            if($this->input->post('gravable')=='0'){ //no
+                $tipo_impuesto = '3';
+            }else{ //si
+                $tipo_impuesto = '1';
+            }
+            $doc = $this->documentos_model->get_by('id_doc', $this->input->post('cboDocumento', true));
+            
+            $comp_cab_pie = array(
+                'fecReg' => date("Y-m-d H:i:s"),
+                'fecEmision' => date('Y-m-d H:i:s', strtotime($this->input->post('fecha', true))),
+                'doc_serie' => $this->input->post('doc_serie', true),
+                'doc_numero' => $this->input->post('doc_numero', true),
+                'cboTipDoc' => $doc->des_doc,
+                'cboProveedor' => $cboProveedor,
+                'subTotal' => $this->input->post('subtotal', true),
+                'montoigv' => $this->input->post('impuesto', true),
+                'totApagar' => $this->input->post('total', true),
+                'tipo_ingreso' => 'GASTO',
+                'pago' => 'CREDITO',
+                'local_id' => $this->input->post('filter_local_id', true),
+                'ingreso_observacion' => $this->input->post('descripcion', true),
+                'id_moneda' => $cuenta->moneda_id,
+                'tasa_cambio' => NULL,
+                'status' => 'COMPLETADO',
+                'facturar' => '0',
+                'tipo_impuesto' => $tipo_impuesto
+            );
+            $credito['c_inicial'] = $this->input->post('c_saldo_inicial') != '' ? $this->input->post('c_saldo_inicial') : 0;
+            $credito['c_precio_contado'] = $this->input->post('c_precio_contado');
+            $credito['c_precio_credito'] = $this->input->post('c_precio_credito');
+            $credito['c_tasa_interes'] = $this->input->post('c_tasa_interes');
+            $credito['c_numero_cuotas'] = $this->input->post('c_numero_cuotas');
+            $credito['c_fecha_giro'] = $this->input->post('c_fecha_giro');
+            $credito['c_periodo_gracia'] = $this->input->post('c_periodo_gracia');
+            $cuotas = json_decode($this->input->post('cuotas', true));
+
+            $resultado = $this->ingreso_model->insertar_compra($comp_cab_pie, null, $credito, $cuotas);            
         }
 
         if (empty($id)) {

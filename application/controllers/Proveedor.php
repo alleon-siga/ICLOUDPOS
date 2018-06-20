@@ -17,24 +17,47 @@ class proveedor extends MY_Controller
 
 
     /** carga cuando listas los proveedores*/
-    function index()
+    function index($action = '')
     {
-
         if ($this->session->flashdata('success') != FALSE) {
             $data ['success'] = $this->session->flashdata('success');
         }
         if ($this->session->flashdata('error') != FALSE) {
             $data ['error'] = $this->session->flashdata('error');
         }
+        $local_id = $this->session->userdata('id_local');
+        switch ($action) {
+            case 'pdf': {
+                $data['lists'] = $this->proveedor_model->get_all();
+                $local = $this->db->get_where('local', array('int_local_id' => $local_id))->row();
+                $data['local_nombre'] = $local->local_nombre;
+                $data['local_direccion'] = $local->direccion;
+                $this->load->library('mpdf53/mpdf');
+                $mpdf = new mPDF('utf-8', 'A4', 0, '', 5, 5, 5, 5, 5, 5);
+                $html = $this->load->view('menu/proveedor/proveedor_list_pdf', $data, true);
+                $mpdf->WriteHTML($html);
+                $mpdf->Output();
+                break;
+            }
+            case 'excel': {
+                $local = $this->db->get_where('local', array('int_local_id' => $local_id))->row();
+                $data['local_nombre'] = $local->local_nombre;
+                $data['local_direccion'] = $local->direccion;
+                $data['lists'] = $this->proveedor_model->get_all();
+                echo $this->load->view('menu/proveedor/proveedor_list_excel', $data, true);
+                break;
+            }
+            default: {
+                $data['proveedores'] = $this->proveedor_model->get_all();
+                $dataCuerpo['cuerpo'] = $this->load->view('menu/proveedor/proveedor', $data, true);
 
-        $data['proveedores'] = $this->proveedor_model->get_all();
-        $dataCuerpo['cuerpo'] = $this->load->view('menu/proveedor/proveedor', $data, true);
-
-
-        if ($this->input->is_ajax_request()) {
-            echo $dataCuerpo['cuerpo'];
-        }else{
-            $this->load->view('menu/template', $dataCuerpo);
+                if ($this->input->is_ajax_request()) {
+                    echo $dataCuerpo['cuerpo'];
+                }else{
+                    $this->load->view('menu/template', $dataCuerpo);
+                }
+                break;
+            }
         }
     }
 
