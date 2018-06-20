@@ -8,23 +8,22 @@
     </div>
 </div>
 <div class="table-responsive">
-    <table class="table table-striped dataTable table-bordered" id="example">
+    <table class="table table-striped dataTable table-bordered tableStyle" id="example">
         <thead>
         <tr>
 
             <th>ID</th>
             <th>Local</th>
             <th>Fecha</th>
-            <th>Tipo de Gasto</th>
-            <th>Persona Afectada</th>
-            <th>Descripci&oacute;n</th>
+            <th width="10%">Tipo de Gasto</th>
+            <th width="30%">Persona Afectada</th>
+            <th width="30%">Descripci&oacute;n</th>
             <th>Total</th>
-            <th>Usuario</th>
+            <th width="10%">Usuario</th>
             <th>Fecha Registro</th>
+            <th>Condici&oacute;n</th>
             <th>Estado</th>
-
-            <th class="desktop">Acciones</th>
-
+            <th width="20%" class="desktop">Acciones</th>
         </tr>
         </thead>
         <tbody>
@@ -39,15 +38,15 @@
                     <td>
                         <span style="display: none;"><?= date("YmdHis", strtotime($gastos['fecha'])) ?></span><?= date("d/m/Y", strtotime($gastos['fecha'])) ?>
                     </td>
-                    <td><?= $gastos['nombre_tipos_gasto'] ?></td>
-                    <td><?= $gastos['proveedor_id'] != NULL ? $gastos['proveedor_nombre'] : $gastos['trabajador'] ?></td>
-                    <td><?= $gastos['descripcion'] ?></td>
+                    <td style="white-space: normal;"><?= $gastos['nombre_tipos_gasto'] ?></td>
+                    <td style="white-space: normal;"><?= $gastos['proveedor_id'] != NULL ? $gastos['proveedor_nombre'] : $gastos['trabajador'] ?></td>
+                    <td style="white-space: normal;"><?= $gastos['descripcion'] ?></td>
                     <td><?= $gastos['simbolo'] . ' ' . number_format($gastos['total'], 2) ?></td>
-                    <td><?= $gastos['responsable'] ?></td>
+                    <td style="white-space: normal;"><?= $gastos['responsable'] ?></td>
                     <td><?= date("d/m/Y", strtotime($gastos['fecha_registro'])) ?></td>
+                    <td><?= $gastos['nombre_condiciones'] ?></td>
                     <td><?= $gastos['status_gastos'] == 1 ? 'Pendiente' : 'Confirmado' ?></td>
-
-                    <td class="center">
+                    <td class="center" style="white-space: nowrap;">
                         <div class="btn-group">
                         <?php if ($gastos['status_gastos'] == 1): ?>
                             <?php echo '<a class="btn btn-default" data-toggle="tooltip"
@@ -73,14 +72,14 @@
 
 <a id="exportar_pdf" target="_blank"
    href="#"
-   class="btn  btn-default btn-lg" data-toggle="tooltip" title="Exportar a Pdf"
+   class="btn  btn-primary btn-md" data-toggle="tooltip" title="Exportar a Pdf"
    data-original-title="fa fa-file-pdf-o"><i class="fa fa-file-pdf-o fa-fw"></i></a>
 
 <a id="exportar_excel" target="_blank"
    href="#"
-   class="btn  btn-default btn-lg" data-toggle="tooltip" title="Exportar a Excel"
+   class="btn  btn-primary btn-md" data-toggle="tooltip" title="Exportar a Excel"
    data-original-title="fa fa-file-excel-o"><i class="fa fa-file-pdf-o fa-fw"></i></a>
-
+<br><br>
 <script>
     $(function () {
         TablesDatatables.init(2);

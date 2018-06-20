@@ -45,15 +45,15 @@ class gastos_model extends CI_Model
     function get_all($data = array())
     {
         $this->db->select('*, moneda.*,
-         responsable.nombre as responsable, trabajador.nombre as trabajador,
-         gastos.total as total');
+         responsable.username as responsable, trabajador.nombre as trabajador,
+         gastos.total as total, condiciones_pago.nombre_condiciones');
         $this->db->join('tipos_gasto', 'tipos_gasto.id_tipos_gasto=gastos.tipo_gasto');
         $this->db->join('local', 'gastos.local_id=local.int_local_id');
         $this->db->join('moneda', 'moneda.id_moneda=gastos.id_moneda');
-        $this->db->join('usuario as trabajador', 'gastos.usuario_id=trabajador.NusuCodigo', 'left');
-        $this->db->join('usuario as responsable', 'gastos.responsable_id=responsable.NusuCodigo');
+        $this->db->join('usuario as trabajador', 'gastos.usuario_id=trabajador.nUsuCodigo', 'left');
+        $this->db->join('usuario as responsable', 'gastos.responsable_id=responsable.nUsuCodigo');
         $this->db->join('proveedor', 'gastos.proveedor_id=proveedor.id_proveedor', 'left');
-
+        $this->db->join('condiciones_pago', 'gastos.condicion_pago=condiciones_pago.id_condiciones', 'left');
 
         $this->set_gastos_where($data);
 

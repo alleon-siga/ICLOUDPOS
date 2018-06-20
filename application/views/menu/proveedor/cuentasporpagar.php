@@ -10,11 +10,8 @@
             <form id="frmBuscar">
 
                 <div class="row">
-                    <div class="col-md-1">
-                        <label class="control-label panel-admin-text">Ubicacion:</label>
-                    </div>
                     <div class="col-md-3">
-
+                        <label class="control-label panel-admin-text">Ubicacion:</label>
                         <select name="local_id" id="local_id" class='cho form-control'>
                             <option value="">TODOS</option>
                             <?php if (count($locales) > 0): ?>
@@ -29,12 +26,8 @@
                             <?php endif; ?>
                         </select>
                     </div>
-
-                    <div class="col-md-1">
-                        <label class="control-label panel-admin-text">Proveedor:</label>
-                    </div>
                     <div class="col-md-3">
-
+                        <label class="control-label panel-admin-text">Proveedor:</label>
                         <select name="proveedor" id="proveedor" class='cho form-control'>
                             <option value="">TODOS</option>
                             <?php if (count($lstproveedor) > 0): ?>
@@ -46,12 +39,8 @@
                             <?php endif; ?>
                         </select>
                     </div>
-
-                    <div class="col-md-1">
-                        <label class="control-label panel-admin-text">Moneda:</label>
-                    </div>
                     <div class="col-md-2">
-
+                        <label class="control-label panel-admin-text">Moneda:</label>
                         <select name="moneda" id="moneda" class='cho form-control'>
                             <?php foreach ($monedas as $moneda): ?>
                                 <option value="<?= $moneda->id_moneda ?>"
@@ -59,7 +48,20 @@
                             <?php endforeach; ?>
                         </select>
                     </div>
-
+                    <div class="col-md-2">
+                        <label class="control-label panel-admin-text">Tipo:</label>
+                        <select name="tipo" id="tipo" class='cho form-control'>
+                            <option value="">TODOS</option>
+                            <option value="COMPRA">COMPRA</option>
+                            <option value="GASTO">GASTO</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="control-label panel-admin-text">&nbsp;</label><br>
+                        <button id="btnBuscar" class="btn btn-default">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
                     <div class="col-md-2" style="display:none;">
                         <label class="control-label panel-admin-text">Documento:</label>
                     </div>
@@ -72,10 +74,6 @@
                             <option value="NOTA DE PEDIDO">NOTA DE PEDIDO</option>
                         </select>
                     </div>
-
-                    <button id="btnBuscar" class="btn btn-default">
-                        <i class="fa fa-search"></i>
-                    </button>
                 </div>
             </form>
         </div>
@@ -90,8 +88,8 @@
             <div id="lstTabla"></div>
             <div class="block-section">
                 <br>
-                <div id="pp_excel">
-                    <form action="<?php echo $ruta; ?>ingresos/toExcel_cuentasPorPagar" name="frmExcel"
+                <!--<div id="pp_excel">
+                    <form action="<?php //echo $ruta; ?>ingresos/toExcel_cuentasPorPagar" name="frmExcel"
                           id="frmExcel" method="post">
                         <input type="hidden" name="fecIni1" id="fecIni1" class='input-small'>
                         <input type="hidden" name="fecFin1" id="fecFin1" class='input-small'>
@@ -102,7 +100,7 @@
                    title="Exportar a Excel"><i class="fa fa-file-excel-o"></i></a>
                 <div id="pp_pdf">
                     <form name="frmPDF" id="frmPDF"
-                          action="<?php echo $ruta; ?>ingresos/toPdf_cuentasPorPagar"
+                          action="<?php //echo $ruta; ?>ingresos/toPdf_cuentasPorPagar"
                           method="post">
                         <input type="hidden" name="fecIni2" id="fecIni2" >
                         <input type="hidden" name="fecFin2" id="fecFin2" >
@@ -110,7 +108,14 @@
                     </form>
                 </div>
                 <a href="#" onclick="generar_reporte_pdf();" class='btn btn-primary tip '
-                   title="Exportar a PDF"><i class="fa fa-file-pdf-o"></i> </a>
+                   title="Exportar a PDF"><i class="fa fa-file-pdf-o"></i> </a>-->
+
+                <button type="button" id="exportar_excel" title="Exportar Excel" class="btn btn-primary">
+                    <i class="fa fa-file-excel-o fa-fw"></i>
+                </button>
+                <button type="button" id="exportar_pdf" title="Exportar Pdf" class="btn btn-primary">
+                    <i class="fa fa-file-pdf-o fa-fw"></i>
+                </button>
             </div>
         </div>
     </div>
@@ -123,6 +128,14 @@
     <script>
         var verificar = 1;
         $(document).ready(function () {
+            $('#exportar_excel').on('click', function () {
+                exportar_excel();
+            });
+
+            $("#exportar_pdf").on('click', function () {
+                exportar_pdf();
+            });
+
             $("#pp_excel").hide();
             $("#pp_pdf").hide();
 
@@ -166,7 +179,7 @@
             $.ajax({
                 type: 'POST',
                 data: $('#frmBuscar').serialize(),
-                url: '<?php echo base_url();?>' + 'ingresos/lst_cuentas_porpagar',
+                url: '<?php echo base_url();?>' + 'ingresos/lst_cuentas_porpagar/filter',
                 success: function (data) {
                     $("#lstTabla").html(data);
                     var simbolo = $("#moneda option:selected").attr('data-simbolo');
@@ -178,13 +191,13 @@
         }
 
 
-        function generar_reporte_excel() {
+        /*function generar_reporte_excel() {
             document.getElementById("frmExcel").submit();
         }
 
         function generar_reporte_pdf() {
             document.getElementById("frmPDF").submit();
-        }
+        }*/
 
 
         function guardarPago1(total_ingreso, suma, id_ingreso, id_moneda, tasa_cambio) {
@@ -294,7 +307,30 @@
 
                 }
             })
+        }
 
+        function exportar_pdf() {
+            var data = {
+                'local_id': $("#local_id").val(),
+                'proveedor': $("#proveedor").val(),
+                'moneda': $("#moneda").val(),
+                'tipo': $("#tipo").val()
+            };
+
+            var win = window.open('<?= base_url()?>ingresos/lst_cuentas_porpagar/pdf?data=' + JSON.stringify(data), '_blank');
+            win.focus();
+        }
+
+        function exportar_excel() {
+            var data = {
+                'local_id': $("#local_id").val(),
+                'proveedor': $("#proveedor").val(),
+                'moneda': $("#moneda").val(),
+                'tipo': $("#tipo").val()
+            };
+
+            var win = window.open('<?= base_url()?>ingresos/lst_cuentas_porpagar/excel?data=' + JSON.stringify(data), '_blank');
+            win.focus();
         }
 
     </script>

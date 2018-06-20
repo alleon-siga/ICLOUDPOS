@@ -345,6 +345,11 @@
                 $('#cuotas').attr('value', cuotas);
                 $('#agregar').modal('hide');
                 App.formSubmitAjax($("#formagregar").attr('action'), get_gastos, 'dialog_gasto_credito', 'formagregar');
+                $.bootstrapGrowl('<h4>Solicitud procesada con &eacute;xito</h4>', {
+                    type: 'success',
+                    delay: 2500,
+                    allow_dismiss: true
+                });
             });
 
 

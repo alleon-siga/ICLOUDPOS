@@ -286,7 +286,7 @@ class gastos extends MY_Controller
             if ($usuario != "-")
                 $params['usuario'] = $usuario;
         }
-        $local_id = $this->input->post('local_id');
+        $local_id = $get->local_id;
         if ($local_id != "0"){
             $params['local_id'] = $local_id;        
         }
@@ -336,7 +336,7 @@ class gastos extends MY_Controller
             if ($usuario != "-")
                 $params['usuario'] = $usuario;
         }
-        $local_id = $this->input->post('local_id');
+        $local_id = $get->local_id;
         if ($local_id != "0"){
             $params['local_id'] = $local_id;
         }

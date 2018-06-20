@@ -590,7 +590,7 @@ class reporte_model extends CI_Model
             $where .= "v.fecha >= '".$params['fecha_ini']."' AND v.fecha <= '".$params['fecha_fin']."'";
         }
 
-        $query = "SELECT v.venta_id, DATE_FORMAT(v.fecha, '%d/%m/%Y') AS fecha, pr.proveedor_nombre, p.producto_nombre, u.nombre_unidad, SUM(up.unidades * dv.cantidad) AS cantidad, dv.detalle_costo_promedio, dv.detalle_importe, l.local_nombre, IF(dv.detalle_costo_ultimo>0, dv.detalle_costo_ultimo, pcu.costo) AS detalle_costo_ultimo, dv.impuesto_porciento, v.tipo_impuesto
+        $query = "SELECT v.venta_id, DATE_FORMAT(v.fecha, '%d/%m/%Y') AS fecha, pr.proveedor_nombre, p.producto_nombre, u.nombre_unidad, SUM(up.unidades * dv.cantidad) AS cantidad, dv.detalle_costo_promedio, dv.detalle_importe, l.local_nombre, dv.detalle_costo_ultimo, dv.impuesto_porciento, v.tipo_impuesto
             FROM detalle_venta dv
             INNER JOIN venta v ON v.venta_id=dv.id_venta 
             INNER JOIN producto p ON p.producto_id=dv.id_producto 

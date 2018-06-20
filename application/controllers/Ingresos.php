@@ -329,39 +329,115 @@ class ingresos extends MY_Controller
     }
 
 
-    function lst_cuentas_porpagar()
+    function lst_cuentas_porpagar($action = '')
     {
-        if ($this->input->is_ajax_request()) {
-            if (!empty($this->input->post('local_id'))){
-                $local_id = $this->input->post('local_id');
-                $data['local'] = $local_id;
-            }else{
-                $usu = $this->session->userdata('nUsuCodigo');
-                $dataLocal = $this->local_model->get_all_usu($usu);
-                $arr = array();
-                foreach ($dataLocal as $value) {
-                    $arr[] = $value['int_local_id'];
+        switch ($action) {
+            case 'filter': {
+                if (!empty($this->input->post('local_id'))){
+                    $local_id = $this->input->post('local_id');
+                    $data['local'] = $local_id;
+                }else{
+                    $usu = $this->session->userdata('nUsuCodigo');
+                    $dataLocal = $this->local_model->get_all_usu($usu);
+                    $arr = array();
+                    foreach ($dataLocal as $value) {
+                        $arr[] = $value['int_local_id'];
+                    }
+                    $local_id = implode(",", $arr);
+                    $data['local'] = 'TODOS';
                 }
-                $local_id = implode(",", $arr);
-                $data['local'] = 'TODOS';
+
+                $params['local_id'] = $local_id;
+                $params['proveedor_id'] = $this->input->post('proveedor');
+                $params['moneda_id'] = $this->input->post('moneda');
+                $params['tipo'] = $this->input->post('tipo');
+                $data["lstproveedor"] = $this->proveedor_model->get_cuentas_pagar($params);
+                $data["ingreso_totales"] = $this->proveedor_model->get_cuentas_pagar_totales($params);
+                if ($this->input->is_ajax_request()) {
+                    $this->load->view('menu/proveedor/tbl_lst_cuentasporpagar', $data);
+                } else {
+                    redirect(base_url() . 'proveedor/', 'refresh');
+                }
+                break;
             }
-            
-            $params = array(
-                'local_id' => $local_id,
-                'proveedor_id' => $this->input->post('proveedor'),
-                'moneda_id' => $this->input->post('moneda'),
-            );
+            case 'pdf': {
+                $params = json_decode($this->input->get('data'));
 
-            $data["lstproveedor"] = $this->proveedor_model->get_cuentas_pagar($params);
-            $data["ingreso_totales"] = $this->proveedor_model->get_cuentas_pagar_totales($params);
+                if (!empty($params->local_id)){
+                    $local_id = $params->local_id;
+                    $data['local'] = $local_id;
+                }else{
+                    $usu = $this->session->userdata('nUsuCodigo');
+                    $dataLocal = $this->local_model->get_all_usu($usu);
+                    $arr = array();
+                    foreach ($dataLocal as $value) {
+                        $arr[] = $value['int_local_id'];
+                    }
+                    $local_id = implode(",", $arr);
+                    $data['local'] = 'TODOS';
+                }
+                
+                $input = array(
+                    'local_id' => $local_id,
+                    'proveedor_id' => $params->proveedor,
+                    'moneda_id' => $params->moneda,
+                    'tipo' => $params->tipo
+                );
 
+                $data['lists'] = $this->proveedor_model->get_cuentas_pagar($input);
+                $data["ingreso_totales"] = $this->proveedor_model->get_cuentas_pagar_totales($input);
+                if($data['local']!='TODOS'){
+                    $local = $this->db->get_where('local', array('int_local_id' => $input['local_id']))->row();
+                    $data['local_nombre'] = $local->local_nombre;
+                    $data['local_direccion'] = $local->direccion;
+                }else{
+                    $data['local_nombre'] = $data['local'];
+                    $data['local_direccion'] = $data['local'];
+                }
 
-            if ($this->input->is_ajax_request()) {
+                $this->load->library('mpdf53/mpdf');
+                $mpdf = new mPDF('utf-8', 'A4', 0, '', 5, 5, 5, 5, 5, 5);
+                $html = $this->load->view('menu/proveedor/tbl_lst_cuentasporpagar_pdf', $data, true);
+                $mpdf->WriteHTML($html);
+                $mpdf->Output();
+                break;
+            }
+            case 'excel': {
+                $params = json_decode($this->input->get('data'));
 
-                $this->load->view('menu/proveedor/tbl_lst_cuentasporpagar', $data);
+                if (!empty($params->local_id)){
+                    $local_id = $params->local_id;
+                    $data['local'] = $local_id;
+                }else{
+                    $usu = $this->session->userdata('nUsuCodigo');
+                    $dataLocal = $this->local_model->get_all_usu($usu);
+                    $arr = array();
+                    foreach ($dataLocal as $value) {
+                        $arr[] = $value['int_local_id'];
+                    }
+                    $local_id = implode(",", $arr);
+                    $data['local'] = 'TODOS';
+                }
+                
+                $input = array(
+                    'local_id' => $local_id,
+                    'proveedor_id' => $params->proveedor,
+                    'moneda_id' => $params->moneda,
+                    'tipo' => $params->tipo
+                );
 
-            } else {
-                redirect(base_url() . 'proveedor/', 'refresh');
+                $data['lists'] = $this->proveedor_model->get_cuentas_pagar($input);
+                $data["ingreso_totales"] = $this->proveedor_model->get_cuentas_pagar_totales($input);
+                if($data['local']!='TODOS'){
+                    $local = $this->db->get_where('local', array('int_local_id' => $input['local_id']))->row();
+                    $data['local_nombre'] = $local->local_nombre;
+                    $data['local_direccion'] = $local->direccion;
+                }else{
+                    $data['local_nombre'] = $data['local'];
+                    $data['local_direccion'] = $data['local'];
+                }
+                echo $this->load->view('menu/proveedor/tbl_lst_cuentasporpagar_excel', $data, true);
+                break;   
             }
         }
     }

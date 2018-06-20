@@ -311,6 +311,11 @@ var grupo = {
             $('#dialog_gasto_credito').modal('show');
         }else{
             App.formSubmitAjax($("#formagregar").attr('action'), get_gastos, 'agregar', 'formagregar');
+            $.bootstrapGrowl('<h4>Solicitud procesada con &eacute;xito</h4>', {
+                type: 'success',
+                delay: 2500,
+                allow_dismiss: true
+            });         
         }
     }
 }

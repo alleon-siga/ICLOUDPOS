@@ -27,7 +27,8 @@ class proveedor_model extends CI_Model
                 ingreso_credito.monto_debito as monto_debito,
                 ingreso_credito.inicial as inicial, 
                 DATEDIFF(CURDATE(), ingreso.fecha_emision) as dias_transcurridos,
-                l.local_nombre as local_nombre
+                l.local_nombre as local_nombre,
+                ingreso.tipo_ingreso as tipo_ingreso
             FROM
                 (ingreso)
                     JOIN
@@ -50,10 +51,12 @@ class proveedor_model extends CI_Model
 
         if (isset($data['moneda_id']) && $data['moneda_id'] != "")
             $consulta .= " AND ingreso.id_moneda =" . $data['moneda_id'] . "";
-
+ 
         if (isset($data['local_id']) && $data['local_id'] != "")
             $consulta .= " AND ingreso.local_id IN(" . $data['local_id'] . ")";
 
+        if (isset($data['tipo']) && $data['tipo'] != "")
+            $consulta .= " AND ingreso.tipo_ingreso ='".$data['tipo']."'";
 
         $consulta .= " GROUP BY ingreso.id_ingreso";
 
@@ -88,7 +91,8 @@ class proveedor_model extends CI_Model
         if (isset($data['local_id']) && $data['local_id'] != "")
             $consulta .= " AND ingreso.local_id IN(" . $data['local_id'] . ")";
 
-
+        if (isset($data['tipo']) && $data['tipo'] != "")
+            $consulta .= " AND ingreso.tipo_ingreso ='".$data['tipo']."'";
         return $this->db->query($consulta)->row();
     }
 
