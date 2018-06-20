@@ -60,17 +60,24 @@ class Pedidos extends REST_Controller
             $fecha_fin = $this->input->post('fecha_fin');
 
             $res = $this->usuario_api_model->get_venta_user($id_usuario);
+
             if (empty($res)) {
-                $id_usuario = null;
+                $where = array('fecha_ini' => date('Y-m-d', strtotime($fecha_ini)),
+                    'fecha_fin' => date('Y-m-d', strtotime($fecha_fin)),
+                    'estado' => $estado);
+
+                $data['today']['count'] = count($this->db->get_where('venta', array('fecha >=' => date('Y-m-d 00:00:00'),
+                    'fecha <=' => date('Y-m-d 23:59:59')))->result());
+
+            } else {
+                $where = array('fecha_ini' => date('Y-m-d', strtotime($fecha_ini)),
+                    'fecha_fin' => date('Y-m-d', strtotime($fecha_fin)),
+                    'estado' => $estado,
+                    'usuarios_id' => $id_usuario);
+
+                $data['today']['count'] = count($this->db->get_where('venta', array('fecha >=' => date('Y-m-d 00:00:00'),
+                    'fecha <=' => date('Y-m-d 23:59:59'), 'id_vendedor' => $id_usuario))->result());
             }
-
-            $where = array('fecha_ini' => date('Y-m-d', strtotime($fecha_ini)),
-                'fecha_fin' => date('Y-m-d', strtotime($fecha_fin)),
-                'estado' => $estado,
-                'usuarios_id' => $id_usuario);
-
-            $data['today']['count'] = count($this->db->get_where('venta', array('fecha >=' => date('Y-m-d 00:00:00'),
-                'fecha <=' => date('Y-m-d 23:59:59')))->result());
 
         } else {
             $where = array('estado' => $estado);
