@@ -6,16 +6,16 @@
     <li>Gastos</li>
     <li><a href="">Agregar y editar Gastos</a></li>
 </ul>
-<div class="row">
+<!--<div class="row">
     <div class="col-xs-12">
         <div class="alert alert-success alert-dismissable" id="success"
-             style="display:<?php echo isset($success) ? 'block' : 'none' ?>">
+             style="display:<?php // echo isset($success) ? 'block' : 'none' ?>">
             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">X</button>
             <h4><i class="icon fa fa-check"></i> Operaci&oacute;n realizada</h4>
-            <span id="successspan"><?php echo isset($success) ? $success : '' ?></div>
+            <span id="successspan"><?php // echo isset($success) ? $success : '' ?></div>
         </span>
     </div>
-</div>
+</div>-->
 <?php
 echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "</div>");
 ?>

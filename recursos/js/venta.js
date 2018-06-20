@@ -422,6 +422,10 @@ $(document).ready(function () {
         $(this).select();
     });
 
+    $("#importe").on('focus', function () {
+        $(this).select();
+    });
+
     $("#precio_unitario").on('keyup', function (e) {
         if (e.keyCode == tecla_enter) {
             $("#editar_pu").click();
@@ -429,6 +433,15 @@ $(document).ready(function () {
         }
         else
             refresh_totals();
+    });
+
+    $("#importe").on('keyup', function (e) {
+        if (e.keyCode == tecla_enter) {
+            $("#editar_su").click();
+            $('#add_producto').trigger("focus");
+        }else{
+            $("#precio_unitario").val(parseFloat($("#importe").val() / $('#total_minimo').val()).toFixed(2));
+        }
     });
 
     $("#moneda_id").on('change', function () {
@@ -515,7 +528,7 @@ $(document).ready(function () {
         }
         else if ($("#editar_su").attr('data-estado') == '1') {
             show_msg('warning', '<h4>Error. </h4><p>Por favor debe confirmar el Subtotal de Venta.</p>');
-            $('#precio_unitario').trigger('focus');
+            $('#importe').trigger('focus');
             return false;
         }
         add_producto();
