@@ -252,9 +252,9 @@
                             <div id="abrir_local_excel"></div>
                         </form>
                     </div>
-                    <a href="#" onclick="generar_reporte_excel();" class=' btn btn-lg btn-default'
-                       title="Exportar a Excel"><i class="fa fa-file-excel-o"></i></a>
-
+                    <button onclick="generar_reporte_excel();" type="button" id="exportar_excel" title="Exportar Excel" class="btn btn-primary">
+                        <i class="fa fa-file-excel-o fa-fw"></i>
+                    </button>
                     <!--<div id="pp_pdf">
                         <form name="frmPDF" id="frmPDF"
                               action="<?php $ruta; ?>exportar/toPDF_pagoPendiente" target="_blank"

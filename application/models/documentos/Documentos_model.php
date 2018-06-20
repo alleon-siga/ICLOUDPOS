@@ -24,4 +24,12 @@ class documentos_model extends CI_Model {
         $this->db->where($where);
         return $this->db->get()->result();
     }
+
+    function get_by($campo, $valor)
+    {
+        $this->db->select('des_doc');
+        $this->db->where($campo, $valor);
+        $query = $this->db->get('documentos');
+        return $query->row();
+    }
 }

@@ -79,7 +79,7 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                                     <i class="fa fa-edit"></i>
                                     </a>
                                 <?php endif; ?>
-                                <?php if ($grupo['id_grupos_usuarios'] != 1): ?>
+                                <?php if ($grupo['id_grupos_usuarios']!=2 && $grupo['id_grupos_usuarios']!=8 && $grupo['id_grupos_usuarios']!=9): ?>
                                     <?php echo '<a class="btn btn-default" data-toggle="tooltip"
                                      title="Eliminar" data-original-title="fa fa-comment-o"
                                      onclick="borrar(' . $grupo['id_grupos_usuarios'] . ',\'' . $grupo['nombre_grupos_usuarios'] . '\');">'; ?>

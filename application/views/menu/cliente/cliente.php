@@ -64,24 +64,26 @@
                     </tr>
                 <?php }
             } ?>
-
             </tbody>
         </table>
-
     </div>
-    <br>
-    <a href="<?= $ruta ?>cliente/pdf" class="btn  btn-default btn-lg" data-toggle="tooltip" title="Exportar a PDF"
-       data-original-title="fa fa-file-pdf-o"><i class="fa fa-file-pdf-o fa-fw"></i></a>
-    <a href="<?= $ruta ?>cliente/excel" class="btn btn-default btn-lg" data-toggle="tooltip"
-       title="Exportar a Excel" data-original-title="fa fa-file-excel-o"><i
-            class="fa fa-file-excel-o fa-fw"></i></a>
+    <button type="button" id="exportar_excel" title="Exportar Excel" class="btn btn-primary">
+        <i class="fa fa-file-excel-o fa-fw"></i>
+    </button>
+    <button type="button" id="exportar_pdf" title="Exportar Pdf" class="btn btn-primary">
+        <i class="fa fa-file-pdf-o fa-fw"></i>
+    </button>
+    <br><br>
 </div>
-
-
-
-
 <script src="<?php echo $ruta; ?>recursos/js/Validacion.js?<?php echo date("Hms"); ?>"></script>
 <script type="text/javascript">
+        $('#exportar_excel').on('click', function () {
+            location.href = "<?= $ruta ?>cliente/excel";
+        });
+
+        $("#exportar_pdf").on('click', function () {
+            location.href = "<?= $ruta ?>cliente/pdf";
+        });
     function borrar(id, nom) {
 
         $('#borrar').modal('show');

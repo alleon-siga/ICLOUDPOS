@@ -83,60 +83,44 @@
 </div>
 <div class="row-fluid">
     <div class="span12">
-        <div class="block" id="lstTabla">
-
-
+        <div class="block">
             <div class="table-responsive">
 
             </div>
-        </div>
-
-        <div class="block-section">
-
-
-            <!--<div id="pp_excel">
-                <form action="<?php echo $ruta; ?>ingresos/toExcel_cuentasPorPagar" name="frmExcel"
-                      id="frmExcel" method="post">
-                    <input type="hidden" name="fecIni1" id="fecIni1" class='input-small'>
-                    <input type="hidden" name="fecFin1" id="fecFin1" class='input-small'>
-                    <input type="hidden" name="proveedor1" value="-1" id="proveedor1" class='input-small'>
-                </form>
-
-
+            <div id="lstTabla"></div>
+            <div class="block-section">
+                <br>
+                <div id="pp_excel">
+                    <form action="<?php echo $ruta; ?>ingresos/toExcel_cuentasPorPagar" name="frmExcel"
+                          id="frmExcel" method="post">
+                        <input type="hidden" name="fecIni1" id="fecIni1" class='input-small'>
+                        <input type="hidden" name="fecFin1" id="fecFin1" class='input-small'>
+                        <input type="hidden" name="proveedor1" value="-1" id="proveedor1" class='input-small'>
+                    </form>
+                </div>
+                <a href="#" onclick="generar_reporte_excel();" class='btn btn-primary tip'
+                   title="Exportar a Excel"><i class="fa fa-file-excel-o"></i></a>
+                <div id="pp_pdf">
+                    <form name="frmPDF" id="frmPDF"
+                          action="<?php echo $ruta; ?>ingresos/toPdf_cuentasPorPagar"
+                          method="post">
+                        <input type="hidden" name="fecIni2" id="fecIni2" >
+                        <input type="hidden" name="fecFin2" id="fecFin2" >
+                        <input type="hidden" name="proveedor2" id="proveedor2" value="-1" class='input-small'>
+                    </form>
+                </div>
+                <a href="#" onclick="generar_reporte_pdf();" class='btn btn-primary tip '
+                   title="Exportar a PDF"><i class="fa fa-file-pdf-o"></i> </a>
             </div>
-            <a href="#" onclick="generar_reporte_excel();" class='btn btn-default tip'
-               title="Exportar a Excel"><i class="fa fa-file-excel-o"></i></a>
-
-            <div id="pp_pdf">
-                <form name="frmPDF" id="frmPDF"
-                      action="<?php echo $ruta; ?>ingresos/toPdf_cuentasPorPagar"
-                      method="post">
-                    <input type="hidden" name="fecIni2" id="fecIni2" >
-                    <input type="hidden" name="fecFin2" id="fecFin2" >
-                    <input type="hidden" name="proveedor2" id="proveedor2" value="-1" class='input-small'>
-                </form>
-            </div>
-            <a href="#" onclick="generar_reporte_pdf();" class='btn btn-default tip '
-               title="Exportar a PDF"><i class="fa fa-file-pdf-o"></i> </a>
-        </div>-->
-
-            <div class="col-sm-1"></div>
-
-
         </div>
     </div>
-
-
+</div>
     <div class="modal fade" id="visualizarPago" tabindex="-1" role="dialog"
          aria-labelledby="myModalLabel"
          aria-hidden="true">
-
-
     </div>
     <script src="<?php echo $ruta ?>recursos/js/pages/tablesDatatables.js"></script>
     <script>
-
-
         var verificar = 1;
         $(document).ready(function () {
             $("#pp_excel").hide();
