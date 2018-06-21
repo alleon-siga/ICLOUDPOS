@@ -96,6 +96,7 @@ class gastos_model extends CI_Model
             'total' => $data['total'],
             'tipo_gasto' => $data['tipo_gasto'],
             'local_id' => $data['local_id'],
+            'status_gastos' => $data['status_gastos'],
             'gasto_usuario' => $data['gasto_usuario'],
             'id_moneda' => $data['moneda_id'],
             'tasa_cambio' => 0,

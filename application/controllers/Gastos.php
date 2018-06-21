@@ -130,6 +130,10 @@ class gastos extends MY_Controller
             $proveedor = NULL;
             $usuario = $this->input->post('usuario');
         }
+        $status_gastos = '1'; //pendiente
+        if($this->input->post('tipo_pago')=='2'){ //Si es al credito
+            $status_gastos = '0'; //confirmado
+        }
 
         $cuenta = $this->db->join('caja', 'caja.id = caja_desglose.caja_id')
             ->get_where('caja_desglose', array('caja_desglose.id' => $this->input->post('cuenta_id')))->row();
@@ -142,6 +146,7 @@ class gastos extends MY_Controller
             'total' => $this->input->post('total'),
             'tipo_gasto' => $this->input->post('tipo_gasto'),
             'local_id' => $this->input->post('filter_local_id'),
+            'status_gastos' => $status_gastos,
             'gasto_usuario' => $this->session->userdata('nUsuCodigo'),
             'cuenta_id' => $this->input->post('cuenta_id'),
             'proveedor_id' => $proveedor,
