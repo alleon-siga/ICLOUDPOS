@@ -15,7 +15,7 @@ INSERT INTO opcion VALUES('710','7','productovendido','Productos + vendidos');
 INSERT INTO opcion VALUES('711','7','ventaSucursal','Ventas x sucursal');
 INSERT INTO opcion VALUES('712','7','ventaEmpleado','Ventas x empleado');
 INSERT INTO opcion VALUES('713','7','margenutilidad','Margen de utilidad');
-INSERT INTO opcion VALUES('714','7','utilidadProducto','Utilidades por producto');
+INSERT INTO opcion VALUES('714','7','utilidadProducto','Utilidad x venta');
 INSERT INTO opcion VALUES('715','7','hojaColecta','Reporte hoja de colecta');
 INSERT INTO opcion VALUES('716','7','recargaDia','Recargas del día');
 INSERT INTO opcion VALUES('717','7','recargaCobranza','Cobranza del día');
