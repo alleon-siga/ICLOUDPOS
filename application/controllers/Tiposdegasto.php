@@ -8,6 +8,7 @@ class tiposdegasto extends MY_Controller
         parent::__construct();
         if ($this->login_model->verify_session()) {        
             $this->load->model('tiposdegasto/tipos_gasto_model');
+            $this->load->model('grupogastos/grupo_gastos_model');
         }else{
             redirect(base_url(), 'refresh');
         }
@@ -41,6 +42,7 @@ class tiposdegasto extends MY_Controller
         if ($id != FALSE) {
             $data['tiposgasto'] = $this->tipos_gasto_model->get_by('id_tipos_gasto', $id);
         }
+        $data['grupogasto'] = $this->grupo_gastos_model->get_all();
         $this->load->view('menu/tiposdegasto/form', $data);
     }
 
@@ -51,7 +53,8 @@ class tiposdegasto extends MY_Controller
 
         $tiposgasto = array(
             'nombre_tipos_gasto' => $this->input->post('nombre_tipos_gasto'),
-            'tipo_tipos_gasto' => $this->input->post('tipo_tipos_gasto')
+            'tipo_tipos_gasto' => $this->input->post('tipo_tipos_gasto'),
+            'id_grupo_gastos' => $this->input->post('grupo_gasto')
         );
 
         if (empty($id)) {

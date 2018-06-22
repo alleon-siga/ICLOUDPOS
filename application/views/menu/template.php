@@ -603,6 +603,11 @@ $primary_nav = array(
                         'name' => 'Gastos del d&iacute;a',
                         'url' => $ruta . 'reporte/gastosDia',
                         'slug' => 'gastosDia'
+                    ),
+                    array(
+                        'name' => 'Estado de Resultado',
+                        'url' => $ruta . 'reporte/estadoResultado',
+                        'slug' => 'estadoresultado'
                     )
                 )
             ),

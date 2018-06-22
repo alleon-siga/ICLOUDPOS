@@ -11,13 +11,12 @@
     <table class="table table-striped dataTable table-bordered tableStyle" id="example">
         <thead>
         <tr>
-
             <th>ID</th>
-            <th>Local</th>
+            <th width="20%">Local</th>
             <th>Fecha</th>
             <th width="10%">Tipo de Gasto</th>
-            <th width="30%">Persona Afectada</th>
-            <th width="30%">Descripci&oacute;n</th>
+            <th width="20%">Persona Afectada</th>
+            <th width="20%">Descripci&oacute;n</th>
             <th>Total</th>
             <th width="10%">Usuario</th>
             <th>Fecha Registro</th>
@@ -34,7 +33,7 @@
                 <tr style="<?= $gastos['status_gastos'] == 0 ? 'color: #0000FF;' : '' ?>">
 
                     <td class="center"><?= $gastos['id_gastos'] ?></td>
-                    <td><?= $gastos['local_nombre'] ?></td>
+                    <td style="white-space: normal;"><?= $gastos['local_nombre'] ?></td>
                     <td>
                         <span style="display: none;"><?= date("YmdHis", strtotime($gastos['fecha'])) ?></span><?= date("d/m/Y", strtotime($gastos['fecha'])) ?>
                     </td>

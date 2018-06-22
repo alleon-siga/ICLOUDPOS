@@ -30,10 +30,10 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
         <table class="table table-striped dataTable table-bordered" id="example">
             <thead>
             <tr>
-
                 <th>ID</th>
                 <th>Nombre</th>
                 <th>Tipo</th>
+                <th>Grupo</th>
                 <th class="desktop">Acciones</th>
             </tr>
             </thead>
@@ -52,7 +52,7 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                         <td class="center"><?= $tipo['id_tipos_gasto'] ?></td>
                         <td><?= $tipo['nombre_tipos_gasto'] ?></td>
                         <td><?= $tipo_tipos_gasto ?></td>
-
+                        <td><?= $tipo['nom_grupo_gastos'] ?></td>
                         <td class="center">
                             <div class="btn-group">
                             <?php

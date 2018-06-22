@@ -22,6 +22,27 @@
                 </div>
                 <div class="row">
                     <div class="col-md-2">
+                        <label>Grupo</label>
+                    </div>
+                    <div class="col-md-10">
+                        <select class="form-control" name="grupo_gasto" id="grupo_gasto">
+                            <option value="">Seleccione</option>
+                           <?php
+                                foreach ($grupogasto as $grupo):
+                                    $selected = "";    
+                                    if(isset($tiposgasto['id_grupo_gastos'])){
+                                        if($tiposgasto['id_grupo_gastos'] == $grupo['id_grupo_gastos']){
+                                            $selected = "selected";
+                                        }
+                                    }
+                            ?>
+                                <option value="<?= $grupo['id_grupo_gastos'] ?>" <?= $selected ?>><?= $grupo['nom_grupo_gastos'] ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
                         <label>Tipo</label>
                     </div>
                     <div class="col-md-10">

@@ -647,4 +647,32 @@ class reporte_model extends CI_Model
         $query .= " GROUP BY v.venta_id, dv.id_detalle ORDER BY v.venta_id";
         return $this->db->query($query)->result();
     }
+
+    function getEstadoResultado($params)
+    {
+        $this->db->select("SUM(dv.detalle_importe) / ((dv.impuesto_porciento / 100) + 1) AS detalle_importe, SUM(dv.detalle_costo_ultimo) / SUM(dv.cantidad) AS costo_venta, m.simbolo");
+        $this->db->from('venta v');
+        $this->db->join('detalle_venta dv', 'v.venta_id = dv.id_venta');
+        $this->db->join('moneda m', 'v.id_moneda = m.id_moneda');
+        $this->db->where("v.venta_status='COMPLETADO'");
+        if($params['local_id']>0){
+            $this->db->where('v.local_id = '.$params['local_id']);
+        }
+        if($params['moneda_id']>0){
+            $this->db->where('v.id_moneda = '.$params['moneda_id']);
+        }
+        if($params['mes'] != '' && $params['year'] != ''){
+            $this->db->where('YEAR(v.fecha) = '.$params['year'].' AND MONTH(v.fecha) = '.$params['mes']);
+        }
+        $ventas = $this->db->get()->row();
+
+        $datos['simbolo'] = $ventas->simbolo;
+        $datos['ventas'] = $ventas->detalle_importe;
+        $datos['costo'] = $ventas->costo_venta;
+        $datos['margen_bruto'] = $datos['ventas'] - $datos['costo'];
+        $datos['gasto']['nombre'] = 'GASTO DE VENTA';
+        $datos['gasto']['subtotal'] = 10;
+
+        return $datos;
+    }
 }

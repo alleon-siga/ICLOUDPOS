@@ -1269,4 +1269,71 @@ class Reporte extends MY_Controller
             }
         }
     }
+
+    function estadoResultado($action = '')
+    {
+        switch ($action) {
+            case 'filter': {
+                $params['local_id'] = $this->input->post('local_id');
+                $params['year'] = $this->input->post('year');
+                $params['mes'] = $this->input->post('mes');
+                $params['moneda_id'] = $this->input->post('moneda_id');
+                $data['lists'] = $this->reporte_model->getEstadoResultado($params);
+
+                $this->load->view('menu/reportes/estadoResultado_list', $data);
+                break;
+            }
+            case 'pdf': {
+                $params = json_decode($this->input->get('data'));
+                $date_range = explode(' - ', $params->fecha);
+                $input = array(
+                    'local_id' => $params->local_id,
+                    'fecha_ini' => date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0]))),
+                    'fecha_fin' => date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])))
+                );
+                $data['lists'] = $this->reporte_model->getEstadoResultado($input);
+
+                $local = $this->db->get_where('local', array('int_local_id' => $input['local_id']))->row();
+                $data['local_nombre'] = !empty($local->local_nombre)? $local->local_nombre: 'TODOS';
+                $data['local_direccion'] = !empty($local->direccion)? $local->direccion: 'TODOS';
+
+                $data['fecha_ini'] = $input['fecha_ini'];
+                $data['fecha_fin'] = $input['fecha_fin'];
+                $data['condicion_pago'] = $input['condicion_pago'];
+                $this->load->library('mpdf53/mpdf');
+                $mpdf = new mPDF('utf-8', 'A4-L', 0, '', 5, 5, 5, 5, 5, 5);
+                $html = $this->load->view('menu/reportes/estadoResultado_list_pdf', $data, true);
+                $mpdf->WriteHTML($html);
+                $mpdf->Output();
+                break;
+            }
+            case 'excel': {
+                $params = json_decode($this->input->get('data'));
+                $date_range = explode(' - ', $params->fecha);
+                $input = array(
+                    'local_id' => $params->local_id,
+                    'fecha_ini' => date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0]))),
+                    'fecha_fin' => date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])))
+                );
+                $data['lists'] = $this->reporte_model->getEstadoResultado($input);
+
+                $local = $this->db->get_where('local', array('int_local_id' => $input['local_id']))->row();
+                $data['local_nombre'] = !empty($local->local_nombre)? $local->local_nombre: 'TODOS';
+                $data['local_direccion'] = !empty($local->direccion)? $local->direccion: 'TODOS';
+                echo $this->load->view('menu/reportes/estadoResultado_list_excel', $data, true);
+                break;
+            }
+            default: {
+                $data['monedas'] = $this->db->get_where('moneda', array('status_moneda' => 1))->result();
+                $data['locales'] = $this->local_model->get_local_by_user($this->session->userdata('nUsuCodigo'));
+                $dataCuerpo['cuerpo'] = $this->load->view('menu/reportes/estadoResultado', $data, true);
+                if ($this->input->is_ajax_request()) {
+                    echo $dataCuerpo['cuerpo'];
+                } else {
+                    $this->load->view('menu/template', $dataCuerpo);
+                }
+                break;
+            }
+        }
+    }
 }
