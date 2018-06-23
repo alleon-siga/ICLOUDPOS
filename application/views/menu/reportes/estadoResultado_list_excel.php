@@ -1,117 +1,86 @@
 <?php
     header("Content-type: application/octet-stream");
-    header("Content-Disposition: attachment; filename=utilidad_venta.xls");
+    header("Content-Disposition: attachment; filename=estado_resultados.xls");
     header("Pragma: no-cache");
     header("Expires: 0");
 ?>
-<?php $md = get_moneda_defecto() ?>
-<h4 style="text-align: center; margin: 0;">Reporte de gastos del d&iacute;a</h4>
-<?php if(isset($fecha_ini) && isset($fecha_fin)): ?>
-<h4 style="text-align: center; margin: 0;">
-    Desde <?= date('d/m/Y', strtotime($fecha_ini)) ?> al <?= date('d/m/Y', strtotime($fecha_fin)) ?>
-    Hora: <?= date('H:i:s') ?>
-</h4>
-<?php endif; ?>
+<h4 style="text-align: center; margin: 0;">Estado de Resultados</h4>
+<h4 style="text-align: center; margin: 0;"><?= getMes($mes).' '.$year ?></h4>
 <h5 style="margin: 0;">EMPRESA: <?= valueOption('EMPRESA_NOMBRE') ?></h5>
 <h5 style="margin: 0;">DIRECCI&Oacute;N: <?= $local_direccion ?></h5>
 <h5 style="margin: 0;">SUCURSAL: <?= $local_nombre ?></h5>
-<table border="1">
-    <thead>
-        <tr>
-            <th># Venta </th>
-            <th>Local</th>
-            <th>Fecha</th>
-            <th>Proveedor</th>
-            <th>Producto</th>
-            <th>Unidad</th>
-            <th>Costo unitario</th>
-            <th>Impuesto</th>
-            <th>Costo + Impuesto</th>
-            <th>Impuesto</th>
-            <th>Precio unitario</th>
-            <th>Precio + Impuesto</th>
-            <th>Costo Total</th>
-            <th>Cantidad vendida</th>
-            <th>Subtotal</th>
-            <th>Impuesto</th>
-            <th>Venta total</th>
-            <th>Utilidad x unidad</th>
-            <th>Utilidad total</th>
-            <th>% rentabilidad</th>
-        </tr>
-    </thead>
+<table width="60%" cellpadding="0" cellspacing="0" align="center">
     <tbody>
-<?php
-    $totalCostoImpuesto = $totalPrecioImpuesto = $totalCostoTotal = $totalSubTotal = $totalImpuestoV = $totalVentaTotal = $totalUtilidadTotal = 0;
-    foreach ($lists as $ingreso):
-        $impuesto = (($ingreso->impuesto_porciento / 100) + 1);
-        $cantidad = $ingreso->cantidad;
-        $costoCompraSi = $ingreso->detalle_costo_ultimo / $impuesto; //Costo de compra unitario sin impuesto
-        $costoCompra = $ingreso->detalle_costo_ultimo; //Costo de compra unitario con impuesto
-        $impCompra = $costoCompra - $costoCompraSi; //Impuesto de compra
-        $precioVenta = $ingreso->detalle_importe; //precio de venta
-        $costoVentaSi = ($precioVenta / $cantidad) / $impuesto; //Costo de venta unitario sin impuesto
-        $costoVenta = $costoVentaSi * $impuesto; //Costo de venta unitario con impuesto
-        $costoTotal = $cantidad * $costoCompra; //Costo Total
-        $subtotal = $cantidad * $costoVentaSi;
-        $impVenta = $precioVenta - $subtotal;
-        $utilidadXund = $costoVentaSi - $costoCompraSi;
-        $utilidadTotal = $utilidadXund * $cantidad;
-        if($costoCompraSi>0){
-            $porRenta = ($utilidadXund / $costoCompraSi) * 100; //Porcentaje de rentabilidad    
-        }else{
-            $porRenta = 0;
+        <tr>
+            <td>VENTAS</td>
+            <td style="text-align: right;"><?= $lists['simbolo'].' '.number_format($lists['ventas'], 2) ?></td>
+        </tr>
+        <tr>
+            <td>COSTO DE VENTAS</td>
+            <td style="text-align: right;"><?= $lists['simbolo'].' '.number_format($lists['costo'], 2) ?></td>
+        </tr>
+        <tr>
+            <td style="background-color: #cccccc; font-weight: bold;">MARGEN BRUTO</td>
+            <td style="background-color: #cccccc; font-weight: bold; text-align: right;"><?= $lists['simbolo'].' '.number_format($lists['margen_bruto'], 2) ?></td>
+        </tr>
+    <?php
+        $x=1;
+        foreach ($lists['gastos'] as $gasto) {
+            if($x>2) break;
+    ?>
+        <tr>
+            <td style="background-color: #e6e6e6; text-align: center;"><?= $gasto['nom_grupo_gastos'] ?></td>
+            <td style="background-color: #e6e6e6; text-align: right;"><?= $lists['simbolo'].' '.number_format($gasto['suma'], 2) ?></td>
+        </tr>
+    <?php
+            foreach ($gasto['nom'] as $tipo) {
+    ?>
+        <tr>
+            <td style="text-align: right;"><?= strtoupper($tipo['nombre_tipos_gasto']) ?></td>
+            <td style="text-align: right;"><?= $lists['simbolo'].' '.number_format($tipo['suma'], 2) ?></td>
+        </tr>
+    <?php
+            }
+            $x++;
         }
-        //Totales
-        $totalCostoImpuesto += $costoCompra;
-        $totalPrecioImpuesto += $costoVenta;
-        $totalCostoTotal += $costoTotal;
-        $totalSubTotal += $subtotal;
-        $totalImpuestoV += $impVenta;
-        $totalVentaTotal += $precioVenta;
-        $totalUtilidadTotal += $utilidadTotal;
-?>
+    ?>
         <tr>
-            <td style="text-align: right;"><?= $ingreso->venta_id ?></td>
-            <td><?= $ingreso->local_nombre ?></td>
-            <td><?= $ingreso->fecha ?></td>
-            <td><?= $ingreso->proveedor_nombre ?></td>
-            <td><?= $ingreso->producto_nombre ?></td>
-            <td><?= $ingreso->nombre_unidad ?></td>
-            <td style="text-align: right;"><?= number_format($costoCompraSi, 2) ?></td>
-            <td style="text-align: right;"><?= number_format($impCompra, 2) ?></td>
-            <td style="text-align: right;"><?= number_format($costoCompra, 2) ?></td>
-            <td style="text-align: right;"><?= number_format($impuesto, 2) ?></td>
-            <td style="text-align: right;"><?= number_format($costoVentaSi, 2) ?></td>
-            <td style="text-align: right;"><?= number_format($costoVenta, 2) ?></td>
-            <td style="text-align: right;"><?= number_format($costoTotal, 2) ?></td>
-            <td style="text-align: right;"><?= $cantidad ?></td>
-            <td style="text-align: right;"><?= number_format($subtotal, 2) ?></td>
-            <td style="text-align: right;"><?= number_format($impVenta, 2) ?></td>
-            <td style="text-align: right;"><?= number_format($precioVenta, 2) ?></td>
-            <td style="text-align: right;"><?= number_format($utilidadXund, 2) ?></td>
-            <td style="text-align: right;"><?= number_format($utilidadTotal, 2) ?></td>
-            <td style="text-align: right;"><?= number_format($porRenta, 2) ?></td>
+            <td style="background-color: #cccccc; font-weight: bold;">UTILIDAD OPERATIVA</td>
+            <td style="background-color: #cccccc; font-weight: bold; text-align: right;"><?= $lists['simbolo'].' '.number_format($lists['utilidad'], 2) ?></td>
         </tr>
-<?php
-    endforeach;
-?>
+    <?php
+        $x = 1;
+        foreach ($lists['gastos'] as $gasto) {
+            if($x>2){
+    ?>
+        <tr>
+            <td style="background-color: #e6e6e6; text-align: center;"><?= strtoupper($gasto['nom_grupo_gastos']) ?></td>
+            <td style="background-color: #e6e6e6; text-align: right;"><?= $lists['simbolo'].' '.number_format($gasto['suma'], 2) ?></td>
+        </tr>
+    <?php
+                foreach ($gasto['nom'] as $tipo) {
+    ?>
+        <tr>
+            <td style="text-align: right;"><?= $tipo['nombre_tipos_gasto'] ?></td>
+            <td style="text-align: right;"><?= $lists['simbolo'].' '.number_format($tipo['suma'], 2) ?></td>
+        </tr>
+    <?php
+                }
+            }
+            $x++;
+        }
+    ?>
+        <tr>
+            <td style="background-color: #cccccc; font-weight: bold;">UTILIDAD ANTES DE IMPUESTOS</td>
+            <td style="background-color: #cccccc; font-weight: bold; text-align: right;"><?= $lists['simbolo'].' '.number_format($lists['utilidad_si'], 2) ?></td>
+        </tr>
+        <tr>
+            <td style="background-color: #e6e6e6; text-align: center;">IMPUESTO A LA RENTA </td>
+            <td style="background-color: #e6e6e6; font-weight: bold; text-align: right;"><?= $lists['simbolo'].' '.number_format($lists['impuesto'], 2) ?></td>
+        </tr>
+        <tr>
+            <td style="background-color: #cccccc; font-weight: bold;">UTILIDAD NETA</td>
+            <td style="background-color: #cccccc; font-weight: bold; text-align: right;"><?= $lists['simbolo'].' '.number_format($lists['utilidad_neta'], 2) ?></td>
+        </tr>        
     </tbody>
-    <tfoot>
-        <tr>
-            <td colspan="8">TOTALES</td>
-            <td style="text-align: right;"><?= number_format($totalCostoImpuesto, 2) ?></td>
-            <td></td>
-            <td></td>
-            <td style="text-align: right;"><?= number_format($totalPrecioImpuesto, 2) ?></td>
-            <td style="text-align: right;"><?= number_format($totalCostoTotal, 2) ?></td>
-            <td></td>
-            <td style="text-align: right;"><?= number_format($totalSubTotal, 2) ?></td>
-            <td style="text-align: right;"><?= number_format($totalImpuestoV, 2) ?></td>
-            <td style="text-align: right;"><?= number_format($totalVentaTotal, 2) ?></td>
-            <td></td>
-            <td style="text-align: right;"><?= number_format($totalUtilidadTotal, 2) ?></td>
-            <td></td>
-        </tr>
-    </tfoot>
 </table>

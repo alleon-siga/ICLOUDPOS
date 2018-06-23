@@ -1285,23 +1285,20 @@ class Reporte extends MY_Controller
             }
             case 'pdf': {
                 $params = json_decode($this->input->get('data'));
-                $date_range = explode(' - ', $params->fecha);
                 $input = array(
                     'local_id' => $params->local_id,
-                    'fecha_ini' => date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0]))),
-                    'fecha_fin' => date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])))
+                    'year' => $params->year,
+                    'mes' => $params->mes,
+                    'moneda_id' => $params->moneda_id
                 );
                 $data['lists'] = $this->reporte_model->getEstadoResultado($input);
-
+                $data['year'] = $input['year'];
+                $data['mes'] = $input['mes'];
                 $local = $this->db->get_where('local', array('int_local_id' => $input['local_id']))->row();
                 $data['local_nombre'] = !empty($local->local_nombre)? $local->local_nombre: 'TODOS';
                 $data['local_direccion'] = !empty($local->direccion)? $local->direccion: 'TODOS';
-
-                $data['fecha_ini'] = $input['fecha_ini'];
-                $data['fecha_fin'] = $input['fecha_fin'];
-                $data['condicion_pago'] = $input['condicion_pago'];
                 $this->load->library('mpdf53/mpdf');
-                $mpdf = new mPDF('utf-8', 'A4-L', 0, '', 5, 5, 5, 5, 5, 5);
+                $mpdf = new mPDF('utf-8', 'A4', 0, '', 5, 5, 5, 5, 5, 5);
                 $html = $this->load->view('menu/reportes/estadoResultado_list_pdf', $data, true);
                 $mpdf->WriteHTML($html);
                 $mpdf->Output();
@@ -1309,14 +1306,15 @@ class Reporte extends MY_Controller
             }
             case 'excel': {
                 $params = json_decode($this->input->get('data'));
-                $date_range = explode(' - ', $params->fecha);
                 $input = array(
                     'local_id' => $params->local_id,
-                    'fecha_ini' => date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0]))),
-                    'fecha_fin' => date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])))
+                    'year' => $params->year,
+                    'mes' => $params->mes,
+                    'moneda_id' => $params->moneda_id
                 );
                 $data['lists'] = $this->reporte_model->getEstadoResultado($input);
-
+                $data['year'] = $input['year'];
+                $data['mes'] = $input['mes'];
                 $local = $this->db->get_where('local', array('int_local_id' => $input['local_id']))->row();
                 $data['local_nombre'] = !empty($local->local_nombre)? $local->local_nombre: 'TODOS';
                 $data['local_direccion'] = !empty($local->direccion)? $local->direccion: 'TODOS';

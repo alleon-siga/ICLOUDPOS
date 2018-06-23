@@ -1668,7 +1668,7 @@ function create_unidades_template(index, unidad, unidad_minima) {
     template += 'data-orden="' + unidad.orden + '" ';
     template += 'data-cualidad="' + unidad.producto_cualidad + '" ';
     template += 'data-index="' + index + '" ';
-    template += 'onkeydown="return soloDecimal(this, event);">';
+    template += 'onkeydown="return soloDecimal3(this, event);">';
     template += '</div>';
 
     template += '<h6>' + unidad.nombre_unidad + ' (' + unidad.unidades + ' ' + unidad_minima.abr + ')</h6>';

@@ -25,18 +25,16 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
     </a>
     <br>
     <div class="table-responsive">
-        <table class="table table-striped dataTable table-bordered" id="example">
+        <table class="table table-striped dataTable table-bordered tableStyle" id="example">
             <thead>
             <tr>
                 <th>ID</th>
-                <th><?= $term[0]->valor.' / '.$term[1]->valor ?></th>
-                <th>Razón Social</th>
-                <th>Direcci&oacute;n Fiscal</th>
-                <th>Tel&eacute;fono Empresa</th>
-                <th>Correo</th>
-                <th width="25%">Contacto</th>
-                <th>Tel&eacute;fono contacto</th>
-                <th width="15%">Acciones</th>
+                <th width="5%"><?= $term[0]->valor.' / '.$term[1]->valor ?></th>
+                <th width="30%">Razón Social</th>
+                <th width="30%">Direcci&oacute;n Fiscal</th>
+                <th width="10%">Tel&eacute;fono</th>
+                <th width="5%">Correo</th>
+                <th width="10%">Acciones</th>
             </tr>
             </thead>
             <tbody>
@@ -45,13 +43,11 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                     ?>
                     <tr id=<?= $proveedor['id_proveedor'] ?>>
                         <td class="center"><?= $proveedor['id_proveedor'] ?></td>
-                        <td><?= $proveedor['proveedor_ruc'] ?></td>
+                        <td style="white-space: normal;"><?= $proveedor['proveedor_ruc'] ?></td>
                         <td style="white-space: normal;"><?= $proveedor['proveedor_nombre'] ?></td>
                         <td style="white-space: normal;"><?= $proveedor['proveedor_direccion1'] ?></td>
-                        <td><?= $proveedor['proveedor_telefono1'] ?></td>
-                        <td><?= $proveedor['proveedor_email'] ?></td>
-                        <td style="white-space: normal;"><?= $proveedor['proveedor_contacto'] ?></td>
-                        <td><?= $proveedor['proveedor_telefono2'] ?></td>
+                        <td style="white-space: normal;"><?= $proveedor['proveedor_telefono1'] ?></td>
+                        <td style="white-space: normal;"><?= $proveedor['proveedor_email'] ?></td>
                         <td style="white-space: nowrap;">
                             <div class="btn-group">
                                 <?php

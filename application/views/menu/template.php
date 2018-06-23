@@ -605,7 +605,7 @@ $primary_nav = array(
                         'slug' => 'gastosDia'
                     ),
                     array(
-                        'name' => 'Estado de Resultado',
+                        'name' => 'Estado de Resultados',
                         'url' => $ruta . 'reporte/estadoResultado',
                         'slug' => 'estadoresultado'
                     )

@@ -14,17 +14,17 @@
     <br>
 
     <div class="table-responsive">
-        <table class="table table-striped dataTable" id="example">
+        <table class="table table-striped dataTable tableStyle" id="example">
             <thead>
             <tr>
                 <th style="text-align: center">ID</th>
                 <th style="text-align: center">Tipo</th>
-                <th style="text-align: center"><?= $term[0]->valor.' / '.$term[1]->valor ?></th>
-                <th style="text-align: center">Raz&oacute;n Social o Nombre</th>
-                <th style="text-align: center">Direccion</th>
-                <th style="text-align: center">Teléfono</th>
-                <th style="text-align: center">correo</th>
-                <th class="desktop">Acciones</th>
+                <th width="10%" style="text-align: center"><?= $term[0]->valor.' / '.$term[1]->valor ?></th>
+                <th width="20%" style="text-align: center">Raz&oacute;n Social o Nombre</th>
+                <th width="40%" style="text-align: center">Direccion</th>
+                <th width="10%" style="text-align: center">Teléfono</th>
+                <th width="10%" style="text-align: center">correo</th>
+                <th width="10%" class="desktop">Acciones</th>
             </tr>
             </thead>
             <tbody>
@@ -34,13 +34,13 @@
                     <tr>
                         <td class="center"><?= $cliente['id_cliente'] ?></td>
                         <td><?= $cliente['tipo_cliente'] == '1' ? 'Empresa' : 'Persona'?></td>
-                        <td><?= $cliente['ruc'] == '2' ? $term[1]->valor.':' : $term[0]->valor.':'?> <?= $cliente['identificacion'] ?></td>
-                        <td><?= $cliente['razon_social'] ?></td>                        
-                        <td><?= $cliente['direccion'] ?></td>
-                        <td><?= $cliente['telefono1'] ?></td>
-                        <td><?= $cliente['email'] ?></td>
+                        <td style="white-space: normal;"><?= $cliente['ruc'] == '2' ? $term[1]->valor.':' : $term[0]->valor.':'?> <?= $cliente['identificacion'] ?></td>
+                        <td style="white-space: normal;"><?= $cliente['razon_social'] ?></td>                        
+                        <td style="white-space: normal;"><?= $cliente['direccion'] ?></td>
+                        <td style="white-space: normal;"><?= $cliente['telefono1'] ?></td>
+                        <td style="white-space: normal;"><?= $cliente['email'] ?></td>
                         <!--  <td><?php //if($cliente['categoria_precio']!=null){ echo  $cliente['nombre_precio']; }?></td> -->
-                        <td class="center">
+                        <td class="center" style="white-space: nowrap;">
                             <div class="btn-group">
                                 <?php
 

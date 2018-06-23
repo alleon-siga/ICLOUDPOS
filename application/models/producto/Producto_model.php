@@ -56,6 +56,7 @@ class producto_model extends CI_Model
                 p.producto_nombre AS producto_nombre,
                 p.producto_codigo_interno AS producto_ci,
                 p.producto_codigo_barra AS barra,
+                p.producto_cualidad AS producto_cualidad,
                 pa.cantidad AS cantidad,
                 pa.fraccion AS fraccion,
                 um_max.id_unidad AS unidad_max_id,

@@ -22,8 +22,17 @@
                 <td><?= getCodigoValue(sumCod($p->producto_id), $p->producto_ci) ?></td>
                 <?= $barra_activa->activo == 1 ? '<td>' . $p->barra . '</td>' : '' ?>
                 <td><?= $p->producto_nombre ?></td>
-                <td><?= $p->cantidad . " " . $p->unidad_max_abr ?></td>
-                <td><?= $p->fraccion . " " . $p->unidad_min_abr ?></td>
+                <?php if($p->producto_cualidad=='MEDIBLE'){ ?>
+                    <td><?= bcdiv($p->cantidad,'1',0) . " " . $p->unidad_max_abr ?></td>
+                <?php }else{ ?>
+                    <td><?= $p->cantidad . " " . $p->unidad_max_abr ?></td>
+                <?php } ?>
+                <?php if($p->producto_cualidad=='MEDIBLE'){ ?>
+                    <td><?= bcdiv($p->fraccion,'1',0) . " " . $p->unidad_min_abr ?></td>
+                <?php }else{ ?>
+                    <td><?= $p->fraccion . " " . $p->unidad_min_abr ?></td>    
+                <?php } ?>
+                
                 <td><?= $p->cantidad_min . " " . $p->unidad_min_abr ?></td>
                 <?php if ($local_id == ""): ?>
                     <td><?= $p->local_nombre ?></td>
