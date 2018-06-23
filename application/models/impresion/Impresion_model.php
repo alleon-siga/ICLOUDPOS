@@ -120,7 +120,7 @@ class impresion_model extends CI_Model
                 FORMAT(v.pagado, 2) AS pagado,
                 FORMAT(IFNULL(v.inicial, 0), 2) AS inicial,
                 CONCAT(co.serie, '-', LPAD(v.nro_guia, 7, '0')) AS nro_guia,
-                REPLACE(v.nota,'<br>',' - ') AS nota,
+                REPLACE(v.nota,'<br>',' - ') AS nota
             FROM
                 venta AS v
                     JOIN
