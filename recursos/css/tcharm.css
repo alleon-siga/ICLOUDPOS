@@ -1,0 +1,28 @@
+    .tcharm {
+        background-color: #fff;
+        border: 1px solid #dae8e7;
+        width: 300px;
+        padding: 0 20px;
+        overflow-y: auto;
+    }
+
+    .tcharm-header {
+        text-align: center;
+    }
+
+    .tcharm-body .row {
+        margin: 20px 3px;
+    }
+
+    .tcharm-close {
+        text-decoration: none !important;
+        color: #333333;
+        padding: 3px;
+        border: 1px solid #fff;
+        float: left;
+    }
+
+    .tcharm-close:hover {
+        background-color: #dae8e7;
+        color: #333333;
+    }

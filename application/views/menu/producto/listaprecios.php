@@ -474,11 +474,11 @@
 
                         //si tengo un stock diferente de 0 muestro el resultado, sino muestro Sin Stock
                         if (stock_local[i].cantidad != 0 || stock_local[i].fraccion != 0)
-                            stock = '<label class="control-label badge label-' + type_badge + '">' + stock + '</label>';
+                            stock = '<label class="control-label badge label-' + type_badge + '"></label>';
                     }
                 }
             }
-            template += '<td>' + stock + '</td>';
+            template += '<td>...' + stock + '</td>';
 
             if (flag) {
                 //defino si el stock esta por debajo del minimo

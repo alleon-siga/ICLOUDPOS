@@ -54,13 +54,26 @@
                         <td><?= $k->nombre ?></td>
                         <td style="white-space: normal;"><?= $k->ref_val ?></td>
                         <?php if ($k->io == 1): ?>
-                            <td style="text-align: right;"><?= $k->cantidad ?></td>
+                            <?php if($k->producto_cualidad=='MEDIBLE'){ ?>
+                                <td style="text-align: right;"><?=  bcdiv($k->cantidad,1,0) ?></td>
+                            <?php }else{ ?>
+                                <td style="text-align: right;"><?= $k->cantidad ?></td>
+                            <?php } ?>
                             <td style="text-align: right;"></td>
                         <?php elseif ($k->io == 2): ?>
                             <td style="text-align: right;"></td>
-                            <td style="text-align: right;"><?= $k->cantidad ?></td>
+                            <?php if($k->producto_cualidad=='MEDIBLE'){ ?>
+                                <td style="text-align: right;"><?= bcdiv($k->cantidad,1,0) ?></td>
+                            <?php }else{ ?>
+                                <td style="text-align: right;"><?= $k->cantidad ?></td>    
+                            <?php } ?>
+                            
                         <?php endif; ?>
-                        <td style="text-align: right;"><?= $k->cantidad_saldo ?></td>
+                        <?php if($k->producto_cualidad=='MEDIBLE'){ ?>
+                            <td style="text-align: right;"><?= bcdiv($k->cantidad_saldo,1,0) ?></td>
+                        <?php }else{ ?>
+                            <td style="text-align: right;"><?= $k->cantidad_saldo ?></td>    
+                        <?php } ?>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>

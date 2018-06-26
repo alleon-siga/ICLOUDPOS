@@ -4,8 +4,8 @@
     }
 </style>
 <form name="formagregar" action="<?= base_url() ?>gastos/guardar" method="post" id="formagregar" class="form-horizontal">
-    <input type="hidden" name="gastos_id" id="id" required="true"
-           value="<?php if (isset($gastos['id_gastos'])) echo $gastos['id_gastos']; ?>">
+    <input type="hidden" name="gastos_id" id="id" required="true" value="<?php if (isset($gastos['id_gastos'])) echo $gastos['id_gastos']; ?>">
+    <input type="hidden" name="cuotas" id="cuotas" value="">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -83,11 +83,7 @@
                             <select name="proveedor" id="proveedor" required="true" class="form-control">
                                 <option value="">Seleccione</option>
                                 <?php foreach ($proveedores as $proveedor): ?>
-                                    <option
-                                            value="<?php echo $proveedor->id_proveedor ?>"
-                                        <?php if (isset($gastos['proveedor_id']) and $gastos['proveedor_id'] == $proveedor->id_proveedor) echo 'selected' ?>>
-                                        <?= $proveedor->proveedor_nombre ?>
-                                    </option>
+                                    <option value="<?php echo $proveedor->id_proveedor ?>" <?php if (isset($gastos['proveedor_id']) and $gastos['proveedor_id'] == $proveedor->id_proveedor) echo 'selected' ?>><?= $proveedor->proveedor_nombre ?></option>
                                 <?php endforeach ?>
                             </select>
                             <a class="input-group-addon btn-default" data-toggle="tooltip"
@@ -104,11 +100,7 @@
                         <select name="usuario" id="usuario" required="true" class="form-control">
                             <option value="">Seleccione</option>
                             <?php foreach ($usuarios as $usuario): ?>
-                                <option
-                                        value="<?php echo $usuario->nUsuCodigo ?>"
-                                    <?php if (isset($gastos['usuario_id']) and $gastos['usuario_id'] == $usuario->nUsuCodigo) echo 'selected' ?>>
-                                    <?= $usuario->nombre ?>
-                                </option>
+                                <option value="<?php echo $usuario->nUsuCodigo ?>" <?php if (isset($gastos['usuario_id']) and $gastos['usuario_id'] == $usuario->nUsuCodigo) echo 'selected' ?>><?= $usuario->nombre ?></option>
                             <?php endforeach ?>
                         </select>
                     </div>
@@ -118,9 +110,17 @@
                     <label class="control-label col-md-3">Condici&oacute;n</label>
                     <div class="col-md-9">
                         <select name="tipo_pago" id="tipo_pago" class='form-control'>
-                            <?php foreach ($tipo_pagos as $pago): ?>
+                            <?php
+                                foreach ($tipo_pagos as $pago):
+                                    $selected = "";    
+                                    if(isset($gastos['condicion_pago'])){
+                                        if($gastos['condicion_pago'] == $pago['id_condiciones']){
+                                            $selected = "selected";
+                                        }
+                                    }
+                            ?>
                                 <option
-                                        value="<?= $pago['id_condiciones'] ?>"><?= $pago['nombre_condiciones'] ?></option>
+                                        value="<?= $pago['id_condiciones'] ?>" <?= $selected ?>><?= $pago['nombre_condiciones'] ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -236,13 +236,18 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" id="" class="btn btn-primary" onclick="grupo.guardar()">F6 Confirmar</button>
+                <button type="button" class="btn btn-primary" onclick="grupo.guardar()">F6 Guardar</button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
             </div>
             <!-- /.modal-content -->
         </div>
     </div>
     <div class="modal fade" id="detalleModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false"></div>
+    <div class="modal fade" id="dialog_gasto_credito" tabindex="-1" role="dialog"
+         aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false"
+         aria-hidden="true">
+        <?= $dialog_gasto_credito ?>
+    </div>
 </form>
 <script>
     var cuentas = [];

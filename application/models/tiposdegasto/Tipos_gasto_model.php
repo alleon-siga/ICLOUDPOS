@@ -11,6 +11,7 @@ class tipos_gasto_model extends CI_Model
 
     function get_all()
     {
+        $query = $this->db->join('grupo_gastos', 'tipos_gasto.id_grupo_gastos = grupo_gastos.id_grupo_gastos', 'left');
         $query = $this->db->where('status_tipos_gasto', 1);
         $query = $this->db->get('tipos_gasto');
         return $query->result_array();

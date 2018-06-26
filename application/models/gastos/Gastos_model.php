@@ -45,15 +45,15 @@ class gastos_model extends CI_Model
     function get_all($data = array())
     {
         $this->db->select('*, moneda.*,
-         responsable.nombre as responsable, trabajador.nombre as trabajador,
-         gastos.total as total');
+         responsable.username as responsable, trabajador.nombre as trabajador,
+         gastos.total as total, condiciones_pago.nombre_condiciones');
         $this->db->join('tipos_gasto', 'tipos_gasto.id_tipos_gasto=gastos.tipo_gasto');
         $this->db->join('local', 'gastos.local_id=local.int_local_id');
         $this->db->join('moneda', 'moneda.id_moneda=gastos.id_moneda');
-        $this->db->join('usuario as trabajador', 'gastos.usuario_id=trabajador.NusuCodigo', 'left');
-        $this->db->join('usuario as responsable', 'gastos.responsable_id=responsable.NusuCodigo');
+        $this->db->join('usuario as trabajador', 'gastos.usuario_id=trabajador.nUsuCodigo', 'left');
+        $this->db->join('usuario as responsable', 'gastos.responsable_id=responsable.nUsuCodigo');
         $this->db->join('proveedor', 'gastos.proveedor_id=proveedor.id_proveedor', 'left');
-
+        $this->db->join('condiciones_pago', 'gastos.condicion_pago=condiciones_pago.id_condiciones', 'left');
 
         $this->set_gastos_where($data);
 
@@ -89,9 +89,6 @@ class gastos_model extends CI_Model
 
         $this->db->trans_start();
 
-        $cuenta = $this->db->join('caja', 'caja.id = caja_desglose.caja_id')
-            ->get_where('caja_desglose', array('caja_desglose.id' => $data['cuenta_id']))->row();
-
         $gastos = array(
             'fecha' => $data['fecha'],
             'fecha_registro' => $data['fecha_registro'],
@@ -99,8 +96,9 @@ class gastos_model extends CI_Model
             'total' => $data['total'],
             'tipo_gasto' => $data['tipo_gasto'],
             'local_id' => $data['local_id'],
+            'status_gastos' => $data['status_gastos'],
             'gasto_usuario' => $data['gasto_usuario'],
-            'id_moneda' => $cuenta->moneda_id,
+            'id_moneda' => $data['moneda_id'],
             'tasa_cambio' => 0,
             'proveedor_id' => $data['proveedor_id'],
             'usuario_id' => $data['usuario_id'],
@@ -111,7 +109,8 @@ class gastos_model extends CI_Model
             'numero' => $data['numero'],
             'id_impuesto' => $data['id_impuesto'],
             'subtotal' => $data['subtotal'],
-            'impuesto' => $data['impuesto']
+            'impuesto' => $data['impuesto'],
+            'condicion_pago' => $data['tipo_pago']
         );
 
         $this->db->insert('gastos', $gastos);

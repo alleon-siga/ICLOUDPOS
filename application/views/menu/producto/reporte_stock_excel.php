@@ -64,9 +64,17 @@
             </td>
             <td id="cantidad_prod_<?php echo $pd['producto_id'] ?>">
         <?php if($unidadMinima == 0){ ?>
-            <?php echo $pd['cantidad']; ?>
+            <?php if($pd['producto_cualidad']=='MEDIBLE'){ ?>
+                <?php echo bcdiv($pd['cantidad'],1,0); ?>    
+            <?php }else{ ?>
+                <?php echo $pd['cantidad']; ?>
+            <?php } ?>
         <?php }else{ ?>
-            <?php echo ($pd['unidades'] * $pd['cantidad']) + $pd['fraccion']; ?>
+            <?php if($pd['producto_cualidad']=='MEDIBLE'){ ?>
+                <?php echo bcdiv(($pd['unidades'] * $pd['cantidad']) + $pd['fraccion'],1,0); ?>    
+            <?php }else{ ?>
+                <?php echo ($pd['unidades'] * $pd['cantidad']) + $pd['fraccion']; ?>
+            <?php } ?>
         <?php } ?>
             </td>
             <?php if($unidadMinima == 0){ ?>

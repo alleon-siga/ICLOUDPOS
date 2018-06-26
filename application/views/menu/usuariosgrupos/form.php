@@ -16,9 +16,15 @@
                             <label>Nombre</label>
                         </div>
                         <div class="col-md-10">
+                        <?php
+                            $readonly = '';
+                            if($usuariosgrupos['id_grupos_usuarios']=='2' || $usuariosgrupos['id_grupos_usuarios']=='8' || $usuariosgrupos['id_grupos_usuarios']=='9'){
+                                $readonly = 'readonly';
+                            }
+                        ?>
                             <input type="text" name="nombre_grupos_usuarios" id="nombre_grupos_usuarios" required="true"
                                    class="form-control"
-                                   value="<?php if (isset($usuariosgrupos['nombre_grupos_usuarios'])) echo $usuariosgrupos['nombre_grupos_usuarios']; ?>">
+                                   value="<?php if (isset($usuariosgrupos['nombre_grupos_usuarios'])) echo $usuariosgrupos['nombre_grupos_usuarios']; ?>" <?= $readonly ?>>
                         </div>
 
                     </div>

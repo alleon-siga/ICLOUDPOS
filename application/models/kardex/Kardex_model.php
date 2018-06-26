@@ -58,9 +58,10 @@ class kardex_model extends CI_Model
 
     public function get_kardex($where)
     {
-        $this->db->select('*')->from('kardex');
-        $this->db->join('usuario', 'usuario.nUsuCodigo = kardex.usuario_id')
-            ->where('producto_id', $where['producto_id'])
+        $this->db->select("kardex.id, kardex.fecha, kardex.tipo, kardex.serie, kardex.numero, kardex.operacion, usuario.nombre, kardex.ref_val, kardex.io, kardex.cantidad, kardex.cantidad_saldo, producto.producto_cualidad")->from('kardex');
+        $this->db->join('usuario', 'usuario.nUsuCodigo = kardex.usuario_id');
+        $this->db->join('producto', 'kardex.producto_id = producto.producto_id')
+            ->where('kardex.producto_id', $where['producto_id'])
             ->where('local_id', $where['local_id'])
             ->order_by('id');
 

@@ -387,7 +387,42 @@ $(document).ready(function () {
         }
     });
 
+    $("#editar_su").on('click', function (e) {
+        e.preventDefault();
+        var edit_pu = $("#editar_su");
+        var pu = $("#importe");
+
+        if (edit_pu.attr('data-estado') == '0') {
+            pu.removeAttr('readonly');
+            pu.trigger("focus");
+            edit_pu.attr('data-estado', '1');
+            edit_pu.html('<i class="fa fa-check"></i>');
+        }else{
+            pu.attr('readonly', 'readonly');
+            edit_pu.attr('data-estado', '0');
+            edit_pu.html('<i class="fa fa-edit"></i>');
+            $(".precio-input").removeClass('precio-selected');
+            var subtotal = pu.val();
+            var flag = false;
+            if(subtotal == pu.attr('data-sub')){
+                flag = true;
+                $("#subtotal_um").html(input.attr('data-unidad_nombre'));
+                input.addClass('precio-selected');
+            }else{
+                $("#precio_unitario").val(parseFloat(pu.val() / $('#total_minimo').val()).toFixed(2));
+            }
+
+            if (flag == false) {
+                $("#subtotal_um").html('<span style="color: #f39c12;">Personalizado</span>');
+            }
+        }
+    });
+
     $("#precio_unitario").on('focus', function () {
+        $(this).select();
+    });
+
+    $("#importe").on('focus', function () {
         $(this).select();
     });
 
@@ -398,6 +433,15 @@ $(document).ready(function () {
         }
         else
             refresh_totals();
+    });
+
+    $("#importe").on('keyup', function (e) {
+        if (e.keyCode == tecla_enter) {
+            $("#editar_su").click();
+            $('#add_producto').trigger("focus");
+        }else{
+            $("#precio_unitario").val(parseFloat($("#importe").val() / $('#total_minimo').val()).toFixed(2));
+        }
     });
 
     $("#moneda_id").on('change', function () {
@@ -482,7 +526,11 @@ $(document).ready(function () {
             $('#precio_unitario').trigger('focus');
             return false;
         }
-
+        else if ($("#editar_su").attr('data-estado') == '1') {
+            show_msg('warning', '<h4>Error. </h4><p>Por favor debe confirmar el Subtotal de Venta.</p>');
+            $('#importe').trigger('focus');
+            return false;
+        }
         add_producto();
     });
 
@@ -1402,6 +1450,7 @@ function refresh_totals() {
 
     $("#total_minimo").val(data_total);
     $("#importe").val(parseFloat(importe_total).toFixed(2));
+    $("#importe").attr('data-sub', parseFloat(importe_total).toFixed(2));
 }
 
 //function para refrescar el panel derecho
@@ -1619,7 +1668,7 @@ function create_unidades_template(index, unidad, unidad_minima) {
     template += 'data-orden="' + unidad.orden + '" ';
     template += 'data-cualidad="' + unidad.producto_cualidad + '" ';
     template += 'data-index="' + index + '" ';
-    template += 'onkeydown="return soloDecimal(this, event);">';
+    template += 'onkeydown="return soloDecimal3(this, event);">';
     template += '</div>';
 
     template += '<h6>' + unidad.nombre_unidad + ' (' + unidad.unidades + ' ' + unidad_minima.abr + ')</h6>';

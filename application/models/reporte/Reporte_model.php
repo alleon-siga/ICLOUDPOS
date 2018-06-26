@@ -590,7 +590,7 @@ class reporte_model extends CI_Model
             $where .= "v.fecha >= '".$params['fecha_ini']."' AND v.fecha <= '".$params['fecha_fin']."'";
         }
 
-        $query = "SELECT v.venta_id, DATE_FORMAT(v.fecha, '%d/%m/%Y') AS fecha, pr.proveedor_nombre, p.producto_nombre, u.nombre_unidad, SUM(up.unidades * dv.cantidad) AS cantidad, dv.detalle_costo_promedio, dv.detalle_importe, l.local_nombre, IF(dv.detalle_costo_ultimo>0, dv.detalle_costo_ultimo, pcu.costo) AS detalle_costo_ultimo, dv.impuesto_porciento, v.tipo_impuesto
+        $query = "SELECT v.venta_id, DATE_FORMAT(v.fecha, '%d/%m/%Y') AS fecha, pr.proveedor_nombre, p.producto_nombre, u.nombre_unidad, SUM(up.unidades * dv.cantidad) AS cantidad, dv.detalle_costo_promedio, dv.detalle_importe, l.local_nombre, dv.detalle_costo_ultimo, dv.impuesto_porciento, v.tipo_impuesto
             FROM detalle_venta dv
             INNER JOIN venta v ON v.venta_id=dv.id_venta 
             INNER JOIN producto p ON p.producto_id=dv.id_producto 
@@ -646,5 +646,80 @@ class reporte_model extends CI_Model
         }
         $query .= " GROUP BY v.venta_id, dv.id_detalle ORDER BY v.venta_id";
         return $this->db->query($query)->result();
+    }
+
+    function getEstadoResultado($params)
+    {
+        // Ventas
+        $this->db->select("SUM(dv.detalle_importe) / ((dv.impuesto_porciento / 100) + 1) AS detalle_importe, SUM(dv.detalle_costo_ultimo * dv.cantidad) AS costo_venta, m.simbolo");
+        $this->db->from('venta v');
+        $this->db->join('detalle_venta dv', 'v.venta_id = dv.id_venta');
+        $this->db->join('moneda m', 'v.id_moneda = m.id_moneda');
+        $this->db->where("v.venta_status='COMPLETADO'");
+        if($params['local_id']>0){
+            $this->db->where('v.local_id = '.$params['local_id']);
+        }
+        if($params['moneda_id']>0){
+            $this->db->where('v.id_moneda = '.$params['moneda_id']);
+        }
+        if($params['mes'] != '' && $params['year'] != ''){
+            $this->db->where('YEAR(v.fecha) = '.$params['year'].' AND MONTH(v.fecha) = '.$params['mes']);
+        }
+        $ventas = $this->db->get()->row();
+
+        //Grupo de gasto
+        $this->db->select('id_grupo_gastos, nom_grupo_gastos');
+        $this->db->from('grupo_gastos');
+        $grupos = $this->db->get()->result_array();
+
+        $x=0;
+        foreach ($grupos as $grupo){
+            //Tipo de gasto
+            $this->db->select('id_tipos_gasto, nombre_tipos_gasto');
+            $this->db->from('tipos_gasto');
+            $this->db->where('id_grupo_gastos', $grupo['id_grupo_gastos']);
+            $tipo_gastos = $this->db->get()->result_array();
+
+            $a = 0;
+            $totSubtotal = 0;
+            foreach ($tipo_gastos as $tipo_gasto) {
+                //Sumas los gastos deacuerdo al tipo y grupo
+                $this->db->select('SUM(subtotal) AS subtotal');
+                $this->db->from('gastos');
+                $this->db->where('status_gastos', '0'); //Gasto confirmado
+                $this->db->where('tipo_gasto', $tipo_gasto['id_tipos_gasto']);
+                if($params['local_id']>0){
+                    $this->db->where('local_id = '.$params['local_id']);
+                }
+                if($params['moneda_id']>0){
+                    $this->db->where('id_moneda = '.$params['moneda_id']);
+                }
+                if($params['mes'] != '' && $params['year'] != ''){
+                    $this->db->where('YEAR(fecha) = '.$params['year'].' AND MONTH(fecha) = '.$params['mes']);
+                }
+                $suma = $this->db->get()->row_array();
+                $tipo_gastos[$a]['suma'] = $suma['subtotal'];
+                $totSubtotal += $suma['subtotal'];
+                $a++;
+            }
+            $grupos[$x]['nom'] = $tipo_gastos;
+            $grupos[$x]['suma'] = $totSubtotal;
+            $x++;
+        }
+
+        $datos['simbolo'] = $ventas->simbolo;
+        $datos['ventas'] = $ventas->detalle_importe;
+        $datos['costo'] = $ventas->costo_venta;
+        $datos['margen_bruto'] = $datos['ventas'] - $datos['costo'];
+        $datos['gastos'] = $grupos;
+        //utilidad operativa = margen bruto - gasto de venta - gasto administrativo
+        $datos['utilidad'] = $datos['margen_bruto'] - $grupos[0]['suma'] - $grupos[1]['suma'];
+        //UTILIDAD ANTES DE IMPUESTOS = utilidad operativa - gasto financiero
+        $datos['utilidad_si'] = $datos['utilidad'] - $grupos[2]['suma'];
+        //IMPUESTO A LA RENTA  = UTILIDAD ANTES DE IMPUESTOS * 0.3
+        $datos['impuesto'] = $datos['utilidad_si'] * 0.3;
+        //UTILIDAD NETA = UTILIDAD ANTES DE IMPUESTOS - IMPUESTO A LA RENTA
+        $datos['utilidad_neta'] = $datos['utilidad_si'] - $datos['impuesto'];
+        return $datos;
     }
 }

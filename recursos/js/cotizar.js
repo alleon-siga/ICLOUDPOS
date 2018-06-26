@@ -548,7 +548,7 @@ function prepare_detalles_productos() {
 }
 
 function save_cotizar(imprimir) {
-
+    var tipo_cliente = $('#cliente_id option:selected').attr('data-ruc');
     $("#loading_save_venta").modal('show');
     $("#dialog_cotizar").modal('hide');
     $('.save_venta_contado').attr('disabled', 'disabled');
@@ -589,7 +589,7 @@ function save_cotizar(imprimir) {
     });
 
     if (success != false) {
-        var win = window.open(ruta + '/cotizar/exportar_pdf/' + success, '_blank');
+        var win = window.open(ruta + 'cotizar/exportar_pdf/' + success + '/' + tipo_cliente, '_blank');
         cancel_cotizar();
     }
 }
