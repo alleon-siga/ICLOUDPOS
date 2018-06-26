@@ -312,6 +312,326 @@ class Emisor
 
     }
 
+    public function sendSummary($file_name)
+    {
+        $zip = new \ZipArchive();
+        $file = $this->path_xml . DIRECTORY_SEPARATOR . $this->get('NRO_DOCUMENTO') . DIRECTORY_SEPARATOR . $file_name;
+
+        if (!file_exists($file . '.XML')) {
+            Logger::write('error', '-1: Archivo no encontrado. ' . $file . '.XML');
+            return array(
+                'CODIGO' => '-1',
+                'MENSAJE' => 'Archivo no encontrado. ' . $file . '.XML',
+                'HASH_CPE' => NULL
+            );
+        }
+
+        if ($zip->open($file . '.ZIP', \ZIPARCHIVE::CREATE) === true) {
+            $zip->addFile($file . '.XML', $file_name . '.XML'); //ORIGEN, DESTINO
+            $zip->close();
+        }
+
+        $xml = new \DOMDocument("1.0", "ISO-8859-1");
+        $root = $xml->createElement("soapenv:Envelope");
+        $root->setAttribute("xmlns:soapenv", "http://schemas.xmlsoap.org/soap/envelope/");
+        $root->setAttribute("xmlns:SOAP-ENV", "http://schemas.xmlsoap.org/soap/envelope/");
+        $root->setAttribute("xmlns:ser", "http://service.sunat.gob.pe");
+        $root->setAttribute("xmlns:wsse", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd");
+        $xml->appendChild($root);
+
+        //Header
+        $header = $xml->createElement('soapenv:Header');
+
+        $user_token = $header->appendChild($xml->createElement('wsse:Security'))
+            ->appendChild($xml->createElement('wsse:UsernameToken'));
+
+        $user_token->appendChild(
+            $xml->createElement('wsse:Username', $this->get('NRO_DOCUMENTO') . $this->get('SOL_USER')));
+        $user_token->appendChild(
+            $xml->createElement('wsse:Password', $this->get('SOL_PASS')));
+
+        $root->appendChild($header);
+
+        //Body
+        $body = $xml->createElement('soapenv:Body');
+
+        $content = $body->appendChild($xml->createElement('ser:sendSummary'));
+        $content->appendChild($xml->createElement('fileName', $file_name . '.ZIP'));
+        $content->appendChild($xml->createElement('contentFile', base64_encode(file_get_contents($file . '.ZIP'))));
+
+        $root->appendChild($body);
+
+        $xml_post_string = $xml->saveXML();
+
+
+        $headers = array(
+            "Content-type: text/xml;charset=\"utf-8\"",
+            "Accept: text/xml",
+            "Cache-Control: no-cache",
+            "Pragma: no-cache",
+            "SOAPAction: ",
+            "Content-length: " . strlen($xml_post_string),
+        );
+
+        if ($this->get('ENV') === 'PROD')
+            $soap_url = Config::get('soap_url_prod');
+        else
+            $soap_url = Config::get('soap_url_beta');
+
+        // PHP cURL  for https connection with auth
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
+        curl_setopt($ch, CURLOPT_URL, $soap_url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $xml_post_string); // the SOAP request
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        // converting
+        $response = curl_exec($ch);
+        $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+        curl_close($ch);
+
+        if ($httpcode == 200) {
+            $doc = new \DOMDocument();
+            $doc->loadXML($response);
+
+            if (isset($doc->getElementsByTagName('ticket')->item(0)->nodeValue)) {
+                $ticket = $doc->getElementsByTagName('ticket')->item(0)->nodeValue;
+
+                unlink($file . '.ZIP');
+                $name = explode('-', $file_name);
+                $name = $name[1].'-'.$name[2].'-'.$name[3];
+                return array(
+                    'CODIGO' => '0',
+                    'MENSAJE' =>
+                        'El Resumen Diario ' . $name . ' ha sido enviado correctamente y este pendiente su respuesta. Numero de ticket: ' . $ticket,
+                    'TICKET' => $ticket
+                );
+
+            } else {
+                unlink($file . '.ZIP');
+                if (isset($doc->getElementsByTagName('faultcode')->item(0)->nodeValue)) {
+                    $sunat_codigo = $doc->getElementsByTagName('faultcode')->item(0)->nodeValue;
+                    $error = $doc->getElementsByTagName('faultstring')->item(0)->nodeValue;
+                    Logger::write('error', $sunat_codigo . ': ' . $error);
+                    return array(
+                        'CODIGO' => $sunat_codigo,
+                        'MENSAJE' => $error,
+                        'TICKET' => NULL,
+                    );
+                } else {
+                    Logger::write('error', '-3: SUNAT FUERA DE SERVICIO');
+                    return array(
+                        'CODIGO' => '-3',
+                        'MENSAJE' => 'SUNAT FUERA DE SERVICIO',
+                        'TICKET' => NULL,
+                    );
+                }
+
+            }
+
+        } else {
+            unlink($file . '.ZIP');
+            $doc = new \DOMDocument();
+            @$doc->loadXML($response);
+            if (isset($doc->getElementsByTagName('faultcode')->item(0)->nodeValue)) {
+
+                $sunat_codigo = $doc->getElementsByTagName('faultcode')->item(0)->nodeValue;
+                $error = $doc->getElementsByTagName('faultstring')->item(0)->nodeValue;
+                Logger::write('error', $sunat_codigo . ': ' . $error);
+                return array(
+                    'CODIGO' => $sunat_codigo,
+                    'MENSAJE' => $error,
+                    'TICKET' => NULL,
+                );
+            } else {
+                Logger::write('error', '-3: SUNAT FUERA DE SERVICIO');
+                return array(
+                    'CODIGO' => '-3',
+                    'MENSAJE' => 'SUNAT FUERA DE SERVICIO',
+                    'TICKET' => NULL,
+                );
+            }
+
+        }
+
+    }
+
+    public function getStatus($ticket, $data)
+    {
+        $file_name = $this->get('NRO_DOCUMENTO') . '-RC-' . date('Ymd', strtotime($data['FECHA_EMISION'])) . '-' . $data['CORRELATIVO'];
+        $file = $this->path_xml . DIRECTORY_SEPARATOR . $this->get('NRO_DOCUMENTO') . DIRECTORY_SEPARATOR . $file_name;
+
+        $xml = new \DOMDocument("1.0", "ISO-8859-1");
+        $root = $xml->createElement("soapenv:Envelope");
+        $root->setAttribute("xmlns:soapenv", "http://schemas.xmlsoap.org/soap/envelope/");
+        $root->setAttribute("xmlns:SOAP-ENV", "http://schemas.xmlsoap.org/soap/envelope/");
+        $root->setAttribute("xmlns:ser", "http://service.sunat.gob.pe");
+        $root->setAttribute("xmlns:wsse", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd");
+        $xml->appendChild($root);
+
+        //Header
+        $header = $xml->createElement('SOAP-ENV:Header');
+        $header->setAttribute('xmlns:soapenv', "http://schemas.xmlsoap.org/soap/envelope");
+
+        $user_token = $header->appendChild($xml->createElement('wsse:Security'))
+            ->appendChild($xml->createElement('wsse:UsernameToken'));
+
+        $user_token->appendChild(
+            $xml->createElement('wsse:Username', $this->get('NRO_DOCUMENTO') . $this->get('SOL_USER')));
+        $user_token->appendChild(
+            $xml->createElement('wsse:Password', $this->get('SOL_PASS')));
+
+        $root->appendChild($header);
+
+        //Body
+        $body = $xml->createElement('soapenv:Body');
+
+        $content = $body->appendChild($xml->createElement('ser:getStatus'));
+        $content->appendChild($xml->createElement('ticket', $ticket));
+
+        $root->appendChild($body);
+
+        $xml_post_string = $xml->saveXML();
+
+        $headers = array(
+            "Content-type: text/xml;charset=\"utf-8\"",
+            "Accept: text/xml",
+            "Cache-Control: no-cache",
+            "Pragma: no-cache",
+            "SOAPAction: ",
+            "Content-length: " . strlen($xml_post_string),
+        );
+
+
+        if ($this->get('ENV') === 'PROD')
+            $soap_url = Config::get('soap_url_prod');
+        else
+            $soap_url = Config::get('soap_url_beta');
+
+        // PHP cURL  for https connection with auth
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
+        curl_setopt($ch, CURLOPT_URL, $soap_url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $xml_post_string); // the SOAP request
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        // converting
+        $response = curl_exec($ch);
+        $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+        curl_close($ch);
+
+
+//        header('Content-Type: text/xml');
+//        $doc = new \DOMDocument();
+//        $doc->loadXML($response);
+//        print $doc->saveXML();
+//        return false;
+
+        if ($httpcode == 200) {
+            $doc = new \DOMDocument();
+            $doc->loadXML($response);
+
+            if (isset($doc->getElementsByTagName('content')->item(0)->nodeValue)) {
+                $xmlCDR = $doc->getElementsByTagName('content')->item(0)->nodeValue;
+
+                $path_response = $path_response = $this->path_xml . DIRECTORY_SEPARATOR . $this->get('NRO_DOCUMENTO') . DIRECTORY_SEPARATOR . 'R-TICKET-' . $ticket;
+                file_put_contents($path_response . '.ZIP', base64_decode($xmlCDR));
+
+
+                $zip = new \ZipArchive;
+                if ($zip->open($path_response . '.ZIP') === TRUE) {
+
+                    if ($zip->extractTo($this->path_xml . DIRECTORY_SEPARATOR . $this->get('NRO_DOCUMENTO'), 'R-' . $file_name . '.XML') == FALSE) {
+                        if ($zip->extractTo($this->path_xml . DIRECTORY_SEPARATOR . $this->get('NRO_DOCUMENTO'), 'R-' . $file_name . '.xml') == TRUE) {
+                            rename(
+                                $this->path_xml . DIRECTORY_SEPARATOR . $this->get('NRO_DOCUMENTO') . DIRECTORY_SEPARATOR . 'R-' . $file_name . '.xml',
+                                $this->path_xml . DIRECTORY_SEPARATOR . $this->get('NRO_DOCUMENTO') . DIRECTORY_SEPARATOR . 'R-' . $file_name . '.XML'
+                            );
+                        }
+                    }
+                    $zip->close();
+                }
+//
+                unlink($path_response . '.ZIP');
+
+                $status_code = $doc->getElementsByTagName('statusCode')->item(0)->nodeValue;
+
+                $response_xml = $this->path_xml . DIRECTORY_SEPARATOR . $this->get('NRO_DOCUMENTO') . DIRECTORY_SEPARATOR . 'R-' . $file_name . '.XML';
+                if (file_exists($response_xml)) {
+                    $doc_cdr = new \DOMDocument();
+                    $doc_cdr->load($response_xml);
+
+//                    header('Content-Type: text/xml');
+//                    print $doc_cdr->saveXML();
+
+                    return array(
+                        'CODIGO' => $doc_cdr->getElementsByTagName('ResponseCode')->item(0)->nodeValue,
+                        'MENSAJE' => $doc_cdr->getElementsByTagName('Description')->item(0)->nodeValue,
+                        'HASH_CDR' => $doc_cdr->getElementsByTagName('DigestValue')->item(0)->nodeValue,
+                    );
+                } else {
+                    Logger::write('warning', '9999: El comprobante ' . $file_name . ' fue emitido pero no recibio respuesta.');
+                    return array(
+                        'CODIGO' => '9999',
+                        'MENSAJE' => 'El comprobante ' . $file_name . ' fue emitido pero no recibio respuesta.',
+                        'HASH_CDR' => NULL,
+                    );
+                }
+            } else {
+                if (isset($doc->getElementsByTagName('faultcode')->item(0)->nodeValue)) {
+                    $sunat_codigo = $doc->getElementsByTagName('faultcode')->item(0)->nodeValue;
+                    $error = $doc->getElementsByTagName('faultstring')->item(0)->nodeValue;
+                    Logger::write('error', $sunat_codigo . ': ' . $error);
+                    return array(
+                        'CODIGO' => $sunat_codigo,
+                        'MENSAJE' => $error,
+                        'HASH_CDR' => NULL,
+                    );
+                } else {
+                    Logger::write('error', '-3: SUNAT FUERA DE SERVICIO');
+                    return array(
+                        'CODIGO' => '-3',
+                        'MENSAJE' => 'SUNAT FUERA DE SERVICIO',
+                        'HASH_CDR' => NULL,
+                    );
+                }
+
+            }
+        } else {
+            $doc = new \DOMDocument();
+            @$doc->loadXML($response);
+            if (isset($doc->getElementsByTagName('faultcode')->item(0)->nodeValue)) {
+
+                $sunat_codigo = $doc->getElementsByTagName('faultcode')->item(0)->nodeValue;
+                $error = $doc->getElementsByTagName('faultstring')->item(0)->nodeValue;
+                Logger::write('error', $sunat_codigo . ': ' . $error);
+                return array(
+                    'CODIGO' => $sunat_codigo,
+                    'MENSAJE' => $error,
+                    'HASH_CDR' => NULL,
+                );
+            } else {
+                Logger::write('error', '-3: SUNAT FUERA DE SERVICIO');
+                return array(
+                    'CODIGO' => '-3',
+                    'MENSAJE' => 'SUNAT FUERA DE SERVICIO',
+                    'HASH_CDR' => NULL,
+                );
+            }
+
+        }
+    }
+
     /*
      * $data = array(
      *  'TIPO_DOCUMENTO'=>'01',

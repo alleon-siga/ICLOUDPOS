@@ -323,6 +323,12 @@ $primary_nav = array(
                 'slug' => 'facturacion_comprobantes'
             ),
             array(
+                'name' => 'Sistema de Emisi&oacute;n',
+                'url' => $ruta . 'facturacion/enviar',
+                'icon' => 'fa fa-mail-forward',
+                'slug' => 'facturacion_comprobantes'
+            ),
+            array(
                 'name' => 'Configurar Emisor',
                 'url' => $ruta . 'facturacion/emisor',
                 'icon' => 'fa fa-cogs',

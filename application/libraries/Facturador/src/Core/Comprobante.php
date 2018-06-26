@@ -19,7 +19,7 @@ abstract class Comprobante
 
     abstract public function crearXml($cabecera, $detalle);
 
-    protected function saveXml($file)
+    protected function saveXml($file, $sign_node = 1)
     {
         $this->xml->formatOutput = TRUE;
         $this->xml->preserveWhiteSpace = TRUE;
@@ -31,7 +31,7 @@ abstract class Comprobante
         $path = $this->emisor->getPathXml() . DIRECTORY_SEPARATOR . $this->emisor->get('NRO_DOCUMENTO') . DIRECTORY_SEPARATOR . $file . '.XML';
         $this->xml->save($path);
 
-        return $this->emisor->sign($file);
+        return $this->emisor->sign($file, $sign_node);
     }
 
     protected function generateQr($cabecera)
@@ -182,15 +182,15 @@ abstract class Comprobante
         return $ubl_extension;
     }
 
-    protected function createTributoXml($data, $id, $name, $type_code)
+    protected function createTributoXml($total, $moneda, $id, $name, $type_code)
     {
         $tributo = $this->xml->createElement('cac:TaxTotal');
-        $tributo->appendChild($this->xml->createElement('cbc:TaxAmount', $data['TOTAL_TRIBUTO_IGV']))
-            ->setAttribute('currencyID', $data['CODIGO_MONEDA']);
+        $tributo->appendChild($this->xml->createElement('cbc:TaxAmount', $total))
+            ->setAttribute('currencyID', $moneda);
 
         $tributo_subtotal = $this->xml->createElement('cac:TaxSubtotal');
-        $tributo_subtotal->appendChild($this->xml->createElement('cbc:TaxAmount', $data['TOTAL_TRIBUTO_IGV']))
-            ->setAttribute('currencyID', $data['CODIGO_MONEDA']);
+        $tributo_subtotal->appendChild($this->xml->createElement('cbc:TaxAmount', $total))
+            ->setAttribute('currencyID', $moneda);
 
         $tributo_categoria = $tributo_subtotal->appendChild($this->xml->createElement('cac:TaxCategory'))
             ->appendChild($this->xml->createElement('cac:TaxScheme'));

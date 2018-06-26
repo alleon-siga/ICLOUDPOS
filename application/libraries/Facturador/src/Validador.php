@@ -89,6 +89,67 @@ class Validador
         return $cabecera;
     }
 
+    public static function prepareDetallesRC($detalles)
+    {
+        for ($i = 0; $i < count($detalles); $i++) {
+            $detalles[$i]['CLIENTE_NOMBRE'] = self::limpiar_caracteres($detalles[$i]['CLIENTE_NOMBRE']);
+
+            if (isset($detalles[$i]['TOTAL_GRAVADAS']))
+                $detalles[$i]['TOTAL_GRAVADAS'] = number_format($detalles[$i]['TOTAL_GRAVADAS'], 2, '.', '');
+
+            if (isset($detalles[$i]['TOTAL_INAFECTAS']))
+                $detalles[$i]['TOTAL_INAFECTAS'] = number_format($detalles[$i]['TOTAL_INAFECTAS'], 2, '.', '');
+
+            if (isset($detalles[$i]['TOTAL_EXONERADAS']))
+                $detalles[$i]['TOTAL_EXONERADAS'] = number_format($detalles[$i]['TOTAL_EXONERADAS'], 2, '.', '');
+
+            if (isset($detalles[$i]['TOTAL_GRATUITAS']))
+                $detalles[$i]['TOTAL_GRATUITAS'] = number_format($detalles[$i]['TOTAL_GRATUITAS'], 2, '.', '');
+
+            if (isset($detalles[$i]['TOTAL_DESCUENTOS']))
+                $detalles[$i]['TOTAL_DESCUENTOS'] = number_format($detalles[$i]['TOTAL_DESCUENTOS'], 2, '.', '');
+
+            if (isset($detalles[$i]['TOTAL_TRIBUTO_IGV']))
+                $detalles[$i]['TOTAL_TRIBUTO_IGV'] = number_format($detalles[$i]['TOTAL_TRIBUTO_IGV'], 2, '.', '');
+
+            if (isset($detalles[$i]['TOTAL_TRIBUTO_ISC']))
+                $detalles[$i]['TOTAL_TRIBUTO_ISC'] = number_format($detalles[$i]['TOTAL_TRIBUTO_ISC'], 2, '.', '');
+
+            if (isset($detalles[$i]['TOTAL_TRIBUTO_OTROS']))
+                $detalles[$i]['TOTAL_TRIBUTO_OTROS'] = number_format($detalles[$i]['TOTAL_TRIBUTO_OTROS'], 2, '.', '');
+
+            if (isset($detalles[$i]['TOTAL_DESCUENTO_GLOBAL']))
+                $detalles[$i]['TOTAL_DESCUENTO_GLOBAL'] = number_format($detalles[$i]['TOTAL_DESCUENTO_GLOBAL'], 2, '.', '');
+
+            if (isset($detalles[$i]['TOTAL_OTROS_CARGOS']))
+                $detalles[$i]['TOTAL_OTROS_CARGOS'] = number_format($detalles[$i]['TOTAL_OTROS_CARGOS'], 2, '.', '');
+
+            if (isset($detalles[$i]['TOTAL_VENTA']))
+                $detalles[$i]['TOTAL_VENTA'] = number_format($detalles[$i]['TOTAL_VENTA'], 2, '.', '');
+
+            if ($detalles[$i]['TIPO_DOCUMENTO'] == \TIPO_COMPROBANTE::$BOLETA) {
+                if ($detalles[$i]['TOTAL_VENTA'] <= 700) {
+                    $detalles[$i]['CLIENTE_NRO_DOCUMENTO'] = '-';
+                    $detalles[$i]['CLIENTE_TIPO_IDENTIDAD'] = '-';
+                    $detalles[$i]['CLIENTE_NOMBRE'] = '-';
+                }
+            }
+
+            if (isset($detalles[$i]['NOTA_TIPO_DOCUMENTO'])) {
+                if ($detalles[$i]['NOTA_TIPO_DOCUMENTO'] == \TIPO_COMPROBANTE::$BOLETA) {
+                    if ($detalles[$i]['TOTAL_VENTA'] <= 700) {
+                        $detalles[$i]['CLIENTE_NRO_DOCUMENTO'] = '-';
+                        $detalles[$i]['CLIENTE_TIPO_IDENTIDAD'] = '-';
+                        $detalles[$i]['CLIENTE_NOMBRE'] = '-';
+                    }
+                }
+            }
+        }
+
+
+        return $detalles;
+    }
+
     public static function prepareDetalles($detalle)
     {
         for ($i = 0; $i < count($detalle); $i++) {
@@ -283,6 +344,64 @@ class Validador
                 return self::validar_detalles($detalles);
             }
         }
+    }
+
+    public static function validarRC($cabecera, $detalles)
+    {
+        $resp['CODIGO'] = '-2';
+        if (!self::fecha($cabecera['FECHA_EMISION'])) {
+            $resp['MENSAJE'] = 'Fecha de emision no valida';
+            return $resp;
+        }
+
+        if (!self::fecha($cabecera['FECHA_REFERENCIA'])) {
+            $resp['MENSAJE'] = 'Fecha de referencia no valida';
+            return $resp;
+        }
+
+        if (!isset($cabecera['CORRELATIVO']) && $cabecera['CORRELATIVO'] = '') {
+            $resp['MENSAJE'] = 'Correlativo es requerido';
+            return $resp;
+        }
+
+        foreach ($detalles as $detalle) {
+            if (!self::fecha($detalle['FECHA_EMISION'])) {
+                $resp['MENSAJE'] = 'Fecha de emision no valida';
+                return $resp;
+            }
+
+            if (!self::numero_comprobante($detalle['TIPO_DOCUMENTO'], $detalle['NUMERO_DOCUMENTO'])) {
+                $resp['MENSAJE'] = 'Numero de comprobante no valido';
+                return $resp;
+            }
+
+            if (!isset($detalle['TOTAL_VENTA']) && $detalle['TOTAL_VENTA'] = '' && $detalle['TOTAL_VENTA'] > 0) {
+                $resp['MENSAJE'] = 'Total de la venta es requerido';
+                return $resp;
+            }
+
+            if ($detalle['TOTAL_VENTA'] > 700) {
+                if (!self::identificacion($detalle['CLIENTE_TIPO_IDENTIDAD'], $detalle['CLIENTE_NRO_DOCUMENTO'])) {
+                    $resp['MENSAJE'] = 'Identificacion del cliente no valida';
+                    return $resp;
+                }
+
+                if (!isset($detalle['CLIENTE_NOMBRE']) && $detalle['CLIENTE_NOMBRE'] = '') {
+                    $resp['MENSAJE'] = 'Nombre del cliente es requerido';
+                    return $resp;
+                }
+            }
+
+            if (!isset($detalle['CODIGO_MONEDA']) && $detalle['CODIGO_MONEDA'] = '') {
+                $resp['MENSAJE'] = 'Codigo de moneda es requerido';
+                return $resp;
+            }
+
+            //VALIDAR GRAVABAS, EXONERADAS E INAFECTAS. Se debera informar al menos uno de estos
+        }
+
+        return FALSE;
+
     }
 
     protected static function validar_detalles($detalles)

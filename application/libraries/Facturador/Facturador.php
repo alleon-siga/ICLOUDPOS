@@ -64,11 +64,31 @@ class Facturador
         return $emisor->sendBill($file_name);
     }
 
-    public function enviarBaja($cabecera, $detalles)
+    public function enviarResumen($cabecera, $detalles)
     {
+        $resumen = new \Facturador\Comprobantes\Resumen($this->emisor_data);
 
-        $baja = new \Facturador\ComunicacionBaja($this->emisor_data);
-        return $baja->enviarBaja($cabecera, $detalles);
+        $validar = \Facturador\Validador::validarRC($cabecera, $detalles);
+        if ($validar !== FALSE) {
+            return $validar;
+        }
+
+        $detalles = \Facturador\Validador::prepareDetallesRC($detalles);
+
+        $response = $resumen->crearXml($cabecera, $detalles);
+
+        if ($response['CODIGO'] == 0) {
+            $file_name = $this->emisor_data['NRO_DOCUMENTO'] . '-RC-' . date('Ymd', strtotime($cabecera['FECHA_EMISION'])) . '-' . $cabecera['CORRELATIVO'];
+            $resp = $resumen->send($file_name);
+            $resp['HASH_CPE'] = $response['HASH_CPE'];
+        }
+
+        return $resp;
+    }
+
+    public function getEstado($ticket, $data){
+        $emisor = new Emisor($this->emisor_data);
+        return $emisor->getStatus($ticket, $data);
     }
 
     public function getEstadoCDR($data)
@@ -90,5 +110,14 @@ class Facturador
         $response['FROM'] = 'SUNAT';
         return $response;
     }
+
+    public function enviarBaja($cabecera, $detalles)
+    {
+
+        $baja = new \Facturador\ComunicacionBaja($this->emisor_data);
+        return $baja->enviarBaja($cabecera, $detalles);
+    }
+
+
 
 }

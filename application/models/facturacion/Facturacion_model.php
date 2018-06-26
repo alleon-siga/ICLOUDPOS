@@ -51,6 +51,43 @@ class facturacion_model extends CI_Model
         return $this->db->get()->result();
     }
 
+    function get_comprobantes_generados($where = array())
+    {
+        $this->db->select('*')->from('facturacion')
+            ->join('local', 'local.int_local_id = facturacion.local_id');
+
+        if (isset($where['local_id']))
+            $this->db->where('facturacion.local_id', $where['local_id']);
+
+
+        if (isset($where['fecha']) && isset($where['estado'])) {
+            if ($where['estado'] == '1') {
+                $this->db->where('facturacion.fecha >=', date('Y-m-d H:i:s', strtotime($where['fecha'] . " 00:00:00")));
+                $this->db->where('facturacion.fecha <=', date('Y-m-d H:i:s', strtotime($where['fecha'] . " 23:59:59")));
+            }
+        }
+
+        if (isset($where['estado'])) {
+            $this->db->where('facturacion.estado', $where['estado']);
+        }
+
+        if ($where['tipo_documento'] == '01') {
+            $this->db->where("
+        (facturacion.documento_tipo = '01' OR 
+        (facturacion.documento_tipo = '07' AND documento_mod_tipo = '01') OR  
+        (facturacion.documento_tipo = '08' AND documento_mod_tipo = '01'))");
+
+        } elseif ($where['tipo_documento'] == '03') {
+            $this->db->where("
+        (facturacion.documento_tipo = '03' OR 
+        (facturacion.documento_tipo = '07' AND documento_mod_tipo = '03') OR  
+        (facturacion.documento_tipo = '08' AND documento_mod_tipo = '03'))");
+        }
+
+
+        return $this->db->get()->result();
+    }
+
     function save_emisor($data)
     {
         $this->db->empty_table('facturacion_emisor');
@@ -99,6 +136,64 @@ class facturacion_model extends CI_Model
         ));
 
         return $facturador;
+    }
+
+    function getEstadoResumen($resumen_id)
+    {
+
+        $facturador = $this->getFacturador();
+
+        $resumen = $this->db->get_where('facturacion_resumen', array('id' => $resumen_id))->row();
+        if ($resumen != NULL) {
+
+            if ($resumen->estado == 2) {
+
+                $response = $facturador->getEstado($resumen->ticket, array(
+                    'FECHA_EMISION' => $resumen->fecha,
+                    'CORRELATIVO' => $resumen->correlativo
+                ));
+
+                $codigo = $response['CODIGO'];
+
+                if ($codigo == '0') {
+                    $estado = 3;
+                } elseif ($codigo == '9999' || $codigo == '-3') {
+                    $estado = 2;
+                } else {
+                    $estado = 4;
+                }
+
+                $this->db->where('id', $resumen_id);
+                $this->db->update('facturacion_resumen', array(
+                    'estado' => $estado,
+                    'sunat_codigo' => $response['CODIGO'],
+                    'hash_cdr' => isset($response['HASH_CDR']) ? $response['HASH_CDR'] : null,
+                    'nota' => $response['MENSAJE']
+                ));
+
+                if ($estado == 3) {
+                    $resumen_detalles = $this->db->join('facturacion', 'facturacion.id = facturacion_resumen_comprobantes.comprobante_id')
+                        ->get_where('facturacion_resumen_comprobantes', array(
+                            'resumen_id' => $resumen_id
+                        ))->result();
+
+                    foreach ($resumen_detalles as $detalle) {
+                        $this->db->where('id', $detalle->comprobante_id);
+                        $this->db->update('facturacion', array(
+                            'estado' => 3,
+                            'nota' =>
+                                'El Comprobante numero ' . $detalle->documento_numero .
+                                ', ha sido aceptado por el resumen 
+                                RC-' . date('Ymd', strtotime($resumen->fecha)) . '-' . $resumen->correlativo,
+                            'hash_cdr' => isset($response['HASH_CDR']) ? $response['HASH_CDR'] : null
+                        ));
+                    }
+                }
+                return TRUE;
+            } else {
+                return FALSE;
+            }
+        }
     }
 
     function getCdr($id)
@@ -157,6 +252,7 @@ class facturacion_model extends CI_Model
         }
 
         $pre_fact = $this->db->get_where('facturacion', array('id' => $id))->row();
+
         if ($pre_fact->hash_cdr != null) {
             $this->db->where('id', $id);
             $this->db->update('facturacion', array(
@@ -166,42 +262,54 @@ class facturacion_model extends CI_Model
             return FALSE;
         }
 
-        if ($pre_fact->estado == 2) {
-            $response = $this->getCdr($id);
-        } else {
+        $resumen = $this->db->join('facturacion_resumen_comprobantes', 'facturacion_resumen_comprobantes.resumen_id = facturacion_resumen.id')
+            ->get_where('facturacion_resumen', array(
+                'facturacion_resumen_comprobantes.comprobante_id' => $pre_fact->id
+            ))->row();
+
+        if ($resumen == null) {
+
+            if ($pre_fact->estado == 2) {
+                $response = $this->getCdr($id);
+            } else {
+                $this->db->where('id', $id);
+                $this->db->update('facturacion', array(
+                    'nota' => 'El comprobante esta enviado',
+                    'estado' => 2
+                ));
+
+                $comprobante = $this->db->get_where('facturacion', array('id' => $id))->row();
+
+                $response = $facturador->enviarComprobante($comprobante->documento_tipo, array(
+                    'NUMERO_DOCUMENTO' => $comprobante->documento_numero
+                ));
+            }
+
+
+            $codigo = $response['CODIGO'];
+
+            if ($codigo == '0') {
+                $estado = 3;
+            } elseif ($codigo == '9999' || $codigo == '-3') {
+                $estado = 2;
+            } else {
+                $estado = 4;
+            }
+
             $this->db->where('id', $id);
             $this->db->update('facturacion', array(
-                'nota' => 'El comprobante esta enviado',
-                'estado' => 2
+                'sunat_codigo' => $response['CODIGO'],
+                'hash_cdr' => isset($response['HASH_CDR']) ? $response['HASH_CDR'] : null,
+                'nota' => $response['MENSAJE'],
+                'estado' => $estado
             ));
 
-            $comprobante = $this->db->get_where('facturacion', array('id' => $id))->row();
-
-            $response = $facturador->enviarComprobante($comprobante->documento_tipo, array(
-                'NUMERO_DOCUMENTO' => $comprobante->documento_numero
-            ));
-        }
-
-
-        $codigo = $response['CODIGO'];
-
-        if ($codigo == '0') {
-            $estado = 3;
-        } elseif ($codigo == '9999' || $codigo == '-3') {
-            $estado = 2;
+            return TRUE;
         } else {
-            $estado = 4;
+            return $this->getEstadoResumen($resumen->id);
         }
 
-        $this->db->where('id', $id);
-        $this->db->update('facturacion', array(
-            'sunat_codigo' => $response['CODIGO'],
-            'hash_cdr' => isset($response['HASH_CDR']) ? $response['HASH_CDR'] : null,
-            'nota' => $response['MENSAJE'],
-            'estado' => $estado
-        ));
 
-        return TRUE;
     }
 
     function crearXml($id)
@@ -283,6 +391,102 @@ class facturacion_model extends CI_Model
         ));
 
         return TRUE;
+    }
+
+    function enviarResumenBoletas($data)
+    {
+        $data['tipo_documento'] = '03';
+        $boletas = $this->get_comprobantes_generados($data);
+
+        $facturador = $this->getFacturador();
+
+        if ($facturador === FALSE) {
+            return FALSE;
+        }
+
+        $resumen = $this->db->order_by('id', 'desc')->get_where('facturacion_resumen', array(
+            'fecha_ref >=' => date('Y-m-d H:i:s', strtotime($data['fecha'] . " 00:00:00")),
+            'fecha_ref <=' => date('Y-m-d H:i:s', strtotime($data['fecha'] . " 23:59:59"))
+        ))->row();
+
+        if ($resumen != NULL) {
+            $correlativo = ($resumen->correlativo + 1);
+        } else {
+            $correlativo = 1;
+        }
+
+        $cabecera = array(
+            'FECHA_EMISION' => date('Y-m-d'),
+            'FECHA_REFERENCIA' => date('Y-m-d', strtotime($data['fecha'])),
+            'CORRELATIVO' => $correlativo,
+        );
+
+        $detalles = array();
+        foreach ($boletas as $comprobante) {
+
+            $detalles[] = array(
+                'FECHA_EMISION' => date('Y-m-d', strtotime($comprobante->fecha)),
+                'TIPO_DOCUMENTO' => $comprobante->documento_tipo,
+                'NUMERO_DOCUMENTO' => $comprobante->documento_numero,
+
+                'NOTA_NUMERO_DOCUMENTO' => $comprobante->documento_mod_numero,
+                'NOTA_TIPO_DOCUMENTO' => $comprobante->documento_mod_tipo,
+                'ESTADO_ITEM' => '1',
+
+                'CLIENTE_NRO_DOCUMENTO' => $comprobante->cliente_identificacion,
+                'CLIENTE_TIPO_IDENTIDAD' => $comprobante->cliente_tipo,
+                'CLIENTE_NOMBRE' => $comprobante->cliente_nombre,
+
+                'CODIGO_MONEDA' => 'PEN',
+                'TOTAL_GRAVADAS' => $comprobante->total_gravadas,
+                'TOTAL_INAFECTAS' => $comprobante->total_inafectas,
+                'TOTAL_EXONERADAS' => $comprobante->total_exoneradas,
+                'TOTAL_GRATUITAS' => '0.00',
+                'TOTAL_DESCUENTOS' => '0.00',
+
+                'TOTAL_TRIBUTO_IGV' => $comprobante->impuesto,
+                'TOTAL_TRIBUTO_ISC' => '0.00',
+                'TOTAL_TRIBUTO_OTROS' => '0.00',
+
+                'TOTAL_DESCUENTO_GLOBAL' => '0.00',
+                'TOTAL_OTROS_CARGOS' => '0.00',
+                'TOTAL_VENTA' => $comprobante->total
+            );
+        }
+
+        $response = $facturador->enviarResumen($cabecera, $detalles);
+
+        if ($response['CODIGO'] == 0) {
+
+            $this->db->insert('facturacion_resumen', array(
+                'fecha' => date('Y-m-d H:i:s'),
+                'fecha_ref' => date('Y-m-d H:i:s', strtotime($data['fecha'] . " " . date('H:i:s'))),
+                'correlativo' => $correlativo,
+                'estado' => 2,
+                'nota' => $response['MENSAJE'],
+                'sunat_codigo' => 0,
+                'hash_cpe' => $response['HASH_CPE'],
+                'hash_cdr' => null,
+                'ticket' => $response['TICKET']
+            ));
+            $resumen_id = $this->db->insert_id();
+
+            foreach ($boletas as $comprobante) {
+                $this->db->insert('facturacion_resumen_comprobantes', array(
+                    'comprobante_id' => $comprobante->id,
+                    'resumen_id' => $resumen_id
+                ));
+
+                $this->db->where('id', $comprobante->id);
+                $this->db->update('facturacion', array(
+                    'estado' => 2,
+                    'nota' => 'El comprobante ha sido enviado con el resumen RC-' . date('Ymd') . '-' .
+                        $correlativo . ' y se encuentra pendiente. Numero de ticket ' . $response['TICKET']
+                ));
+            }
+        }
+
+        return $response;
     }
 
     function facturarVenta($venta_id)
