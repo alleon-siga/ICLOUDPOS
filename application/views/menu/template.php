@@ -407,7 +407,12 @@ $primary_nav = array(
                 'icon' => 'fa fa-list',
                 'slug' => 'cuentasporpagar'
             ),
-
+            array(
+                'name' => 'Calendario Cuentas',
+                'url' => $ruta . 'proveedor/calendarioCuentasPagar',
+                'icon' => 'fa fa-calendar',
+                'slug' => 'calendarioCuentasPagar'
+            )
         )
     ),
 

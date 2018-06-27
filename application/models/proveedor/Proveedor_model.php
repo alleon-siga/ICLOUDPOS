@@ -183,4 +183,29 @@ class proveedor_model extends CI_Model
 
         }
     }
+
+    function get_cronograma($params)
+    {
+        $this->db->select("i.id_ingreso, p.proveedor_nombre, DATE(icc.fecha_vencimiento) AS fecha_vencimiento, (ic.monto_cuota - ic.monto_debito) AS pago_pendiente, icc.letra, m.simbolo, i.tipo_ingreso");
+        $this->db->from('ingreso i');
+        $this->db->join('proveedor p', 'i.int_Proveedor_id = p.id_proveedor');
+        $this->db->join('moneda m', 'm.id_moneda = i.id_moneda');
+        $this->db->join('ingreso_credito ic', 'ic.ingreso_id = i.id_ingreso');
+        $this->db->join('ingreso_credito_cuotas icc', 'ic.ingreso_id = icc.ingreso_id');
+        $this->db->where("ic.estado = 'PENDIENTE' AND i.ingreso_status = 'COMPLETADO' AND icc.pagado = 0");
+        if($params['local_id']>0){
+            $this->db->where('i.local_id = '.$params['local_id']);
+        }
+        if($params['proveedor']>0){
+            $this->db->where('i.int_Proveedor_id = '.$params['proveedor']);
+        }
+        if($params['moneda']>0){
+            $this->db->where('i.id_moneda = '.$params['moneda']);
+        }
+        if($params['tipo']>0){
+            $this->db->where("i.tipo_ingreso = '".$params['tipo']."'");
+        }
+        $this->db->group_by("icc.ingreso_id");
+        return $this->db->get()->result();
+    }
 }

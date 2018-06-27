@@ -9,6 +9,8 @@ class proveedor extends MY_Controller
         parent::__construct();
         if ($this->login_model->verify_session()) {
             $this->load->model('proveedor/proveedor_model');
+            $this->load->model('local/local_model');
+            $this->load->model('monedas/monedas_model');
         }else{
             redirect(base_url(), 'refresh');
         }
@@ -165,4 +167,39 @@ class proveedor extends MY_Controller
 
     }
 
+    function calendarioCuentasPagar($action = '')
+    {
+        switch ($action) {
+            case 'filter': {
+                $params['local_id'] = $this->input->post('local_id');
+                $params['proveedor'] = $this->input->post('proveedor');
+                $params['moneda'] = $this->input->post('moneda');
+                $params['tipo'] = $this->input->post('tipo');
+                $data['lists'] = $this->proveedor_model->get_cronograma($params);
+                $this->load->view('menu/proveedor/calendarioCuentasPagar_list', $data);
+                break;
+            }
+            case 'pdf': {
+            }
+            case 'excel': {
+            }
+            default: {
+                $usu = $this->session->userdata('nUsuCodigo');
+                $data["lstproveedor"] = $this->proveedor_model->get_all();
+                $data['monedas'] = $this->monedas_model->get_monedas_activas();
+                if ($this->session->userdata('esSuper') == 1) {
+                    $data['locales'] = $this->local_model->get_all();
+                } else {
+                    $data['locales'] = $this->local_model->get_all_usu($usu);
+                }
+                $dataCuerpo['cuerpo'] = $this->load->view('menu/proveedor/calendarioCuentasPagar', $data, true);
+                if ($this->input->is_ajax_request()) {
+                    echo $dataCuerpo['cuerpo'];
+                } else {
+                    $this->load->view('menu/template', $dataCuerpo);
+                }
+                break;
+            }
+        }
+    }
 }

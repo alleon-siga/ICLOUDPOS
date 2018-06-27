@@ -17,7 +17,7 @@
                 <th> Facturaci&oacute;n</th>
             <?php endif; ?>
             <th width="5%">Estado</th>
-            <th width="6%">Ver</th>
+            <th width="7%">Ver</th>
         </tr>
         </thead>
         <tbody>
@@ -239,7 +239,7 @@
                     <td align="center"><label class="label <?= $etiqueta ?>"> <?= $status ?></label></td>
 
 
-                    <td class="actions">
+                    <td class="actions" style="white-space: nowrap;">
                         <div class="btn-group">
                             <?php
                             $pertenece = "'INGRESONORMAL'";
