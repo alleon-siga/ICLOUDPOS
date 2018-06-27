@@ -149,8 +149,6 @@ class traspaso extends MY_Controller
             $usu = $this->session->userdata('nUsuCodigo');
             $data['locales'] = $this->local_model->get_all_usu($usu);
         }
-
-        $data['productos'] = $this->producto_model->productosporlocal_venta($data["locales"][0]["int_local_id"]);
         $dataCuerpo['cuerpo'] = $this->load->view('menu/traspaso/traspaso', $data, true);
 
         if ($this->input->is_ajax_request())
@@ -166,25 +164,13 @@ class traspaso extends MY_Controller
 
             $this->load->model('kardex/kardex_model');
 
-            /*$condicion = array(
-                'smovimiento_historico.tipo_movimiento' => "TRASPASO"
-            );*/
-
             if ($this->input->post('locales') != "TODOS") {
-                $condicion['local_id'] = $this->input->post('locales');
+                $condicion['local_origen'] = $this->input->post('locales');
             }
             $data['local'] = $this->input->post('locales', true);
             $date_range = explode(" - ", $this->input->post('fecha'));
             $condicion['fecha >= '] = date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0])));
             $condicion['fecha <= '] = date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])));
-
-            if ($this->input->post('productos_traspaso', true) != "TODOS") {
-                $condicion['k.producto_id'] = $this->input->post('productos_traspaso', true);
-            }
-
-            if ($this->input->post('tipo_mov', true) != "TODOS") {
-                $condicion['io'] = $this->input->post('tipo_mov', true);
-            }
 
             $data['movimientos'] = $this->historico_model->get_historico2($condicion);
 
@@ -206,9 +192,10 @@ class traspaso extends MY_Controller
         $productos = json_decode($this->input->post('lst_producto', true));
         $local_destino = $this->input->post('local_destino', true);
         $fecha_traspaso = $this->input->post('fecha_traspaso', date('Y-m-d'));
+        $motivo = $this->input->post('motivo', true);
 
         $fecha_traspaso = date('Y-m-d H:i:s', strtotime($fecha_traspaso . " " . date('H:i:s')));
-        $traspasar = $this->traspaso_model->traspasar_productos_traspaso($productos, $local_destino, $fecha_traspaso);
+        $traspasar = $this->traspaso_model->traspasar_productos_traspaso($productos, $local_destino, $fecha_traspaso, $motivo);
 
         if (true) {
             $json['success'] = 'Se ha realizado el traspaso de almacenes exitosamente';
@@ -219,4 +206,15 @@ class traspaso extends MY_Controller
         echo json_encode($json);
     }
 
+    function imprimir($id)
+    {
+        $data['datos'] = $this->traspaso_model->get_traspaso_detalle($id);
+        $this->load->view('menu/traspaso/imprimir', $data);
+    }
+
+    function verDetalle($id)
+    {
+        $data['data'] = $this->traspaso_model->traspasar_detalle($id);
+        $this->load->view('menu/traspaso/verDetalle', $data);
+    }
 }

@@ -18,9 +18,9 @@ class traspaso_model extends CI_Model
         $this->load->model('inventario/inventario_model');
     }
 
-    function traspasar_productos_traspaso($productos, $localdestino, $fecha = 0)
+    function traspasar_productos_traspaso($productos, $localdestino, $fecha = 0, $motivo)
     {
-
+        $aIdKardex = array();
         for ($i = 0; $i < count($productos); $i++) {
 
             $old_cantidad_1 = $this->db->get_where('producto_almacen', array(
@@ -85,7 +85,7 @@ class traspaso_model extends CI_Model
             $values['ref_id'] = $productos[$i]->local_id;
             $values['ref_val'] = $local1->local_nombre;
 
-            $this->kardex_model->set_kardex($values);
+            $aIdKardex[$i] = $this->kardex_model->set_kardex($values);
             /**************************************************************************************/
 
             //ACTUALIZO LOS ALMACENES
@@ -100,6 +100,8 @@ class traspaso_model extends CI_Model
             } else
                 $this->inventario_model->insert_producto_almacen($productos[$i]->producto_id, $localdestino, $result_2['cantidad'], $result_2['fraccion']);
         }
+        //REGISTRO EN UNA NUEVA TABLA DE TRASLADO
+        $this->insert_traslado($aIdKardex, $localdestino, $productos[0]->local_id, $motivo);        
     }
 
 
@@ -163,14 +165,14 @@ class traspaso_model extends CI_Model
             'ref_val' => $local_nombre2->local_nombre,
             'usuario_id' => $id_usuario
         );
-        $this->kardex_model->set_kardex($values);
+        $salida_id = $this->kardex_model->set_kardex($values);
 
         $values['local_id'] = $local2;
         $values['io'] = 1;
         $values['ref_id'] = $data['venta_id'];
         $values['ref_val'] = $local_nombre1->local_nombre;
 
-        $this->kardex_model->set_kardex($values);
+        $entrada_id = $this->kardex_model->set_kardex($values);
         /**************************************************************************************/
 
         //ACTUALIZO LOS ALMACENES
@@ -184,6 +186,11 @@ class traspaso_model extends CI_Model
                 'fraccion' => $result_2['fraccion']));
         } else
             $this->inventario_model->insert_producto_almacen($producto_id, $local2, $result_2['cantidad'], $result_2['fraccion']);
+
+            return array(
+                "salida_id" => $salida_id,
+                "entrada_id" => $entrada_id
+            );
 
     }
 
@@ -234,4 +241,75 @@ class traspaso_model extends CI_Model
 
     }
 
+    function get_traspaso_detalle($id)
+    {
+        $this->db->select('l1.local_nombre as origen, l2.local_nombre as destino, ref_val, t.fecha, username, producto_nombre, cantidad, nombre_unidad');
+        $this->db->from('traspaso t');
+        $this->db->join('traspaso_detalle AS d', 't.id = d.traspaso_id');
+        $this->db->join('kardex k', 'd.kardex_id = k.id');
+        $this->db->join('producto p', 'k.producto_id = p.producto_id');
+        $this->db->join('unidades u', 'k.unidad_id = u.id_unidad');
+        $this->db->join('local AS l1', 't.local_origen = l1.int_local_id');
+        $this->db->join('local AS l2', 't.local_destino = l2.int_local_id');
+        $this->db->join('usuario us', 't.usuario_id = us.nUsuCodigo');
+        $this->db->where('t.id', $id);
+        return $this->db->get()->result();
+    }
+
+    function insert_traslado($aIdKardex, $localdestino, $localorigen, $motivo)
+    {
+        $id_usuario = $this->session->userdata('nUsuCodigo');
+        $values = array(
+            'ref_id' => '0', //Por ser traslado
+            'usuario_id' => $id_usuario,
+            'local_origen' => $localorigen,
+            'local_destino' => $localdestino,
+            'fecha' => date('Y-m-d H:i:s'),
+            'motivo' => $motivo
+        );
+        $this->db->insert('traspaso', $values);
+        $id = $this->db->insert_id();
+
+        for($x = 0; $x < count($aIdKardex); $x++){
+            $values = array(
+                'traspaso_id' => $id,
+                'kardex_id' => $aIdKardex[$x],
+            );
+            $this->db->insert('traspaso_detalle', $values);
+        }
+    }
+
+    function traspasar_detalle($id)
+    {
+        $this->db->select("t.id, p.producto_nombre, k.cantidad, u.nombre_unidad AS um, t.fecha, l1.local_nombre as origen, l2.local_nombre as destino, us.username, t.motivo, k.producto_id, p.producto_codigo_interno");
+        $this->db->from('traspaso AS t');
+        $this->db->join('traspaso_detalle AS d', 't.id = d.traspaso_id');
+        $this->db->join('kardex AS k', 'd.kardex_id = k.id');
+        $this->db->join('producto AS p', 'p.producto_id = k.producto_id');
+        $this->db->join('unidades AS u', 'u.id_unidad = k.unidad_id');
+        $this->db->join('local AS l1', 't.local_origen = l1.int_local_id');
+        $this->db->join('local AS l2', 't.local_destino = l2.int_local_id');
+        $this->db->join('usuario AS us', 't.usuario_id = us.nUsuCodigo');
+        //$this->db->where('k.tipo = 0 AND k.operacion = 11');
+        $this->db->where('t.id', $id);
+        $result = $this->db->get()->result();
+        return $result;
+    }
+
+    function exportar($where)
+    {
+        $this->db->select("t.id, p.producto_nombre, k.cantidad, u.nombre_unidad AS um, t.fecha, l1.local_nombre as origen, l2.local_nombre as destino, us.username, t.motivo, k.producto_id, p.producto_codigo_interno, IF(t.ref_id>0, CONCAT('VENTA',' (',t.ref_id,')'),'TRASPASO') AS ref_id");
+        $this->db->from('traspaso AS t');
+        $this->db->join('traspaso_detalle AS d', 't.id = d.traspaso_id');
+        $this->db->join('kardex AS k', 'd.kardex_id = k.id');
+        $this->db->join('producto AS p', 'p.producto_id = k.producto_id');
+        $this->db->join('unidades AS u', 'u.id_unidad = k.unidad_id');
+        $this->db->join('local AS l1', 't.local_origen = l1.int_local_id');
+        $this->db->join('local AS l2', 't.local_destino = l2.int_local_id');
+        $this->db->join('usuario AS us', 't.usuario_id = us.nUsuCodigo');
+        //$this->db->where('k.tipo = 0 AND k.operacion = 11');
+        $this->db->where($where);
+        $result = $this->db->get()->result();
+        return $result;
+    }
 }

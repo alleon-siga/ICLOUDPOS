@@ -17,8 +17,6 @@
             <form name="formagregar" action="<?= base_url() ?>traspaso/traspasar_productos" method="post"
                   id="formagregar">
                 <div class="row">
-
-
                     <div class="form-group">
                         <div class="col-md-4">
                             <div class="row">
@@ -58,14 +56,17 @@
                                 Los productos que no figuran aquí no cuentan con stock.
                             </div>
                         </div>
-
-
                     </div>
-
                 </div>
-
                 <br>
-
+                <div class="row">
+                    <div class="col-md-3" style="text-align: center">
+                        <label class="panel-admin-text">Motivo: </label>
+                    </div>
+                    <div class="col-md-8">
+                        <input type="text" name="motivo" id="motivo" value="" class="form-control">
+                    </div>
+                </div>
                 <div class="row" style="display: <?= ($this->session->grupo == '1' || $this->session->grupo == '5' || $this->session->grupo == '4') ? 'block' : 'none'?>;">
                     <label class="col-md-1 panel-admin-text">Fecha:</label>
                     <div class="col-md-3">

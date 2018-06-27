@@ -4,22 +4,20 @@
     <table class="table table-striped dataTable table-bordered tableStyle" id="tablaresultado">
         <thead>
         <tr>
-            <th>ID Ingreso</th>
-            <th>Tipo Documento</th>
-            <th>Nro Documento</th>
-            <th>Fecha Registro</th>
-            <th>Proveedor</th>
-            <th>Responsable</th>
-            <th>Local</th>
-            <th>Tipo Pago</th>
-            <th>Total</th>
+            <th width="2%">ID</th>
+            <th width="2%">Doc.</th>
+            <th width="5%">Documento</th>
+            <th width="4%">Fecha Registro</th>
+            <th width="10%">Proveedor</th>
+            <th width="5%">Responsable</th>
+            <th width="10%">Local</th>
+            <th width="2%">Tipo Pago</th>
+            <th width="5%">Total</th>
             <?php if (valueOption('ACTIVAR_SHADOW') == 1): ?>
                 <th> Facturaci&oacute;n</th>
             <?php endif; ?>
-            <th>Estado</th>
-            <th>Ver</th>
-
-
+            <th width="5%">Estado</th>
+            <th width="6%">Ver</th>
         </tr>
         </thead>
         <tbody>
@@ -28,8 +26,8 @@
             foreach ($ingresos as $ingreso) {
                 ?>
                 <tr>
-                    <td align="center"><?php echo $ingreso->id_ingreso; ?></td>
-                    <td align="center">
+                    <td align="center" style="white-space: normal;"><?php echo $ingreso->id_ingreso; ?></td>
+                    <td align="center" style="white-space: normal;">
                         <?php
                         if ($ingreso->tipo_documento == "FACTURA") echo "FA";
                         if ($ingreso->tipo_documento == 2) echo "NC";
@@ -39,15 +37,15 @@
                         if ($ingreso->tipo_documento == "NOTA DE PEDIDO") echo "NP";
                         ?>
                     </td>
-                    <td align="center"><?php echo $ingreso->documento_serie . "-" . $ingreso->documento_numero ?></td>
-                    <td align="center"><span
+                    <td align="center" style="white-space: normal;"><?php echo $ingreso->documento_serie . "-" . $ingreso->documento_numero ?></td>
+                    <td align="center" style="white-space: normal;"><span
                             style="display: none;"><?= date('YmdHis', strtotime($ingreso->fecha_registro)) ?></span><?= date('d-m-Y H:i:s', strtotime($ingreso->fecha_registro)) ?>
                     </td>
-                    <td align="center"><?= $ingreso->proveedor_nombre ?></td>
-                    <td align="center"><?= $ingreso->username ?></td>
-                    <td align="center"><?= $ingreso->local_nombre ?></td>
-                    <td align="center"><?= $ingreso->pago ?></td>
-                    <td align="center"><?= $ingreso->simbolo . " " . $ingreso->total_ingreso ?></td>
+                    <td align="center" style="white-space: normal;"><?= $ingreso->proveedor_nombre ?></td>
+                    <td align="center" style="white-space: normal;"><?= $ingreso->username ?></td>
+                    <td align="center" style="white-space: normal;"><?= $ingreso->local_nombre ?></td>
+                    <td align="center" style="white-space: normal;"><?= $ingreso->pago ?></td>
+                    <td align="center" style="white-space: normal;"><?= $ingreso->simbolo . " " . $ingreso->total_ingreso ?></td>
 
                     <?php
                     $pertenece = "'INGRESONORMAL'";
@@ -98,10 +96,10 @@
                             <label class="label <?= $etiqueta_facturar ?>"> <?= $facturado ?> </label>
                         </td>
                     <?php endif; ?>
-                    <td align="center"><label class="label <?= $etiqueta ?>"> <?= $status ?></label></td>
+                    <td align="center" style="white-space: normal;"><label class="label <?= $etiqueta ?>"> <?= $status ?></label></td>
 
 
-                    <td class="actions">
+                    <td class="actions" style="white-space: nowrap;">
                         <div class="btn-group">
                             <a class="btn btn-default" data-toggle="tooltip"
                                title="Ver" data-original-title="Ver"
@@ -152,11 +150,8 @@
                                     <i class="fa fa-unlock"></i>
                                 </a>
                             <?php endif; ?>
-
                         </div>
                     </td>
-
-
                 </tr>
             <?php }
         }

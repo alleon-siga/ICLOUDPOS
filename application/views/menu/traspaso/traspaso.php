@@ -60,20 +60,6 @@
                             <label class="control-label panel-admin-text">Fecha:</label>
                             <input type="text" id="fecha" class="form-control" readonly style="cursor: pointer;" name="fecha" value="<?= date('d/m/Y') ?> - <?= date('d/m/Y') ?>"/>
                         </div>
-                        <div class="col-md-3">
-                            <label class="control-label panel-admin-text">Productos: </label>
-                            <select class="form-control" id="productos_traspaso" name="productos_traspaso">
-                                <option value="TODOS" selected>TODOS</option>
-                                <?php if (count($productos) > 0):
-                                    foreach ($productos as $producto): ?>
-                                        <?php if ($n++ != 0): ?>
-                                            <option
-                                                value="<?= $producto['producto_id'] ?>"><?= $producto['producto_nombre'] ?></option>
-                                        <?php endif; ?>
-                                    <?php endforeach; ?>
-                                <?php endif; ?>
-                            </select>
-                        </div>
                         <div class="col-md-1">
                             <div style="padding-top: 30px;"></div>
                             <input type="hidden" name="tipo_mov" id="tipo_mov" value="TODOS">
@@ -102,8 +88,6 @@
             <div class="col-md-4">
             </div>
             <div id="lstTabla" class="table-responsive"></div>
-        </div>
-        <div class="block-section">
             <div id="pp_excel">
                 <form action="<?php echo $ruta; ?>exportar/toExcel_traspaso" name="frmExcel"
                       id="frmExcel" method="post">
@@ -115,7 +99,7 @@
                     <div id="abrir_local_excel"></div>
                 </form>
             </div>
-            <a href="#" onclick="generar_reporte_excel();" class=' btn btn-lg btn-default'
+            <a href="#" onclick="generar_reporte_excel();" class=' btn btn-md btn-primary'
                title="Exportar a Excel"><i class="fa fa-file-excel-o"></i></a>
             <div id="pp_pdf">
                 <form name="frmPDF" id="frmPDF" action="<?php echo $ruta; ?>exportar/toPDF_traspaso" target="_blank" method="post">
@@ -126,8 +110,9 @@
                     <div id="abrir_local_pdf"></div>
                 </form>
             </div>
-            <a href="#" onclick="generar_reporte_pdf();" class='btn btn-lg btn-default'
+            <a href="#" onclick="generar_reporte_pdf();" class='btn btn-md btn-primary'
                title="Exportar a PDF"><i class="fa fa-file-pdf-o"></i> </a>
+            <br><br>
         </div>
     </div>
 </div>
@@ -229,7 +214,7 @@
 
             $.ajax({
                 url: '<?= $ruta?>traspaso/traspasar_productos',
-                data: '&lst_producto=' + miJSON + '&local_destino=' + $("#localform2").val() + '&fecha_traspaso=' + $("#fecha_traspaso").val(),
+                data: '&lst_producto=' + miJSON + '&local_destino=' + $("#localform2").val() + '&fecha_traspaso=' + $("#fecha_traspaso").val()+'&motivo=' + $('#motivo').val(),
                 type: 'post',
                 dataType: "json",
                 success: function (data) {

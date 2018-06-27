@@ -246,6 +246,23 @@ class venta_new_model extends CI_Model
         return $venta;
     }
 
+    function get_venta_detalle_traspaso($venta_id)
+    {
+        $this->db->select('local_nombre, ref_val, c.serie, v.venta_id, v.fecha, tipo_cliente, razon_social, username, producto_nombre, cantidad, nombre_unidad, cl.identificacion');
+        $this->db->from('traspaso t');
+        $this->db->join('traspaso_detalle d', 't.id = d.traspaso_id');
+        $this->db->join('venta v', 't.ref_id = v.venta_id');
+        $this->db->join('kardex k', 'd.kardex_id = k.id');
+        $this->db->join('producto p', 'k.producto_id = p.producto_id');
+        $this->db->join('unidades u', 'k.unidad_id = u.id_unidad');
+        $this->db->join('local l', 'k.local_id = l.int_local_id');
+        $this->db->join('cliente cl', 'v.id_cliente = cl.id_cliente');
+        $this->db->join('usuario us', 'v.id_vendedor=us.nUsuCodigo');
+        $this->db->join('correlativos c', 'v.id_documento=c.id_documento and v.local_id=c.id_local', 'left');
+        $this->db->where('v.venta_id', $venta_id);
+        return $this->db->get()->result();
+    }
+
     function get_venta_facturar($venta_id)
     {
         $venta = $this->get_ventas(array('venta_id' => $venta_id));
@@ -438,8 +455,9 @@ class venta_new_model extends CI_Model
             }
         }
 
+        $traspasos_kardex = array(); 
         if (sizeof($traspasos) > 0) {
-            $this->save_traspasos($traspasos, $venta['id_usuario']);
+            $traspasos_kardex = $this->save_traspasos($traspasos, $venta['id_usuario']);
         }
 
         //preparo la venta
@@ -484,11 +502,31 @@ class venta_new_model extends CI_Model
             }
         }
 
-
         //inserto la venta
         $this->db->insert('venta', $venta_contado);
         $venta_id = $this->db->insert_id();
 
+        //INSERTO EN ESTA TABLA UTIL PARA LA IMPRESION
+        if (sizeof($traspasos_kardex) > 0) {
+            $values = array(
+                'ref_id' => $venta_id,
+                'usuario_id' => $venta['id_usuario'],
+                'local_origen' => $venta['local_origen'],
+                'local_destino' => $venta['local_id'],
+                'fecha' => date('Y-m-d H:i:s'),
+                'motivo' => 'VENTA AL CONTADO'
+            );
+            $this->db->insert('traspaso', $values);
+            $id = $this->db->insert_id();
+
+            foreach ($traspasos_kardex as $k) {
+                $this->db->insert("traspaso_detalle", array(
+                    'traspaso_id' => $id,
+                    'kardex_id' => $k["entrada_id"]
+                )); 
+            }
+        }
+        //FIN
 
         if ($venta['venta_status'] != 'CAJA') {
 
@@ -574,8 +612,9 @@ class venta_new_model extends CI_Model
             }
         }
 
+        $traspasos_kardex = array(); 
         if (sizeof($traspasos) > 0) {
-            $this->save_traspasos($traspasos, $venta['id_usuario']);
+            $traspasos_kardex = $this->save_traspasos($traspasos, $venta['id_usuario']);
         }
 
         if ($venta['venta_status'] == 'CAJA' && $venta['c_inicial'] == 0)
@@ -615,6 +654,27 @@ class venta_new_model extends CI_Model
         $this->db->insert('venta', $venta_contado);
         $venta_id = $this->db->insert_id();
 
+        //INSERTO EN ESTA TABLA UTIL PARA LA IMPRESION
+        if (sizeof($traspasos_kardex) > 0) {
+            $values = array(
+                'ref_id' => $venta_id,
+                'usuario_id' => $venta['id_usuario'],
+                'local_origen' => $venta['local_origen'],
+                'local_destino' => $venta['local_id'],
+                'fecha' => date('Y-m-d H:i:s'),
+                'motivo' => 'VENTA AL CREDITO'
+            );
+            $this->db->insert('traspaso', $values);
+            $id = $this->db->insert_id();
+
+            foreach ($traspasos_kardex as $k) {
+                $this->db->insert("traspaso_detalle", array(
+                    'traspaso_id' => $id,
+                    'kardex_id' => $k["entrada_id"]
+                )); 
+            }
+        }
+        //FIN
         if ($venta['venta_status'] != 'CAJA' && $venta_contado['inicial'] > 0) {
 
 
@@ -876,6 +936,7 @@ class venta_new_model extends CI_Model
     function save_traspasos($traspasos, $id_usuario)
     {
         //Hago los traspasos en caso de haber
+        $t = array();
         foreach ($traspasos as $traspaso) {
             $orden_max = $this->db->select_max('orden', 'orden')
                 ->where('producto_id', $traspaso->id_producto)->get('unidades_has_producto')->row();
@@ -886,12 +947,13 @@ class venta_new_model extends CI_Model
                 ->get('unidades_has_producto')->row();
 
             $next_id = $this->db->select_max('venta_id')->get('venta')->row();
-            $this->traspaso_model->traspasar_productos($traspaso->id_producto, $traspaso->local_id, $traspaso->parent_local, $id_usuario, array(
+            $t[] = $this->traspaso_model->traspasar_productos($traspaso->id_producto, $traspaso->local_id, $traspaso->parent_local, $id_usuario, array(
                 'um_id' => $minima_unidad->um_id,
                 'cantidad' => $traspaso->cantidad,
                 'venta_id' => $next_id->venta_id + 1
             ));
         }
+        return $t;
     }
 
     public
