@@ -16,17 +16,73 @@ class facturacion extends MY_Controller
 
     function test()
     {
-        $this->db->update('facturacion', array('estado' => 0));
-        $fact = $this->db->get('facturacion')->result();
-        foreach ($fact as $f) {
-            $this->facturacion_model->crearXml($f->id);
-        }
-        $this->db->update('facturacion', array(
-            'estado' => 2,
-            'hash_cdr' => NULL
-        ));
-        foreach ($fact as $f) {
-            $this->facturacion_model->emitirXml($f->id);
+        echo date('Y-m-d H:i:s');
+//        $this->facturacion_model->getEstadoResumen();
+//        header('Content-Type: text/xml');
+//        var_dump($this->facturacion_model->enviarResumenBoletas());
+
+//        $this->db->update('facturacion', array('estado' => 0));
+//        $fact = $this->db->get('facturacion')->result();
+//        foreach ($fact as $f) {
+//            $this->facturacion_model->crearXml($f->id);
+//        }
+//        $this->db->update('facturacion', array(
+//            'estado' => 2,
+//            'hash_cdr' => NULL
+//        ));
+//        foreach ($fact as $f) {
+//            $this->facturacion_model->emitirXml($f->id);
+//        }
+    }
+
+    function enviar($action = '')
+    {
+        switch ($action) {
+            case 'filter': {
+                $data['local_id'] = $this->input->post('local_id');
+                $data['estado'] = $this->input->post('estado');
+
+                $data['fecha'] = str_replace('/', '-', $this->input->post('fecha'));
+
+
+                $data['tipo_documento'] = '01';
+                $data['facturas'] = $this->facturacion_model->get_comprobantes_generados($data);
+                $data['tipo_documento'] = '03';
+                $data['boletas'] = $this->facturacion_model->get_comprobantes_generados($data);
+
+                $resumen = $this->db->order_by('id', 'desc')->get_where('facturacion_resumen', array(
+                    'fecha_ref >=' => date('Y-m-d H:i:s', strtotime($data['fecha'] . " 00:00:00")),
+                    'fecha_ref <=' => date('Y-m-d H:i:s', strtotime($data['fecha'] . " 23:59:59"))
+                ))->row();
+
+                if ($resumen != NULL) {
+                    $data['resumen_numero'] = 'RC-' . date('Ymd') . '-' . ($resumen->correlativo + 1);
+                } else {
+                    $data['resumen_numero'] = 'RC-' . date('Ymd') . '-' . 1;
+                }
+
+                $data['emisor'] = $this->facturacion_model->get_emisor();
+                echo $this->load->view('menu/facturacion/enviar_list', $data, true);
+                break;
+            }
+            default: {
+                if ($this->session->userdata('esSuper') == 1) {
+                    $data['locales'] = $this->local_model->get_all();
+                } else {
+                    $usu = $this->session->userdata('nUsuCodigo');
+                    $data['locales'] = $this->local_model->get_all_usu($usu);
+                }
+
+                $data['monedas'] = $this->db->get_where('moneda', array('status_moneda' => 1))->result();
+
+
+                $dataCuerpo['cuerpo'] = $this->load->view('menu/facturacion/enviar', $data, true);
+                if ($this->input->is_ajax_request()) {
+                    echo $dataCuerpo['cuerpo'];
+                } else {
+                    $this->load->view('menu/template', $dataCuerpo);
+                }
+            }
         }
     }
 
@@ -88,12 +144,55 @@ class facturacion extends MY_Controller
         echo json_encode($data);
     }
 
+    function get_comprobantes()
+    {
+        $data['fecha'] = str_replace('/', '-', $this->input->post('fecha'));
+        $data['local_id'] = $this->input->post('local_id');
+        $data['estado'] = $this->input->post('estado');
+
+        $data['tipo_documento'] = '01';
+        $data['facturas'] = $this->facturacion_model->get_comprobantes_generados($data);
+        $data['tipo_documento'] = '03';
+        $data['boletas'] = $this->facturacion_model->get_comprobantes_generados($data);
+        $data['resumen_pendiente'] = $this->db->get_where('facturacion_resumen', array('estado' => 2))->result();
+
+        foreach ($data['resumen_pendiente'] as $resumen) {
+            $resumen->numero = 'RC-' . date('Ymd', strtotime($resumen->fecha)) . '-' . $resumen->correlativo;
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode($data);
+    }
+
     function emitir_comprobante()
     {
         $id = $this->input->post('id');
 
         $resp = $this->facturacion_model->emitirXml($id);
         $data['facturacion'] = $this->db->get_where('facturacion', array('id' => $id))->row();
+
+        header('Content-Type: application/json');
+        echo json_encode($data);
+    }
+
+    function emitir_resumen()
+    {
+        $data['fecha'] = str_replace('/', '-', $this->input->post('fecha'));
+        $data['local_id'] = $this->input->post('local_id');
+        $data['estado'] = $this->input->post('estado');
+
+        $data['resp'] = $this->facturacion_model->enviarResumenBoletas($data);
+
+        header('Content-Type: application/json');
+        echo json_encode($data);
+    }
+
+    function actualizar_resumen()
+    {
+        $id = $this->input->post('id');
+
+        $response = $this->facturacion_model->getEstadoResumen($id);
+        $data['resumen'] = $this->db->get_where('facturacion_resumen', array('id' => $id))->row();
 
         header('Content-Type: application/json');
         echo json_encode($data);

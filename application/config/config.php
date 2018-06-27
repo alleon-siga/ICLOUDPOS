@@ -20,7 +20,7 @@ $root .= str_replace(basename($_SERVER['SCRIPT_NAME']), "", $_SERVER['SCRIPT_NAM
 
 $config['base_url'] = $root;
 
-
+date_default_timezone_set('America/Lima');
 
 /*
 |--------------------------------------------------------------------------

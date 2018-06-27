@@ -88,11 +88,11 @@ class Factura extends Comprobante
 
         //TRIBUTOS
         if (isset($cabecera['TOTAL_TRIBUTO_IGV']))
-            $root->appendChild($this->createTributoXml($cabecera, '1000', 'IGV', 'VAT'));
+            $root->appendChild($this->createTributoXml($cabecera['TOTAL_TRIBUTO_IGV'], $cabecera['CODIGO_MONEDA'], '1000', 'IGV', 'VAT'));
         if (isset($cabecera['TOTAL_TRIBUTO_ISC']))
-            $root->appendChild($this->createTributoXml($cabecera, '2000', 'ISC', 'EXC'));
+            $root->appendChild($this->createTributoXml($cabecera['TOTAL_TRIBUTO_ISC'], $cabecera['CODIGO_MONEDA'], '2000', 'ISC', 'EXC'));
         if (isset($cabecera['TOTAL_TRIBUTO_OTROS']))
-            $root->appendChild($this->createTributoXml($cabecera, '9999', 'OTROS', 'OTH'));
+            $root->appendChild($this->createTributoXml($cabecera['TOTAL_TRIBUTO_OTROS'], $cabecera['CODIGO_MONEDA'], '9999', 'OTROS', 'OTH'));
 
 
         //IMPORTE TOTAL DE LA VENTA
