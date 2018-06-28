@@ -48,7 +48,7 @@
                             <th>Numero</th>
                             <th>Estado</th>
                             <th>Total</th>
-                            <th></th>
+                            <th>Acciones</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -129,7 +129,7 @@
                             <th>Numero</th>
                             <th>Estado</th>
                             <th>Total</th>
-                            <th></th>
+                            <th>Acciones</th>
                         </tr>
                         </thead>
                         <tbody>
