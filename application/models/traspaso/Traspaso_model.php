@@ -312,4 +312,15 @@ class traspaso_model extends CI_Model
         $result = $this->db->get()->result();
         return $result;
     }
+
+    function getUnidadesProducto($id)
+    {
+        $this->db->select("up.id_unidad, unidades, nombre_unidad, abreviatura");
+        $this->db->from('unidades_has_producto up');
+        $this->db->join('unidades u', 'up.id_unidad = u.id_unidad');
+        $this->db->where('producto_id', $id);
+        $this->db->order_by('orden');
+        $result = $this->db->get()->result();
+        return $result;
+    }
 }
