@@ -18,7 +18,7 @@
         <div class="modal-footer">
 
             <div class="row">
-                <div class="col-md-4" style="margin: 0; text-align: left;">
+                <div class="col-md-3" style="margin: 0; text-align: left;">
                     <?php if (valueOption('FACTURACION', '0') == 1 && $facturacion_venta != null): ?>
                         <h4>Facturaci&oacute;n Electr&oacute;nica:</h4>
                         <button class="btn btn-xs btn-primary" onclick="imprimir_fe(<?= $facturacion_venta->id ?>)"
@@ -46,16 +46,22 @@
                         </button>
                     <?php endif; ?>
                 </div>
-                <div class="col-md-8">
+                <div class="col-md-9">
                     <?php if (ENV == 'DEV' && false): ?>
                         <button class="btn btn-primary" data-id="<?= $venta->venta_id ?>"
                                 type="button"
                                 id="btn_venta_imprimir_test"><i class="fa fa-print"></i> IMPRIMIR TEST
                         </button>
                     <?php endif; ?>
-
+                    <?php if(count($traspaso)>0){ ?>
                     <button class="btn btn-primary btn_venta_imprimir"
-                            type="button" data-nombre="nota_pedido"
+                            type="button" data-nombre="TRASPASO"
+                            id="btn_venta_imprimir_2"><i
+                                class="fa fa-print"></i> Traspaso
+                    </button>
+                    <?php } ?>
+                    <button class="btn btn-primary btn_venta_imprimir"
+                            type="button" data-nombre="PEDIDO"
                             id="btn_venta_imprimir_1"><i
                                 class="fa fa-print"></i> (F6) Pedido
                     </button>
@@ -66,13 +72,13 @@
                     </button>
                     <?php $imprimir_doc = ($venta->condicion_id == 1 || $venta->condicion_id == 2); ?>
                     <?php if (($venta->factura_impresa == 0) && ($venta->documento_id == 1 || $venta->documento_id == 3) && $imprimir_doc): ?>
-                        <button class="btn btn-primary btn_venta_imprimir_doc imprimir"
+                        <button id="btn_venta_imprimir_almacen_3" class="btn btn-primary btn_venta_imprimir_doc imprimir"
                                 data-nombre="<?= $venta->documento_id == 1 ? 'factura' : 'boleta' ?>"
                                 type="button"><i
                                     class="fa fa-print"></i> <?= $venta->documento_id == 1 ? 'Factura' : 'Boleta' ?>
                         </button>
                     <?php elseif (($venta->factura_impresa != 0) && ($venta->documento_id == 1 || $venta->documento_id == 3) && $imprimir_doc): ?>
-                        <button class="btn btn-warning btn_venta_imprimir_doc imprimir"
+                        <button id="btn_venta_imprimir_almacen_3" class="btn btn-warning btn_venta_imprimir_doc imprimir"
                                 data-nombre="<?= $venta->documento_id == 1 ? 'factura' : 'boleta' ?>"
                                 type="button"><i
                                     class="fa fa-print"></i> <?= $venta->documento_id == 1 ? 'Factura' : 'Boleta' ?>
@@ -446,7 +452,7 @@
                 <div class="col-md-12">
                     <button class="btn btn-primary btn_venta_imprimir"
                             type="button"
-                            data-nombre="nota_pedido"
+                            data-nombre="PEDIDO"
                             id="btn_venta_imprimir_1"><i
                                 class="fa fa-print"></i> (F6) Pedido
                     </button>
@@ -459,13 +465,13 @@
                     </button>
 
                     <?php if (($venta->factura_impresa == 0) && ($venta->documento_id == 1 || $venta->documento_id == 3) && $imprimir_doc): ?>
-                        <button class="btn btn-primary btn_venta_imprimir_doc imprimir"
+                        <button id="btn_venta_imprimir_almacen_4" class="btn btn-primary btn_venta_imprimir_doc imprimir"
                                 data-nombre="<?= $venta->documento_id == 1 ? 'factura' : 'boleta' ?>"
                                 type="button"><i
                                     class="fa fa-print"></i> <?= $venta->documento_id == 1 ? 'Factura' : 'Boleta' ?>
                         </button>
                     <?php elseif (($venta->factura_impresa != 0) && ($venta->documento_id == 1 || $venta->documento_id == 3) && $imprimir_doc): ?>
-                        <button class="btn btn-warning btn_venta_imprimir_doc imprimir"
+                        <button id="btn_venta_imprimir_almacen_4" class="btn btn-warning btn_venta_imprimir_doc imprimir"
                                 data-nombre="<?= $venta->documento_id == 1 ? 'factura' : 'boleta' ?>"
                                 type="button"><i
                                     class="fa fa-print"></i> <?= $venta->documento_id == 1 ? 'Factura' : 'Boleta' ?>
@@ -522,16 +528,15 @@
     $(document).ready(function () {
 
         $('.imprimir').on('click', function () {
-            var input = $('.btn_venta_imprimir');
-            var nombre = $(this).attr('data-nombre');
-
-            input.html('<i class="fa fa-print"></i> IMPRIMIENDO...');
-            input.attr('disabled', 'disabled');
-
+            var id = $(this).attr('id');
+            var nombre = $('#'+id).attr('data-nombre');
+            var html = $('#'+id).html();
+            $('#'+id).html('<i class="fa fa-print"></i> IMPRIMIENDO...');
+            $('#'+id).attr('disabled', 'disabled');
+            
             $.ajax({
                 url: '<?= base_url()?>impresion/get_venta/' + $('#venta_id').val(),
                 success: function (data) {
-                    console.log(data);
                     $.ajax({
                         url: '<?= valueOptionDB('HOST_IMPRESION', 'http://localhost:8080') ?>',
                         method: 'POST',
@@ -543,20 +548,18 @@
                             show_msg('success', 'La venta se esta imprimiendo');
                         },
                         error: function (data) {
-                            alert('Error de impresion')
+                            alert('Error de impresion');
                         },
                         complete: function (data) {
 //                            if (data.status == 1) {
 //                                show_msg('danger', data.message);
 //                            }
-
-                            input.removeAttr('disabled');
-                            input.html('<i class="fa fa-print"></i> (F6) Pedido');
+                            $('#'+id).removeAttr('disabled');
+                            $('#'+id).html(html);
                         }
-
                     })
                 }
-            })
+            });
         });
 
         $(document).keydown(function (e) {
@@ -577,17 +580,17 @@
         });
 
         $(".btn_venta_imprimir").on('click', function () {
-            $.bootstrapGrowl('<p>IMPRIMIENDO PEDIDO</p>', {
+            var nombre = $(this).attr('data-nombre');
+            $.bootstrapGrowl('<p>IMPRIMIENDO ' + nombre + '</p>', {
                 type: 'success',
                 delay: 2500,
                 allow_dismiss: true
             });
-
+            var url = '<?= base_url() ?>/venta_new/imprimir/<?= $venta->venta_id ?>/'+nombre;
             <?php if (SERVER_NAME == SERVER_CRDIGITAL): ?>
-            var win = window.open('<?=base_url('venta_new/imprimir/' . $venta->venta_id . '/PEDIDO')?>', '_blank');
+            var win = window.open(url, '_blank');
             win.focus();
             <?php else:?>
-            var url = '<?=base_url('venta_new/imprimir/' . $venta->venta_id . '/PEDIDO')?>';
             $("#imprimir_frame").attr('src', url);
             <?php endif; ?>
 

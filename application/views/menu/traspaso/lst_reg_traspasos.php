@@ -1,61 +1,39 @@
 <?php $ruta = base_url(); ?>
 <!--<script src="<?php echo $ruta; ?>recursos/js/custom.js"></script>-->
-<table class='table table-striped dataTable table-bordered no-footer' id="lstPagP" name="lstPagP">
+<table class='table table-striped dataTable table-bordered no-footer tableStyle' id="lstPagP" name="lstPagP">
     <thead>
     <tr>
         <th><?php echo getCodigoNombre() ?></th>
-        <th>Nombre Prod.</th>
-        <th>UM</th>
-        <th>Cantidad</th>
+        <th>Tipo</th>
         <th>Almacen Origen</th>
         <th>Almacen Destino</th>
         <th>Usuario</th>
         <th>Fecha</th>
-        <?php //if($local=="TODOS"){?>
-            <!--<th>Local</th>-->
-        <?php //} ?>
+        <th>Acciones</th>
     </tr>
     </thead>
     <tbody id="columnas">
-
     <?php
-
     foreach ($movimientos as $arreglo): ?>
         <tr>
-            <td style="text-align: center"><span
-                    style="display: none"><?= date('YmdHi', strtotime($arreglo->date)) ?></span><?= $arreglo->id ?></span></td>
-            <td style="text-align: center"><?= $arreglo->producto_nombre ?></td>
-            <td style="text-align: center"><?= $arreglo->um ?></td>
-            <td style="text-align: center"><?= $arreglo->cantidad ?></td>
-            <td style="text-align: center"><?php  if($arreglo->io=="2"){ echo $arreglo->local_nombre; }else{ echo $arreglo->ref_val; } ?></td>
-            <td style="text-align: center"><?php  if($arreglo->io=="1"){ echo $arreglo->local_nombre; }else{ echo $arreglo->ref_val; } ?></td>
-            <td style="text-align: center"><?= $arreglo->nombre ?></td>
+            <td style="text-align: center"><?= $arreglo->id ?></td>
+            <td style="text-align: center"><?= $arreglo->ref_id; ?></td>
+            <td style="text-align: center"><?= $arreglo->origen; ?></td>
+            <td style="text-align: center"><?= $arreglo->destino; ?></td>
+            <td style="text-align: center"><?= $arreglo->username ?></td>
             <td style="text-align: center"><?= date('d-m-Y H:i', strtotime($arreglo->fecha)) ?></td>
-            <?php //if($local=="TODOS"){?>
-                <!--<td style="text-align: center;"><?php //echo $arreglo->localuno; ?></td>-->
-            <?php //} ?> </tr>
+            <td style="text-align: center">
+                <a class="btn btn-default" data-toggle="tooltip" style="margin-right: 5px;" title="Ver" data-original-title="Ver" href="#" onclick="ver('<?= $arreglo->id ?>');"><i class="fa fa-search"></i></a>
+            </td>
+        </tr>
     <?php endforeach; ?>
-
-
     </tbody>
 </table>
+<div class="modal fade" id="verModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
+<iframe style="display: block;" id="imprimir_frame" src="" frameborder="YES" height="0" width="0" border="0" scrolling="no"></iframe>
 <!--- ----------------- -->
-<script src="<?php echo $ruta ?>recursos/js/pages/tablesDatatables.js"></script>
 <script type="text/javascript">
-
-
-    $(document).ready(function () {
-        $('#cargando_modal').modal('hide')
-        TablesDatatables.init(5);
-
-        $("#cerrar_pago_modal").on('click', function (){
-
-            $("#pago_modal").modal('hide')
-        })
-
-    });
-
-
-
-
+    var url = '<?= base_url() ?>';
 </script>
+<script src="<?php echo $ruta ?>recursos/js/pages/tablesDatatables.js"></script>
+<script src="<?php echo $ruta ?>recursos/js/lst_reg_traspasos.js"></script>

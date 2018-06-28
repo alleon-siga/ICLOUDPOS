@@ -7,16 +7,17 @@ header("Expires: 0");
 <table>
     <tr>
         <td style="font-weight: bold;text-align: center; font-size:1.5em; background-color:#BA5A41; color: #fff;"
-            colspan="8">TRASPASO DE ALMACEN
+            colspan="9">TRASPASO DE ALMACEN
         </td>
     </tr>
     <tr>
-        <td colspan="5"></td>
+        <td colspan="6"></td>
     </tr>
 
     <tr>
     </tr>
     <tr>
+        <td></td>
         <td></td>
         <td></td>
         <td></td>
@@ -34,6 +35,7 @@ header("Expires: 0");
     <thead>
         <tr>
             <th>Id</th>
+            <th>Tipo</th>
             <th>Nombre Prod.</th>
             <th>UM</th>
             <th>Cantidad</th>
@@ -41,9 +43,6 @@ header("Expires: 0");
             <th>Almacen Destino</th>
             <th>Usuario</th>
             <th>Fecha</th>
-            <?php //if($local=="TODOS"){?>
-                <!--<th>Local</th>-->
-            <?php //} ?>
         </tr>
     </thead>
     <tbody id="columnas">
@@ -53,16 +52,14 @@ header("Expires: 0");
     foreach ($movimientos as $arreglo): ?>
         <tr>
             <td style="text-align: center"><?= $arreglo->id ?></span></td>
+            <td style="text-align: center"><?= $arreglo->ref_id ?></td>
             <td style="text-align: center"><?= $arreglo->producto_nombre ?></td>
             <td style="text-align: center"><?= $arreglo->um ?></td>
             <td style="text-align: center"><?= $arreglo->cantidad ?></td>
-            <td style="text-align: center"><?php  if($arreglo->io=="2"){ echo $arreglo->local_nombre; }else{ echo $arreglo->ref_val; } ?></td>
-            <td style="text-align: center"><?php  if($arreglo->io=="1"){ echo $arreglo->local_nombre; }else{ echo $arreglo->ref_val; } ?> </td>
-            <td style="text-align: center"><?= $arreglo->nombre ?></td>
+            <td style="text-align: center"><?= $arreglo->origen ?></td>
+            <td style="text-align: center"><?= $arreglo->destino ?> </td>
+            <td style="text-align: center"><?= $arreglo->username ?></td>
             <td style="text-align: center"><?= date('d-m-Y H:i', strtotime($arreglo->fecha)) ?></td>
-            <?php //if($local=="TODOS"){?>
-                <!--<td style="text-align: center;"><?php //echo $arreglo->localuno; ?></td>-->
-            <?php //} ?> </tr>
     <?php endforeach; ?>
 
 

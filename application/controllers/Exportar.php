@@ -19,6 +19,7 @@ class exportar extends MY_Controller
             $this->load->model('detalle_ingreso/detalle_ingreso_model');
             $this->load->model('monedas/monedas_model');
             $this->load->model('metodosdepago/metodos_pago_model');
+            $this->load->model('traspaso/traspaso_model');
             $this->load->library('mpdf53/mpdf');
         } else {
             redirect(base_url(), 'refresh');
@@ -902,64 +903,35 @@ class exportar extends MY_Controller
         $mpdf = new mPDF('utf-8', 'A4-L');
 
         $this->load->model('historico/historico_model');
-        /*$condicion = array(
-            'movimiento_historico.tipo_movimiento' => "TRASPASO"
-        );*/
 
         if ($this->input->post('local') != "TODOS") {
-            $condicion['local_id'] = $this->input->post('local');
+            $condicion['local_origen'] = $this->input->post('local');
         }
         $data['local'] = $this->input->post('locales', true);
         if ($_POST['fecha'] != "") {
             $date_range = explode(" - ", $this->input->post('fecha'));
-            $condicion['fecha >= '] = date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0])));
-            $condicion['fecha <= '] = date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])));
+            $condicion['t.fecha >= '] = date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0])));
+            $condicion['t.fecha <= '] = date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])));
         }
 
-        if ($this->input->post('productos', true) != "TODOS") {
-            $condicion['k.producto_id'] = $this->input->post('productos', true);
-        }
-
-        if ($this->input->post('tipo', true) != "TODOS") {
-            $condicion['io'] = $this->input->post('tipo', true);
-        }
-        //var_dump($condicion);
-        $data['movimientos'] = $this->historico_model->get_historico2($condicion);
+        $data['movimientos'] = $this->traspaso_model->exportar($condicion);
 
         $mpdf->WriteHTML($this->load->view('menu/reportes/pdftraspaso', $data, true));
         $mpdf->Output();
     }
 
-
     function toExcel_traspaso()
     {
-
-        /*$this->load->model('historico/historico_model');
-        $condicion = array(
-            'movimiento_historico.tipo_movimiento' => "TRASPASO"
-        );*/
-
         if ($this->input->post('local') != "TODOS") {
-            $condicion['local_id'] = $this->input->post('local');
+            $condicion['local_origen'] = $this->input->post('local');
         }
         $data['local'] = $this->input->post('locales', true);
         if ($_POST['fecha'] != "") {
             $date_range = explode(" - ", $this->input->post('fecha'));
-            $condicion['fecha >= '] = date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0])));
-            $condicion['fecha <= '] = date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])));
+            $condicion['t.fecha >= '] = date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0])));
+            $condicion['t.fecha <= '] = date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])));
         }
-
-        if ($this->input->post('productos', true) != "TODOS") {
-            $condicion['k.producto_id'] = $this->input->post('productos', true);
-        }
-
-        if ($this->input->post('tipo', true) != "TODOS") {
-            $condicion['io'] = $this->input->post('tipo', true);
-        }
-        //var_dump($condicion);
-        $data['movimientos'] = $this->historico_model->get_historico2($condicion);
-
-
+        $data['movimientos'] = $this->traspaso_model->exportar($condicion);
         $this->load->view('menu/reportes/excelTraspaso', $data);
     }
 

@@ -211,7 +211,7 @@ class venta_new extends MY_Controller
 
         $data['venta_action'] = 'imprimir';
         $data['detalle'] = 'venta';
-
+        $data['traspaso'] = $this->db->get_where('traspaso', array('ref_id' => $venta_id))->result();
         $data['dialog_detalle'] = $this->load->view('menu/venta/historial_list_detalle', $data, true);
 
         $this->load->view('menu/venta/dialog_venta_previa', $data);
@@ -272,6 +272,7 @@ class venta_new extends MY_Controller
     {
 
         $venta['local_id'] = $this->input->post('local_venta_id');
+        $venta['local_origen'] = $this->input->post('local_id');
         $venta['id_documento'] = $this->input->post('tipo_documento');
         $venta['id_cliente'] = $this->input->post('cliente_id');
         $venta['id_usuario'] = $this->input->post('vendedor_id'); //$this->session->userdata('nUsuCodigo');
@@ -809,8 +810,10 @@ class venta_new extends MY_Controller
                 //$this->load->view('menu/venta/impresiones/boleta', $data);
                 $this->venta->imprimir_boleta($data);
             }
+        } elseif ($tipo_impresion == 'TRASPASO') {
+            $data['venta'] = $this->venta->get_venta_detalle_traspaso($venta_id);
+            $this->load->view('menu/venta/impresiones/traspaso', $data);
         }
-
     }
 
     function imprimir_html()

@@ -1,0 +1,1 @@
+INSERT INTO opcion VALUES(503,5,'calendarioCuentasPagar', 'Calendario cuentas x pagar');

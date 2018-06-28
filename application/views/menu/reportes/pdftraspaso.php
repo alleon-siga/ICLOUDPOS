@@ -56,6 +56,7 @@
     <thead>
         <tr>
             <th>Id</th>
+            <th>Tipo</th>
             <th>Nombre Prod.</th>
             <th>UM</th>
             <th>Cantidad</th>
@@ -63,9 +64,6 @@
             <th>Almacen Destino</th>
             <th>Usuario</th>
             <th>Fecha</th>
-            <?php //if($local=="TODOS"){?>
-                <!--<th>Local</th>-->
-            <?php //} ?>
         </tr>
     </thead>
     <tbody id="columnas">
@@ -74,18 +72,15 @@
 
     foreach ($movimientos as $arreglo): ?>
         <tr>
-            <td style="text-align: center"><span
-                    style="display: none"><?= date('YmdHi', strtotime($arreglo->date)) ?></span><?= $arreglo->id ?></span></td>
+            <td style="text-align: center"><span style="display: none"><?= date('YmdHi', strtotime($arreglo->date)) ?></span><?= $arreglo->id ?></span></td>
+            <td style="text-align: center"><?= $arreglo->ref_id ?></td>
             <td style="text-align: center"><?= $arreglo->producto_nombre ?></td>
             <td style="text-align: center"><?= $arreglo->um ?></td>
             <td style="text-align: center"><?= $arreglo->cantidad ?></td>
-            <td style="text-align: center"><?php  if($arreglo->io=="2"){ echo $arreglo->local_nombre; }else{ echo $arreglo->ref_val; } ?></td>
-            <td style="text-align: center"><?php  if($arreglo->io=="1"){ echo $arreglo->local_nombre; }else{ echo $arreglo->ref_val; } ?> </td>
-            <td style="text-align: center"><?= $arreglo->nombre ?></td>
+            <td style="text-align: center"><?= $arreglo->origen ?></td>
+            <td style="text-align: center"><?= $arreglo->destino ?> </td>
+            <td style="text-align: center"><?= $arreglo->username ?></td>
             <td style="text-align: center"><?= date('d-m-Y H:i', strtotime($arreglo->fecha)) ?></td>
-            <?php //if($local=="TODOS"){?>
-                <!--<td style="text-align: center;"><?php //echo $arreglo->localuno; ?></td>-->
-            <?php //} ?> </tr>
     <?php endforeach; ?>
 
 
