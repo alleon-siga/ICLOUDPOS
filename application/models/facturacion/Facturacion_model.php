@@ -544,7 +544,7 @@ class facturacion_model extends CI_Model
 
         $this->db->insert('facturacion', array(
             'local_id' => $venta->local_id,
-            'fecha' => $venta->fecha_facturacion,
+            'fecha' => date('Y-m-d', strtotime($venta->fecha_facturacion)),
             'documento_tipo' => $tipo_doc,
             'documento_numero' => $numero_comprobante,
             'documento_mod_tipo' => '',
@@ -651,7 +651,7 @@ class facturacion_model extends CI_Model
 
         $this->db->insert('facturacion', array(
             'local_id' => $venta->local_id,
-            'fecha' => date('Y-m-d H:i:s'),
+            'fecha' => date('Y-m-d'),
             'documento_tipo' => TIPO_COMPROBANTE::$NOTA_CREDITO,
             'documento_numero' => $numero,
             'documento_mod_tipo' => $tipo_doc,
@@ -789,7 +789,7 @@ class facturacion_model extends CI_Model
 
         $this->db->insert('facturacion', array(
             'local_id' => $venta->local_id,
-            'fecha' => date('Y-m-d H:i:s'),
+            'fecha' => date('Y-m-d'),
             'documento_tipo' => TIPO_COMPROBANTE::$NOTA_CREDITO,
             'documento_numero' => $numero,
             'documento_mod_tipo' => $tipo_doc,
@@ -839,5 +839,163 @@ class facturacion_model extends CI_Model
 
         return $this->crearXml($facturacion_id);
 
+    }
+
+    function convertirNotaPedido($venta_id, $tipo_documento, $fecha_facturacion, $descuento)
+    {
+
+        if ($tipo_documento == '99') {
+            return $this->crearBoletasMultiples($venta_id, $fecha_facturacion, $descuento);
+        }
+
+        $this->load->model('venta_new/venta_new_model');
+        $this->load->model('correlativos/correlativos_model');
+        log_message('debug', 'Facturacion Electronica. Guardando venta ' . $venta_id);
+        $venta = $this->venta_new_model->get_venta_detalle($venta_id);
+
+        $tipo_doc = '';
+        $numero_comprobante = '';
+        if ($tipo_documento == '03') {
+            $correlativo = $this->correlativos_model->get_correlativo($venta->local_id, 3);
+            $this->correlativos_model->sumar_correlativo($venta->local_id, 3);
+            $numero_comprobante = 'B' . $correlativo->serie . '-' . $correlativo->correlativo;
+            $tipo_doc = TIPO_COMPROBANTE::$BOLETA;
+        }
+        if ($tipo_documento == '01') {
+            $correlativo = $this->correlativos_model->get_correlativo($venta->local_id, 1);
+            $this->correlativos_model->sumar_correlativo($venta->local_id, 1);
+            $numero_comprobante = 'F' . $correlativo->serie . '-' . $correlativo->correlativo;
+            $tipo_doc = TIPO_COMPROBANTE::$FACTURA;
+        }
+
+        $tipo_identidad = '';
+        if ($venta->cliente_tipo_identificacion == 1)
+            $tipo_identidad = TIPO_IDENTIDAD::$DNI;
+        if ($venta->cliente_tipo_identificacion == 2)
+            $tipo_identidad = TIPO_IDENTIDAD::$RUC;
+
+        $cambio_dolar = 1;
+        if ($venta->moneda_id != MONEDA_DEFECTO) {
+            $cambio = $this->get_tipo_cambio();
+            if ($cambio != null) {
+                $cambio_dolar = $cambio->venta;
+            } else {
+                log_message('error', 'Facturacion error, No se ha podido recuperar el cambio de dolar');
+                return array(
+                    'respuesta' => 'error',
+                    'msg_validacion' => 'No se ha podido recuperar el cambio de dolar'
+                );
+            }
+        }
+
+        $descuento = $descuento > 0 ? $descuento : 0;
+
+        $total_gravadas = 0;
+        $total_exoneradas = 0;
+        $total_inafectas = 0;
+        $total_impuesto = 0;
+        $total_subtotal = 0;
+        $total_venta = 0;
+
+        foreach ($venta->detalles as $d) {
+            $d->precio = $d->precio - ($d->precio * $descuento / 100);
+
+            if ($d->afectacion_impuesto == OP_GRAVABLE)
+                $total_gravadas += $d->cantidad * $d->precio;
+
+            if ($d->afectacion_impuesto == OP_EXONERADA)
+                $total_exoneradas += $d->cantidad * $d->precio;
+
+            if ($d->afectacion_impuesto == OP_INAFECTA)
+                $total_inafectas += $d->cantidad * $d->precio;
+
+            $total_venta += $d->cantidad * $d->precio;
+
+            if ($d->afectacion_impuesto == OP_GRAVABLE) {
+                $factor = (100 + $d->impuesto_porciento) / 100;
+                if ($venta->tipo_impuesto == 1) {
+                    $total_impuesto += ($d->cantidad * $d->precio) - (($d->cantidad * $d->precio) / $factor);
+                } elseif ($venta->tipo_impuesto == 2) {
+                    $total_impuesto += (($d->cantidad * $d->precio) * $factor) - ($d->cantidad * $d->precio);
+                }
+            }
+        }
+
+        if ($venta->tipo_impuesto == 1) {
+            $total_subtotal = $total_venta - $total_impuesto;
+        } elseif ($venta->tipo_impuesto == 2) {
+            $total_subtotal = $total_venta;
+            $total_venta = $total_subtotal + $total_impuesto;
+        }
+
+        $this->db->insert('facturacion', array(
+            'local_id' => $venta->local_id,
+            'fecha' => $fecha_facturacion,
+            'documento_tipo' => $tipo_doc,
+            'documento_numero' => $numero_comprobante,
+            'documento_mod_tipo' => '',
+            'documento_mod_numero' => '',
+            'documento_mod_motivo' => '',
+            'cliente_tipo' => $tipo_identidad,
+            'cliente_identificacion' => $venta->ruc,
+            'cliente_nombre' => $venta->cliente_nombre,
+            'cliente_direccion' => $venta->cliente_direccion,
+            'total_gravadas' => $total_gravadas * $cambio_dolar,
+            'total_exoneradas' => $total_exoneradas * $cambio_dolar,
+            'total_inafectas' => $total_inafectas * $cambio_dolar,
+            'subtotal' => $total_subtotal * $cambio_dolar,
+            'impuesto' => $total_impuesto * $cambio_dolar,
+            'total' => $total_venta * $cambio_dolar,
+            'estado' => 0,
+            'nota' => 'No enviado',
+            'ref_id' => $venta->venta_id,
+            'descuento' => $descuento
+        ));
+
+        $facturacion_id = $this->db->insert_id();
+
+        foreach ($venta->detalles as $d) {
+
+            $impuesto = 0;
+            if ($d->afectacion_impuesto == OP_GRAVABLE) {
+                $factor = (100 + $d->impuesto_porciento) / 100;
+                if ($venta->tipo_impuesto == 1) {
+                    $impuesto = ($d->cantidad * $d->precio) - (($d->cantidad * $d->precio) / $factor);
+                } elseif ($venta->tipo_impuesto == 2) {
+                    $impuesto = (($d->cantidad * $d->precio) * $factor) - ($d->cantidad * $d->precio);
+                }
+            }
+
+            $this->db->insert('facturacion_detalle', array(
+                'facturacion_id' => $facturacion_id,
+                'producto_codigo' => getCodigoValue(sumCod($d->producto_id, 4), $d->producto_codigo_interno),
+                'producto_descripcion' => $d->producto_nombre,
+                'um' => $d->unidad_abr,
+                'cantidad' => $d->cantidad,
+                'precio' => $d->precio * $cambio_dolar,
+                'impuesto' => $impuesto * $cambio_dolar
+            ));
+        }
+
+        $this->db->where('venta_id', $venta_id);
+        $this->db->update('venta', array(
+            'nota_facturada' => 1
+        ));
+
+        return $this->crearXml($facturacion_id);
+
+    }
+
+    function crearBoletasMultiples($venta_id, $descuento)
+    {
+        $this->load->model('venta_new/venta_new_model');
+        $this->load->model('correlativos/correlativos_model');
+        log_message('debug', 'Facturacion Electronica. Guardando venta ' . $venta_id);
+        $venta = $this->venta_new_model->get_venta_detalle($venta_id);
+
+
+
+
+        return TRUE;
     }
 }

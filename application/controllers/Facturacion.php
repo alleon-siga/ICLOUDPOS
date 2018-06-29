@@ -124,6 +124,84 @@ class facturacion extends MY_Controller
         }
     }
 
+    function notas($action = '')
+    {
+        switch ($action) {
+            case 'filter': {
+                $data['local_id'] = $this->input->post('local_id');
+
+                $date_range = explode(" - ", $this->input->post('fecha'));
+                $data['fecha_ini'] = str_replace("/", "-", $date_range[0]);
+                $data['fecha_fin'] = str_replace("/", "-", $date_range[1]);
+
+
+                $data['ventas'] = $this->db->select('v.*, c.razon_social, m.simbolo')->from('venta AS v')
+                    ->join('cliente AS c', 'c.id_cliente = v.id_cliente')
+                    ->join('moneda AS m', 'm.id_moneda = v.id_moneda')
+                    ->where('v.fecha >=', date('Y-m-d H:i:s', strtotime($data['fecha_ini'] . " 00:00:00")))
+                    ->where('v.fecha <=', date('Y-m-d H:i:s', strtotime($data['fecha_fin'] . " 23:59:59")))
+                    ->where('v.local_id', $data['local_id'])
+                    ->where('v.id_documento = 6')
+                    ->where('v.numero != ', NULL)
+                    ->where('v.nota_facturada', 0)
+                    ->where("v.venta_status = 'COMPLETADO'")
+                    ->get()->result();
+
+                echo $this->load->view('menu/facturacion/notas_list', $data, true);
+                break;
+            }
+            case 'declarar': {
+                $data['venta'] = $this->db->get_where('venta', array('venta_id' => $this->input->post('venta_id')))->row();
+
+                echo $this->load->view('menu/facturacion/notas_declarar', $data, true);
+                break;
+            }
+            case 'crear_comprobante': {
+
+                $venta_id = $this->input->post('venta_id');
+                $tipo_documento = $this->input->post('tipo_documento');
+                $descuento = $this->input->post('descuento');
+                $fecha_facturacion = date('Y-m-d H:i:s', strtotime(
+                        str_replace('/', '-', $this->input->post('fecha_facturacion')))
+                );
+
+                $resp = $this->facturacion_model->convertirNotaPedido($venta_id, $tipo_documento, $fecha_facturacion, $descuento);
+
+                if ($tipo_documento == '03' || $tipo_documento == '01') {
+                    $data['facturacion'] = $this->db->get_where('facturacion', array(
+                        'documento_tipo' => $tipo_documento,
+                        'ref_id' => $venta_id
+                    ))->row();
+                } else {
+                    $data['boleta_multiples'] = array();
+                }
+
+                header('Content-Type: application/json');
+                echo json_encode($data);
+
+                break;
+            }
+            default: {
+                if ($this->session->userdata('esSuper') == 1) {
+                    $data['locales'] = $this->local_model->get_all();
+                } else {
+                    $usu = $this->session->userdata('nUsuCodigo');
+                    $data['locales'] = $this->local_model->get_all_usu($usu);
+                }
+
+                $data['monedas'] = $this->db->get_where('moneda', array('status_moneda' => 1))->result();
+
+
+                $dataCuerpo['cuerpo'] = $this->load->view('menu/facturacion/notas', $data, true);
+                if ($this->input->is_ajax_request()) {
+                    echo $dataCuerpo['cuerpo'];
+                } else {
+                    $this->load->view('menu/template', $dataCuerpo);
+                }
+            }
+        }
+    }
+
     function get_facturacion_detalle()
     {
         $id = $this->input->post('id');
