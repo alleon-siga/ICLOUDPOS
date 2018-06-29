@@ -90,7 +90,9 @@
             <script type="text/javascript">
 
                 $(function () {
-
+                    //CONFIGURACIONES INICIALES
+                    App.sidebar('close-sidebar');
+                    
                     $('input[name="daterange"]').daterangepicker({
                         "locale": {
                             "format": "DD/MM/YYYY",

@@ -692,6 +692,7 @@ $(document).ready(function () {
             'id_producto': $('#producto_id').val(),
             'id_cliente': $('#cliente_id').val()
         };
+        $('#popover_precioUnitario').html('Cargando ...');
         $.ajax({
             url: ruta + 'venta_new/ultimasVentas',
             data: data,
@@ -715,6 +716,40 @@ $(document).ready(function () {
             }
         })
         $("#popover_precioUnitario").show();
+    });
+
+    $("#costoUnitario").on('mouseleave', function () {
+        $("#popover_costoUnitario").hide();
+    });
+
+    $("#costoUnitario").on('mousemove', function () {
+        var data = {
+            'id_producto': $('#producto_id').val()
+        };
+        $('#popover_costoUnitario').html('Cargando ...');
+        $.ajax({
+            url: ruta + 'venta_new/ultimasCompras',
+            data: data,
+            type: 'POST',
+            success: function (data) {
+                let obj = JSON.parse(data);
+                let tabla = "<b>ULTIMOS COSTOS UNITARIOS DE COMPRA</b>: <br><br>";
+                tabla += '<table class="table table-condensed">';
+                obj.map(function (data) {
+                    tabla += '<tr style="color:#fff; font-weight:bold">';
+                    let fecha = data.fecha.split('-');
+                    let nuevaFecha = fecha[2] + '/' + fecha[1] + '/' + fecha[0];
+                    tabla += "<td>" + nuevaFecha + "</td>";
+                    tabla += "<td>" + data.simbolo + " " + data.precio + "</td>";
+                    tabla += "<td>" + parseInt(data.cantidad) + "</td>";
+                    tabla += "<td>" + data.nombre_unidad + "</td>";
+                    tabla += "</tr>";
+                });
+                tabla += "</table>"
+                $('#popover_costoUnitario').html(tabla);
+            }
+        })
+        $("#popover_costoUnitario").show();
     });
 });
 

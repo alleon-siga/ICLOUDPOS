@@ -116,7 +116,7 @@
                 $('input[data-id='+id+']').prop('checked', true);
             }else{
                 $('input[data-id='+id+']').prop('checked', false);
-            }
+            }8
         });
     });
 </script>

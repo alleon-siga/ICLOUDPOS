@@ -178,6 +178,12 @@
                                 <label class="control-label panel-admin-text">
                                     <a href="#" id="precioUnitario">Precio Unitario:</a>
                                 </label>
+                                <br>
+                                <?php if($this->session->userdata('grupo')=='2' || $this->session->userdata('grupo')=='9'){ //Administrador y gerente ?>
+                                <label class="control-label panel-admin-text">
+                                    <a href="#" id="costoUnitario" style="color: red;">Costo Unitario:</a>
+                                </label>
+                                <?php }  ?>
                                 <div style="display: none;">
                                     <!--<div class="help-key badge label-success" style="display: none;">4</div>-->
                                     <select name="precio_id" id="precio_id" class='form-control'>
@@ -189,7 +195,6 @@
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
-
                             </div>
                             <div class="col-md-8 row" id="loading_precio" style="display: none;">
                                 <div class="col-md-12 text-center">
@@ -199,6 +204,9 @@
                             <div class="col-md-8">
                                 <label id="popover_precioUnitario" class="control-label badge label-info"
                                        style="width: 50% !important; font-size: 15px; cursor: pointer; display:none; float: left; position: absolute; z-index: 3000;"></label>
+                                <label id="popover_costoUnitario" class="control-label badge label-info"
+                                       style="width: 50% !important; font-size: 15px; cursor: pointer; display:none; float: left; position: absolute; z-index: 3000; background-color: #FF7B7B"></label>
+
                             </div>
                             <div id="producto_precio" class="col-md-8 row text-center venta_input">
                             </div>

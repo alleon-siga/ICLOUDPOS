@@ -178,7 +178,9 @@
 
 <script>
     $(function () {
-
+        //CONFIGURACIONES INICIALES
+        App.sidebar('close-sidebar');
+        
         $("#dialog_venta_imprimir").on('hidden.bs.modal', function () {
             get_ventas();
         });

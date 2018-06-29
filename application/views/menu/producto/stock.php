@@ -355,9 +355,12 @@
 <!-- Load and execute javascript code used only in this page -->
 <script src="<?php echo $ruta ?>recursos/js/pages/tablesDatatables.js"></script>
 
-<script>$(function () {
-        TablesDatatables.init();
+<script>
+    $(function () {
+        //CONFIGURACIONES INICIALES
+        App.sidebar('close-sidebar');
 
+        TablesDatatables.init();
 
         $("#locales, #mostrar_detalles, #unidades_minimas").on('change', function(){
             $("#productostable").hide();

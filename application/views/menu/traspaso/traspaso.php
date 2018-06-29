@@ -163,7 +163,7 @@
         </div>
 </div>
 <div class="modal fade" id="traspasomodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-     aria-hidden="false" data-backdrop="static" data-keyboard="false">
+     aria-hidden="false" data-backdrop="static" data-keyboard="true">
 </div>
 <div class="modal fade" id="MsjPreg" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" data-backdrop="static" data-keyboard="false" style="z-index: 999999999;">
@@ -207,7 +207,7 @@
                     index: lst_producto[i].index,
                     producto_id: lst_producto[i].producto_id,
                     cantidad: lst_producto[i].cantidad,
-                    fraccion: lst_producto[i].fraccion
+                    fraccion: lst_producto[i].fraccion,
                 });
             }
             var miJSON = JSON.stringify(prods);

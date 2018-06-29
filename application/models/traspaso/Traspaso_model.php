@@ -63,6 +63,12 @@ class traspaso_model extends CI_Model
 
             $this->historico_model->set_historico($values, $fecha == 0 ? date("Y-m-d H:i:s") : $fecha);
             */
+            //OBTENIENDO AFECTACION DE IMPUESTO E IMPUESTO
+            $this->db->select('p.producto_afectacion_impuesto, i.porcentaje_impuesto, p.producto_costo_unitario');
+            $this->db->from('producto p');
+            $this->db->join('impuestos i', 'p.producto_impuesto = i.id_impuesto');
+            $this->db->where('p.producto_id', $productos[$i]->producto_id);
+            $datosP = $this->db->get()->row();
 
             $local1 = $this->db->get_where('local', array('int_local_id' => $productos[$i]->local_id))->row();
             $local2 = $this->db->get_where('local', array('int_local_id' => $localdestino))->row();
@@ -76,7 +82,8 @@ class traspaso_model extends CI_Model
                 'serie' => '-',
                 'numero' => '-',
                 'ref_id' => $localdestino,
-                'ref_val' => $local2->local_nombre
+                'ref_val' => $local2->local_nombre,
+                'costo' => ($datosP->producto_afectacion_impuesto=='1')? $datosP->producto_costo_unitario / (($datosP->porcentaje_impuesto / 100) + 1) : $datosP->producto_costo_unitario
             );
             $this->kardex_model->set_kardex($values);
 
@@ -151,7 +158,12 @@ class traspaso_model extends CI_Model
 
         $local_nombre1 = $this->db->get_where('local', array('int_local_id' => $local1))->row();
         $local_nombre2 = $this->db->get_where('local', array('int_local_id' => $local2))->row();
-
+        //OBTENIENDO AFECTACION DE IMPUESTO E IMPUESTO
+        $this->db->select('p.producto_afectacion_impuesto, i.porcentaje_impuesto, p.producto_costo_unitario');
+        $this->db->from('producto p');
+        $this->db->join('impuestos i', 'p.producto_impuesto = i.id_impuesto');
+        $this->db->where('p.producto_id', $producto_id);
+        $datosP = $this->db->get()->row();
         $values = array(
             'local_id' => $local1,
             'producto_id' => $producto_id,
@@ -163,7 +175,8 @@ class traspaso_model extends CI_Model
             'numero' => '-',
             'ref_id' => $data['venta_id'],
             'ref_val' => $local_nombre2->local_nombre,
-            'usuario_id' => $id_usuario
+            'usuario_id' => $id_usuario,
+            'costo' => ($datosP->producto_afectacion_impuesto=='1')? $datosP->producto_costo_unitario / (($datosP->porcentaje_impuesto / 100) + 1) : $datosP->producto_costo_unitario
         );
         $salida_id = $this->kardex_model->set_kardex($values);
 

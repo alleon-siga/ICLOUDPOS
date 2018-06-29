@@ -722,4 +722,29 @@ class reporte_model extends CI_Model
         $datos['utilidad_neta'] = $datos['utilidad_si'] - $datos['impuesto'];
         return $datos;
     }
+
+    function getkardexValorizado($where)
+    {
+        $this->db->select("kardex.id, kardex.fecha, kardex.tipo, kardex.serie, kardex.numero, kardex.operacion, usuario.username, kardex.ref_val, kardex.io, kardex.cantidad, kardex.cantidad_saldo, producto.producto_cualidad, kardex.costo")->from('kardex');
+        $this->db->join('usuario', 'usuario.nUsuCodigo = kardex.usuario_id');
+        $this->db->join('producto', 'kardex.producto_id = producto.producto_id')
+            ->where('kardex.producto_id', $where['producto_id'])
+            ->where('local_id', $where['local_id'])
+            ->order_by('id');
+
+        if (isset($where['mes']) && isset($where['year']) && isset($where['dia_min']) && isset($where['dia_max'])) {
+            $last_day = last_day($where['year'], sumCod($where['mes'], 2));
+            if ($last_day > $where['dia_max'])
+                $last_day = $where['dia_max'];
+
+            $this->db->where('date(fecha) >=', $where['year'] . '-' . sumCod($where['mes'], 2) . '-' . $where['dia_min']);
+            $this->db->where('date(fecha) <=', $where['year'] . '-' . sumCod($where['mes'], 2) . '-' . $last_day);
+        }
+        elseif (isset($where['fecha_ini']) && isset($where['fecha_fin'])){
+            $this->db->where('date(fecha) >=', $where['fecha_ini'] . ' ');
+            $this->db->where('date(fecha) <=', $where['fecha_fin'] . ' ');
+        }
+
+        return $this->db->get()->result();
+    }
 }

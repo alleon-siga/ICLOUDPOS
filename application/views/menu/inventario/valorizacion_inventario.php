@@ -210,7 +210,9 @@
 
 <script>
     $(function () {
-
+        //CONFIGURACIONES INICIALES
+        App.sidebar('close-sidebar');
+        
         $("#charm").tcharm({
             'position': 'right',
             'display': false,

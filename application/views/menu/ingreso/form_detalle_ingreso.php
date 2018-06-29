@@ -24,24 +24,20 @@
                 Ingreso <?= $doc . $ingreso->documento_serie . '-' . $ingreso->documento_numero ?></h4>
         </div>
         <div class="modal-body">
-
             <div class="table-responsive">
                 <table class="table datatable datatables_filter table-striped tableStyle" id="tabledetail">
-
                     <thead>
-                    <tr>
-
-                        <th>ID</th>
-                        <th>Producto</th>
-                        <th>UM</th>
-                        <th>Cantidad</th>
-                        <th>Moneda</th>
-                        <th>Tipo Camb</th>
-                        <th>Precio</th>
-                        <th>Sub total</th>
-
-
-                    </tr>
+                        <tr>
+                            <th>ID</th>
+                            <th>Producto</th>
+                            <th>UM</th>
+                            <th>Cantidad</th>
+                            <th>Moneda</th>
+                            <th>Tipo Camb</th>
+                            <th>Prec. sin Imp</th>
+                            <th>Prec. con Imp</th>
+                            <th>Sub total</th>
+                        </tr>
                     </thead>
                     <tbody>
                     <?php
@@ -51,6 +47,17 @@
                         foreach ($detalles as $detalle) {
                             $total += $detalle->precio * $detalle->cantidad;
                             $simbolo = $detalle->simbolo;
+                            $precio_si = $precio_co = 0;
+                            if($detalle->tipo_impuesto=='1'){ //incluye impuesto
+                                $precio_si = $detalle->precio / (($detalle->impuesto_porciento / 100)+1);
+                                $precio_co = $detalle->precio;
+                            }elseif($detalle->tipo_impuesto=='2'){ //agregar impuesto
+                                $precio_si = $detalle->precio / (($detalle->impuesto_porciento / 100)+1);
+                                $precio_co = $detalle->precio;
+                            }elseif($detalle->tipo_impuesto=='3'){ //no considerar impuesto
+                                $precio_si = $detalle->precio;
+                                $precio_co = $detalle->precio;
+                            }
                             ?>
                             <tr>
                                 <td align="center">
@@ -73,9 +80,11 @@
                                     $detalle->tasa_cambio ?>
                                 </td>
                                 <td align="center">
-                                    <?= $detalle->simbolo . " " . $detalle->precio ?>
+                                    <?= $detalle->simbolo . " " . number_format($precio_si, 2) ?>
+                                </td>                                
+                                <td align="center">
+                                    <?= $detalle->simbolo . " " . number_format($precio_co, 2) ?>
                                 </td>
-
                                 <td align="center">
                                     <?= $detalle->simbolo . " " . number_format($detalle->precio * $detalle->cantidad, 2) ?>
                                 </td>
@@ -142,7 +151,6 @@
     </div>
     <!-- /.modal-content -->
 </div>
-
 <script src="<?php echo $ruta ?>recursos/js/pages/tablesDatatables.js"></script>
 <script>
     $(function () {

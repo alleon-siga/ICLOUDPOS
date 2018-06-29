@@ -517,6 +517,11 @@ $primary_nav = array(
                         'url' => $ruta . 'ingresos/ingreso_detallado',
                         'slug' => 'ingresodetallado'
                     ),
+                    array(
+                        'name' => 'Kardex Valorizado',
+                        'url' => $ruta . 'reporte/kardexValorizado',
+                        'slug' => 'kardexvalorizado'
+                    )
                 )
             ),
             array(

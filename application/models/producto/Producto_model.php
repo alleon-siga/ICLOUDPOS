@@ -147,6 +147,7 @@ class producto_model extends CI_Model
             ->where('producto_estatus', '1')
             ->where('producto_estado', '1')
             ->group_by('producto_id')
+            ->order_by('producto_id', 'DESC')
             ->get()->result();
     }
 
@@ -750,7 +751,7 @@ class producto_model extends CI_Model
 
         $where = array($this->status => '1', $this->estado => '1');
         $this->db->where($where);
-        $this->db->order_by($this->nombre, 'asc');
+        $this->db->order_by($this->id, 'desc');
         $query = $this->db->get();
         return $query->result_array();
     }
@@ -1079,6 +1080,7 @@ class producto_model extends CI_Model
         $this->db->where($where);
         $this->db->where('( producto_almacen.cantidad>0 or  producto_almacen.fraccion>0)');
         $this->db->group_by('producto_id');
+        $this->db->order_by('producto_id', 'desc');
         $query = $this->db->get();
         return $query->result_array();
     }
