@@ -95,25 +95,7 @@
                                 </a>
                             <?php endif; ?>
 
-                            <?php if ($f->estado == 1): ?>
-                                <a class="btn btn-sm btn-default" data-toggle="tooltip" style="margin-right: 5px;"
-                                   title="Emitir comprobante a SUNAT" data-original-title="Emitir comprobante a SUNAT"
-                                   href="#"
-                                   onclick="emitir('<?= $f->id ?>');">
-                                    <i class="fa fa-mail-forward"></i>
-                                </a>
-                            <?php endif; ?>
-
-                            <?php if ($f->estado == 2): ?>
-                                <a class="btn btn-sm btn-warning" data-toggle="tooltip" style="margin-right: 5px;"
-                                   title="Actualizar estado" data-original-title="Actualizar estado"
-                                   href="#"
-                                   onclick="emitir('<?= $f->id ?>');">
-                                    <i class="fa fa-refresh"></i>
-                                </a>
-                            <?php endif; ?>
-
-                            <?php if ($f->estado == 3): ?>
+                            <?php if ($f->estado == 1 || $f->estado == 2 || $f->estado == 3): ?>
                                 <a class="btn btn-sm btn-info" data-toggle="tooltip" style="margin-right: 5px;"
                                    title="Descargar comprobante XML" data-original-title="Descargar comprobante XML"
                                    href="#"
@@ -288,33 +270,7 @@
             });
         }
 
-        function emitir(id) {
 
-            $("#barloadermodal").modal('show');
-
-            $.ajax({
-                url: '<?php echo $ruta . 'facturacion/emitir_comprobante'; ?>',
-                type: 'POST',
-                data: {'id': id},
-
-                success: function (data) {
-
-                    if (data.facturacion.estado == 3) {
-                        show_msg('success', '<h4>Facturacion Electronica:</h4> ' + data.facturacion.nota);
-                    }
-                    else {
-                        show_msg('danger', '<h4>Facturacion Electronica:</h4> ' + data.facturacion.nota);
-                    }
-
-                    $("#barloadermodal").modal('hide');
-                    get_facturacion();
-                },
-                error: function () {
-                    alert('Error inesperado');
-                    $("#barloadermodal").modal('hide');
-                }
-            });
-        }
 
         function reemitir(id) {
 

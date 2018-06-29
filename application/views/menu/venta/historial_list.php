@@ -78,7 +78,7 @@
                             <i class="fa fa-search"></i>
                         </a>
 
-                        <?php if ($venta->numero == '' && $venta_action != 'comision' && $venta_action != 'anular'): ?>
+                        <?php if ($venta->numero == '' && $venta_action != 'comision' && $venta_action != 'anular' && $venta->venta_estado == 'COMPLETADO'): ?>
 
                             <a class="btn btn-warning" data-toggle="tooltip" style="margin-right: 5px;"
                                title="Facturar" data-original-title="Facturar"

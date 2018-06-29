@@ -142,10 +142,10 @@
                                         </span>.
                                     </td>
                                     <td>
-                                        <span class="btn btn-xs btn-default">
-                                            <i class="fa fa-mail-forward"></i>
-                                        </span> <strong>Emitir comprobante a SUNAT.</strong> Esta acci&oacute;n enviara su comprobante
-                                        a SUNAT para ser declarado. Posteriormente recibira su aceptaci&oacute;n o rechazo del mismo.
+                                        <span class="btn btn-xs btn-info">
+                                            <i class="fa fa-download"></i>
+                                        </span> <strong>Descargar comprobante XML.</strong> Aqui podr&aacute; descargar
+                                        el comprobante electr&oacute;nico en su formato digital (XML).
                                     </td>
                                 </tr>
                                 <tr>
@@ -169,12 +169,10 @@
                                         puede ser errores de conexi&oacute;n con SUNAT o error de validaci&oacute;n del comprobante.
                                     </td>
                                     <td>
-                                        <span class="btn btn-xs btn-warning">
-                                            <i class="fa fa-refresh"></i>
-                                        </span> <strong>Actualizar estado.</strong>
-                                        Esta acci&oacute;n intentar&aacute; volver a enviar el comprobante. Si tras varios
-                                        intentos no ha podido enviar el comprobante y recibir una aceptaci&oacute;n o rechazo
-                                        consulte con el administrador del sistema.
+                                        <span class="btn btn-xs btn-info">
+                                            <i class="fa fa-download"></i>
+                                        </span> <strong>Descargar comprobante XML.</strong> Aqui podr&aacute; descargar
+                                        el comprobante electr&oacute;nico en su formato digital (XML).
                                     </td>
                                 </tr>
 

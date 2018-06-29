@@ -113,6 +113,9 @@ class venta_new_model extends CI_Model
         if (isset($where['condicion_id']) && $where['condicion_id'] != "")
             $this->db->where('venta.condicion_pago', $where['condicion_id']);
 
+        if (isset($where['id_cliente']) && $where['id_cliente'] != "")
+            $this->db->where('venta.id_cliente', $where['id_cliente']);
+
         if (isset($where['estado']))
             if ($action == '')
                 $this->db->where('(venta.venta_status = "COMPLETADO" OR venta.venta_status = "ANULADO")');
@@ -167,6 +170,9 @@ class venta_new_model extends CI_Model
 
         if (isset($where['condicion_id']) && $where['condicion_id'] != "")
             $this->db->where('venta.condicion_pago', $where['condicion_id']);
+
+        if (isset($where['id_cliente']) && $where['id_cliente'] != "")
+            $this->db->where('venta.id_cliente', $where['id_cliente']);
 
         if (isset($where['estado']))
             if ($where['estado'] != "")
