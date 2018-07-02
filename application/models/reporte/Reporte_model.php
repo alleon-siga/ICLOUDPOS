@@ -725,9 +725,10 @@ class reporte_model extends CI_Model
 
     function getkardexValorizado($where)
     {
-        $this->db->select("kardex.id, kardex.fecha, kardex.tipo, kardex.serie, kardex.numero, kardex.operacion, usuario.username, kardex.ref_val, kardex.io, kardex.cantidad, kardex.cantidad_saldo, producto.producto_cualidad, kardex.costo")->from('kardex');
+        $this->db->select("kardex.id, kardex.fecha, kardex.tipo, kardex.serie, kardex.numero, kardex.operacion, usuario.username, kardex.ref_val, kardex.io, kardex.cantidad, kardex.cantidad_saldo, producto.producto_cualidad, kardex.costo, moneda.simbolo")->from('kardex');
         $this->db->join('usuario', 'usuario.nUsuCodigo = kardex.usuario_id');
-        $this->db->join('producto', 'kardex.producto_id = producto.producto_id')
+        $this->db->join('producto', 'kardex.producto_id = producto.producto_id');
+        $this->db->join('moneda', 'kardex.moneda_id = moneda.id_moneda')
             ->where('kardex.producto_id', $where['producto_id'])
             ->where('local_id', $where['local_id'])
             ->order_by('id');

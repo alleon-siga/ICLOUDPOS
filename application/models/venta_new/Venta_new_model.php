@@ -907,6 +907,17 @@ class venta_new_model extends CI_Model
             if ($venta->documento_id == 6)
                 $tipo = -2;
 
+            $costo = 0;
+            if($ArrfectImp[$key]=='1'){
+                if($venta->tipo_impuesto==1){ //incluye impuesto
+                    $costo = $precio[$key] / (($impPorciento[$key] / 100) + 1);
+                }else{ //agrega impuesto
+                    $costo = $precio[$key] * (($impPorciento[$key] / 100) + 1);
+                }
+            }else{
+                $costo = $precio[$key];
+            }
+
             $values = array(
                 'local_id' => $local_id,
                 'producto_id' => $key,
@@ -918,7 +929,8 @@ class venta_new_model extends CI_Model
                 'numero' => $venta->numero != null ? sumCod($venta->numero, 6) : '-',
                 'ref_id' => $venta->venta_id,
                 'usuario_id' => $id_usuario,
-                'costo' => ($ArrfectImp[$key]=='1')? $precio[$key] / (($impPorciento[$key] / 100) + 1) : $precio[$key]
+                'costo' => $costo,
+                'moneda_id' => $venta->moneda_id
             );
             $this->kardex_model->set_kardex($values);
 
@@ -1012,6 +1024,17 @@ class venta_new_model extends CI_Model
             if (!isset($referencias->ref_val))
                 $referencias->ref_val == "";
 
+            $costo = 0;
+            if($venta->afectacion_impuesto=='1'){
+                if($venta->tipo_impuesto==1){ //incluye impuesto
+                    $costo = $venta->precio / (($venta->impuesto_porciento / 100) + 1);
+                }else{ //agrega impuesto
+                    $costo = $venta->precio * (($venta->impuesto_porciento / 100) + 1);
+                }
+            }else{
+                $costo = $venta->precio;
+            }
+
             $values = array(
                 'local_id' => $venta->local_id,
                 'producto_id' => $key,
@@ -1024,7 +1047,8 @@ class venta_new_model extends CI_Model
                 'ref_id' => $venta->venta_id,
                 'ref_val' => $referencias->ref_val,
                 'usuario_id' => $id_usuario == false ? $this->session->userdata('nUsuCodigo') : $id_usuario,
-                'costo' => ($venta->afectacion_impuesto=='1')? $venta->precio / (($venta->impuesto_porciento / 100) + 1) : $venta->precio
+                'costo' => $costo,
+                'moneda_id' => $venta->moneda_id
             );
             $this->kardex_model->set_kardex($values);
 
@@ -1232,6 +1256,17 @@ class venta_new_model extends CI_Model
             if (!isset($referencias->ref_val))
                 $referencias->ref_val == "";
 
+            $costo = 0;
+            if($venta->afectacion_impuesto=='1'){
+                if($venta->tipo_impuesto==1){ //incluye impuesto
+                    $costo = $venta->precio / (($venta->impuesto_porciento / 100) + 1);
+                }else{ //agrega impuesto
+                    $costo = $venta->precio * (($venta->impuesto_porciento / 100) + 1);
+                }
+            }else{
+                $costo = $venta->precio;
+            }
+
             $values = array(
                 'local_id' => $venta->local_id,
                 'producto_id' => $key,
@@ -1244,7 +1279,8 @@ class venta_new_model extends CI_Model
                 'ref_id' => $venta->venta_id,
                 'ref_val' => $referencias->ref_val,
                 'usuario_id' => $id_usuario == false ? $this->session->userdata('nUsuCodigo') : $id_usuario,
-                'costo' => ($venta->afectacion_impuesto=='1')? $venta->precio / (($venta->impuesto_porciento / 100) + 1) : $venta->precio
+                'costo' => $costo,
+                'moneda_id' => $venta->moneda_id
             );
             $this->kardex_model->set_kardex($values);
 

@@ -54,27 +54,27 @@
                         <td style="white-space: normal;"><?= $operacion['value'] ?></td>
                         <td style="white-space: normal;"><?= $k->username ?></td>
                         <td style="white-space: normal;"><?= $k->ref_val ?></td>
-                        <?php if ($k->io == 1): ?>
-                            <?php if($k->producto_cualidad=='MEDIBLE'){ ?>
-                                <td style="text-align: right;"><?=  bcdiv($k->cantidad,1,0) ?></td>
-                            <?php }else{ ?>
-                                <td style="text-align: right;"><?= $k->cantidad ?></td>
-                            <?php } ?>
-                            
-                        <?php elseif ($k->io == 2): ?>
-                            <?php if($k->producto_cualidad=='MEDIBLE'){ ?>
-                                <td style="text-align: right;"><?= bcdiv($k->cantidad,1,0) ?></td>
-                            <?php }else{ ?>
-                                <td style="text-align: right;"><?= $k->cantidad ?></td>
-                            <?php } ?>
-                        <?php endif; ?>
-                        <?php if($k->producto_cualidad=='MEDIBLE'){ ?>
-                            <td style="text-align: right;"><?= bcdiv($k->cantidad_saldo,1,0) ?></td>
+                        <?php if($k->io == 1){ ?>
+                            <td style="text-align: right;"><?php if($k->producto_cualidad=='MEDIBLE'){ echo bcdiv($k->cantidad,1,0); }else{ echo $k->cantidad; } ?></td>
+                            <td><?= $k->simbolo.' '.number_format($k->costo, 2) ?></td>
+                            <td><?= $k->simbolo.' '.number_format($k->cantidad * $k->costo, 2) ?></td>
                         <?php }else{ ?>
-                            <td style="text-align: right;"><?= $k->cantidad_saldo ?></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
                         <?php } ?>
-                        <td><?= $k->costo ?></td>
-                        <td><?= $k->cantidad * $k->costo ?></td>
+                        <?php if($k->io == 2){ ?>
+                            <td style="text-align: right;"><?php if($k->producto_cualidad=='MEDIBLE'){ echo bcdiv($k->cantidad,1,0); }else{ echo $k->cantidad; } ?></td>
+                            <td><?= $k->simbolo.' '.number_format($k->costo, 2) ?></td>
+                            <td><?= $k->simbolo.' '.number_format($k->cantidad * $k->costo, 2) ?></td>
+                        <?php }else{ ?>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        <?php } ?>
+                        <td style="text-align: right;"><?php if($k->producto_cualidad=='MEDIBLE'){ echo bcdiv($k->cantidad_saldo,1,0); }else{ echo $k->cantidad_saldo; } ?></td>
+                        <td></td>
+                        <td></td>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>
