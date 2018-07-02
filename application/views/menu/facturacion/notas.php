@@ -1,8 +1,8 @@
 <?php $ruta = base_url(); ?>
 
 <ul class="breadcrumb breadcrumb-top">
-    <li>Reportes</li>
-    <li><a href="">Entradas y Salidas</a></li>
+    <li>Facturaci&oacute;n</li>
+    <li><a href="">Notas de Pedidos</a></li>
 </ul>
 <link rel="stylesheet" href="<?= $ruta ?>recursos/css/plugins.css">
 <link rel="stylesheet" href="<?= $ruta ?>recursos/js/datepicker-range/daterangepicker.css">
@@ -16,7 +16,7 @@
                     <div class="col-md-3">
                         <?php if (isset($locales)): ?>
                             <label class="control-label panel-admin-text">Ubicaci&oacute;n</label>
-                            <select id="venta_local" class="form-control filter-input">
+                            <select id="local_id" class="form-control filter-input">
                                 <?php foreach ($locales as $local): ?>
                                     <option <?php if ($this->session->userdata('id_local') == $local['int_local_id']) echo "selected"; ?>
                                             value="<?= $local['int_local_id']; ?>"> <?= $local['local_nombre'] ?> </option>
@@ -27,55 +27,53 @@
                     </div>
 
                     <div class="col-md-3">
-                        <label class="control-label panel-admin-text">Fecha</label>
+                        <label class="control-label panel-admin-text">Fecha de Venta</label>
                         <input type="text" id="date_range" class="form-control" readonly style="cursor: pointer;"
-                               name="daterange" value="<?= date('01/m/Y') ?> - <?= date('d/m/Y') ?>"/>
+                               name="daterange" value="<?= date('d/m/Y') ?> - <?= date('d/m/Y') ?>"/>
+                    </div>
+
+
+                    <div class="col-md-3">
+<!--                        <label class="control-label panel-admin-text">Estado:</label>-->
+<!--                        <select id="estado" class="form-control filter-input" name="estado">-->
+<!--                            <option value="">TODOS</option>-->
+<!--                            <option value="0">NO GENERADOS</option>-->
+<!--                            <option value="1">GENERADOS</option>-->
+<!--                            <option value="2">ENVIADOS</option>-->
+<!--                            <option value="3">ACEPTADOS</option>-->
+<!--                            <option value="4">RECHAZADOS</option>-->
+<!--                        </select>-->
 
                     </div>
 
-                    <div class="col-md-2">
-                        <label class="control-label panel-admin-text">Movimiento</label>
-                        <select name="io" id="io" class='cho form-control'>
-                           <option value="0">TODOS</option>
-                           <option value="1">Entrada</option>
-                           <option value="2">Salida</option>
-                        </select>
-                    </div>
-
-                    <div class="col-md-2">
-                        <label class="control-label panel-admin-text">Moneda</label>
-                        <select name="moneda_id" id="moneda_id" class='cho form-control'>
-                            <?php foreach ($monedas as $moneda): ?>
-                                <option value="<?= $moneda->id_moneda ?>"
-                                        data-simbolo="<?= $moneda->simbolo ?>"
-                                    <?= $moneda->id_moneda == MONEDA_DEFECTO ? 'selected' : '' ?>><?= $moneda->nombre ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-
-                    <div class="col-md-1"></div>
 
                     <div class="col-md-1">
-                        <label class="control-label panel-admin-text" style="color: #FFFFFF;">.</label><br>
+                        <label class="control-label panel-admin-text" style="color: #fff;">.</label><br>
                         <button id="btn_buscar" class="btn btn-default">
-                            <i class="fa fa-search"></i>
+                            <i class="fa fa-search"></i> Buscar
                         </button>
+                    </div>
+
+                    <div class="col-md-2 text-right">
+<!--                        <label class="control-label panel-admin-text" style="color: #fff;">.</label><br>-->
+<!--                        <button type="button" class="btn btn-info" onclick="$('#leyenda_modal').modal('show')">-->
+<!--                            <i class="fa fa-info"></i> Leyenda-->
+<!--                        </button>-->
                     </div>
 
                 </div>
             </div>
             <br>
 
-
             <div class="row-fluid">
                 <div class="span12">
-                    <div id="historial_list">
+                    <div id="notas_list" class="block">
+
 
                     </div>
 
                 </div>
             </div>
-
             <div class="row" id="loading" style="display: none;">
                 <div class="col-md-12 text-center">
                     <div class="loading-icon"></div>
@@ -90,9 +88,7 @@
             <script type="text/javascript">
 
                 $(function () {
-                    //CONFIGURACIONES INICIALES
-                    App.sidebar('close-sidebar');
-                    
+
                     $('input[name="daterange"]').daterangepicker({
                         "locale": {
                             "format": "DD/MM/YYYY",
@@ -129,35 +125,32 @@
                         }
                     });
 
+
                     $('select').chosen();
 
-                    getReporte();
+                    get_notas();
 
                     $("#btn_buscar").on("click", function () {
-                        getReporte();
+                        get_notas();
                     });
-
-
-                    $('.chosen-container').css('width', '100%');
 
                 });
 
-                function getReporte() {
-                    $("#historial_list").html($("#loading").html());
+                function get_notas() {
+                    $("#notas_list").html($("#loading").html());
 
-                    var data = {
-                        local_id: $("#venta_local").val(),
-                        fecha: $("#date_range").val(),
-                        moneda_id: $("#moneda_id").val(),
-                        io: $("#io").val()
-                    };
-
+                    var local_id = $("#local_id").val();
+                    var estado = $("#estado").val();
+                    var fecha = $('#date_range').val();
                     $.ajax({
-                        url: '<?= base_url()?>ajuste/historial/filter',
-                        data: data,
+                        url: '<?= base_url()?>facturacion/notas/filter',
+                        data: {
+                            'local_id': local_id,
+                            'fecha': fecha
+                        },
                         type: 'POST',
                         success: function (data) {
-                            $("#historial_list").html(data);
+                            $("#notas_list").html(data);
                         },
                         error: function () {
                             $.bootstrapGrowl('<h4>Error.</h4> <p>Ha ocurrido un error en la operaci&oacute;n</p>', {
@@ -165,7 +158,7 @@
                                 delay: 5000,
                                 allow_dismiss: true
                             });
-                            $("#historial_list").html('');
+                            $("#notas_list").html('');
                         }
                     });
 

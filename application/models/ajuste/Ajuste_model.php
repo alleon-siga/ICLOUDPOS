@@ -70,6 +70,7 @@ class ajuste_model extends CI_Model
         $ajuste = $this->db->get_where('ajuste', array('id' => $ajuste_id))->row();
         $cantidades = array();
         $ajuste_detalle = array();
+        $arrCostoUn = array();
         foreach ($productos as $producto) {
 
             //preparo los datos para el historico
@@ -92,7 +93,7 @@ class ajuste_model extends CI_Model
                 'unidad_id' => $producto->unidad_medida
             );
             array_push($ajuste_detalle, $producto_detalle);
-
+            $arrCostoUn[$producto->id_producto] = $producto->costo_unitario; //costo unitario a su minima expresion
         }
 
         //inserto los detalles del ajuste
@@ -114,6 +115,12 @@ class ajuste_model extends CI_Model
 
             $result = $this->unidades_model->get_cantidad_fraccion($key, $ajuste_cantidad);
 
+            //OBTENIENDO AFECTACION DE IMPUESTO E IMPUESTO
+            $this->db->select('p.producto_afectacion_impuesto, i.porcentaje_impuesto');
+            $this->db->from('producto p');
+            $this->db->join('impuestos i', 'p.producto_impuesto = i.id_impuesto');
+            $this->db->where('p.producto_id', $key);
+            $datosP = $this->db->get()->row();
             //CREAR EL HISTORICO DE LA VENTA *************************************
             $values = array(
                 'fecha' => date('Y-m-d H:i:s'),
@@ -126,7 +133,8 @@ class ajuste_model extends CI_Model
                 'serie' => $ajuste->serie,
                 'numero' => $ajuste->numero,
                 'ref_id' => $ajuste->id,
-                'ref_val' => $otros_val
+                'ref_val' => $otros_val,
+                'costo' => ($datosP->producto_afectacion_impuesto=='1')? $arrCostoUn[$key] / (($datosP->porcentaje_impuesto / 100) + 1) : $arrCostoUn[$key]
             );
             $this->kardex_model->set_kardex($values);
 

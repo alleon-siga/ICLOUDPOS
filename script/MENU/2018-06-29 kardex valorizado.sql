@@ -1,0 +1,1 @@
+INSERT INTO opcion VALUES(724,7,'kardexvalorizado', 'Kardex Valorizado');

@@ -361,6 +361,7 @@ function prepare_detalles_productos() {
                 producto.unidad_medida = unidad;
                 producto.cantidad = cantidades[unidad];
                 producto.detalle_importe = producto.cantidad * producto.costo;
+                producto.costo_unitario = lst_producto[i].costo_unitario;
                 productos.push(producto);
             }
         }

@@ -125,13 +125,7 @@
                         <label for="vc_num_oper" class="control-label panel-admin-text">Operaci&oacute;n #:</label>
                     </div>
                     <div class="col-md-9">
-                        <input
-                                type="text"
-                                tabindex="0"
-                                class='input-square input-small form-control'
-                                name="vc_num_oper"
-                                id="vc_num_oper">
-
+                        <input type="text" tabindex="0" class='input-square input-small form-control' name="vc_num_oper" id="vc_num_oper" autocomplete="off">
                     </div>
                 </div>
             </div>

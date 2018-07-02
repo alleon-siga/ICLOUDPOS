@@ -142,7 +142,9 @@
             <script type="text/javascript">
 
                 $(function () {
-
+                    //CONFIGURACIONES INICIALES
+                    App.sidebar('close-sidebar');
+                    
                     $(document).off('keyup');
                     $(document).off('keydown');
 

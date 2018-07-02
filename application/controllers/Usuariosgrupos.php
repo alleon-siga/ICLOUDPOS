@@ -65,6 +65,7 @@ class usuariosgrupos extends MY_Controller
             foreach ($data['perm_list'] as &$perm) {
                 $perm->var_opcion_usuario_estado = FALSE;
             }
+            $data['usuariosgrupos'] = null;
 
         }
         $this->load->view('menu/usuariosgrupos/form', $data);

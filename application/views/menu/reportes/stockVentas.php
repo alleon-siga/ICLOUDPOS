@@ -218,8 +218,10 @@
             <script src="<?= base_url('recursos/js/multiple-select.js') ?>"></script>
             <!-- /.modal-dialog -->
             <script type="text/javascript">
+                //CONFIGURACIONES INICIALES
+                App.sidebar('close-sidebar');
+                
                 var bnt_save = '<input type="button" id="guardar" class="btn btn-sm btn-success" value="Guardar">';
-
                 // Filtro en select
                 $("#producto_id, #local_id").multipleSelect({
                     filter: true,

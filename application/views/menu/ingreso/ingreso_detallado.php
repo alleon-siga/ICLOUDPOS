@@ -175,6 +175,9 @@
     }
 
     $(function () {
+        //CONFIGURACIONES INICIALES
+        App.sidebar('close-sidebar');
+
         $('select').chosen();
 
         $("#pp_excel").hide();
@@ -184,8 +187,5 @@
         $(".campos").on("change",function(){
             buscaringresos();
         });
-
     });
-
-
 </script>

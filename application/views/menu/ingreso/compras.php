@@ -93,7 +93,9 @@
 <script type="text/javascript">
 
     $(document).ready(function () {
-
+        //CONFIGURACIONES INICIALES
+        App.sidebar('close-sidebar');
+        
         $('#estado').on('change', function () {
             if ($(this).val() == 'PENDIENTE') {
                 $('#moneda_block').hide();

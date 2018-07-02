@@ -237,7 +237,7 @@ class ingreso_model extends CI_Model
 
         $cantidad_minima = array();
         $costo_unitario = array();
-
+        $costo_unitario2 =array();
         if ($detalle != null) {
             foreach ($detalle as $row) {
 
@@ -304,7 +304,7 @@ class ingreso_model extends CI_Model
                     'impuesto_porciento' => $p->porcentaje_impuesto
                 );
                 $this->db->insert('detalleingreso', $data);
-
+                $costo_unitario2[$row->producto_id] = ($row->costo_unitario === 'null') ? 0 : $row->costo_unitario;
             }
 
 
@@ -335,7 +335,6 @@ class ingreso_model extends CI_Model
                     $referencia_valor = 'Se realizo un registro de existencia';
                 }
 
-
                 //CREAR EL HISTORICO DEL INGRESO *************************************
                 if ($compra['ingreso_status'] == 'COMPLETADO') {
                     $tipo = 0;
@@ -343,6 +342,13 @@ class ingreso_model extends CI_Model
                         $tipo = 1;
                     if ($compra['tipo_documento'] == 'BOLETA DE VENTA')
                         $tipo = 3;
+
+                    //OBTENIENDO AFECTACION DE IMPUESTO E IMPUESTO
+                    $this->db->select('p.producto_afectacion_impuesto, i.porcentaje_impuesto');
+                    $this->db->from('producto p');
+                    $this->db->join('impuestos i', 'p.producto_impuesto = i.id_impuesto');
+                    $this->db->where('p.producto_id', $key);
+                    $datosP = $this->db->get()->row();
 
                     $values = array(
                         'fecha' => date('Y-m-d H:i:s'), //$compra['fecha_emision'],
@@ -354,7 +360,8 @@ class ingreso_model extends CI_Model
                         'operacion' => 2,
                         'serie' => $compra['documento_serie'],
                         'numero' => $compra['documento_numero'],
-                        'ref_id' => $insert_id
+                        'ref_id' => $insert_id,
+                        'costo' => ($datosP->producto_afectacion_impuesto=='1')? $costo_unitario2[$key] / (($datosP->porcentaje_impuesto / 100) + 1) : $costo_unitario2[$key]
                     );
                     $this->kardex_model->set_kardex($values);
                 }
@@ -771,6 +778,13 @@ WHERE detalleingreso.id_ingreso='$compra_id'");
                     $tipo = 1;
                 if ($compra['tipo_documento'] == 'BOLETA DE VENTA')
                     $tipo = 3;
+
+                //OBTENIENDO AFECTACION DE IMPUESTO E IMPUESTO
+                $this->db->select('p.producto_afectacion_impuesto, i.porcentaje_impuesto');
+                $this->db->from('producto p');
+                $this->db->join('impuestos i', 'p.producto_impuesto = i.id_impuesto');
+                $this->db->where('p.producto_id', $productos[$i]->producto_id);
+                $datosP = $this->db->get()->row();
 
                 $values = array(
                     'fecha' => $compra['fecha_emision'],

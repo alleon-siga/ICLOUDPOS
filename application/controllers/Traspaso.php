@@ -79,7 +79,6 @@ class traspaso extends MY_Controller
     {
         $data = array();
 
-
         $where = array(
             "id_local" => $this->input->post('local_id'),
             "id_producto" => $this->input->post('producto_id')
@@ -92,14 +91,12 @@ class traspaso extends MY_Controller
         $data['um'][0]['nombre_unidad'] = $this->producto_model->getUmById($this->input->post('producto_id'));
         $data['um'] = $data['um'][0];
 
-
-        //$data['unidades'] = $this->unidades_model->get_unidades_cantidad($this->input->post('producto_id'), $this->input->post('local_id'));
-
         $old_cantidad = $this->db->get_where('producto_almacen', array('id_producto' => $this->input->post('producto_id'), 'id_local' => $this->input->post('local_id')))->row();
 
         $old_cantidad_min = $old_cantidad != NULL ? $this->unidades_model->convert_minimo_um($this->input->post('producto_id'), $old_cantidad->cantidad, $old_cantidad->fraccion) : 0;
 
         $data['stock_actual'] = $this->unidades_model->get_cantidad_fraccion($this->input->post('producto_id'), $old_cantidad_min);
+        $data['stock_actual_2'] = $this->traspaso_model->getUnidadesProducto($temp[0]['producto_id']);
         $data['stock_minimo'] = $old_cantidad_min;
         echo json_encode($data);
     }
@@ -190,6 +187,7 @@ class traspaso extends MY_Controller
     {
 
         $productos = json_decode($this->input->post('lst_producto', true));
+
         $local_destino = $this->input->post('local_destino', true);
         $fecha_traspaso = $this->input->post('fecha_traspaso', date('Y-m-d'));
         $motivo = $this->input->post('motivo', true);

@@ -943,4 +943,11 @@ class venta_new extends MY_Controller
         $data = $this->venta->ultimasVentas($venta);
         echo json_encode($data);
     }
+
+    function ultimasCompras()
+    {
+        $venta['id_producto'] = $this->input->post('id_producto');
+        $data = $this->venta->ultimasCompras($venta);
+        echo json_encode($data);
+    }
 }

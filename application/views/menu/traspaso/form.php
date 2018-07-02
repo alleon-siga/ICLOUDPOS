@@ -61,14 +61,7 @@
                         <label class="panel-admin-text">Motivo: </label>
                     </div>
                     <div class="col-md-8">
-                        <input type="text" name="motivo" id="motivo" value="" class="form-control">
-                    </div>
-                </div>
-                <div class="row" style="display: <?= ($this->session->grupo == '1' || $this->session->grupo == '5' || $this->session->grupo == '4') ? 'block' : 'none'?>;">
-                    <label class="col-md-1 panel-admin-text">Fecha:</label>
-                    <div class="col-md-3">
-                        <input type="text" name="fecha_traspaso" readonly style="cursor: pointer;" id="fecha_traspaso"
-                               value="<?= date('d-m-Y') ?>" class='input-small form-control input-datepicker'>
+                        <input type="text" name="motivo" id="motivo" value="" class="form-control" autocomplete="off">
                     </div>
                 </div>
                 <br>
@@ -99,34 +92,14 @@
                 <div class="row" style="display: none" id="abrir_info" align="center">
                     <div class="form-group">
                         <div id="mostrar_nombres"></div>
-                        <table class="table block table-striped table-bordered" style="width: 70%">
-                            <tr>
-                                <td>Cantidad</td>
-                                <td>Fraccion</td>
-                            </tr>
-                            <tr id="">
-                                <td><input type="number" name="cantidad" id="cantidad" required="true"
-                                           class="form-control"
-                                           value="">
-                                    <input type="hidden" id="cantidad_producto"
-                                           value="">
-                                </td>
-                                <td><input type="number" name="fraccion" id="fraccion" required="true"
-                                           class="form-control"></td>
-                                <td><a class="btn btn-primary" data-placement="bottom"
-                                       style="margin-top:-2.2%;cursor: pointer;"
-                                       onclick="agregarProducto();">agregar</a></td>
-                            </tr>
-                        </table>
+                        <div id="mostrar_input"></div>
                     </div>
                     <br>
                 </div>
                 <div class="table-responsive" style="height: 200px; overflow-y: scroll;">
                     <table class="table dataTable" id="tablaresult">
-                        <thead id="head_productos">
-                        </thead>
-                        <tbody id="body_productos">
-                        </tbody>
+                        <thead id="head_productos"></thead>
+                        <tbody id="body_productos"></tbody>
                     </table>
                 </div>
             </form>

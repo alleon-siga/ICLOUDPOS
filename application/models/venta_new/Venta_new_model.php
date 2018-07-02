@@ -807,6 +807,9 @@ class venta_new_model extends CI_Model
         $cantidades = array();
         $venta_detalle = array();
         $venta_contable_detalle = array();
+        $precio = array(); //precio unitario de venta
+        $ArrfectImp = array(); //Afectacion de impuesto
+        $impPorciento = array(); //Impuesto porciento
         foreach ($productos as $producto) {
 
             //preparo los datos para el historico
@@ -859,8 +862,9 @@ class venta_new_model extends CI_Model
                 );
                 array_push($venta_contable_detalle, $producto_detalle);
             }
-
-
+            $precio[$producto->id_producto] = $producto->precio;
+            $ArrfectImp[$producto->id_producto] = $prod->producto_afectacion_impuesto;
+            $impPorciento[$producto->id_producto] = $p->porcentaje_impuesto;
         }
 
         //inserto los detalles de la venta
@@ -913,7 +917,8 @@ class venta_new_model extends CI_Model
                 'serie' => $venta->serie != null ? $venta->serie : '-',
                 'numero' => $venta->numero != null ? sumCod($venta->numero, 6) : '-',
                 'ref_id' => $venta->venta_id,
-                'usuario_id' => $id_usuario
+                'usuario_id' => $id_usuario,
+                'costo' => ($ArrfectImp[$key]=='1')? $precio[$key] / (($impPorciento[$key] / 100) + 1) : $precio[$key]
             );
             $this->kardex_model->set_kardex($values);
 
@@ -1018,7 +1023,8 @@ class venta_new_model extends CI_Model
                 'numero' => $numero,
                 'ref_id' => $venta->venta_id,
                 'ref_val' => $referencias->ref_val,
-                'usuario_id' => $id_usuario == false ? $this->session->userdata('nUsuCodigo') : $id_usuario
+                'usuario_id' => $id_usuario == false ? $this->session->userdata('nUsuCodigo') : $id_usuario,
+                'costo' => ($venta->afectacion_impuesto=='1')? $venta->precio / (($venta->impuesto_porciento / 100) + 1) : $venta->precio
             );
             $this->kardex_model->set_kardex($values);
 
@@ -1237,7 +1243,8 @@ class venta_new_model extends CI_Model
                 'numero' => $numero,
                 'ref_id' => $venta->venta_id,
                 'ref_val' => $referencias->ref_val,
-                'usuario_id' => $id_usuario == false ? $this->session->userdata('nUsuCodigo') : $id_usuario
+                'usuario_id' => $id_usuario == false ? $this->session->userdata('nUsuCodigo') : $id_usuario,
+                'costo' => ($venta->afectacion_impuesto=='1')? $venta->precio / (($venta->impuesto_porciento / 100) + 1) : $venta->precio
             );
             $this->kardex_model->set_kardex($values);
 
@@ -1498,6 +1505,19 @@ class venta_new_model extends CI_Model
         $this->db->where('id_producto', $venta['id_producto']);
         $this->db->where('id_cliente', $venta['id_cliente']);
         $this->db->order_by('v.fecha DESC');
+        return $this->db->get()->result();
+    }
+
+    public function ultimasCompras($id)
+    {
+        $this->db->select('DATE(i.fecha_registro) AS fecha,d.precio,d.cantidad,u.nombre_unidad, m.simbolo');
+        $this->db->from('detalleingreso d');
+        $this->db->join('ingreso i', 'd.id_ingreso=i.id_ingreso');
+        $this->db->join('unidades u', 'd.unidad_medida=u.id_unidad');
+        $this->db->join('moneda m', 'i.id_moneda = m.id_moneda');
+        $this->db->where('id_producto', $id['id_producto']);
+        $this->db->order_by('i.fecha_registro DESC');
+        $this->db->limit(10);
         return $this->db->get()->result();
     }
 }

@@ -329,6 +329,12 @@ $primary_nav = array(
                 'slug' => 'facturacion_comprobantes'
             ),
             array(
+                'name' => 'Notas de Pedido',
+                'url' => $ruta . 'facturacion/notas',
+                'icon' => 'fa fa-list',
+                'slug' => 'facturacion_comprobantes'
+            ),
+            array(
                 'name' => 'Configurar Emisor',
                 'url' => $ruta . 'facturacion/emisor',
                 'icon' => 'fa fa-cogs',
@@ -517,6 +523,11 @@ $primary_nav = array(
                         'url' => $ruta . 'ingresos/ingreso_detallado',
                         'slug' => 'ingresodetallado'
                     ),
+                    array(
+                        'name' => 'Kardex Valorizado',
+                        'url' => $ruta . 'reporte/kardexValorizado',
+                        'slug' => 'kardexvalorizado'
+                    )
                 )
             ),
             array(

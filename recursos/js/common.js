@@ -143,6 +143,15 @@ function formatPrice(price, min) {
     return parseFloat(entero + '.' + fraccion).toFixed(2);
 }
 
+function mensaje(growlType, msj){
+    $.bootstrapGrowl(msj, {
+        type: growlType,
+        delay: 2500,
+        allow_dismiss: true
+    });
+    return false;
+}
+
 var region = {
 
     actualizarestados: function () {

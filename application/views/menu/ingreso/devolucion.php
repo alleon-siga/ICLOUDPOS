@@ -113,6 +113,9 @@
 <script src="<?php echo $ruta; ?>recursos/js/datepicker-range/daterangepicker.js"></script>
 <script type="text/javascript">
     $(function () {
+        //CONFIGURACIONES INICIALES
+        App.sidebar('close-sidebar');
+        
         elajax();
         TablesDatatables.init();
         $(".fecha").datepicker({
