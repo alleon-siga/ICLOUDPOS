@@ -53,43 +53,31 @@ class Pedidos extends REST_Controller
     {
         $estado = $this->input->post('estado');
         $id_usuario = $this->input->post('id_usuario');
-        $id_cliente = $this->input->post('id_cliente');
 
         $data = array();
         if ($estado == "COMPLETADO") {
+            $id_cliente = $this->input->post('id_cliente');
             $fecha_ini = $this->input->post('fecha_ini');
             $fecha_fin = $this->input->post('fecha_fin');
 
+            $where['estado'] = $estado;
+
+            if ($id_cliente) {
+                $where['id_cliente'] = $id_cliente;
+            }
+
+            if ($fecha_ini) {
+                $where['fecha_ini'] = date('Y-m-d', strtotime($fecha_ini));
+                $where['fecha_fin'] = date('Y-m-d', strtotime($fecha_fin));
+            }
+
             $res = $this->usuario_api_model->get_venta_user($id_usuario);
-
             if (empty($res)) {
-                if ($id_cliente) {
-                    $where = array('fecha_ini' => date('Y-m-d', strtotime($fecha_ini)),
-                        'fecha_fin' => date('Y-m-d', strtotime($fecha_fin)),
-                        'estado' => $estado,
-                        'id_cliente' => $id_cliente);
-                } else {
-                    $where = array('fecha_ini' => date('Y-m-d', strtotime($fecha_ini)),
-                        'fecha_fin' => date('Y-m-d', strtotime($fecha_fin)),
-                        'estado' => $estado);
-                }
-
                 $data['today']['count'] = count($this->db->get_where('venta', array('fecha >=' => date('Y-m-d 00:00:00'),
                     'fecha <=' => date('Y-m-d 23:59:59')))->result());
 
             } else {
-                if ($id_cliente) {
-                    $where = array('fecha_ini' => date('Y-m-d', strtotime($fecha_ini)),
-                        'fecha_fin' => date('Y-m-d', strtotime($fecha_fin)),
-                        'estado' => $estado,
-                        'usuarios_id' => $id_usuario,
-                        'id_cliente' => $id_cliente);
-                } else {
-                    $where = array('fecha_ini' => date('Y-m-d', strtotime($fecha_ini)),
-                        'fecha_fin' => date('Y-m-d', strtotime($fecha_fin)),
-                        'estado' => $estado,
-                        'usuarios_id' => $id_usuario);
-                }
+                $where['usuarios_id'] = $id_usuario;
 
                 $data['today']['count'] = count($this->db->get_where('venta', array('fecha >=' => date('Y-m-d 00:00:00'),
                     'fecha <=' => date('Y-m-d 23:59:59'), 'id_vendedor' => $id_usuario))->result());
