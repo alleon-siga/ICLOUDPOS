@@ -80,22 +80,21 @@
             </div>
         </div>
     </div>
-
-    <div class="row form-group">
+    <input type="hidden" name="COMPROBANTE" value="0"> <!-- Desarrollado solo para ramon -->
+    <!--<div class="row form-group">
         <div class="col-md-4">
             <label class="control-label panel-admin-text">Habilitar Uso de Comprobante:</label>
         </div>
         <div class="col-md-8">
             <div class="form-control">
                 <input type="radio" name="COMPROBANTE" id="" class='' value="1"
-                    <?php echo validOption("COMPROBANTE", '1', '0') ? 'checked' : '' ?>> SI
+                    <?php //echo validOption("COMPROBANTE", '1', '0') ? 'checked' : '' ?>> SI
                 &nbsp;&nbsp;&nbsp;
                 <input type="radio" name="COMPROBANTE" id="" class='' value="0"
-                    <?php echo validOption("COMPROBANTE", '0', '0') ? 'checked' : '' ?>> NO
+                    <?php //echo validOption("COMPROBANTE", '0', '0') ? 'checked' : '' ?>> NO
             </div>
         </div>
-    </div>
-
+    </div>-->
     <div class="row form-group">
         <div class="col-md-4">
             <label class="control-label panel-admin-text">Cobrar en Caja:</label>
@@ -110,7 +109,37 @@
             </div>
         </div>
     </div>
-
+    <div class="row form-group">
+        <div class="col-md-4">
+            <label class="control-label panel-admin-text">Documento de venta por defecto:</label>
+        </div>
+        <div class="col-md-8">
+            <div class="form-control">
+                <?php foreach($documentos as $doc) { ?>
+                <input type="radio" name="DOCUMENTO_DEFECTO" value="<?= $doc->des_doc ?>" <?php echo validOption("DOCUMENTO_DEFECTO", $doc->des_doc, '0') ? 'checked' : '' ?>> <?= $doc->des_doc ?>
+                &nbsp;&nbsp;&nbsp;
+                <?php } ?>
+            </div>
+        </div>
+    </div>
+    <div class="row form-group">
+        <div class="col-md-4">
+            <label class="control-label panel-admin-text">Botones para guardar venta:</label>
+        </div>
+        <div class="col-md-8">
+            <div class="form-control">
+        <?php
+            $boton = json_decode(valueOption("BOTONES_VENTA"));
+            $arr = array('GUARDAR', 'GUARDAR & IMPRIMIR', 'GUARDAR & DETALLES');
+            foreach ($boton as $clave => $valor) {
+        ?>
+                <input type="checkbox" class="BOTONES_VENTA" name="BOTONES_VENTA[]" value="<?= $valor ?>" <?php echo ($valor=='1')? 'checked' : '' ?>> <?= $arr[$clave] ?>&nbsp;&nbsp;&nbsp;
+        <?php
+            } 
+        ?>
+            </div>
+        </div>
+    </div>
     <?php if (validOption('ACTIVAR_SHADOW', 1)): ?>
         <div class="row form-group">
             <div class="col-md-4">
@@ -172,14 +201,9 @@
 
 <div class="row form-group">
     <button type="button" id="" class="btn btn-primary" onclick="grupo.guardar()">Confirmar</button>
-
 </div>
-
-
 </div>
 <script>
-
-
     var grupo = {
         ajaxgrupo: function () {
             return $.ajax({
@@ -188,7 +212,7 @@
             })
         },
         guardar: function () {
-
+            $('.BOTONES_VENTA').prop('checked', true);
             App.formSubmitAjax($("#formguardar").attr('action'), this.ajaxgrupo, null, 'formguardar');
             //App.formSubmitAjax($("#formguardar").attr('action'), this.reloadOpciones, null, 'formguardar');
         },
@@ -198,8 +222,13 @@
     }
 
     $(function () {
-
-
+        $('.BOTONES_VENTA').on('click', function(){
+            if($(this).prop('checked')){
+                $(this).attr('value', '1');
+            }else{
+                $(this).attr('value', '0');
+            }
+        });
 
         $('.textarea-editor').wysihtml5({
             "font-styles": true, //Font styling, e.g. h1, h2, etc. Default true

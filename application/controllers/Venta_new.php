@@ -244,7 +244,7 @@ class venta_new extends MY_Controller
         $data['tipo_documentos'] = $this->db->get_where('documentos', array('ventas' => 1))->result();
         $data['precios'] = $this->precios_model->get_all_by('mostrar_precio', '1', array('campo' => 'orden', 'tipo' => 'ASC'));
         $data['comprobantes'] = $this->db->get_where('comprobantes', array('estado' => 1))->result();
-
+        $data['comprobantes_default'] = $this->db->get_where('configuraciones', array('config_id' => '55'))->row();
 
         $data['dialog_venta_contado'] = $this->load->view('menu/venta/dialog_venta_contado', array(
             'tarjetas' => $this->db->get('tarjeta_pago')->result(),
@@ -615,11 +615,14 @@ class venta_new extends MY_Controller
             'COTIZACION_INFORMACION',
             'COTIZACION_CONDICION',
             'COTIZACION_PIE_PAGINA',
-            'COMPROBANTE'
+            'COMPROBANTE',
+            'DOCUMENTO_DEFECTO',
+            'BOTONES_VENTA'
         );
 
         if ($action == 'get') {
             $data['configuraciones'] = $this->opciones_model->get_opciones($keys);
+            $data['documentos'] = $this->documentos_model->get_documentosBy("ventas = '1'");
             $dataCuerpo['cuerpo'] = $this->load->view('menu/venta/opciones', $data, true);
 
             if ($this->input->is_ajax_request()) {
@@ -631,9 +634,14 @@ class venta_new extends MY_Controller
 
             $configuraciones = array();
             foreach ($keys as $key) {
+                if(is_array($this->input->post($key))){
+                    $config_value = json_encode($this->input->post($key));
+                }else{
+                    $config_value = $this->input->post($key);
+                }
                 $configuraciones[] = array(
                     'config_key' => $key,
-                    'config_value' => $this->input->post($key)
+                    'config_value' => $config_value
                 );
             }
 

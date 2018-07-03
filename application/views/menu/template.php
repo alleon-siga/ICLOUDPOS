@@ -560,7 +560,6 @@ $primary_nav = array(
                         'url' => $ruta . 'reporte/ventaSucursal',
                         'slug' => 'ventaSucursal'
                     ),
-
                     array(
                         'name' => 'Ventas x empleado',
                         'url' => $ruta . 'reporte/ventaEmpleado',
@@ -602,6 +601,11 @@ $primary_nav = array(
                         'icon' => 'fa fa-area-chart',
                         'slug' => 'recargaCuentasC'
                     ),
+                    array(
+                        'name' => 'Cr&eacute;dito Fiscal',
+                        'url' => $ruta . 'reporte/creditoFiscal',
+                        'slug' => 'creditofiscal'
+                    )
                 )
             ),
             array(

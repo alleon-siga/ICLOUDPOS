@@ -465,7 +465,7 @@
                         <div class="help-key badge label-success" style="display: none;">7</div>
                         <select name="tipo_documento" id="tipo_documento" class="form-control">
                             <?php foreach ($tipo_documentos as $key => $value): ?>
-                                <option <?= $value->id_doc == 3 ? 'selected="selected"' : '' ?>
+                                <option <?= $value->des_doc == $comprobantes_default->config_value ? 'selected="selected"' : '' ?>
                                         value="<?= $value->id_doc ?>"><?= $value->des_doc ?></option>
                             <?php endforeach; ?>
                         </select>

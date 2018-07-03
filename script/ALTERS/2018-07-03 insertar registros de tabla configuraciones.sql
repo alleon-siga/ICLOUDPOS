@@ -1,0 +1,2 @@
+INSERT INTO configuraciones VALUES('55', 'DOCUMENTO_DEFECTO', 'BOLETA VENTA');
+INSERT INTO configuraciones VALUES('56', 'BOTONES_VENTA', '["1","1","1"]');
