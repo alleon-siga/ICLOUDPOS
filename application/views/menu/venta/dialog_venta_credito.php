@@ -347,22 +347,18 @@
                         </span>
 
                         <span id="guardar_credito_block">
-                        <button class="btn btn-default save_venta_credito" data-imprimir="0"
-                                type="button"
-                                id="btn_venta_credito"><i
-                                    class="fa fa-save"></i> Guardar
-                        </button>
-                        <button type="button" class="btn btn-default save_venta_credito" data-imprimir="2"
-                                id="btn_venta_credito_imprimir_2"
-                        ><i
-                                    class="fa fa-print"></i> (F6) Grabar & Imprimir
-                        </button>
-
-                            <button type="button" class="btn btn-default save_venta_credito" data-imprimir="1"
-                                    id="btn_venta_credito_imprimir"
-                            ><i
-                                        class="fa fa-print"></i> Grabar & Detalles
-                        </button>
+                    <?php
+                        $boton = json_decode(valueOption("BOTONES_VENTA"));
+                        $arrHtml[0] = '<button class="btn btn-default save_venta_credito" data-imprimir="0" type="button" id="btn_venta_credito"><i class="fa fa-save"></i> Guardar</button>';
+                        $arrHtml[1] = '<button type="button" class="btn btn-default save_venta_credito" data-imprimir="2" id="btn_venta_credito_imprimir_2"><i class="fa fa-print"></i> (F6) Grabar & Imprimir</button>';
+                        $arrHtml[2] = '<button type="button" class="btn btn-default save_venta_credito" data-imprimir="1" id="btn_venta_credito_imprimir"><i class="fa fa-print"></i> Grabar & Detalles</button>';
+                        $arr = array('Guardar', '(F6) Grabar & Imprimir', 'Grabar & Detalles');
+                        foreach ($boton as $clave => $valor) {
+                            if($valor=='1'){
+                                echo $arrHtml[$clave];
+                            }
+                        }
+                    ?>
                         </span>
                         <button type="button" class="btn btn-danger"
                                 onclick="$('#dialog_venta_credito').modal('hide');"><i
