@@ -1,5 +1,3 @@
-INSERT INTO opcion VALUES('723', '7', 'estadoresultado', 'Estado de Resultados');
-
 CREATE TABLE `grupo_gastos` (
 	`id_grupo_gastos`  int NOT NULL AUTO_INCREMENT ,
 	`nom_grupo_gastos`  varchar(255) NULL ,
