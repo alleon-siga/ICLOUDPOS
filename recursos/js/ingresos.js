@@ -1,4 +1,5 @@
 var lst_producto = [];
+var lst_gastos = [];
 var tablaListaCompras;
 var contador_productos = 0;
 var montoTotal = 0;
@@ -35,6 +36,38 @@ $(document).ready(function () {
 
     /*esto hace que los nombres de los productos se puedan buscar facilmente*/
     jQuery('#cboProducto').chosen({search_contains: true});
+
+    //Agregar gastos a la compra
+    $('#agregar_gasto').on('click', function () {
+        if ($('#config_moneda').attr('data-action') == '1') {
+            var growlType = 'warning';
+            $.bootstrapGrowl('<h4> Primero debe confirmar la moneda</h4>', {
+                type: growlType,
+                delay: 2500,
+                allow_dismiss: true
+            });
+            return false;
+        }
+
+        $("#dialog_gastos_modal").html($("#loading").html());
+        $("#dialog_gastos_modal").modal('show');
+
+        $.ajax({
+            url: ruta + 'ingresos/get_gastos',
+            type: 'POST',
+            data: {
+                local_id: $('#local').val(),
+                moneda_id: $('#monedas').val()
+            },
+            success: function (data) {
+                $("#dialog_gastos_modal").html(data);
+            },
+            error: function () {
+                alert('Error inesperado')
+            }
+        });
+    });
+
 
     $("#cerrar_numero_series").on('click', function () {
         $("#producto_serie").modal('hide');
@@ -359,6 +392,8 @@ function buscardetalle() {
                     producto.cantidad = parseFloat(detalles[i]['cantidad']);
                     producto.costo_unitario = detalles[i]['precio'];
                     producto.importe = detalles[i]['total_detalle'];
+
+                    producto.importe_gasto = producto.importe;
 
                     producto.viene_bd = true;
 
@@ -771,6 +806,8 @@ function agregarProducto() {
                     producto.importe = parseFloat(producto.cantidad * producto.costo_unitario);
                 }
 
+                producto.importe_gasto = producto.importe;
+
                 producto.unidad = input.attr('data-unidad_id');
                 producto.unidad_nombre = input.attr('data-unidad_nombre');
 
@@ -802,6 +839,8 @@ function agregarProducto() {
                     lst_producto[index].costo_unitario = parseFloat($("#total_precio").val() / $("#total_unidades").val() * input.attr('data-unidades'));
                     lst_producto[index].importe = parseFloat(lst_producto[index].cantidad * lst_producto[index].costo_unitario);
                 }
+
+                lst_producto[index].importe_gasto = lst_producto[index].importe;
 
                 if ($("#producto_serie_activo").val() == "SI") {
                     lst_producto[index].series = [];
@@ -943,9 +982,27 @@ function get_type_view() {
         return 'general';
 }
 
+function updatePrecioGasto() {
+
+    var total_gasto = 0;
+    for (var i = 0; i < lst_gastos.length; i++) {
+        total_gasto += parseFloat(lst_gastos[i].total);
+    }
+
+
+    calcular_pago();
+    var total_pago = parseFloat($('#totApagar').val());
+    for (var i = 0; i < lst_producto.length; i++) {
+        var porciento = lst_producto[i].importe * 100 / total_pago;
+        lst_producto[i].importe_gasto = parseFloat(lst_producto[i].importe) + (total_gasto * porciento / 100);
+    }
+
+}
+
 //refresca la tabla con la vista seleccionada
 function updateView(type) {
 
+    updatePrecioGasto();
 
     $("#body_productos").html('');
 
@@ -956,6 +1013,7 @@ function updateView(type) {
         '<th>Cantidad</th>' +
         '<th>Prec. sin Imp</th>' +
         '<th>Prec. con Imp</th>' +
+        '<th>Prec. Gasto</th>' +
         '<th>Subtotal</th>' +
         '<th>Opciones</th>' +
         '</tr>');
@@ -1063,25 +1121,26 @@ function addTable(producto, type) {
     template += '<td style="text-align: center;">' + producto.cantidad + '</td>';
     var cboImp = $('#tipo_impuesto option:selected').val();
     var impuesto = (producto.producto_impuesto / 100) + 1;
-    if(producto.producto_impuesto==0){
+    if (producto.producto_impuesto == 0) {
         impuesto = 0;
-    }else{
+    } else {
         impuesto = (producto.producto_impuesto / 100) + 1;
     }
-    
-    if(cboImp=='1'){
+
+    if (cboImp == '1') {
         sinImp = parseFloat(producto.costo_unitario / impuesto);
         conImp = parseFloat(producto.costo_unitario);
-    }else if(cboImp=='2'){
+    } else if (cboImp == '2') {
         sinImp = parseFloat(producto.costo_unitario);
-        conImp = parseFloat(producto.costo_unitario * impuesto);  
-    }else{
+        conImp = parseFloat(producto.costo_unitario * impuesto);
+    } else {
         sinImp = parseFloat(producto.costo_unitario);
         conImp = parseFloat(producto.costo_unitario);
     }
-    template += '<input type="hidden" name="hdImp" class="hdImp" value="'+impuesto+'">';
+    template += '<input type="hidden" name="hdImp" class="hdImp" value="' + impuesto + '">';
     template += '<td style="text-align: right;" class="sinImp">' + parseFloat(sinImp).toFixed(3) + '</td>';
     template += '<td style="text-align: right;" class="conImp">' + parseFloat(conImp).toFixed(3) + '</td>';
+    template += '<td style="text-align: right;" class="conGasto">' + parseFloat(producto.importe_gasto / producto.cantidad).toFixed(2) + '</td>';
     template += '<td style="text-align: right;">' + parseFloat(producto.importe).toFixed(2) + '</td>';
 
     template += '<td class="actions" style="text-align: center;">';
@@ -1123,27 +1182,27 @@ function calcular_pago() {
         total_importe = parseFloat(total_importe) + parseFloat(lst_producto[i].importe);
         //Actualizamos los precios, segun el impuesto seleccionado
         var cboImp = $('#tipo_impuesto option:selected').val();
-        var impuesto = parseFloat($('#'+i).find('.hdImp').val());
-        if(cboImp=='1'){
-            if(impuesto==0){
+        var impuesto = parseFloat($('#' + i).find('.hdImp').val());
+        if (cboImp == '1') {
+            if (impuesto == 0) {
                 sinImp = parseFloat(lst_producto[i].costo_unitario);
-            }else{
+            } else {
                 sinImp = parseFloat(lst_producto[i].costo_unitario / impuesto);
             }
             conImp = parseFloat(lst_producto[i].costo_unitario);
-        }else if(cboImp=='2'){
+        } else if (cboImp == '2') {
             sinImp = parseFloat(lst_producto[i].costo_unitario);
-            if(impuesto==0){
+            if (impuesto == 0) {
                 conImp = parseFloat(lst_producto[i].costo_unitario);
-            }else{
+            } else {
                 conImp = parseFloat(lst_producto[i].costo_unitario * impuesto);
             }
-        }else{
+        } else {
             sinImp = parseFloat(lst_producto[i].costo_unitario);
             conImp = parseFloat(lst_producto[i].costo_unitario);
         }
-        $('#'+i).find('.sinImp').text(sinImp.toFixed(3));
-        $('#'+i).find('.conImp').text(conImp.toFixed(3));
+        $('#' + i).find('.sinImp').text(sinImp.toFixed(3));
+        $('#' + i).find('.conImp').text(conImp.toFixed(3));
     }
 
     var total = 0;
@@ -1373,7 +1432,8 @@ function accionGuardar() {
             index: lst_producto[i].index,
             producto_id: lst_producto[i].producto_id,
             cantidad: lst_producto[i].cantidad,
-            costo_unitario: $('#'+i).find('.conImp').text(),//lst_producto[i].costo_unitario,
+            costo_unitario: $('#' + i).find('.conImp').text(),//lst_producto[i].costo_unitario,
+            importe_gasto: lst_producto[i].importe_gasto,
             importe: lst_producto[i].importe,
             unidad: lst_producto[i].unidad,
             unidades: lst_producto[i].unidades,
@@ -1381,6 +1441,8 @@ function accionGuardar() {
         });
     }
     miJSON = JSON.stringify(miJSON);
+
+    var gastos = JSON.stringify(lst_gastos);
 
     var cuotas = [];
     if ($('#pago').val() == 'CREDITO')
@@ -1392,7 +1454,7 @@ function accionGuardar() {
 
     $.ajax({
         type: 'POST',
-        data: $('#frmCompra').serialize() + '&lst_producto=' + miJSON + '&cuotas=' + cuotas,
+        data: $('#frmCompra').serialize() + '&lst_producto=' + miJSON + '&cuotas=' + cuotas + '&gastos=' + gastos,
         url: ruta + 'ingresos/registrar_ingreso',
         dataType: 'json',
         success: function (data) {
@@ -1483,17 +1545,17 @@ function generar_reporte_pdf() {
 }
 
 function nuevoProducto() {
-    if($('#config_moneda').attr('data-action')=='1'){
+    if ($('#config_moneda').attr('data-action') == '1') {
         var growlType = 'warning';
         $.bootstrapGrowl('<h4> Primero debe confirmar la moneda</h4>', {
             type: growlType,
             delay: 2500,
             allow_dismiss: true
         });
-    }else{
+    } else {
         $('#cboProducto').val(0);
         $("#cboProducto").trigger('chosen:updated');
-        $("#productomodal").load(ruta + 'producto/agregar', function(){
+        $("#productomodal").load(ruta + 'producto/agregar', function () {
             $('#btnGuardar').removeAttr("onclick");
             $('#btnGuardar').attr("onclick", "confirm_save('ingresos')");
         });
@@ -1502,7 +1564,7 @@ function nuevoProducto() {
 }
 
 function update_producto(id, nombre, impuesto, producto_id) {
-    $('#cboProducto').append('<option value="' + producto_id + '" data-impuesto="'+ impuesto +'">' + id + ' - ' + nombre + '</option>');
+    $('#cboProducto').append('<option value="' + producto_id + '" data-impuesto="' + impuesto + '">' + id + ' - ' + nombre + '</option>');
     $('#cboProducto').val(producto_id);
     $("#cboProducto").trigger('chosen:updated');
     get_unidades_has_producto('click');
@@ -1524,10 +1586,10 @@ function getproductosbylocal() {
     })
 }
 
-function get_unidades_has_producto(evento){
+function get_unidades_has_producto(evento) {
     $(".form_div").hide();
 
-    if(evento=='change'){
+    if (evento == 'change') {
         if ($('#cboProducto').val() == "") {
             return false;
         }

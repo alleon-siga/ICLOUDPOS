@@ -201,6 +201,7 @@ class ingresos extends MY_Controller
                 $credito['c_fecha_giro'] = $this->input->post('c_fecha_giro');
                 $credito['c_periodo_gracia'] = $this->input->post('c_periodo_gracia');
                 $cuotas = json_decode($this->input->post('cuotas', true));
+                $gastos = json_decode($this->input->post('gastos', true));
 
                 $id = $this->input->post('id_ingreso', true);
 //                 var_dump($this->input->post('doc_serie', true));
@@ -228,6 +229,11 @@ class ingresos extends MY_Controller
                 if ($rs != false) {
                     $json['success'] = 'Solicitud Procesada con exito';
                     $json['id'] = $rs;
+
+                    foreach ($gastos as $g) {
+                        $this->db->where('id_gastos', $g->id);
+                        $this->db->update('gastos', array('compra_ref_id' => $rs));
+                    }
 
                 } else {
                     if ($this->ingreso_model->error != NULL)
@@ -307,7 +313,7 @@ class ingresos extends MY_Controller
                 $this->load->view('menu/ingreso/lista_compra', $data);
                 break;
             }
-            case 'excel':{
+            case 'excel': {
                 $params = json_decode($this->input->get('data'));
                 $date_range = explode(' - ', $params->fecha);
                 $input = array(
@@ -320,9 +326,60 @@ class ingresos extends MY_Controller
                 $data['ingresos'] = $this->ingreso_model->get_compras($input);
                 $data['ingreso_totales'] = $this->ingreso_model->get_totales_compra($input);
                 $local = $this->db->get_where('local', array('int_local_id' => $input['local_id']))->row();
-                $data['local_nombre'] = !empty($local->local_nombre)? $local->local_nombre: 'TODOS';
-                $data['local_direccion'] = !empty($local->direccion)? $local->direccion: 'TODOS';
+                $data['local_nombre'] = !empty($local->local_nombre) ? $local->local_nombre : 'TODOS';
+                $data['local_direccion'] = !empty($local->direccion) ? $local->direccion : 'TODOS';
                 echo $this->load->view('menu/ingreso/lista_compra_excel', $data, true);
+                break;
+            }
+        }
+    }
+
+    function get_gastos($action = '')
+    {
+        switch ($action) {
+            case 'filter': {
+                $where = array(
+                    'compra_ref_id' => 0,
+                    'status_gastos' => 0
+                );
+
+                $documento_id = $this->input->post('documento_id');
+                if ($documento_id != '')
+                    $where['id_documento'] = $documento_id;
+
+                $where['local_id'] = $this->input->post('local_id');
+                $where['id_moneda'] = $this->input->post('moneda_id');
+
+                $date_range = explode(" - ", $this->input->post('fecha'));
+                $where['fecha >='] = date('Y-m-d H:i:s', strtotime(str_replace("/", "-", $date_range[0]) . ' 00:00:00'));
+                $where['fecha <='] = date('Y-m-d H:i:s', strtotime(str_replace("/", "-", $date_range[1]) . ' 23:59:59'));
+
+                $data['gastos'] = $this->db->join('documentos', 'documentos.id_doc = gastos.id_documento')
+                    ->get_where('gastos', $where)->result();
+
+                echo $this->load->view('menu/ingreso/gastos_table_list', $data, TRUE);
+                break;
+            }
+            default: {
+                $where = array(
+                    'compra_ref_id' => 0,
+                    'status_gastos' => 0
+                );
+
+                $where['local_id'] = $this->input->post('local_id');
+                $where['id_moneda'] = $this->input->post('moneda_id');
+
+                $where['fecha >='] = date('Y-m-01') . ' 00:00:00';
+                $where['fecha <='] = date('Y-m-d') . ' 23:59:59';
+
+                $data['gastos'] = $this->db->join('documentos', 'documentos.id_doc = gastos.id_documento')
+                    ->join('usuario', 'usuario.nUsuCodigo = gastos.usuario_id', 'left')
+                    ->join('proveedor', 'proveedor.id_proveedor = gastos.proveedor_id', 'left')
+                    ->get_where('gastos', $where)->result();
+                $data['table_list'] = $this->load->view('menu/ingreso/gastos_table_list', $data, TRUE);
+                $data["documentos"] = $this->db->get_where('documentos', array('gastos' => 1))->result();
+
+                echo $this->load->view('menu/ingreso/gastos_list', $data, TRUE);
                 break;
             }
         }
@@ -333,10 +390,10 @@ class ingresos extends MY_Controller
     {
         switch ($action) {
             case 'filter': {
-                if (!empty($this->input->post('local_id'))){
+                if (!empty($this->input->post('local_id'))) {
                     $local_id = $this->input->post('local_id');
                     $data['local'] = $local_id;
-                }else{
+                } else {
                     $usu = $this->session->userdata('nUsuCodigo');
                     $dataLocal = $this->local_model->get_all_usu($usu);
                     $arr = array();
@@ -363,10 +420,10 @@ class ingresos extends MY_Controller
             case 'pdf': {
                 $params = json_decode($this->input->get('data'));
 
-                if (!empty($params->local_id)){
+                if (!empty($params->local_id)) {
                     $local_id = $params->local_id;
                     $data['local'] = $local_id;
-                }else{
+                } else {
                     $usu = $this->session->userdata('nUsuCodigo');
                     $dataLocal = $this->local_model->get_all_usu($usu);
                     $arr = array();
@@ -376,7 +433,7 @@ class ingresos extends MY_Controller
                     $local_id = implode(",", $arr);
                     $data['local'] = 'TODOS';
                 }
-                
+
                 $input = array(
                     'local_id' => $local_id,
                     'proveedor_id' => $params->proveedor,
@@ -386,11 +443,11 @@ class ingresos extends MY_Controller
 
                 $data['lists'] = $this->proveedor_model->get_cuentas_pagar($input);
                 $data["ingreso_totales"] = $this->proveedor_model->get_cuentas_pagar_totales($input);
-                if($data['local']!='TODOS'){
+                if ($data['local'] != 'TODOS') {
                     $local = $this->db->get_where('local', array('int_local_id' => $input['local_id']))->row();
                     $data['local_nombre'] = $local->local_nombre;
                     $data['local_direccion'] = $local->direccion;
-                }else{
+                } else {
                     $data['local_nombre'] = $data['local'];
                     $data['local_direccion'] = $data['local'];
                 }
@@ -405,10 +462,10 @@ class ingresos extends MY_Controller
             case 'excel': {
                 $params = json_decode($this->input->get('data'));
 
-                if (!empty($params->local_id)){
+                if (!empty($params->local_id)) {
                     $local_id = $params->local_id;
                     $data['local'] = $local_id;
-                }else{
+                } else {
                     $usu = $this->session->userdata('nUsuCodigo');
                     $dataLocal = $this->local_model->get_all_usu($usu);
                     $arr = array();
@@ -418,7 +475,7 @@ class ingresos extends MY_Controller
                     $local_id = implode(",", $arr);
                     $data['local'] = 'TODOS';
                 }
-                
+
                 $input = array(
                     'local_id' => $local_id,
                     'proveedor_id' => $params->proveedor,
@@ -428,16 +485,16 @@ class ingresos extends MY_Controller
 
                 $data['lists'] = $this->proveedor_model->get_cuentas_pagar($input);
                 $data["ingreso_totales"] = $this->proveedor_model->get_cuentas_pagar_totales($input);
-                if($data['local']!='TODOS'){
+                if ($data['local'] != 'TODOS') {
                     $local = $this->db->get_where('local', array('int_local_id' => $input['local_id']))->row();
                     $data['local_nombre'] = $local->local_nombre;
                     $data['local_direccion'] = $local->direccion;
-                }else{
+                } else {
                     $data['local_nombre'] = $data['local'];
                     $data['local_direccion'] = $data['local'];
                 }
                 echo $this->load->view('menu/proveedor/tbl_lst_cuentasporpagar_excel', $data, true);
-                break;   
+                break;
             }
         }
     }

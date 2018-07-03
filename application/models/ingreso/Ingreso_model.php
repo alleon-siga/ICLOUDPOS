@@ -237,7 +237,7 @@ class ingreso_model extends CI_Model
 
         $cantidad_minima = array();
         $costo_unitario = array();
-        $costo_unitario2 =array();
+        $costo_unitario2 = array();
         if ($detalle != null) {
             foreach ($detalle as $row) {
 
@@ -264,7 +264,7 @@ class ingreso_model extends CI_Model
                 if (!isset($costo_unitario[$row->producto_id]))
                     $costo_unitario[$row->producto_id] = array();
                 $costo_unitario[$row->producto_id][] = array(
-                    'costo' => $row->costo_unitario, //$row->importe / $row->cantidad,
+                    'costo' => $row->importe_gasto / $row->cantidad, //$row->importe / $row->cantidad,
                     'um_id' => $row->unidad
                 );
 
@@ -361,7 +361,7 @@ class ingreso_model extends CI_Model
                         'serie' => $compra['documento_serie'],
                         'numero' => $compra['documento_numero'],
                         'ref_id' => $insert_id,
-                        'costo' => ($datosP->producto_afectacion_impuesto=='1')? $costo_unitario2[$key] / (($datosP->porcentaje_impuesto / 100) + 1) : $costo_unitario2[$key]
+                        'costo' => ($datosP->producto_afectacion_impuesto == '1') ? $costo_unitario2[$key] / (($datosP->porcentaje_impuesto / 100) + 1) : $costo_unitario2[$key]
                     );
                     $this->kardex_model->set_kardex($values);
                 }

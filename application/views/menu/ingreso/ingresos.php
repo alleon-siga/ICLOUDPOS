@@ -413,6 +413,12 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                                                 <input type="hidden" id="hiden_local">
                                             </div>
                                         </div>
+
+                                        <div class="col-md-3 text-right">
+                                            <button id="agregar_gasto" type="button" class="btn btn-info">
+                                              <i class="fa fa-plus"></i>  Agregar Gasto
+                                            </button>
+                                        </div>
                                     </div>
 
                                     <div class="control-group">
@@ -855,6 +861,12 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
 <div class="modal fade" id="agregarfamilia" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 </div>
 <div class="modal fade" id="agregarlinea" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+</div>
+
+<div class="modal fade" id="dialog_gastos_modal" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false"
+     aria-hidden="true">
+
 </div>
 <script src="<?php echo $ruta; ?>recursos/js/Validacion.js"></script>
 <script src="<?php echo $ruta ?>recursos/js/pages/tablesDatatables.js"></script>
