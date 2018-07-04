@@ -355,6 +355,8 @@ class ingresos extends MY_Controller
                 $where['fecha <='] = date('Y-m-d H:i:s', strtotime(str_replace("/", "-", $date_range[1]) . ' 23:59:59'));
 
                 $data['gastos'] = $this->db->join('documentos', 'documentos.id_doc = gastos.id_documento')
+                    ->join('usuario', 'usuario.nUsuCodigo = gastos.usuario_id', 'left')
+                    ->join('proveedor', 'proveedor.id_proveedor = gastos.proveedor_id', 'left')
                     ->get_where('gastos', $where)->result();
 
                 echo $this->load->view('menu/ingreso/gastos_table_list', $data, TRUE);
