@@ -361,7 +361,8 @@ class ingreso_model extends CI_Model
                         'serie' => $compra['documento_serie'],
                         'numero' => $compra['documento_numero'],
                         'ref_id' => $insert_id,
-                        'costo' => ($datosP->producto_afectacion_impuesto=='1')? $costo_unitario2[$key] / (($datosP->porcentaje_impuesto / 100) + 1) : $costo_unitario2[$key]
+                        'costo' => ($datosP->producto_afectacion_impuesto=='1')? $costo_unitario2[$key] / (($datosP->porcentaje_impuesto / 100) + 1) : $costo_unitario2[$key],
+                        'moneda_id' => $compra['id_moneda']
                     );
                     $this->kardex_model->set_kardex($values);
                 }
@@ -955,6 +956,8 @@ WHERE detalleingreso.id_ingreso='$compra_id'");
 
         $detalle_ingresos = $this->db->get_where('detalleingreso', array('id_ingreso' => $id))->result();
         $cantidad_anulada = array();
+        $precio = array();
+        $impuesto_porciento = array();
         foreach ($detalle_ingresos as $detalle) {
 
             //Agrupo las cantidades minimas por producto
@@ -964,6 +967,8 @@ WHERE detalleingreso.id_ingreso='$compra_id'");
                 $detalle->id_producto,
                 $detalle->unidad_medida,
                 $detalle->cantidad);
+            $precio[$detalle->id_producto] = $detalle->precio;
+            $impuesto_porciento[$detalle->id_producto] = $detalle->impuesto_porciento;
         }
 
         if (!$this->validar_anulacion($local, $cantidad_anulada))
@@ -998,6 +1003,25 @@ WHERE detalleingreso.id_ingreso='$compra_id'");
                 if ($ingreso->tipo_documento == "FACTURA")
                     $tipo = "FA";
 
+                //OBTENIENDO AFECTACION DE IMPUESTO E IMPUESTO
+                $this->db->select('p.producto_afectacion_impuesto');
+                $this->db->from('producto p');
+                $this->db->where('p.producto_id', $key);
+                $datosP = $this->db->get()->row();
+
+                $costo = 0;
+                if($datosP->producto_afectacion_impuesto=='1'){
+                    if($ingreso->tipo_impuesto==1){ //incluye impuesto
+                        $costo = $precio[$key] / (($impuesto_porciento[$key] / 100) + 1);
+                    }elseif($ingreso->tipo_impuesto==2){ //agrega impuesto
+                        $costo = $precio[$key] * (($impuesto_porciento[$key] / 100) + 1);
+                    }else{
+                        $costo = $precio[$key];
+                    }
+                }else{
+                    $costo = $precio[$key];
+                }
+
                 $values = array(
                     'local_id' => $local,
                     'producto_id' => $key,
@@ -1008,7 +1032,9 @@ WHERE detalleingreso.id_ingreso='$compra_id'");
                     'serie' => $serie,
                     'numero' => $numero,
                     'ref_id' => $id,
-                    'ref_val' => $tipo . " " . $ingreso->documento_serie . "-" . $ingreso->documento_numero
+                    'ref_val' => $tipo . " " . $ingreso->documento_serie . "-" . $ingreso->documento_numero,
+                    'costo' => $costo,
+                    'moneda_id' => $ingreso->id_moneda
                 );
                 $this->kardex_model->set_kardex($values);
 
@@ -1308,5 +1334,25 @@ WHERE detalleingreso.id_ingreso='$compra_id'");
         $this->db->order_by('ingreso.fecha_emision DESC');
         $this->db->limit('7');
         return $this->db->get()->result_array();
+    }
+
+    function get_totales_compra2($params)
+    {
+        $this->db->select("SUM(i.sub_total_ingreso) as subtotal, SUM(i.impuesto_ingreso) as impuesto, SUM(i.total_ingreso) as total, m.simbolo");
+        $this->db->join('moneda m', 'i.id_moneda = m.id_moneda');
+        $this->db->from('ingreso i');
+        $this->db->where("i.ingreso_status='COMPLETADO' AND i.tipo_ingreso='COMPRA'");
+        $this->db->where("DATE(i.fecha_emision) >= '".$params['fecha_ini']."' AND DATE(i.fecha_emision) <= '".$params['fecha_fin']."'");
+        if($params['local_id']>0){
+            $this->db->where('i.local_id = '.$params['local_id']);
+        }
+        if($params['moneda_id']>0){
+            $this->db->where('i.id_moneda = '.$params['moneda_id']);
+        }
+        if($params['doc_id']>0){
+            $doc = array('1' => 'FACTURA', '2' => 'NOTA CREDITO', '3' => 'BOLETA VENTA');
+            $this->db->where("i.tipo_documento = '".$doc[$params['doc_id']]."'");
+        }
+        return $this->db->get()->row();
     }
 }

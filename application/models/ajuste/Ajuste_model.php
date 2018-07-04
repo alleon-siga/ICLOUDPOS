@@ -134,7 +134,8 @@ class ajuste_model extends CI_Model
                 'numero' => $ajuste->numero,
                 'ref_id' => $ajuste->id,
                 'ref_val' => $otros_val,
-                'costo' => ($datosP->producto_afectacion_impuesto=='1')? $arrCostoUn[$key] / (($datosP->porcentaje_impuesto / 100) + 1) : $arrCostoUn[$key]
+                'costo' => ($datosP->producto_afectacion_impuesto=='1')? $arrCostoUn[$key] / (($datosP->porcentaje_impuesto / 100) + 1) : $arrCostoUn[$key],
+                'moneda_id' => $ajuste->moneda_id
             );
             $this->kardex_model->set_kardex($values);
 

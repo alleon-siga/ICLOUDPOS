@@ -1,0 +1,1 @@
+INSERT INTO opcion VALUES(725,7,'creditofiscal', 'Credito Fiscal');

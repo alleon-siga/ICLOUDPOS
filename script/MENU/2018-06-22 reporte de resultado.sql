@@ -1,0 +1,1 @@
+INSERT INTO opcion VALUES('723', '7', 'estadoresultado', 'Estado de Resultados');
