@@ -1310,4 +1310,24 @@ WHERE detalleingreso.id_ingreso='$compra_id'");
         $this->db->limit('7');
         return $this->db->get()->result_array();
     }
+
+    function get_totales_compra2($params)
+    {
+        $this->db->select("SUM(i.sub_total_ingreso) as subtotal, SUM(i.impuesto_ingreso) as impuesto, SUM(i.total_ingreso) as total, m.simbolo");
+        $this->db->join('moneda m', 'i.id_moneda = m.id_moneda');
+        $this->db->from('ingreso i');
+        $this->db->where("i.ingreso_status='COMPLETADO' AND i.tipo_ingreso='COMPRA'");
+        $this->db->where("DATE(i.fecha_emision) >= '".$params['fecha_ini']."' AND DATE(i.fecha_emision) <= '".$params['fecha_fin']."'");
+        if($params['local_id']>0){
+            $this->db->where('i.local_id = '.$params['local_id']);
+        }
+        if($params['moneda_id']>0){
+            $this->db->where('i.id_moneda = '.$params['moneda_id']);
+        }
+        if($params['doc_id']>0){
+            $doc = array('1' => 'FACTURA', '2' => 'NOTA CREDITO', '3' => 'BOLETA VENTA');
+            $this->db->where("i.tipo_documento = '".$doc[$params['doc_id']]."'");
+        }
+        return $this->db->get()->row();
+    }    
 }
