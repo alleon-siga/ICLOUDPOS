@@ -289,4 +289,24 @@ class gastos_model extends CI_Model
         $this->db->delete('gastos_detalle');
         return true;
     }
+
+    function get_totales_gasto2($params)
+    {
+        $this->db->select("SUM(g.subtotal) as subtotal, SUM(g.impuesto) as impuesto, SUM(g.total) as total, m.simbolo");
+        $this->db->join('moneda m', 'g.id_moneda = m.id_moneda');
+        $this->db->from('gastos g');
+        $this->db->where('g.status_gastos', '0');
+        $this->db->where("DATE(g.fecha) >= '".$params['fecha_ini']."' AND DATE(g.fecha) <= '".$params['fecha_fin']."'");
+        
+        if($params['local_id']>0){
+            $this->db->where('g.local_id = '.$params['local_id']);
+        }
+        if($params['moneda_id']>0){
+            $this->db->where('g.id_moneda = '.$params['moneda_id']);
+        }
+        if($params['doc_id']>0){
+            $this->db->where('g.id_documento', $params['doc_id']);
+        }
+        return $this->db->get()->row();
+    }
 }

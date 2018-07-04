@@ -361,7 +361,8 @@ class ingreso_model extends CI_Model
                         'serie' => $compra['documento_serie'],
                         'numero' => $compra['documento_numero'],
                         'ref_id' => $insert_id,
-                        'costo' => ($datosP->producto_afectacion_impuesto == '1') ? $costo_unitario2[$key] / (($datosP->porcentaje_impuesto / 100) + 1) : $costo_unitario2[$key]
+                        'costo' => ($datosP->producto_afectacion_impuesto=='1')? $costo_unitario2[$key] / (($datosP->porcentaje_impuesto / 100) + 1) : $costo_unitario2[$key],
+                        'moneda_id' => $compra['id_moneda']
                     );
                     $this->kardex_model->set_kardex($values);
                 }

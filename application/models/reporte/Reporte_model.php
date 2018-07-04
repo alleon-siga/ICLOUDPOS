@@ -748,4 +748,30 @@ class reporte_model extends CI_Model
 
         return $this->db->get()->result();
     }
+
+    function getCreditoFiscal($params)
+    {
+        $this->db->select("v.venta_id, DATE(v.fecha) AS fecha, DATE(v.fecha) AS created_at, d.abr_doc, c.razon_social, cp.nombre_condiciones, l.local_nombre, v.serie, v.numero, SUM(up.unidades * dv.cantidad) AS cantidad, impuesto_porciento, v.tipo_impuesto, SUM(dv.detalle_importe) AS detalle_importe, m.simbolo");
+        $this->db->from('venta v');
+        $this->db->join('detalle_venta dv', 'v.venta_id = dv.id_venta');
+        $this->db->join('moneda m', 'v.id_moneda = m.id_moneda');
+        $this->db->join('cliente c', 'v.id_cliente = c.id_cliente');
+        $this->db->join('condiciones_pago cp', 'v.condicion_pago = cp.id_condiciones');
+        $this->db->join('documentos d', 'v.id_documento = d.id_doc');
+        $this->db->join('local l', 'v.local_id = l.int_local_id');
+        $this->db->join('unidades_has_producto up', 'dv.id_producto=up.producto_id AND dv.unidad_medida=up.id_unidad');
+        $this->db->where("v.venta_status='COMPLETADO'");
+        $this->db->where("DATE(v.fecha) >= '".$params['fecha_ini']."' AND DATE(v.fecha) <= '".$params['fecha_fin']."'");
+        $this->db->group_by('v.venta_id');
+        if($params['local_id']>0){
+            $this->db->where('v.local_id = '.$params['local_id']);
+        }
+        if($params['moneda_id']>0){
+            $this->db->where('v.id_moneda = '.$params['moneda_id']);
+        }
+        if($params['doc_id']>0){
+            $this->db->where('v.id_documento = '.$params['doc_id']);
+        }
+        return $this->db->get()->result();
+    }
 }
