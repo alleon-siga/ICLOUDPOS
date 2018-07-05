@@ -1400,7 +1400,7 @@ class Reporte extends MY_Controller
 
     function exportar_kardex($producto_id, $local_id, $mes, $year, $dia_min, $dia_max)
     {
-        $data['kardex'] = $this->kardex_model->get_kardex(array(
+        $data['kardex'] = $this->reporte_model->getkardexValorizado(array(
             'producto_id' => $producto_id,
             'local_id' => $local_id,
             'mes' => $mes,
@@ -1408,6 +1408,16 @@ class Reporte extends MY_Controller
             'dia_min' => $dia_min,
             'dia_max' => $dia_max
         ));
+
+        $mes_anterior = $year.'-'.$mes.'-01';
+        $nuevafecha = strtotime ('-1 month', strtotime($mes_anterior));
+        $nuevafecha2 = date ('m',$nuevafecha);
+
+        $data['kardex_ant'] = $this->db->order_by('id','DESC')->get_where('kardex', array(
+            'producto_id' => $producto_id,
+            'local_id' => $local_id,
+            'MONTH(fecha)' => $nuevafecha2
+        ))->row();
 
         $data['producto'] = $this->db->get_where('producto', array(
             'producto_id' => $producto_id

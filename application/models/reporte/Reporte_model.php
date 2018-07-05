@@ -677,6 +677,7 @@ class reporte_model extends CI_Model
             //Tipo de gasto
             $this->db->select('id_tipos_gasto, nombre_tipos_gasto');
             $this->db->from('tipos_gasto');
+            $this->db->where('status_tipos_gasto', '1');
             $this->db->where('id_grupo_gastos', $grupo['id_grupo_gastos']);
             $tipo_gastos = $this->db->get()->result_array();
 

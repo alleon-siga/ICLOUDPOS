@@ -61,6 +61,12 @@ $(document).ready(function () {
             dataType: 'json',
             data: $("#formagregar").serialize(),
             success: function (data) {
+            	var total=0;
+				$('#tblDetalleGasto tbody tr').each(function(){
+					var tr = $(this);
+					total += parseFloat(tr.find('input[name^="txtTot"]').val());
+				});
+            	$('#total').attr('value', total.toFixed(2));
             	$('#load_div').hide();
             	if (data.error == undefined) {
             		mensaje('success', "Registro actualizado correctamente");
