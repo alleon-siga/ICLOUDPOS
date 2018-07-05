@@ -862,7 +862,7 @@ class venta_new_model extends CI_Model
                 );
                 array_push($venta_contable_detalle, $producto_detalle);
             }
-            $precio[$producto->id_producto] = $producto->precio;
+            $precio[$producto->id_producto] = $this->unidades_model->get_maximo_costo($producto->id_producto, $producto->unidad_medida, $producto->precio);
             $ArrfectImp[$producto->id_producto] = $prod->producto_afectacion_impuesto;
             $impPorciento[$producto->id_producto] = $p->porcentaje_impuesto;
         }
@@ -912,7 +912,7 @@ class venta_new_model extends CI_Model
                 if($venta->tipo_impuesto==1){ //incluye impuesto
                     $costo = $precio[$key] / (($impPorciento[$key] / 100) + 1);
                 }else{ //agrega impuesto
-                    $costo = $precio[$key] * (($impPorciento[$key] / 100) + 1);
+                    $costo = $precio[$key];
                 }
             }else{
                 $costo = $precio[$key];
@@ -1006,7 +1006,7 @@ class venta_new_model extends CI_Model
                 $detalle->cantidad
             );
             $afectacion_impuesto[$detalle->producto_id] = $detalle->afectacion_impuesto;
-            $precio[$detalle->producto_id] = $detalle->precio;
+            $precio[$detalle->producto_id] = $this->unidades_model->get_maximo_costo($detalle->producto_id, $detalle->unidad_id, $detalle->precio);
             $impuesto_porciento[$detalle->producto_id] = $detalle->impuesto_porciento;
         }
         foreach ($cantidades as $key => $value) {
@@ -1033,7 +1033,7 @@ class venta_new_model extends CI_Model
                 if($venta->tipo_impuesto==1){ //incluye impuesto
                     $costo = $precio[$key] / (($impuesto_porciento[$key] / 100) + 1);
                 }else{ //agrega impuesto
-                    $costo = $precio[$key] * (($impuesto_porciento[$key] / 100) + 1);
+                    $costo = $precio[$key];
                 }
             }else{
                 $costo = $precio[$key];
@@ -1206,12 +1206,11 @@ class venta_new_model extends CI_Model
                 $detalle->unidad_id,
                 $detalle->devolver
             );
-            $afectacion_impuesto[$detalle->producto_id] = $detalle->afectacion_impuesto;
-            $precio[$detalle->producto_id] = $detalle->precio;
-            $impuesto_porciento[$detalle->producto_id] = $detalle->impuesto_porciento;
-
+            $precio[$detalle->producto_id] = $this->unidades_model->get_maximo_costo($detalle->producto_id, $detalle->unidad_id, $detalle->precio);
             $detalle_temp = $this->db->get_where('detalle_venta', array('id_detalle' => $detalle->detalle_id))->row();
             $detalle->impuesto_porciento = $detalle_temp->impuesto_porciento;
+            $impuesto_porciento[$detalle->producto_id] = $detalle->impuesto_porciento;
+            $afectacion_impuesto[$detalle->producto_id] = $detalle_temp->afectacion_impuesto;
 
             if ($detalle->new_cantidad == 0) {
                 $this->db->where('id_detalle', $detalle->detalle_id);
@@ -1271,7 +1270,7 @@ class venta_new_model extends CI_Model
                 if($venta->tipo_impuesto==1){ //incluye impuesto
                     $costo = $precio[$key] / (($impuesto_porciento[$key] / 100) + 1);
                 }else{ //agrega impuesto
-                    $costo = $precio[$key] * (($impuesto_porciento[$key] / 100) + 1);
+                    $costo = $precio[$key];
                 }
             }else{
                 $costo = $precio[$key];

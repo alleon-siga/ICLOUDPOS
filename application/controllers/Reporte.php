@@ -1376,6 +1376,16 @@ class Reporte extends MY_Controller
             'dia_max' => $dia_max
         ));
 
+        $mes_anterior = $year.'-'.$mes.'-01';
+        $nuevafecha = strtotime ('-1 month', strtotime($mes_anterior));
+        $nuevafecha2 = date ('m',$nuevafecha);
+
+        $data['kardex_ant'] = $this->db->order_by('id','DESC')->get_where('kardex', array(
+            'producto_id' => $producto_id,
+            'local_id' => $local_id,
+            'MONTH(fecha)' => $nuevafecha2
+        ))->row();
+
         $data['producto'] = $this->db->get_where('producto', array(
             'producto_id' => $producto_id
         ))->row();
