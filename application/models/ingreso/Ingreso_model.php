@@ -304,7 +304,7 @@ class ingreso_model extends CI_Model
                     'impuesto_porciento' => $p->porcentaje_impuesto
                 );
                 $this->db->insert('detalleingreso', $data);
-                $costo_unitario2[$row->producto_id] = ($row->costo_unitario === 'null') ? 0 : $row->costo_unitario;
+                $costo_unitario2[$row->producto_id] = $this->unidades_model->get_maximo_costo($row->producto_id, $row->unidad, ($row->costo_unitario === 'null') ? 0 : $row->costo_unitario);
             }
 
 
@@ -344,11 +344,26 @@ class ingreso_model extends CI_Model
                         $tipo = 3;
 
                     //OBTENIENDO AFECTACION DE IMPUESTO E IMPUESTO
-                    $this->db->select('p.producto_afectacion_impuesto, i.porcentaje_impuesto');
+                    $this->db->select('p.producto_afectacion_impuesto');
                     $this->db->from('producto p');
-                    $this->db->join('impuestos i', 'p.producto_impuesto = i.id_impuesto');
                     $this->db->where('p.producto_id', $key);
                     $datosP = $this->db->get()->row();
+
+                    $costo = 0;
+                    
+                    if($datosP->producto_afectacion_impuesto=='1'){
+                        if($cab_pie['tipo_impuesto']=='3'){ //no considerar impuesto
+                            $costo = $costo_unitario2[$key];
+                        }else{
+                            $costo = $costo_unitario2[$key] / (($p->porcentaje_impuesto / 100) + 1);
+                        }
+                    }else{
+                        $costo = $costo_unitario2[$key];
+                    }
+
+                    if($cab_pie['tasa_cambio']>0){
+                        $costo = $costo * $cab_pie['tasa_cambio'];
+                    }
 
                     $values = array(
                         'fecha' => date('Y-m-d H:i:s'), //$compra['fecha_emision'],
@@ -361,7 +376,7 @@ class ingreso_model extends CI_Model
                         'serie' => $compra['documento_serie'],
                         'numero' => $compra['documento_numero'],
                         'ref_id' => $insert_id,
-                        'costo' => ($datosP->producto_afectacion_impuesto=='1')? $costo_unitario2[$key] / (($datosP->porcentaje_impuesto / 100) + 1) : $costo_unitario2[$key],
+                        'costo' => $costo,
                         'moneda_id' => $compra['id_moneda']
                     );
                     $this->kardex_model->set_kardex($values);
@@ -780,13 +795,6 @@ WHERE detalleingreso.id_ingreso='$compra_id'");
                 if ($compra['tipo_documento'] == 'BOLETA DE VENTA')
                     $tipo = 3;
 
-                //OBTENIENDO AFECTACION DE IMPUESTO E IMPUESTO
-                $this->db->select('p.producto_afectacion_impuesto, i.porcentaje_impuesto');
-                $this->db->from('producto p');
-                $this->db->join('impuestos i', 'p.producto_impuesto = i.id_impuesto');
-                $this->db->where('p.producto_id', $productos[$i]->producto_id);
-                $datosP = $this->db->get()->row();
-
                 $values = array(
                     'fecha' => $compra['fecha_emision'],
                     'local_id' => $local_id,
@@ -956,6 +964,8 @@ WHERE detalleingreso.id_ingreso='$compra_id'");
 
         $detalle_ingresos = $this->db->get_where('detalleingreso', array('id_ingreso' => $id))->result();
         $cantidad_anulada = array();
+        $porcentaje_impuesto = array();
+        $precio = array();
         foreach ($detalle_ingresos as $detalle) {
 
             //Agrupo las cantidades minimas por producto
@@ -965,6 +975,8 @@ WHERE detalleingreso.id_ingreso='$compra_id'");
                 $detalle->id_producto,
                 $detalle->unidad_medida,
                 $detalle->cantidad);
+            $porcentaje_impuesto[$detalle->id_producto] = $detalle->impuesto_porciento;
+            $precio[$detalle->id_producto] = $this->unidades_model->get_maximo_costo($detalle->id_producto, $detalle->unidad_medida, $detalle->precio);
         }
 
         if (!$this->validar_anulacion($local, $cantidad_anulada))
@@ -999,6 +1011,27 @@ WHERE detalleingreso.id_ingreso='$compra_id'");
                 if ($ingreso->tipo_documento == "FACTURA")
                     $tipo = "FA";
 
+                //OBTENIENDO AFECTACION DE IMPUESTO E IMPUESTO
+                $this->db->select('p.producto_afectacion_impuesto');
+                $this->db->from('producto p');
+                $this->db->where('p.producto_id', $key);
+                $datosP = $this->db->get()->row();
+                
+                $costo = 0;
+                if($datosP->producto_afectacion_impuesto=='1'){
+                    if($ingreso->tipo_impuesto=='3'){ //no considerar impuesto
+                        $costo = $precio[$key];
+                    }else{
+                        $costo = $precio[$key] / (($porcentaje_impuesto[$key] / 100) + 1);
+                    }
+                }else{
+                    $costo = $precio[$key];
+                }
+
+                if($ingreso->tasa_cambio > 0){
+                    $costo = $costo * $ingreso->tasa_cambio;
+                }
+
                 $values = array(
                     'local_id' => $local,
                     'producto_id' => $key,
@@ -1009,7 +1042,9 @@ WHERE detalleingreso.id_ingreso='$compra_id'");
                     'serie' => $serie,
                     'numero' => $numero,
                     'ref_id' => $id,
-                    'ref_val' => $tipo . " " . $ingreso->documento_serie . "-" . $ingreso->documento_numero
+                    'ref_val' => $tipo . " " . $ingreso->documento_serie . "-" . $ingreso->documento_numero,
+                    'costo' => $costo,
+                    'moneda_id' => $ingreso->id_moneda
                 );
                 $this->kardex_model->set_kardex($values);
 
@@ -1310,4 +1345,24 @@ WHERE detalleingreso.id_ingreso='$compra_id'");
         $this->db->limit('7');
         return $this->db->get()->result_array();
     }
+
+    function get_totales_compra2($params)
+    {
+        $this->db->select("SUM(i.sub_total_ingreso) as subtotal, SUM(i.impuesto_ingreso) as impuesto, SUM(i.total_ingreso) as total, m.simbolo");
+        $this->db->join('moneda m', 'i.id_moneda = m.id_moneda');
+        $this->db->from('ingreso i');
+        $this->db->where("i.ingreso_status='COMPLETADO' AND i.tipo_ingreso='COMPRA'");
+        $this->db->where("DATE(i.fecha_emision) >= '".$params['fecha_ini']."' AND DATE(i.fecha_emision) <= '".$params['fecha_fin']."'");
+        if($params['local_id']>0){
+            $this->db->where('i.local_id = '.$params['local_id']);
+        }
+        if($params['moneda_id']>0){
+            $this->db->where('i.id_moneda = '.$params['moneda_id']);
+        }
+        if($params['doc_id']>0){
+            $doc = array('1' => 'FACTURA', '2' => 'NOTA CREDITO', '3' => 'BOLETA VENTA');
+            $this->db->where("i.tipo_documento = '".$doc[$params['doc_id']]."'");
+        }
+        return $this->db->get()->row();
+    }    
 }

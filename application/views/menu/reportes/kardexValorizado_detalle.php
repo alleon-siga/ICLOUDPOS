@@ -42,7 +42,53 @@
                     </tr>
                 </thead>
                 <tbody>
-                <?php foreach ($kardex as $k): ?>
+                <?php
+                    if(empty($kardex_ant)){
+                        $finalCant = $finalCu = $finalCt = 0;
+                    }else{
+                        $finalCant = $kardex_ant->cantidad_saldo;
+                        $finalCu = $kardex_ant->costo;
+                        $finalCt = $finalCant * $finalCu;
+                    }
+                    if(!empty($kardex)){
+                        if($kardex[0]->simbolo!=1029){
+                            $kardex[0]->simbolo = 'S/';
+                        }
+                ?>                    
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td>Otros</td>
+                        <td></td>
+                        <td></td>
+                        <td>SALDO ANTERIOR</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td style="text-align: right;"><?= $finalCant ?></td>
+                        <td><?= $kardex[0]->simbolo.' '.number_format($finalCu, 2) ?></td>
+                        <td><?= $kardex[0]->simbolo.' '.number_format($finalCt, 2) ?></td>
+                    </tr>
+                <?php
+                    }
+                    foreach ($kardex as $k):
+                        if($k->io == 1){
+                            $finalCant += $k->cantidad;
+                            $finalCt += $k->cantidad * $k->costo;
+                        }else{
+                            $finalCant -= $k->cantidad;
+                            $finalCt -= $k->cantidad * $k->costo;
+                        }
+                        $finalCu = $finalCt / $finalCant;
+                        if($k->simbolo!=1029){
+                            $k->simbolo = 'S/';
+                        }
+                ?>
                     <tr>
                         <td style="white-space: normal;"><?= $k->id ?></td>
                         <td style="white-space: normal;"><?= date('d/m/Y H:i:s', strtotime($k->fecha)) ?></td>
@@ -72,11 +118,13 @@
                             <td></td>
                             <td></td>
                         <?php } ?>
-                        <td style="text-align: right;"><?php if($k->producto_cualidad=='MEDIBLE'){ echo bcdiv($k->cantidad_saldo,1,0); }else{ echo $k->cantidad_saldo; } ?></td>
-                        <td></td>
-                        <td></td>
+                        <td style="text-align: right;"><?= $finalCant ?></td>
+                        <td><?= $k->simbolo.' '.number_format($finalCu, 2) ?></td>
+                        <td><?= $k->simbolo.' '.number_format($finalCt, 2) ?></td>
                     </tr>
-                <?php endforeach; ?>
+                <?php
+                    endforeach;
+                ?>
                 </tbody>
             </table>
         </div>

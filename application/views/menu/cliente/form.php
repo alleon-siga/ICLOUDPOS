@@ -43,10 +43,12 @@
                 <?php $claseE ='tab-pane fade' ?>
                 <?php $tipoC = '0' ?>
                 <li class="active"><a data-toggle="tab" href="#persona">Persona</a></li>
+                <li><a data-toggle="tab" href="#empresa">Empresa</a></li>
             <?php }else{ //empresa ?>
                 <?php $claseP ='tab-pane fade' ?>
                 <?php $claseE ='tab-pane fade in active' ?>
                 <?php $tipoC = '1' ?>
+                <li><a data-toggle="tab" href="#persona">Persona</a></li>
                 <li class="active"><a data-toggle="tab" href="#empresa">Empresa</a></li>
             <?php } ?>
             </ul>
