@@ -361,6 +361,10 @@ class ingreso_model extends CI_Model
                         $costo = $costo_unitario2[$key];
                     }
 
+                    if($cab_pie['tasa_cambio']>0){
+                        $costo = $costo * $cab_pie['tasa_cambio'];
+                    }
+
                     $values = array(
                         'fecha' => date('Y-m-d H:i:s'), //$compra['fecha_emision'],
                         'local_id' => $local_id,
@@ -1022,6 +1026,10 @@ WHERE detalleingreso.id_ingreso='$compra_id'");
                     }
                 }else{
                     $costo = $precio[$key];
+                }
+
+                if($ingreso->tasa_cambio > 0){
+                    $costo = $costo * $ingreso->tasa_cambio;
                 }
 
                 $values = array(

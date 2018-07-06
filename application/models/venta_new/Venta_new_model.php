@@ -918,6 +918,10 @@ class venta_new_model extends CI_Model
                 $costo = $precio[$key];
             }
 
+            if($venta->moneda_tasa > 0){
+                $costo = $costo * $venta->moneda_tasa;
+            }
+
             $values = array(
                 'local_id' => $local_id,
                 'producto_id' => $key,
@@ -1037,6 +1041,10 @@ class venta_new_model extends CI_Model
                 }
             }else{
                 $costo = $precio[$key];
+            }
+
+            if($venta->moneda_tasa > 0){
+                $costo = $costo * $venta->moneda_tasa;
             }
 
             $values = array(
@@ -1275,6 +1283,10 @@ class venta_new_model extends CI_Model
             }else{
                 $costo = $precio[$key];
             }
+
+            if($venta->moneda_tasa > 0){
+                $costo = $costo * $venta->moneda_tasa;
+            }            
 
             $values = array(
                 'local_id' => $venta->local_id,

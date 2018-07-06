@@ -1,6 +1,6 @@
 <?php
 header("Content-type: application/octet-stream");
-header("Content-Disposition: attachment; filename=kardex.xls");
+header("Content-Disposition: attachment; filename=kardex_valorizado.xls");
 header("Content-Language: es");
 header("Pragma: no-cache");
 header("Expires: 0");
@@ -79,6 +79,9 @@ header("Expires: 0");
             $finalCt = $finalCant * $finalCu;
         }
         if(!empty($kardex)){
+            if($kardex[0]->simbolo!=1029){
+                $kardex[0]->simbolo = 'S/';
+            }
     ?>                    
         <tr>
             <td></td>
@@ -110,6 +113,9 @@ header("Expires: 0");
                 $finalCt -= $k->cantidad * $k->costo;
             }
             $finalCu = $finalCt / $finalCant;
+            if($k->simbolo!=1029){
+                $k->simbolo = 'S/';
+            }
     ?>
         <tr>
             <td style="white-space: normal;"><?= $k->id ?></td>
