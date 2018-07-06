@@ -626,7 +626,7 @@ function validar_ingreso() {
     if ($("#pago").val() == 'CONTADO')
         $("#confirmarmodal").modal('show');
     else {
-        credito_init(formatPrice($("#totApagar").val()), 'COMPLETADO');
+        credito_init($("#totApagar").val(), 'COMPLETADO');
         refresh_credito_window();
         $('#dialog_compra_credito').modal('show');
     }

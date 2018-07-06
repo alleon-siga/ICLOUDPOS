@@ -16,7 +16,63 @@ class facturacion extends MY_Controller
 
     function test()
     {
-        echo date('Y-m-d H:i:s');
+        $this->load->model('facturacion/picado_model');
+        $productos = array();
+        $temp = new stdClass();
+        $temp->id = 1;
+        $temp->um_id = 1;
+        $temp->precio = 50;
+        $temp->cantidad = 100;
+        $productos[] = $temp;
+
+        $temp = new stdClass();
+        $temp->id = 2;
+        $temp->um_id = 1;
+        $temp->precio = 50;
+        $temp->cantidad = 100;
+        $productos[] = $temp;
+
+        $temp = new stdClass();
+        $temp->id = 3;
+        $temp->um_id = 1;
+        $temp->precio = 50;
+        $temp->cantidad = 100;
+        $productos[] = $temp;
+
+        $temp = new stdClass();
+        $temp->id = 41;
+        $temp->um_id = 1;
+        $temp->precio = 50;
+        $temp->cantidad = 100;
+        $productos[] = $temp;
+
+        $temp = new stdClass();
+        $temp->id = 5;
+        $temp->um_id = 1;
+        $temp->precio = 50;
+        $temp->cantidad = 100;
+        $productos[] = $temp;
+
+        $response = $this->picado_model->split($productos);
+        $n = 0;
+        foreach ($response['BOLETAS'] as $boleta) {
+
+            echo '<br>BOLETA: ' . ++$n;
+            $importe = 0;
+            foreach ($boleta as $detalle) {
+                echo '<br>ID: ' . $detalle['id'];
+                echo '<br>UM: ' . $detalle['um_id'];
+                echo '<br>PRECIO: ' . $detalle['precio'];
+                echo '<br>CANTIDAD: ' . $detalle['cantidad'];
+                echo '<br>IMPORTE: ' . $detalle['cantidad'] * $detalle['precio'];
+                $importe += $detalle['cantidad'] * $detalle['precio'];
+            }
+            echo '<hr><br>TOTAL: ' . $importe;
+
+            echo '<hr>';
+
+        }
+
 //        $this->facturacion_model->getEstadoResumen();
 //        header('Content-Type: text/xml');
 //        var_dump($this->facturacion_model->enviarResumenBoletas());
@@ -49,6 +105,10 @@ class facturacion extends MY_Controller
                 $data['facturas'] = $this->facturacion_model->get_comprobantes_generados($data);
                 $data['tipo_documento'] = '03';
                 $data['boletas'] = $this->facturacion_model->get_comprobantes_generados($data);
+
+                $data['resumenes_pendientes'] = $this->db->get_where('facturacion_resumen', array(
+                    'estado' => 2
+                ))->result();
 
                 $resumen = $this->db->order_by('id', 'desc')->get_where('facturacion_resumen', array(
                     'fecha_ref >=' => date('Y-m-d H:i:s', strtotime($data['fecha'] . " 00:00:00")),
@@ -173,7 +233,31 @@ class facturacion extends MY_Controller
                         'ref_id' => $venta_id
                     ))->row();
                 } else {
-                    $data['boleta_multiples'] = array();
+                    $boletas_multiples = $this->db->get_where('facturacion', array(
+                        'documento_tipo' => '03',
+                        'ref_id' => $venta_id
+                    ))->result();
+
+                    if (count($boletas_multiples) > 0) {
+                        if ($boletas_multiples[0]->estado == 1) {
+                            $data['bm_msg'] = array(
+                                'estado' => 1,
+                                'nota' => 'Las boletas ' . $boletas_multiples[0]->documento_numero .
+                                    ' hasta la ' . $boletas_multiples[count($boletas_multiples) - 1]->documento_numero .
+                                    ' fueron generadas correctamente'
+                            );
+                        } else {
+                            $data['bm_msg'] = array(
+                                'estado' => 0,
+                                'nota' => 'Ha occurido un error al generar picado de boletas multiples'
+                            );
+                        }
+                    } else {
+                        $data['bm_msg'] = array(
+                            'estado' => 0,
+                            'nota' => 'No se crearon boletas a partir de la nota de pedido ' . $venta_id
+                        );
+                    }
                 }
 
                 header('Content-Type: application/json');
@@ -202,13 +286,30 @@ class facturacion extends MY_Controller
         }
     }
 
-    function get_facturacion_detalle()
+    function get_facturacion_detalle($action = '')
     {
-        $id = $this->input->post('id');
-        $data['facturacion'] = $this->facturacion_model->get_facturacion(array('id' => $id));
-        $data['emisor'] = $this->facturacion_model->get_emisor();
+        switch ($action) {
+            case 'boleta': {
+                $id = $this->input->post('id');
+                $data['resumen'] = $this->db->get_where('facturacion_resumen', array('id' => $id))->row();
+                $data['emisor'] = $this->facturacion_model->get_emisor();
+                $data['boletas'] = $this->db
+                    ->join('facturacion_resumen_comprobantes AS frc', 'frc.comprobante_id = facturacion.id')
+                    ->get_where('facturacion', array('frc.resumen_id' => $id))
+                    ->result();
 
-        echo $this->load->view('menu/facturacion/facturacion_list_detalle', $data, TRUE);
+                echo $this->load->view('menu/facturacion/facturacion_boleta_detalle', $data, TRUE);
+                break;
+            }
+            default: {
+
+                $id = $this->input->post('id');
+                $data['facturacion'] = $this->facturacion_model->get_facturacion(array('id' => $id));
+                $data['emisor'] = $this->facturacion_model->get_emisor();
+
+                echo $this->load->view('menu/facturacion/facturacion_list_detalle', $data, TRUE);
+            }
+        }
     }
 
     function generar_comprobante()

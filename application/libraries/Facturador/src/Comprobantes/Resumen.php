@@ -100,7 +100,7 @@ class Resumen extends Comprobante
                 $doc_line->appendChild($totales_venta);
             }
 
-            if ($detalle['TOTAL_GRAVADAS'] > 0) {
+            if ($detalle['TOTAL_EXONERADAS'] > 0) {
                 $totales_venta = $this->xml->createElement('sac:BillingPayment');
                 $totales_venta->appendChild($this->xml->createElement('cbc:PaidAmount', $detalle['TOTAL_EXONERADAS']))
                     ->setAttribute('currencyID', $detalle['CODIGO_MONEDA']);
@@ -109,7 +109,7 @@ class Resumen extends Comprobante
                 $doc_line->appendChild($totales_venta);
             }
 
-            if ($detalle['TOTAL_GRAVADAS'] > 0) {
+            if ($detalle['TOTAL_INAFECTAS'] > 0) {
                 $totales_venta = $this->xml->createElement('sac:BillingPayment');
                 $totales_venta->appendChild($this->xml->createElement('cbc:PaidAmount', $detalle['TOTAL_INAFECTAS']))
                     ->setAttribute('currencyID', $detalle['CODIGO_MONEDA']);

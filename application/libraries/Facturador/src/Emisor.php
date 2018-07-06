@@ -482,7 +482,7 @@ class Emisor
             ->appendChild($xml->createElement('wsse:UsernameToken'));
 
         $user_token->appendChild(
-            $xml->createElement('wsse:Username', $this->get('NRO_DOCUMENTO') . $this->get('SOL_USER')));
+            $xml->createElement('wsse:Username', $this->get('NRO_DOCUMENTO') . strtoupper($this->get('SOL_USER'))));
         $user_token->appendChild(
             $xml->createElement('wsse:Password', $this->get('SOL_PASS')));
 

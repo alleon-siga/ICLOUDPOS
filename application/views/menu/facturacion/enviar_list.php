@@ -37,84 +37,157 @@
         <div class="row">
             <div class="col-md-6">
                 <h3>Resumen de Boletas y Notas Asociadas</h3>
+                <?php if ($estado == 1): ?>
+                    <div class="table-responsive">
+                        <table class='table table-striped dataTable table-bordered no-footer tableStyle'
+                               style="overflow:scroll">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Documento</th>
+                                <th>Numero</th>
+                                <th>Estado</th>
+                                <th>Total</th>
+                                <th>Acciones</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <?php if (count($boletas) > 0): ?>
 
-                <div class="table-responsive">
-                    <table class='table table-striped dataTable table-bordered no-footer tableStyle'
-                           style="overflow:scroll">
-                        <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Documento</th>
-                            <th>Numero</th>
-                            <th>Estado</th>
-                            <th>Total</th>
-                            <th>Acciones</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <?php if (count($boletas) > 0): ?>
+                                <?php foreach ($boletas as $f): ?>
+                                    <tr>
+                                        <td><?= $f->id ?></td>
+                                        <td><?php
+                                            if ($f->documento_tipo == '01') echo 'FACTURA';
+                                            if ($f->documento_tipo == '03') echo 'BOLETA';
+                                            if ($f->documento_tipo == '07') echo 'NOTA DE CREDITO';
+                                            if ($f->documento_tipo == '08') echo 'NOTA DE DEBITO';
+                                            ?></td>
+                                        <td><?= $f->documento_numero ?>
+                                        </td>
+                                        <td style="white-space: nowrap;">
 
-                            <?php foreach ($boletas as $f): ?>
-                                <tr>
-                                    <td><?= $f->id ?></td>
-                                    <td><?php
-                                        if ($f->documento_tipo == '01') echo 'FACTURA';
-                                        if ($f->documento_tipo == '03') echo 'BOLETA';
-                                        if ($f->documento_tipo == '07') echo 'NOTA DE CREDITO';
-                                        if ($f->documento_tipo == '08') echo 'NOTA DE DEBITO';
-                                        ?></td>
-                                    <td><?= $f->documento_numero ?>
-                                    </td>
-                                    <td style="white-space: nowrap;">
+                                            <?php
+                                            $estado = '';
+                                            $estado_class = '';
+                                            if ($f->estado == 0) {
+                                                $estado_class = 'label-warning';
+                                                $estado = 'NO GENERADO';
+                                            } elseif ($f->estado == 1) {
+                                                $estado_class = 'label-info';
+                                                $estado = 'GENERADO';
+                                            } elseif ($f->estado == 2) {
+                                                $estado_class = 'label-warning';
+                                                $estado = 'ENVIADO';
+                                            } elseif ($f->estado == 3) {
+                                                $estado_class = 'label-success';
+                                                $estado = 'ACEPTADO';
+                                            } elseif ($f->estado == 4) {
+                                                $estado_class = 'label-danger';
+                                                $estado = 'RECHAZADO';
+                                            }
 
-                                        <?php
-                                        $estado = '';
-                                        $estado_class = '';
-                                        if ($f->estado == 0) {
-                                            $estado_class = 'label-warning';
-                                            $estado = 'NO GENERADO';
-                                        } elseif ($f->estado == 1) {
-                                            $estado_class = 'label-info';
-                                            $estado = 'GENERADO';
-                                        } elseif ($f->estado == 2) {
-                                            $estado_class = 'label-warning';
-                                            $estado = 'ENVIADO';
-                                        } elseif ($f->estado == 3) {
-                                            $estado_class = 'label-success';
-                                            $estado = 'ACEPTADO';
-                                        } elseif ($f->estado == 4) {
-                                            $estado_class = 'label-danger';
-                                            $estado = 'RECHAZADO';
-                                        }
+                                            ?>
+                                            <div
+                                                    title="Descripci&oacute;n del Estado" data-content="<?= $f->nota ?>"
+                                                    data-toggle="popover"
+                                                    class="label <?= $estado_class ?>"
+                                                    data-placement="top"
+                                                    style="font-size: 1em; padding: 2px; cursor: pointer; white-space: nowrap;">
+                                                <?= $estado ?>
+                                            </div>
+                                        </td>
+                                        <td style="text-align: right;"><?= $emisor->moneda_simbolo ?> <?= number_format($f->total, 2) ?></td>
+                                        <td>
+                                            <a class="btn btn-sm btn-primary" data-toggle="tooltip"
+                                               style="margin-right: 5px;"
+                                               title="Ver Detalles" data-original-title="Ver Detalles"
+                                               href="#"
+                                               onclick="ver('<?= $f->id ?>');">
+                                                <i class="fa fa-list"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <?php endforeach ?>
+                            <?php endif; ?>
 
-                                        ?>
-                                        <div
-                                                title="Descripci&oacute;n del Estado" data-content="<?= $f->nota ?>"
-                                                data-toggle="popover"
-                                                class="label <?= $estado_class ?>"
-                                                data-placement="top"
-                                                style="font-size: 1em; padding: 2px; cursor: pointer; white-space: nowrap;">
-                                            <?= $estado ?>
-                                        </div>
-                                    </td>
-                                    <td style="text-align: right;"><?= $emisor->moneda_simbolo ?> <?= number_format($f->total, 2) ?></td>
-                                    <td>
-                                        <a class="btn btn-sm btn-primary" data-toggle="tooltip"
-                                           style="margin-right: 5px;"
-                                           title="Ver Detalles" data-original-title="Ver Detalles"
-                                           href="#"
-                                           onclick="ver('<?= $f->id ?>');">
-                                            <i class="fa fa-list"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                            <?php endforeach ?>
-                        <?php endif; ?>
+                            </tbody>
+                        </table>
 
-                        </tbody>
-                    </table>
+                    </div>
+                <?php elseif ($estado == 2): ?>
+                    <div class="table-responsive">
+                        <table class='table table-striped dataTable table-bordered no-footer tableStyle'
+                               style="overflow:scroll">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Fecha</th>
+                                <th>Documento</th>
+                                <th>Numero</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <?php if (count($resumenes_pendientes) > 0): ?>
 
-                </div>
+                                <?php foreach ($resumenes_pendientes as $f): ?>
+                                    <tr>
+                                        <td><?= $f->id ?></td>
+                                        <td><?= date('m/d/Y', strtotime($f->fecha)) ?></td>
+                                        <td>RESUMEN</td>
+                                        <td><?= 'RC-' . date('Ymd', strtotime($f->fecha)) . '-' . $f->correlativo ?></td>
+                                        <td style="white-space: nowrap;">
+
+                                            <?php
+                                            $estado = '';
+                                            $estado_class = '';
+                                            if ($f->estado == 0) {
+                                                $estado_class = 'label-warning';
+                                                $estado = 'NO GENERADO';
+                                            } elseif ($f->estado == 1) {
+                                                $estado_class = 'label-info';
+                                                $estado = 'GENERADO';
+                                            } elseif ($f->estado == 2) {
+                                                $estado_class = 'label-warning';
+                                                $estado = 'ENVIADO';
+                                            } elseif ($f->estado == 3) {
+                                                $estado_class = 'label-success';
+                                                $estado = 'ACEPTADO';
+                                            } elseif ($f->estado == 4) {
+                                                $estado_class = 'label-danger';
+                                                $estado = 'RECHAZADO';
+                                            }
+
+                                            ?>
+                                            <div
+                                                    title="Descripci&oacute;n del Estado" data-content="<?= $f->nota ?>"
+                                                    data-toggle="popover"
+                                                    class="label <?= $estado_class ?>"
+                                                    data-placement="top"
+                                                    style="font-size: 1em; padding: 2px; cursor: pointer; white-space: nowrap;">
+                                                <?= $estado ?>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-sm btn-primary" data-toggle="tooltip"
+                                               style="margin-right: 5px;"
+                                               title="Ver Boletas Detalles" data-original-title="Ver Boletas Detalles"
+                                               href="#"
+                                               onclick="verBoletas('<?= $f->id ?>');">
+                                                <i class="fa fa-list"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <?php endforeach ?>
+                            <?php endif; ?>
+
+                            </tbody>
+                        </table>
+
+                    </div>
+                <?php endif; ?>
             </div>
 
             <div class="col-md-6">
@@ -188,8 +261,10 @@
                                             <i class="fa fa-list"></i>
                                         </a>
                                         <?php if ($f->estado == 1): ?>
-                                            <a class="btn btn-sm btn-default" data-toggle="tooltip" style="margin-right: 5px;"
-                                               title="Emitir comprobante a SUNAT" data-original-title="Emitir comprobante a SUNAT"
+                                            <a class="btn btn-sm btn-default" data-toggle="tooltip"
+                                               style="margin-right: 5px;"
+                                               title="Emitir comprobante a SUNAT"
+                                               data-original-title="Emitir comprobante a SUNAT"
                                                href="#"
                                                onclick="emitir_by_id('<?= $f->id ?>');">
                                                 <i class="fa fa-mail-forward"></i>
@@ -197,7 +272,8 @@
                                         <?php endif; ?>
 
                                         <?php if ($f->estado == 2): ?>
-                                            <a class="btn btn-sm btn-warning" data-toggle="tooltip" style="margin-right: 5px;"
+                                            <a class="btn btn-sm btn-warning" data-toggle="tooltip"
+                                               style="margin-right: 5px;"
                                                title="Actualizar estado" data-original-title="Actualizar estado"
                                                href="#"
                                                onclick="emitir_by_id('<?= $f->id ?>');">
@@ -218,6 +294,12 @@
 
 
         <div class="modal fade" id="dialog_venta_detalle" tabindex="-1" role="dialog"
+             aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false"
+             aria-hidden="true">
+
+        </div>
+
+        <div class="modal fade" id="dialog_boleta_detalle" tabindex="-1" role="dialog"
              aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false"
              aria-hidden="true">
 
@@ -342,6 +424,25 @@
 
                     success: function (data) {
                         $("#dialog_venta_detalle").html(data);
+                    },
+                    error: function () {
+                        alert('Error inesperado')
+                    }
+                });
+            }
+
+            function verBoletas(id) {
+
+                $("#dialog_boleta_detalle").html($("#loading").html());
+                $("#dialog_boleta_detalle").modal('show');
+
+                $.ajax({
+                    url: '<?php echo $ruta . 'facturacion/get_facturacion_detalle/boleta'; ?>',
+                    type: 'POST',
+                    data: {'id': id},
+
+                    success: function (data) {
+                        $("#dialog_boleta_detalle").html(data);
                     },
                     error: function () {
                         alert('Error inesperado')

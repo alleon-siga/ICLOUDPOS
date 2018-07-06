@@ -100,12 +100,25 @@
                 },
                 success: function (data) {
 
-                    if (data.facturacion.estado == 1) {
-                        show_msg('success', '<h4>Facturacion Electronica:</h4> ' + data.facturacion.nota);
+                    if (data.facturacion != undefined) {
+                        if (data.facturacion.estado == 1) {
+                            show_msg('success', '<h4>Facturacion Electronica:</h4> ' + data.facturacion.nota);
+                        }
+                        else {
+                            show_msg('danger', '<h4>Facturacion Electronica:</h4> ' + data.facturacion.nota);
+                        }
                     }
                     else {
-                        show_msg('danger', '<h4>Facturacion Electronica:</h4> ' + data.facturacion.nota);
+                        if (data.bm_msg != undefined) {
+                            if (data.bm_msg.estado == 1) {
+                                show_msg('success', '<h4>Facturacion Electronica:</h4> ' + data.bm_msg.nota);
+                            }
+                            else {
+                                show_msg('danger', '<h4>Facturacion Electronica:</h4> ' + data.bm_msg.nota);
+                            }
+                        }
                     }
+
 
                     $("#barloadermodal").modal('hide');
                     get_notas();
