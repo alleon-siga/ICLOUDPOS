@@ -129,10 +129,16 @@ class gastos_model extends CI_Model
             $this->db->insert('gastos_detalle', $gastosDetalle);
         }
 
+        if($data['id_documento'] == '10'){ //CRONOGRAMA DE PAGOS
+            $io = 1;
+        }else{
+            $io = 2;
+        }
+
         $this->cajas_model->save_pendiente(array(
-            'monto' => $data['total'],
+            'monto' => ($data['total'] - $data['c_tasa_interes']),
             'tipo' => 'GASTOS',
-            'IO' => 2,
+            'IO' => $io,
             'ref_id' => $id,
             'cuenta_id' => $data['cuenta_id'],
             'local_id' => $data['local_id']

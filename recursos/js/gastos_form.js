@@ -3,6 +3,10 @@
     });
 
     $(document).ready(function () {
+        if($('#tipo_gasto option:selected').text()=='PRESTAMO BANCARIO'){
+            controles(true);
+        }
+
         $("#detalleModal").load(url + 'gastos/detalle');
         $(document).off('keyup');
         $(document).off('keydown');
@@ -108,6 +112,20 @@
             $('#subtotal').attr('value', parseFloat(total / impuesto).toFixed(2));
             $('#impuesto').attr('value', parseFloat(total - (total / impuesto)).toFixed(2));
         });
+
+        $('#tipo_gasto').on('change', function(){
+            if($('#tipo_gasto option:selected').text()=='PRESTAMO BANCARIO'){
+                $('#tipo_pago').val(2);
+                $('#tipo_pago').trigger('chosen:updated');
+                $('#descripcion').text('Prestamo bancario');
+                controles(true);
+            }else{
+                $('#tipo_pago').val(1);
+                $('#tipo_pago').trigger('chosen:updated');
+                $('#descripcion').text('');
+                controles(false);
+            }
+        });
     });
 
     function get_persona_gasto() {
@@ -189,4 +207,12 @@
                 alert('Error');
             }
         });
+    }
+
+    function controles(a){
+        $('#tipo_pago').prop('disabled', a);
+        $('#gravable').prop('disabled', a);
+        $('#cboDocumento').prop('disabled', a);
+        $('#doc_serie').prop('disabled', a);
+        $('#doc_numero').prop('disabled', a);
     }

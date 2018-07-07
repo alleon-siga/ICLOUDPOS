@@ -187,9 +187,7 @@ var grupo = {
             return false;
         }
 
-
-
-        if ($("#total").val() == '') {
+        if ($("#total").val() == '' && $('#tipo_gasto option:selected').text()!='PRESTAMO BANCARIO') { //Si esta vacio y si el tipo de gasto no es prestamo bancario
             var growlType = 'warning';
 
             $.bootstrapGrowl('<h4>Debe ingresar el monto gastado</h4>', {
@@ -306,9 +304,38 @@ var grupo = {
         }
 
 
-        if($('#tipo_pago').val()=='2'){ //credito
-            credito_init(formatPrice(total));
-            $('#dialog_gasto_credito').modal('show');
+        if($('#tipo_pago').val()=='2' && $('#tipo_gasto option:selected').text()!='PRESTAMO BANCARIO'){ //credito y diferente a tipo de gasto prestamo bancario
+            $("#dialog_gasto_prestamo").html('');
+            $('#load_div').show();
+            $.ajax({
+                url: url + 'gastos/dialog_gasto_credito/',
+                type: 'POST',
+                success: function (data) {
+                    $("#dialog_gasto_credito").html(data);
+                    $('#load_div').hide();
+                    $('#dialog_gasto_credito').modal('show');
+                    credito_init(formatPrice(total));
+                },
+                error: function () {
+                    alert('Error');
+                }
+            });
+        }else if($('#tipo_gasto option:selected').text()=='PRESTAMO BANCARIO'){ //si es tipo de gasto prestamo bancario
+            $("#dialog_gasto_credito").html('');
+            $('#load_div').show();
+            $.ajax({
+                url: url + 'gastos/dialog_gasto_prestamo/',
+                type: 'POST',
+                success: function (data) {
+                    $("#dialog_gasto_prestamo").html(data);
+                    $('#load_div').hide();
+                    $('#dialog_gasto_prestamo').modal('show');
+                    credito_init(formatPrice(total));
+                },
+                error: function () {
+                    alert('Error');
+                }
+            });
         }else{
             App.formSubmitAjax($("#formagregar").attr('action'), get_gastos, 'agregar', 'formagregar');
             $.bootstrapGrowl('<h4>Solicitud procesada con &eacute;xito</h4>', {

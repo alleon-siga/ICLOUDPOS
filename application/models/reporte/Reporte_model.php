@@ -207,42 +207,32 @@ class reporte_model extends CI_Model
         $producto_id .= ($params['producto_id']!='')? " AND p.producto_id IN(".implode(",", $params['producto_id']).")" : "";
         $search = $marca_id.$grupo_id.$familia_id.$linea_id.$producto_id;
 
-        $query = "
-            SELECT dv.id_producto, p.producto_codigo_interno,
-            p.producto_nombre,  p.producto_codigo_interno, 
-            SUM(up.unidades * dv.cantidad) AS cantidad, 
-            u.nombre_unidad, 
-            di2.precio AS compra,
-            i.porcentaje_impuesto,
-            dv.precio AS precioUnitario
+        $query = "SELECT v.venta_id, p.producto_nombre, u.nombre_unidad, SUM(up.unidades * dv.cantidad) AS cantidad, 
+            dv.detalle_costo_promedio, SUM(dv.detalle_importe) AS detalle_importe, l.local_nombre, AVG(dv.detalle_costo_ultimo) AS detalle_costo_ultimo, 
+            dv.impuesto_porciento, v.tipo_impuesto, count(*) as count
             FROM detalle_venta dv
-            INNER JOIN venta v 
-                ON v.venta_id=dv.id_venta
-            INNER JOIN producto p 
-                ON dv.id_producto = p.producto_id
-            INNER JOIN unidades_has_producto up 
-                ON dv.id_producto=up.producto_id AND dv.unidad_medida=up.id_unidad
-            INNER JOIN unidades_has_producto up2 ON dv.id_producto=up2.producto_id AND (select id_unidad from unidades_has_producto where unidades_has_producto.producto_id = dv.id_producto  ORDER BY orden DESC LIMIT 1) = up2.id_unidad 
-            INNER JOIN unidades u 
-                ON up2.id_unidad=u.id_unidad
-            INNER JOIN ingreso ing
-                ON ing.local_id = v.local_id AND ing.id_moneda = v.id_moneda
-            INNER JOIN detalleingreso di
-                ON di.id_producto=p.producto_id AND di.impuesto_id = dv.impuesto_id AND di.id_ingreso = ing.id_ingreso AND di.unidad_medida = dv.unidad_medida
-            INNER JOIN detalleingreso di2
-                ON di.id_producto=p.producto_id AND di2.impuesto_id = dv.impuesto_id AND di2.id_ingreso = ing.id_ingreso AND (select id_unidad from unidades_has_producto where unidades_has_producto.producto_id = dv.id_producto  ORDER BY orden DESC LIMIT 1) = di2.unidad_medida
-            INNER JOIN impuestos i ON 
-                dv.impuesto_id = i.id_impuesto
-            WHERE
+                INNER JOIN venta v ON v.venta_id=dv.id_venta 
+                INNER JOIN producto p ON p.producto_id=dv.id_producto 
+                INNER JOIN `local` l ON v.local_id = l.int_local_id
+                INNER JOIN unidades_has_producto up ON dv.id_producto=up.producto_id 
+                AND dv.unidad_medida=up.id_unidad
+                INNER JOIN unidades_has_producto up2 ON dv.id_producto=up2.producto_id 
+                AND (
+                    select id_unidad from unidades_has_producto 
+                    where unidades_has_producto.producto_id = dv.id_producto
+                    ORDER BY orden DESC LIMIT 1
+                ) = up2.id_unidad 
+                INNER JOIN unidades u ON u.id_unidad=up2.id_unidad
+                INNER JOIN producto_costo_unitario pcu ON  p.producto_id = pcu.producto_id AND v.id_moneda = pcu.moneda_id AND activo=1 
+            WHERE 
                 v.venta_status='COMPLETADO'
                 AND v.id_moneda = ".$params['moneda_id']."
                 AND v.local_id = ".$params['local_id']."
                 AND v.fecha >= '".$params['fecha_ini']."'
                 AND v.fecha <= '".$params['fecha_fin']."'
-                $search
-            GROUP BY 
-                dv.id_producto
-        ";
+                $search";
+
+        $query .= " GROUP BY p.producto_id ORDER BY v.venta_id";
 
         return $this->db->query($query)->result();
     }

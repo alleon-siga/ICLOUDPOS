@@ -104,7 +104,8 @@ class gastos extends MY_Controller
         $data["proveedores"] = $this->proveedor_model->select_all_proveedor();
         $data["usuarios"] = $this->db->get_where('usuario', array('activo' => 1))->result();
         $data["documentos"] = $this->db->get_where('documentos', array('gastos' => 1))->result();
-        $data['dialog_gasto_credito'] = $this->load->view('menu/gastos/dialog_gasto_credito', array(), true);
+        //$data['dialog_gasto_credito'] = $this->load->view('menu/gastos/dialog_gasto_credito', array(), true);
+        //$data['dialog_gasto_prestamo'] = $this->load->view('menu/gastos/dialog_gasto_prestamo', array(), true);
         $data['cuentas'] = $this->db->select('caja_desglose.*, caja.local_id, caja.moneda_id, moneda.nombre AS moneda_nombre, moneda.simbolo')
             ->from('caja_desglose')
             ->join('caja', 'caja.id = caja_desglose.caja_id')
@@ -131,7 +132,7 @@ class gastos extends MY_Controller
             $usuario = $this->input->post('usuario');
         }
         $status_gastos = '1'; //pendiente
-        if($this->input->post('tipo_pago')=='2'){ //Si es al credito
+        if($this->input->post('tipo_pago')=='2' && $this->input->post('cboDocumento')!='10'){ //Si es al credito y es diferente a prestamo bancario
             $status_gastos = '0'; //confirmado
         }
 
@@ -160,7 +161,8 @@ class gastos extends MY_Controller
             'subtotal' => $this->input->post('subtotal'),
             'impuesto' => $this->input->post('impuesto'),
             'moneda_id' => $cuenta->moneda_id,
-            'tipo_pago' => $this->input->post('tipo_pago')
+            'tipo_pago' => $this->input->post('tipo_pago'),
+            'c_tasa_interes' => $this->input->post('c_tasa_interes')
         );
         
         $detalle = array();
@@ -221,7 +223,6 @@ class gastos extends MY_Controller
             $credito['c_fecha_giro'] = $this->input->post('c_fecha_giro');
             $credito['c_periodo_gracia'] = $this->input->post('c_periodo_gracia');
             $cuotas = json_decode($this->input->post('cuotas', true));
-
             $resultado = $this->ingreso_model->insertar_compra($comp_cab_pie, null, $credito, $cuotas);            
         }
 
@@ -397,5 +398,15 @@ class gastos extends MY_Controller
         }
 
         echo json_encode($json);
+    }
+
+    function dialog_gasto_credito()
+    {
+        echo $this->load->view('menu/gastos/dialog_gasto_credito',  array(), true);
+    }
+
+    function dialog_gasto_prestamo()
+    {
+        echo $this->load->view('menu/gastos/dialog_gasto_prestamo',  array(), true);
     }
 }

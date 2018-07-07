@@ -162,7 +162,7 @@ class ingreso_model extends CI_Model
         $this->load->model('unidades_has_precio/unidades_has_precio_model');
         $this->load->model('precio/precios_model');
 
-        $valid_doc = $this->db->get_where('ingreso', array(
+        /*$valid_doc = $this->db->get_where('ingreso', array(
             'tipo_documento' => $cab_pie['cboTipDoc'],
             'documento_serie' => $cab_pie['doc_serie'],
             'documento_numero' => $cab_pie['doc_numero'],
@@ -171,7 +171,7 @@ class ingreso_model extends CI_Model
         if ($valid_doc != NULL) {
             $this->error = 'El numero de documento ya existe';
             return false;
-        }
+        }*/
 
         $this->db->trans_start();
 
@@ -200,7 +200,7 @@ class ingreso_model extends CI_Model
             'utilidad_por' => isset($cab_pie['utilidad_por']) ? $cab_pie['utilidad_por'] : 0,
             'tipo_impuesto' => $cab_pie['tipo_impuesto']
         );
-
+        
         $this->db->insert('ingreso', $compra);
         $insert_id = $this->db->insert_id();
 

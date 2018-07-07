@@ -135,7 +135,7 @@
                                 $gravable = $gastos['gravable'];
                             }
                         ?>
-                        <select name="gravable" id="gravable" class="select_chosen form-control">
+                        <select name="gravable" id="gravable" class="form-control">
                             <option value="0" <?php if($gravable == '0'){ echo "selected"; } ?>>NO</option>
                             <option value="1" <?php if($gravable == '1'){ echo "selected"; } ?>>SI</option>
                         </select>
@@ -230,7 +230,7 @@
                             <div class="input-group-addon idMoneda" id="idMoneda"></div>
                             <input type="number" name="total" id="total" required="true" class="form-control"
                                    value="<?php if (isset($gastos['total'])) echo $gastos['total']; ?>"
-                                   onkeydown="return soloDecimal(event);">
+                                   onkeydown="return soloDecimal(event);" autocomplete="off">
                         </div>
                     </div>
                 </div>
@@ -243,11 +243,8 @@
         </div>
     </div>
     <div class="modal fade" id="detalleModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false"></div>
-    <div class="modal fade" id="dialog_gasto_credito" tabindex="-1" role="dialog"
-         aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false"
-         aria-hidden="true">
-        <?= $dialog_gasto_credito ?>
-    </div>
+    <div class="modal fade" id="dialog_gasto_prestamo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true"></div>    
+    <div class="modal fade" id="dialog_gasto_credito" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true"></div>
 </form>
 <script>
     var cuentas = [];
