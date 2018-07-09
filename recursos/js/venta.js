@@ -698,13 +698,13 @@ $(document).ready(function () {
             data: data,
             type: 'POST',
             success: function (data) {
-                let obj = JSON.parse(data);
-                let tabla = "<b>ULTIMOS PRECIOS UNITARIOS DE VENTAS</b>: <br><br>";
+                var obj = JSON.parse(data);
+                var tabla = "<b>ULTIMOS PRECIOS UNITARIOS DE VENTAS</b>: <br><br>";
                 tabla += '<table class="table table-condensed">';
                 obj.map(function (data) {
                     tabla += '<tr style="color:#fff; font-weight:bold">';
-                    let fecha = data.fecha.split('-');
-                    let nuevaFecha = fecha[2] + '/' + fecha[1] + '/' + fecha[0];
+                    var fecha = data.fecha.split('-');
+                    var nuevaFecha = fecha[2] + '/' + fecha[1] + '/' + fecha[0];
                     tabla += "<td>" + nuevaFecha + "</td>";
                     tabla += "<td>" + data.simbolo + " " + data.precio + "</td>";
                     tabla += "<td>" + parseInt(data.cantidad) + "</td>";
@@ -732,13 +732,13 @@ $(document).ready(function () {
             data: data,
             type: 'POST',
             success: function (data) {
-                let obj = JSON.parse(data);
-                let tabla = "<b>ULTIMOS COSTOS UNITARIOS DE COMPRA</b>: <br><br>";
+                var obj = JSON.parse(data);
+                var tabla = "<b>ULTIMOS COSTOS UNITARIOS DE COMPRA</b>: <br><br>";
                 tabla += '<table class="table table-condensed">';
                 obj.map(function (data) {
                     tabla += '<tr style="color:#fff; font-weight:bold">';
-                    let fecha = data.fecha.split('-');
-                    let nuevaFecha = fecha[2] + '/' + fecha[1] + '/' + fecha[0];
+                    var fecha = data.fecha.split('-');
+                    var nuevaFecha = fecha[2] + '/' + fecha[1] + '/' + fecha[0];
                     tabla += "<td>" + nuevaFecha + "</td>";
                     tabla += "<td>" + data.simbolo + " " + data.precio + "</td>";
                     tabla += "<td>" + parseInt(data.cantidad) + "</td>";

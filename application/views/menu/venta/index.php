@@ -726,6 +726,7 @@
             impuesto: <?= $detalle->impuesto?>,
             producto_nombre: '<?= $detalle->producto_nombre ?>',
             precio: <?= $detalle->precio ?>,
+            precio_venta: <?= $detalle->precio_venta ?>,
             um_min: '<?= $detalle->um_min ?>',
             um_min_abr: '<?= $detalle->um_min_abr ?>',
             total_min: <?= $detalle->total_min ?>,
@@ -773,6 +774,7 @@
                 prod.producto_id,
                 prod.producto_nombre,
                 prod.precio,
+                prod.precio_venta,
                 prod.um_min,
                 prod.um_min_abr,
                 prod.total_min,
@@ -787,7 +789,7 @@
     });
 
 
-    function add_producto_from_cotizacion(producto_id, producto_nombre, precio, um_min, um_min_abr, total_min, unidades, impuesto) {
+    function add_producto_from_cotizacion(producto_id, producto_nombre, precio, precio_venta, um_min, um_min_abr, total_min, unidades, impuesto) {
 
         var local_id = $("#local_id").val();
         var precio_id = $("#precio_id").val();
@@ -800,7 +802,9 @@
         producto.producto_impuesto = impuesto;
         producto.producto_nombre = encodeURIComponent(producto_nombre);
         producto.precio_id = precio_id;
-        producto.precio_unitario = parseFloat(precio);
+        producto.precio_unitario = parseFloat(precio_venta);
+        producto.precio_descuento = parseFloat(precio);
+        producto.descuento = parseFloat(0);
 
         producto.um_min = um_min;
         producto.um_min_abr = um_min_abr;
@@ -832,7 +836,7 @@
         for (var local_index in producto.total_local)
             producto.total_minimo += parseFloat(producto.total_local[local_index]);
 
-        producto.subtotal = parseFloat(producto.total_minimo * producto.precio_unitario);
+        producto.subtotal = parseFloat(producto.total_minimo * producto.precio_descuento);
 
         lst_producto.push(producto);
 

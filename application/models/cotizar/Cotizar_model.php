@@ -225,6 +225,7 @@ class cotizar_model extends CI_Model
             producto.producto_codigo_interno as producto_codigo_interno,
             producto.producto_nombre as producto_nombre,
             cd.precio as precio,
+            cd.precio_venta as precio_venta,
             cd.cantidad as cantidad,
             (SELECT cantidad FROM producto_almacen WHERE id_producto = cd.producto_id AND id_local = c.local_id LIMIT 1) AS cantidad_almacen,
             (SELECT fraccion FROM producto_almacen WHERE id_producto = cd.producto_id AND id_local = c.local_id LIMIT 1) AS fraccion_almacen,
@@ -254,6 +255,7 @@ class cotizar_model extends CI_Model
                 $result[$detalle->producto_id]->producto_id = $detalle->producto_id;
                 $result[$detalle->producto_id]->impuesto = $detalle->impuesto;
                 $result[$detalle->producto_id]->precio = $detalle->precio;
+                $result[$detalle->producto_id]->precio_venta = $detalle->precio_venta;
                 $result[$detalle->producto_id]->um_min = $this->unidades_model->get_um_min_by_producto($detalle->producto_id);
                 $result[$detalle->producto_id]->um_min_abr = $this->unidades_model->get_um_min_by_producto_abr($detalle->producto_id);
                 $result[$detalle->producto_id]->total_min = 0;
