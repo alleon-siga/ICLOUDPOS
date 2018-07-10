@@ -56,7 +56,14 @@
                                                     <th>Monto a Pagar</th>
                                                 </tr>
                                             </thead>
-                                            <tbody id="body_cuotas">
+                                        <?php
+                                            if(empty($body_cuotas)){
+                                                $body_cuotas = "body_cuotas";
+                                            }else{
+                                                $body_cuotas = "";
+                                            }
+                                        ?>
+                                            <tbody id="<?= $body_cuotas ?>">
                                             </tbody>
                                         </table>
                                     </div>

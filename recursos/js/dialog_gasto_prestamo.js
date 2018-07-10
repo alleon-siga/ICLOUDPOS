@@ -194,16 +194,23 @@ function generar_cuotas(numero_cuotas, saldo) {
     var body = $("#body_cuotas");
     var monto = formatPrice(saldo / numero_cuotas);
 
-    body.html("");
+    body.html('');
     for (var i = 0; i < numero_cuotas; i++) {
         var template = '<tr>';
         template += '<td id="c_cuota_letra_' + i + '">' + (i + 1) + ' / ' + numero_cuotas + '</td>';
-        template += '<td style="height: 28px;"><span  id="c_cuota_fecha_' + i + '">' + get_fecha_vencimiento(i, $("#c_pago_periodo").val()) + '</span>'
+        template += '<td style="height: 28px;">';
+        template += '<input style="cursor:pointer;" class="form-control fecha_venc" type="text" id="c_cuota_fecha_'+ i +'" name="c_cuota_fecha_'+ i +'" value="' + get_fecha_vencimiento(i, $("#c_pago_periodo").val()) + '" autocomplete="off" readonly>';
         template += '</td>';
-        template += '<td style="text-align: right;">' + $('.tipo_moneda').first().html() + ' <span id="c_cuota_monto_' + i + '">' + monto + '</span></td>';
-        template += '</tr>';
+        template += '<td style="text-align: right;">';
+        template += '<div class="input-group">';
+        template += '<div class="input-group-addon">' + $('.tipo_moneda').first().html() + '</div>';
+        template += '<input class="form-control monto_a_pagar" type="text" id="c_cuota_monto_'+ i +'" name="c_cuota_monto_'+ i +'" value="' + monto + '" onkeyup="actTotal()" onkeydown="return soloDecimal(this, event);" autocomplete="off">';
+        template += '</div></td></tr>';
         body.append(template);
     }
+    $(".fecha_venc").datepicker({
+        format: 'dd/mm/yyyy'
+    });
 }
 
 function get_fecha_vencimiento(index, type) {
@@ -263,9 +270,21 @@ function prepare_cuotas() {
     for (var i = 0; i < numero_coutas; i++) {
         var cuota = {};
         cuota.letra = $("#body_cuotas #c_cuota_letra_" + i).html().trim();
-        cuota.fecha = $("#body_cuotas #c_cuota_fecha_" + i).html().trim();
-        cuota.monto = $("#body_cuotas #c_cuota_monto_" + i).html().trim();
+        cuota.fecha = $("#c_cuota_fecha_" + i).val();
+        cuota.monto = $("#c_cuota_monto_" + i).val();
         cuotas.push(cuota);
     }
     return JSON.stringify(cuotas);
+}
+
+function actTotal(){
+    var capital = 0;
+    $('.monto_a_pagar').each(function () {
+        capital += parseFloat($(this).val());
+    });
+    var interes = parseFloat($("#c_tasa_interes").val());
+    var prestamo = parseFloat(capital + interes);
+
+    $('#c_precio_contado').val(formatPrice(capital));    
+    $("#c_precio_credito").val(formatPrice(prestamo));
 }

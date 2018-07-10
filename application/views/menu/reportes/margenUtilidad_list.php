@@ -20,8 +20,6 @@
     <table class='table dataTable table-bordered no-footer tableStyle' style="overflow:scroll">
         <thead>
             <tr>
-                <th># Venta </th>
-                <th>Local</th>
                 <th>Producto</th>
                 <th>Unidad</th>
                 <th>Costo unitario</th>
@@ -37,7 +35,6 @@
                 <th>Venta total</th>
                 <th>Utilidad x unidad</th>
                 <th>Utilidad total</th>
-                <th>% rentabilidad</th>
             </tr>
         </thead>
         <tbody>
@@ -46,33 +43,25 @@
         foreach ($lists as $ingreso):
             $impuesto = (($ingreso->impuesto_porciento / 100) + 1);
             $cantidad = $ingreso->cantidad;
-            $count = $ingreso->count;
-            $costoCompraSi = $ingreso->detalle_costo_ultimo / $impuesto; //Costo de compra unitario sin impuesto
+            $costoCompraSi = $ingreso->costoCompraSi; //Costo de compra unitario sin impuesto
             $costoCompra = $ingreso->detalle_costo_ultimo; //Costo de compra unitario con impuesto
             $impCompra = $costoCompra - $costoCompraSi; //Impuesto de compra
-            if($ingreso->tipo_impuesto=='1'){ //incluye impuesto
-                $precioVenta = $ingreso->detalle_importe; //precio de venta
-                $costoVentaSi = ($precioVenta / $count) / $impuesto; //Costo de venta unitario sin impuesto
-                $costoVenta = $costoVentaSi * $impuesto; //Costo de venta unitario con impuesto
-            }elseif($ingreso->tipo_impuesto=='2'){ //agregar impuesto
-                $precioVenta = $ingreso->detalle_importe * $impuesto;
-                $costoVentaSi = ($precioVenta / $count) / $impuesto; //Costo de venta unitario sin impuesto
-                $costoVenta = $costoVentaSi * $impuesto; //Costo de venta unitario con impuesto
-            }else{ //no incluye impuesto
-                $precioVenta = $ingreso->detalle_importe; //precio de venta
-                $costoVentaSi = ($precioVenta / $count);
-                $costoVenta = $costoVentaSi;
-            }
-            $costoTotal = $cantidad * $costoCompra; //Costo Total
-            $subtotal = $cantidad * $costoVentaSi;
+            $precioVenta = $ingreso->detalle_importe; //precio de venta
+            $costoVentaSi = $ingreso->costoVentaSi;
+            $costoVenta = $ingreso->costoVenta;
+            $costoTotal = $ingreso->costoTotal;
+            $subtotal = $ingreso->subtotal;
             $impVenta = $precioVenta - $subtotal;
-            $utilidadXund = $costoVentaSi - $costoCompraSi;
-            $utilidadTotal = $utilidadXund * $cantidad;
-            if($costoCompraSi>0){
-                $porRenta = ($utilidadXund / $costoCompraSi) * 100; //Porcentaje de rentabilidad    
+            //$utilidadXund = $costoVentaSi - $costoCompraSi;
+            $utilidadXund = $ingreso->utilidadXund;
+            //$utilidadTotal = $utilidadXund * $cantidad;
+            $utilidadTotal = $ingreso->utilidadTotal;
+            /*if($costoCompraSi>0){
+                //$porRenta = ($utilidadXund / $costoCompraSi) * 100; //Porcentaje de rentabilidad
+                $porRenta = $ingreso->porRenta;
             }else{
                 $porRenta = 0;
-            }
+            }*/
             //Totales
             $totalCostoImpuesto += $costoCompra;
             $totalPrecioImpuesto += $costoVenta;
@@ -83,8 +72,6 @@
             $totalUtilidadTotal += $utilidadTotal;
     ?>
             <tr>
-                <td style="text-align: right;"><?= $ingreso->venta_id ?></td>
-                <td><?= $ingreso->local_nombre ?></td>
                 <td><?= $ingreso->producto_nombre ?></td>
                 <td><?= $ingreso->nombre_unidad ?></td>
                 <td style="text-align: right;"><?= number_format($costoCompraSi, 2) ?></td>
@@ -100,7 +87,6 @@
                 <td style="text-align: right;"><?= number_format($precioVenta, 2) ?></td>
                 <td style="text-align: right;"><?= number_format($utilidadXund, 2) ?></td>
                 <td style="text-align: right;"><?= number_format($utilidadTotal, 2) ?></td>
-                <td style="text-align: right;"><?= number_format($porRenta, 2) ?></td>
             </tr>
     <?php
         endforeach;
@@ -108,7 +94,7 @@
         </tbody>
         <tfoot>
             <tr>
-                <td colspan="6">TOTALES</td>
+                <td colspan="4">TOTALES</td>
                 <td style="text-align: right;"><?= number_format($totalCostoImpuesto, 2) ?></td>
                 <td></td>
                 <td></td>
@@ -120,7 +106,6 @@
                 <td style="text-align: right;"><?= number_format($totalVentaTotal, 2) ?></td>
                 <td></td>
                 <td style="text-align: right; color: green;"><?= number_format($totalUtilidadTotal, 2) ?></td>
-                <td></td>
             </tr>
         </tfoot>
     </table>

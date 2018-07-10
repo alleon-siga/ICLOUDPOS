@@ -104,8 +104,6 @@ class gastos extends MY_Controller
         $data["proveedores"] = $this->proveedor_model->select_all_proveedor();
         $data["usuarios"] = $this->db->get_where('usuario', array('activo' => 1))->result();
         $data["documentos"] = $this->db->get_where('documentos', array('gastos' => 1))->result();
-        //$data['dialog_gasto_credito'] = $this->load->view('menu/gastos/dialog_gasto_credito', array(), true);
-        //$data['dialog_gasto_prestamo'] = $this->load->view('menu/gastos/dialog_gasto_prestamo', array(), true);
         $data['cuentas'] = $this->db->select('caja_desglose.*, caja.local_id, caja.moneda_id, moneda.nombre AS moneda_nombre, moneda.simbolo')
             ->from('caja_desglose')
             ->join('caja', 'caja.id = caja_desglose.caja_id')
@@ -132,7 +130,8 @@ class gastos extends MY_Controller
             $usuario = $this->input->post('usuario');
         }
         $status_gastos = '1'; //pendiente
-        if($this->input->post('tipo_pago')=='2' && $this->input->post('cboDocumento')!='10'){ //Si es al credito y es diferente a prestamo bancario
+        if($this->input->post('tipo_pago')=='2'){ //Si es al credito
+        //if($this->input->post('tipo_pago')=='2' && $this->input->post('cboDocumento')!='10'){ //Si es al credito y es diferente a prestamo bancario
             $status_gastos = '0'; //confirmado
         }
 
