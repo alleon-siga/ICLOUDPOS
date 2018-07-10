@@ -16,40 +16,39 @@
     </div>
 </div>
 <div class="table-responsive">
-    <table class='table table-striped dataTable table-bordered no-footer tableStyle' style="overflow:scroll">
+    <table class='table table-striped dataTable tableStyle'>
         <thead>
-        <tr>
-            <th># Venta</th>
-            <th>Fecha Registro</th>
-            <th>Fecha Venta</th>
-            <th># Comprobante</th>
-            <th>Identificaci&oacute;n</th>
-            <th>Cliente</th>
-            <th>Vendedor</th>
-            <th>Condici&oacute;n</th>
-            <th>Estado</th>
-            <th>Tip. Cam.</th>
-            <th>Total <?= $venta_action == 'caja' ? 'a Pagar' : '' ?></th>
-            <th>Acciones</th>
-        </tr>
+            <tr>
+                <th width="5%"># Venta</th>
+                <th width="5%">Fecha Registro</th>
+                <th width="5%">Fecha Venta</th>
+                <th width="5%"># Comprobante</th>
+                <th width="10%">Identificaci&oacute;n</th>
+                <th width="20%">Cliente</th>
+                <th width="10%">Vendedor</th>
+                <th width="5%">Condici&oacute;n</th>
+                <th width="5%">Estado</th>
+                <th width="5%">Tip. Cam.</th>
+                <th width="5%">Total <?= $venta_action == 'caja' ? 'a Pagar' : '' ?></th>
+                <th width="20%">Acciones</th>
+            </tr>
         </thead>
         <tbody>
         <?php if (count($ventas) > 0): ?>
 
             <?php foreach ($ventas as $venta): ?>
                 <tr <?= $venta->venta_estado == 'ANULADO' ? 'style="color: red;"' : '' ?>>
-                    <td><?= $venta->venta_id ?></td>
-                    <td>
+                    <td style="white-space: normal;"><?= $venta->venta_id ?></td>
+                    <td style="white-space: normal;">
                         <span style="display: none;"><?= date('YmdHis', strtotime($venta->venta_creado)) ?></span>
                         <?= date('d/m/Y H:i', strtotime($venta->venta_creado)) ?>
                     </td>
-
-                    <td>
+                    <td style="white-space: normal;">
                         <span style="display: none;"><?= date('YmdHis', strtotime($venta->venta_fecha)) ?></span>
                         <?= date('d/m/Y H:i', strtotime($venta->venta_fecha)) ?>
                     </td>
 
-                    <td><?php
+                    <td style="white-space: normal;"><?php
                         $doc = '';
                         if ($venta->documento_id == 1) $doc = "FA";
                         if ($venta->documento_id == 2) $doc = "NC";
@@ -63,14 +62,14 @@
                             echo '<span style="color: #0000FF">NO FACTURADO</span>';
                         ?>
                     </td>
-                    <td><?= $venta->ruc ?></td>
-                    <td><?= $venta->cliente_nombre ?></td>
-                    <td><?= $venta->vendedor_nombre ?></td>
-                    <td><?= $venta->condicion_nombre ?></td>
-                    <td><?= $venta->venta_estado ?></td>
-                    <td><?= $venta->moneda_tasa ?></td>
+                    <td style="white-space: normal;"><?= $venta->ruc ?></td>
+                    <td style="white-space: normal;"><?= $venta->cliente_nombre ?></td>
+                    <td style="white-space: normal;"><?= $venta->vendedor_nombre ?></td>
+                    <td style="white-space: normal;"><?= $venta->condicion_nombre ?></td>
+                    <td style="white-space: normal;"><?= $venta->venta_estado ?></td>
+                    <td style="white-space: normal;"><?= $venta->moneda_tasa ?></td>
                     <td style="text-align: right;"><?= $venta->moneda_simbolo ?> <?= number_format($venta->total, 2) ?></td>
-                    <td style="text-align: center;">
+                    <td style="text-align: center; white-space: normal;">
                         <a class="btn btn-default" data-toggle="tooltip" style="margin-right: 5px;"
                            title="Ver" data-original-title="Ver"
                            href="#"

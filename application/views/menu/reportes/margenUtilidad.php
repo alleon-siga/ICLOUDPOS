@@ -1,41 +1,13 @@
 <?php $ruta = base_url(); ?>
-<style>
-    .tcharm {
-        background-color: #fff;
-        border: 1px solid #dae8e7;
-        width: 300px;
-        padding: 0 20px;
-        overflow-y: auto;
-    }
-
-    .tcharm-header {
-        text-align: center;
-    }
-
-    .tcharm-body .row {
-        margin: 20px 3px;
-    }
-
-    .tcharm-close {
-        text-decoration: none !important;
-        color: #333333;
-        padding: 3px;
-        border: 1px solid #fff;
-        float: left;
-    }
-
-    .tcharm-close:hover {
-        background-color: #dae8e7;
-        color: #333333;
-    }
-</style>
 <ul class="breadcrumb breadcrumb-top">
     <li>Reporte</li>
+    <li>Venta</li>
     <li><a href="">Margen de utilidad</a></li>
 </ul>
 <link rel="stylesheet" href="<?= $ruta ?>recursos/css/plugins.css">
 <link rel="stylesheet" href="<?= $ruta ?>recursos/js/datepicker-range/daterangepicker.css">
 <link rel="stylesheet" href="<?= $ruta ?>recursos/css/multiple-select.css" />
+<link rel="stylesheet" href="<?= $ruta ?>recursos/css/tcharm.css" />
 <div class="row-fluid">
     <div class="span12">
         <div class="block">
@@ -117,7 +89,8 @@
                 </div>
                 <div class="col-md-3">
                     <?php if (isset($locales)): ?>
-                        <select id="local_id" class="form-control filter-input">
+                        <select id="local_id" class="form-control ctrl">
+                            <option value="0">TODOS</option>
                             <?php foreach ($locales as $local): ?>
                                 <option <?php if ($this->session->userdata('id_local') == $local['int_local_id']) echo "selected"; ?>
                                         value="<?= $local['int_local_id']; ?>"> <?= $local['local_nombre'] ?> </option>
@@ -126,7 +99,7 @@
                     <?php endif; ?>
                 </div>
                 <div class="col-md-2">
-                    <select name="moneda_id" id="moneda_id" class='cho form-control'>
+                    <select name="moneda_id" id="moneda_id" class='form-control ctrl'>
                         <?php foreach ($monedas as $moneda): ?>
                             <option value="<?= $moneda->id_moneda ?>"
                                     data-simbolo="<?= $moneda->simbolo ?>"
@@ -170,6 +143,8 @@
             <script src="<?php echo $ruta; ?>recursos/js/multiple-select.js"></script>
             <!-- /.modal-dialog -->
             <script type="text/javascript">
+                //CONFIGURACIONES INICIALES
+                App.sidebar('close-sidebar');
                 // Filtro en select
                 $("#producto_id").multipleSelect({
                     filter: true,

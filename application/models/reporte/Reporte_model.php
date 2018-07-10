@@ -198,16 +198,16 @@ class reporte_model extends CI_Model
 
     function getMargenUtilidad($params)
     {
-        $marca_id = $grupo_id = $familia_id = $linea_id = $producto_id = '';
-
+        $marca_id = $grupo_id = $familia_id = $linea_id = $producto_id = $local_id = '';
+        $local_id .= ($params['local_id']>0)? " AND v.local_id=".$params['local_id'] : "";
         $marca_id .= ($params['marca_id']>0)? " AND p.producto_marca=".$params['marca_id'] : "";
         $grupo_id .= ($params['grupo_id']>0)? " AND p.produto_grupo=".$params['grupo_id'] : "";
         $familia_id .= ($params['familia_id']>0)? " AND p.producto_familia=".$params['familia_id'] : "";
         $linea_id .= ($params['linea_id']>0)? " AND p.producto_linea=".$params['linea_id'] : "";
         $producto_id .= ($params['producto_id']!='')? " AND p.producto_id IN(".implode(",", $params['producto_id']).")" : "";
-        $search = $marca_id.$grupo_id.$familia_id.$linea_id.$producto_id;
+        $search = $marca_id.$grupo_id.$familia_id.$linea_id.$producto_id.$local_id;
 
-        $query = "SELECT p.producto_nombre, u.nombre_unidad, SUM(up.unidades * dv.cantidad) AS cantidad, 
+        $query = "SELECT l.local_nombre, p.producto_nombre, u.nombre_unidad, SUM(up.unidades * dv.cantidad) AS cantidad, 
             dv.detalle_costo_promedio, 
             SUM(IF(v.tipo_impuesto='2', dv.detalle_importe * ((dv.impuesto_porciento / 100) + 1), dv.detalle_importe)) AS detalle_importe,
             AVG(IF(v.tipo_impuesto='3', (IF(v.tipo_impuesto='2', dv.detalle_importe * ((dv.impuesto_porciento / 100) + 1), dv.detalle_importe) / (up.unidades * dv.cantidad)), (IF(v.tipo_impuesto='2', dv.detalle_importe * ((dv.impuesto_porciento / 100) + 1), dv.detalle_importe) / (up.unidades * dv.cantidad)) / ((dv.impuesto_porciento / 100) + 1))) AS costoVentaSi,
@@ -220,7 +220,8 @@ class reporte_model extends CI_Model
             SUM( ((IF(v.tipo_impuesto='3', (IF(v.tipo_impuesto='2', dv.detalle_importe * ((dv.impuesto_porciento / 100) + 1), dv.detalle_importe) / (up.unidades * dv.cantidad)), (IF(v.tipo_impuesto='2', dv.detalle_importe * ((dv.impuesto_porciento / 100) + 1), dv.detalle_importe) / (up.unidades * dv.cantidad)) / ((dv.impuesto_porciento / 100) + 1))) - (dv.detalle_costo_ultimo / ((dv.impuesto_porciento / 100) + 1))) * (up.unidades * dv.cantidad) ) AS utilidadTotal,
             dv.impuesto_porciento, v.tipo_impuesto
             FROM detalle_venta dv
-                INNER JOIN venta v ON v.venta_id=dv.id_venta 
+                INNER JOIN venta v ON v.venta_id=dv.id_venta
+                INNER JOIN `local` l ON v.local_id = l.int_local_id
                 INNER JOIN producto p ON p.producto_id=dv.id_producto 
                 INNER JOIN unidades_has_producto up ON dv.id_producto=up.producto_id 
                 AND dv.unidad_medida=up.id_unidad
@@ -235,7 +236,6 @@ class reporte_model extends CI_Model
             WHERE 
                 v.venta_status='COMPLETADO'
                 AND v.id_moneda = ".$params['moneda_id']."
-                AND v.local_id = ".$params['local_id']."
                 AND v.fecha >= '".$params['fecha_ini']."'
                 AND v.fecha <= '".$params['fecha_fin']."'
                 $search";

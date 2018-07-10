@@ -12,18 +12,16 @@
     <table class='table table-striped dataTable table-bordered no-footer tableStyle' style="overflow:scroll">
         <thead>
         <tr>
-            <th>ID</th>
-            <th>Fecha Emisi&oacute;n</th>
-            <th>Fecha Vencimiento</th>
-            <th>Documento</th>
-            <th>Num Documento</th>
-            <th>Cliente</th>
+            <th># Coti.</th>
+            <th>Fec. Emi.</th>
+            <th>Fec. Venc.</th>
+            <th>Doc.</th>
+            <th># Documento</th>
+            <th width="20%">Cliente</th>
             <th>Vendedor</th>
             <th>Tip. Cam.</th>
             <th>Total</th>
             <th>Acciones</th>
-
-
         </tr>
         </thead>
         <tbody>
@@ -49,7 +47,7 @@
                     <td style="text-align: right;"><?= $detalle->moneda_simbolo ?> <?= number_format($detalle->total, 2) ?></td>
                     <td style="text-align: center;">
                         <?php if ($detalle->estado == 'PENDIENTE'): ?>
-                            <a class="btn btn-sm btn-default" data-toggle="tooltip" style="margin-right: 5px;"
+                            <a class="btn btn-sm btn-primary" data-toggle="tooltip" style="margin-right: 5px;"
                                title="Ver" data-original-title="Ver"
                                href="#"
                                onclick="cotizar('<?= $detalle->id ?>');">

@@ -18,7 +18,7 @@
         <td><img height="100" src="<?= base_url('recursos/img/logo/' . valueOption("EMPRESA_LOGO", '')) ?>"></td>
         <td style="height: 100px; text-align: center; width: 50%;"><?= valueOption('COTIZACION_INFORMACION', '') ?></td>
         <td style="text-align: center; border: 1px solid #000; vertical-align: middle; font-size: 1.5em;">
-            # CT <?= $cotizar->id ?><br><br><?= date('d/m/Y') ?>
+            # COTIZACION <?= sumCod($cotizar->id) ?><br><br><?= date('d/m/Y') ?>
         </td>
     </tr>
 </table>
