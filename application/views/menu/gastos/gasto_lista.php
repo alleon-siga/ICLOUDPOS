@@ -48,11 +48,13 @@
                     <td class="center" style="white-space: nowrap;">
                         <div class="btn-group">
                         <?php if ($gastos['status_gastos'] == 1): ?>
+                            <?php if($gastos['nombre_tipos_gasto']!='PRESTAMO BANCARIO'){  ?>
                             <?php echo '<a class="btn btn-default" data-toggle="tooltip"
                                                 title="Editar" data-original-title="fa fa-comment-o"
                                                 href="#" onclick="editar(' . $gastos['id_gastos'] . ');">'; ?>
                             <i class="fa fa-edit"></i>
                             </a>
+                        <?php } ?>
                             <?php echo '<a class="btn btn-danger" data-toggle="tooltip"
                                  title="Eliminar" data-original-title="fa fa-comment-o"
                                  onclick="borrar(' . $gastos['id_gastos'] . ');">'; ?>

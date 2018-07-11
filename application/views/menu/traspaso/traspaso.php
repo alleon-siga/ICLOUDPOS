@@ -41,7 +41,7 @@
                 <?php else: ?>
                     <div class="row">
                         <div class="col-md-2">
-                            <label class="control-label panel-admin-text">Local:</label>
+                            <label class="control-label panel-admin-text">Local de destino:</label>
                             <select class="form-control" id="locales" name="locales">
                                 <option value="TODOS">TODOS</option>
                                 <?php

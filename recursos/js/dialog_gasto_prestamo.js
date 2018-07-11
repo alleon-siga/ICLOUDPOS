@@ -1,17 +1,29 @@
 $(document).ready(function () {
+    $('.tipo_moneda').html($('#idMoneda').html());
     $('#btn_compra_credito').on('click', function () {
-        $("#btn_compra_credito").addClass('disabled');
-        var cuotas = [];
-        cuotas = prepare_cuotas();
-        $('#cuotas').attr('value', cuotas);
-        $('#total').val($('#c_precio_credito').val());
-        $('#agregar').modal('hide');
-        App.formSubmitAjax($("#formagregar").attr('action'), get_gastos, 'dialog_gasto_prestamo', 'formagregar');
-        $.bootstrapGrowl('<h4>Solicitud procesada con &eacute;xito</h4>', {
-            type: 'success',
-            delay: 2500,
-            allow_dismiss: true
+        //Validar que coincida con el total de importe
+        var capital = 0;
+        $('.monto_a_pagar').each(function () {
+            capital += parseFloat($(this).val());
         });
+
+        if( parseFloat(roundPrice(capital, 2)) != parseFloat(roundPrice($('#c_precio_credito').val(), 2)) ){
+            mensaje('warning', '<h4>El cronograma no coindice con el total del cr&eacute;dito</h4>');
+        }else{
+            $("#btn_compra_credito").addClass('disabled');
+            var cuotas = [];
+            cuotas = prepare_cuotas();
+            $('#cuotas').attr('value', cuotas);
+            $('#total').val($('#c_precio_credito').val());
+            $('#agregar').modal('hide');
+            App.formSubmitAjax($("#formagregar").attr('action'), get_gastos, 'dialog_gasto_prestamo', 'formagregar');
+            $.bootstrapGrowl('<h4>Solicitud procesada con &eacute;xito</h4>', {
+                type: 'success',
+                delay: 2500,
+                allow_dismiss: true
+            });
+            //mensaje('success', '<h4>Solicitud procesada con &eacute;xito</h4>');
+        }
     });
 
     $("#c_tasa_interes, #c_numero_cuotas, #c_saldo_inicial_por, #c_dia_pago, #c_precio_contado").on('keyup', function () {
@@ -138,6 +150,12 @@ function refresh_credito_window(trigger) {
     $('#body_proyeccion_cuotas tr').removeClass('table-selected');
     $('#body_proyeccion_cuotas tr[data-cuota="' + $("#c_numero_cuotas").val() + '"]').addClass('table-selected');
     $("#c_total_deuda").html(formatPrice(prestamo));
+
+    var capital = 0;
+    $('.monto_a_pagar').each(function () {
+        capital += parseFloat($(this).val());
+    });
+    $("#c_total_cronograma").html(roundPrice(capital, 2));
 }
 
 function generar_proyeccion(saldo) {
@@ -204,7 +222,7 @@ function generar_cuotas(numero_cuotas, saldo) {
         template += '<td style="text-align: right;">';
         template += '<div class="input-group">';
         template += '<div class="input-group-addon">' + $('.tipo_moneda').first().html() + '</div>';
-        template += '<input class="form-control monto_a_pagar" type="text" id="c_cuota_monto_'+ i +'" name="c_cuota_monto_'+ i +'" value="' + monto + '" onkeyup="actTotal()" onkeydown="return soloDecimal(this, event);" autocomplete="off">';
+        template += '<input class="form-control monto_a_pagar" onChange="actualizarTotal()" type="text" id="c_cuota_monto_'+ i +'" name="c_cuota_monto_'+ i +'" value="' + monto + '" onkeydown="return soloDecimal(this, event);" autocomplete="off">';
         template += '</div></td></tr>';
         body.append(template);
     }
@@ -287,4 +305,13 @@ function actTotal(){
 
     $('#c_precio_contado').val(formatPrice(capital));    
     $("#c_precio_credito").val(formatPrice(prestamo));
+}
+
+function actualizarTotal(){
+    var capital = 0;
+    $('.monto_a_pagar').each(function () {
+        capital += parseFloat($(this).val());
+    });
+    $("#c_total_cronograma").html(roundPrice(capital, 2));
+    return 
 }

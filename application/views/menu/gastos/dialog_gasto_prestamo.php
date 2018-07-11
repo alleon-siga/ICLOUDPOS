@@ -80,7 +80,7 @@
                             </div>
                             <div class="col-md-7">
                                 <div class="input-group">
-                                    <div class="input-group-addon tipo_moneda"><?= $md->simbolo ?></div>
+                                    <div class="input-group-addon tipo_moneda"></div>
                                     <input type="text" style="text-align: right; font-weight: bold;" class='form-control' name="c_precio_contado" id="c_precio_contado" autocomplete="off">
                                 </div>
                             </div>
@@ -91,7 +91,7 @@
                             </div>
                             <div class="col-md-7">
                                 <div class="input-group">
-                                    <div class="input-group-addon tipo_moneda"><?= $md->simbolo ?></div>
+                                    <div class="input-group-addon tipo_moneda"></div>
                                     <input type="text" style="text-align: right; font-weight: bold;" class='form-control' name="c_tasa_interes" id="c_tasa_interes" autocomplete="off">
                                 </div>
                             </div>
@@ -102,7 +102,7 @@
                             </div>
                             <div class="col-md-7">
                                 <div class="input-group">
-                                    <div class="input-group-addon tipo_moneda"><?= $md->simbolo ?></div>
+                                    <div class="input-group-addon tipo_moneda"></div>
                                     <input type="text" style="text-align: right; font-weight: bold;" class='form-control' name="c_precio_credito" id="c_precio_credito" autocomplete="off" readonly="">
                                 </div>
                             </div>
@@ -148,14 +148,17 @@
         </div>
         <div class="modal-footer">
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-7">
                     <div class="row" style="text-align: left;">
-                        <div class="col-md-12">
-                            <h4>Total Importe: <span class="tipo_moneda"><?= $md->simbolo ?></span> <span id="c_total_deuda">0</span></h4>
+                        <div class="col-md-6">
+                            <h4>Total Importe: <span class="tipo_moneda"></span> <span id="c_total_deuda">0</span></h4>
+                        </div>
+                        <div class="col-md-6">
+                            <h4>Total Cronograma: <span class="tipo_moneda"></span> <span id="c_total_cronograma">0</span></h4>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-5">
                     <button class="btn btn-primary save_compra_credito" data-imprimir="0" type="button" id="btn_compra_credito"><i class="fa fa-save"></i> (F6) Guardar</button>
                     <button type="button" class="btn btn-danger" onclick="$('#dialog_gasto_prestamo').modal('hide');"><i class="fa fa-close"></i> Cancelar</button>
                 </div>

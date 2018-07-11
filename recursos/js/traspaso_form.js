@@ -47,7 +47,7 @@ $(document).ready(function () {
                     var tabla = '<div class="col-md-2"></div>';
                     for(let x=0; x<prod_und.length; x++){
                         tabla += '<div class="col-md-2">';
-                        tabla += '<input type="number" name="cantidad" id="cantidad_'+(x+1)+'" required="true" class="form-control" value="">';
+                        tabla += '<input type="number" name="cantidad" id="cantidad_'+(x+1)+'" required="true" class="form-control" value="" autocomplete="off">';
                         tabla += '<h6>'+ prod_und[x]['nombre_unidad'] + '(' + prod_und[x]['unidades'] + ' ' + prod_und[x]['abreviatura'] + ')' + '</h6>';
                         tabla += '</div>';
                     }

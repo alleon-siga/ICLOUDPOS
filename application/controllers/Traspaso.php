@@ -162,7 +162,7 @@ class traspaso extends MY_Controller
             $this->load->model('kardex/kardex_model');
 
             if ($this->input->post('locales') != "TODOS") {
-                $condicion['local_origen'] = $this->input->post('locales');
+                $condicion['local_destino'] = $this->input->post('locales');
             }
             $data['local'] = $this->input->post('locales', true);
             $date_range = explode(" - ", $this->input->post('fecha'));

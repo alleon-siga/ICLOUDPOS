@@ -872,9 +872,9 @@ function prepare_traspasos() {
             if (cantidades[local_id] != 0) {
                 var producto = {};
                 producto.id_producto = lst_producto[i].producto_id;
-                producto.parent_local = local_venta.val();
+                producto.parent_local = local_venta.val(); //local de destino
                 producto.cantidad = cantidades[local_id];
-                producto.local_id = local_id;
+                producto.local_id = local_id; //local de origen
                 productos.push(producto);
             }
         }

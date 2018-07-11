@@ -5,7 +5,6 @@
     <tr>
         <th><?php echo getCodigoNombre() ?></th>
         <th>Tipo</th>
-        <th>Almacen Origen</th>
         <th>Almacen Destino</th>
         <th>Usuario</th>
         <th>Fecha</th>
@@ -18,7 +17,6 @@
         <tr>
             <td style="text-align: center"><?= $arreglo->id ?></td>
             <td style="text-align: center"><?= $arreglo->ref_id; ?></td>
-            <td style="text-align: center"><?= $arreglo->origen; ?></td>
             <td style="text-align: center"><?= $arreglo->destino; ?></td>
             <td style="text-align: center"><?= $arreglo->username ?></td>
             <td style="text-align: center"><?= date('d-m-Y H:i', strtotime($arreglo->fecha)) ?></td>

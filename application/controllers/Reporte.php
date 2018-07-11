@@ -442,8 +442,8 @@ class Reporte extends MY_Controller
                 $data['lists'] = $this->reporte_model->getMargenUtilidad($input);
 
                 $local = $this->db->get_where('local', array('int_local_id' => $input['local_id']))->row();
-                $data['local_nombre'] = $local->local_nombre;
-                $data['local_direccion'] = $local->direccion;
+                $data['local_nombre'] = !empty($local->local_nombre)? $local->local_nombre: 'TODOS';
+                $data['local_direccion'] = !empty($local->direccion)? $local->direccion: 'TODOS';
 
                 $data['fecha_ini'] = $input['fecha_ini'];
                 $data['fecha_fin'] = $input['fecha_fin'];
@@ -474,8 +474,8 @@ class Reporte extends MY_Controller
                 $data['lists'] = $this->reporte_model->getMargenUtilidad($input);
 
                 $local = $this->db->get_where('local', array('int_local_id' => $input['local_id']))->row();
-                $data['local_nombre'] = $local->local_nombre;
-                $data['local_direccion'] = $local->direccion;
+                $data['local_nombre'] = !empty($local->local_nombre)? $local->local_nombre: 'TODOS';
+                $data['local_direccion'] = !empty($local->direccion)? $local->direccion: 'TODOS';
 
                 $data['fecha_ini'] = $input['fecha_ini'];
                 $data['fecha_fin'] = $input['fecha_fin'];

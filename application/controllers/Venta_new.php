@@ -272,7 +272,6 @@ class venta_new extends MY_Controller
     {
 
         $venta['local_id'] = $this->input->post('local_venta_id');
-        $venta['local_origen'] = $this->input->post('local_id');
         $venta['id_documento'] = $this->input->post('tipo_documento');
         $venta['id_cliente'] = $this->input->post('cliente_id');
         $venta['id_usuario'] = $this->input->post('vendedor_id'); //$this->session->userdata('nUsuCodigo');

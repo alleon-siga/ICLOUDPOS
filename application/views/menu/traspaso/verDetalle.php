@@ -15,25 +15,23 @@
                     </div>
                     <hr class="hr-margin-5">
                     <div class="row">
-                        <div class="col-md-2"><label class="control-label">Origen:</label></div>
-                        <div class="col-md-3"><?= $data[0]->origen ?></div>
-                        <div class="col-md-1"></div>
                         <div class="col-md-2"><label class="control-label">Destino:</label></div>
                         <div class="col-md-3"><?= $data[0]->destino ?></div>
+                        <div class="col-md-1"></div>
+                        <div class="col-md-2"><label class="control-label">Usuario:</label></div>
+                        <div class="col-md-3"><?= $data[0]->username ?></div>
                     </div>
                     <hr class="hr-margin-5">
                     <div class="row">
-                        <div class="col-md-2"><label class="control-label">Usuario:</label></div>
-                        <div class="col-md-3"><?= $data[0]->username ?></div>
-                        <div class="col-md-1"></div>
                         <div class="col-md-2"><label class="control-label">Motivo:</label></div>
-                        <div class="col-md-3"><?= $data[0]->motivo ?></div>
+                        <div class="col-md-10"><?= $data[0]->motivo ?></div>
                     </div>
                     <table class="table table-bordered">
                         <thead>
                         <tr>
                             <th><?= getCodigoNombre() ?></th>
                             <th>Producto</th>
+                            <th>Origen</th>
                             <th>UM</th>
                             <th>Cantidad</th>
                         </tr>
@@ -43,6 +41,7 @@
                             <tr>
                                 <td><?= getCodigoValue($dato->producto_id, $dato->producto_codigo_interno) ?></td>
                                 <td><?= $dato->producto_nombre ?></td>
+                                <td><?= $dato->origen ?></td>
                                 <td><?= number_format($dato->cantidad, 0) ?></td>
                                 <td><?= $dato->um ?></td>
                             </tr>

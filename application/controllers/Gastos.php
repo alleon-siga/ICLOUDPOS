@@ -130,8 +130,8 @@ class gastos extends MY_Controller
             $usuario = $this->input->post('usuario');
         }
         $status_gastos = '1'; //pendiente
-        if($this->input->post('tipo_pago')=='2'){ //Si es al credito
-        //if($this->input->post('tipo_pago')=='2' && $this->input->post('cboDocumento')!='10'){ //Si es al credito y es diferente a prestamo bancario
+        //if($this->input->post('tipo_pago')=='2'){ //Si es al credito
+        if($this->input->post('tipo_pago')=='2' && $this->input->post('cboDocumento')!='10'){ //Si es al credito y es diferente a prestamo bancario
             $status_gastos = '0'; //confirmado
         }
 
