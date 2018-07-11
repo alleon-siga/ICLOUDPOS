@@ -70,7 +70,9 @@
                                 <option value=""></option>
                                 <?php foreach ($productos as $producto): ?>
                                     <option value="<?= $producto->producto_id ?>"
-                                            data-impuesto="<?= $producto->porcentaje_impuesto ?>">
+                                            data-impuesto="<?= $producto->porcentaje_impuesto ?>"
+                                            data-afectacion_impuesto="<?= $producto->producto_afectacion_impuesto ?>"
+                                            data-cb="<?= $barra_activa->activo == 1 && $producto->barra != "" ? $producto->barra : "" ?>">
                                         <?php $barra = $barra_activa->activo == 1 && $producto->barra != "" ? "CB: " . $producto->barra : "" ?>
                                         <?= getCodigoValue($producto->producto_id, $producto->codigo) . ' - ' . $producto->producto_nombre . " " . $barra ?>
                                     </option>

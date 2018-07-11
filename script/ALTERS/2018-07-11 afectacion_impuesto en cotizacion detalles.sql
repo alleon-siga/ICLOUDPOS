@@ -1,0 +1,1 @@
+ALTER TABLE cotizacion_detalles ADD afectacion_impuesto INT NULL;

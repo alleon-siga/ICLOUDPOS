@@ -405,9 +405,8 @@ class facturacion_model extends CI_Model
         }
 
         $resumen = $this->db->order_by('id', 'desc')->get_where('facturacion_resumen', array(
-            'fecha_ref >=' => date('Y-m-d H:i:s', strtotime($data['fecha'] . " 00:00:00")),
-            'fecha_ref <=' => date('Y-m-d H:i:s', strtotime($data['fecha'] . " 23:59:59"))
-        ))->row();
+                    'fecha' => date('Y-m-d')
+                ))->row();
 
         if ($resumen != NULL) {
             $correlativo = ($resumen->correlativo + 1);

@@ -234,6 +234,7 @@ class cotizar_model extends CI_Model
             unidades.abreviatura as unidad_abr,
             SUM(cd.precio * cd.cantidad) as importe,
             cd.impuesto as impuesto,
+            IFNULL(cd.afectacion_impuesto, 0) as afectacion_impuesto,
             cd.precio_venta as precio_venta
             ')
             ->from('cotizacion_detalles as cd')
@@ -254,6 +255,7 @@ class cotizar_model extends CI_Model
                 $result[$detalle->producto_id]->producto_nombre = $detalle->producto_nombre;
                 $result[$detalle->producto_id]->producto_id = $detalle->producto_id;
                 $result[$detalle->producto_id]->impuesto = $detalle->impuesto;
+                $result[$detalle->producto_id]->afectacion_impuesto = $detalle->afectacion_impuesto;
                 $result[$detalle->producto_id]->precio = $detalle->precio;
                 $result[$detalle->producto_id]->precio_venta = $detalle->precio_venta;
                 $result[$detalle->producto_id]->um_min = $this->unidades_model->get_um_min_by_producto($detalle->producto_id);
@@ -290,6 +292,7 @@ class cotizar_model extends CI_Model
 
         $data = array();
         foreach ($detalles as $detalle) {
+        $prod = $this->db->get_where('producto', array('producto_id' => $detalle->id_producto))->row();
             $temp = array(
                 'cotizacion_id' => $id,
                 'producto_id' => $detalle->id_producto,
@@ -297,6 +300,7 @@ class cotizar_model extends CI_Model
                 'precio' => $detalle->precio,
                 'cantidad' => $detalle->cantidad,
                 'impuesto' => $detalle->producto_impuesto,
+                'afectacion_impuesto' => $prod->producto_afectacion_impuesto,
                 'precio_venta' => $detalle->precio_venta
             );
 
@@ -316,7 +320,8 @@ class cotizar_model extends CI_Model
         }
     }
 
-    public function editarCotizacion($id){
+    public function editarCotizacion($id)
+    {
         $parte = explode('|', $id);
         $id = $parte[0];
         $cotizacion_id = $parte[1];
@@ -330,7 +335,8 @@ class cotizar_model extends CI_Model
         $this->recalc_totales($cotizacion_id);
     }
 
-    public function eliminarCotizacion($id){
+    public function eliminarCotizacion($id)
+    {
         $parte = explode('|', $id);
         $id = $parte[0];
         $cotizacion_id = $parte[1];
@@ -364,8 +370,7 @@ class cotizar_model extends CI_Model
                 $impuesto += (($d->cantidad * $d->precio) * $factor) - ($d->cantidad * $d->precio);
             }
             $total = $subtotal + $impuesto;
-        }
-        else{
+        } else {
             $subtotal = $total;
         }
 

@@ -724,6 +724,7 @@
         var temp = {
             producto_id: <?= $detalle->producto_id ?>,
             impuesto: <?= $detalle->impuesto?>,
+            afectacion_impuesto: <?= $detalle->afectacion_impuesto?>,
             producto_nombre: '<?= $detalle->producto_nombre ?>',
             precio: <?= $detalle->precio ?>,
             precio_venta: <?= $detalle->precio_venta ?>,
@@ -779,7 +780,8 @@
                 prod.um_min_abr,
                 prod.total_min,
                 prod.unidades,
-                prod.impuesto
+                prod.impuesto,
+                prod.afectacion_impuesto
             );
         }
 
@@ -789,7 +791,7 @@
     });
 
 
-    function add_producto_from_cotizacion(producto_id, producto_nombre, precio, precio_venta, um_min, um_min_abr, total_min, unidades, impuesto) {
+    function add_producto_from_cotizacion(producto_id, producto_nombre, precio, precio_venta, um_min, um_min_abr, total_min, unidades, impuesto, afectacion_impuesto) {
 
         var local_id = $("#local_id").val();
         var precio_id = $("#precio_id").val();
@@ -800,6 +802,7 @@
         producto.index = lst_producto.length;
         producto.producto_id = producto_id;
         producto.producto_impuesto = impuesto;
+        producto.afectacion_impuesto = afectacion_impuesto;
         producto.producto_nombre = encodeURIComponent(producto_nombre);
         producto.precio_id = precio_id;
         producto.precio_unitario = parseFloat(precio_venta);

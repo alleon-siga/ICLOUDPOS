@@ -612,6 +612,7 @@ function add_producto() {
         producto.index = lst_producto.length;
         producto.producto_id = producto_id;
         producto.producto_impuesto = parseFloat($("#producto_id option:selected").attr('data-impuesto'));
+        producto.afectacion_impuesto = parseFloat($("#producto_id option:selected").attr('data-afectacion_impuesto'));
         producto.producto_nombre = encodeURIComponent($("#producto_id option:selected").text());
         producto.precio_id = precio_id;
         producto.precio_unitario = parseFloat($("#precio_unitario").val());
@@ -890,6 +891,13 @@ function refresh_totals() {
 //function para refrescar el panel derecho
 function refresh_right_panel() {
 
+    if ($("#sc").val() == 1) {
+        if ($("#tipo_documento").val() == 6)
+            $("#stock_contable").hide();
+        else
+            $("#stock_contable").show();
+    }
+
     if (lst_producto.length > 0) {
         $("#moneda_block_input").hide();
         $("#moneda_block_text").show();
@@ -926,23 +934,32 @@ function refresh_right_panel() {
     $('.precio-input[data-index="' + index + '"]').first().trigger('click');
 
     var subtotal = 0, impuesto = 0, total_importe = 0, total_descuento = 0;
+
     if ($("#tipo_impuesto").val() == 1) {
         total_importe = parseFloat(total);
         for (var i = 0; i < lst_producto.length; i++) {
-            var factor = parseFloat((parseFloat(lst_producto[i].producto_impuesto) + 100) / 100);
-            impuesto += parseFloat(lst_producto[i].subtotal - (lst_producto[i].subtotal / factor));
+            var afect_impuesto = lst_producto[i].afectacion_impuesto;
+
+            if (afect_impuesto == 1) {
+                var factor = parseFloat((parseFloat(lst_producto[i].producto_impuesto) + 100) / 100);
+                impuesto += parseFloat(lst_producto[i].subtotal - (lst_producto[i].subtotal / factor));
+            }
         }
         subtotal = parseFloat(total_importe - impuesto);
     }
     else if ($("#tipo_impuesto").val() == 2) {
         subtotal = parseFloat(total);
         for (var i = 0; i < lst_producto.length; i++) {
-            var factor = parseFloat((parseFloat(lst_producto[i].producto_impuesto) + 100) / 100);
-            impuesto += parseFloat((lst_producto[i].subtotal * factor) - lst_producto[i].subtotal);
+            var afect_impuesto = lst_producto[i].afectacion_impuesto;
+
+            if (afect_impuesto == 1) {
+                var factor = parseFloat((parseFloat(lst_producto[i].producto_impuesto) + 100) / 100);
+                impuesto += parseFloat((lst_producto[i].subtotal * factor) - lst_producto[i].subtotal);
+            }
         }
         total_importe = parseFloat(subtotal + impuesto);
     }
-    else {
+    else if ($("#tipo_impuesto").val() == 3 && $('#tipo_documento').val() == 6) {
         total_importe = parseFloat(total);
         subtotal = total;
         impuesto = parseFloat(0);
