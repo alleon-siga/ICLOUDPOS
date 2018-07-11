@@ -1,13 +1,23 @@
 <?php
-define('SERVER_VYM', 'vym.grupocd.pe');
+define('SERVER_DESARROLLO', 'desarrollo.teayudo.pe');
 define('SERVER_CRDIGITAL', 'crdigital.teayudo.pe');
 define('SERVER_TEST', 'apps.teayudo.pe/dev/');
+define('SERVER_INNOVALED', 'innovaled.teayudo.pe');
+define('SERVER_TICDEA', 'ticdea.teayudo.pe');
+define('SERVER_OCHOA', 'og.teayudo.pe');
+define('SERVER_GVENTAS', 'gventas.teayudo.pe');
+define('SERVER_DISMILK', 'dismilk.teayudo.pe');
+define('SERVER_FITO', 'fito.teayudo.pe');
+define('SERVER_JAMIS', 'jamis.teayudo.pe');
+define('SERVER_MEGAHOME', 'megahome.teayudo.pe');
+define('SERVER_MOISESMAMANI', 'viammcat.teayudo.pe');
 
 $env = 'PROD';
 $server_name = 'localhost';
-if ($_SERVER['SERVER_NAME'] == SERVER_VYM) {
-    $server_name = SERVER_VYM;
-    define('DATABASE_HOST', 'grupocd_vym');
+
+if ($_SERVER['SERVER_NAME'] == SERVER_DESARROLLO) {
+    $server_name = SERVER_DESARROLLO;
+    define('DATABASE_HOST', 'teayudop_ochoaPrueba');
 } elseif ($_SERVER['SERVER_NAME'] == SERVER_CRDIGITAL) {
     $server_name = SERVER_CRDIGITAL;
     define('DATABASE_HOST', 'teayudop_crdigital');
@@ -15,7 +25,47 @@ if ($_SERVER['SERVER_NAME'] == SERVER_VYM) {
     $server_name = SERVER_TEST;
     define('DATABASE_HOST', '25.36.257.45');
     $env = 'DEV';
-} else {
+}
+/*05/07/2018 => Fecha actualizacion*/
+elseif ($_SERVER['SERVER_NAME'] == SERVER_INNOVALED) {
+    $server_name = SERVER_INNOVALED;
+    define('DATABASE_HOST', 'teayudop_innovalednew');
+}
+/*05/07/2018 => Fecha actualizacion*/
+elseif ($_SERVER['SERVER_NAME'] == SERVER_TICDEA) {
+    $server_name = SERVER_TICDEA;
+    define('DATABASE_HOST', 'teayudop_ticdea');
+}
+/*06/07/2018 => Fecha actualizacion*/
+elseif ($_SERVER['SERVER_NAME'] == SERVER_OCHOA) {
+    $server_name = SERVER_OCHOA;
+    define('DATABASE_HOST', 'teayudop_ochoa');
+}
+elseif ($_SERVER['SERVER_NAME'] == SERVER_GVENTAS) {
+    $server_name = SERVER_GVENTAS;
+    define('DATABASE_HOST', 'teayudop_gventas');
+}
+elseif ($_SERVER['SERVER_NAME'] == SERVER_DISMILK) {
+    $server_name = SERVER_DISMILK;
+    define('DATABASE_HOST', 'teayudop_dismilk');
+}
+elseif ($_SERVER['SERVER_NAME'] == SERVER_FITO) {
+    $server_name = SERVER_FITO;
+    define('DATABASE_HOST', 'teayudop_amazonas');
+}
+elseif ($_SERVER['SERVER_NAME'] == SERVER_JAMIS) {
+    $server_name = SERVER_JAMIS;
+    define('DATABASE_HOST', 'teayudop_jamis');
+}
+elseif ($_SERVER['SERVER_NAME'] == SERVER_MEGAHOME) {
+    $server_name = SERVER_MEGAHOME;
+    define('DATABASE_HOST', 'teayudop_megahome');
+}
+elseif ($_SERVER['SERVER_NAME'] == SERVER_MOISESMAMANI) {
+    $server_name = SERVER_MOISESMAMANI;
+    define('DATABASE_HOST', 'teayudop_viammcat');
+}
+else {
     $env = 'DEV';
     define('DATABASE_HOST', false);
 }
@@ -54,7 +104,7 @@ define('SERVER_NAME', $server_name);
  * @author    EllisLab Dev Team
  * @copyright    Copyright (c) 2008 - 2014, EllisLab, Inc. (https://ellislab.com/)
  * @copyright    Copyright (c) 2014 - 2016, British Columbia Institute of Technology (http://bcit.ca/)
- * @license    http://opensource.org/licenses/MIT	MIT License
+ * @license    http://opensource.org/licenses/MIT   MIT License
  * @link    https://codeigniter.com
  * @since    Version 1.0.0
  * @filesource
@@ -179,7 +229,7 @@ $view_folder = '';
 // $routing['controller'] = '';
 
 // The controller function you wish to be called.
-// $routing['function']	= '';
+// $routing['function'] = '';
 
 
 /*
