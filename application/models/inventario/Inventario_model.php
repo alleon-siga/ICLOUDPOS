@@ -43,12 +43,20 @@ class inventario_model extends CI_Model
             }
 
 
-            if($cantidad_min_stock < $data['cantidad_min_out'])
-            $result[] = array(
-                'producto_id' => $data['producto_id'],
-                'cantidad_actual' => $cantidad_min_stock,
-                'cantidad_vender' => $data['cantidad_min_out']
-            );
+            if($cantidad_min_stock < $data['cantidad_min_out']) {
+                $prod = $this->db->select('*')
+                    ->from('producto')
+                    ->where('producto_id', $data['producto_id'])
+                    ->get()->row();
+
+                $result[] = array(
+                    'producto_id' => $data['producto_id'],
+                    'producto_codigo' => $prod->producto_codigo_interno,
+                    'cantidad_actual' => $cantidad_min_stock,
+                    'cantidad_vender' => $data['cantidad_min_out'],
+                    'producto_nombre' => $prod->producto_nombre
+                );
+            }
         }
 
 
