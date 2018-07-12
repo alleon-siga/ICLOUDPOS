@@ -171,24 +171,23 @@ class facturacion_model extends CI_Model
                     'nota' => $response['MENSAJE']
                 ));
 
-                if ($estado == 3) {
-                    $resumen_detalles = $this->db->join('facturacion', 'facturacion.id = facturacion_resumen_comprobantes.comprobante_id')
-                        ->get_where('facturacion_resumen_comprobantes', array(
-                            'resumen_id' => $resumen_id
-                        ))->result();
+                $resumen_detalles = $this->db->join('facturacion', 'facturacion.id = facturacion_resumen_comprobantes.comprobante_id')
+                    ->get_where('facturacion_resumen_comprobantes', array(
+                        'resumen_id' => $resumen_id
+                    ))->result();
 
-                    foreach ($resumen_detalles as $detalle) {
-                        $this->db->where('id', $detalle->comprobante_id);
-                        $this->db->update('facturacion', array(
-                            'estado' => 3,
-                            'nota' =>
-                                'El Comprobante numero ' . $detalle->documento_numero .
-                                ', ha sido aceptado por el resumen 
+                foreach ($resumen_detalles as $detalle) {
+                    $this->db->where('id', $detalle->comprobante_id);
+                    $this->db->update('facturacion', array(
+                        'estado' => $estado,
+                        'nota' =>
+                            'El Comprobante numero ' . $detalle->documento_numero .
+                            ', ha sido aceptado por el resumen 
                                 RC-' . date('Ymd', strtotime($resumen->fecha)) . '-' . $resumen->correlativo,
-                            'hash_cdr' => isset($response['HASH_CDR']) ? $response['HASH_CDR'] : null
-                        ));
-                    }
+                        'hash_cdr' => isset($response['HASH_CDR']) ? $response['HASH_CDR'] : null
+                    ));
                 }
+
                 return TRUE;
             } else {
                 return FALSE;
@@ -405,8 +404,8 @@ class facturacion_model extends CI_Model
         }
 
         $resumen = $this->db->order_by('id', 'desc')->get_where('facturacion_resumen', array(
-                    'fecha' => date('Y-m-d')
-                ))->row();
+            'fecha' => date('Y-m-d')
+        ))->row();
 
         if ($resumen != NULL) {
             $correlativo = ($resumen->correlativo + 1);
