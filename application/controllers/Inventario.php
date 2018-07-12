@@ -34,11 +34,66 @@ class inventario extends MY_Controller
             $this->columnas = $this->columnas_model->get_by('tabla', 'producto');
             $this->load->library('Pdf');
             $this->load->library('phpExcel/PHPExcel.php');
-        }else{
+        } else {
             redirect(base_url(), 'refresh');
         }
 
 
+    }
+
+    function reset_kardex($key)
+    {
+        if ($key == 'madadehu') {
+
+
+            $this->db->empty_table('kardex');
+
+            $productos = $this->db->get_where('producto', array('producto_estatus' => 1))->result();
+
+            foreach ($productos as $producto) {
+
+                $orden_max = $this->db->select_max('orden', 'orden')
+                    ->where('producto_id', $producto->producto_id)->get('unidades_has_producto')->row();
+
+                $minima_unidad = $this->db->select('id_unidad as um_id,unidades as um_number')
+                    ->where('producto_id', $producto->producto_id)
+                    ->where('orden', $orden_max->orden)
+                    ->get('unidades_has_producto')->row();
+
+                $inventarios = $this->db->get_where('producto_almacen', array('id_producto' => $producto->producto_id))->result();
+                foreach ($inventarios as $inventario) {
+
+                    $cantidad_minima = $this->unidades_model->convert_minimo_um(
+                        $producto->producto_id,
+                        $inventario->cantidad,
+                        $inventario->fraccion
+                    );
+
+                    $this->db->insert('kardex', array(
+                        'fecha' => date('Y-m-d H:i:s'),
+                        'usuario_id' => $this->session->userdata('nUsuCodigo'),
+                        'local_id' => $inventario->id_local,
+                        'producto_id' => $producto->producto_id,
+                        'unidad_id' => $minima_unidad->um_id,
+                        'cantidad' => $cantidad_minima,
+                        'cantidad_saldo' => $cantidad_minima,
+                        'costo' => $producto->producto_costo_unitario,
+                        'moneda_id' => MONEDA_DEFECTO,
+                        'io' => '1',
+                        'tipo' => '-3',
+                        'operacion' => '16',
+                        'serie' => '0',
+                        'numero' => '0',
+                        'ref_id' => 0,
+                        'ref_val' => 'Reinicio de Kardex',
+                    ));
+                }
+            }
+
+            echo 'Kardex Reiniciado';
+        } else {
+            echo 'Clave incorrecta';
+        }
     }
 
 
@@ -73,7 +128,6 @@ class inventario extends MY_Controller
 
     function ajusteinventario_by_local()
     {
-
 
 
         if ($this->input->is_ajax_request()) {
@@ -773,9 +827,9 @@ AND cantidad < producto_stockminimo + (producto_stockminimo * 30)/100 and cantid
         }
 
         $html .= "</table>";
-        $html .='<table><tr><td colspan="8" align="right"><b>Total:</b></td><td colspan="2">';
+        $html .= '<table><tr><td colspan="8" align="right"><b>Total:</b></td><td colspan="2">';
 
-        $simbolo=$moneda_simbolo;
+        $simbolo = $moneda_simbolo;
         if (isset($operacion)) {
             $precio = $total;
             $string = ' $precio$operacion$tasa_soles ';
@@ -784,10 +838,10 @@ AND cantidad < producto_stockminimo + (producto_stockminimo * 30)/100 and cantid
             eval("\$string = \"$string\";");
             eval("\$result = ($string);");
 
-            $html .= $simbolo." ".number_format($result, 2);
+            $html .= $simbolo . " " . number_format($result, 2);
         } else {
-            $html .= $simbolo." ".number_format($total, 2);
-        } 
+            $html .= $simbolo . " " . number_format($total, 2);
+        }
         $html .= "</td></tr></table>";
 
 // Imprimimos el texto con writeHTMLCell()
