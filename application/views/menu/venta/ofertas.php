@@ -25,7 +25,7 @@
 </div>
 <div class="row block">
     <!--    <button type="button" id="imprimir">Imprimir</button>-->
-    <?= form_open_multipart(base_url() . 'venta_new/ofertas/save', array('id' => 'formguardar')) ?>
+    <?= form_open_multipart(base_url() . 'venta_new/ofertas/save', array('id' => 'formguardar', 'accept-charset' => "UTF-8")) ?>
 
 
     <div class="row form-group">
@@ -69,14 +69,45 @@
 
     var grupo = {
         ajaxgrupo: function () {
+            alert('asd')
             return $.ajax({
                 url: '<?= base_url()?>venta_new/ofertas'
 
             })
         },
         guardar: function () {
+//            alert(encodeURI($('#VENTA_PROMO').val()))
 
-            App.formSubmitAjax($("#formguardar").attr('action'), this.ajaxgrupo, null, 'formguardar');
+            $('#barloadermodal').modal('show');
+            $.ajax({
+                url: '<?= base_url()?>venta_new/ofertas/save',
+                type: "post",
+                dataType: "json",
+                data: {
+                    FECHA_VENTA_PROMO: $('#FECHA_VENTA_PROMO').val(),
+                    VENTA_PROMO: encodeURI($('#VENTA_PROMO').val())
+                },
+                success: function (data) {
+
+                    $.ajax({
+                        url: '<?= base_url()?>venta_new/ofertas',
+                        success: function (data) {
+                            $("#barloadermodal").modal('hide');
+                            $(".modal-backdrop").remove();
+                            $('#page-content').html(data);
+                        }
+                    });
+
+
+                },
+                error: function (response) {
+                    $('#barloadermodal').modal('hide');
+                    alert('Error inesperado');
+
+                }
+            });
+
+//            App.formSubmitAjax($("#formguardar").attr('action'), this.ajaxgrupo, null, 'formguardar');
             //App.formSubmitAjax($("#formguardar").attr('action'), this.reloadOpciones, null, 'formguardar');
         },
         reloadOpciones: function () {

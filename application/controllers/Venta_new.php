@@ -633,9 +633,9 @@ class venta_new extends MY_Controller
 
             $configuraciones = array();
             foreach ($keys as $key) {
-                if(is_array($this->input->post($key))){
+                if (is_array($this->input->post($key))) {
                     $config_value = json_encode($this->input->post($key));
-                }else{
+                } else {
                     $config_value = $this->input->post($key);
                 }
                 $configuraciones[] = array(
@@ -686,9 +686,10 @@ class venta_new extends MY_Controller
             foreach ($keys as $key) {
                 $configuraciones[] = array(
                     'config_key' => $key,
-                    'config_value' => $this->input->post($key)
+                    'config_value' => urldecode($this->input->post($key, false))
                 );
             }
+
 
             $result = $this->opciones_model->guardar_configuracion($configuraciones);
             $configuraciones = $this->opciones_model->get_opciones($keys);

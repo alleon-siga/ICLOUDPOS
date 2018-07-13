@@ -358,6 +358,7 @@ class venta_new_model extends CI_Model
         $this->db->where('operacion', 1);
         $this->db->where('ref_id', $venta_id);
         $this->db->update('kardex', array(
+            'tipo' => $iddoc,
             'serie' => $update_venta['serie'],
             'numero' => sumCod($update_venta['numero'], 6)
         ));
