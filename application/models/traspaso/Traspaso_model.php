@@ -277,24 +277,33 @@ class traspaso_model extends CI_Model
 
     }
 
-    function get_traspaso_detalle($id)
+    function get_traspaso($id)
     {
-        $this->db->select('l1.local_nombre as origen, l2.local_nombre as destino, ref_val, t.fecha, username, producto_nombre, cantidad, nombre_unidad');
+        $this->db->select('t.fecha, l2.local_nombre as destino, us.username, t.motivo, t.id');
         $this->db->from('traspaso t');
-        $this->db->join('traspaso_detalle AS d', 't.id = d.traspaso_id');
+        $this->db->join('local AS l2', 't.local_destino = l2.int_local_id');
+        $this->db->join('usuario AS us', 't.usuario_id = us.nUsuCodigo');
+        $this->db->where('t.id', $id);
+        $result = $this->db->get()->row();
+        return $result;
+    }
+
+    function get_traspaso_detalle($id, $local)
+    {
+        $this->db->select('l1.local_nombre as origen, ref_val, producto_nombre, cantidad, nombre_unidad');
+        $this->db->from('traspaso_detalle d');
         $this->db->join('kardex k', 'd.kardex_id = k.id');
         $this->db->join('producto p', 'k.producto_id = p.producto_id');
         $this->db->join('unidades u', 'k.unidad_id = u.id_unidad');
-        $this->db->join('local AS l1', 't.local_origen = l1.int_local_id');
-        $this->db->join('local AS l2', 't.local_destino = l2.int_local_id');
-        $this->db->join('usuario us', 't.usuario_id = us.nUsuCodigo');
-        $this->db->where('t.id', $id);
+        $this->db->join('local AS l1', 'd.local_origen = l1.int_local_id');
+        $this->db->where('d.traspaso_id', $id);
+        $this->db->where('d.local_origen', $local);
         return $this->db->get()->result();
     }
 
     function traspasar_detalle($id)
     {
-        $this->db->select("t.id, p.producto_nombre, k.cantidad, u.nombre_unidad AS um, t.fecha, l1.local_nombre as origen, l2.local_nombre as destino, us.username, t.motivo, k.producto_id, p.producto_codigo_interno");
+        $this->db->select("t.id, p.producto_nombre, k.cantidad, u.nombre_unidad AS um, t.fecha, l1.local_nombre as origen, l2.local_nombre as destino, us.username, t.motivo, k.producto_id, p.producto_codigo_interno, d.local_origen");
         $this->db->from('traspaso AS t');
         $this->db->join('traspaso_detalle AS d', 't.id = d.traspaso_id');
         $this->db->join('kardex AS k', 'd.kardex_id = k.id');
@@ -335,5 +344,16 @@ class traspaso_model extends CI_Model
         $this->db->order_by('orden');
         $result = $this->db->get()->result();
         return $result;
-    }    
+    }
+
+    function getTrasladoDetalle($id)
+    {
+        $this->db->select("d.traspaso_id, l2.local_nombre as origen, d.id");
+        $this->db->from('traspaso_detalle d');
+        $this->db->join('local l2', 'd.local_origen = l2.int_local_id');
+        $this->db->where('d.traspaso_id', $id);
+        $this->db->group_by('d.local_origen');
+        $result = $this->db->get()->result();
+        return $result;
+    }
 }

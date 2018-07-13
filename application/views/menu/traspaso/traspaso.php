@@ -191,6 +191,9 @@
 
 <script src="<?php echo $ruta; ?>recursos/js/Validacion.js"></script>
 <script type="text/javascript">
+    //CONFIGURACIONES INICIALES
+    App.sidebar('close-sidebar');
+    
     var local1 = "";
 
     /*esta variable es para colocarla cuando se cancele el reiniciar el formulario de traspaso*/

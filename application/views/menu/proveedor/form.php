@@ -19,7 +19,7 @@
                         </div>
                         <div class="col-md-9">
                             <input type="text" name="proveedor_nrofax" id="proveedor_nrofax"  class="form-control"
-                                   value="<?php if (isset($proveedor['proveedor_ruc'])) echo $proveedor['proveedor_ruc']; ?>">
+                                   value="<?php if (isset($proveedor['proveedor_ruc'])) echo $proveedor['proveedor_ruc']; ?>" autocomplete="off">
                         </div>
                     </div>
                 </div>
@@ -32,7 +32,7 @@
                         <div class="col-md-9">
                             <input type="text" name="proveedor_nombre" id="proveedor_nombre" required="true"
                                    class="form-control"
-                                   value="<?php if (isset($proveedor['proveedor_nombre'])) echo $proveedor['proveedor_nombre']; ?>">
+                                   value="<?php if (isset($proveedor['proveedor_nombre'])) echo $proveedor['proveedor_nombre']; ?>" autocomplete="off">
                         </div>
                     </div>
                 </div>
@@ -44,7 +44,7 @@
                         </div>
                         <div class="col-md-9">
                             <input type="text" name="proveedor_direccion1" id="proveedor_direccion1"  class="form-control"
-                                   value="<?php if (isset($proveedor['proveedor_direccion1'])) echo $proveedor['proveedor_direccion1']; ?>">
+                                   value="<?php if (isset($proveedor['proveedor_direccion1'])) echo $proveedor['proveedor_direccion1']; ?>" autocomplete="off">
                         </div>
                     </div>
                 </div>
@@ -56,7 +56,7 @@
                         </div>
                         <div class="col-md-9">
                             <input type="text" name="proveedor_telefono1" id="proveedor_telefono1"  class="form-control"
-                                   value="<?php if (isset($proveedor['proveedor_telefono1'])) echo $proveedor['proveedor_telefono1']; ?>">
+                                   value="<?php if (isset($proveedor['proveedor_telefono1'])) echo $proveedor['proveedor_telefono1']; ?>" autocomplete="off">
                         </div>
                     </div>
                 </div>
@@ -70,7 +70,7 @@
                         </div>
                         <div class="col-md-9">
                             <input type="email" name="proveedor_email" id="proveedor_email"  class="form-control"
-                                   value="<?php if (isset($proveedor['proveedor_email'])) echo $proveedor['proveedor_email']; ?>">
+                                   value="<?php if (isset($proveedor['proveedor_email'])) echo $proveedor['proveedor_email']; ?>" autocomplete="off">
                         </div>
                     </div>
                 </div>
@@ -82,7 +82,7 @@
                         </div>
                         <div class="col-md-9">
                             <input type="text" name="proveedor_paginaweb" id=""  class="form-control"
-                                   value="<?php if (isset($proveedor['proveedor_paginaweb'])) echo $proveedor['proveedor_paginaweb']; ?>">
+                                   value="<?php if (isset($proveedor['proveedor_paginaweb'])) echo $proveedor['proveedor_paginaweb']; ?>" autocomplete="off">
                         </div>
                     </div>
                 </div>
@@ -94,7 +94,7 @@
                         </div>
                         <div class="col-md-9">
                             <input type="text" name="proveedor_direccion2" id=""  class="form-control"
-                                   value="<?php if (isset($proveedor['proveedor_contacto'])) echo $proveedor['proveedor_contacto']; ?>">
+                                   value="<?php if (isset($proveedor['proveedor_contacto'])) echo $proveedor['proveedor_contacto']; ?>" autocomplete="off">
                         </div>
                     </div>
                 </div>
@@ -106,7 +106,7 @@
                         </div>
                         <div class="col-md-9">
                             <input type="text" name="proveedor_telefono2" id=""  class="form-control"
-                                   value="<?php if (isset($proveedor['proveedor_telefono2'])) echo $proveedor['proveedor_telefono2']; ?>">
+                                   value="<?php if (isset($proveedor['proveedor_telefono2'])) echo $proveedor['proveedor_telefono2']; ?>" autocomplete="off">
                         </div>
                     </div>
                 </div>
@@ -118,7 +118,7 @@
                         </div>
                         <div class="col-md-9">
                             <input type="text" name="proveedor_observacion" id="" class="form-control"
-                                   value="<?php if (isset($proveedor['proveedor_observacion'])) echo $proveedor['proveedor_observacion']; ?>">
+                                   value="<?php if (isset($proveedor['proveedor_observacion'])) echo $proveedor['proveedor_observacion']; ?>" autocomplete="off">
                         </div>
                     </div>
                 </div>

@@ -170,6 +170,9 @@ class traspaso extends MY_Controller
             $condicion['fecha <= '] = date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])));
 
             $data['movimientos'] = $this->historico_model->get_historico2($condicion);
+            foreach ($data['movimientos'] as $valor) {
+                $data['origen'][] = $this->traspaso_model->getTrasladoDetalle($valor->id);
+            }
 
             $this->load->view('menu/traspaso/lst_reg_traspasos', $data);
         } else {
@@ -204,9 +207,15 @@ class traspaso extends MY_Controller
         echo json_encode($json);
     }
 
-    function imprimir($id)
+    function imprimir($id, $local_origen)
     {
-        $data['datos'] = $this->traspaso_model->get_traspaso_detalle($id);
+        $data['datos'] = $this->traspaso_model->get_traspaso($id);
+        //foreach ($data['datos'] as $valor) {
+            //$data_origen = $this->traspaso_model->get_traspaso_local($valor->id);
+            //foreach ($data_origen as $idLocal) {
+                $data['detalles'] = $this->traspaso_model->get_traspaso_detalle($data['datos']->id, $local_origen);
+            //}
+        //}
         $this->load->view('menu/traspaso/imprimir', $data);
     }
 

@@ -305,7 +305,8 @@ class ingresos extends MY_Controller
                     'local_id' => $this->input->post('local_id'),
                     'moneda_id' => $this->input->post('moneda_id'),
                     'fecha_ini' => $fecha_ini,
-                    'fecha_fin' => $fecha_fin
+                    'fecha_fin' => $fecha_fin,
+                    'tipo_ingreso' => 'COMPRA'
                 );
                 $data['moneda'] = $this->db->get_where('moneda', array('id_moneda' => $params['moneda_id']))->row();
                 $data['ingresos'] = $this->ingreso_model->get_compras($params);

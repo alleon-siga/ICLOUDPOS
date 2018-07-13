@@ -818,7 +818,15 @@ class venta_new extends MY_Controller
                 $this->venta->imprimir_boleta($data);
             }
         } elseif ($tipo_impresion == 'TRASPASO') {
-            $data['venta'] = $this->venta->get_venta_detalle_traspaso($venta_id);
+            $id_traspaso = $this->db->get_where('traspaso', array('ref_id' => $venta_id))->row();
+            $data_origen = $this->venta->get_traspaso_local($id_traspaso->id);
+
+            $x = 0;
+            foreach ($data_origen as $idLocal) {
+                $data['datos'][$x]['head'] = $this->venta->get_venta_traspaso($id_traspaso->id);
+                $data['datos'][$x]['detalles'] = $this->venta->get_venta_detalle_traspaso($id_traspaso->id, $idLocal->local_origen);
+                $x++;
+            }
             $this->load->view('menu/venta/impresiones/traspaso', $data);
         }
     }

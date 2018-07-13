@@ -7,14 +7,14 @@ $(document).ready(function () {
 	});
 });
 
-function imprimir(id){
+function imprimir(id, local_origen){
     $.bootstrapGrowl('<p>IMPRIMIENDO TRASPASO</p>', {
         type: 'success',
         delay: 2500,
         allow_dismiss: true
     });
 
-    $("#imprimir_frame").attr('src', url + 'traspaso/imprimir/' + id);
+    $("#imprimir_frame").attr('src', url + 'traspaso/imprimir/' + id + '/' + local_origen);
 }
 
 function ver(id){

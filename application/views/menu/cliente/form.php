@@ -119,7 +119,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <label id="lblIdenDni" class="control-label panel-admin-text"><?= $term[0]->valor ?></label>
-                                <input type="number" autocomplete="true" name="ruc_j" value="<?php if (isset($cliente['identificacion'])) echo  $cliente['identificacion']; ?>" id="ruc_j" typeClass="DNI" class="form-control dni ruc" />
+                                <input type="number" autocomplete="true" name="ruc_j" value="<?php if (isset($cliente['identificacion'])) echo  $cliente['identificacion']; ?>" id="ruc_j" typeClass="DNI" class="form-control dni ruc" autocomplete="off" />
                                 <input type="hidden" name="ruc_j_bk" value="<?php if (isset($cliente['identificacion'])) echo  $cliente['identificacion']; ?>">
                             </div>
                         </div>
@@ -148,13 +148,13 @@
                                 <label class="control-label panel-admin-text">Nombre</label>
                                 <input type="text" name="nombres"
                                        value="<?php if (isset($cliente['nombres'])) echo  $cliente['nombres']; ?>"
-                                       id="nombres" class="form-control" data-placeholder="Nombre"  />
+                                       id="nombres" class="form-control" data-placeholder="Nombre" autocomplete="off"  />
                             </div>
                             <div class="col-md-6">
                                 <label class="control-label panel-admin-text">Apellidos</label>
                                 <input type="text" name="apellido_paterno"
                                        value="<?php if (isset($cliente['apellido_paterno'])) echo  $cliente['apellido_paterno']; ?>"
-                                       id="apellido_paterno" class="form-control" data-placeholder="Apellido paterno"  />
+                                       id="apellido_paterno" class="form-control" data-placeholder="Apellido paterno" autocomplete="off"  />
                             </div>
                         </div>
                         <!--<div class="row">
@@ -170,7 +170,7 @@
                                 <label class="control-label panel-admin-text">Dirección Principal</label>
                                 <input type="text"  id="direccion_j" required="true"
                                 class="form-control" name="direccion_j"
-                                value="<?php if (isset($cliente['direccion'])) echo $cliente['direccion']; ?>">
+                                value="<?php if (isset($cliente['direccion'])) echo $cliente['direccion']; ?>" autocomplete="off">
                             </div>
                         </div>
                         <div class="row">
@@ -178,13 +178,13 @@
                                 <label class="control-label panel-admin-text">Telefono</label>
                                 <input type="text" name="telefono"
                                 value="<?php if (isset($cliente['telefono1'])) echo  $cliente['telefono1']; ?>"
-                                id="telefono" class="form-control" data-placeholder="Telefono"  />
+                                id="telefono" class="form-control" data-placeholder="Telefono" autocomplete="off"  />
                             </div>
                             <div class="col-md-6">
                                 <label class="control-label panel-admin-text">Correo Electr&oacute;nico</label>
                                 <input type="email" name="correo"
                                 value="<?php if (isset($cliente['email'])) echo  $cliente['email']; ?>"
-                                id="correo" class="form-control" data-placeholder="Correo"  />
+                                id="correo" class="form-control" data-placeholder="Correo" autocomplete="off"  />
                             </div>
                         </div>
                         <div class="row">
@@ -220,7 +220,7 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <label class="control-label panel-admin-text">Nota</label>
-                                    <input type="text" name="tienda" value="<?php if (isset($cliente['nota'])) echo  $cliente['nota']; ?>" id="tienda" class="form-control" data-placeholder="Tienda"  />
+                                    <input type="text" name="tienda" value="<?php if (isset($cliente['nota'])) echo  $cliente['nota']; ?>" id="tienda" class="form-control" data-placeholder="Tienda" autocomplete="off"  />
                                 </div>
                             </div>
                             <div class="row">
@@ -277,7 +277,7 @@
                                     <input type="number" <?php if(!(isset($cliente['agente_retension_valor']) AND $cliente['tipo_cliente'] == 1)){ echo "readonly"; } ?>  
                                     class="form-control"  autocomplete="on"
                                     id="retencion_value" name="retencion_value" 
-                                    value="<?php if(isset($cliente['agente_retension_valor']) AND $cliente['tipo_cliente'] == 1 ){ echo $cliente['agente_retension_valor']; } ?>" />
+                                    value="<?php if(isset($cliente['agente_retension_valor']) AND $cliente['tipo_cliente'] == 1 ){ echo $cliente['agente_retension_valor']; } ?>" autocomplete="off" />
                                 </div>
                                 <div class="col-md-4">
                                     <input type="checkbox" name="credito" id="credito" value="1" 
@@ -286,7 +286,7 @@
                                     <input type="number"
                                            value="<?php if (isset($cliente['linea_credito'])) echo $cliente['linea_credito']; ?>"
                                            id="lineaC_j" name="lineaC_j" class="form-control"
-                                           <?php if(!(isset($cliente['linea_credito']) AND $cliente['linea_credito'] != NULL)){ echo "readonly"; } ?> />
+                                           <?php if(!(isset($cliente['linea_credito']) AND $cliente['linea_credito'] != NULL)){ echo "readonly"; } ?> autocomplete="off" />
                                 </div>
                             </div>
                                     <!--<div class="row">
@@ -406,14 +406,14 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <label id="lblIdenRuc" class="control-label panel-admin-text"><?= $term[1]->valor ?></label>
-                                <input type="number" autocomplete="true" name="ruc_j" value="<?php if (isset($cliente['identificacion'])) echo  $cliente['identificacion']; ?>" id="ruc_j" class="form-control ruc" />
+                                <input type="number" autocomplete="true" name="ruc_j" value="<?php if (isset($cliente['identificacion'])) echo  $cliente['identificacion']; ?>" id="ruc_j" class="form-control ruc" autocomplete="off" />
                                 <input type="hidden" name="ruc_j_bk" value="<?php if (isset($cliente['identificacion'])) echo  $cliente['identificacion']; ?>">
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12">
                                 <label class="control-label panel-admin-text">Razon Social</label>
-                                <input type="text" name="razon_social_j" value="<?php if (isset($cliente['razon_social'])) echo  $cliente['razon_social']; ?>" id="razon_social_j" class="form-control"  />
+                                <input type="text" name="razon_social_j" value="<?php if (isset($cliente['razon_social'])) echo  $cliente['razon_social']; ?>" id="razon_social_j" class="form-control" autocomplete="off"  />
                             </div> 
                         </div>
                         <div class="row">
@@ -432,7 +432,7 @@
                                 <label class="control-label panel-admin-text">Dirección Principal</label>
                                 <input type="text"  id="direccion_j" required="true"
                                 class="form-control" name="direccion_j"
-                                value="<?php if (isset($cliente['direccion'])) echo $cliente['direccion']; ?>">
+                                value="<?php if (isset($cliente['direccion'])) echo $cliente['direccion']; ?>" autocomplete="off">
                             </div>
                         </div>
                         <div class="row">
@@ -440,7 +440,7 @@
                                 <label class="control-label panel-admin-text">Representante</label>
                                 <input type="text" name="apellidoPJuridico"
                                value="<?php if (isset($cliente['dni'])) echo  $cliente['dni']; ?>"
-                               id="apellidoPJuridico" class="form-control" data-placeholder="Nombre"  />
+                               id="apellidoPJuridico" class="form-control" data-placeholder="Nombre" autocomplete="off"  />
                             </div>
                         </div>
                         <div class="row">
@@ -448,13 +448,13 @@
                                 <label class="control-label panel-admin-text">Telefono</label>
                                 <input type="text" name="telefono"
                                 value="<?php if (isset($cliente['telefono1'])) echo  $cliente['telefono1']; ?>"
-                                id="telefono" class="form-control" data-placeholder="Telefono"  />
+                                id="telefono" class="form-control" data-placeholder="Telefono" autocomplete="off"  />
                             </div>
                             <div class="col-md-6">
                                 <label class="control-label panel-admin-text">Correo Electr&oacute;nico</label>
                                 <input type="email" name="correo"
                                 value="<?php if (isset($cliente['email'])) echo  $cliente['email']; ?>"
-                                id="correo" class="form-control" data-placeholder="Correo"  />
+                                id="correo" class="form-control" data-placeholder="Correo" autocomplete="off" />
                             </div>
                         </div>
                         <div class="row">
@@ -640,7 +640,7 @@
                                     <input type="number" <?php if(!(isset($cliente['agente_retension_valor']) AND $cliente['tipo_cliente'] == 1)){ echo "readonly"; } ?>  
                                             class="form-control"  autocomplete="on"
                                            id="retencion_value" name="retencion_value" 
-                                           value="<?php if(isset($cliente['agente_retension_valor']) AND $cliente['tipo_cliente'] == 1 ){ echo $cliente['agente_retension_valor']; } ?>" />
+                                           value="<?php if(isset($cliente['agente_retension_valor']) AND $cliente['tipo_cliente'] == 1 ){ echo $cliente['agente_retension_valor']; } ?>" autocomplete="off" />
                                 </div>
                                 <div class="col-md-4">
                                     <input type="checkbox" name="credito" id="credito" value="1" 
@@ -649,7 +649,7 @@
                                     <input type="number"
                                            value="<?php if (isset($cliente['linea_credito'])) echo $cliente['linea_credito']; ?>"
                                            id="lineaC_j" name="lineaC_j" class="form-control"
-                                           <?php if(!(isset($cliente['linea_credito']) AND $cliente['linea_credito'] != NULL)){ echo "readonly"; } ?> />
+                                           <?php if(!(isset($cliente['linea_credito']) AND $cliente['linea_credito'] != NULL)){ echo "readonly"; } ?> autocomplete="off" />
                                 </div>
                             </div>
                                 <!--<div class="row">

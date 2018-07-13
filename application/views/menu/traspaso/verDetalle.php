@@ -34,6 +34,7 @@
                             <th>Origen</th>
                             <th>UM</th>
                             <th>Cantidad</th>
+                            <th>Acciones</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -44,6 +45,11 @@
                                 <td><?= $dato->origen ?></td>
                                 <td><?= number_format($dato->cantidad, 0) ?></td>
                                 <td><?= $dato->um ?></td>
+                                <td>
+                                    <a class="btn btn-primary" title="Imprimir" href="#" onclick="imprimir('<?= $dato->id ?>', '<?= $dato->local_origen ?>')">
+                                        <i class="fa fa-print"></i>
+                                    </a>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                         </tbody>
@@ -55,7 +61,6 @@
             <div class="row">
                 <div class="text-right">
                     <div class="col-md-12">
-                        <input type="button" class='btn btn-primary' value="Imprimir" onclick="imprimir(<?= $data[0]->id ?>)">
                         <input type="button" class='btn btn-danger' value="Cerrar" data-dismiss="modal">
                     </div>
                 </div>

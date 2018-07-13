@@ -230,10 +230,10 @@ class historico_model extends CI_Model
 
     public function get_historico2($where)
     {
-        $this->db->select("t.id, t.fecha, l2.local_nombre as destino, us.username, IF(t.ref_id>0, CONCAT('VENTA',' (# ',t.ref_id,')'),'TRASPASO') AS ref_id");
-        $this->db->from('traspaso AS t');
-        $this->db->join('local AS l2', 't.local_destino = l2.int_local_id');
-        $this->db->join('usuario AS us', 't.usuario_id = us.nUsuCodigo');
+        $this->db->select("t.id, t.fecha, us.username, IF(t.ref_id>0, CONCAT('VENTA',' (# ',t.ref_id,')'),'TRASPASO') AS ref_id, l1.local_nombre as destino");
+        $this->db->from('traspaso t');
+        $this->db->join('local l1', 't.local_destino = l1.int_local_id');
+        $this->db->join('usuario us', 't.usuario_id = us.nUsuCodigo');
         $this->db->where($where);
         $result = $this->db->get()->result();
         return $result;

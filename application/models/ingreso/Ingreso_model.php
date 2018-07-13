@@ -122,6 +122,10 @@ class ingreso_model extends CI_Model
             $this->db->where('ingreso.fecha_registro >=', $data['year'] . '-' . sumCod($data['mes'], 2) . '-' . $data['dia_min'] . " 00:00:00");
             $this->db->where('ingreso.fecha_registro <=', $data['year'] . '-' . sumCod($data['mes'], 2) . '-' . $last_day . " 23:59:59");
         }
+
+        if(isset($data['tipo_ingreso'])){
+            $this->db->where('ingreso.tipo_ingreso', $data['tipo_ingreso']);
+        }
     }
 
     function get_monedas($id_moneda = false)
