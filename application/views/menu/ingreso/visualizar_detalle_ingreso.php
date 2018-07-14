@@ -172,6 +172,11 @@
                                     <thead>
                                     <th>N° Cuota</th>
                                     <th>Vencimiento</th>
+                                <?php if(!empty($credito->capital)){ ?>
+                                    <th>Capital</th>
+                                    <th>Inter&eacute;s</th>
+                                    <th>Comisi&oacute;n</th>
+                                <?php } ?>
                                     <th>Total</th>
                                     <th>Pago Pendiente</th>
                                     <th>Estado</th>
@@ -190,6 +195,11 @@
                                             </td>
                                             <td align="center">
                                                 <input type="text" class="form-control cambiar_fecha" readonly style="width: 100px; padding: 2px 2px; cursor: pointer; color: #2CA8E4; text-align: center; border: 1px solid #2CA8E4;" value="<?= date('d-m-Y', strtotime($pago->fecha_vencimiento)) ?>" data-id="<?= $pago->id ?>"></td>
+                                        <?php if(!empty($credito->capital)){ ?>
+                                            <td align="right"><?= $ingreso->simbolo." ".number_format($pago->capital, 2) ?></td>
+                                            <td align="right"><?= $ingreso->simbolo." ".number_format($pago->interes, 2) ?></td>
+                                            <td align="right"><?= $ingreso->simbolo." ".number_format($pago->comision, 2) ?></td>
+                                        <?php } ?>
                                             <td align="right"> <?= $ingreso->simbolo . " " . number_format($pago->monto, 2) ?></td>
                                             <td align="right"><?= $ingreso->simbolo . " " . number_format($pago->monto - $pago->monto_pagado, 2) ?></td>
                                             <?php if ($pago->pagado) { ?>

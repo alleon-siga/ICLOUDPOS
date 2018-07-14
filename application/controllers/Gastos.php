@@ -215,14 +215,15 @@ class gastos extends MY_Controller
                 'tipo_impuesto' => $tipo_impuesto
             );
             $credito['c_inicial'] = $this->input->post('c_saldo_inicial') != '' ? $this->input->post('c_saldo_inicial') : 0;
-            $credito['c_precio_contado'] = $this->input->post('c_precio_contado');
-            $credito['c_precio_credito'] = $this->input->post('c_precio_credito');
-            $credito['c_tasa_interes'] = $this->input->post('c_tasa_interes');
+            $credito['c_precio_contado'] = $this->input->post('c_precio_contado'); //capital
+            $credito['c_tasa_interes'] = $this->input->post('c_tasa_interes'); //interes
+            $credito['c_comision'] = $this->input->post('c_comision'); //comision
+            $credito['c_precio_credito'] = $this->input->post('c_precio_credito');  //total de cuota
             $credito['c_numero_cuotas'] = $this->input->post('c_numero_cuotas');
             $credito['c_fecha_giro'] = $this->input->post('c_fecha_giro');
             $credito['c_periodo_gracia'] = $this->input->post('c_periodo_gracia');
             $cuotas = json_decode($this->input->post('cuotas', true));
-            $resultado = $this->ingreso_model->insertar_compra($comp_cab_pie, null, $credito, $cuotas);            
+            $resultado = $this->ingreso_model->insertar_compra($comp_cab_pie, null, $credito, $cuotas);
         }
 
         if (empty($id)) {

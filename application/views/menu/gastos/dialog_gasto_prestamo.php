@@ -13,7 +13,7 @@
 <input type="hidden" name="doc_serie" value="">
 <input type="hidden" name="doc_numero" value="">
 <?php $md = get_moneda_defecto() ?>
-<div class="modal-dialog" style="width: 70%;">
+<div class="modal-dialog" style="width: 80%;">
     <div class="modal-content">
         <div class="modal-header">
             <h4>Compra al Cr&eacute;dito</h4>
@@ -38,11 +38,14 @@
                                     <div class="col-md-3">
                                         <label class="control-label panel-admin-text">Fecha de Giro:</label>
                                     </div>
-                                    <div class="col-md-9">
+                                    <div class="col-md-3">
                                         <div class="input-group">
                                             <input type="text" style="font-weight: bold;" class='form-control date-picker' name="c_fecha_giro" id="c_fecha_giro" value="<?= date('d/m/Y') ?>" readonly>
                                             <input type="hidden" id="last_fecha_giro" value="<?= date('d/m/Y') ?>">
                                         </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="control-label panel-admin-text">Moneda: <span class="tipo_moneda"></span></label>
                                     </div>
                                 </div>
                                 <br>
@@ -51,9 +54,13 @@
                                         <table class="table table-bordered table-cuotas">
                                             <thead>
                                                 <tr>
-                                                    <th>Nro Letra</th>
-                                                    <th>Fecha Vencimiento</th>
-                                                    <th>Monto a Pagar</th>
+                                                    <th># Letra</th>
+                                                    <th>Fecha Venc.</th>
+                                                    <th>Saldo</th>
+                                                    <th>Capital</th>
+                                                    <th>Inter&eacute;s</th>
+                                                    <th>Comisi&oacute;n</th>
+                                                    <th>Total cuota</th>
                                                 </tr>
                                             </thead>
                                         <?php
@@ -81,7 +88,7 @@
                             <div class="col-md-7">
                                 <div class="input-group">
                                     <div class="input-group-addon tipo_moneda"></div>
-                                    <input type="text" style="text-align: right; font-weight: bold;" class='form-control' name="c_precio_contado" id="c_precio_contado" autocomplete="off">
+                                    <input onkeydown="return soloDecimal(this, event);" type="text" style="text-align: right; font-weight: bold;" class='form-control' name="c_precio_contado" id="c_precio_contado" autocomplete="off">
                                 </div>
                             </div>
                         </div>
@@ -92,13 +99,24 @@
                             <div class="col-md-7">
                                 <div class="input-group">
                                     <div class="input-group-addon tipo_moneda"></div>
-                                    <input type="text" style="text-align: right; font-weight: bold;" class='form-control' name="c_tasa_interes" id="c_tasa_interes" autocomplete="off">
+                                    <input onkeydown="return soloDecimal(this, event);" type="text" style="text-align: right; font-weight: bold;" class='form-control' name="c_tasa_interes" id="c_tasa_interes" autocomplete="off">
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-5 label-title">
-                                <label class="control-label">Capital + Inter&eacute;s:</label>
+                                <label class="control-label">Comisi&oacute;n:</label>
+                            </div>
+                            <div class="col-md-7">
+                                <div class="input-group">
+                                    <div class="input-group-addon tipo_moneda"></div>
+                                    <input onkeydown="return soloDecimal(this, event);" type="text" style="text-align: right; font-weight: bold;" class='form-control' name="c_comision" id="c_comision" autocomplete="off">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 label-title">
+                                <label class="control-label">Total cuota:</label>
                             </div>
                             <div class="col-md-7">
                                 <div class="input-group">

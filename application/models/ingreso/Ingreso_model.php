@@ -515,10 +515,12 @@ class ingreso_model extends CI_Model
 
     function save_credito($compra_id, $credito, $cuotas)
     {
-
         $this->db->insert('ingreso_credito', array(
             'ingreso_id' => $compra_id,
             'numero_cuotas' => count($cuotas),
+            'capital' => $credito['c_precio_contado'],
+            'interes' => $credito['c_tasa_interes'],
+            'comision' => $credito['c_comision'],
             'monto_cuota' => $credito['c_precio_credito'],
             'monto_debito' => 0,
             'estado' => 'PENDIENTE',
@@ -530,6 +532,9 @@ class ingreso_model extends CI_Model
         foreach ($cuotas as $cuota) {
             $this->db->insert('ingreso_credito_cuotas', array(
                 'ingreso_id' => $compra_id,
+                'capital' => $cuota->capital,
+                'interes' => $cuota->interes,
+                'comision' => $cuota->comision,
                 'monto' => $cuota->monto,
                 'letra' => $cuota->letra,
                 'fecha_vencimiento' => date('Y-m-d', strtotime(str_replace('/', '-', $cuota->fecha))),
@@ -537,7 +542,6 @@ class ingreso_model extends CI_Model
                 'fecha_cancelada' => null
             ));
         }
-
     }
 
     function guardar_detalle_contable($detalle, $ingreso_id)

@@ -149,7 +149,6 @@ function mensaje(growlType, msj){
         delay: 2500,
         allow_dismiss: true
     });
-    return false;
 }
 
 var region = {
