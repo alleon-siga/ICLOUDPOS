@@ -27,7 +27,7 @@ class Opciones_api_model extends CI_Model
         $result = $this->db->select('*')
             ->from('opcion_grupo')
             ->where('grupo', $grupo->grupo)
-            ->where('opcion', 10)
+            ->where('opcion', 11)
             ->get()->row();
 
         return $result;
@@ -43,7 +43,7 @@ class Opciones_api_model extends CI_Model
         $result = $this->db->select('*')
             ->from('opcion_grupo')
             ->where('grupo', $grupo->grupo)
-            ->where('opcion', 1001)
+            ->where('opcion', 1101)
             ->get()->result();
 
         return $result;
@@ -59,7 +59,7 @@ class Opciones_api_model extends CI_Model
         $result = $this->db->select('*')
             ->from('opcion_grupo')
             ->where('grupo', $grupo->grupo)
-            ->where('opcion', 1002)
+            ->where('opcion', 1102)
             ->get()->result();
 
         return $result;
@@ -75,7 +75,7 @@ class Opciones_api_model extends CI_Model
         $result = $this->db->select('*')
             ->from('opcion_grupo')
             ->where('grupo', $grupo->grupo)
-            ->where('opcion', 1003)
+            ->where('opcion', 1103)
             ->get()->result();
 
         return $result;
