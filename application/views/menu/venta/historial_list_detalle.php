@@ -661,12 +661,15 @@
                     });
 
                     if ($('#facturacion_electronica').val() == 1 && (data.venta.id_documento == 1 || data.venta.id_documento == 3)) {
-                        if (data.facturacion.estado == 1) {
-                            show_msg('success', '<h4>Facturacion Electronica:</h4> ' + data.facturacion.nota);
+                        if (data.facturacion != undefined) {
+                            if (data.facturacion.estado == 1) {
+                                show_msg('success', '<h4>Facturacion Electronica:</h4> ' + data.facturacion.nota);
+                            }
+                            else {
+                                show_msg('danger', '<h4>Facturacion Electronica:</h4> ' + data.facturacion.nota);
+                            }
                         }
-                        else {
-                            show_msg('danger', '<h4>Facturacion Electronica:</h4> ' + data.facturacion.nota);
-                        }
+
                     }
 
                     get_ventas();
