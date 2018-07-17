@@ -12,17 +12,20 @@
         <thead>
         <tr>
             <th>ID</th>
-            <th width="20%">Local</th>
-            <th>Fecha</th>
-            <th width="10%">Tipo de Gasto</th>
-            <th width="20%">Persona Afectada</th>
-            <th width="20%">Descripci&oacute;n</th>
-            <th>Total</th>
-            <th width="10%">Usuario</th>
-            <th>Fecha Registro</th>
-            <th>Condici&oacute;n</th>
-            <th>Estado</th>
-            <th width="20%" class="desktop">Acciones</th>
+            <th width="10%">Local</th>
+            <th width="5%">Fecha</th>
+            <th width="5%">Tipo de Gasto</th>
+            <th width="5%">Documento</th>
+            <th width="10%">Persona Afectada</th>
+            <th width="15%">Descripci&oacute;n</th>
+            <th width="5%">Subtotal</th>
+            <th width="5%">Impuesto</th>
+            <th width="10%">Total</th>
+            <th width="5%">Usuario</th>
+            <th width="5%">F. Registro</th>
+            <th width="5%">Condici&oacute;n</th>
+            <th width="5%">Estado</th>
+            <th width="10%" class="desktop">Acciones</th>
         </tr>
         </thead>
         <tbody>
@@ -34,17 +37,20 @@
 
                     <td class="center"><?= $gastos['id_gastos'] ?></td>
                     <td style="white-space: normal;"><?= $gastos['local_nombre'] ?></td>
-                    <td>
+                    <td style="white-space: normal;">
                         <span style="display: none;"><?= date("YmdHis", strtotime($gastos['fecha'])) ?></span><?= date("d/m/Y", strtotime($gastos['fecha'])) ?>
                     </td>
                     <td style="white-space: normal;"><?= $gastos['nombre_tipos_gasto'] ?></td>
+                    <td style="white-space: normal;"><?= $gastos['des_doc'] ?></td>
                     <td style="white-space: normal;"><?= $gastos['proveedor_id'] != NULL ? $gastos['proveedor_nombre'] : $gastos['trabajador'] ?></td>
                     <td style="white-space: normal;"><?= $gastos['descripcion'] ?></td>
-                    <td><?= $gastos['simbolo'] . ' ' . number_format($gastos['total'], 2) ?></td>
+                    <td style="white-space: normal;"><?= $gastos['simbolo'] . ' ' . number_format($gastos['subtotal'], 2) ?></td>
+                    <td style="white-space: normal;"><?= $gastos['simbolo'] . ' ' . number_format($gastos['impuesto'], 2) ?></td>
+                    <td style="white-space: normal;"><?= $gastos['simbolo'] . ' ' . number_format($gastos['total'], 2) ?></td>
                     <td style="white-space: normal;"><?= $gastos['responsable'] ?></td>
-                    <td><?= date("d/m/Y", strtotime($gastos['fecha_registro'])) ?></td>
-                    <td><?= $gastos['nombre_condiciones'] ?></td>
-                    <td><?= $gastos['status_gastos'] == 1 ? 'Pendiente' : 'Confirmado' ?></td>
+                    <td style="white-space: normal;"><?= date("d/m/Y", strtotime($gastos['fecha_registro'])) ?></td>
+                    <td style="white-space: normal;"><?= $gastos['nombre_condiciones'] ?></td>
+                    <td style="white-space: normal;"><?= $gastos['status_gastos'] == 1 ? 'Pendiente' : 'Confirmado' ?></td>
                     <td class="center" style="white-space: nowrap;">
                         <div class="btn-group">
                         <?php if ($gastos['status_gastos'] == 1): ?>

@@ -46,18 +46,16 @@ class gastos_model extends CI_Model
     {
         $this->db->select('*, moneda.*,
          responsable.username as responsable, trabajador.nombre as trabajador,
-         gastos.total as total, condiciones_pago.nombre_condiciones');
+         gastos.total as total, condiciones_pago.nombre_condiciones, documentos.des_doc, gastos.subtotal, gastos.impuesto');
         $this->db->join('tipos_gasto', 'tipos_gasto.id_tipos_gasto=gastos.tipo_gasto');
         $this->db->join('local', 'gastos.local_id=local.int_local_id');
         $this->db->join('moneda', 'moneda.id_moneda=gastos.id_moneda');
+        $this->db->join('documentos', 'gastos.id_documento = documentos.id_doc');
         $this->db->join('usuario as trabajador', 'gastos.usuario_id=trabajador.nUsuCodigo', 'left');
         $this->db->join('usuario as responsable', 'gastos.responsable_id=responsable.nUsuCodigo');
         $this->db->join('proveedor', 'gastos.proveedor_id=proveedor.id_proveedor', 'left');
         $this->db->join('condiciones_pago', 'gastos.condicion_pago=condiciones_pago.id_condiciones', 'left');
-
         $this->set_gastos_where($data);
-
-
         return $this->db->get('gastos')->result_array();
     }
 
@@ -108,7 +106,7 @@ class gastos_model extends CI_Model
             'serie' => $data['serie'],
             'numero' => $data['numero'],
             'id_impuesto' => $data['id_impuesto'],
-            'subtotal' => $data['subtotal'],
+            'subtotal' => ($data['gravable']=='0')? $data['total'] : $data['subtotal'],
             'impuesto' => $data['impuesto'],
             'condicion_pago' => $data['tipo_pago']
         );
@@ -136,7 +134,7 @@ class gastos_model extends CI_Model
         }
 
         $this->cajas_model->save_pendiente(array(
-            'monto' => ($data['total'] - $data['c_tasa_interes']),
+            'monto' => $data['capital'],
             'tipo' => 'GASTOS',
             'IO' => $io,
             'ref_id' => $id,

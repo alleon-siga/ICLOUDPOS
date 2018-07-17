@@ -161,7 +161,8 @@ class gastos extends MY_Controller
             'impuesto' => $this->input->post('impuesto'),
             'moneda_id' => $cuenta->moneda_id,
             'tipo_pago' => $this->input->post('tipo_pago'),
-            'c_tasa_interes' => $this->input->post('c_tasa_interes')
+            'c_tasa_interes' => $this->input->post('c_tasa_interes'),
+            'capital' => $this->input->post('c_precio_contado')
         );
         
         $detalle = array();

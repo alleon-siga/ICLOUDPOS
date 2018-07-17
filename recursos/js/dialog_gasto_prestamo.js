@@ -123,7 +123,8 @@ function refresh_credito_window(trigger) {
     var interes = isNaN(parseFloat($("#c_tasa_interes").val())) ? 0 : parseFloat($("#c_tasa_interes").val());
     var comision = isNaN(parseFloat($("#c_comision").val())) ? 0 : parseFloat($("#c_comision").val());
     var prestamo = capital + interes + comision;
-    $("#c_precio_credito").val(formatPrice(prestamo));
+    var b = prestamo.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0];
+    $("#c_precio_credito").val(b);
     generar_proyeccion(prestamo);
 
     if ($('#c_pago_periodo').val() == 6){
@@ -132,7 +133,7 @@ function refresh_credito_window(trigger) {
     generar_cuotas(parseInt($("#c_numero_cuotas").val()), capital, interes, comision, prestamo);
     $('#body_proyeccion_cuotas tr').removeClass('table-selected');
     $('#body_proyeccion_cuotas tr[data-cuota="' + $("#c_numero_cuotas").val() + '"]').addClass('table-selected');
-    $("#c_total_deuda").html(formatPrice(prestamo));
+    $("#c_total_deuda").html(b);
 
     var capital = 0;
     $('.monto_a_pagar').each(function () {
@@ -193,33 +194,33 @@ function generar_rangos(numero_cuotas) {
 function generar_cuotas(numero_cuotas, vcapital, vinteres, vcomision, vprestamo) {
     $('#last_fecha_giro').val($("#c_fecha_giro").val());
     var body = $("#body_cuotas");
-    var capital = formatPrice(vcapital / numero_cuotas);
-    var interes = formatPrice(vinteres / numero_cuotas);
-    var comision = formatPrice(vcomision / numero_cuotas);
-    var prestamo = formatPrice(vprestamo / numero_cuotas);
+    var capital = roundPrice(vcapital / numero_cuotas, 2);
+    var interes = roundPrice(vinteres / numero_cuotas, 2);
+    var comision = roundPrice(vcomision / numero_cuotas, 2);
+    var prestamo = roundPrice(vprestamo / numero_cuotas, 2);
     body.html('');
     var saldo = vcapital;
     for (var i = 0; i < numero_cuotas; i++) {
-        saldo = formatPrice(saldo - capital);
+        saldo = roundPrice(saldo - capital);
         var template = '<tr class="sumarFila">';
         template += '<td id="c_cuota_letra_' + i + '">' + (i + 1) + ' / ' + numero_cuotas + '</td>';
         template += '<td>';
         template += '<input style="width:90px;" style="cursor:pointer;" class="form-control fecha_venc" type="text" id="c_cuota_fecha_'+ i +'" name="c_cuota_fecha_'+ i +'" value="' + get_fecha_vencimiento(i, $("#c_pago_periodo").val()) + '" autocomplete="off" readonly>'; //fecha vencimiento
         template += '</td>';
         template += '<td>';
-        template += '<input style="width:70px;" class="form-control saldo" onChange="actualizarTotal()" type="text" id="c_saldo_'+ i +'" name="c_saldo_'+ i +'" value="' + saldo + '" onkeydown="return soloDecimal(this, event);" autocomplete="off">'; //saldo
+        template += '<input style="width:80px;" class="form-control saldo" onChange="actualizarTotal()" type="text" id="c_saldo_'+ i +'" name="c_saldo_'+ i +'" value="' + saldo + '" onkeydown="return soloDecimal(this, event);" autocomplete="off">'; //saldo
         template += '</td>';
         template += '<td>';
-        template += '<input style="width:70px;" class="form-control capital" onChange="actualizarTotal()" type="text" id="c_capital_'+ i +'" name="c_capital_'+ i +'" value="' + capital + '" onkeydown="return soloDecimal(this, event);" autocomplete="off">'; //capital
+        template += '<input style="width:80px;" class="form-control capital" onChange="actualizarTotal()" type="text" id="c_capital_'+ i +'" name="c_capital_'+ i +'" value="' + capital + '" onkeydown="return soloDecimal(this, event);" autocomplete="off">'; //capital
         template += '</td>';
         template += '<td>';
-        template += '<input style="width:70px;" class="form-control interes" onChange="actualizarTotal()" type="text" id="c_interes_'+ i +'" name="c_interes_'+ i +'" value="' + interes + '" onkeydown="return soloDecimal(this, event);" autocomplete="off">'; //interes
+        template += '<input style="width:80px;" class="form-control interes" onChange="actualizarTotal()" type="text" id="c_interes_'+ i +'" name="c_interes_'+ i +'" value="' + interes + '" onkeydown="return soloDecimal(this, event);" autocomplete="off">'; //interes
         template += '</td>';
         template += '<td>';
-        template += '<input style="width:70px;" class="form-control comision" onChange="actualizarTotal()" type="text" id="c_comision_'+ i +'" name="c_comision_'+ i +'" value="' + comision + '" onkeydown="return soloDecimal(this, event);" autocomplete="off">'; //comision
+        template += '<input style="width:80px;" class="form-control comision" onChange="actualizarTotal()" type="text" id="c_comision_'+ i +'" name="c_comision_'+ i +'" value="' + comision + '" onkeydown="return soloDecimal(this, event);" autocomplete="off">'; //comision
         template += '</td>';
         template += '<td>';
-        template += '<input style="width:70px;" class="form-control monto_a_pagar prestamo" type="text" id="c_cuota_monto_'+ i +'" name="c_cuota_monto_'+ i +'" value="' + prestamo + '" onkeydown="return soloDecimal(this, event);" readonly>'; //total cuota
+        template += '<input style="width:80px;" class="form-control monto_a_pagar prestamo" type="text" id="c_cuota_monto_'+ i +'" name="c_cuota_monto_'+ i +'" value="' + prestamo + '" onkeydown="return soloDecimal(this, event);" readonly>'; //total cuota
         template += '</td>';
         template += '</tr>';
         body.append(template);
@@ -246,7 +247,7 @@ function generar_cuotas(numero_cuotas, vcapital, vinteres, vcomision, vprestamo)
         $('#c_tasa_interes').val(roundPrice(interes, 2));
         $('#c_comision').val(roundPrice(comision, 2));
         $('#c_precio_credito').val(roundPrice(capital + interes + comision, 2));
-        $("#c_total_deuda").html(formatPrice($('#c_precio_credito').val()));
+        $("#c_total_deuda").html($('#c_precio_credito').val());
     });
 }
 

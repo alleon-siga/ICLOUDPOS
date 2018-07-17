@@ -1,4 +1,7 @@
 $(document).ready(function () {
+    //CONFIGURACIONES INICIALES
+    App.sidebar('close-sidebar');
+    
     $("#agregarproveedor").load(ruta + 'proveedor/form');
 
     $("#charm").tcharm({
