@@ -1,3 +1,22 @@
+<link rel="stylesheet" href="<?php echo base_url('recursos/js/autocomplete/jquery-ui.min.css') ?>">
+<style>
+    .ui-autocomplete-loading {
+        background: white url("<?php echo base_url('recursos/js/autocomplete/images/ui-anim_basic_16x16.gif') ?>") right center no-repeat;
+    }
+
+    .ui-autocomplete {
+        max-height: 300px;
+        overflow-y: auto;
+        /* prevent horizontal scrollbar */
+        overflow-x: hidden;
+    }
+    /* IE 6 doesn't support max-height
+     * we use height instead, but this forces the menu to always be this tall
+     */
+    * html .ui-autocomplete {
+        height: 300px;
+    }
+</style>
 <input type="hidden" id="sc" value="<?= valueOption('ACTIVAR_SHADOW') ?>">
 <ul class="breadcrumb breadcrumb-top">
     <li>Ventas</li>
@@ -77,20 +96,13 @@
                     </div>
 
                     <div class="col-md-7">
+                        <input type="text" class="form-control" id="producto_complete">
+                    </div>
+                    <div class="col-md-7" style="display: none;">
                         <div class="input-group">
                             <div class="help-key badge label-success" style="display: none;">3</div>
-                            <select name="producto_id" id="producto_id" class='form-control'
-                                    data-placeholder="Seleccione el Producto">
+                            <select name="producto_id" id="producto_id" class='form-control'>
                                 <option value=""></option>
-                                <?php foreach ($productos as $producto): ?>
-                                    <option value="<?= $producto->producto_id ?>"
-                                            data-impuesto="<?= $producto->porcentaje_impuesto ?>"
-                                            data-afectacion_impuesto="<?= $producto->producto_afectacion_impuesto ?>"
-                                            data-cb="<?= $barra_activa->activo == 1 && $producto->barra != "" ? $producto->barra : "" ?>">
-                                        <?php $barra = $barra_activa->activo == 1 && $producto->barra != "" ? "CB: " . $producto->barra : "" ?>
-                                        <?= getCodigoValue($producto->producto_id, $producto->codigo) . ' - ' . $producto->producto_nombre . " " . $barra ?>
-                                    </option>
-                                <?php endforeach; ?>
                             </select>
                             <a id="refresh_productos" href="#" class="input-group-addon btn-default">
                                 <i class="fa fa-refresh"></i>
@@ -704,6 +716,7 @@
 
 <script src="<?php echo base_url('recursos/js/pages/tablesDatatables.js') ?>"></script>
 <script src="<?php echo base_url('recursos/js/Validacion.js') ?>"></script>
+<script src="<?php echo base_url('recursos/js/autocomplete/jquery-ui.min.js') ?>"></script>
 <script src="<?php echo base_url('recursos/js/venta.js') ?>"></script>
 <script>
     var cotizacion = [];

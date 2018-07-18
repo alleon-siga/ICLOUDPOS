@@ -31,6 +31,75 @@ class producto_model extends CI_Model
         $this->load->model('unidades_has_precio/unidades_has_precio_model');
     }
 
+    public function get_productos_auto($term){
+
+        $barra_activa = $this->db->get_where('columnas', array('id_columna' => 36))->row();
+        $query = "
+            SELECT 
+              producto_id AS id,
+              producto_codigo_interno as codigo, 
+              producto_nombre, 
+              producto_codigo_barra as barra, 
+              producto_afectacion_impuesto, 
+              impuestos.porcentaje_impuesto
+            FROM 
+              producto 
+            JOIN 
+              impuestos ON impuestos.id_impuesto = producto.producto_impuesto
+            WHERE 
+              producto_estatus = 1 AND 
+              producto_estado = 1
+            
+        ";
+
+        if ($term != "") {
+            $terms = explode(' ', $term);
+            if (count($terms) > 0) {
+                $query .= " AND ";
+                $n = 1;
+                if (getCodigo() == 'AUTO')
+                    $codigo = 'producto_codigo_interno';
+                else
+                    $codigo = 'producto_id';
+
+
+                foreach ($terms as $t) {
+                    if ($barra_activa->activo == 1)
+                        $barra_select = " OR producto_codigo_barra LIKE '" . $t . "%'";
+                    else
+                        $barra_select = "";
+                    $query .= "(producto_nombre LIKE '%" . $t . "%' OR "
+                        . $codigo . " LIKE '%" . $t . "%'"
+                        . $barra_select . ")";
+                    if ($n++ < count($terms))
+                        $query .= " AND ";
+                }
+            }
+        }
+
+        $query .= " GROUP BY producto_id";
+        $productos = $this->db->query($query)->result();
+
+        $data = array();
+        foreach ($productos as $p) {
+            $template = getCodigoValue(sumCod($p->id, 4), $p->codigo) . ' - ' . $p->producto_nombre;
+            $barra = $barra_activa->activo == 1 && $p->barra != "" ? "CB: " . $p->barra : "";
+//            if($barra != '')
+//                $barra .= "MODELO: ". $p->modelo;
+            $data[] = array(
+                'id' => $p->id,
+                'value' => $template,
+                'label' => $template,
+                'desc' => $barra,
+                'codigo_barra' => $p->barra,
+                'porcentaje_impuesto' => $p->porcentaje_impuesto,
+                'producto_afectacion_impuesto' => $p->producto_afectacion_impuesto,
+            );
+        }
+
+        return json_encode($data);
+    }
+
     //DEVUELVE EL COSTO UNITARIO PROMEDIO DEL PRODUCTO SEGUN SUS INGRESOS
     function get_costo_promedio($id, $um_id)
     {

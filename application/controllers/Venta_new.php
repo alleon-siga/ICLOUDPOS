@@ -224,6 +224,13 @@ class venta_new extends MY_Controller
         echo json_encode($data);
     }
 
+    function get_productos_json()
+    {
+
+        header('Content-Type: application/json');
+        echo $this->producto_model->get_productos_auto($this->input->get('term'));
+    }
+
     function index($local = "", $cot_id = FALSE)
     {
 
@@ -233,7 +240,8 @@ class venta_new extends MY_Controller
         $data['cotizacion'] = $cot_id != FALSE ? $this->cotizar_model->prepare_cotizacion($cot_id) : NULL;
 
         $data['locales'] = $this->local_model->get_local_by_user($this->session->userdata('nUsuCodigo'));
-        $data['productos'] = $this->producto_model->get_productos_list();
+//        $data['productos'] = $this->producto_model->get_productos_list();
+        $data['productos'] = array();
         if ($this->session->userdata('grupo') == 2) { //perfil de administrador
             $data['usuarios'] = $this->usuario_model->select_all_user(array(8, 2, 9));
         }
