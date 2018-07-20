@@ -111,10 +111,13 @@
                                 </div>
 
                                 <div class="col-md-8">
-                                    <input type="text" name="producto_nombre" required="true" id="producto_nombre"
+                                    <input type="text" name="producto_nombre_unico" required="true" id="producto_nombre_unico"
                                            class='form-control'
                                            maxlength="100"
                                            value="<?php if (isset($producto['producto_nombre'])) echo $producto['producto_nombre'] ?>" autocomplete="off">
+                                    <br>
+                                    <label id="label_producto_nombre" class="control-label"></label>
+                                    <input type="hidden" name="producto_nombre" value="">
                                 </div>
                             </div>
 
@@ -222,7 +225,7 @@
                                     <label for="producto_linea" class="control-label">L&iacute;nea:</label>
                                 </div>
                                 <div class="col-md-7">
-                                    <select name="producto_linea" id="producto_linea" class='cho form-control'>
+                                    <select name="producto_linea" id="producto_linea" class='cho form-control cbo_desc'>
                                         <option value="">Seleccione</option>
                                         <?php if (count($lineas) > 0): ?>
                                             <?php foreach ($lineas as $linea): ?>
@@ -1194,45 +1197,51 @@
         $(function () {
             $('.desc_chk, .cbo_desc').on('click change', function(){
                 var cadena = new Array();
-
+                if($('#producto_nombre_unico').val() != ''){
+                    cadena[0] = $.trim($('#producto_nombre_unico').val());
+                }
                 $('.desc_chk').each(function(){
                     if($(this).prop('checked') == true){
                         var id = $(this).attr('id');
                         if(id == 'chk_grupo'){
                             if($('#produto_grupo').val() != ''){
-                                cadena[0]= $.trim($('#produto_grupo option:selected').text());
+                                cadena[1]= $.trim($('#produto_grupo option:selected').text());
                             }
                         }else if(id == 'chk_familia'){
                             if($('#producto_familia').val() != ''){
-                                cadena[1] = $.trim($('#producto_familia option:selected').text());
+                                cadena[2] = $.trim($('#producto_familia option:selected').text());
                             }
                         }else if(id == 'chk_linea'){
                             if($('#producto_linea').val() != ''){
-                                cadena[2] = $.trim($('#producto_linea option:selected').text());
+                                cadena[3] = $.trim($('#producto_linea option:selected').text());
                             }
                         }else if(id == 'chk_modelo'){
                             if($('#producto_modelo').val() != ''){
-                                cadena[3] = $.trim($('#producto_modelo').val());
+                                cadena[4] = $.trim($('#producto_modelo').val());
                             }
                         }else if(id == 'chk_marca'){
                             if($('#producto_marca').val() != ''){
-                                cadena[4] = $.trim($('#producto_marca option:selected').text());
+                                cadena[5] = $.trim($('#producto_marca option:selected').text());
                             }
                         }else{
                             if($('#codigo_interno').val() != ''){
-                                cadena[5] = $.trim($('#codigo_interno').val());
+                                cadena[6] = $.trim($('#codigo_interno').val());
                             }
                         }
                     }
                 });
-                
+
                 var newCadena = new Array();
                 var i=0;
                 cadena.forEach( function(valor, indice, array){
                     newCadena[i] = valor;
                     i++;
                 });
-                $('#producto_nombre').val(newCadena.join(' '));
+
+                if(newCadena.length>0){
+                    $('#label_producto_nombre').text(newCadena.join(' '));
+                    $('#producto_nombre').val(newCadena.join(' '));
+                }
             });
 
             $('#producto_impuesto').on('change', function () {
