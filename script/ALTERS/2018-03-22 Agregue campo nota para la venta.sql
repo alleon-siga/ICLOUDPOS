@@ -1,2 +1,0 @@
-ALTER TABLE `caja_pendiente`
-ADD COLUMN `created_at` DATETIME NULL DEFAULT CURRENT_TIMESTAMP AFTER `estado`;
