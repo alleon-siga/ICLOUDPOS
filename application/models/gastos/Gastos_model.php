@@ -127,20 +127,28 @@ class gastos_model extends CI_Model
             $this->db->insert('gastos_detalle', $gastosDetalle);
         }
 
-        if($data['id_documento'] == '10'){ //CRONOGRAMA DE PAGOS
-            $io = 1;
+        if($data['tipo_pago']=='1'){
+            $this->cajas_model->save_pendiente(array(
+                'monto' => $data['total'],
+                'tipo' => 'GASTOS',
+                'IO' => 2,
+                'ref_id' => $id,
+                'cuenta_id' => $data['cuenta_id'],
+                'local_id' => $data['local_id']
+            ));
         }else{
-            $io = 2;
+            $tipo_gasto = $this->db->get_where('tipos_gasto', array('id_tipos_gasto' => $data['tipo_gasto']))->row();
+            if($tipo_gasto->nombre_tipos_gasto == 'PRESTAMO BANCARIO'){
+                $this->cajas_model->save_pendiente(array(
+                    'monto' => $data['capital'],
+                    'tipo' => 'GASTOS',
+                    'IO' => 1,
+                    'ref_id' => $id,
+                    'cuenta_id' => $data['cuenta_id'],
+                    'local_id' => $data['local_id']
+                ));
+            }
         }
-
-        $this->cajas_model->save_pendiente(array(
-            'monto' => $data['capital'],
-            'tipo' => 'GASTOS',
-            'IO' => $io,
-            'ref_id' => $id,
-            'cuenta_id' => $data['cuenta_id'],
-            'local_id' => $data['local_id']
-        ));
 
         $this->db->trans_complete();
 

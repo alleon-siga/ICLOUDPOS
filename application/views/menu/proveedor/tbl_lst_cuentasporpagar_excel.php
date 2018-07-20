@@ -48,7 +48,11 @@ header("Expires: 0");
                     echo '<span style="color: #0000FF">NO FACTURADO</span>';
             ?>
             </td>
+            <?php if(!empty($p->proveedor_nombre)){ ?>
             <td><?= $p->proveedor_nombre ?></td>
+            <?php }else{ ?>
+            <td><?= $p->username ?></td>
+            <?php } ?>
             <td><?= date('d/m/Y', strtotime($p->fecha_emision)) ?></td>
             <td><?= $p->simbolo . ' ' . number_format($p->total_ingreso, 2) ?></td>
             <td><?= $p->simbolo . ' ' . number_format($p->inicial, 2) ?></td>

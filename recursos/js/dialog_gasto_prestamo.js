@@ -100,6 +100,8 @@ function credito_init(precio_contado) {
     }
     $("#c_precio_contado").val(precio_contado);
     $("#c_tasa_interes").val($("#tasa_interes").val());
+    $('#c_comision').val('0');
+    $('#c_precio_credito').val(precio_contado)
     $("#c_saldo_inicial_por").val($("#saldo_porciento").val());
     $("#c_numero_cuotas").attr('max', $("#max_cuotas").val());
     $("#c_numero_cuotas").val($("#numero_cuotas").val());
@@ -116,6 +118,7 @@ function credito_init(precio_contado) {
         $("#c_pago_periodo").change();
     }, 500);
     //ojo inicializar garante tambien*/
+    refresh_credito_window(1);
 }
 
 function refresh_credito_window(trigger) {

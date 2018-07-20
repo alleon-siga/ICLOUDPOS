@@ -616,7 +616,8 @@ class venta_new extends MY_Controller
             'COTIZACION_PIE_PAGINA',
             'COMPROBANTE',
             'DOCUMENTO_DEFECTO',
-            'BOTONES_VENTA'
+            'BOTONES_VENTA',
+            'NOMBRE_PRODUCTO'
         );
 
         if ($action == 'get') {

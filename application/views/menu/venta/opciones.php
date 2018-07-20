@@ -130,10 +130,28 @@
             <div class="form-control">
         <?php
             $boton = json_decode(valueOption("BOTONES_VENTA"));
-            $arr = array('GUARDAR', 'GUARDAR & IMPRIMIR', 'GUARDAR & DETALLES');
+            $arr = array('Guardar', 'Guardar & imprimir', 'Guardar & detalles');
             foreach ($boton as $clave => $valor) {
         ?>
                 <input type="checkbox" class="BOTONES_VENTA" name="BOTONES_VENTA[]" value="<?= $valor ?>" <?php echo ($valor=='1')? 'checked' : '' ?>> <?= $arr[$clave] ?>&nbsp;&nbsp;&nbsp;
+        <?php
+            } 
+        ?>
+            </div>
+        </div>
+    </div>
+    <div class="row form-group">
+        <div class="col-md-4">
+            <label class="control-label panel-admin-text">Configurar nombre de producto:</label>
+        </div>
+        <div class="col-md-8">
+            <div class="form-control">
+        <?php
+            $boton = json_decode(valueOption("NOMBRE_PRODUCTO"));
+            $arr = array('Grupo', 'Familia', 'Linea', 'Modelo', 'Marca', 'Codigo interno');
+            foreach ($boton as $clave => $valor) {
+        ?>
+                <input type="checkbox" class="NOMBRE_PRODUCTO" name="NOMBRE_PRODUCTO[]" value="<?= $valor ?>" <?php echo ($valor=='1')? 'checked' : '' ?>> <?= $arr[$clave] ?>&nbsp;&nbsp;&nbsp;
         <?php
             } 
         ?>
@@ -213,6 +231,7 @@
         },
         guardar: function () {
             $('.BOTONES_VENTA').prop('checked', true);
+            $('.NOMBRE_PRODUCTO').prop('checked', true);
             App.formSubmitAjax($("#formguardar").attr('action'), this.ajaxgrupo, null, 'formguardar');
             //App.formSubmitAjax($("#formguardar").attr('action'), this.reloadOpciones, null, 'formguardar');
         },
@@ -222,7 +241,7 @@
     }
 
     $(function () {
-        $('.BOTONES_VENTA').on('click', function(){
+        $('.BOTONES_VENTA, .NOMBRE_PRODUCTO').on('click', function(){
             if($(this).prop('checked')){
                 $(this).attr('value', '1');
             }else{

@@ -130,8 +130,8 @@ class gastos extends MY_Controller
             $usuario = $this->input->post('usuario');
         }
         $status_gastos = '1'; //pendiente
-        //if($this->input->post('tipo_pago')=='2'){ //Si es al credito
-        if($this->input->post('tipo_pago')=='2' && $this->input->post('cboDocumento')!='10'){ //Si es al credito y es diferente a prestamo bancario
+        $tipo_gasto = $this->db->get_where('tipos_gasto', array('id_tipos_gasto' => $this->input->post('tipo_gasto')))->row();
+        if($this->input->post('tipo_pago')=='2' && $tipo_gasto->nombre_tipos_gasto != 'PRESTAMO BANCARIO'){ //Si es al credito y es diferente a prestamo bancario
             $status_gastos = '0'; //confirmado
         }
 
@@ -184,14 +184,22 @@ class gastos extends MY_Controller
         if($this->input->post('tipo_pago')=='2'){
             if($this->input->post('persona_gasto')=='1'){ //Proveedor
                 $cboProveedor = $this->input->post('proveedor', true);
+                $cboUsuario = '0';
             }else{ //Trabajador
-                $cboProveedor = $this->input->post('usuario', true);
+                $cboUsuario = $this->input->post('usuario', true);
+                $cboProveedor = '0';
             }
 
             if($this->input->post('gravable')=='0'){ //no
                 $tipo_impuesto = '3';
             }else{ //si
                 $tipo_impuesto = '1';
+            }
+
+            if($tipo_gasto->nombre_tipos_gasto == 'PRESTAMO BANCARIO'){
+                $status = 'PENDIENTE';
+            }else{
+                $status = 'COMPLETADO';
             }
             $doc = $this->documentos_model->get_by('id_doc', $this->input->post('cboDocumento', true));
             
@@ -211,9 +219,10 @@ class gastos extends MY_Controller
                 'ingreso_observacion' => $this->input->post('descripcion', true),
                 'id_moneda' => $cuenta->moneda_id,
                 'tasa_cambio' => NULL,
-                'status' => 'COMPLETADO',
+                'status' => $status,
                 'facturar' => '0',
-                'tipo_impuesto' => $tipo_impuesto
+                'tipo_impuesto' => $tipo_impuesto,
+                'cboUsuario' => $cboUsuario
             );
             $credito['c_inicial'] = $this->input->post('c_saldo_inicial') != '' ? $this->input->post('c_saldo_inicial') : 0;
             $credito['c_precio_contado'] = $this->input->post('c_precio_contado'); //capital
@@ -224,13 +233,17 @@ class gastos extends MY_Controller
             $credito['c_fecha_giro'] = $this->input->post('c_fecha_giro');
             $credito['c_periodo_gracia'] = $this->input->post('c_periodo_gracia');
             $cuotas = json_decode($this->input->post('cuotas', true));
-            $resultado = $this->ingreso_model->insertar_compra($comp_cab_pie, null, $credito, $cuotas);
         }
 
         if (empty($id)) {
             $resultado = $this->gastos_model->insertar($gastos, $detalle);
         } else {
             $resultado = $this->gastos_model->update($gastos, $detalle);
+        }
+
+        if($this->input->post('tipo_pago')=='2'){
+            $comp_cab_pie['id_gastos'] = $resultado;
+            $resultado = $this->ingreso_model->insertar_compra($comp_cab_pie, null, $credito, $cuotas);
         }
 
         if ($resultado != FALSE) {

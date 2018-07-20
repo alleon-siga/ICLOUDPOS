@@ -69,7 +69,7 @@
     <br>
 
     <div class="table-responsive" id="productostable">
-        <table class='table table-striped dataTable table-bordered table-responsive' id="table" style="width: 100%;">
+        <table class='table table-striped dataTable table-bordered table-responsive tableStyle' id="table" style="width: 100%;">
             <thead>
             <tr>
                 <?php if (canShowCodigo()): ?>
@@ -443,7 +443,8 @@
 
 
 <script>$(function () {
-
+            //CONFIGURACIONES INICIALES
+            App.sidebar('close-sidebar');
 
 
         // este codigo es para que al abrir un modal encima de otro modal no se pierda el scroll

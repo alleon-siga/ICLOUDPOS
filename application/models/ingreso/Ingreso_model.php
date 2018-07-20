@@ -202,7 +202,9 @@ class ingreso_model extends CI_Model
             'tasa_cambio' => $cab_pie['tasa_cambio'],
             'costo_por' => isset($cab_pie['costo_por']) ? $cab_pie['costo_por'] : 0,
             'utilidad_por' => isset($cab_pie['utilidad_por']) ? $cab_pie['utilidad_por'] : 0,
-            'tipo_impuesto' => $cab_pie['tipo_impuesto']
+            'tipo_impuesto' => $cab_pie['tipo_impuesto'],
+            'id_gastos' => isset($cab_pie['id_gastos']) ? $cab_pie['id_gastos'] : 0,
+            'int_usuario_id' => isset($cab_pie['cboUsuario']) ? $cab_pie['cboUsuario'] : 0,
         );
         
         $this->db->insert('ingreso', $compra);
@@ -212,7 +214,7 @@ class ingreso_model extends CI_Model
             $moneda_id = $compra['id_moneda'];
             $this->cajas_model->save_pendiente(array(
                 'monto' => $compra['total_ingreso'],
-                'tipo' => 'COMPRA',
+                'tipo' => $compra['tipo_ingreso'],
                 'IO' => 2,
                 'ref_id' => $insert_id,
                 'moneda_id' => $moneda_id,
@@ -223,14 +225,15 @@ class ingreso_model extends CI_Model
                 $moneda_id = $compra['id_moneda'];
                 $this->cajas_model->save_pendiente(array(
                     'monto' => $credito['c_inicial'],
-                    'tipo' => 'COMPRA',
+                    'tipo' => $compra['tipo_ingreso'],
                     'IO' => 2,
                     'ref_id' => $insert_id,
                     'moneda_id' => $moneda_id,
                     'local_id' => $compra['local_id']
                 ));
             }
-
+            $this->save_credito($insert_id, $credito, $cuotas);
+        } else if ($compra['ingreso_status'] == 'PENDIENTE' && $compra['total_ingreso'] > 0 && $compra['pago'] == 'CREDITO') {
             $this->save_credito($insert_id, $credito, $cuotas);
         }
 

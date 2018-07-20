@@ -48,7 +48,7 @@
                         </div>
                         <div class="col-md-3">
                             <input type="text" class='form-control' name="Cliente"
-                                   value="<?= $ingreso->proveedor_nombre ?>" id="Cliente"
+                                   value="<?= (empty($ingreso->proveedor_nombre))? $ingreso->username : $ingreso->proveedor_nombre ?>" id="Cliente"
                                    readonly>
                         </div>
 

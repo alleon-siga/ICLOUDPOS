@@ -342,6 +342,9 @@ class cajas extends MY_Controller
                 $this->db->update('gastos', array(
                     'status_gastos' => 0
                 ));
+
+                $this->db->where('id_gastos', $caja_pendiente->ref_id);
+                $this->db->update('ingreso', array('ingreso_status' => 'COMPLETADO'));
             }
 
             if ($caja_pendiente->tipo == 'TRASPASO') {

@@ -628,7 +628,9 @@
                 cuota.letra = $("#body_cuotas #c_cuota_letra_" + i).html().trim();
                 cuota.fecha = $("#body_cuotas #c_cuota_fecha_" + i).html().trim();
                 cuota.monto = $("#body_cuotas #c_cuota_monto_" + i).html().trim();
-
+                cuota.capital = 0;
+                cuota.interes = 0;
+                cuota.comision = 0;
                 cuotas.push(cuota);
             }
             return JSON.stringify(cuotas);

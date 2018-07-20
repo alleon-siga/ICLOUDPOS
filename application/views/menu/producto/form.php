@@ -16,7 +16,10 @@
     }
 </style>
 <div class="modal-dialog modal-lg">
-    <?php $ruta = base_url(); ?>
+<?php 
+    $ruta = base_url();
+    $nombre_producto = json_decode(valueOption("NOMBRE_PRODUCTO"));
+?>
     <script src="<?= $ruta ?>recursos/js/helpers/excanvas.min.js"></script>
     <script src="<?= $ruta ?>recursos/js/pages/readyInboxCompose.js"></script>
 
@@ -78,11 +81,13 @@
                             <div class="form-group">
                                 <div class="col-md-3"><label class="control-label">C&oacute;digo Interno:</label></div>
                                 <div class="col-md-8">
-
                                     <input type="text" name="producto_codigo_interno" id="codigo_interno"
                                            class='form-control' autofocus="autofocus" maxlength="25"
-                                           value="<?php if (isset($producto['producto_codigo_interno'])) echo $producto['producto_codigo_interno'] ?>">
+                                           value="<?php if (isset($producto['producto_codigo_interno'])) echo $producto['producto_codigo_interno'] ?>" autocomplete="off">
 
+                                </div>
+                                <div class="col-md-1">
+                                    <input type="checkbox" name="chk" class="desc_chk" id="chk_codigo" <?= ($nombre_producto[5]=='1' || isset($producto['producto_codigo_interno']))? 'checked':''; ?>>
                                 </div>
                             </div>
                         <?php } ?>
@@ -109,7 +114,7 @@
                                     <input type="text" name="producto_nombre" required="true" id="producto_nombre"
                                            class='form-control'
                                            maxlength="100"
-                                           value="<?php if (isset($producto['producto_nombre'])) echo $producto['producto_nombre'] ?>">
+                                           value="<?php if (isset($producto['producto_nombre'])) echo $producto['producto_nombre'] ?>" autocomplete="off">
                                 </div>
                             </div>
 
@@ -133,7 +138,7 @@
                                     <label for="linea" class="control-label">Marca:</label>
                                 </div>
                                 <div class="col-md-7">
-                                    <select name="producto_marca" id="producto_marca" class='cho form-control'>
+                                    <select name="producto_marca" id="producto_marca" class='cho form-control cbo_desc'>
                                         <option value="">Seleccione</option>
                                         <?php if (count($marcas) > 0): ?>
                                             <?php foreach ($marcas as $marca): ?>
@@ -150,6 +155,9 @@
                                         <i class="hi hi-plus-sign"></i>
                                     </a>
                                 </div>
+                                <div class="col-md-1">
+                                    <input type="checkbox" name="chk" class="desc_chk" id="chk_marca" <?= ($nombre_producto[4]=='1' || isset($producto['producto_marca']))? 'checked':''; ?>>
+                                </div>
                             </div>
                         <?php } ?>
                         <?php if ($columna->nombre_columna == 'produto_grupo' and $columna->activo == 1) { ?>
@@ -158,7 +166,7 @@
                                     <label for="grupo" class="control-label">Grupo:</label>
                                 </div>
                                 <div class="col-md-7">
-                                    <select name="produto_grupo" id="produto_grupo" class='cho form-control'>
+                                    <select name="produto_grupo" id="produto_grupo" class='cho form-control cbo_desc'>
                                         <option value="">Seleccione</option>
                                         <?php if (count($grupos) > 0): ?>
                                             <?php foreach ($grupos as $grupo): ?>
@@ -175,6 +183,9 @@
                                         <i class="hi hi-plus-sign"></i>
                                     </a>
                                 </div>
+                                <div class="col-md-1">
+                                    <input type="checkbox" name="chk" class="desc_chk" id="chk_grupo" <?= ($nombre_producto[0]=='1' || isset($producto['produto_grupo']))? 'checked':''; ?>>
+                                </div>
                             </div>
                         <?php } ?>
                         <?php if ($columna->nombre_columna == 'producto_familia' and $columna->activo == 1) { ?>
@@ -183,7 +194,7 @@
                                     <label for="producto_familia" class="control-label">Familia:</label>
                                 </div>
                                 <div class="col-md-7">
-                                    <select name="producto_familia" id="producto_familia" class='cho form-control'>
+                                    <select name="producto_familia" id="producto_familia" class='cho form-control cbo_desc'>
                                         <option value="">Seleccione</option>
                                         <?php if (count($familias) > 0): ?>
                                             <?php foreach ($familias as $familia): ?>
@@ -199,6 +210,9 @@
                                        href="#" onclick="agregarfamilia()">
                                         <i class="hi hi-plus-sign"></i>
                                     </a>
+                                </div>
+                                <div class="col-md-1">
+                                    <input type="checkbox" name="chk" class="desc_chk" id="chk_familia" <?= ($nombre_producto[1]=='1' || isset($producto['producto_familia']))? 'checked':''; ?>>
                                 </div>
                             </div>
                         <?php } ?>
@@ -225,6 +239,9 @@
                                         <i class="hi hi-plus-sign"></i>
                                     </a>
                                 </div>
+                                <div class="col-md-1">
+                                    <input type="checkbox" name="chk" class="desc_chk" id="chk_linea" <?= ($nombre_producto[2]=='1' || isset($producto['producto_linea']))? 'checked':''; ?>>
+                                </div>
                             </div>
                         <?php } ?>
 
@@ -237,8 +254,11 @@
                                     <input type="text" name="producto_modelo" required="true" id="producto_modelo"
                                            class='form-control'
                                            maxlength="100"
-                                           value="<?php if (isset($producto['producto_modelo'])) echo $producto['producto_modelo'] ?>">
+                                           value="<?php if (isset($producto['producto_modelo'])) echo $producto['producto_modelo'] ?>" autocomplete="off">
                                 </div>
+                            </div>
+                            <div class="col-md-1">
+                                <input type="checkbox" name="chk" class="desc_chk" id="chk_modelo" <?= ($nombre_producto[3]=='1' || isset($producto['producto_modelo']))? 'checked':''; ?>>
                             </div>
                         <?php } ?>
 
@@ -1172,6 +1192,49 @@
 
 
         $(function () {
+            $('.desc_chk, .cbo_desc').on('click change', function(){
+                var cadena = new Array();
+
+                $('.desc_chk').each(function(){
+                    if($(this).prop('checked') == true){
+                        var id = $(this).attr('id');
+                        if(id == 'chk_grupo'){
+                            if($('#produto_grupo').val() != ''){
+                                cadena[0]= $.trim($('#produto_grupo option:selected').text());
+                            }
+                        }else if(id == 'chk_familia'){
+                            if($('#producto_familia').val() != ''){
+                                cadena[1] = $.trim($('#producto_familia option:selected').text());
+                            }
+                        }else if(id == 'chk_linea'){
+                            if($('#producto_linea').val() != ''){
+                                cadena[2] = $.trim($('#producto_linea option:selected').text());
+                            }
+                        }else if(id == 'chk_modelo'){
+                            if($('#producto_modelo').val() != ''){
+                                cadena[3] = $.trim($('#producto_modelo').val());
+                            }
+                        }else if(id == 'chk_marca'){
+                            if($('#producto_marca').val() != ''){
+                                cadena[4] = $.trim($('#producto_marca option:selected').text());
+                            }
+                        }else{
+                            if($('#codigo_interno').val() != ''){
+                                cadena[5] = $.trim($('#codigo_interno').val());
+                            }
+                        }
+                    }
+                });
+                
+                var newCadena = new Array();
+                var i=0;
+                cadena.forEach( function(valor, indice, array){
+                    newCadena[i] = valor;
+                    i++;
+                });
+                $('#producto_nombre').val(newCadena.join(' '));
+            });
+
             $('#producto_impuesto').on('change', function () {
                 if ($(this).val() == '') {
                     $('#valor_importe').val("");
