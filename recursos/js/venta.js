@@ -27,14 +27,65 @@ $(document).ready(function () {
     $('.date-picker').datepicker({format: 'dd/mm/yyyy'});
     $('.date-picker').css('cursor', 'pointer');
 
-    $('#producto_id, #local_id, #local_venta_id, #cliente_id, #moneda_id, #precio_id, #tipo_pago, #tipo_documento, #venta_estado, #c_garante, #c_pago_periodo').chosen({
+    $('#local_id, #local_venta_id, #cliente_id, #moneda_id, #precio_id, #tipo_pago, #tipo_documento, #venta_estado, #c_garante, #c_pago_periodo').chosen({
         search_contains: true
     });
 
     $('.chosen-container').css('width', '100%');
 
     //tecla_3 para mostrar los productos
-    select_productos(51);
+    // select_productos(51);
+    setTimeout(function () {
+
+        $('#producto_complete').focus();
+    }, 500);
+
+
+    $("#producto_complete").autocomplete({
+        autoFocus: true,
+        source: function (request, response) {
+
+            $.ajax({
+                url: ruta + 'venta_new/get_productos_json',
+                dataType: "json",
+                data: {
+                    term: request.term
+                },
+                success: function (data) {
+                    response(data);
+                }
+            });
+        },
+        minLength: 2,
+        response: function (event, ui) {
+            if (ui.content.length == 1) {
+                $(this).val(ui.content[0].value);
+                $(this).autocomplete("close");
+                var prod = $('#producto_id');
+                var template = '<option value="' + ui.content[0].id + '"';
+                template += ' data-impuesto="' + ui.content[0].porcentaje_impuesto + '"';
+                template += ' data-afectacion_impuesto="' + ui.content[0].producto_afectacion_impuesto + '"';
+                template += '>' + ui.content[0].value + '</option>';
+                prod.html(template);
+                prod.trigger('change');
+            }
+        },
+        select: function (event, ui) {
+
+            var prod = $('#producto_id');
+            var template = '<option value="' + ui.item.id + '"';
+            template += ' data-impuesto="' + ui.item.porcentaje_impuesto + '"';
+            template += ' data-afectacion_impuesto="' + ui.item.producto_afectacion_impuesto + '"';
+            template += '>' + ui.item.value + '</option>';
+            prod.html(template);
+            prod.trigger('change');
+        }
+    })
+        .autocomplete("instance")._renderItem = function (ul, item) {
+        return $("<li>")
+            .append("<div>" + item.label + "<br><span style='color: #888; font-size: 10px;'>" + item.desc + "</span></div>")
+            .appendTo(ul);
+    };
 
     $('.textarea-editor').wysihtml5({
         "font-styles": true, //Font styling, e.g. h1, h2, etc. Default true
@@ -130,6 +181,10 @@ $(document).ready(function () {
         }
     });
 
+    $('#producto_complete').on('focus', function () {
+        $(this).select();
+    });
+
     $('#dialog_venta_caja').on('shown.bs.modal', function (e) {
         $('#caja_nombre').val('.');
         $('#caja_nombre').focus();
@@ -205,13 +260,14 @@ $(document).ready(function () {
         $("#producto_id").change().trigger('chosen:update');
     });
 
+
     $("#producto_id").on('change', function (e) {
 
         e.preventDefault();
 
         $(".block_producto_unidades").hide();
 
-        if ($(this).val() == "") {
+        if ($('#producto_id').val() == "") {
             return false;
         }
 
@@ -397,18 +453,18 @@ $(document).ready(function () {
             pu.trigger("focus");
             edit_pu.attr('data-estado', '1');
             edit_pu.html('<i class="fa fa-check"></i>');
-        }else{
+        } else {
             pu.attr('readonly', 'readonly');
             edit_pu.attr('data-estado', '0');
             edit_pu.html('<i class="fa fa-edit"></i>');
             $(".precio-input").removeClass('precio-selected');
             var subtotal = pu.val();
             var flag = false;
-            if(subtotal == pu.attr('data-sub')){
+            if (subtotal == pu.attr('data-sub')) {
                 flag = true;
                 $("#subtotal_um").html(input.attr('data-unidad_nombre'));
                 input.addClass('precio-selected');
-            }else{
+            } else {
                 $("#precio_unitario").val(parseFloat(pu.val() / $('#total_minimo').val()).toFixed(2));
             }
 
@@ -439,7 +495,7 @@ $(document).ready(function () {
         if (e.keyCode == tecla_enter) {
             $("#editar_su").click();
             $('#add_producto').trigger("focus");
-        }else{
+        } else {
             $("#precio_unitario").val(parseFloat($("#importe").val() / $('#total_minimo').val()).toFixed(2));
         }
     });
@@ -535,8 +591,8 @@ $(document).ready(function () {
     });
 
     $("#close_add_producto").on('click', function () {
-        $("#producto_id").val("").trigger("chosen:updated");
-        $("#producto_id").change();
+        $("#producto_id").html("<option></option>").change();
+        $('#producto_complete').val('').focus();
     });
 
     $("#add_todos").on('click', function () {
@@ -1252,9 +1308,8 @@ function add_producto() {
         });
     }
 
-
-    $("#producto_id").val("").trigger("chosen:updated");
-    $("#producto_id").change();
+    $("#producto_id").html("<option></option>").change();
+    $('#producto_complete').val('').focus();
 
     update_view(get_active_view());
 
@@ -1268,8 +1323,25 @@ function add_producto() {
 
 //edita un producto en la tabla
 function edit_producto(producto_id) {
+
     $("#producto_id").val(producto_id).trigger("chosen:updated");
     $("#producto_id").change();
+    var producto = {};
+    for (var i = 0; i < lst_producto.length; i++) {
+        if (lst_producto[i].producto_id == producto_id) {
+            producto = lst_producto[i];
+        }
+    }
+    var prod = $('#producto_id');
+    var template = '<option value="' + producto.producto_id + '"';
+    template += ' data-impuesto="' + producto.producto_impuesto + '"';
+    template += ' data-afectacion_impuesto="' + producto.afectacion_impuesto + '"';
+    template += '>' + decodeURIComponent(producto.producto_nombre) + '</option>';
+
+    $('#producto_complete').val(decodeURIComponent(producto.producto_nombre));
+
+    prod.html(template);
+    prod.change();
 }
 
 //elimina un producto de la tabla
@@ -1282,8 +1354,7 @@ function delete_producto(item) {
     }
     update_view(get_active_view());
     refresh_right_panel();
-    $("#producto_id").val("").trigger("chosen:updated");
-    $("#producto_id").change();
+    $('#producto_id').html('<option></option>').change();
 }
 
 //funcion para mostrar las tabla de los productos agregados
