@@ -87,7 +87,7 @@
 
                                 </div>
                                 <div class="col-md-1">
-                                    <input type="checkbox" name="chk" class="desc_chk" id="chk_codigo" <?= ($nombre_producto[5]=='1' || isset($producto['producto_codigo_interno']))? 'checked':''; ?>>
+                                    <input type="checkbox" name="chk" class="desc_chk" id="chk_codigo" <?= ($nombre_producto[5]=='1')? 'checked':''; ?>>
                                 </div>
                             </div>
                         <?php } ?>
@@ -112,7 +112,7 @@
 
                                 <div class="col-md-8">
                                     <input type="text" name="producto_nombre_unico" required="true" id="producto_nombre_unico"
-                                           class='form-control cbo_desc'
+                                           class='form-control'
                                            maxlength="100"
                                            value="<?php if (isset($producto['producto_nombre'])) echo $producto['producto_nombre'] ?>" autocomplete="off">
                                     <br>
@@ -159,7 +159,7 @@
                                     </a>
                                 </div>
                                 <div class="col-md-1">
-                                    <input type="checkbox" name="chk" class="desc_chk" id="chk_marca" <?= ($nombre_producto[4]=='1' || isset($producto['producto_marca']))? 'checked':''; ?>>
+                                    <input type="checkbox" name="chk" class="desc_chk" id="chk_marca" <?= ($nombre_producto[4]=='1')? 'checked':''; ?>>
                                 </div>
                             </div>
                         <?php } ?>
@@ -187,7 +187,7 @@
                                     </a>
                                 </div>
                                 <div class="col-md-1">
-                                    <input type="checkbox" name="chk" class="desc_chk" id="chk_grupo" <?= ($nombre_producto[0]=='1' || isset($producto['produto_grupo']))? 'checked':''; ?>>
+                                    <input type="checkbox" name="chk" class="desc_chk" id="chk_grupo" <?= ($nombre_producto[0]=='1')? 'checked':''; ?>>
                                 </div>
                             </div>
                         <?php } ?>
@@ -215,7 +215,7 @@
                                     </a>
                                 </div>
                                 <div class="col-md-1">
-                                    <input type="checkbox" name="chk" class="desc_chk" id="chk_familia" <?= ($nombre_producto[1]=='1' || isset($producto['producto_familia']))? 'checked':''; ?>>
+                                    <input type="checkbox" name="chk" class="desc_chk" id="chk_familia" <?= ($nombre_producto[1]=='1')? 'checked':''; ?>>
                                 </div>
                             </div>
                         <?php } ?>
@@ -243,7 +243,7 @@
                                     </a>
                                 </div>
                                 <div class="col-md-1">
-                                    <input type="checkbox" name="chk" class="desc_chk" id="chk_linea" <?= ($nombre_producto[2]=='1' || isset($producto['producto_linea']))? 'checked':''; ?>>
+                                    <input type="checkbox" name="chk" class="desc_chk" id="chk_linea" <?= ($nombre_producto[2]=='1')? 'checked':''; ?>>
                                 </div>
                             </div>
                         <?php } ?>
@@ -261,7 +261,7 @@
                                 </div>
                             </div>
                             <div class="col-md-1">
-                                <input type="checkbox" name="chk" class="desc_chk" id="chk_modelo" <?= ($nombre_producto[3]=='1' || isset($producto['producto_modelo']))? 'checked':''; ?>>
+                                <input type="checkbox" name="chk" class="desc_chk" id="chk_modelo" <?= ($nombre_producto[3]=='1')? 'checked':''; ?>>
                             </div>
                         <?php } ?>
 
