@@ -79,7 +79,7 @@ class proveedor_model extends CI_Model
             JOIN
               ingreso_credito ON ingreso_credito.ingreso_id = ingreso.id_ingreso
             WHERE
-                ingreso_credito.estado = 'PENDIENTE' 
+                ingreso_credito.estado = 'PENDIENTE' AND ingreso.ingreso_status = 'COMPLETADO'
         ";
 
         if (isset($data['proveedor_id']) && $data['proveedor_id'] != "")
