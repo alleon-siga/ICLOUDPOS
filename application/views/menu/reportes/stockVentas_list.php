@@ -1,3 +1,7 @@
+<?php
+ini_set('max_execution_time', 300);
+//ini_set('memory_limit', '256M');
+?>
 <?php $ruta = base_url(); ?>
 <?php $md = get_moneda_defecto() ?>
 <style>

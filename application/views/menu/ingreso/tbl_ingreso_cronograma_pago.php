@@ -7,7 +7,7 @@
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close cerrar_pagar_venta">&times;</button>
-            <h3>Realizar Pago de Cuota - <?= $proveedor->proveedor_nombre ?></h3>
+            <h3>Realizar Pago de Cuota - <?= isset($proveedor->proveedor_nombre)? $proveedor->proveedor_nombre : $proveedor->username ?></h3>
         </div>
         <div class="modal-body">
             <div class="row-fluid force-margin">

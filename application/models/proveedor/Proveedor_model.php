@@ -28,11 +28,14 @@ class proveedor_model extends CI_Model
                 ingreso_credito.inicial as inicial, 
                 DATEDIFF(CURDATE(), ingreso.fecha_emision) as dias_transcurridos,
                 l.local_nombre as local_nombre,
-                ingreso.tipo_ingreso as tipo_ingreso
+                ingreso.tipo_ingreso as tipo_ingreso,
+                usuario.username as username
             FROM
                 (ingreso)
-                    JOIN
+                    LEFT JOIN
                 proveedor ON ingreso.int_Proveedor_id = proveedor.id_proveedor 
+                    LEFT JOIN  
+                usuario ON ingreso.int_usuario_id = usuario.nUsuCodigo 
                     JOIN  
                 moneda ON moneda.id_moneda = ingreso.id_moneda 
                     JOIN

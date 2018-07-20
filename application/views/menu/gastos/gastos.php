@@ -56,7 +56,7 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                 <div class="row">
                     <label class="control-label">Estado</label>
                     <select name="estado_id" id="estado_id" class='cho form-control'>
-                       <option value="">Todos</option>
+                       <option value="">TODOS</option>
                        <option value="1">Pendientes</option>
                        <option value="0">Confirmados</option>
                     </select>
@@ -64,6 +64,7 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                 <div class="row">
                     <label class="control-label">Persona Afectada:</label>
                     <select name="persona_gasto_filter" id="persona_gasto_filter" required="true" class="select_chosen form-control">
+                        <option value="">TODOS</option>
                         <option value="1">Proveedor</option>
                         <option value="2">Trabajador</option>
                     </select>

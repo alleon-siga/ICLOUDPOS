@@ -49,8 +49,13 @@
             $impuesto = (($ingreso->impuesto_porciento / 100) + 1);
             $cantidad = $ingreso->cantidad;
             $costoCompra = $ingreso->detalle_costo_ultimo; //Costo de compra unitario con impuesto
+<<<<<<< HEAD
             
             if($ingreso->tipo_impuesto=='1'){ //incluye impuesto
+=======
+            $impCompra = $costoCompra - $costoCompraSi; //Impuesto de compra
+            if($ingreso->tipo_impuesto=='1' || empty($ingreso->tipo_impuesto)){ //incluye impuesto
+>>>>>>> e8b34f98d6b3f62920f6ac48b3975d0f5834233f
                 $precioVenta = $ingreso->detalle_importe; //precio de venta
                 $costoVentaSi = ($precioVenta / $cantidad) / $impuesto; //Costo de venta unitario sin impuesto
                 $costoVenta = $costoVentaSi * $impuesto; //Costo de venta unitario con impuesto

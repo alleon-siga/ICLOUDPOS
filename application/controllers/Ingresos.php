@@ -200,6 +200,7 @@ class ingresos extends MY_Controller
                 $credito['c_numero_cuotas'] = $this->input->post('c_numero_cuotas');
                 $credito['c_fecha_giro'] = $this->input->post('c_fecha_giro');
                 $credito['c_periodo_gracia'] = $this->input->post('c_periodo_gracia');
+                $credito['c_comision'] = '0';
                 $cuotas = json_decode($this->input->post('cuotas', true));
                 $gastos = json_decode($this->input->post('gastos', true));
 
@@ -321,7 +322,8 @@ class ingresos extends MY_Controller
                     'local_id' => $params->local_id,
                     'fecha_ini' => str_replace("/", "-", $date_range[0]),
                     'fecha_fin' => str_replace("/", "-", $date_range[1]),
-                    'moneda_id' => $params->moneda_id
+                    'moneda_id' => $params->moneda_id,
+                    'tipo_ingreso' => 'COMPRA'
                 );
                 $data['moneda'] = $this->db->get_where('moneda', array('id_moneda' => $input['moneda_id']))->row();
                 $data['ingresos'] = $this->ingreso_model->get_compras($input);
@@ -512,10 +514,15 @@ class ingresos extends MY_Controller
             $dataresult['cronogramas'] = $this->ingreso_model->get_cronograma_by_cuotas($id_ingreso);
 
             $dataresult['ingreso'] = $this->db->join('moneda', 'moneda.id_moneda=ingreso.id_moneda')
-                ->join('proveedor', 'proveedor.id_proveedor=ingreso.int_Proveedor_id')
+                ->join('proveedor', 'proveedor.id_proveedor=ingreso.int_Proveedor_id', 'left')
+                ->join('usuario', 'usuario.nUsuCodigo = ingreso.int_usuario_id', 'left')
                 ->get_where('ingreso', array('id_ingreso' => $id_ingreso))->row();
 
-            $dataresult['proveedor'] = $this->db->get_where('proveedor', array('id_proveedor' => $dataresult['ingreso']->int_Proveedor_id))->row();
+            if(!empty($dataresult['ingreso']->proveedor_nombre)){
+                $dataresult['proveedor'] = $this->db->get_where('proveedor', array('id_proveedor' => $dataresult['ingreso']->int_Proveedor_id))->row();
+            }else{
+                $dataresult['proveedor'] = $this->db->get_where('usuario', array('nUsuCodigo' => $dataresult['ingreso']->int_usuario_id))->row();
+            }
 
             $dataresult['ingreso_detalles'] = $this->db->join('producto', 'producto.producto_id=detalleingreso.id_producto')
                 ->get_where('detalleingreso', array('id_ingreso' => $id_ingreso))->result();
@@ -785,7 +792,8 @@ class ingresos extends MY_Controller
             $dataresult['cronogramas'] = $this->ingreso_model->get_cronograma_by_cuotas($id_ingreso);
 
             $dataresult['ingreso'] = $this->db->join('moneda', 'moneda.id_moneda=ingreso.id_moneda')
-                ->join('proveedor', 'proveedor.id_proveedor=ingreso.int_Proveedor_id')
+                ->join('proveedor', 'proveedor.id_proveedor=ingreso.int_Proveedor_id', 'left')
+                ->join('usuario', 'usuario.nUsuCodigo = ingreso.int_usuario_id', 'left')
                 ->get_where('ingreso', array('id_ingreso' => $id_ingreso))->row();
 
             $dataresult['ingreso_detalles'] = $this->db->join('producto', 'producto.producto_id=detalleingreso.id_producto')

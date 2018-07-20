@@ -677,26 +677,47 @@ class reporte_model extends CI_Model
             $this->db->from('tipos_gasto');
             $this->db->where('status_tipos_gasto', '1');
             $this->db->where('id_grupo_gastos', $grupo['id_grupo_gastos']);
+            $this->db->where("nombre_tipos_gasto != 'PRESTAMO BANCARIO'");
             $tipo_gastos = $this->db->get()->result_array();
 
             $a = 0;
             $totSubtotal = 0;
             foreach ($tipo_gastos as $tipo_gasto) {
-                //Sumas los gastos deacuerdo al tipo y grupo
-                $this->db->select('SUM(subtotal) AS subtotal');
-                $this->db->from('gastos');
-                $this->db->where('status_gastos', '0'); //Gasto confirmado
-                $this->db->where('tipo_gasto', $tipo_gasto['id_tipos_gasto']);
-                if($params['local_id']>0){
-                    $this->db->where('local_id = '.$params['local_id']);
+                if($grupo['nom_grupo_gastos']=='GASTO FINANCIERO' && ($tipo_gasto['nombre_tipos_gasto']=='INTERES' || $tipo_gasto['nombre_tipos_gasto']=='COMISION')){
+                    if($tipo_gasto['nombre_tipos_gasto'] == 'INTERES'){
+                        $this->db->select('SUM(interes) AS subtotal');
+                    }else{
+                        $this->db->select('SUM(comision) AS subtotal');
+                    }
+                    $this->db->from('ingreso i');
+                    $this->db->join('ingreso_credito ic', 'i.id_ingreso = ic.ingreso_id');
+                    if($params['local_id']>0){
+                        $this->db->where('local_id = '.$params['local_id']);
+                    }
+                    if($params['moneda_id']>0){
+                        $this->db->where('id_moneda = '.$params['moneda_id']);
+                    }
+                    if($params['mes'] != '' && $params['year'] != ''){
+                        $this->db->where('YEAR(fecha_emision) = '.$params['year'].' AND MONTH(fecha_emision) = '.$params['mes']);
+                    }
+                    $suma = $this->db->get()->row_array();
+                }else{
+                    //Sumas los gastos deacuerdo al tipo y grupo
+                    $this->db->select('SUM(subtotal) AS subtotal');
+                    $this->db->from('gastos');
+                    $this->db->where('status_gastos', '0'); //Gasto confirmado
+                    $this->db->where('tipo_gasto', $tipo_gasto['id_tipos_gasto']);
+                    if($params['local_id']>0){
+                        $this->db->where('local_id = '.$params['local_id']);
+                    }
+                    if($params['moneda_id']>0){
+                        $this->db->where('id_moneda = '.$params['moneda_id']);
+                    }
+                    if($params['mes'] != '' && $params['year'] != ''){
+                        $this->db->where('YEAR(fecha) = '.$params['year'].' AND MONTH(fecha) = '.$params['mes']);
+                    }
+                    $suma = $this->db->get()->row_array();
                 }
-                if($params['moneda_id']>0){
-                    $this->db->where('id_moneda = '.$params['moneda_id']);
-                }
-                if($params['mes'] != '' && $params['year'] != ''){
-                    $this->db->where('YEAR(fecha) = '.$params['year'].' AND MONTH(fecha) = '.$params['mes']);
-                }
-                $suma = $this->db->get()->row_array();
                 $tipo_gastos[$a]['suma'] = $suma['subtotal'];
                 $totSubtotal += $suma['subtotal'];
                 $a++;

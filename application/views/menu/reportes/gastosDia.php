@@ -67,6 +67,9 @@
             <!-- /.modal-dialog -->
             <script type="text/javascript">
                 $(document).ready(function () {
+                    //CONFIGURACIONES INICIALES
+                    App.sidebar('close-sidebar');
+                    
                     $('input[name="fecha"]').daterangepicker({
                         "locale": {
                             "format": "DD/MM/YYYY",

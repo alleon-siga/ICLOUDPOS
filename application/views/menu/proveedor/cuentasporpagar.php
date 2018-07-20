@@ -119,6 +119,9 @@
 </div>
 <script src="<?php echo $ruta ?>recursos/js/pages/tablesDatatables.js"></script>
 <script>
+    //CONFIGURACIONES INICIALES
+    App.sidebar('close-sidebar');
+    
     var verificar = 1;
     $(document).ready(function () {
         $('#exportar_excel').on('click', function () {

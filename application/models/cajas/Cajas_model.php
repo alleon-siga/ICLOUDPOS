@@ -605,10 +605,13 @@ class cajas_model extends CI_Model
                 }
                 $saldos_pendientes[$x]->cliente = '';
             }elseif($saldos_pendientes[$x]->tipo=='COMPRA' || $saldos_pendientes[$x]->tipo=='PAGOS_CUOTAS'){
-                $this->db->select('proveedor_nombre');
-                $this->db->from('ingreso i');
-                $this->db->join('proveedor p', 'i.int_Proveedor_id = p.id_proveedor');
-                $this->db->where('id_ingreso', $saldos_pendientes[$x]->ref_id);
+                $this->db->select('IF(p.proveedor_nombre IS NULL, u.username, p.proveedor_nombre) AS proveedor_nombre');
+                $this->db->from('pagos_ingreso pi');
+                $this->db->join('ingreso_credito_cuotas icc', 'pi.pagoingreso_ingreso_id = icc.id');
+                $this->db->join('ingreso i', 'icc.ingreso_id = i.id_ingreso');
+                $this->db->join('proveedor p', 'i.int_Proveedor_id = p.id_proveedor', 'left');
+                $this->db->join('usuario u', 'i.int_usuario_id = u.nUsuCodigo', 'left');
+                $this->db->where('pi.pagoingreso_id', $saldos_pendientes[$x]->ref_id);
                 $proveedor = $this->db->get()->row();
                 $saldos_pendientes[$x]->cliente = '';
                 $saldos_pendientes[$x]->proveedor = $proveedor->proveedor_nombre;

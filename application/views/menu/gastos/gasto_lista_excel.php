@@ -15,8 +15,11 @@
         <th>Local</th>
         <th>Fecha</th>
         <th>Tipo de Gasto</th>
+        <th>Documento</th>
         <th>Persona Afectada</th>
         <th>Descripci&oacute;n</th>
+        <th>Subtotal</th>
+        <th>Impuesto</th>
         <th>Total</th>
         <th>Usuario</th>
         <th>Fecha Registro</th>
@@ -33,8 +36,11 @@
                 <td><?= $gastos['local_nombre'] ?></td>
                 <td><?= date("d/m/Y", strtotime($gastos['fecha'])) ?></td>
                 <td><?= $gastos['nombre_tipos_gasto'] ?></td>
+                <td><?= $gastos['des_doc'] ?></td>
                 <td><?= $gastos['proveedor_id'] != NULL ? $gastos['proveedor_nombre'] : $gastos['trabajador'] ?></td>
                 <td><?= $gastos['descripcion'] ?></td>
+                <td><?= $gastos['simbolo'] . ' ' . number_format($gastos['subtotal'], 2) ?></td>
+                <td><?= $gastos['simbolo'] . ' ' . number_format($gastos['impuesto'], 2) ?></td>
                 <td><?= $gastos['simbolo'] . ' ' . number_format($gastos['total'], 2) ?></td>
                 <td><?= $gastos['responsable'] ?></td>
                 <td><?= date("d/m/Y", strtotime($gastos['fecha_registro'])) ?></td>
@@ -43,6 +49,10 @@
             </tr>
         <?php }
     } ?>
+        <tr>
+            <td colspan="9">Total</td>
+            <td><?= $moneda->simbolo ?> <?=number_format($gastos_totales->total, 2)?></td>
+            <td colspan="4"></td>
+        </tr>
     </tbody>
 </table>
-<h4 style="text-align: right;">Importe: <?= $moneda->simbolo ?> <?=number_format($gastos_totales->total, 2)?></h4>

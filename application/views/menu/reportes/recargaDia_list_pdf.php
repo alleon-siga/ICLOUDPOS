@@ -91,9 +91,9 @@
     ?>
         <tr style="background-color: <?= $colorFila ?> !important">
             <td><?= $list->venta_id ?></td>
-            <td><?= utf8_decode($list->razon_social) ?></td>
-            <td><?= utf8_decode($list->nota) ?></td>
-            <td><?= utf8_decode($list->nombre) ?></td>
+            <td><?= $list->razon_social ?></td>
+            <td><?= $list->nota ?></td>
+            <td><?= $list->nombre ?></td>
             <td><?= $list->valor ?></td>
             <td><?= $list->rec_nro ?></td>
             <td><?= $list->rec_trans ?></td>
@@ -106,8 +106,8 @@
                     <?= $md->simbolo.' '.number_format($debe, 2); ?>
                 </label>
             </td>
-            <td><?= utf8_decode($list->local_nombre) ?></td>
-            <td><?= utf8_decode($list->condicion) ?></td>
+            <td><?= $list->local_nombre ?></td>
+            <td><?= $list->condicion ?></td>
             <td><?= $estado ?></td>
         </tr>     
         <?php 

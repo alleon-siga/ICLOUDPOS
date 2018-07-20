@@ -71,7 +71,11 @@
                         echo '<span style="color: #0000FF">NO FACTURADO</span>';
                 ?>
                 </td>
+                <?php if(!empty($p->proveedor_nombre)){ ?>
                 <td style="white-space: normal;"><?= $p->proveedor_nombre ?></td>
+                <?php }else{ ?>
+                <td style="white-space: normal;"><?= $p->username ?></td>
+                <?php } ?>
                 <td><?= date('d/m/Y', strtotime($p->fecha_emision)) ?></td>
                 <td><?= $p->simbolo . ' ' . number_format($p->total_ingreso, 2) ?></td>
                 <td><?= $p->simbolo . ' ' . number_format($p->inicial, 2) ?></td>

@@ -640,8 +640,11 @@
                 var cuota = {};
                 cuota.letra = $("#body_cuotas #c_cuota_letra_" + i).html().trim();
                 cuota.fecha = $("#body_cuotas #c_cuota_fecha_" + i).html().trim();
+                cuota.saldo = '0'; //saldo
+                cuota.capital = '0'; //capital
+                cuota.interes = '0'; //interes
+                cuota.comision = '0'; //comision
                 cuota.monto = $("#body_cuotas #c_cuota_monto_" + i).html().trim();
-
                 cuotas.push(cuota);
             }
             return JSON.stringify(cuotas);

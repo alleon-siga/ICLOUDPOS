@@ -202,7 +202,9 @@ class ingreso_model extends CI_Model
             'tasa_cambio' => $cab_pie['tasa_cambio'],
             'costo_por' => isset($cab_pie['costo_por']) ? $cab_pie['costo_por'] : 0,
             'utilidad_por' => isset($cab_pie['utilidad_por']) ? $cab_pie['utilidad_por'] : 0,
-            'tipo_impuesto' => $cab_pie['tipo_impuesto']
+            'tipo_impuesto' => $cab_pie['tipo_impuesto'],
+            'id_gastos' => isset($cab_pie['id_gastos']) ? $cab_pie['id_gastos'] : 0,
+            'int_usuario_id' => isset($cab_pie['cboUsuario']) ? $cab_pie['cboUsuario'] : 0,
         );
         
         $this->db->insert('ingreso', $compra);
@@ -212,7 +214,7 @@ class ingreso_model extends CI_Model
             $moneda_id = $compra['id_moneda'];
             $this->cajas_model->save_pendiente(array(
                 'monto' => $compra['total_ingreso'],
-                'tipo' => 'COMPRA',
+                'tipo' => $compra['tipo_ingreso'],
                 'IO' => 2,
                 'ref_id' => $insert_id,
                 'moneda_id' => $moneda_id,
@@ -223,14 +225,15 @@ class ingreso_model extends CI_Model
                 $moneda_id = $compra['id_moneda'];
                 $this->cajas_model->save_pendiente(array(
                     'monto' => $credito['c_inicial'],
-                    'tipo' => 'COMPRA',
+                    'tipo' => $compra['tipo_ingreso'],
                     'IO' => 2,
                     'ref_id' => $insert_id,
                     'moneda_id' => $moneda_id,
                     'local_id' => $compra['local_id']
                 ));
             }
-
+            $this->save_credito($insert_id, $credito, $cuotas);
+        } else if ($compra['ingreso_status'] == 'PENDIENTE' && $compra['total_ingreso'] > 0 && $compra['pago'] == 'CREDITO') {
             $this->save_credito($insert_id, $credito, $cuotas);
         }
 
@@ -515,10 +518,12 @@ class ingreso_model extends CI_Model
 
     function save_credito($compra_id, $credito, $cuotas)
     {
-
         $this->db->insert('ingreso_credito', array(
             'ingreso_id' => $compra_id,
             'numero_cuotas' => count($cuotas),
+            'capital' => $credito['c_precio_contado'],
+            'interes' => $credito['c_tasa_interes'],
+            'comision' => $credito['c_comision'],
             'monto_cuota' => $credito['c_precio_credito'],
             'monto_debito' => 0,
             'estado' => 'PENDIENTE',
@@ -530,6 +535,9 @@ class ingreso_model extends CI_Model
         foreach ($cuotas as $cuota) {
             $this->db->insert('ingreso_credito_cuotas', array(
                 'ingreso_id' => $compra_id,
+                'capital' => $cuota->capital,
+                'interes' => $cuota->interes,
+                'comision' => $cuota->comision,
                 'monto' => $cuota->monto,
                 'letra' => $cuota->letra,
                 'fecha_vencimiento' => date('Y-m-d', strtotime(str_replace('/', '-', $cuota->fecha))),
@@ -537,7 +545,6 @@ class ingreso_model extends CI_Model
                 'fecha_cancelada' => null
             ));
         }
-
     }
 
     function guardar_detalle_contable($detalle, $ingreso_id)

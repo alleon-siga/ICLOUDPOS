@@ -46,18 +46,16 @@ class gastos_model extends CI_Model
     {
         $this->db->select('*, moneda.*,
          responsable.username as responsable, trabajador.nombre as trabajador,
-         gastos.total as total, condiciones_pago.nombre_condiciones');
+         gastos.total as total, condiciones_pago.nombre_condiciones, documentos.des_doc, gastos.subtotal, gastos.impuesto');
         $this->db->join('tipos_gasto', 'tipos_gasto.id_tipos_gasto=gastos.tipo_gasto');
         $this->db->join('local', 'gastos.local_id=local.int_local_id');
         $this->db->join('moneda', 'moneda.id_moneda=gastos.id_moneda');
+        $this->db->join('documentos', 'gastos.id_documento = documentos.id_doc');
         $this->db->join('usuario as trabajador', 'gastos.usuario_id=trabajador.nUsuCodigo', 'left');
         $this->db->join('usuario as responsable', 'gastos.responsable_id=responsable.nUsuCodigo');
         $this->db->join('proveedor', 'gastos.proveedor_id=proveedor.id_proveedor', 'left');
         $this->db->join('condiciones_pago', 'gastos.condicion_pago=condiciones_pago.id_condiciones', 'left');
-
         $this->set_gastos_where($data);
-
-
         return $this->db->get('gastos')->result_array();
     }
 
@@ -108,7 +106,7 @@ class gastos_model extends CI_Model
             'serie' => $data['serie'],
             'numero' => $data['numero'],
             'id_impuesto' => $data['id_impuesto'],
-            'subtotal' => $data['subtotal'],
+            'subtotal' => ($data['gravable']=='0')? $data['total'] : $data['subtotal'],
             'impuesto' => $data['impuesto'],
             'condicion_pago' => $data['tipo_pago']
         );
@@ -129,20 +127,28 @@ class gastos_model extends CI_Model
             $this->db->insert('gastos_detalle', $gastosDetalle);
         }
 
-        if($data['id_documento'] == '10'){ //CRONOGRAMA DE PAGOS
-            $io = 1;
+        if($data['tipo_pago']=='1'){
+            $this->cajas_model->save_pendiente(array(
+                'monto' => $data['total'],
+                'tipo' => 'GASTOS',
+                'IO' => 2,
+                'ref_id' => $id,
+                'cuenta_id' => $data['cuenta_id'],
+                'local_id' => $data['local_id']
+            ));
         }else{
-            $io = 2;
+            $tipo_gasto = $this->db->get_where('tipos_gasto', array('id_tipos_gasto' => $data['tipo_gasto']))->row();
+            if($tipo_gasto->nombre_tipos_gasto == 'PRESTAMO BANCARIO'){
+                $this->cajas_model->save_pendiente(array(
+                    'monto' => $data['capital'],
+                    'tipo' => 'GASTOS',
+                    'IO' => 1,
+                    'ref_id' => $id,
+                    'cuenta_id' => $data['cuenta_id'],
+                    'local_id' => $data['local_id']
+                ));
+            }
         }
-
-        $this->cajas_model->save_pendiente(array(
-            'monto' => ($data['total'] - $data['c_tasa_interes']),
-            'tipo' => 'GASTOS',
-            'IO' => $io,
-            'ref_id' => $id,
-            'cuenta_id' => $data['cuenta_id'],
-            'local_id' => $data['local_id']
-        ));
 
         $this->db->trans_complete();
 
