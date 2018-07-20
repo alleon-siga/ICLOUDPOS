@@ -336,7 +336,7 @@ class venta_new_model extends CI_Model
         $update_venta['numero'] = $correlativo->correlativo;
         if ($iddoc != '')
             $update_venta['id_documento'] = $iddoc;
-        $this->correlativos_model->sumar_correlativo($venta->local_id, $venta->id_documento);
+        $this->correlativos_model->sumar_correlativo($venta->local_id, $iddoc);
 
         // Hago la facturacion de comprobantes
         if ($venta->comprobante_id > 0) {
@@ -363,7 +363,7 @@ class venta_new_model extends CI_Model
             'numero' => sumCod($update_venta['numero'], 6)
         ));
 
-        if (valueOptionDB('FACTURACION', 0) == 1 && ($venta->id_documento == 1 || $venta->id_documento == 3)) {
+        if (valueOptionDB('FACTURACION', 0) == 1 && ($iddoc == 1 || $iddoc == 3)) {
             $resp = $this->facturacion_model->facturarVenta($venta_id);
         }
 
