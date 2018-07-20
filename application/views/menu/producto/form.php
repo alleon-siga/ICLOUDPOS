@@ -1548,7 +1548,9 @@
                 show_msg('warning', '<h3><strong>El precio unitario de venta es menor o igual a su costo</strong></h3>');
 
 
-            $("#cargando_modal").modal('show');
+
+            $('#productomodal').modal('hide');
+            $("#barloadermodal").modal('show');
             var formData = new FormData($("#formguardar")[0]);
             $.ajax({
                 url: ruta + 'producto/registrar',
@@ -1565,9 +1567,8 @@
                         if (retorno != 'producto') {
                             update_producto(data.id, data.nombre, data.impuesto, data.producto_id);
                         }
+                        $("#barloadermodal").modal('hide');
                         $(".modal-backdrop").remove();
-                        $('#productomodal').modal('hide');
-                        $("#cargando_modal").modal('hide');
                         if (retorno == 'producto') {
                             $.ajax({
                                 url: ruta + 'producto',
@@ -1585,7 +1586,8 @@
                             allow_dismiss: true
                         });
                     } else {
-                        $("#cargando_modal").modal('hide');
+                        $("#barloadermodal").modal('hide');
+                        $('#productomodal').modal('show');
                         var growlType = 'warning';
 
                         $.bootstrapGrowl('<h4>' + data.error + '</h4>', {
@@ -1611,7 +1613,8 @@
 
                 },
                 error: function (response) {
-                    $('#cargando_modal').modal('hide');
+                    $('#barloadermodal').modal('hide');
+                    $('#productomodal').modal('show');
                     var growlType = 'warning';
                     $.bootstrapGrowl('<h4>Ha ocurrido un error al realizar la operacion</h4>', {
                         type: growlType,
