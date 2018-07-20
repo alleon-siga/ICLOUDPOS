@@ -48,22 +48,25 @@
         foreach ($lists as $ingreso):
             $impuesto = (($ingreso->impuesto_porciento / 100) + 1);
             $cantidad = $ingreso->cantidad;
-            $costoCompraSi = $ingreso->detalle_costo_ultimo / $impuesto; //Costo de compra unitario sin impuesto
             $costoCompra = $ingreso->detalle_costo_ultimo; //Costo de compra unitario con impuesto
-            $impCompra = $costoCompra - $costoCompraSi; //Impuesto de compra
+            
             if($ingreso->tipo_impuesto=='1'){ //incluye impuesto
                 $precioVenta = $ingreso->detalle_importe; //precio de venta
                 $costoVentaSi = ($precioVenta / $cantidad) / $impuesto; //Costo de venta unitario sin impuesto
                 $costoVenta = $costoVentaSi * $impuesto; //Costo de venta unitario con impuesto
+                $costoCompraSi = $ingreso->detalle_costo_ultimo / $impuesto;
             }elseif($ingreso->tipo_impuesto=='2'){ //agregar impuesto
                 $precioVenta = $ingreso->detalle_importe * $impuesto;
                 $costoVentaSi = ($precioVenta / $cantidad) / $impuesto; //Costo de venta unitario sin impuesto
                 $costoVenta = $costoVentaSi * $impuesto; //Costo de venta unitario con impuesto
+                $costoCompraSi = $ingreso->detalle_costo_ultimo * $impuesto;
             }else{ //no incluye impuesto
                 $precioVenta = $ingreso->detalle_importe; //precio de venta
                 $costoVentaSi = ($precioVenta / $cantidad);
                 $costoVenta = $costoVentaSi;
+                $costoCompraSi = $ingreso->detalle_costo_ultimo;
             }
+            $impCompra = $costoCompra - $costoCompraSi; //Impuesto de compra
             $costoTotal = $cantidad * $costoCompra; //Costo Total
             $subtotal = $cantidad * $costoVentaSi;
             $impVenta = $precioVenta - $subtotal;
