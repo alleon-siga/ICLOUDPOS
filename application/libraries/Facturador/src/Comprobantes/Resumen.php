@@ -84,12 +84,25 @@ class Resumen extends Comprobante
             $doc_line->appendChild($this->xml->createElement('cbc:ID', $detalle['NUMERO_DOCUMENTO']));
             $doc_line->appendChild($this->createClienteXml($detalle));
 
+            //Billing reference
+            if (isset($detalle['NOTA_NUMERO_DOCUMENTO']) && $detalle['NOTA_NUMERO_DOCUMENTO'] != '') {
+                $billing_ref = $this->xml->createElement('cac:BillingReference');
+                $p = $billing_ref->appendChild($this->xml->createElement('cac:InvoiceDocumentReference'));
+                $p->appendChild($this->xml->createElement('cbc:ID', $detalle['NOTA_NUMERO_DOCUMENTO']));
+                $p->appendChild($this->xml->createElement('cbc:DocumentTypeCode', $detalle['NOTA_TIPO_DOCUMENTO']));
+
+                $doc_line->appendChild($billing_ref);
+            }
+
+
             $estado_item = $this->xml->createElement('cac:Status');
             $estado_item->appendChild($this->xml->createElement('cbc:ConditionCode', $detalle['ESTADO_ITEM']));
             $doc_line->appendChild($estado_item);
 
             $doc_line->appendChild($this->xml->createElement('sac:TotalAmount', $detalle['TOTAL_VENTA']))
                 ->setAttribute('currencyID', $detalle['CODIGO_MONEDA']);
+
+
 
             if ($detalle['TOTAL_GRAVADAS'] > 0) {
                 $totales_venta = $this->xml->createElement('sac:BillingPayment');
@@ -135,16 +148,6 @@ class Resumen extends Comprobante
             if (isset($detalle['TOTAL_TRIBUTO_OTROS']))
                 $doc_line->appendChild($this->createTributoXml($detalle['TOTAL_TRIBUTO_OTROS'], $detalle['CODIGO_MONEDA'], '9999', 'OTROS', 'OTH'));
 
-
-            //Billing reference
-            if (isset($detalles['NOTA_NUMERO_DOCUMENTO'])) {
-                $billing_ref = $this->xml->createElement('cac:BillingReference');
-                $p = $billing_ref->appendChild($this->xml->createElement('cac:InvoiceDocumentReference'));
-                $p->appendChild($this->xml->createElement('cbc:ID', $detalle['NOTA_NUMERO_DOCUMENTO']));
-                $p->appendChild($this->xml->createElement('cbc:DocumentTypeCode', $detalle['NOTA_TIPO_DOCUMENTO']));
-
-                $doc_line->appendChild($billing_ref);
-            }
 
             $root->appendChild($doc_line);
 
