@@ -69,21 +69,21 @@
     <br>
 
     <div class="table-responsive" id="productostable">
-        <table class='table table-striped dataTable table-bordered table-responsive tableStyle' id="table">
+        <table class='table table-striped dataTable table-bordered table-responsive tableStyle' id="table" style="width: 100%;">
             <thead>
             <tr>
                 <?php if (canShowCodigo()): ?>
-                    <th width="2%"><?php echo getCodigoNombre() ?></th>
+                    <th><?php echo getCodigoNombre() ?></th>
                 <?php endif; ?>
                 <?php foreach ($columnas as $col): ?>
                     <?php
                     if ($col->mostrar == TRUE && $col->nombre_columna != 'producto_estado' && $col->nombre_columna != 'producto_codigo_interno' && $col->nombre_columna != 'producto_id') {
-                        echo " <th width='10%'>" . $col->nombre_mostrar . "</th>";
+                        echo " <th>" . $col->nombre_mostrar . "</th>";
                     }
 
                     ?>
                 <?php endforeach; ?>
-                <th width="2%">Estado</th>
+                <th>Estado</th>
 
 
             </tr>
@@ -96,12 +96,12 @@
 
                 <tr id="<?= $pd['producto_id'] ?>">
                     <?php if (canShowCodigo()): ?>
-                        <td style="white-space: normal;"><?php echo getCodigoValue(sumCod($pd['producto_id']), $pd['producto_codigo_interno']) ?></td>
+                        <td><?php echo getCodigoValue(sumCod($pd['producto_id']), $pd['producto_codigo_interno']) ?></td>
                     <?php endif; ?>
                     <?php foreach ($columnas as $col): ?>
                         <?php if (array_key_exists($col->nombre_columna, $pd) and $col->mostrar == TRUE) {
                             if ($col->nombre_columna != 'producto_estado' && $col->nombre_columna != 'producto_codigo_interno' && $col->nombre_columna != 'producto_id') {
-                                echo "<td style='white-space: normal;'>";
+                                echo "<td>";
                                 if ($col->nombre_columna == 'producto_vencimiento')
                                     echo $pd[$col->nombre_join] != null ? date('d-m-Y', strtotime($pd[$col->nombre_join])) : '';
                                 else
@@ -112,7 +112,7 @@
                         } ?>
                     <?php endforeach; ?>
 
-                    <td style="white-space: normal;">
+                    <td>
                         <?php if ($pd['producto_estado'] == 0) {
                             echo "INACTIVO";
                         } else {
@@ -442,9 +442,9 @@
 <!-- Load and execute javascript code used only in this page -->
 
 
-<script>
-    $(function () {
-
+<script>$(function () {
+            //CONFIGURACIONES INICIALES
+            //App.sidebar('close-sidebar');
 
 
         // este codigo es para que al abrir un modal encima de otro modal no se pierda el scroll
@@ -462,8 +462,8 @@
             }
         });
 
-        //CONFIGURACIONES INICIALES
-        //App.sidebar('close-sidebar');
+
+        TablesDatatables.init();
 
         //setTimeout(function () { $(window).resize(); }, 400);
 
@@ -496,7 +496,7 @@
         });
 
 
-        TablesDatatables.init();
+
 
         /*
          NO DESOMENTAR ESTO
@@ -514,8 +514,6 @@
 
          }
          });*/
-
-
     });
 
     function confirmarcerrar() {

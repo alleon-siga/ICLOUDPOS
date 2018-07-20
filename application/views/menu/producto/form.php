@@ -82,7 +82,7 @@
                                 <div class="col-md-3"><label class="control-label">C&oacute;digo Interno:</label></div>
                                 <div class="col-md-8">
                                     <input type="text" name="producto_codigo_interno" id="codigo_interno"
-                                           class='form-control' autofocus="autofocus" maxlength="25"
+                                           class='form-control cbo_desc' autofocus="autofocus" maxlength="25"
                                            value="<?php if (isset($producto['producto_codigo_interno'])) echo $producto['producto_codigo_interno'] ?>" autocomplete="off">
 
                                 </div>
@@ -112,12 +112,12 @@
 
                                 <div class="col-md-8">
                                     <input type="text" name="producto_nombre_unico" required="true" id="producto_nombre_unico"
-                                           class='form-control'
+                                           class='form-control cbo_desc'
                                            maxlength="100"
                                            value="<?php if (isset($producto['producto_nombre'])) echo $producto['producto_nombre'] ?>" autocomplete="off">
                                     <br>
                                     <label id="label_producto_nombre" class="control-label"></label>
-                                    <input type="hidden" name="producto_nombre" value="">
+                                    <input type="hidden" name="producto_nombre" id="producto_nombre" value="<?php if (isset($producto['producto_nombre'])) echo $producto['producto_nombre'] ?>">
                                 </div>
                             </div>
 
@@ -255,7 +255,7 @@
                                 </div>
                                 <div class="col-md-8">
                                     <input type="text" name="producto_modelo" required="true" id="producto_modelo"
-                                           class='form-control'
+                                           class='form-control cbo_desc'
                                            maxlength="100"
                                            value="<?php if (isset($producto['producto_modelo'])) echo $producto['producto_modelo'] ?>" autocomplete="off">
                                 </div>
@@ -1192,10 +1192,12 @@
         $(".my_datepicker").datepicker({format: 'dd-mm-yyyy'});
         <?php endif;?>
 
-
-
         $(function () {
             $('.desc_chk, .cbo_desc').on('click change', function(){
+                /*if( $.trim($('#iddos').val()) != '' && $('#producto_nombre_unico').val() != '' ){
+                    $('#producto_nombre_unico').val('');
+                }*/
+
                 var cadena = new Array();
                 if($('#producto_nombre_unico').val() != ''){
                     cadena[0] = $.trim($('#producto_nombre_unico').val());
