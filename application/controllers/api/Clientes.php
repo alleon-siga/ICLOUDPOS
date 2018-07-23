@@ -87,7 +87,7 @@ class Clientes extends REST_Controller
         $emisor = $sunat->consultarRuc($ruc);
 
         if ($emisor != false) {
-            $this->response(array('emisor' => $emisor), 200);
+            $this->response($emisor, 200);
 
         } else {
             $this->response(array(), 200);
