@@ -91,7 +91,7 @@ class Clientes extends REST_Controller
             $data['cliente'] = $emisor;
         }
 
-        $this->response($data, 200);
+        $this->response($ruc, 200);
     }
 
     // Save
