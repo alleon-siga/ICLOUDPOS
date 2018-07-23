@@ -50,8 +50,6 @@
             $cantidad = $ingreso->cantidad;
             $costoCompra = $ingreso->detalle_costo_ultimo; //Costo de compra unitario con impuesto
             
-            if($ingreso->tipo_impuesto=='1'){ //incluye impuesto
-            $impCompra = $costoCompra - $costoCompraSi; //Impuesto de compra
             if($ingreso->tipo_impuesto=='1' || empty($ingreso->tipo_impuesto)){ //incluye impuesto
                 $precioVenta = $ingreso->detalle_importe; //precio de venta
                 $costoVentaSi = ($precioVenta / $cantidad) / $impuesto; //Costo de venta unitario sin impuesto

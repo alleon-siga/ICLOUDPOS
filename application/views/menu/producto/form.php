@@ -112,11 +112,13 @@
 
                                 <div class="col-md-8">
                                     <input type="text" name="producto_nombre_unico" required="true" id="producto_nombre_unico"
-                                           class='form-control'
+                                           class='form-control cbo_desc'
                                            maxlength="100"
-                                           value="<?php if (isset($producto['producto_nombre'])) echo $producto['producto_nombre'] ?>" autocomplete="off">
+                                           value="<?php if (isset($producto['producto_nombre_original'])) echo $producto['producto_nombre_original'] ?>" autocomplete="off">
                                     <br>
-                                    <label id="label_producto_nombre" class="control-label"></label>
+                                    <label id="label_producto_nombre" class="control-label">
+                                        <?php if (isset($producto['producto_nombre'])) echo $producto['producto_nombre'] ?>
+                                    </label>
                                     <input type="hidden" name="producto_nombre" id="producto_nombre" value="<?php if (isset($producto['producto_nombre'])) echo $producto['producto_nombre'] ?>">
                                 </div>
                             </div>
@@ -1194,10 +1196,6 @@
 
         $(function () {
             $('.desc_chk, .cbo_desc').on('click change', function(){
-                /*if( $.trim($('#iddos').val()) != '' && $('#producto_nombre_unico').val() != '' ){
-                    $('#producto_nombre_unico').val('');
-                }*/
-
                 var cadena = new Array();
                 if($('#producto_nombre_unico').val() != ''){
                     cadena[0] = $.trim($('#producto_nombre_unico').val());
@@ -1257,7 +1255,7 @@
             $('#producto_impuesto').trigger('change');
 
 
-        })
+        });
 
 
         $("#cu_moneda").change(function (e) {

@@ -508,6 +508,7 @@ class producto extends MY_Controller
         $producto_codigo_interno = $this->input->post('producto_codigo_interno');
         $producto_vencimiento = $this->input->post('producto_vencimiento');
 		$valor_importe = $this->input->post('valor_importe');
+        $producto_nom_original = $this->input->post('producto_nombre_unico');
 
         if ($codigo_barra != "") {
             if (empty($id)) {
@@ -559,7 +560,8 @@ class producto extends MY_Controller
             'producto_titulo_imagen' => $this->input->post('titulo_imagen'),
             'producto_codigo_interno' => $producto_codigo_interno,
             'producto_descripcion_img' => $this->input->post('descripcion_imagen'),
-            'producto_vencimiento' => $producto_vencimiento != null ? date('Y-m-d', strtotime($producto_vencimiento)) : null
+            'producto_vencimiento' => $producto_vencimiento != null ? date('Y-m-d', strtotime($producto_vencimiento)) : null,
+            'producto_nombre_original' => $producto_nom_original
         );
 
 
