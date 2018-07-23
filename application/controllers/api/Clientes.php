@@ -85,14 +85,13 @@ class Clientes extends REST_Controller
         require_once(APPPATH . 'libraries/RucSunat/RucSunat.php');
         $sunat = new RucSunat();
         $emisor = $sunat->consultarRuc($ruc);
-        $data['cliente'] = $emisor;
+        $data['cliente'] = array();
 
         if ($emisor != false) {
-            $this->response($data, 200);
-
-        } else {
-            $this->response(array(), 200);
+            $data['cliente'] = $emisor;
         }
+
+        $this->response($data, 200);
     }
 
     // Save
