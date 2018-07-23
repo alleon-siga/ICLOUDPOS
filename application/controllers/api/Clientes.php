@@ -78,6 +78,23 @@ class Clientes extends REST_Controller
         $this->response($data, 200);
     }
 
+    public function sunat_post()
+    {
+        $post = $this->input->post();
+        $ruc = $post['ruc'];
+
+        require_once(APPPATH.'libraries/sunat/autoload.php');
+        $cliente = new \Sunat\Sunat(true,true);
+        $data = $cliente->search($ruc, true);
+        $resultArray = json_decode($data, true);
+        if ($resultArray['success'] == 1) {
+            $this->response($resultArray['result'], 200);
+
+        } else {
+            $this->response(array(), 200);
+        }
+    }
+
     // Save
     public function save_post()
     {
