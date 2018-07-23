@@ -80,15 +80,14 @@ class Clientes extends REST_Controller
 
     public function sunat_post()
     {
-        $post = $this->input->post();
-        $ruc = $post['ruc'];
+        $ruc = $this->input->post('ruc');
 
-        require_once(APPPATH.'libraries/sunat/autoload.php');
-        $cliente = new \Sunat\Sunat(true,true);
-        $data = $cliente->search($ruc, true);
-        $resultArray = json_decode($data, true);
-        if ($resultArray['success'] == 1) {
-            $this->response($resultArray['result'], 200);
+        require_once(APPPATH . 'libraries/RucSunat/RucSunat.php');
+        $sunat = new RucSunat();
+        $emisor = $sunat->consultarRuc($ruc);
+
+        if ($emisor != false) {
+            $this->response(array('emisor' => $emisor), 200);
 
         } else {
             $this->response(array(), 200);
