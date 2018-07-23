@@ -1238,10 +1238,8 @@
                     i++;
                 });
 
-                if(newCadena.length>0){
-                    $('#label_producto_nombre').text(newCadena.join(' '));
-                    $('#producto_nombre').val(newCadena.join(' '));
-                }
+                $('#label_producto_nombre').text(newCadena.join(' '));
+                $('#producto_nombre').val(newCadena.join(' '));
             });
 
             $('#producto_impuesto').on('change', function () {
