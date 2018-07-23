@@ -88,7 +88,7 @@ class Clientes extends REST_Controller
         $data = $cliente->search($ruc, true);
         $resultArray = json_decode($data, true);
         if ($resultArray['success'] == 1) {
-            $this->response($resultArray, 200);
+            $this->response($resultArray['result'], 200);
 
         } else {
             $this->response(array(), 200);
