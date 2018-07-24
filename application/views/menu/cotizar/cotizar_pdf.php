@@ -18,7 +18,7 @@
         <td><img height="100" src="<?= base_url('recursos/img/logo/' . valueOption("EMPRESA_LOGO", '')) ?>"></td>
         <td style="height: 100px; text-align: center; width: 50%;"><?= valueOption('COTIZACION_INFORMACION', '') ?></td>
         <td style="text-align: center; border: 1px solid #000; vertical-align: middle; font-size: 1.5em;">
-            # COTIZACION <?= sumCod($cotizar->id) ?><br><br><?= date('d/m/Y') ?>
+            COTIZACION <?= sumCod($cotizar->id) ?><br><br><?= date('d/m/Y') ?>
         </td>
     </tr>
 </table>
@@ -45,7 +45,7 @@
 <table>
     <tr>
         <td>LUGAR DE ENTREGA: <?= $cotizar->lugar_entrega ?></td>
-        <td>CONTACTO: <?= valueOption('EMPRESA_CONTACTO', '-') ?></td>
+        <td>CONTACTO: <?= $cotizar->vendedor_nombre ?></td>
     </tr>
     <tr>
         <td>FECHA DE ENTREGA: <?= date('d/m/Y', strtotime($cotizar->fecha_entrega)) ?></td>
@@ -77,7 +77,7 @@
             <td style="border: #111 0.5px solid;"><?= $detalle->producto_nombre ?></td>
             <td style="border: #111 0.5px solid; text-align: center;"><?= $detalle->cantidad ?></td>
             <td style="border: #111 0.5px solid; text-align: center;"><?= $detalle->unidad_nombre ?></td>
-            <td style="border: #111 0.5px solid; text-align: center;"><?= $cotizar->moneda_simbolo . " " . $detalle->precio ?></td>
+            <td style="border: #111 0.5px solid; text-align: center;"><?= $cotizar->moneda_simbolo . " " . number_format($detalle->precio, 2) ?></td>
             <td style="border: #111 0.5px solid; text-align: right;"><?= $cotizar->moneda_simbolo . " " . number_format($detalle->importe, 2) ?></td>
         </tr>
     <?php endforeach; ?>

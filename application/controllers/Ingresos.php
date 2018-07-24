@@ -794,6 +794,8 @@ class ingresos extends MY_Controller
             $dataresult['ingreso'] = $this->db->join('moneda', 'moneda.id_moneda=ingreso.id_moneda')
                 ->join('proveedor', 'proveedor.id_proveedor=ingreso.int_Proveedor_id', 'left')
                 ->join('usuario', 'usuario.nUsuCodigo = ingreso.int_usuario_id', 'left')
+                ->join('gastos', 'ingreso.id_gastos = gastos.id_gastos', 'left')
+                ->join('tipos_gasto', 'gastos.tipo_gasto = tipos_gasto.id_tipos_gasto', 'left')
                 ->get_where('ingreso', array('id_ingreso' => $id_ingreso))->row();
 
             $dataresult['ingreso_detalles'] = $this->db->join('producto', 'producto.producto_id=detalleingreso.id_producto')
