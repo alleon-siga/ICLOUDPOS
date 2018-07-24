@@ -91,7 +91,7 @@ class Clientes extends REST_Controller
             $this->response($data, 200);
 
         } else {
-            $this->response('empty', 200);
+            $this->response(0, 200);
         }
     }
 
