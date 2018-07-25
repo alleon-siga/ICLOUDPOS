@@ -32,7 +32,7 @@ class cotizar_model extends CI_Model
             cliente.direccion as cliente_direccion,
             cliente.telefono1 as telefono,
             c.vendedor_id as vendedor_id,
-            usuario.username as vendedor_nombre,
+            usuario.nombre as vendedor_nombre,
             c.tipo_pago_id as condicion_id,
             condiciones_pago.nombre_condiciones as condicion_nombre,
             c.estado as estado,
