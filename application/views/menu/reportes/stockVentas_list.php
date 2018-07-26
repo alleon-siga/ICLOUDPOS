@@ -1,136 +1,165 @@
-<?php
-ini_set('max_execution_time', 300);
-//ini_set('memory_limit', '256M');
-?>
 <?php $ruta = base_url(); ?>
-<?php $md = get_moneda_defecto() ?>
 <style>
     table tfoot tr td {
         font-weight: bold;
     }
 </style>
-<?php
+<?
     /*echo "<pre>";
     echo print_r($lists);
     echo "</pre>";*/
-    //echo $tipo;
 ?>
-
-<ul class="nav nav-tabs">
-  <li class="active"><a data-toggle="tab" href="#data">Tabla</a></li>
-  <!-- <li><a data-toggle="tab" href="#grafico">Gr&aacute;fico</a></li>-->
-</ul>
-<div class="tab-content">
-    <div id="data" class="tab-pane fade in active">
-        <div class="table-responsive">
-            <table class='table table-striped dataTable table-bordered no-footer tableStyle' style="overflow:scroll; ">
-                <thead>
-                    <tr>
-                        <th rowspan="2" style="vertical-align: middle;"><?= getCodigoNombre() ?></th>
-                        <th rowspan="2" style="vertical-align: middle;">Familia</th>
-                        <th rowspan="2" style="vertical-align: middle;">Nombre</th>
-                        <th rowspan="2" style="vertical-align: middle;">Unidad</th>
-                        <th rowspan="2" style="vertical-align: middle;">Marca</th>
-                        <th rowspan="2" style="vertical-align: middle;">Linea</th>
-                    <?php foreach ($locale as $x): ?>
-                        <th rowspan="2" style="vertical-align: middle;"><?= $x['local_nombre']  ?></th>
-                    <?php endforeach ?>
-                        <th rowspan="2" style="vertical-align: middle;"><?php if($tipo==1){ echo "TOTAL<br>VNTAS"; }else{ echo "TOTAL"; } ?></th>
-                        <?php foreach ($locale as $x): ?>
-                        <?php if($tipo==1){ ?><th rowspan="2" style="vertical-align: middle;">STOCK<br>ACTUAL</th><?php } ?>
-                            <th colspan="<?= count($periodo); ?>"><?= $x['local_nombre']  ?></th>
-                        <?php if($tipo==1){ ?><th rowspan="2" style="vertical-align: middle;">VNTA<br>PROMEDIO</th><?php } ?>
-                        <?php if($tipo==1){ ?><th rowspan="2" style="vertical-align: middle;">ROTACION</th><?php } ?>
-                        <th rowspan="2" style="vertical-align: middle;"><?php if($tipo==1){ echo "TOTAL<br>VNTAS"; }else{ echo "TOTAL"; } ?></th>
-                        <?php endforeach ?>
-                    </tr>
-                    <tr>
-                    <?php foreach ($localId as $a){ ?>
-                        <?php foreach ($periodo as $x): ?>
-                        <th><?= $x  ?></th>
-                        <?php endforeach ?>
-                    <?php } ?>
-                    </tr>
-                </thead>
-                <tbody>
-                <?php
-                    $totalLocal = 0;
-                ?>
-                <?php foreach ($lists as $list): ?>
-                    <tr>
-                        <td><?= getCodigoValue($list['producto_id'], $list['producto_codigo_interno']) ?></td>
-                        <td><?= $list['nombre_familia'] ?></td>
-                        <td><?= $list['producto_nombre']; ?></td>
-                        <td><?= $list['nombre_unidad']; ?></td>
-                        <td><?= $list['nombre_marca']; ?></td>
-                        <td><?= $list['nombre_linea']; ?></td>
-                    <?php
-                        $totalCantV = 0;
-                        foreach ($localId as $x){
-                            $cantV = $list['cantVend'.$x['int_local_id']];
-                            $totalCantV += $cantV;
-                    ?>
-                        <td style="text-align: right; background-color:#90EE7E;"><?php if($tipo==1){ echo $cantV; }else{ echo $list['simbolo'].' '.number_format($cantV, 2); } ?></td>
-                    <?php
+<div class="table-responsive">
+    <table class='table dataTable table-bordered no-footer tableStyle' style="overflow:scroll;">
+        <thead>
+            <tr>
+                <th width="5%"><?= getCodigoNombre() ?></th>
+                <th width="5%">Familia</th>
+                <th width="5%">Nombre</th>
+                <th width="5%">Unidad</th>
+                <th width="5%">Marca</th>
+                <th width="5%" >Linea</th>
+        <?php foreach ($locale as $local): ?>
+                <th width="5%"><?= ucfirst(strtolower($local['local_nombre'])); ?></th>
+        <?php endforeach ?>
+                <th width="5%"><?= ($tipo==1)? "Total<br>Vntas" : "Total"; ?></th>
+        <?php foreach ($locale as $local): ?>
+            <?php if($tipo==1){ ?>
+                <th width="5%">Stock<br>Actual</th>
+            <?php } ?>
+                <th width="5%" colspan="<?= count($rangos); ?>"><?= ucfirst(strtolower($local['local_nombre']))  ?></th>
+            <?php if($tipo==1){ ?>
+                <th width="5%">Vnta<br>Promedio</th>
+                <th width="5%">Rotacion</th>
+            <?php } ?>
+                <th width="5%"><?= ($tipo==1)? "Total<br>Vntas" : "Total"; ?></th>
+        <?php endforeach ?>
+            </tr>
+        </thead>
+        <tbody>
+    <?php foreach ($lists as $list): ?>
+            <tr>
+                <td style="white-space: normal;"><?= getCodigoValue($list['producto_id'], $list['producto_codigo_interno']) ?></td>
+                <td style="white-space: normal;"><?= $list['nombre_familia'] ?></td>
+                <td style="white-space: normal;"><?= $list['producto_nombre']; ?></td>
+                <td style="white-space: normal;"><?= $list['nombre_unidad']; ?></td>
+                <td style="white-space: normal;"><?= $list['nombre_marca']; ?></td>
+                <td style="white-space: normal;"><?= $list['nombre_linea']; ?></td>
+        <?php
+            $totalCantV = $totalxLocal = 0;
+            $moneda = '';
+            foreach ($locale as $local):
+                if(!empty($list['detalle'])){
+                    if(isset($list['detalle']['local'][$local['int_local_id']])){
+                        $totalxLocal = $list['detalle']['local'][$local['int_local_id']];
+                    }else{
+                        $totalxLocal = '0';
+                    }
+                    $totalCantV += $totalxLocal;
+                    $moneda = $list['detalle']['moneda'];
+                }
+        ?>
+                <td style="white-space: normal; text-align: right; background-color:#90EE7E;"><?= ($tipo==1)? $totalxLocal : $moneda.' '.number_format($totalxLocal, 2); ?></td>
+        <?php endforeach; ?>
+                <td style="white-space: normal; text-align: right; background-color:#90EE7E;"><?= ($tipo==1)? $totalCantV : $moneda.' '.number_format($totalCantV, 2); ?></td>
+        <?php 
+            $colors = array('#2B908F','#F45B5B');
+            $z=0;
+        ?>
+        <?php foreach ($locale as $local): ?>
+            <?php if($z==2) $z=0; ?>
+            <?php if($tipo==1){ ?>
+                <td style="white-space: normal; text-align: right; background-color:<?= $colors[$z] ?>;"><?= $list['detalle']['stock'][$local['int_local_id'].'_'.$list['producto_id']]; ?></td>
+            <?php } ?>
+            <?php
+                $LocalyFecha = $totalxLocalyFecha = 0;
+                $moneda = '';
+                foreach ($rangos as $rango => $id):
+                    //echo $id;
+                    $idlocal = $local['int_local_id'];
+                    if($tipo_periodo=='1'){
+                        $fecha = date('Y-m-d', strtotime(str_replace("/", "-", $id)));
+                    }elseif($tipo_periodo=='2'){
+                        $parte = explode("/", $id);
+                        $fecha = $parte[1].'-'.$parte[0];
+                    }else{
+                        $fecha = $id;
+                    }
+                    //echo $fecha;
+                    if(!empty($list['detalle'])){
+                        if(isset($list['detalle']['fecha'][$idlocal.'_'.$fecha])){
+                            $LocalyFecha = $list['detalle']['fecha'][$idlocal.'_'.$fecha];
+                        }else{
+                            $LocalyFecha = '0';
                         }
-                    ?>
-                        <td style="text-align: right; background-color:#90EE7E;"><?php if($tipo==1){ echo $totalCantV; }else{ echo $list['simbolo'].' '.number_format($totalCantV, 2); } ?></td>
-                    <?php
-                        $colors = array('#2B908F','#F45B5B');
-                        $z=0;
-                        foreach ($localId as $a){
-                            if($z==3) $z=0;
-                            $stockA = $list['stock_'.$a['int_local_id']];
-                    ?>
-                    <?php if($tipo==1){ ?><td style="text-align: right; background-color:<?= $colors[$z] ?>;"><?= $stockA ?></td><?php } ?>
-                    <?php
-                            $totalV = $vProm = 0;
-                            for($x=1; $x<=count($periodo); $x++){
-                                $v = $list['periodo'.$x.'_'.$a['int_local_id']];
-                                $totalV += $v;
-                    ?>
-                        <td style="text-align: right; background-color:<?= $colors[$z] ?>;"><?php if($tipo==1){ echo $v; }else{ echo $list['simbolo'].' '.number_format($v, 2); } ?></td>
-                    <?php
-                            }
-                            $vProm = $totalV / count($periodo);
-                            if($vProm==0){
-                                $rotacion = 0;
-                            }else{
-                                $rotacion = $stockA / $vProm;    
-                            }
-                    ?>
-                    <?php if($tipo==1){ ?><td style="text-align: right; background-color:<?= $colors[$z] ?>;"><?= number_format($vProm,2) ?></td><?php } ?>
-                    <?php if($tipo==1){ ?><td style="text-align: right; background-color:<?= $colors[$z] ?>;"><?= number_format($rotacion,2) ?></td><?php } ?>
-                        <td style="text-align: right; background-color:<?= $colors[$z] ?>;"><?php if($tipo==1){ echo $totalV; }else{ echo $list['simbolo'].' '.number_format($totalV, 2); } ?></td>
-                    <?php
-                            $z++;
-                        }
-                    ?>
-                    </tr>
-                <?php endforeach ?>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="row">
-            <div class="col-md-12">
-                <br>
-                <button type="button" id="exportar_excel" title="Exportar Excel" class="btn btn-primary">
-                    <i class="fa fa-file-excel-o fa-fw"></i>
-                </button>
-                <button type="button" id="exportar_pdf" title="Exportar Pdf" class="btn btn-primary">
-                    <i class="fa fa-file-pdf-o fa-fw"></i>
-                </button>
-            </div>
-        </div>
-    </div>
-    <div id="grafico" class="tab-pane fade" style="min-width: 310px; max-width: 800px; height: 400px; margin: 0 auto">
-
+                        $moneda = $list['detalle']['moneda'];
+                        $totalxLocalyFecha += $LocalyFecha;
+                    }
+            ?>
+                <td style="white-space: normal; text-align: right; background-color:<?= $colors[$z] ?>;"><?= ($tipo==1)? $LocalyFecha : $moneda.' '.number_format($LocalyFecha, 2); ?></td>
+            <?php endforeach ?>
+            <?php 
+                if($tipo==1){
+                    $vProm = $totalxLocalyFecha / count($rangos);
+                    if($vProm==0){
+                        $rotacion = 0;
+                    }else{
+                        $rotacion = ($list['detalle']['stock'][$local['int_local_id'].'_'.$list['producto_id']]) / $vProm; //stock / venta promedio
+                    }
+            ?>
+                <td style="white-space: normal; text-align: right; background-color:<?= $colors[$z] ?>;"><?= number_format($vProm, 2) ?></td>
+                <td style="white-space: normal; text-align: right; background-color:<?= $colors[$z] ?>;"><?= number_format($rotacion, 2) ?></td>
+            <?php } ?>
+                <td style="white-space: normal; text-align: right; background-color:<?= $colors[$z] ?>;"><?= ($tipo==1)? $totalxLocalyFecha : $moneda.' '.number_format($totalxLocalyFecha, 2); ?></td>
+        <?php $z++; ?>
+        <?php endforeach ?>
+            </tr>
+    <?php endforeach; ?>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td style="white-space: normal;"></td>
+                <td style="white-space: normal;"></td>
+                <td style="white-space: normal;"></td>
+                <td style="white-space: normal;"></td>
+                <td style="white-space: normal;"></td>
+                <td style="white-space: normal;"></td>
+        <?php foreach ($locale as $local): ?>
+                <td style="white-space: normal;"></td>
+        <?php endforeach ?>
+                <td style="white-space: normal;"></td>
+        <?php foreach ($locale as $local): ?>
+            <?php if($tipo==1){ ?>
+                <td style="white-space: normal;"></td>
+            <?php } ?>
+            <?php foreach ($rangos as $rango): ?>
+                <td style="white-space: normal; text-align: center; color:blue !important; font-size: 10px !important;"><?= $rango; ?></td>
+            <?php endforeach ?>
+        <?php if($tipo==1){ ?>
+                <td style="white-space: normal;"></td>
+                <td style="white-space: normal;"></td>
+        <?php } ?>
+                <td style="white-space: normal;"></td>
+        <?php endforeach ?>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <br>
+        <button type="button" id="exportar_excel" title="Exportar Excel" class="btn btn-primary">
+            <i class="fa fa-file-excel-o fa-fw"></i>
+        </button>
+        <button type="button" id="exportar_pdf" title="Exportar Pdf" class="btn btn-primary">
+            <i class="fa fa-file-pdf-o fa-fw"></i>
+        </button>
     </div>
 </div>
+<br>
 <script type="text/javascript">
-     $(function () {
-        TablesDatatables.init(2, 'asc');
+     $(document).ready(function () {
+        //TablesDatatables.init(0);
 
         $('#exportar_excel').on('click', function () {
             exportar_excel();
@@ -140,6 +169,7 @@ ini_set('max_execution_time', 300);
             exportar_pdf();
         });      
     });
+
     function exportar_pdf() {
         var th = [];
 

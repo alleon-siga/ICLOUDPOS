@@ -46,7 +46,7 @@
 </ul>
 <link rel="stylesheet" href="<?= $ruta ?>recursos/css/plugins.css">
 <link rel="stylesheet" href="<?= $ruta ?>recursos/css/multiple-select.css" />
-<link rel="stylesheet" href="<?= base_url('recursos/css/bootstrap-datepicker.min.css') ?>">
+<link rel="stylesheet" href="<?= $ruta ?>recursos/css/bootstrap-datepicker.min.css">
 <div class="row-fluid">
     <div class="span12">
         <div class="block">
@@ -204,17 +204,15 @@
             </div>
             <div class="row-fluid">
                 <div class="span12">
-                    <div id="historial_list">
+                    <div id="historial_list" style="height: 200px;">
 
                     </div>
                 </div>
             </div>
-            <script src="<?= base_url('recursos/js/Validacion.js') ?>"></script>
-            <script src="<?= base_url('recursos/js/tcharm.js') ?>"></script>
-            <script src="<?= base_url('recursos/js/bootstrap.min.js') ?>"></script>
             <script src="<?= base_url('recursos/js/bootstrap-datepicker.min.js') ?>"></script>
             <script src="<?= base_url('recursos/js/bootstrap-datepicker.es.min.js') ?>"></script>
-            <script src="<?= base_url('recursos/js/moment.min.js') ?>"></script>
+            <script src="<?= base_url('recursos/js/Validacion.js') ?>"></script>
+            <script src="<?= base_url('recursos/js/tcharm.js') ?>"></script>
             <script src="<?= base_url('recursos/js/multiple-select.js') ?>"></script>
             <!-- /.modal-dialog -->
             <script type="text/javascript">
@@ -228,7 +226,12 @@
                     width: '100%'
                 });
 
-                $(function () {
+                $(document).ready(function(){
+                    $("#charm").tcharm({
+                        'position': 'right',
+                        'display': false,
+                        'top': '50px'
+                    });
 
                     select_day();
                     set_datepicker_events();
@@ -250,18 +253,9 @@
                         }
                         set_datepicker_events();
                     });
-                });
-
-                $('document').ready(function(){
 
                     $(".select-chosen").chosen({
                         search_contains: true
-                    });
-
-                    $("#charm").tcharm({
-                        'position': 'right',
-                        'display': false,
-                        'top': '50px'
                     });
 
                     $('.ctrl').chosen();
@@ -289,14 +283,14 @@
                 });
 
                 function getReporte() {
-                    $("#historial_list").html($("#loading").html());
-
                     var th = [];
 
                     var ini = $('#fecha_ini_value').html();
                     var fin = $('#fecha_fin_value').html();
 
                     if (ini != "" && fin != "") {
+                        $("#historial_list").html($("#loading").html());
+
                         if ($('#year').prop('checked')) {
                             th = generar_rango_year(ini, fin);
                         }
@@ -341,8 +335,7 @@
                             }
                         });
                         $("#charm").tcharm('hide');
-                    }
-                    else {
+                    }else{
                         alert("El rango de fecha no es valido");
                         return;
                     }

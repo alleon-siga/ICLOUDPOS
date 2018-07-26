@@ -6,6 +6,7 @@ class reporte_model extends CI_Model
     function __construct()
     {
         parent::__construct();
+        $this->load->model('unidades/unidades_model');
         $this->load->database();
     }
 
@@ -247,139 +248,106 @@ class reporte_model extends CI_Model
 
     function getStockVentas($params)
     {
-        $marca_id = $grupo_id = $familia_id = $linea_id = $producto_id = '';
+        $this->db->select("p.producto_id, p.producto_codigo_interno, f.nombre_familia, p.producto_nombre, m.nombre_marca, l.nombre_linea");
+        $this->db->from("producto p");
+        $this->db->join("familia f", "p.producto_familia = f.id_familia", "left");
+        $this->db->join("marcas m", "p.producto_marca = m.id_marca", "left");
+        $this->db->join("lineas l", "p.producto_linea = l.id_linea", "left");
+        $this->db->where("p.producto_estado", "1");
 
-        $marca_id .= ($params['marca_id']>0)? " AND p.producto_marca=".$params['marca_id'] : "";
-        $grupo_id .= ($params['grupo_id']>0)? " AND p.produto_grupo=".$params['grupo_id'] : "";
-        $familia_id .= ($params['familia_id']>0)? " AND p.producto_familia=".$params['familia_id'] : "";
-        $linea_id .= ($params['linea_id']>0)? " AND p.producto_linea=".$params['linea_id'] : "";
-        $producto_id .= ($params['producto_id']!='')? " AND p.producto_id IN(".implode(",", $params['producto_id']).")" : "";
-        $tipo = $params['tipo'];
-        $search = $marca_id.$grupo_id.$familia_id.$linea_id.$producto_id;
-        $query = "SELECT p.producto_id, p.producto_codigo_interno, f.nombre_familia, p.producto_nombre, u.nombre_unidad, m.nombre_marca, l.nombre_linea, mo.simbolo";
-        foreach ($params['local_id'] as $local_id)
-        {
-            $query .= ",
-            (
-                SELECT 
-                    IF(SUM((pa.cantidad * (SELECT unidades FROM unidades_has_producto WHERE producto_id=pa.id_producto AND orden=1)) + pa.fraccion) IS NULL, 0, SUM((pa.cantidad * (SELECT unidades FROM unidades_has_producto WHERE producto_id=pa.id_producto AND orden=1)) + pa.fraccion))
-                FROM producto_almacen pa
-                WHERE pa.id_local='$local_id' AND pa.id_producto=p.producto_id
-            ) AS stock_".$local_id;
-
-            switch ($params['tipo_periodo']) {
-                case '1': //dia
-                    $rango = $params['rangos'];
-                    $ArrayFechaI =explode('/', $rango[0]);
-                    $fechaI = $ArrayFechaI[2] ."-".$ArrayFechaI[1] ."-".$ArrayFechaI[0];
-                    $fecha_ini = date('Y-m-d 00:00:00', strtotime($fechaI));
-
-                    $ArrayFechaF =explode('/', $rango[count($rango)-1]);
-                    $fechaF = $ArrayFechaF[2] ."-".$ArrayFechaF[1] ."-".$ArrayFechaF[0];
-                    $fecha_fin = date('Y-m-d 23:59:59', strtotime($fechaF));
-
-                    $where = "AND v.fecha >= '".$fecha_ini."' AND v.fecha <= '".$fecha_fin."'";
-                    break;
-                case '2': //mes
-                    $rango = $params['rangos'];
-                    $arrI = explode('/', $rango[0]);
-                    $fechaI = $arrI[1] ."-".$arrI[0] ."-01";
-                    $fecha_ini = date('Y-m-d 00:00:00', strtotime($fechaI));
-
-                    $arrF = explode('/', $rango[count($rango)-1]);
-                    $fechaF = $arrF[1] ."-".$arrF[0];
-                    $aux = date('Y-m-d 23:59:59', strtotime("{$fechaF} + 1 month"));
-                    $fecha_fin = date('Y-m-d 23:59:59', strtotime("{$aux} - 1 day"));
-
-                    $where = "AND v.fecha >= '".$fecha_ini."' AND v.fecha <= '".$fecha_fin."'";
-                    break;
-                case '3': //anio
-                    $where = "AND YEAR(v.fecha) IN(".implode(",", $params['rangos']).")";
-                    break;
-            }
-            if($tipo=='1'){ //cantidad
-                $select = "IF(SUM(up.unidades * dv.cantidad) IS NULL, '0', SUM(up.unidades * dv.cantidad))";
-            }else{ //importe
-                $select = "IF(SUM(dv.precio * dv.cantidad) IS NULL, '0', SUM(dv.precio * dv.cantidad))";
-            }
-
-            $query .= ",
-                (   SELECT $select
-                    FROM venta v
-                    INNER JOIN detalle_venta dv ON v.venta_id=dv.id_venta 
-                    INNER JOIN unidades_has_producto up ON dv.id_producto=up.producto_id AND dv.unidad_medida=up.id_unidad
-                    WHERE v.venta_status='COMPLETADO' AND v.local_id='$local_id' AND dv.id_producto=p.producto_id $where
-                ) AS cantVend". $local_id;
+        if($params['marca_id'] > 0){
+            $this->db->where("p.producto_marca", $params['marca_id']);
         }
 
-        $x=1;
-        foreach ($params['rangos'] as $rango)
-        {
-            switch ($params['tipo_periodo']) {
+        if($params['grupo_id'] > 0){
+            $this->db->where("p.produto_grupo", $params['grupo_id']);
+        }
+
+        if($params['familia_id'] > 0){
+            $this->db->where("p.producto_familia", $params['familia_id']);
+        }
+
+        if($params['linea_id'] > 0){
+            $this->db->where("p.producto_linea", $params['linea_id']);
+        }
+
+        if($params['producto_id'] != ''){
+            $this->db->where("p.producto_id IN(".implode(",", $params['producto_id']).")");
+        }
+        $this->db->order_by("p.producto_nombre");
+        $datos = $this->db->get()->result_array();
+
+        $x=0;
+        foreach ($datos as $dato) {
+            $datos[$x]['nombre_unidad'] = $this->unidades_model->get_um_min_by_producto($dato['producto_id']);
+
+            if($params['tipo']=='1'){ //cantidad
+                $this->db->select("IF(SUM(up.unidades * dv.cantidad) IS NULL, '0', SUM(up.unidades * dv.cantidad)) AS total, DATE(v.fecha) AS fecha, l.local_nombre, v.local_id, m.simbolo");
+            }else{ //importe
+                $this->db->select("IF(SUM(dv.precio * dv.cantidad) IS NULL, '0', SUM(dv.precio * dv.cantidad)) AS total, DATE(v.fecha) AS fecha, l.local_nombre, v.local_id, m.simbolo");
+            }
+
+            $this->db->from("venta v");
+            $this->db->join("detalle_venta dv", "v.venta_id=dv.id_venta");
+            $this->db->join("unidades_has_producto up", "dv.id_producto=up.producto_id AND dv.unidad_medida=up.id_unidad");
+            $this->db->join("local l", "v.local_id = l.int_local_id");
+            $this->db->join("moneda m", "v.id_moneda = m.id_moneda");
+            $this->db->where("v.venta_status = 'COMPLETADO' AND dv.id_producto = ".$dato['producto_id']." AND v.local_id IN(".implode(",", $params['local_id']).")");
+            switch ($params['tipo_periodo']){
                 case '1': //dia
-                    $ArrayFecha =explode('/', $rango);
-                    $fecha = $ArrayFecha[2] ."-".$ArrayFecha[1] ."-".$ArrayFecha[0];
-                    $fecha_ini = date('Y-m-d 00:00:00', strtotime($fecha));
-                    $fecha_fin = date('Y-m-d 23:59:59', strtotime($fecha));
-                    $where = "AND v.fecha >= '".$fecha_ini."' AND v.fecha <= '".$fecha_fin."'";
+                    $this->db->where("v.fecha >= '".$params['rangos'][0]."' AND v.fecha <= '".$params['rangos'][1]."'");
                     break;
                 case '2': //mes
-                    $arr = explode('/', $rango);
-                    $where = "AND MONTH(v.fecha)='".$arr[0]."' AND YEAR(v.fecha)='".$arr[1]."'";
+                    $this->db->where("v.fecha >= '".$params['rangos'][0]."' AND v.fecha <= '".$params['rangos'][1]."'");
                     break;
                 case '3': //anio
-                    $where = "AND YEAR(v.fecha)='".$rango."'";
+                    $this->db->where("YEAR(v.fecha) IN(".implode(",", $params['rangos']).")");
                     break;
             }
+            $this->db->group_by("v.local_id, DATE(v.fecha)");
+            $datosVentas = $this->db->get()->result_array();
 
-            foreach ($params['local_id'] as $local_id){
-                if($tipo=='1'){ //cantidad
-                    $select = "IF(SUM(up.unidades * dv.cantidad) IS NULL, '0', SUM(up.unidades * dv.cantidad))";
-                }else{ //importe
-                    $select = "SUM(dv.precio * dv.cantidad)";
+            $detalle = array();
+            $i=0;
+            foreach($datosVentas as $datosVenta){
+                switch ($params['tipo_periodo']){
+                    case '1': //dia
+                        $detalle['fecha'][$datosVenta['local_id'].'_'.$datosVenta['fecha']] = $datosVenta['total'];
+                        break;
+                    case '2': //mes
+                        $parte = explode("-", $datosVenta['fecha']);
+                        $detalle['fecha'][$datosVenta['local_id'].'_'.$parte[0].'-'.$parte[1]] = $datosVenta['total'];
+                        break;
+                    case '3': //año
+                        $parte = explode("-", $datosVenta['fecha']);
+                        $detalle['fecha'][$datosVenta['local_id'].'_'.$parte[0]] = $datosVenta['total'];
+                        break;
                 }
-
-                $query .= ", 
-                    (   SELECT $select FROM venta v
-                        INNER JOIN detalle_venta dv ON v.venta_id=dv.id_venta 
-                        INNER JOIN unidades_has_producto up ON dv.id_producto=up.producto_id AND dv.unidad_medida=up.id_unidad
-                        WHERE v.venta_status='COMPLETADO' AND v.local_id='$local_id' AND dv.id_producto=p.producto_id $where
-                    ) AS periodo".$x."_".$local_id;
+                
+                if(!isset($detalle['local'][$datosVenta['local_id']])){
+                    $detalle['local'][$datosVenta['local_id']] = $datosVenta['total'];    
+                }else{
+                    $detalle['local'][$datosVenta['local_id']] += $datosVenta['total'];
+                }
+                $detalle['moneda'] = $datosVenta['simbolo'];
+                $i++;
             }
+
+            //Para el stock
+            if($params['tipo']=='1'){
+                foreach($params['local_id'] as $locale){
+                    $this->db->select('cantidad, fraccion');
+                    $this->db->from("producto_almacen");
+                    $this->db->where("id_local", $locale);
+                    $this->db->where("id_producto", $dato['producto_id']);
+                    $datoStock = $this->db->get()->row_array();
+                    $detalle['stock'][$locale.'_'.$dato['producto_id']] = $this->unidades_model->convert_minimo_um($dato['producto_id'], $datoStock['cantidad'], $datoStock['fraccion']);
+                }
+            }
+            $datos[$x]['detalle'] = $detalle;
             $x++;
         }
-
-        $query .= "
-            FROM 
-                producto AS p
-            INNER JOIN 
-                detalle_venta dv ON p.producto_id=dv.id_producto
-            INNER JOIN 
-                venta v ON v.venta_id=dv.id_venta
-            INNER JOIN unidades_has_producto up 
-                ON dv.id_producto=up.producto_id AND dv.unidad_medida=up.id_unidad
-            INNER JOIN unidades_has_producto up2 ON dv.id_producto=up2.producto_id AND (select id_unidad from unidades_has_producto where unidades_has_producto.producto_id = dv.id_producto  ORDER BY orden DESC LIMIT 1) = up2.id_unidad 
-            INNER JOIN unidades u 
-                ON up2.id_unidad=u.id_unidad
-            INNER JOIN 
-                moneda mo ON v.id_moneda = mo.id_moneda
-            LEFT JOIN 
-                familia f ON p.producto_familia = f.id_familia
-            LEFT JOIN 
-                marcas m ON p.producto_marca = m.id_marca
-            LEFT JOIN 
-                lineas l ON p.producto_linea = l.id_linea
-            WHERE 
-                p.producto_estado='1'
-                AND v.venta_status='COMPLETADO'
-                $search
-            GROUP BY
-                dv.id_producto
-            ORDER BY
-                p.producto_nombre
-        ";
-
-        return $this->db->query($query)->result_array();
+        return $datos;
     }
 
     function getHojaColecta($params, $count = false)
