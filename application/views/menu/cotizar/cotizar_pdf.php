@@ -18,7 +18,7 @@
     <table border="0">
         <tr>
             <td width="50%" style="text-transform: uppercase; color:#88B830 ; font-size: 24px;"><?= valueOption('EMPRESA_NOMBRE'); ?></td>
-            <td width="50%" style="text-align: center;" rowspan="5" valign="top"><img src="<?= base_url('recursos/img/logo/' . valueOption("EMPRESA_LOGO", '')) ?>"></td>
+            <td width="50%" style="text-align: center;" rowspan="5" valign="top"><img height="120" src="<?= base_url('recursos/img/logo/' . valueOption("EMPRESA_LOGO", '')) ?>"></td>
         </tr>
         <tr>
             <td style="text-transform: uppercase; color: #88B830; font-size: 24px;"><?= $term[1]->valor.': '.valueOption('EMPRESA_IDENTIFICACION'); ?></td>

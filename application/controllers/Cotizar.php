@@ -244,4 +244,28 @@ class cotizar extends MY_Controller
         }
         echo json_encode($action);
     }
+
+    function modalEnviarCotizacion($id)
+    {
+        $data['id'] = $id;
+        $this->load->view('menu/cotizar/modalEnviarCotizacion', $data);
+    }
+
+    function enviarCotizacion()
+    {
+        $correo = $this->input->post('txtMail');
+        //Inicializando la libreria
+        $this->load->library('email');
+        //Preparando datos
+        $data['correo'] = $correo;
+        //Configurando parametros
+        $this->email->from('info@teayudo.pe', 'prueba');
+        $this->email->to($correo);
+        $this->email->subject('Prueba de correo');
+        $message = $this->load->view('menu/cotizar/enviarCotizacion', $data, TRUE);
+        $this->email->message($message);
+        $this->email->set_mailtype("html");
+        $this->email->send();
+        //Envio de mensaje
+    }
 }
