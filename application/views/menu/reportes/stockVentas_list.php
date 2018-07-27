@@ -56,7 +56,10 @@
                         $totalxLocal = '0';
                     }
                     $totalCantV += $totalxLocal;
-                    $moneda = $list['detalle']['moneda'];
+                    $moneda = '';
+                    if(isset($list['detalle']['moneda'])){
+                        $moneda = $list['detalle']['moneda'];
+                    }
                 }
         ?>
                 <td style="white-space: normal; text-align: right; background-color:#90EE7E;"><?= ($tipo==1)? $totalxLocal : $moneda.' '.number_format($totalxLocal, 2); ?></td>
@@ -69,7 +72,7 @@
         <?php foreach ($locale as $local): ?>
             <?php if($z==2) $z=0; ?>
             <?php if($tipo==1){ ?>
-                <td style="white-space: normal; text-align: right; background-color:<?= $colors[$z] ?>;"><?= $list['detalle']['stock'][$local['int_local_id'].'_'.$list['producto_id']]; ?></td>
+                <td style="white-space: normal; text-align: right; background-color:<?= $colors[$z] ?>;"><?= number_format($list['detalle']['stock'][$local['int_local_id'].'_'.$list['producto_id']],0); ?></td>
             <?php } ?>
             <?php
                 $LocalyFecha = $totalxLocalyFecha = 0;
@@ -85,14 +88,19 @@
                     }else{
                         $fecha = $id;
                     }
-                    //echo $fecha;
+
                     if(!empty($list['detalle'])){
                         if(isset($list['detalle']['fecha'][$idlocal.'_'.$fecha])){
                             $LocalyFecha = $list['detalle']['fecha'][$idlocal.'_'.$fecha];
                         }else{
                             $LocalyFecha = '0';
                         }
-                        $moneda = $list['detalle']['moneda'];
+
+                        $moneda = '';
+                        if(isset($list['detalle']['moneda'])){
+                            $moneda = $list['detalle']['moneda'];
+                        }
+                        
                         $totalxLocalyFecha += $LocalyFecha;
                     }
             ?>
@@ -144,17 +152,6 @@
             </tr>
         </tfoot>
     </table>
-</div>
-<div class="row">
-    <div class="col-md-12">
-        <br>
-        <button type="button" id="exportar_excel" title="Exportar Excel" class="btn btn-primary">
-            <i class="fa fa-file-excel-o fa-fw"></i>
-        </button>
-        <button type="button" id="exportar_pdf" title="Exportar Pdf" class="btn btn-primary">
-            <i class="fa fa-file-pdf-o fa-fw"></i>
-        </button>
-    </div>
 </div>
 <br>
 <script type="text/javascript">

@@ -2,128 +2,173 @@
 <style type="text/css">
     table {
         width: 100%;
-        /*border: 0px;*/
         font-size: 11px;
     }
 
     thead, th {
         border: #111 0.5px solid;
     }
-
+    body{
+        font-size: 12px;
+        font-family: sans-serif;
+    }
 </style>
-
-
-<table>
-    <tr>
-        <td><img height="100" src="<?= base_url('recursos/img/logo/' . valueOption("EMPRESA_LOGO", '')) ?>"></td>
-        <td style="height: 100px; text-align: center; width: 50%;"><?= valueOption('COTIZACION_INFORMACION', '') ?></td>
-        <td style="text-align: center; border: 1px solid #000; vertical-align: middle; font-size: 1.5em;">
-            COTIZACION <?= sumCod($cotizar->id) ?><br><br><?= date('d/m/Y') ?>
-        </td>
-    </tr>
-</table>
-
-<br>
-
-<table>
-    <tr>
-        <td>NOMBRE DEL CLIENTE: <?= $cotizar->cliente_nombre ?></td>
-    </tr>
-    <tr>
-        <td>DIRECCI&Oacute;N: <?= $cotizar->cliente_direccion == "" ? '-' : $cotizar->cliente_direccion ?></td>
-    </tr>
-    <tr>
-        <td><?= $tipo_cliente == '2' ? $term[1]->valor : $term[0]->valor ?>: <?= $cotizar->ruc ?></td>
-    </tr>
-    <tr>
-        <td>TEL&Eacute;FONO: <?= $cotizar->telefono == "" ? '-' : $cotizar->telefono ?></td>
-    </tr>
-</table>
-
-<br>
-
-<table>
-    <tr>
-        <td>LUGAR DE ENTREGA: <?= $cotizar->lugar_entrega ?></td>
-        <td>CONTACTO: <?= $cotizar->vendedor_nombre ?></td>
-    </tr>
-    <tr>
-        <td>FECHA DE ENTREGA: <?= date('d/m/Y', strtotime($cotizar->fecha_entrega)) ?></td>
-        <td>CORREO: <?= valueOption('EMPRESA_CORREO', '-') ?></td>
-    </tr>
-    <tr>
-        <td>FORMA DE PAGO: <?= $cotizar->condicion_nombre ?></td>
-        <td>N<sup>o</sup> CELULAR: <?= valueOption('EMPRESA_TELEFONO', '-') ?></td>
-    </tr>
-</table>
-
-<br>
-
-<table cellpadding="5" cellspacing="0">
-    <thead>
-    <tr>
-        <th><?= getCodigoNombre() ?></th>
-        <th>DESCRIPCI&Oacute;N PRODUCTO</th>
-        <th>Cantidad</th>
-        <th>UND</th>
-        <th>P. UNIT</th>
-        <th>TOTAL</th>
-    </tr>
-    </thead>
-    <tbody>
-    <?php foreach ($cotizar->detalles as $detalle): ?>
+<body>
+    <hr style="color:#28359D; height: 5px;">
+    <table border="0">
         <tr>
-            <td style="border: #111 0.5px solid;"><?= getCodigoValue($detalle->producto_id, $detalle->producto_codigo_interno) ?></td>
-            <td style="border: #111 0.5px solid;"><?= $detalle->producto_nombre ?></td>
-            <td style="border: #111 0.5px solid; text-align: center;"><?= $detalle->cantidad ?></td>
-            <td style="border: #111 0.5px solid; text-align: center;"><?= $detalle->unidad_nombre ?></td>
-            <td style="border: #111 0.5px solid; text-align: center;"><?= $cotizar->moneda_simbolo . " " . number_format($detalle->precio, 2) ?></td>
-            <td style="border: #111 0.5px solid; text-align: right;"><?= $cotizar->moneda_simbolo . " " . number_format($detalle->importe, 2) ?></td>
-        </tr>
-    <?php endforeach; ?>
-    <?php for ($i = 0; $i < (20 - count($cotizar->detalles)); $i++): ?>
-        <tr>
-            <td style="border: #111 0.5px solid; color: #fff;">-</td>
-            <td style="border: #111 0.5px solid;"></td>
-            <td style="border: #111 0.5px solid; text-align: center;"></td>
-            <td style="border: #111 0.5px solid; text-align: center;"></td>
-            <td style="border: #111 0.5px solid; text-align: center;"></td>
-            <td style="border: #111 0.5px solid; text-align: center;"></td>
-        </tr>
-    <?php endfor; ?>
-    <?php if ($cotizar->documento_id == 1): ?>
-        <tr>
-            <td colspan="4"></td>
-            <th style="text-align: left;">SUBTOTAL</th>
-            <td style="border: #111 0.5px solid; text-align: right;"><?= $cotizar->subtotal ?></td>
+            <td width="50%" style="text-transform: uppercase; color:#88B830 ; font-size: 24px;"><?= valueOption('EMPRESA_NOMBRE'); ?></td>
+            <td width="50%" style="text-align: center;" rowspan="5" valign="top"><img src="<?= base_url('recursos/img/logo/' . valueOption("EMPRESA_LOGO", '')) ?>"></td>
         </tr>
         <tr>
-            <td colspan="4"></td>
-            <th style="text-align: left;">IMPUESTOS</th>
-            <td style="border: #111 0.5px solid; text-align: right;"><?= $cotizar->impuesto ?></td>
+            <td style="text-transform: uppercase; color: #88B830; font-size: 24px;"><?= $term[1]->valor.': '.valueOption('EMPRESA_IDENTIFICACION'); ?></td>
         </tr>
-    <?php endif; ?>
-    <tr>
-        <td colspan="4"></td>
-        <th style="text-align: left;">DESCUENTO</th>
-        <td style="border: #111 0.5px solid; text-align: right;"><?= $cotizar->moneda_simbolo . " " . number_format($cotizar->descuento, 2) ?></td>
-    </tr>
-    <tr>
-        <td colspan="4"></td>
-        <th style="text-align: left;">TOTAL</th>
-        <td style="border: #111 0.5px solid; text-align: right;"><?= $cotizar->moneda_simbolo . " " . $cotizar->total ?></td>
-    </tr>
-    </tbody>
-</table>
-<br>
-<div style="text-align: center;">
-    <?= valueOption('COTIZACION_CONDICION', '') ?>
-</div>
-<br>
-<div style="text-align: center; font-size: 9px;">
-    <?= valueOption('COTIZACION_PIE_PAGINA', 'fsfd') ?>
-</div>
-
-
-
-
+        <tr>
+            <td style="text-transform: uppercase;"><?= valueOption('COTIZACION_INFORMACION'); ?></td>
+        </tr>
+        <tr>
+            <td style="text-align: left; vertical-align: middle; font-size: 28px; color:#28359D;">
+                <br>
+                Cotizaci&oacute;n <?= sumCod($cotizar->id) ?>
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align: left; vertical-align: middle; color:red; font-weight: bold;"><?= date('d/m/Y') ?></td>
+        </tr>
+        <tr>
+            <td>
+                <table>
+                    <tr>
+                        <td style="font-weight: bold;">A la atenci&oacute;n de</td>
+                    </tr>
+                    <tr>
+                        <td>NOMBRE DEL CLIENTE: <?= $cotizar->cliente_nombre ?></td>
+                    </tr>
+                    <tr>
+                        <td>DIRECCI&Oacute;N: <?= $cotizar->cliente_direccion == "" ? '-' : $cotizar->cliente_direccion ?></td>
+                    </tr>
+                    <tr>
+                        <td><?= $tipo_cliente == '2' ? $term[1]->valor : $term[0]->valor ?>: <?= $cotizar->ruc ?></td>
+                    </tr>
+                    <tr>
+                        <td>TEL&Eacute;FONO: <?= $cotizar->telefono == "" ? '-' : $cotizar->telefono ?></td>
+                    </tr>
+                </table>
+            </td>
+            <td>
+                <table>
+                    <tr>
+                        <td style="font-weight: bold;">Datos de contacto</td>
+                    </tr>
+                    <tr>
+                        <td>CONTACTO: <?= $cotizar->vendedor_nombre ?></td>
+                    </tr>
+                    <tr>
+                        <td>CORREO: <?= valueOption('EMPRESA_CORREO', '-') ?></td>
+                    </tr>
+                    <tr>
+                        <td>N<sup>o</sup> CELULAR: <?= valueOption('EMPRESA_TELEFONO') ?></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    <br>
+    <table cellpadding="5" cellspacing="0" border="0">
+        <thead>
+            <tr>
+                <td width="5%" style="border-top: #ccc 1px solid; color:#88B830;"><?= getCodigoNombre() ?></td>
+                <td width="45%" style="border-top: #ccc 1px solid; color:#88B830;">Descripci&oacute;n</td>
+                <td width="10%" style="border-top: #ccc 1px solid; color:#88B830;">Cantidad</td>
+                <td width="10%" style="border-top: #ccc 1px solid; color:#88B830;">Unidad</td>
+                <td width="15%" style="border-top: #ccc 1px solid; color:#88B830;">Precio unitario</td>
+                <td width="15%" style="border-top: #ccc 1px solid; color:#88B830;">Precio total</td>
+            </tr>
+        </thead>
+        <tbody>
+        <?php 
+            $i=1;
+            foreach ($cotizar->detalles as $detalle):
+                if(($i % 2) == 0){
+                    $color ="#fff";
+                }else{
+                    $color ="#F3F3F3";
+                }
+        ?>
+            <tr>
+                <td style="white-space: normal; background-color: <?= $color ?>"><?= getCodigoValue($detalle->producto_id, $detalle->producto_codigo_interno) ?></td>
+                <td style="white-space: normal; background-color: <?= $color ?>"><?= $detalle->producto_nombre ?></td>
+                <td style="white-space: normal; text-align: center; background-color: <?= $color ?>"><?= $detalle->cantidad ?></td>
+                <td style="white-space: normal; text-align: center; background-color: <?= $color ?>"><?= $detalle->unidad_nombre ?></td>
+                <td style="white-space: normal; text-align: right; background-color: <?= $color ?>"><?= $cotizar->moneda_simbolo . " " . number_format($detalle->precio, 2) ?></td>
+                <td style="white-space: normal; text-align: right; background-color: <?= $color ?>"><?= $cotizar->moneda_simbolo . " " . number_format($detalle->importe, 2) ?></td>
+            </tr>
+        <?php
+                $i++;
+            endforeach;
+            $rowspan = "4";
+            if ($cotizar->documento_id == 1){
+                $rowspan = "6";
+            }
+        ?>
+        <tr>
+            <td colspan="6" style="border-bottom: #ccc 1px solid; background-color: #F3F3F3;">&nbsp;</td>
+        </tr>
+        <tr>
+            <td rowspan="<?= $rowspan ?>" colspan="4" style="white-space: normal; height: 400px; color: #434343;"><?= $cotizar->nota ?></td>
+        </tr>
+        <?php if ($cotizar->documento_id == 1): ?>
+            <tr>
+                <td style="text-align: right; font-weight: bold;">SUBTOTAL</td>
+                <td style="text-align: right;"><?= $cotizar->subtotal ?></td>
+            </tr>
+            <tr>
+                <td style="text-align: right; font-weight: bold;">IMPUESTOS</td>
+                <td style="text-align: right;"><?= $cotizar->impuesto ?></td>
+            </tr>
+        <?php endif; ?>
+        <tr>
+            <td style="text-align: right; font-weight: bold;">DESCUENTO</td>
+            <td style="text-align: right;"><?= $cotizar->moneda_simbolo . " " . number_format($cotizar->descuento, 2) ?></td>
+        </tr>
+        <tr>
+            <td style="text-align: right; font-weight: bold;">TOTAL</td>
+            <td style="text-align: right;"><?= $cotizar->moneda_simbolo . " " . $cotizar->total ?></td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        </tbody>
+    </table>
+    <br>
+    <table width="50%">
+        <thead>
+            <tr>
+                <td style="border-top: #ccc 1px solid; color:#88B830; text-align: center;">Lugar de entrega</td>
+                <td style="border-top: #ccc 1px solid; color:#88B830; text-align: center;">Fecha de entrega</td>
+                <td style="border-top: #ccc 1px solid; color:#88B830; text-align: center;">Forma de pago</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td align="center"><?= $cotizar->lugar_entrega ?></td>
+                <td align="center"><?= date('d/m/Y', strtotime($cotizar->fecha_entrega)) ?></td>
+                <td align="center"><?= $cotizar->condicion_nombre ?></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3" style="border-bottom: #ccc 1px solid; background-color: #F3F3F3;">&nbsp;</td>
+            </tr>
+        </tfoot>
+    </table>
+    <br>
+    <div style="text-align: left;">
+        <?= valueOption('COTIZACION_CONDICION', '') ?>
+    </div>
+    <br>    
+    <div style="text-align: center;">
+        <?= valueOption('COTIZACION_PIE_PAGINA', 'fsfd') ?>
+    </div>
+</body>

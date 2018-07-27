@@ -204,11 +204,23 @@
             </div>
             <div class="row-fluid">
                 <div class="span12">
-                    <div id="historial_list" style="height: 200px;">
+                    <div id="historial_list" style="height: 600px; overflow: auto;">
 
                     </div>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <br>
+                    <button type="button" id="exportar_excel" title="Exportar Excel" class="btn btn-primary">
+                        <i class="fa fa-file-excel-o fa-fw"></i>
+                    </button>
+                    <button type="button" id="exportar_pdf" title="Exportar Pdf" class="btn btn-primary">
+                        <i class="fa fa-file-pdf-o fa-fw"></i>
+                    </button>
+                    <br><br>
+                </div>
+            </div>            
             <script src="<?= base_url('recursos/js/bootstrap-datepicker.min.js') ?>"></script>
             <script src="<?= base_url('recursos/js/bootstrap-datepicker.es.min.js') ?>"></script>
             <script src="<?= base_url('recursos/js/Validacion.js') ?>"></script>

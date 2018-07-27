@@ -595,6 +595,8 @@ class Reporte extends MY_Controller
                         $params->rangos = array($fecha_ini, $fecha_fin);
                         break;
                     case '3': //anio
+                        $fecha_ini = $rango[0].'-01-01';
+                        $fecha_fin = $rango[1].'-12-31';
                         $params->rangos = $rango;
                         break;
                 }
@@ -661,6 +663,8 @@ class Reporte extends MY_Controller
                         $params->rangos = array($fecha_ini, $fecha_fin);
                         break;
                     case '3': //anio
+                        $fecha_ini = $rango[0].'-01-01';
+                        $fecha_fin = $rango[1].'-12-31';
                         $params->rangos = $rango;
                         break;
                 }

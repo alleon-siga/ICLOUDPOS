@@ -512,8 +512,12 @@
                         </select>
                     </div>
                 </div>
-
-
+                <div class="row">
+                    <button type="button" class="btn btn-primary col-md-12 text-center add_nota">
+                        <i class="fa fa-plus"></i>
+                        Agregar Nota de Cotizaci&oacute;n
+                    </button>
+                </div>
             </div>
 
         </div>
@@ -543,6 +547,27 @@
 
         </div>
 
+    </div>
+    <div class="modal fade" id="dialog_venta_nota" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Agregar Nota a la Cotizaci&oacute;n</h4>
+                </div>
+                <div class="modal-body">
+                    <label class="control-label">Nota:</label>
+                    <textarea type="text" name="cotizacion_nota" rows="5" id="cotizacion_nota" class='form-control textarea-editor'>
+                    </textarea>
+                </div>
+                <div class="modal-footer">
+                    <button onclick="$('#dialog_venta_nota').modal('hide');" type="button" class="btn btn-primary">
+                        Aceptar
+                    </button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
     </div>
 </form>
 
