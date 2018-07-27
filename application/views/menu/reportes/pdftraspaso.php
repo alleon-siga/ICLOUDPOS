@@ -55,11 +55,8 @@
 <table>
     <thead>
         <tr>
-            <th>Id</th>
+            <th><?php echo getCodigoNombre() ?></th>
             <th>Tipo</th>
-            <th>Nombre Prod.</th>
-            <th>UM</th>
-            <th>Cantidad</th>
             <th>Almacen Origen</th>
             <th>Almacen Destino</th>
             <th>Usuario</th>
@@ -67,22 +64,33 @@
         </tr>
     </thead>
     <tbody id="columnas">
-
     <?php
-
     foreach ($movimientos as $arreglo): ?>
         <tr>
-            <td style="text-align: center"><span style="display: none"><?= date('YmdHi', strtotime($arreglo->date)) ?></span><?= $arreglo->id ?></span></td>
-            <td style="text-align: center"><?= $arreglo->ref_id ?></td>
-            <td style="text-align: center"><?= $arreglo->producto_nombre ?></td>
-            <td style="text-align: center"><?= $arreglo->um ?></td>
-            <td style="text-align: center"><?= $arreglo->cantidad ?></td>
-            <td style="text-align: center"><?= $arreglo->origen ?></td>
-            <td style="text-align: center"><?= $arreglo->destino ?> </td>
+            <td style="text-align: center"><?= $arreglo->id ?></td>
+            <td style="text-align: center"><?= $arreglo->ref_id; ?></td>
+            <td>
+            <?php 
+                if(count($origen)>0){
+                    foreach($origen as $row){
+                        $arr = array();
+                        foreach ($row as $value) {
+                            if($value->traspaso_id == $arreglo->id){
+                                $arr[] = $value->origen;
+                            }
+                        }
+                        echo implode(" / ", $arr);
+                    }
+                } 
+            ?>        
+            </td>
+            <td style="text-align: center"><?= $arreglo->destino; ?></td>
             <td style="text-align: center"><?= $arreglo->username ?></td>
             <td style="text-align: center"><?= date('d-m-Y H:i', strtotime($arreglo->fecha)) ?></td>
+            <td style="text-align: center">
+                <a class="btn btn-default" data-toggle="tooltip" style="margin-right: 5px;" title="Ver" data-original-title="Ver" href="#" onclick="ver('<?= $arreglo->id ?>');"><i class="fa fa-search"></i></a>
+            </td>
+        </tr>
     <?php endforeach; ?>
-
-
     </tbody>
 </table>

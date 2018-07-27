@@ -12,87 +12,122 @@ header("Expires: 0");
 <table border="1">
     <thead>
         <tr>
-            <th rowspan="2" style="vertical-align: middle;"><?= getCodigoNombre() ?></th>
-            <th rowspan="2" style="vertical-align: middle;">Familia</th>
-            <th rowspan="2" style="vertical-align: middle;">Nombre</th>
-            <th rowspan="2" style="vertical-align: middle;">Unidad</th>
-            <th rowspan="2" style="vertical-align: middle;">Marca</th>
-            <th rowspan="2" style="vertical-align: middle;">Linea</th>
-        <?php foreach ($locale as $x): ?>
-            <th rowspan="2" style="vertical-align: middle;"><?= $x['local_nombre']  ?></th>
-        <?php endforeach ?>
-            <th rowspan="2" style="vertical-align: middle;"><?php if($tipo==1){ echo "TOTAL<br>VNTAS"; }else{ echo "TOTAL"; } ?></th>
-            <?php foreach ($locale as $x): ?>
-            <?php if($tipo==1){ ?><th rowspan="2" style="vertical-align: middle;">STOCK<br>ACTUAL</th><?php } ?>
-                <th colspan="<?= count($periodo); ?>"><?= $x['local_nombre']  ?></th>
-            <?php if($tipo==1){ ?><th rowspan="2" style="vertical-align: middle;">VNTA<br>PROMEDIO</th><?php } ?>
-            <?php if($tipo==1){ ?><th rowspan="2" style="vertical-align: middle;">ROTACION</th><?php } ?>
-            <th rowspan="2" style="vertical-align: middle;"><?php if($tipo==1){ echo "TOTAL<br>VNTAS"; }else{ echo "TOTAL"; } ?></th>
-            <?php endforeach ?>
+            <th rowspan="2"><?= getCodigoNombre() ?></th>
+            <th rowspan="2">Familia</th>
+            <th rowspan="2">Nombre</th>
+            <th rowspan="2">Unidad</th>
+            <th rowspan="2">Marca</th>
+            <th rowspan="2">Linea</th>
+    <?php foreach ($locale as $local): ?>
+            <th rowspan="2"><?= ucfirst(strtolower($local['local_nombre'])); ?></th>
+    <?php endforeach ?>
+            <th rowspan="2"><?= ($tipo==1)? "Total<br>Vntas" : "Total"; ?></th>
+    <?php foreach ($locale as $local): ?>
+        <?php if($tipo==1){ ?>
+            <th rowspan="2">Stock<br>Actual</th>
+        <?php } ?>
+            <th  colspan="<?= count($rangos); ?>"><?= ucfirst(strtolower($local['local_nombre']))  ?></th>
+        <?php if($tipo==1){ ?>
+            <th rowspan="2">Vnta<br>Promedio</th>
+            <th rowspan="2">Rotacion</th>
+        <?php } ?>
+            <th rowspan="2"><?= ($tipo==1)? "Total<br>Vntas" : "Total"; ?></th>
+    <?php endforeach ?>
         </tr>
         <tr>
-        <?php foreach ($localId as $a){ ?>
-            <?php foreach ($periodo as $x): ?>
-            <th><?= $x  ?></th>
+        <?php foreach ($locale as $local): ?>
+            <?php foreach ($rangos as $rango): ?>
+            <th><?= $rango  ?></th>
             <?php endforeach ?>
-        <?php } ?>
+        <?php endforeach ?>
         </tr>
     </thead>
     <tbody>
-    <?php
-        $totalLocal = 0;
-    ?>
-    <?php foreach ($lists as $list): ?>
+<?php foreach ($lists as $list): ?>
         <tr>
-            <td><?= getCodigoValue($list['producto_id'], $list['producto_codigo_interno']) ?></td>
-            <td><?= $list['nombre_familia'] ?></td>
-            <td><?= $list['producto_nombre']; ?></td>
-            <td><?= $list['nombre_unidad']; ?></td>
-            <td><?= $list['nombre_marca']; ?></td>
-            <td><?= $list['nombre_linea']; ?></td>
-        <?php
-            $totalCantV = 0;
-            foreach ($localId as $x){
-                $cantV = $list['cantVend'.$x['int_local_id']];
-                $totalCantV += $cantV;
-        ?>
-            <td style="text-align: right; background-color:#90EE7E;"><?php if($tipo==1){ echo $cantV; }else{ echo $list['simbolo'].' '.number_format($cantV, 2); } ?></td>
-        <?php
-            }
-        ?>
-            <td style="text-align: right; background-color:#90EE7E;"><?php if($tipo==1){ echo $totalCantV; }else{ echo $list['simbolo'].' '.number_format($totalCantV, 2); } ?></td>
-        <?php
-            $colors = array('#2B908F','#F45B5B');
-            $z=0;
-            foreach ($localId as $a){
-                if($z==3) $z=0;
-                $stockA = $list['stock_'.$a['int_local_id']];
-        ?>
-        <?php if($tipo==1){ ?><td style="text-align: right; background-color:<?= $colors[$z] ?>;"><?= $stockA ?></td><?php } ?>
-        <?php
-                $totalV = $vProm = 0;
-                for($x=1; $x<=count($periodo); $x++){
-                    $v = $list['periodo'.$x.'_'.$a['int_local_id']];
-                    $totalV += $v;
-        ?>
-            <td style="text-align: right; background-color:<?= $colors[$z] ?>;"><?php if($tipo==1){ echo $v; }else{ echo $list['simbolo'].' '.number_format($v, 2); } ?></td>
-        <?php
+            <td style="white-space: normal;"><?= getCodigoValue($list['producto_id'], $list['producto_codigo_interno']) ?></td>
+            <td style="white-space: normal;"><?= $list['nombre_familia'] ?></td>
+            <td style="white-space: normal;"><?= $list['producto_nombre']; ?></td>
+            <td style="white-space: normal;"><?= $list['nombre_unidad']; ?></td>
+            <td style="white-space: normal;"><?= $list['nombre_marca']; ?></td>
+            <td style="white-space: normal;"><?= $list['nombre_linea']; ?></td>
+    <?php
+        $totalCantV = $totalxLocal = 0;
+        $moneda = '';
+        foreach ($locale as $local):
+            if(!empty($list['detalle'])){
+                if(isset($list['detalle']['local'][$local['int_local_id']])){
+                    $totalxLocal = $list['detalle']['local'][$local['int_local_id']];
+                }else{
+                    $totalxLocal = '0';
                 }
-                $vProm = $totalV / count($periodo);
+                $totalCantV += $totalxLocal;
+                $moneda = '';
+                if(isset($list['detalle']['moneda'])){
+                    $moneda = $list['detalle']['moneda'];
+                }
+            }
+    ?>
+            <td style="white-space: normal; text-align: right; background-color:#90EE7E;"><?= ($tipo==1)? $totalxLocal : $moneda.' '.number_format($totalxLocal, 2); ?></td>
+    <?php endforeach; ?>
+            <td style="white-space: normal; text-align: right; background-color:#90EE7E;"><?= ($tipo==1)? $totalCantV : $moneda.' '.number_format($totalCantV, 2); ?></td>
+    <?php 
+        $colors = array('#2B908F','#F45B5B');
+        $z=0;
+    ?>
+    <?php foreach ($locale as $local): ?>
+        <?php if($z==2) $z=0; ?>
+        <?php if($tipo==1){ ?>
+            <td style="white-space: normal; text-align: right; background-color:<?= $colors[$z] ?>;"><?= number_format($list['detalle']['stock'][$local['int_local_id'].'_'.$list['producto_id']],0); ?></td>
+        <?php } ?>
+        <?php
+            $LocalyFecha = $totalxLocalyFecha = 0;
+            $moneda = '';
+            foreach ($rangos as $rango => $id):
+                //echo $id;
+                $idlocal = $local['int_local_id'];
+                if($tipo_periodo=='1'){
+                    $fecha = date('Y-m-d', strtotime(str_replace("/", "-", $id)));
+                }elseif($tipo_periodo=='2'){
+                    $parte = explode("/", $id);
+                    $fecha = $parte[1].'-'.$parte[0];
+                }else{
+                    $fecha = $id;
+                }
+
+                if(!empty($list['detalle'])){
+                    if(isset($list['detalle']['fecha'][$idlocal.'_'.$fecha])){
+                        $LocalyFecha = $list['detalle']['fecha'][$idlocal.'_'.$fecha];
+                    }else{
+                        $LocalyFecha = '0';
+                    }
+
+                    $moneda = '';
+                    if(isset($list['detalle']['moneda'])){
+                        $moneda = $list['detalle']['moneda'];
+                    }
+                    
+                    $totalxLocalyFecha += $LocalyFecha;
+                }
+        ?>
+            <td style="white-space: normal; text-align: right; background-color:<?= $colors[$z] ?>;"><?= ($tipo==1)? $LocalyFecha : $moneda.' '.number_format($LocalyFecha, 2); ?></td>
+        <?php endforeach ?>
+        <?php 
+            if($tipo==1){
+                $vProm = $totalxLocalyFecha / count($rangos);
                 if($vProm==0){
                     $rotacion = 0;
                 }else{
-                    $rotacion = $stockA / $vProm;    
+                    $rotacion = ($list['detalle']['stock'][$local['int_local_id'].'_'.$list['producto_id']]) / $vProm; //stock / venta promedio
                 }
         ?>
-        <?php if($tipo==1){ ?><td style="text-align: right; background-color:<?= $colors[$z] ?>;"><?= number_format($vProm,2) ?></td><?php } ?>
-        <?php if($tipo==1){ ?><td style="text-align: right; background-color:<?= $colors[$z] ?>;"><?= number_format($rotacion,2) ?></td><?php } ?>
-            <td style="text-align: right; background-color:<?= $colors[$z] ?>;"><?php if($tipo==1){ echo $totalV; }else{ echo $list['simbolo'].' '.number_format($totalV, 2); } ?></td>
-        <?php
-                $z++;
-            }
-        ?>
-        </tr>
+            <td style="white-space: normal; text-align: right; background-color:<?= $colors[$z] ?>;"><?= number_format($vProm, 2) ?></td>
+            <td style="white-space: normal; text-align: right; background-color:<?= $colors[$z] ?>;"><?= number_format($rotacion, 2) ?></td>
+        <?php } ?>
+            <td style="white-space: normal; text-align: right; background-color:<?= $colors[$z] ?>;"><?= ($tipo==1)? $totalxLocalyFecha : $moneda.' '.number_format($totalxLocalyFecha, 2); ?></td>
+    <?php $z++; ?>
     <?php endforeach ?>
+        </tr>
+<?php endforeach; ?>
     </tbody>
 </table>

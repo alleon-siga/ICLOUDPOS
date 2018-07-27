@@ -519,20 +519,46 @@ class Reporte extends MY_Controller
                 $params['linea_id'] = $this->input->post('linea_id');
                 $params['producto_id'] = $this->input->post('producto_id');
                 $params['local_id'] = json_decode($this->input->post('local_id'));
-                $params['rangos'] = json_decode($this->input->post('rangos'));
+                $rango = json_decode($this->input->post('rangos'));
+                $data['rangos'] = $rango;
+                $data['tipo_periodo'] = $params['tipo_periodo'];
                 $params['tipo'] = $this->input->post('tipo');
 
-                $this->db->select('local_nombre');
+                switch ($params['tipo_periodo']) {
+                    case '1': //dia
+                        $ArrayFechaI =explode('/', $rango[0]);
+                        $fechaI = $ArrayFechaI[2] ."-".$ArrayFechaI[1] ."-".$ArrayFechaI[0];
+                        $fecha_ini = date('Y-m-d 00:00:00', strtotime($fechaI));
+
+                        $ArrayFechaF =explode('/', $rango[count($rango)-1]);
+                        $fechaF = $ArrayFechaF[2] ."-".$ArrayFechaF[1] ."-".$ArrayFechaF[0];
+                        $fecha_fin = date('Y-m-d 23:59:59', strtotime($fechaF));
+
+                        $params['rangos'] = array($fecha_ini, $fecha_fin);
+                        break;
+                    case '2': //mes
+                        $arrI = explode('/', $rango[0]);
+                        $fechaI = $arrI[1] ."-".$arrI[0] ."-01";
+                        $fecha_ini = date('Y-m-d 00:00:00', strtotime($fechaI));
+
+                        $arrF = explode('/', $rango[count($rango)-1]);
+                        $fechaF = $arrF[1] ."-".$arrF[0];
+                        $aux = date('Y-m-d 23:59:59', strtotime("{$fechaF} + 1 month"));
+                        $fecha_fin = date('Y-m-d 23:59:59', strtotime("{$aux} - 1 day"));
+
+                        $params['rangos'] = array($fecha_ini, $fecha_fin);
+                        break;
+                    case '3': //anio
+                        $params['rangos'] = $rango;
+                        break;
+                }
+
+                $this->db->select('int_local_id, local_nombre');
                 $this->db->where_in('int_local_id', $params['local_id']);
                 $sqlLocal = $this->db->get('local');
                 $data['locale'] = $sqlLocal->result_array();
 
-                $this->db->select('int_local_id');
-                $this->db->where_in('int_local_id', $params['local_id']);
-                $sqlLocal = $this->db->get('local');
-                $data['localId'] = $sqlLocal->result_array();
                 $data['tipo'] = $params['tipo'];
-                $data['periodo'] = $params['rangos'];
 
                 $data['lists'] = $this->reporte_model->getStockVentas($params);
                 $this->load->view('menu/reportes/stockVentas_list', $data);
@@ -540,6 +566,41 @@ class Reporte extends MY_Controller
             }
             case 'pdf': {
                 $params = json_decode($this->input->get('data'));
+                $rango = json_decode($params->rangos);
+                $data['rangos'] = $rango;
+                $data['tipo_periodo'] = $params->tipo_periodo;
+
+                switch ($params->tipo_periodo) {
+                    case '1': //dia
+                        $ArrayFechaI =explode('/', $rango[0]);
+                        $fechaI = $ArrayFechaI[2] ."-".$ArrayFechaI[1] ."-".$ArrayFechaI[0];
+                        $fecha_ini = date('Y-m-d 00:00:00', strtotime($fechaI));
+
+                        $ArrayFechaF =explode('/', $rango[count($rango)-1]);
+                        $fechaF = $ArrayFechaF[2] ."-".$ArrayFechaF[1] ."-".$ArrayFechaF[0];
+                        $fecha_fin = date('Y-m-d 23:59:59', strtotime($fechaF));
+
+                        $params->rangos = array($fecha_ini, $fecha_fin);
+                        break;
+                    case '2': //mes
+                        $arrI = explode('/', $rango[0]);
+                        $fechaI = $arrI[1] ."-".$arrI[0] ."-01";
+                        $fecha_ini = date('Y-m-d 00:00:00', strtotime($fechaI));
+
+                        $arrF = explode('/', $rango[count($rango)-1]);
+                        $fechaF = $arrF[1] ."-".$arrF[0];
+                        $aux = date('Y-m-d 23:59:59', strtotime("{$fechaF} + 1 month"));
+                        $fecha_fin = date('Y-m-d 23:59:59', strtotime("{$aux} - 1 day"));
+
+                        $params->rangos = array($fecha_ini, $fecha_fin);
+                        break;
+                    case '3': //anio
+                        $fecha_ini = $rango[0].'-01-01';
+                        $fecha_fin = $rango[1].'-12-31';
+                        $params->rangos = $rango;
+                        break;
+                }
+
                 $input = array(
                     'marca_id' => $params->marca_id,
                     'grupo_id' => $params->grupo_id,
@@ -548,51 +609,21 @@ class Reporte extends MY_Controller
                     'producto_id' => $params->producto_id,
                     'tipo_periodo' => $params->tipo_periodo,
                     'local_id' => json_decode($params->local_id),
-                    'rangos' => json_decode($params->rangos),
+                    'rangos' => $params->rangos,
                     'tipo' => $params->tipo,
                 );
 
                 $data['lists'] = $this->reporte_model->getStockVentas($input);
 
-                $rango = json_decode($params->rangos);
-
-                $ArrayFechaI =explode('/', $rango[0]);
-                $ArrayFechaF =explode('/', $rango[count($rango)-1]);
-
-                if($params->tipo_periodo=='1'){ //por dia
-                    $fechaI = $ArrayFechaI[2] ."-".$ArrayFechaI[1] ."-".$ArrayFechaI[0];
-                    $fecha_ini = date('Y-m-d 00:00:00', strtotime($fechaI));                
-                    $fechaF = $ArrayFechaF[2] ."-".$ArrayFechaF[1] ."-".$ArrayFechaF[0];
-                    $fecha_fin = date('Y-m-d 23:59:59', strtotime($fechaF));
-                }elseif($params->tipo_periodo=='2') { //por mes
-                    $fechaI = $ArrayFechaI[1] ."-".$ArrayFechaI[0] ."-01";
-                    $fecha_ini = date('Y-m-d 00:00:00', strtotime($fechaI));
-                    $fechaF = $ArrayFechaF[1] ."-".$ArrayFechaF[0];
-                    $aux = date('Y-m-d 00:00:00', strtotime("{$fechaF} + 1 month"));
-                    $fecha_fin = date('Y-m-d 23:59:59', strtotime("{$aux} - 1 day"));
-                }elseif($params->tipo_periodo=='3') { //por año
-                    $fechaI = $ArrayFechaI[0] ."-01-01";
-                    $fecha_ini = date('Y-m-d 00:00:00', strtotime($fechaI));
-
-                    $fechaF = $ArrayFechaF[0] ."-12";
-                    $aux = date('Y-m-d 00:00:00', strtotime("{$fechaF} + 1 month"));
-                    $fecha_fin = date('Y-m-d 23:59:59', strtotime("{$aux} - 1 day"));
-                }
-
                 $data['fecha_ini'] = $fecha_ini;
                 $data['fecha_fin'] = $fecha_fin;
 
-                $this->db->select('local_nombre');
+                $this->db->select('int_local_id, local_nombre');
                 $this->db->where_in('int_local_id', json_decode($params->local_id));
                 $sqlLocal = $this->db->get('local');
                 $data['locale'] = $sqlLocal->result_array();
 
-                $this->db->select('int_local_id');
-                $this->db->where_in('int_local_id', json_decode($params->local_id));
-                $sqlLocal = $this->db->get('local');
-                $data['localId'] = $sqlLocal->result_array();
                 $data['tipo'] = $params->tipo;
-                $data['periodo'] = json_decode($params->rangos);
 
                 $this->load->library('mpdf53/mpdf');
                 $mpdf = new mPDF('utf-8', 'A4-L', 0, '', 5, 5, 5, 5, 5, 5);
@@ -603,6 +634,41 @@ class Reporte extends MY_Controller
             }
             case 'excel': {
                 $params = json_decode($this->input->get('data'));
+                $rango = json_decode($params->rangos);
+                $data['rangos'] = $rango;
+                $data['tipo_periodo'] = $params->tipo_periodo;
+
+                switch ($params->tipo_periodo) {
+                    case '1': //dia
+                        $ArrayFechaI =explode('/', $rango[0]);
+                        $fechaI = $ArrayFechaI[2] ."-".$ArrayFechaI[1] ."-".$ArrayFechaI[0];
+                        $fecha_ini = date('Y-m-d 00:00:00', strtotime($fechaI));
+
+                        $ArrayFechaF =explode('/', $rango[count($rango)-1]);
+                        $fechaF = $ArrayFechaF[2] ."-".$ArrayFechaF[1] ."-".$ArrayFechaF[0];
+                        $fecha_fin = date('Y-m-d 23:59:59', strtotime($fechaF));
+
+                        $params->rangos = array($fecha_ini, $fecha_fin);
+                        break;
+                    case '2': //mes
+                        $arrI = explode('/', $rango[0]);
+                        $fechaI = $arrI[1] ."-".$arrI[0] ."-01";
+                        $fecha_ini = date('Y-m-d 00:00:00', strtotime($fechaI));
+
+                        $arrF = explode('/', $rango[count($rango)-1]);
+                        $fechaF = $arrF[1] ."-".$arrF[0];
+                        $aux = date('Y-m-d 23:59:59', strtotime("{$fechaF} + 1 month"));
+                        $fecha_fin = date('Y-m-d 23:59:59', strtotime("{$aux} - 1 day"));
+
+                        $params->rangos = array($fecha_ini, $fecha_fin);
+                        break;
+                    case '3': //anio
+                        $fecha_ini = $rango[0].'-01-01';
+                        $fecha_fin = $rango[1].'-12-31';
+                        $params->rangos = $rango;
+                        break;
+                }
+
                 $input = array(
                     'marca_id' => $params->marca_id,
                     'grupo_id' => $params->grupo_id,
@@ -611,49 +677,21 @@ class Reporte extends MY_Controller
                     'producto_id' => $params->producto_id,
                     'tipo_periodo' => $params->tipo_periodo,
                     'local_id' => json_decode($params->local_id),
-                    'rangos' => json_decode($params->rangos),
+                    'rangos' => $params->rangos,
                     'tipo' => $params->tipo,
                 );
 
                 $data['lists'] = $this->reporte_model->getStockVentas($input);
 
-                $rango = json_decode($params->rangos);
-                $ArrayFechaI =explode('/', $rango[0]);
-                $ArrayFechaF =explode('/', $rango[count($rango)-1]);
-
-                if($params->tipo_periodo=='1'){ //por dia
-                    $fechaI = $ArrayFechaI[2] ."-".$ArrayFechaI[1] ."-".$ArrayFechaI[0];
-                    $fecha_ini = date('Y-m-d 00:00:00', strtotime($fechaI));                
-                    $fechaF = $ArrayFechaF[2] ."-".$ArrayFechaF[1] ."-".$ArrayFechaF[0];
-                    $fecha_fin = date('Y-m-d 23:59:59', strtotime($fechaF));
-                }elseif($params->tipo_periodo=='2') { //por mes
-                    $fechaI = $ArrayFechaI[1] ."-".$ArrayFechaI[0] ."-01";
-                    $fecha_ini = date('Y-m-d 00:00:00', strtotime($fechaI));
-                    $fechaF = $ArrayFechaF[1] ."-".$ArrayFechaF[0];
-                    $aux = date('Y-m-d 00:00:00', strtotime("{$fechaF} + 1 month"));
-                    $fecha_fin = date('Y-m-d 23:59:59', strtotime("{$aux} - 1 day"));
-                }elseif($params->tipo_periodo=='3') { //por año
-                    $fechaI = $ArrayFechaI[0] ."-01-01";
-                    $fecha_ini = date('Y-m-d 00:00:00', strtotime($fechaI));
-
-                    $fechaF = $ArrayFechaF[0] ."-12";
-                    $aux = date('Y-m-d 00:00:00', strtotime("{$fechaF} + 1 month"));
-                    $fecha_fin = date('Y-m-d 23:59:59', strtotime("{$aux} - 1 day"));
-                }
                 $data['fecha_ini'] = $fecha_ini;
-                $data['fecha_fin'] = $fecha_fin;                               
+                $data['fecha_fin'] = $fecha_fin;
 
-                $this->db->select('local_nombre');
+                $this->db->select('int_local_id, local_nombre');
                 $this->db->where_in('int_local_id', json_decode($params->local_id));
                 $sqlLocal = $this->db->get('local');
                 $data['locale'] = $sqlLocal->result_array();
 
-                $this->db->select('int_local_id');
-                $this->db->where_in('int_local_id', json_decode($params->local_id));
-                $sqlLocal = $this->db->get('local');
-                $data['localId'] = $sqlLocal->result_array();
                 $data['tipo'] = $params->tipo;
-                $data['periodo'] = json_decode($params->rangos);
                 echo $this->load->view('menu/reportes/stockVentas_list_excel', $data, true);
                 break;
             }

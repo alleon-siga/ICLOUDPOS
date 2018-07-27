@@ -78,7 +78,7 @@ class cotizar extends MY_Controller
         $this->load->view('menu/cotizar/historial_cotizar_detalle', $data);
     }
 
-    function exportar_pdf($id, $tipoCliente){
+    function exportar_pdf($id, $tipoCliente = ""){
         $data['tipo_cliente'] = $tipoCliente;
         $data['cotizar'] = $this->cotizar_model->get_cotizar_detalle($id);
 
@@ -147,6 +147,7 @@ class cotizar extends MY_Controller
         $cotizar['credito_periodo'] = $this->input->post('c_pago_periodo');
         $cotizar['periodo_per'] = $this->input->post('periodo_per');
         $cotizar['lugar_entrega'] = $this->input->post('lugar_entrega');
+        $cotizar['nota'] = $this->input->post('cotizacion_nota');
 
         $detalles_productos = json_decode($this->input->post('detalles_productos', true));
 

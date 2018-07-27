@@ -905,16 +905,18 @@ class exportar extends MY_Controller
         $this->load->model('historico/historico_model');
 
         if ($this->input->post('local') != "TODOS") {
-            $condicion['local_origen'] = $this->input->post('local');
+            $condicion['local_destino'] = $this->input->post('local');
         }
         $data['local'] = $this->input->post('locales', true);
-        if ($_POST['fecha'] != "") {
-            $date_range = explode(" - ", $this->input->post('fecha'));
-            $condicion['t.fecha >= '] = date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0])));
-            $condicion['t.fecha <= '] = date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])));
-        }
 
-        $data['movimientos'] = $this->traspaso_model->exportar($condicion);
+        $date_range = explode(" - ", $this->input->post('fecha'));
+        $condicion['fecha >= '] = date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0])));
+        $condicion['fecha <= '] = date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])));
+
+        $data['movimientos'] = $this->historico_model->get_historico2($condicion);
+        foreach ($data['movimientos'] as $valor) {
+            $data['origen'][] = $this->traspaso_model->getTrasladoDetalle($valor->id);
+        }
 
         $mpdf->WriteHTML($this->load->view('menu/reportes/pdftraspaso', $data, true));
         $mpdf->Output();
@@ -923,15 +925,19 @@ class exportar extends MY_Controller
     function toExcel_traspaso()
     {
         if ($this->input->post('local') != "TODOS") {
-            $condicion['local_origen'] = $this->input->post('local');
+            $condicion['local_destino'] = $this->input->post('local');
         }
         $data['local'] = $this->input->post('locales', true);
-        if ($_POST['fecha'] != "") {
-            $date_range = explode(" - ", $this->input->post('fecha'));
-            $condicion['t.fecha >= '] = date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0])));
-            $condicion['t.fecha <= '] = date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])));
+
+        $date_range = explode(" - ", $this->input->post('fecha'));
+        $condicion['fecha >= '] = date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0])));
+        $condicion['fecha <= '] = date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])));
+
+        $data['movimientos'] = $this->historico_model->get_historico2($condicion);
+        foreach ($data['movimientos'] as $valor) {
+            $data['origen'][] = $this->traspaso_model->getTrasladoDetalle($valor->id);
         }
-        $data['movimientos'] = $this->traspaso_model->exportar($condicion);
+        
         $this->load->view('menu/reportes/excelTraspaso', $data);
     }
 
