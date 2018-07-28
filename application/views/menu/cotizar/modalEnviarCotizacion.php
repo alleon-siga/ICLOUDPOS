@@ -6,15 +6,14 @@
         <div class="modal-body">
             <div class="row-fluid force-margin">
                 <div class="row-fluid">
-                    <form action="<?= base_url() ?>cotizar/enviarCotizacion" id="form1" method="post">
+                    <form action="<?= base_url() ?>cotizar/enviarCotizacion" id="form1" name="form1" method="post">
+                        <input type="hidden" name="idCotizacion" value="<?= $idCotizacion ?>">
+                        <input type="hidden" name="tipoCliente" value="<?= $tipo_cliente ?>">
                         <div class="row">
-                            <div class="col-md-3"><label class="control-label">Correo electr&oacute;nico</label></div>
-                            <div class="col-md-9"><input name="txtMail" type="mail" class="form-control" value=""></div>
+                            <div class="col-md-12"><label class="control-label">Correo electr&oacute;nico</label></div>
                         </div>
                         <div class="row">
-                            <div class="col-md-12">
-                                <input id="btnEnviar" type="button" class="btn btn-primary" value="Enviar">
-                            </div>
+                            <div class="col-md-12"><input name="txtMail" type="text" class="form-control" value="" autocomplete="off"></div>
                         </div>
                     </form>
                     <div id="msjEnviar"></div>
@@ -25,6 +24,7 @@
             <div class="row">
                 <div class="text-right">
                     <div class="col-md-12">
+                        <input id="btnEnviar" type="submit" class="btn btn-primary" value="Enviar">
                         <input type="button" class='btn btn-danger' value="Cerrar" data-dismiss="modal">
                     </div>
                 </div>

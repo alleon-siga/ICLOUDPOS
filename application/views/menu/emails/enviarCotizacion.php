@@ -17,13 +17,37 @@
                   <td bgcolor="#ffffff">
                     <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">
                       <tr>
-                        <td><h1>Prueba</h1><br></td>
+                        <td><h1></h1><br></td>
                       </tr>
                       <tr>
                         <td>
-                          <font FACE="arial">
-                            Esto es una prueba
+                          <font FACE="arial" color="#3c4858">
+                            Estimado Sr(a)<br><br><br>
+                            <p>Nos es muy grato dirigirnos a Usted para hacerle llegar nuestros saludos y presentarles nuestra cotización.</p>
+                            <br><br><br>
+                            <p>Atentamente.</p>
+                            <center><font color="#888888">© 2018 teayudo</font></center>
                           </font>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <table>
+                            <tr>
+                              <td>TeAyudo</td>
+                            </tr>
+                            <tr>
+                              <td>Jr. Junin 455, Magdalena del Mar</td>
+                            </tr>
+                            <tr>
+                              <td>Lima - Peru</td>
+                            </tr>
+                            <tr>
+                              <td>info@teayudo.pe</td>
+                            </tr>
+                          </table>
+                        </td>
+                        <td>
                         </td>
                       </tr>
                     </table>

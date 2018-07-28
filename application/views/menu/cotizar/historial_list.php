@@ -64,6 +64,12 @@
                            onclick="exportar_pdf('<?= $detalle->id ?>','<?= $detalle->tipo_cliente ?>');">
                             <i class="fa fa-file-pdf-o"></i>
                         </a>
+                        <a class="btn btn-sm btn-warning" data-toggle="tooltip" style="margin-right: 5px;"
+                           title="Enviar por correo" data-original-title="Enviar por correo"
+                           href="#"
+                           onclick="enviar_correo('<?= $detalle->id ?>', '<?= $detalle->tipo_cliente ?>');">
+                            <i class="fa fa-share-alt"></i>
+                        </a>
                         <?php if ($detalle->estado == 'PENDIENTE'): ?>
                             <a class="btn btn-sm btn-danger" data-toggle="tooltip"
                                title="Eliminar" data-original-title="Eliminar"
@@ -72,12 +78,6 @@
                                 <i class="fa fa-remove"></i>
                             </a>
                         <?php endif; ?>
-                        <a class="btn btn-sm btn-primary" data-toggle="tooltip" style="margin-right: 5px;"
-                           title="Enviar por correo" data-original-title="Enviar por correo"
-                           href="#"
-                           onclick="enviar_correo('<?= $detalle->id ?>');">
-                            <i class="fa fa-envelope-o"></i>
-                        </a>
                     </td>
                 </tr>
             <?php endforeach ?>

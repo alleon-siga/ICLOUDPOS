@@ -104,42 +104,45 @@
                 <td style="white-space: normal; text-align: right; background-color: <?= $color ?>"><?= $cotizar->moneda_simbolo . " " . number_format($detalle->importe, 2) ?></td>
             </tr>
         <?php
-                $i++;
             endforeach;
-            $rowspan = "4";
-            if ($cotizar->documento_id == 1){
-                $rowspan = "6";
-            }
         ?>
-        <tr>
-            <td colspan="6" style="border-bottom: #ccc 1px solid; background-color: #F3F3F3;">&nbsp;</td>
-        </tr>
-        <tr>
-            <td rowspan="<?= $rowspan ?>" colspan="4" style="white-space: normal; height: 400px; color: #434343;"><?= $cotizar->nota ?></td>
-        </tr>
-        <?php if ($cotizar->documento_id == 1): ?>
             <tr>
-                <td style="text-align: right; font-weight: bold;">SUBTOTAL</td>
-                <td style="text-align: right;"><?= $cotizar->subtotal ?></td>
+                <td colspan="6" style="border-bottom: #ccc 1px solid; background-color: #F3F3F3;">&nbsp;</td>
             </tr>
-            <tr>
-                <td style="text-align: right; font-weight: bold;">IMPUESTOS</td>
-                <td style="text-align: right;"><?= $cotizar->impuesto ?></td>
-            </tr>
-        <?php endif; ?>
-        <tr>
-            <td style="text-align: right; font-weight: bold;">DESCUENTO</td>
-            <td style="text-align: right;"><?= $cotizar->moneda_simbolo . " " . number_format($cotizar->descuento, 2) ?></td>
-        </tr>
-        <tr>
-            <td style="text-align: right; font-weight: bold;">TOTAL</td>
-            <td style="text-align: right;"><?= $cotizar->moneda_simbolo . " " . $cotizar->total ?></td>
-        </tr>
-        <tr>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-        </tr>
         </tbody>
+    </table>
+    <table border="0">
+        <tr>
+            <td width="50%">
+                <table border="0">
+                    <tr>
+                        <td rowspan="<?= $rowspan ?>" colspan="4" style="color: #434343;"><?= $cotizar->nota ?></td>
+                    </tr>
+                </table>
+            </td>
+            <td valign="top" align="right" width="50%">
+                <table border="0" align="right">
+                <?php if ($cotizar->documento_id == 1): ?>
+                    <tr>
+                        <td style="text-align: left; font-weight: bold; bold; width: 160px; height: 25px;">SUBTOTAL</td>
+                        <td style="text-align: right;"><?= $cotizar->subtotal ?></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left; font-weight: bold;">IMPUESTOS</td>
+                        <td style="text-align: right;"><?= $cotizar->impuesto ?></td>
+                    </tr>
+                <?php endif; ?>
+                    <tr>
+                        <td style="text-align: left; font-weight: bold; width: 160px; height: 25px;">DESCUENTO</td>
+                        <td style="text-align: right;"><?= $cotizar->moneda_simbolo . " " . number_format($cotizar->descuento, 2) ?></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left; font-weight: bold;">TOTAL</td>
+                        <td style="text-align: right;"><?= $cotizar->moneda_simbolo . " " . $cotizar->total ?></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
     </table>
     <br>
     <table width="50%">
@@ -167,7 +170,11 @@
     <div style="text-align: left;">
         <?= valueOption('COTIZACION_CONDICION', '') ?>
     </div>
-    <br>    
+    <br>
+    <div style="text-align: center; font-size: 15px; font-weight: bold;">
+    Valido hasta el <?= date("d/m/Y", strtotime($cotizar->fecha)) ?>
+    </div>
+    <br>
     <div style="text-align: center;">
         <?= valueOption('COTIZACION_PIE_PAGINA', 'fsfd') ?>
     </div>

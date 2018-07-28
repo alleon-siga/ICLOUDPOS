@@ -8,6 +8,7 @@ $(document).ready(function(){
 			success: function(data){
 				$("#msjEnviar").html('');
 				mensaje('success', '<p>Cotizaci&oacute;n enviada con exito.</p>');
+				$('#correoModal').modal('hide');
 			},
 			error: function () {
 				mensaje('danger', '<p>Error inesperado.</p>');	

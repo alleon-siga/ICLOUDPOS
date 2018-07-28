@@ -73,8 +73,8 @@ function anular(id) {
     });
 }
 
-function enviar_correo(id){
+function enviar_correo(idCotizacion, tipo_cliente){
     $("#correoModal").html($("#loading").html());
-    $("#correoModal").load(ruta + 'cotizar/modalEnviarCotizacion/' + id);
+    $("#correoModal").load(ruta + 'cotizar/modalEnviarCotizacion/' + idCotizacion + '/' + tipo_cliente);
     $('#correoModal').modal('show');
 }
