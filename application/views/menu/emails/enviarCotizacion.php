@@ -29,6 +29,9 @@
                             <center><font color="#888888">© 2018 teayudo</font></center>
                           </font>
                         </td>
+                        <td>
+                          <img src="<?= base_url('recursos/img/facebook.png') ?>" width="37" height="36" alt="Facebook" style="display:block;">
+                        </td>
                       </tr>
                       <tr>
                         <td>

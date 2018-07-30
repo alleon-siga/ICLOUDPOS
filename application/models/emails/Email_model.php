@@ -10,7 +10,6 @@ class email_model extends CI_Model
         parent::__construct();
         $this->_error = null;
         $this->config->load('email');
-        //$this->load->model('token_model');
         $email_cotizacion = $this->config->item('email_cotizacion');
         $this->load->library('mailer', $email_cotizacion);
     }
@@ -42,50 +41,6 @@ class email_model extends CI_Model
             log_message('info', 'El correo de confirmacion ha sido enviado');
             return TRUE;
         }
-    }
-
-    public function sendResetPassword($usuario_id)
-    {
-        $usuario = $this->usuario_model->findOne(array(
-            'id' => $usuario_id,
-            'estado' => 2
-        ));
-
-        if ($usuario !== FALSE) {
-            $token = $this->token_model->findOne(array(
-                'usuario_id' => $usuario->id,
-                'tipo' => 'RESET_PASSWORD'
-            ));
-
-            if ($token !== FALSE) {
-                $this->mailer->addAddress($usuario->email, $usuario->nombre . ' ' . $usuario->apellidos);
-                $this->mailer->Subject = "Reinicio de contraseña";
-                $this->mailer->msgHTML($this->load->view('emails/reset_password', array(
-                    'token' => $token,
-                    'usuario' => $usuario
-                ), TRUE));
-                $this->mailer->AltBody = "This is the plain text version of the email content";
-
-                if (!$this->mailer->send()) {
-                    $this->setError('No pudo enviarse el correo de reinicio de contraseña');
-                    log_message('error', 'Message could not be sent. Mailer Error: ' . $this->mailer->ErrorInfo);
-                    $this->usuario_model->log_user($usuario->id, 'error', 'No se pudo enviar el correo de reinicio de password');
-                    return FALSE;
-                } else {
-                    $this->token_model->setByArray(array(
-                        'id' => $token->id,
-                        'estado' => 1
-                    ));
-                    $this->token_model->update();
-                    $this->usuario_model->log_user($usuario->id, 'info', 'El correo de reinicio de password ha sido enviado');
-                    return TRUE;
-                }
-            }
-            $this->setError('Token no valido');
-            return FALSE;
-        }
-        $this->setError('Usuario no valido');
-        return FALSE;
     }
 
     public function setError($msg)
