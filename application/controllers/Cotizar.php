@@ -250,6 +250,7 @@ class cotizar extends MY_Controller
     {
         $data['idCotizacion'] = $idCotizacion;
         $data['tipo_cliente'] = $tipo_cliente;
+        $data['correo'] = $this->cotizar_model->getCorreoCliente($idCotizacion);
         $this->load->view('menu/cotizar/modalEnviarCotizacion', $data);
     }
 

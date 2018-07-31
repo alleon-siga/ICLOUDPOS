@@ -1,3 +1,5 @@
+<?php $ruta = base_url(); ?>
+<link rel="stylesheet" href="<?= $ruta ?>recursos/css/spectrum.css">
 <ul class="breadcrumb breadcrumb-top">
     <li><a href="#">Ventas</a></li>
     <li><a href="#">Opciones</a></li>
@@ -199,12 +201,10 @@
             </textarea>
         </div>
     </div>
-
     <div class="row form-group">
         <div class="col-md-4">
             <label class="control-label panel-admin-text">Informacion pie de pagina:</label>
         </div>
-
         <div class="col-md-8">
             <textarea type="text" name="COTIZACION_PIE_PAGINA" rows="5" id="COTIZACION_PIE_PAGINA"
                       class='form-control textarea-editor'>
@@ -212,8 +212,14 @@
             </textarea>
         </div>
     </div>
-
-
+    <div class="row form-group">
+        <div class="col-md-4">
+            <label class="control-label panel-admin-text">Colores de formato:</label>
+        </div>
+        <div class="col-md-8">
+            <input id='colorpicker' class="form-control" name="COTIZACION_COLOR_FORMATO" value="<?= valueOption("COTIZACION_COLOR_FORMATO", '') ?>" />
+        </div>
+    </div>
     <?= form_close() ?>
 </div>
 
@@ -221,6 +227,7 @@
     <button type="button" id="" class="btn btn-primary" onclick="grupo.guardar()">Confirmar</button>
 </div>
 </div>
+<script src="<?= $ruta ?>recursos/js/spectrum.js"></script>
 <script>
     var grupo = {
         ajaxgrupo: function () {
@@ -259,4 +266,11 @@
             "color": false //Button to change color of font
         });
     })
+
+    $("#colorpicker").spectrum({
+        preferredFormat: "hex3",
+        showInput: true,
+        showPalette: true,
+        palette: [["red", "rgba(0, 255, 0, .5)", "rgb(0, 0, 255)"]]
+    });
 </script>

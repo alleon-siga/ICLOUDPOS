@@ -1,0 +1,1 @@
+INSERT INTO `configuraciones` VALUES ('60', 'COTIZACION_COLOR_FORMATO', '#88B830');

@@ -13,15 +13,18 @@
         font-family: sans-serif;
     }
 </style>
+<?php
+    $color_formato = valueOption('COTIZACION_COLOR_FORMATO');
+?>
 <body>
     <hr style="color:#28359D; height: 5px;">
     <table border="0">
         <tr>
-            <td width="50%" style="text-transform: uppercase; color:#88B830 ; font-size: 24px;"><?= valueOption('EMPRESA_NOMBRE'); ?></td>
+            <td width="50%" style="text-transform: uppercase; color:<?= $color_formato ?> ; font-size: 24px;"><?= valueOption('EMPRESA_NOMBRE'); ?></td>
             <td width="50%" style="text-align: center;" rowspan="5" valign="top"><img height="120" src="<?= base_url('recursos/img/logo/' . valueOption("EMPRESA_LOGO", '')) ?>"></td>
         </tr>
         <tr>
-            <td style="text-transform: uppercase; color: #88B830; font-size: 24px;"><?= $term[1]->valor.': '.valueOption('EMPRESA_IDENTIFICACION'); ?></td>
+            <td style="text-transform: uppercase; color: <?= $color_formato ?>; font-size: 24px;"><?= $term[1]->valor.': '.valueOption('EMPRESA_IDENTIFICACION'); ?></td>
         </tr>
         <tr>
             <td style="text-transform: uppercase;"><?= valueOption('COTIZACION_INFORMACION'); ?></td>
@@ -77,12 +80,12 @@
     <table cellpadding="5" cellspacing="0" border="0">
         <thead>
             <tr>
-                <td width="5%" style="border-top: #ccc 1px solid; color:#88B830;"><?= getCodigoNombre() ?></td>
-                <td width="45%" style="border-top: #ccc 1px solid; color:#88B830;">Descripci&oacute;n</td>
-                <td width="10%" style="border-top: #ccc 1px solid; color:#88B830;">Cantidad</td>
-                <td width="10%" style="border-top: #ccc 1px solid; color:#88B830;">Unidad</td>
-                <td width="15%" style="border-top: #ccc 1px solid; color:#88B830;">Precio unitario</td>
-                <td width="15%" style="border-top: #ccc 1px solid; color:#88B830;">Precio total</td>
+                <td width="5%" style="border-top: #ccc 1px solid; color:<?= $color_formato ?>;"><?= getCodigoNombre() ?></td>
+                <td width="45%" style="border-top: #ccc 1px solid; color:<?= $color_formato ?>;">Descripci&oacute;n</td>
+                <td width="10%" style="border-top: #ccc 1px solid; color:<?= $color_formato ?>;">Cantidad</td>
+                <td width="10%" style="border-top: #ccc 1px solid; color:<?= $color_formato ?>;">Unidad</td>
+                <td width="15%" style="border-top: #ccc 1px solid; color:<?= $color_formato ?>;">Precio unitario</td>
+                <td width="15%" style="border-top: #ccc 1px solid; color:<?= $color_formato ?>;">Precio total</td>
             </tr>
         </thead>
         <tbody>
@@ -148,9 +151,9 @@
     <table width="50%">
         <thead>
             <tr>
-                <td style="border-top: #ccc 1px solid; color:#88B830; text-align: center;">Lugar de entrega</td>
-                <td style="border-top: #ccc 1px solid; color:#88B830; text-align: center;">Fecha de entrega</td>
-                <td style="border-top: #ccc 1px solid; color:#88B830; text-align: center;">Forma de pago</td>
+                <td style="border-top: #ccc 1px solid; color:<?= $color_formato ?>; text-align: center;">Lugar de entrega</td>
+                <td style="border-top: #ccc 1px solid; color:<?= $color_formato ?>; text-align: center;">Fecha de entrega</td>
+                <td style="border-top: #ccc 1px solid; color:<?= $color_formato ?>; text-align: center;">Forma de pago</td>
             </tr>
         </thead>
         <tbody>

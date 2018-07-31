@@ -16,8 +16,11 @@ class email_model extends CI_Model
 
     public function enviarCotizacion($param)
     {
+        foreach($param['correo'] as $correo){
+            $this->mailer->addAddress($correo, 'prueba');    
+        }
         $this->mailer->addAddress($param['correo'], 'prueba');
-        $this->mailer->Subject = valueOption('EMPRESA_NOMBRE')." COTIZACION";
+        $this->mailer->Subject = "COTIZACION ".valueOption('EMPRESA_NOMBRE');
 
         $this->mailer->msgHTML($this->load->view('menu/emails/enviarCotizacion', array(), TRUE));
         $this->mailer->AltBody = "This is the plain text version of the email content";
