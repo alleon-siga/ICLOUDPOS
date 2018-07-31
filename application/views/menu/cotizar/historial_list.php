@@ -3,7 +3,7 @@
 <?php $term = diccionarioTermino() ?>
 <div class="row">
     <div class="col-md-10"></div>
-
+    
     <div class="col-md-2">
         <label>Total: <?= $moneda->simbolo ?> <span id="total"><?= number_format($cotizaciones_totales->total, 2) ?></span></label>
     </div>
@@ -64,12 +64,16 @@
                            onclick="exportar_pdf('<?= $detalle->id ?>','<?= $detalle->tipo_cliente ?>');">
                             <i class="fa fa-file-pdf-o"></i>
                         </a>
-                        <a class="btn btn-sm btn-warning" data-toggle="tooltip" style="margin-right: 5px;"
-                           title="Enviar por correo" data-original-title="Enviar por correo"
-                           href="#"
-                           onclick="enviar_correo('<?= $detalle->id ?>', '<?= $detalle->tipo_cliente ?>');">
-                            <i class="fa fa-share-alt"></i>
-                        </a>
+                        <div class="btn-group">
+                          <button type="button" style="margin-right: 5px;" class="btn btn-warning btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa fa-share-alt"></i> <span class="caret"></span>
+                          </button>
+                          <ul class="dropdown-menu">
+                            <li><a style="text-align: left !important;" href="#" onclick="enviar_correo('<?= $detalle->id ?>', '<?= $detalle->tipo_cliente ?>');"><i class="fa fa-envelope" aria-hidden="true"></i> Correo</a></li>
+                            <li style="background-color: #26D266;"><a style="text-align: left !important;" href="#" onclick="whatsApp()"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp</a></li>
+                            <li style="background-color: #00B3FF;"><a style="text-align: left !important;" href="#" onclick="messenger()"><i class="fa fa-comment" aria-hidden="true"></i> Messenger</a></li>
+                          </ul>
+                        </div>
                         <?php if ($detalle->estado == 'PENDIENTE'): ?>
                             <a class="btn btn-sm btn-danger" data-toggle="tooltip"
                                title="Eliminar" data-original-title="Eliminar"

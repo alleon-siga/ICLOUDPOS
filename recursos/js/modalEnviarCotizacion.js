@@ -11,7 +11,7 @@ $(document).ready(function(){
 				$('#correoModal').modal('hide');
 			},
 			error: function () {
-				mensaje('danger', '<p>Error inesperado.</p>');	
+				mensaje('danger', '<p>Error inesperado.</p>');
 			}
 		});
 	});
@@ -69,7 +69,7 @@ $('#txtMail').selectize({
                 name  : $.trim(match[1])
             };
         }
-        alert('Invalid email address.');
+        mensaje('warning', '<p>Direcci&oacute;n de correo electr&oacute;nico inv&aacute;lido.</p>');
         return false;
     }
 });

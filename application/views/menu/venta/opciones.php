@@ -217,7 +217,18 @@
             <label class="control-label panel-admin-text">Colores de formato:</label>
         </div>
         <div class="col-md-8">
-            <input id='colorpicker' class="form-control" name="COTIZACION_COLOR_FORMATO" value="<?= valueOption("COTIZACION_COLOR_FORMATO", '') ?>" />
+        <?php
+            $boton = json_decode(valueOption("COTIZACION_COLOR_FORMATO"));
+            $arr = array('Bordes', 'Nombre de Empresa');
+            $i = 1;
+            foreach ($boton as $clave => $valor) {
+        ?>
+                <?= $arr[$clave] ?>
+                <input id='colorpicker<?= $i ?>' class="form-control" name="COTIZACION_COLOR_FORMATO[]" value="<?= $valor ?>" />&nbsp;&nbsp;&nbsp;
+        <?php
+                $i++;
+            } 
+        ?>
         </div>
     </div>
     <?= form_close() ?>
@@ -267,7 +278,7 @@
         });
     })
 
-    $("#colorpicker").spectrum({
+    $("#colorpicker1, #colorpicker2").spectrum({
         preferredFormat: "hex3",
         showInput: true,
         showPalette: true,
