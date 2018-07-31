@@ -75,12 +75,11 @@ $(document).ready(function () {
       }
     },
     select: function (event, ui) {
-
       var prod = $('#producto_id')
       var template = '<option value="' + ui.item.id + '"'
       template += ' data-impuesto="' + ui.item.porcentaje_impuesto + '"'
       template += ' data-afectacion_impuesto="' + ui.item.producto_afectacion_impuesto + '"'
-      template += ' data-cb="' + ui.content[0].codigo_barra + '"'
+      template += ' data-cb="' + ui.item.codigo_barra + '"'
       template += '>' + ui.item.value + '</option>'
       prod.html(template)
       prod.trigger('change')
