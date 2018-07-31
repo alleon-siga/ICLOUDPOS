@@ -142,12 +142,12 @@ class cotizar_model extends CI_Model
             cd.producto_id as producto_id,
             producto.producto_codigo_interno as producto_codigo_interno,
             producto.producto_nombre as producto_nombre,
-            (cd.precio * uhp.unidades) as precio,
+            (cd.precio) as precio,
             cd.cantidad as cantidad,
             cd.unidad_id as unidad_id,
             unidades.nombre_unidad as unidad_nombre,
             unidades.abreviatura as unidad_abr,
-            SUM(cd.precio * uhp.unidades * cd.cantidad) as importe, 
+            SUM(cd.precio * cd.cantidad) as importe, 
             cd.precio_venta as precio_venta
             ')
             ->from('cotizacion_detalles as cd')
@@ -155,7 +155,6 @@ class cotizar_model extends CI_Model
             ->join('local', 'local.int_local_id=c.local_id')
             ->join('producto', 'producto.producto_id=cd.producto_id')
             ->join('unidades', 'unidades.id_unidad=cd.unidad_id')
-            ->join('unidades_has_producto as uhp', 'uhp.producto_id=cd.producto_id AND uhp.id_unidad=cd.unidad_id')
             ->where('cd.cotizacion_id', $cotizacion->id)
             ->group_by('cd.id')
             ->get()->result();
@@ -184,21 +183,20 @@ class cotizar_model extends CI_Model
             cd.producto_id as producto_id,
             producto.producto_codigo_interno as producto_codigo_interno,
             producto.producto_nombre as producto_nombre,
-            (cd.precio * uhp.unidades) as precio,
+            cd.precio as precio,
             cd.cantidad as cantidad,
             (SELECT cantidad FROM producto_almacen WHERE id_producto = cd.producto_id AND id_local = c.local_id LIMIT 1) AS cantidad_almacen,
             (SELECT fraccion FROM producto_almacen WHERE id_producto = cd.producto_id AND id_local = c.local_id LIMIT 1) AS fraccion_almacen,
             cd.unidad_id as unidad_id,
             unidades.nombre_unidad as unidad_nombre,
             unidades.abreviatura as unidad_abr,
-            SUM(cd.precio * uhp.unidades * cd.cantidad) as importe
+            SUM(cd.precio * cd.cantidad) as importe
             ')
             ->from('cotizacion_detalles as cd')
             ->join('cotizacion as c', 'c.id=cd.cotizacion_id')
             ->join('local', 'local.int_local_id=c.local_id')
             ->join('producto', 'producto.producto_id=cd.producto_id')
             ->join('unidades', 'unidades.id_unidad=cd.unidad_id')
-            ->join('unidades_has_producto as uhp', 'uhp.producto_id=cd.producto_id AND uhp.id_unidad=cd.unidad_id')
             ->where('cd.cotizacion_id', $cotizacion->id)
             ->group_by('cd.id')
             ->get()->result();
@@ -383,5 +381,14 @@ class cotizar_model extends CI_Model
         ));
 
         return $total;
+    }
+
+    public function getCorreoCliente($cotizacion_id)
+    {
+        $this->db->select("cl.email");
+        $this->db->from('cotizacion c');
+        $this->db->join('cliente cl', 'c.cliente_id = cl.id_cliente');
+        $this->db->where('c.id', $cotizacion_id);
+        return $this->db->get()->row();
     }
 }
