@@ -1,30 +1,6 @@
 <?php $ruta = base_url(); ?>
 <link rel="stylesheet" href="<?= $ruta ?>recursos/css/selectize.default.css">
-<style type="text/css">
-    /**
-     * Email Contacts
-     */
-    .selectize-control.contacts .selectize-input [data-value] .email {
-        opacity: 0.5;
-    }
-    .selectize-control.contacts .selectize-input [data-value] .name + .email {
-        margin-left: 5px;
-    }
-    .selectize-control.contacts .selectize-input [data-value] .email:before {
-        content: '<';
-    }
-    .selectize-control.contacts .selectize-input [data-value] .email:after {
-        content: '>';
-    }
-    .selectize-control.contacts .selectize-dropdown .caption {
-        font-size: 12px;
-        display: block;
-        opacity: 0.5;
-    }
-    .label {
-        margin-right: 10px !important;
-    }
-</style>
+<link rel="stylesheet" href="<?= $ruta ?>recursos/css/selectize.app.css">
 <div class="modal-dialog">
     <div class="modal-content">
         <div class="modal-header">

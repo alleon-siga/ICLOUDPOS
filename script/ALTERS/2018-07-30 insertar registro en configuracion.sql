@@ -1,1 +1,1 @@
-INSERT INTO `configuraciones` VALUES ('60', 'COTIZACION_COLOR_FORMATO', '#88B830');
+INSERT INTO `configuraciones` VALUES ('60', 'COTIZACION_COLOR_FORMATO', '["#00ace4","#2770b5"]');

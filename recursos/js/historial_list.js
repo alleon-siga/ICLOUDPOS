@@ -78,3 +78,11 @@ function enviar_correo(idCotizacion, tipo_cliente){
     $("#correoModal").load(ruta + 'cotizar/modalEnviarCotizacion/' + idCotizacion + '/' + tipo_cliente);
     $('#correoModal').modal('show');
 }
+
+function whatsApp(){
+    mensaje('warning', '<h4>Opci&oacute;n no disponible para esta versi&oacute;n</h4>')
+}
+
+function messenger(){
+    mensaje('warning', '<h4>Opci&oacute;n no disponible para esta versi&oacute;n</h4>')
+}
