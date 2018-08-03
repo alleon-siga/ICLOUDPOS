@@ -2,7 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 $config['email_cotizacion'] = array(
-	'from' => 'info@teayudo.pe',
+	'from' => 'consultas@teayudo.pe',
 	'name' => 'Info',
 	'protocol' => 'SMTP',
 	'smtp_host' => 'mail.factelec.com',
