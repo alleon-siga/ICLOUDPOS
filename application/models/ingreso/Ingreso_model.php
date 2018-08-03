@@ -271,7 +271,7 @@ class ingreso_model extends CI_Model
                 if (!isset($costo_unitario[$row->producto_id]))
                     $costo_unitario[$row->producto_id] = array();
                 $costo_unitario[$row->producto_id][] = array(
-                    'costo' => $row->importe_gasto / $row->cantidad, //$row->importe / $row->cantidad,
+                    'costo' => $row->costo_unitario, //$row->importe / $row->cantidad,
                     'um_id' => $row->unidad
                 );
 
@@ -414,6 +414,8 @@ class ingreso_model extends CI_Model
                     }
 
                     $new_costo_unitario = number_format(($temp / $n), 2);
+
+
 
                     $this->db->where(array('producto_id' => $key));
                     $this->db->update('producto', array('producto_costo_unitario' => $new_costo_unitario));
