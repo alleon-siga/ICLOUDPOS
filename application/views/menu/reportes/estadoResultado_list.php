@@ -4,7 +4,7 @@
     <div class="col-md-8">
         <table class="table table-responsive table-bordered" >
             <tr>
-                <td>VENTAS</td>
+                <td>INGRESO VENTAS</td>
                 <td style="text-align: right;"><?= $lists['simbolo'].' '.number_format($lists['ventas'], 2) ?></td>
             </tr>
             <tr>
@@ -18,20 +18,21 @@
         <?php
             $x=1;
             foreach ($lists['gastos'] as $gasto) {
-                if($x>2) break;
+                if($gasto['nom_grupo_gastos']=='GASTO DE SERVICIOS' || $gasto['nom_grupo_gastos']=='PLANILLA' || $gasto['nom_grupo_gastos']=='GASTO DE VENTA' || $gasto['nom_grupo_gastos']=='GASTO ADMINISTRATIVO'){
         ?>
             <tr>
                 <td style="background-color: #e6e6e6; text-align: center;"><?= $gasto['nom_grupo_gastos'] ?></td>
                 <td style="background-color: #e6e6e6; text-align: right;"><?= $lists['simbolo'].' '.number_format($gasto['suma'], 2) ?></td>
             </tr>
         <?php
-                foreach ($gasto['nom'] as $tipo) {
+                    foreach ($gasto['nom'] as $tipo) {
         ?>
             <tr>
                 <td style="text-align: right;"><?= strtoupper($tipo['nombre_tipos_gasto']) ?></td>
                 <td style="text-align: right;"><?= $lists['simbolo'].' '.number_format($tipo['suma'], 2) ?></td>
             </tr>
         <?php
+                    }
                 }
                 $x++;
             }
@@ -43,7 +44,7 @@
         <?php
             $x = 1;
             foreach ($lists['gastos'] as $gasto) {
-                if($x>2){
+                if($gasto['nom_grupo_gastos']=='GASTO FINANCIERO'){
         ?>
             <tr>
                 <td style="background-color: #e6e6e6; text-align: center;"><?= strtoupper($gasto['nom_grupo_gastos']) ?></td>
