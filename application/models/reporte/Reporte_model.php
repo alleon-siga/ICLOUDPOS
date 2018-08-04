@@ -705,8 +705,8 @@ class reporte_model extends CI_Model
         $datos['costo'] = $ventas->costo_venta;
         $datos['margen_bruto'] = $datos['ventas'] - $datos['costo'];
         $datos['gastos'] = $grupos;
-        //utilidad operativa = margen bruto - gasto de venta - gasto administrativo
-        $datos['utilidad'] = $datos['margen_bruto'] - $grupos[0]['suma'] - $grupos[1]['suma'];
+        //utilidad operativa = margen bruto - gasto de venta - gasto administrativo - planilla - gastos de servicio
+        $datos['utilidad'] = $datos['margen_bruto'] - $grupos[0]['suma'] - $grupos[1]['suma'] - $grupos[3]['suma'] - $grupos[5]['suma'];
         //UTILIDAD ANTES DE IMPUESTOS = utilidad operativa - gasto financiero
         $datos['utilidad_si'] = $datos['utilidad'] - $grupos[2]['suma'];
         //IMPUESTO A LA RENTA  = UTILIDAD ANTES DE IMPUESTOS * 0.3
