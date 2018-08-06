@@ -25,9 +25,7 @@
         </thead>
         <tbody>
     <?php
-        foreach ($lists as $dato) {
-            # code...
-        }
+        foreach ($lists as $dato):
     ?>
             <tr>
                 <td style="text-align: right;"><?= $dato->producto_id ?></td>
