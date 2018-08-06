@@ -19,6 +19,7 @@ class cotizar extends MY_Controller
             $this->load->model('precio/precios_model');
             $this->load->model('correlativos/correlativos_model');
             $this->load->model('cotizar/cotizar_model');
+            $this->load->model('emails/email_model');
         } else {
             redirect(base_url(), 'refresh');
         }
@@ -243,5 +244,21 @@ class cotizar extends MY_Controller
             $this->cotizar_model->eliminarCotizacion($id);
         }
         echo json_encode($action);
+    }
+
+    function modalEnviarCotizacion($idCotizacion, $tipo_cliente)
+    {
+        $data['idCotizacion'] = $idCotizacion;
+        $data['tipo_cliente'] = $tipo_cliente;
+        $data['correo'] = $this->cotizar_model->getCorreoCliente($idCotizacion);
+        $this->load->view('menu/cotizar/modalEnviarCotizacion', $data);
+    }
+
+    function enviarCotizacion()
+    {
+        $params['correo'] = $this->input->post('txtMail');
+        $params['idCotizacion'] = $this->input->post('idCotizacion');
+        $params['tipoCliente'] = $this->input->post('tipoCliente');
+        $this->email_model->enviarCotizacion($params);
     }
 }

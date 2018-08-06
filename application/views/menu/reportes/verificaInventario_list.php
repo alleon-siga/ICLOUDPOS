@@ -21,7 +21,10 @@
         <thead>
             <tr>
                 <th>Id</th>
+<<<<<<< HEAD
                 <th>Nombre</th>
+=======
+>>>>>>> sebastian
             </tr>
         </thead>
         <tbody>

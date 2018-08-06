@@ -527,6 +527,11 @@ $primary_nav = array(
                         'name' => 'Kardex Valorizado',
                         'url' => $ruta . 'reporte/kardexValorizado',
                         'slug' => 'kardexvalorizado'
+                    ),
+                    array(
+                        'name' => 'Verificaci&oacute;n Inventario',
+                        'url' => $ruta . 'reporte/verificaInventario',
+                        'slug' => 'verificainventario'
                     )
                 )
             ),
@@ -897,8 +902,7 @@ $primary_nav = array(
 
         }
     </script>
-
-
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
 </head>
 
 <body>

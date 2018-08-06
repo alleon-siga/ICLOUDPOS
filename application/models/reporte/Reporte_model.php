@@ -617,7 +617,7 @@ class reporte_model extends CI_Model
     function getEstadoResultado($params)
     {
         // Ventas
-        $this->db->select("SUM(dv.detalle_importe) / ((dv.impuesto_porciento / 100) + 1) AS detalle_importe, SUM(dv.detalle_costo_ultimo * dv.cantidad) AS costo_venta, m.simbolo");
+        $this->db->select("SUM(dv.detalle_importe) / ((dv.impuesto_porciento / 100) + 1) AS detalle_importe, SUM(dv.detalle_costo_ultimo / ((dv.impuesto_porciento / 100) + 1) * dv.cantidad) AS costo_venta, m.simbolo");
         $this->db->from('venta v');
         $this->db->join('detalle_venta dv', 'v.venta_id = dv.id_venta');
         $this->db->join('moneda m', 'v.id_moneda = m.id_moneda');
@@ -651,7 +651,26 @@ class reporte_model extends CI_Model
             $a = 0;
             $totSubtotal = 0;
             foreach ($tipo_gastos as $tipo_gasto) {
-                if($grupo['nom_grupo_gastos']=='GASTO FINANCIERO' && ($tipo_gasto['nombre_tipos_gasto']=='INTERES' || $tipo_gasto['nombre_tipos_gasto']=='COMISION')){
+                //Sumas los gastos deacuerdo al tipo y grupo
+                $this->db->select('SUM(subtotal) AS subtotal');
+                $this->db->from('gastos');
+                $this->db->where('status_gastos', '0'); //Gasto confirmado
+                $this->db->where('tipo_gasto', $tipo_gasto['id_tipos_gasto']);
+                if($params['local_id']>0){
+                    $this->db->where('local_id = '.$params['local_id']);
+                }
+                if($params['moneda_id']>0){
+                    $this->db->where('id_moneda = '.$params['moneda_id']);
+                }
+                if($params['mes'] != '' && $params['year'] != ''){
+                    $this->db->where('YEAR(fecha) = '.$params['year'].' AND MONTH(fecha) = '.$params['mes']);
+                }
+                $suma = $this->db->get()->row_array();
+
+                $tipo_gastos[$a]['suma'] = $suma['subtotal'];
+
+                //Prestamo bancario
+                if($tipo_gasto['nombre_tipos_gasto']=='INTERES' || $tipo_gasto['nombre_tipos_gasto']=='COMISION'){
                     if($tipo_gasto['nombre_tipos_gasto'] == 'INTERES'){
                         $this->db->select('SUM(interes) AS subtotal');
                     }else{
@@ -659,6 +678,7 @@ class reporte_model extends CI_Model
                     }
                     $this->db->from('ingreso i');
                     $this->db->join('ingreso_credito ic', 'i.id_ingreso = ic.ingreso_id');
+                    $this->db->where("i.tipo_ingreso='GASTO' AND tipo_documento='CRONOGRAMA DE PAGOS'");
                     if($params['local_id']>0){
                         $this->db->where('local_id = '.$params['local_id']);
                     }
@@ -669,25 +689,10 @@ class reporte_model extends CI_Model
                         $this->db->where('YEAR(fecha_emision) = '.$params['year'].' AND MONTH(fecha_emision) = '.$params['mes']);
                     }
                     $suma = $this->db->get()->row_array();
-                }else{
-                    //Sumas los gastos deacuerdo al tipo y grupo
-                    $this->db->select('SUM(subtotal) AS subtotal');
-                    $this->db->from('gastos');
-                    $this->db->where('status_gastos', '0'); //Gasto confirmado
-                    $this->db->where('tipo_gasto', $tipo_gasto['id_tipos_gasto']);
-                    if($params['local_id']>0){
-                        $this->db->where('local_id = '.$params['local_id']);
-                    }
-                    if($params['moneda_id']>0){
-                        $this->db->where('id_moneda = '.$params['moneda_id']);
-                    }
-                    if($params['mes'] != '' && $params['year'] != ''){
-                        $this->db->where('YEAR(fecha) = '.$params['year'].' AND MONTH(fecha) = '.$params['mes']);
-                    }
-                    $suma = $this->db->get()->row_array();
+                    $tipo_gastos[$a]['suma'] += $suma['subtotal'];
                 }
-                $tipo_gastos[$a]['suma'] = $suma['subtotal'];
-                $totSubtotal += $suma['subtotal'];
+
+                $totSubtotal += $tipo_gastos[$a]['suma'];
                 $a++;
             }
             $grupos[$x]['nom'] = $tipo_gastos;
@@ -700,8 +705,8 @@ class reporte_model extends CI_Model
         $datos['costo'] = $ventas->costo_venta;
         $datos['margen_bruto'] = $datos['ventas'] - $datos['costo'];
         $datos['gastos'] = $grupos;
-        //utilidad operativa = margen bruto - gasto de venta - gasto administrativo
-        $datos['utilidad'] = $datos['margen_bruto'] - $grupos[0]['suma'] - $grupos[1]['suma'];
+        //utilidad operativa = margen bruto - gasto de venta - gasto administrativo - planilla - gastos de servicio
+        $datos['utilidad'] = $datos['margen_bruto'] - $grupos[0]['suma'] - $grupos[1]['suma'] - $grupos[3]['suma'] - $grupos[5]['suma'];
         //UTILIDAD ANTES DE IMPUESTOS = utilidad operativa - gasto financiero
         $datos['utilidad_si'] = $datos['utilidad'] - $grupos[2]['suma'];
         //IMPUESTO A LA RENTA  = UTILIDAD ANTES DE IMPUESTOS * 0.3
@@ -762,4 +767,22 @@ class reporte_model extends CI_Model
         }
         return $this->db->get()->result();
     }
+
+    function getVerificaInventario($params)
+    {
+        $this->db->select("p.producto_id, p.producto_nombre");
+        $this->db->from('producto p');
+        /*$this->db->join('detalle_venta dv', 'v.venta_id = dv.id_venta');
+        $this->db->join('moneda m', 'v.id_moneda = m.id_moneda');
+        $this->db->join('cliente c', 'v.id_cliente = c.id_cliente');
+        $this->db->join('condiciones_pago cp', 'v.condicion_pago = cp.id_condiciones');
+        $this->db->join('documentos d', 'v.id_documento = d.id_doc');
+        $this->db->join('local l', 'v.local_id = l.int_local_id');
+        $this->db->join('unidades_has_producto up', 'dv.id_producto=up.producto_id AND dv.unidad_medida=up.id_unidad');
+        $this->db->where("v.venta_status='COMPLETADO'");*/
+        $this->db->where('p.producto_estado', '1');
+        //$this->db->where_in('v.local_id', $params['local_id']);
+        //$this->db->where_in('v.producto_id', $params['producto_id']);
+        return $this->db->get()->result();
+    } 
 }

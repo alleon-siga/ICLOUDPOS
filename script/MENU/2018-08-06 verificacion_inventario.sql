@@ -1,0 +1,1 @@
+INSERT INTO opcion VALUES(726,7,'verificainventario', 'Verificacion Inventario');

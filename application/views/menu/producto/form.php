@@ -625,7 +625,7 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                             </div>
                             <div class="col-md-<?php echo count($costos_unitario) == 1 ? '5' : '3' ?>"
                                  style="text-align: right;">
@@ -654,7 +654,7 @@
                                 </select>
 
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-md-3">
                                 <input type="hidden" name="tasa_convert" id="tasa_convert"
                                        data-value-s="<?php echo isset($producto['producto_costo_unitario']) ? number_format($producto['producto_costo_unitario'], 2, '.', '') : '' ?>"
                                        value="<?php echo $tasa ?>">
@@ -666,10 +666,10 @@
                                                value="<?php echo isset($producto['producto_costo_unitario']) ? number_format($producto['producto_costo_unitario'], 2, '.', '') : '0.00' ?>"/>
                                     </div>
                                 </div>
-
                             </div>
-                            <div class="col-md-1">
-                                <label class="panel-admin-text" style="text-align: left;">
+                            <div class="col-md-2">
+                                <label class="panel-admin-text" style="text-align: left;">                                 
+                                    <a href="#" title="Este costo incluye impuesto"><i class="far fa-question-circle"></i></a>
                                     <?php echo isset($um_minimo) ? $um_minimo : '' ?>
                                 </label>
                             </div>
