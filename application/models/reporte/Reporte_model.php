@@ -767,4 +767,22 @@ class reporte_model extends CI_Model
         }
         return $this->db->get()->result();
     }
+
+    function getVerificaInventario($params)
+    {
+        $this->db->select("p.producto_id, p.producto_nombre");
+        $this->db->from('producto p');
+        /*$this->db->join('detalle_venta dv', 'v.venta_id = dv.id_venta');
+        $this->db->join('moneda m', 'v.id_moneda = m.id_moneda');
+        $this->db->join('cliente c', 'v.id_cliente = c.id_cliente');
+        $this->db->join('condiciones_pago cp', 'v.condicion_pago = cp.id_condiciones');
+        $this->db->join('documentos d', 'v.id_documento = d.id_doc');
+        $this->db->join('local l', 'v.local_id = l.int_local_id');
+        $this->db->join('unidades_has_producto up', 'dv.id_producto=up.producto_id AND dv.unidad_medida=up.id_unidad');
+        $this->db->where("v.venta_status='COMPLETADO'");*/
+        $this->db->where('p.producto_estado', '1');
+        //$this->db->where_in('v.local_id', $params['local_id']);
+        //$this->db->where_in('v.producto_id', $params['producto_id']);
+        return $this->db->get()->result();
+    } 
 }
