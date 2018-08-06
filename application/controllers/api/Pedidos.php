@@ -154,6 +154,7 @@ class Pedidos extends REST_Controller
         $venta['tipo_impuesto'] = 1;
         $venta['comprobante_id'] = 0;
         $venta['venta_nota'] = "";
+        $venta['fact_elect'] = $this->input->post('fact_elect');
 
         $detalles_productos = json_decode($this->input->post('detalles_productos', true));
         $traspasos = json_decode($this->input->post('traspasos', true));
@@ -182,7 +183,17 @@ class Pedidos extends REST_Controller
 
             if ($venta_id) {
                 $data['success'] = '1';
-                //$data['venta'] = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
+
+                if ($venta['fact_elect'] == '1') {
+                    $fact = $this->db->get_where('facturacion', array('ref_id' => $venta_id))->row();
+                    $data['doc_nro'] = $fact->documento_numero;
+                    $data['hash'] = $fact->hash_cpe;
+                    $data['url_code'] = md5($fact->id);
+
+                    $fact_emisor = $this->db->get('facturacion_emisor')->row();
+                    $data['ruc'] = $fact_emisor->ruc;
+                }
+
             } else
                 $data['success'] = '0';
 
