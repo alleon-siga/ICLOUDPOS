@@ -184,11 +184,18 @@ class Pedidos extends REST_Controller
             if ($venta_id) {
                 $data['success'] = '1';
 
-                if ($venta['fact_elect'] == '1') {
+                if ($venta['fact_elect'] == '1' && $venta['id_documento'] != '6') {
                     $fact = $this->db->get_where('facturacion', array('ref_id' => $venta_id))->row();
                     $data['doc_nro'] = $fact->documento_numero;
                     $data['hash'] = $fact->hash_cpe;
                     $data['url_code'] = md5($fact->id);
+                    $data['tipo_doc'] = $fact->documento_tipo;
+                    $data['doc_nro_fixed'] = str_replace('-', '|', $fact->documento_numero);
+                    $data['total_tributo_igv'] = $fact->impuesto;
+                    $data['total_venta'] = $fact->total;
+                    $data['fecha_emision'] = $fact->fecha;
+                    $data['clie_tipo_ident'] = $fact->total > 700 ? $fact->cliente_tipo : "-";
+                    $data['clie_nro_doc'] = $fact->total > 700 ? $fact->identificacion : "-";
 
                     $fact_emisor = $this->db->get('facturacion_emisor')->row();
                     $data['ruc'] = $fact_emisor->ruc;
