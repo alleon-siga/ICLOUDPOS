@@ -254,7 +254,7 @@ class facturacion extends MY_Controller
                     } else {
                         $data['bm_msg'] = array(
                             'estado' => 0,
-                            'nota' => 'No se crearon boletas a partir de la nota de pedido ' . $venta_id
+                            'nota' => 'No se crearon boletas a partir de la nota de venta ' . $venta_id
                         );
                     }
                 }

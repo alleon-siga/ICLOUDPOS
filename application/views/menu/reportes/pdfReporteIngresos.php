@@ -88,7 +88,7 @@ $html .= "<table border='1' bordercolor='#FFFFFF' cellpadding='1'cellspacing='0'
         if($ingreso->tipo_documento=="BOLETA DE VENTA") $html .= "BO";
         if($ingreso->tipo_documento==4) $html .= "GR";
         if($ingreso->tipo_documento==5) $html .= "PCV";
-        if($ingreso->tipo_documento=="NOTA DE PEDIDO")$html .= "NP";
+        if($ingreso->tipo_documento=="NOTA DE VENTA")$html .= "NV";
         $html.="</td>";
         $html.="<td align='center' >" . $ingreso->documento_serie ."-".$ingreso->documento_numero. "</td>";
 
@@ -161,7 +161,7 @@ $html .= "<table border='1' bordercolor='#FFFFFF' cellpadding='1'cellspacing='0'
                 if($ingreso->tipo_documento=="BOLETA DE VENTA") $html .= "BO";
                 if($ingreso->tipo_documento==4) $html .= "GR";
                 if($ingreso->tipo_documento==5) $html .= "PCV";
-                if($ingreso->tipo_documento=="NOTA DE PEDIDO")$html .= "NP";
+                if($ingreso->tipo_documento=="NOTA DE VENTA")$html .= "NV";
                 $html.="</td>";
                 $html.="<td align='center' >" . $ingreso->documento_serie ."-".$ingreso->documento_numero. "</td>";
 

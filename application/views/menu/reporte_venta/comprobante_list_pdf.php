@@ -58,7 +58,7 @@
             <td><?= date('d/m/Y', strtotime($list->fecha)) ?></td>            
             <td><?= $list->identificacion ?></td>
             <?php
-            $doc = 'NP ';
+            $doc = 'NV ';
             if ($list->documento_id == 1) $doc = 'FA ';
             if ($list->documento_id == 3) $doc = 'BO ';
             ?>

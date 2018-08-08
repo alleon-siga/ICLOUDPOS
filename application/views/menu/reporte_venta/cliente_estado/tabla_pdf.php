@@ -85,7 +85,7 @@ $total_saldo = 0; ?>
 
                     <?= $cobranza->documento_numero != null ?
                         $doc . $cobranza->documento_serie . ' - ' . sumCod($cobranza->documento_numero, 6) :
-                        '<span style="color: blue;">NO FACTURADO</span>' ?>
+                        '<span style="color: blue;">NO EMITIDO</span>' ?>
                     (# Vnt: <?= $cobranza->venta_id ?>)
                 </td>
                 <td><?= $cobranza->condicion_pago_nombre ?></td>

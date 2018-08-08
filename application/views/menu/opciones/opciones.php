@@ -41,6 +41,18 @@
     </div>
     <div class="row form-group">
         <div class="col-md-4">
+            <label class="control-label panel-admin-text">Direcci&oacute;n de la empresa:</label>
+        </div>
+
+        <div class="col-md-8">
+            <input type="text" name="EMPRESA_DIRECCION" required="true" id="EMPRESA_DIRECCION"
+                   class='form-control'
+                   maxlength="100"
+                   value="<?= valueOption("EMPRESA_DIRECCION", '') ?>">
+        </div>
+    </div>
+    <div class="row form-group">
+        <div class="col-md-4">
             <label class="control-label panel-admin-text">Identificaci&oacute;n de la empresa:</label>
         </div>
 
@@ -174,22 +186,23 @@
         </div>
     </div>
 
-    <div class="row form-group">
+    <!--<div class="row form-group">
         <div class="col-md-4">
             <label class="control-label panel-admin-text">Habilitar Serie de Producto:</label>
         </div>
         <div class="col-md-8">
             <div class="form-control">
                 <input type="radio" name="PRODUCTO_SERIE" id="" class='' value="1"
-                    <?php echo validOption("PRODUCTO_SERIE", '1') ? 'checked' : '' ?>> Si
+                    <?php //echo validOption("PRODUCTO_SERIE", '1') ? 'checked' : '' ?>> Si
                 &nbsp;&nbsp;&nbsp;
                 <input type="radio" name="PRODUCTO_SERIE" id="" class='' value="0"
-                    <?php echo validOption("PRODUCTO_SERIE", '0') ? 'checked' : '' ?>> No
+                    <?php //echo validOption("PRODUCTO_SERIE", '0') ? 'checked' : '' ?>> No
             </div>
         </div>
-    </div>
+    </div>-->
+    <input type="hidden" name="PRODUCTO_SERIE" value="0">
 
-    <div class="row form-group">
+    <!--<div class="row form-group">
         <div class="col-md-4">
             <label class="control-label panel-admin-text">Costo del Ingreso (%):</label>
         </div>
@@ -198,11 +211,12 @@
             <input type="text" name="INGRESO_COSTO" required="true" id="INGRESO_COSTO"
                    class='form-control'
                    maxlength="100"
-                   value="<?= valueOption("INGRESO_COSTO", '0') ?>">
+                   value="<? //valueOption("INGRESO_COSTO", '0') ?>">
         </div>
-    </div>
+    </div>-->
+    <input type="hidden" name="INGRESO_COSTO" value="0">
 
-    <div class="row form-group">
+    <!--<div class="row form-group">
         <div class="col-md-4">
             <label class="control-label panel-admin-text">Utilidad del Ingreso (%):</label>
         </div>
@@ -211,24 +225,26 @@
             <input type="text" name="INGRESO_UTILIDAD" required="true" id="INGRESO_UTILIDAD"
                    class='form-control'
                    maxlength="100"
-                   value="<?= valueOption("INGRESO_UTILIDAD", '0') ?>">
+                   value="<? //valueOption("INGRESO_UTILIDAD", '0') ?>">
         </div>
-    </div>
+    </div>-->
+    <input type="hidden" name="INGRESO_UTILIDAD" value="0">
 
-    <div class="row form-group">
+    <!--<div class="row form-group">
         <div class="col-md-4">
             <label class="control-label panel-admin-text">Habilitar Opci&oacute;n de pago anticipado:</label>
         </div>
         <div class="col-md-8">
             <div class="form-control">
                 <input type="radio" name="PAGOS_ANTICIPADOS" id="" class='' value="1"
-                    <?php echo validOption("PAGOS_ANTICIPADOS", '1') ? 'checked' : '' ?>> Si
+                    <?php //echo validOption("PAGOS_ANTICIPADOS", '1') ? 'checked' : '' ?>> Si
                 &nbsp;&nbsp;&nbsp;
                 <input type="radio" name="PAGOS_ANTICIPADOS" id="" class='' value="0"
-                    <?php echo validOption("PAGOS_ANTICIPADOS", '0') ? 'checked' : '' ?>> No
+                    <?php //echo validOption("PAGOS_ANTICIPADOS", '0') ? 'checked' : '' ?>> No
             </div>
         </div>
-    </div>
+    </div>-->
+    <input type="hidden" name="ACTIVAR_FACTURACION_VENTA" value="0">
 
     <div class="row form-group">
         <div class="col-md-4">
@@ -244,7 +260,7 @@
     </div>
 
 
-    <h3>Facturaci&oacute;n</h3>
+    <!--<h3>Facturaci&oacute;n</h3>
     <div class="row form-group">
         <div class="col-md-4">
             <label class="control-label panel-admin-text">Activar Facturaci&oacute;n Ventas:</label>
@@ -252,30 +268,32 @@
         <div class="col-md-8">
             <div class="form-control">
                 <input type="radio" name="ACTIVAR_FACTURACION_VENTA" id="" class='' value="1"
-                    <?php echo validOption("ACTIVAR_FACTURACION_VENTA", '1') ? 'checked' : '' ?>> Si
+                    <?php //echo validOption("ACTIVAR_FACTURACION_VENTA", '1') ? 'checked' : '' ?>> Si
                 &nbsp;&nbsp;&nbsp;
                 <input type="radio" name="ACTIVAR_FACTURACION_VENTA" id="" class='' value="0"
-                    <?php echo validOption("ACTIVAR_FACTURACION_VENTA", '0') ? 'checked' : '' ?>> No
+                    <?php //echo validOption("ACTIVAR_FACTURACION_VENTA", '0') ? 'checked' : '' ?>> No
             </div>
         </div>
-    </div>
+    </div>-->
+    <input type="hidden" name="ACTIVAR_FACTURACION_VENTA" value="0">
 
-    <div class="row form-group">
+    <!--<div class="row form-group">
         <div class="col-md-4">
             <label class="control-label panel-admin-text">Activar Facturaci&oacute;n Ingreso:</label>
         </div>
         <div class="col-md-8">
             <div class="form-control">
                 <input type="radio" name="ACTIVAR_FACTURACION_INGRESO" id="" class='' value="1"
-                    <?php echo validOption("ACTIVAR_FACTURACION_INGRESO", '1') ? 'checked' : '' ?>> Si
+                    <?php //echo validOption("ACTIVAR_FACTURACION_INGRESO", '1') ? 'checked' : '' ?>> Si
                 &nbsp;&nbsp;&nbsp;
                 <input type="radio" name="ACTIVAR_FACTURACION_INGRESO" id="" class='' value="0"
-                    <?php echo validOption("ACTIVAR_FACTURACION_INGRESO", '0') ? 'checked' : '' ?>> No
+                    <?php //echo validOption("ACTIVAR_FACTURACION_INGRESO", '0') ? 'checked' : '' ?>> No
             </div>
         </div>
-    </div>
+    </div>-->
+    <input type="hidden" name="ACTIVAR_FACTURACION_INGRESO" value="0">
 
-    <h3>Shadow Stock</h3>
+    <!--<h3>Shadow Stock</h3>
     <div class="row form-group">
         <div class="col-md-4">
             <label class="control-label panel-admin-text">Activar Shadow Stock:</label>
@@ -283,13 +301,14 @@
         <div class="col-md-8">
             <div class="form-control">
                 <input type="radio" name="ACTIVAR_SHADOW" id="" class='' value="1"
-                    <?php echo validOption("ACTIVAR_SHADOW", '1') ? 'checked' : '' ?>> Si
+                    <?php //echo validOption("ACTIVAR_SHADOW", '1') ? 'checked' : '' ?>> Si
                 &nbsp;&nbsp;&nbsp;
                 <input type="radio" name="ACTIVAR_SHADOW" id="" class='' value="0"
-                    <?php echo validOption("ACTIVAR_SHADOW", '0') ? 'checked' : '' ?>> No
+                    <?php //echo validOption("ACTIVAR_SHADOW", '0') ? 'checked' : '' ?>> No
             </div>
         </div>
-    </div>
+    </div>-->
+    <input type="hidden" name="ACTIVAR_SHADOW" value="0">
 
 
     <?= form_close() ?>

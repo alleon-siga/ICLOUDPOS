@@ -43,12 +43,12 @@ header("Expires: 0");
                     if ($v->TipoDocumento == 3) $doc = "BO";
                     if ($v->TipoDocumento == 4) $doc = "GR";
                     if ($v->TipoDocumento == 5) $doc = "PCV";
-                    if ($v->TipoDocumento == 6) $doc = "NP";
+                    if ($v->TipoDocumento == 6) $doc = "NV";
 
                     if ($v->correlativo != '')
                         echo $doc . ' ' . $v->serie . '-' . sumCod($v->correlativo, 6);
                     else
-                        echo '<span style="color: #0000FF">NO FACTURADO</span>';
+                        echo '<span style="color: #0000FF">NO EMITIDO</span>';
                     ?>
                 </td>
                 <td><?php echo $v->Cliente; ?></td>

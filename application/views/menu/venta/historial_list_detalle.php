@@ -38,11 +38,11 @@
                                     if ($venta->documento_id == 3) $doc = "BO";
                                     if ($venta->documento_id == 4) $doc = "GR";
                                     if ($venta->documento_id == 5) $doc = "PCV";
-                                    if ($venta->documento_id == 6) $doc = "NP";
+                                    if ($venta->documento_id == 6) $doc = "NV";
                                     if ($venta->numero != '')
                                         echo $doc . ' ' . $venta->serie . '-' . sumCod($venta->numero, 6);
                                     else
-                                        echo '<span style="color: #0000FF">NO FACTURADO</span>';
+                                        echo '<span style="color: #0000FF">NO EMITIDO</span>';
                                     ?>
                                 </div>
                             </div>
@@ -160,11 +160,11 @@
                                     if ($venta->documento_id == 3) $doc = "BO";
                                     if ($venta->documento_id == 4) $doc = "GR";
                                     if ($venta->documento_id == 5) $doc = "PCV";
-                                    if ($venta->documento_id == 6) $doc = "NP";
+                                    if ($venta->documento_id == 6) $doc = "NV";
                                     if ($venta->numero != '')
                                         echo $doc . ' ' . $venta->serie . '-' . sumCod($venta->numero, 6);
                                     else
-                                        echo '<span style="color: #0000FF">NO FACTURADO</span>';
+                                        echo '<span style="color: #0000FF">NO EMITIDO</span>';
                                     ?>
                                 </div>
                             </div>

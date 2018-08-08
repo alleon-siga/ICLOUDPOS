@@ -21,58 +21,65 @@
 <body>
     <hr style="color:<?= $empresa ?>; height: 5px;">
     <table border="0">
+        
         <tr>
-            <td width="50%" style="text-transform: uppercase; color:<?= $bordes ?> ; font-size: 24px;"><?= valueOption('EMPRESA_NOMBRE'); ?></td>
-            <td width="50%" style="text-align: center;" rowspan="5" valign="top"><img height="120" src="<?= base_url('recursos/img/logo/' . valueOption("EMPRESA_LOGO", '')) ?>"></td>
+            <td colspan="2" align="center"><?= valueOption('COTIZACION_INFORMACION'); ?></td>
         </tr>
         <tr>
-            <td style="text-transform: uppercase; color: <?= $bordes ?>; font-size: 24px;"><?= $term[1]->valor.': '.valueOption('EMPRESA_IDENTIFICACION'); ?></td>
-        </tr>
-        <tr>
-            <td style="text-transform: uppercase;"><?= valueOption('COTIZACION_INFORMACION'); ?></td>
-        </tr>
-        <tr>
-            <td style="text-align: left; vertical-align: middle; font-size: 28px; color:<?= $empresa ?>;">
-                <br>
-                Cotizaci&oacute;n <?= sumCod($cotizar->id) ?>
+            <td width="50%" style="text-align: left;" rowspan="5" valign="middle">
+                <img height="120" src="<?= base_url('recursos/img/logo/' . valueOption("EMPRESA_LOGO", '')) ?>">
+            </td>
+            <td width="50%" style="font-size: 12px; text-align: right; vertical-align: middle; color:red; font-weight: bold;">
+                <br><?= date('d/m/Y') ?>
             </td>
         </tr>
         <tr>
-            <td style="text-align: left; vertical-align: middle; color:red; font-weight: bold;"><?= date('d/m/Y') ?></td>
+            <td style="text-align: right; vertical-align: middle; font-size: 28px; color:<?= $empresa ?>;">
+                Cotizaci&oacute;n Nro: <?= sumCod($cotizar->id) ?>
+            </td>
         </tr>
         <tr>
-            <td>
+            <td style="text-align:right; text-transform: uppercase; color:<?= $bordes ?> ; font-size: 22px;"><?= valueOption('EMPRESA_NOMBRE'); ?></td>
+        </tr>
+        <tr>
+            <td style="text-align:right; text-transform: uppercase; color: <?= $bordes ?>; font-size: 22px;"><?= $term[1]->valor.': '.valueOption('EMPRESA_IDENTIFICACION'); ?></td>
+        </tr>
+        <tr>
+            <td style="text-align:right; text-transform: uppercase; color: <?= $bordes ?>; font-size: 12px;"><?= valueOption('EMPRESA_DIRECCION'); ?></td>
+        </tr>
+        <tr>
+            <td valign="top">
                 <table>
                     <tr>
-                        <td style="font-weight: bold;">A la atenci&oacute;n de</td>
+                        <td style="height: 20px; font-weight: bold;">Datos de contacto</td>
                     </tr>
                     <tr>
-                        <td>NOMBRE DEL CLIENTE: <?= $cotizar->cliente_nombre ?></td>
+                        <td style="height: 20px;">CONTACTO: <?= $cotizar->vendedor_nombre ?></td>
                     </tr>
                     <tr>
-                        <td>DIRECCI&Oacute;N: <?= $cotizar->cliente_direccion == "" ? '-' : $cotizar->cliente_direccion ?></td>
+                        <td style="height: 20px;">CORREO: <?= valueOption('EMPRESA_CORREO', '-') ?></td>
                     </tr>
                     <tr>
-                        <td><?= $tipo_cliente == '2' ? $term[1]->valor : $term[0]->valor ?>: <?= $cotizar->ruc ?></td>
-                    </tr>
-                    <tr>
-                        <td>TEL&Eacute;FONO: <?= $cotizar->telefono == "" ? '-' : $cotizar->telefono ?></td>
+                        <td style="height: 20px;">TEL&Eacute;FONO: <?= valueOption('EMPRESA_TELEFONO') ?></td>
                     </tr>
                 </table>
             </td>
-            <td>
+            <td valign="top">
                 <table>
                     <tr>
-                        <td style="font-weight: bold;">Datos de contacto</td>
+                        <td style="height: 20px; font-weight: bold;">A la atenci&oacute;n de</td>
                     </tr>
                     <tr>
-                        <td>CONTACTO: <?= $cotizar->vendedor_nombre ?></td>
+                        <td style="height: 20px;">NOMBRE DEL CLIENTE: <?= $cotizar->cliente_nombre ?></td>
                     </tr>
                     <tr>
-                        <td>CORREO: <?= valueOption('EMPRESA_CORREO', '-') ?></td>
+                        <td style="height: 20px;"><?= $tipo_cliente == '2' ? $term[1]->valor : $term[0]->valor ?>: <?= $cotizar->ruc ?></td>
                     </tr>
                     <tr>
-                        <td>N<sup>o</sup> CELULAR: <?= valueOption('EMPRESA_TELEFONO') ?></td>
+                        <td style="height: 20px;">TEL&Eacute;FONO: <?= $cotizar->telefono == "" ? '-' : $cotizar->telefono ?></td>
+                    </tr>
+                    <tr>
+                        <td style="height: 20px;">DIRECCI&Oacute;N: <?= $cotizar->cliente_direccion == "" ? '-' : $cotizar->cliente_direccion ?></td>
                     </tr>
                 </table>
             </td>
@@ -137,14 +144,14 @@
     </table>
     <table border="0">
         <tr>
-            <td width="50%">
+            <td width="65%">
                 <table border="0">
                     <tr>
                         <td rowspan="<?= $rowspan ?>" colspan="4" style="color: #434343;"><?= $cotizar->nota ?></td>
                     </tr>
                 </table>
             </td>
-            <td valign="top" align="right" width="50%">
+            <td valign="top" align="right" width="35%">
                 <table border="0" align="right">
                 <?php if ($cotizar->documento_id == 1): ?>
                     <tr>

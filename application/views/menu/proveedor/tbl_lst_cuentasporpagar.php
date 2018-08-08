@@ -63,12 +63,12 @@
                     if ($p->documento_nombre == 'BOLETA DE VENTA') $doc = "BO";
                     if ($p->documento_nombre == 'GUIA DE REMISION') $doc = "GR";
                     if ($p->documento_nombre == 'PEDIDO COMPRA-VENTA') $doc = "PCV";
-                    if ($p->documento_nombre == 'NOTA PEDIDO') $doc = "NP";
+                    if ($p->documento_nombre == 'NOTA VENTA') $doc = "NV";
 
                     if($p->documento_numero != '')
                         echo $doc . ' ' . $p->documento_serie . '-' . sumCod($p->documento_numero, 6);
                     else
-                        echo '<span style="color: #0000FF">NO FACTURADO</span>';
+                        echo '<span style="color: #0000FF">NO EMITIDO</span>';
                 ?>
                 </td>
                 <?php if(!empty($p->proveedor_nombre)){ ?>

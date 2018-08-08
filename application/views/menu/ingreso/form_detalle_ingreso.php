@@ -16,7 +16,7 @@
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
             <?php
-            $doc = 'NP ';
+            $doc = 'NV ';
             if ($ingreso->tipo_documento == 'FACTURA') $doc = 'FA ';
             if ($ingreso->tipo_documento == 'BOLETA DE VENTA') $doc = 'BO ';
             ?>
