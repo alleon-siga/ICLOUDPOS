@@ -114,6 +114,28 @@ class Pedidos extends REST_Controller
         }
     }
 
+    public function fact_elect_post()
+    {
+        $venta_id = $this->input->post('venta_id');
+
+        $fact = $this->db->get_where('facturacion', array('ref_id' => $venta_id))->row();
+        $data['doc_nro'] = $fact->documento_numero;
+        $data['hash'] = $fact->hash_cpe;
+        $data['url_code'] = md5($fact->id);
+        $data['tipo_doc'] = $fact->documento_tipo;
+        $data['doc_nro_fixed'] = str_replace('-', '|', $fact->documento_numero);
+        $data['total_tributo_igv'] = $fact->impuesto;
+        $data['total_venta'] = $fact->total;
+        $data['fecha_emision'] = $fact->fecha;
+        $data['clie_tipo_ident'] = $fact->total > 700 ? $fact->cliente_tipo : "-";
+        $data['clie_nro_doc'] = $fact->total > 700 ? $fact->identificacion : "-";
+
+        $fact_emisor = $this->db->get('facturacion_emisor')->row();
+        $data['ruc'] = $fact_emisor->ruc;
+
+        $this->response($data, 200);
+    }
+
     public function save_post()
     {
         $venta['id_usuario'] = $this->input->post('id_usuario');
