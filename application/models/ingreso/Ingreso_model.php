@@ -1018,7 +1018,7 @@ WHERE detalleingreso.id_ingreso='$compra_id'");
 
             if ($old_cantidad != NULL && $result != NULL) {
 
-                $tipo = "NP";
+                $tipo = "NV";
                 if ($ingreso->tipo_documento == "BOLETA DE VENTA")
                     $tipo = "BO";
                 if ($ingreso->tipo_documento == "FACTURA")

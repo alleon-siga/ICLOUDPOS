@@ -35,7 +35,7 @@
                 if($v->TipoDocumento==3) echo "BO";
                 if($v->TipoDocumento==4) echo "GR";
                 if($v->TipoDocumento==5) echo "PCV";
-                if($v->TipoDocumento==6) echo "NP";
+                if($v->TipoDocumento==6) echo "NV";
                 ?>
             </td>
 	 		<td style="text-align: center;"><?php echo $v->NroVenta;?></td>

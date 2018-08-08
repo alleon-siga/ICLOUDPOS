@@ -13,7 +13,7 @@
             </tr>
 
             <tr>
-                <td style="text-transform: uppercase;">Documento: Nota de Pedido</td>
+                <td style="text-transform: uppercase;">Documento: Nota de Venta</td>
                 <td style="text-transform: uppercase; text-align: right;">Tipo de
                     Pago: <?= $venta->condicion_nombre ?></td>
             </tr>

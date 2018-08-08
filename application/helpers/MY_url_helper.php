@@ -38,7 +38,7 @@ function get_tipo_doc($cod)
             return array('code' => $cod, 'value' => 'Gu&iacute;a de Remisi&oacute;n');
         }
         case -2:{
-            return array('code' => $cod, 'value' => 'Nota de Pedido');
+            return array('code' => $cod, 'value' => 'Nota de Venta');
         }
         case -3:{
             return array('code' => $cod, 'value' => 'Control Interno');

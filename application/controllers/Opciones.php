@@ -33,7 +33,8 @@ class opciones extends MY_Controller
             'ACTIVAR_SHADOW',
             'INGRESO_COSTO',
             'INGRESO_UTILIDAD',
-            'HOST_IMPRESION'
+            'HOST_IMPRESION',
+            'EMPRESA_DIRECCION'
         );
 
         if ($action == 'get') {

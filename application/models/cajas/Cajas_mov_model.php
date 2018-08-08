@@ -53,15 +53,15 @@ class cajas_mov_model extends CI_Model
             if ($mov->operacion == 'VENTA') {
 
                 $venta = $this->db->get_where('venta', array('venta_id' => $mov->ref_id))->row();
-                $doc = 'NP ';
+                $doc = 'NV ';
                 if ($venta->id_documento == 1) $doc = 'FA ';
                 if ($venta->id_documento == 3) $doc = 'BO ';
                 if ($venta->numero != "") {
                     $mov->ref_val = $doc . $venta->serie . ' - ' . sumCod($venta->numero, 6);
                 } else {
-                    $mov->ref_val = 'NO FACTURADO';
+                    $mov->ref_val = 'NO EMITIDO';
                 }
-                $mov->numero = 'NP ' . $mov->ref_id . ' (' . date('d/m/Y', strtotime($venta->fecha)) . ')';
+                $mov->numero = 'NV ' . $mov->ref_id . ' (' . date('d/m/Y', strtotime($venta->fecha)) . ')';
             }
 
             if ($mov->operacion == 'COMPRA') {
@@ -70,7 +70,7 @@ class cajas_mov_model extends CI_Model
                 $ingreso = $this->db->join('usuario', 'usuario.nUsuCodigo = ingreso.nUsuCodigo')
                     ->get_where('ingreso', array('id_ingreso' => $caja_pendiente->ref_id))->row();
 
-                $doc = 'NP ';
+                $doc = 'NV ';
                 if ($ingreso->tipo_documento == 'BOLETA DE VENTA') $doc = 'BO ';
                 if ($ingreso->tipo_documento == 'FACTURA') $doc = 'FA ';
 
@@ -97,7 +97,7 @@ class cajas_mov_model extends CI_Model
                 $mov->numero = 'NC ' . $kardex->serie . ' - ' . $kardex->numero;
                 }else
                 $mov->numero = 'NO DEFINIDO';
-                $mov->ref_val = 'NP ' . $caja_pendiente->ref_id . ' (' . date('d/m/Y', strtotime($venta->fecha)) . ')';
+                $mov->ref_val = 'NV ' . $caja_pendiente->ref_id . ' (' . date('d/m/Y', strtotime($venta->fecha)) . ')';
 
                 $mov->usuario_registra = $venta->username;
             }
@@ -114,7 +114,7 @@ class cajas_mov_model extends CI_Model
                 $ingreso = $this->db->get_where('ingreso', array('id_ingreso' => $mov->ref_id))->row();
 
                 $mov->numero = 'NC ' . $kardex->serie . ' - ' . $kardex->numero;
-                $doc = 'NP ';
+                $doc = 'NV ';
                 if ($ingreso->tipo_documento == 'BOLETA DE VENTA') $doc = 'BO ';
                 if ($ingreso->tipo_documento == 'FACTURA') $doc = 'FA ';
 
@@ -139,16 +139,16 @@ class cajas_mov_model extends CI_Model
                 $mov->operacion_nombre = 'CUENTA X COBRAR';
 
                 $venta = $this->db->get_where('venta', array('venta_id' => $mov->ref_id))->row();
-                $doc = 'NP ';
+                $doc = 'NV ';
                 if ($venta->id_documento == 1) $doc = 'FA ';
                 if ($venta->id_documento == 3) $doc = 'BO ';
                 if ($venta->numero != "") {
                     $mov->ref_val = $doc . $venta->serie . ' - ' . sumCod($venta->numero, 6);
                 } else {
-                    $mov->ref_val = 'NO FACTURADO';
+                    $mov->ref_val = 'NO EMITIDO';
                 }
 
-                $mov->numero = 'NP ' . $mov->ref_id;
+                $mov->numero = 'NV ' . $mov->ref_id;
             }
 
             if ($mov->operacion == 'PAGOS_CUOTAS') {
@@ -160,7 +160,7 @@ class cajas_mov_model extends CI_Model
                 $ingreso_credito_cuotas = $this->db->get_where('ingreso_credito_cuotas', array('id' => $pago_ingreso->pagoingreso_ingreso_id))->row();
                 $ingreso = $this->db->get_where('ingreso', array('id_ingreso' => $ingreso_credito_cuotas->ingreso_id))->row();
 
-                $doc = 'NP ';
+                $doc = 'NV ';
                 if ($ingreso->tipo_documento == 'BOLETA DE VENTA') $doc = 'BO ';
                 if ($ingreso->tipo_documento == 'FACTURA') $doc = 'FA ';
 

@@ -56,7 +56,11 @@ class reporte_inventario_model extends CI_Model
             $datosProd[$x]->traspasoE = $cantTraspaso->cantidad;
 
             //kardex
-            $cadsql = "SELECT SUM(cantidad) AS cantidad from kardex where producto_id = '$producto_id' and io = '1' AND local_id IN(".implode(",", $params['local_id']).")";
+            $cadsql = "SELECT SUM(cantidad) AS cantidad from kardex where producto_id = '$producto_id' and io = '1' AND local_id IN(".implode(",", $params['local_id']).")
+                AND ref_id NOT IN
+                ( 
+                    select ref_id from kardex where operacion = 6 and io = 1 AND local_id IN(".implode(",", $params['local_id']).")
+                )";
             $kardexE = $this->db->query($cadsql)->row();
             $datosProd[$x]->kardexE = $kardexE->cantidad;
 
@@ -90,7 +94,11 @@ class reporte_inventario_model extends CI_Model
             $datosProd[$x]->traspasoS = $cantTraspaso->cantidad;
 
             //kardex
-            $cadsql = "SELECT SUM(cantidad) AS cantidad from kardex where producto_id = '$producto_id' and io = '2' AND local_id IN(".implode(",", $params['local_id']).")";
+            $cadsql = "SELECT SUM(cantidad) AS cantidad from kardex where producto_id = '$producto_id' and io = '2' AND local_id IN(".implode(",", $params['local_id']).") 
+                AND ref_id NOT IN
+                ( 
+                    select ref_id from kardex where operacion = 5 and io = 2 AND local_id IN(".implode(",", $params['local_id']).") 
+                )";
             $kardexS = $this->db->query($cadsql)->row();
             $datosProd[$x]->kardexS = $kardexS->cantidad;
 

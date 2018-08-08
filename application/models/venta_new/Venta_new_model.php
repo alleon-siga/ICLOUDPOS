@@ -343,7 +343,7 @@ class venta_new_model extends CI_Model
             $this->comprobante_model->facturar($venta->venta_id, $venta->comprobante_id);
         }
 
-        if ($iddoc != 6) { //Si es diferente a la nota de pedido
+        if ($iddoc != 6) { //Si es diferente a la nota de venta
             //Correlativo para la guia de remision
             $correlativo = $this->correlativos_model->get_correlativo($venta->local_id, 4);
             $this->correlativos_model->sumar_correlativo($venta->local_id, 4);
@@ -518,7 +518,7 @@ class venta_new_model extends CI_Model
             $venta_contado['numero'] = $correlativo->correlativo;
 
             $this->correlativos_model->sumar_correlativo($venta['local_id'], $venta['id_documento']);
-            if ($venta['id_documento'] != 6) { //Si es diferente a la nota de pedido
+            if ($venta['id_documento'] != 6) { //Si es diferente a la nota de venta
                 //Correlativo para la guia de remision
                 $correlativo = $this->correlativos_model->get_correlativo($venta['local_id'], 4);
                 $this->correlativos_model->sumar_correlativo($venta['local_id'], 4);
@@ -1360,7 +1360,7 @@ class venta_new_model extends CI_Model
         $data['section'] = 'body';
         $mpdf->WriteHTML($this->load->view('menu/venta/impresiones/nota_pedido', $data, true));
 
-        $nombre_archivo = utf8_decode('Nota de Pedido.pdf');
+        $nombre_archivo = utf8_decode('Nota de Venta.pdf');
         $mpdf->Output($nombre_archivo, 'I');
     }
 

@@ -85,7 +85,7 @@
                     if($venta->nombre_tipo_documento=="BOLETA DE VENTA" || $venta->nombre_tipo_documento==3 ) echo "BO";
                     if($venta->nombre_tipo_documento==4) echo "GR";
                     if($venta->nombre_tipo_documento==5) echo "PCV";
-                    if($venta->nombre_tipo_documento=="NOTA DE PEDIDO" || $venta->nombre_tipo_documento==6) echo "NP";
+                    if($venta->nombre_tipo_documento=="NOTA DE VENTA" || $venta->nombre_tipo_documento==6) echo "NV";
                     ?></td>
                 <td style="text-align: center;"><?php echo  $venta->venta_status;  ?></td>
                 <td style="text-align: center;"><?php echo  $venta->local_nombre;  ?></td>

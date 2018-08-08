@@ -70,7 +70,7 @@
                             <option value="">TODOS</option>
                             <option value="BOLETA DE VENTA">BOLETA DE VENTA</option>
                             <option value="FACTURA">FACTURA</option>
-                            <option value="NOTA DE PEDIDO">NOTA DE PEDIDO</option>
+                            <option value="NOTA DE VENTA">NOTA DE VENTA</option>
                         </select>
                     </div>
                 </div>

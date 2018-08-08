@@ -40,7 +40,7 @@ define('FOPEN_READ_WRITE_CREATE_STRICT', 'x+b');
 define('COMPLETADO', 'COMPLETADO');
 define('ESPERA', 'EN ESPERA');
 
-define('NOTAVENTA', 'NOTA DE PEDIDO');
+define('NOTAVENTA', 'NOTA DE VENTA');
 define('BOLETAVENTA', 'BOLETA DE VENTA');
 define('FACTURA', 'FACTURA');
 

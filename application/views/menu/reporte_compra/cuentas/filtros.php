@@ -70,7 +70,7 @@
                 <label class="control-label">Tipo de Documento:</label>
                 <select id="tipo_documento" name="tipo_documento" class="form-control">
                     <option value="0">Todos</option>
-                    <option value="NOTA DE PEDIDO">NOTA DE PEDIDO</option>
+                    <option value="NOTA DE VENTA">NOTA DE VENTA</option>
                     <option value="FACTURA">FACTURA</option>
                     <option value="BOLETA DE VENTA">BOLETA DE VENTA</option>
                 </select>

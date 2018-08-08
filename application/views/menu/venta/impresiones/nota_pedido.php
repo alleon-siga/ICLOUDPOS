@@ -51,7 +51,7 @@
     <hr>
     <table style="border: 0px;" cellpadding="0" cellspacing="0">
         <tr>
-            <td style="text-transform: uppercase; text-align: center;">NOTA DE PEDIDO</td>
+            <td style="text-transform: uppercase; text-align: center;">NOTA DE VENTA</td>
         </tr>
     </table>
     <hr>

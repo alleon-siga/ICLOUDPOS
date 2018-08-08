@@ -77,7 +77,7 @@ header("Expires: 0");
                     if($ingreso->tipo_documento=="BOLETA DE VENTA" || $ingreso->tipo_documento==3 ) echo "BO";
                     if($ingreso->tipo_documento==4) echo "GR";
                     if($ingreso->tipo_documento==5) echo "PCV";
-                    if($ingreso->tipo_documento=="NOTA DE PEDIDO" || $ingreso->tipo_documento==6) echo "NP";
+                    if($ingreso->tipo_documento=="NOTA DE VENTA" || $ingreso->tipo_documento==6) echo "NV";
                     ?></td>
                 <td style="text-align: center;"><?= $ingreso->documento_serie."-".$ingreso->documento_numero ?></td>
                 <td style="text-align: center;"><?= date('d-m-Y', strtotime($ingreso->fecha_registro)) ?></td>

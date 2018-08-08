@@ -68,20 +68,22 @@
         </div>
     </div>
 
-    <div class="row form-group">
+    <!--<div class="row form-group">
         <div class="col-md-4">
             <label class="control-label panel-admin-text">Visualizar Cr&eacute;dito:</label>
         </div>
         <div class="col-md-8">
             <div class="form-control">
                 <input type="radio" name="VISTA_CREDITO" id="" class='' value="SIMPLE"
-                    <?php echo validOption("VISTA_CREDITO", 'SIMPLE', 'AVANZADO') ? 'checked' : '' ?>> Simple
+                    <?php //echo validOption("VISTA_CREDITO", 'SIMPLE', 'AVANZADO') ? 'checked' : '' ?>> Simple
                 &nbsp;&nbsp;&nbsp;
                 <input type="radio" name="VISTA_CREDITO" id="" class='' value="AVANZADO"
-                    <?php echo validOption("VISTA_CREDITO", 'AVANZADO', 'AVANZADO') ? 'checked' : '' ?>> Avanzado
+                    <?php //echo validOption("VISTA_CREDITO", 'AVANZADO', 'AVANZADO') ? 'checked' : '' ?>> Avanzado
             </div>
         </div>
-    </div>
+    </div>-->
+    <input type="hidden" name="VISTA_CREDITO" value="AVANZADO">
+
     <input type="hidden" name="COMPROBANTE" value="0"> <!-- Desarrollado solo para ramon -->
     <!--<div class="row form-group">
         <div class="col-md-4">
@@ -178,7 +180,7 @@
     <h3>Cotizaci&oacute;n</h3>
     <div class="row form-group">
         <div class="col-md-4">
-            <label class="control-label panel-admin-text">Informacion de interes:</label>
+            <label class="control-label panel-admin-text">Cabecera de Cotizaci&oacute;n:</label>
         </div>
 
         <div class="col-md-8">
@@ -219,7 +221,7 @@
         <div class="col-md-8">
         <?php
             $boton = json_decode(valueOption("COTIZACION_COLOR_FORMATO"));
-            $arr = array('Bordes', 'Nombre de Empresa');
+            $arr = array('Nombre de Empresa', 'Bordes');
             $i = 1;
             foreach ($boton as $clave => $valor) {
         ?>

@@ -117,7 +117,7 @@
                         <option value="">Seleccione</option>
                         <option value="FACTURA">FACTURA</option>
                         <option value="BOLETA DE VENTA">BOLETA DE VENTA</option>
-                        <option value="NOTA DE PEDIDO">NOTA DE PEDIDO</option>
+                        <option value="NOTA DE VENTA">NOTA DE VENTA</option>
                         <option value="GUIA DE REMISION">GUIA DE REMISION</option>
                     </select>
                 </div>

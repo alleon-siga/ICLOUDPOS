@@ -34,7 +34,7 @@
                         if ($ingreso->tipo_documento == "BOLETA DE VENTA") echo "BO";
                         if ($ingreso->tipo_documento == 4) echo "GR";
                         if ($ingreso->tipo_documento == 5) echo "PCV";
-                        if ($ingreso->tipo_documento == "NOTA DE PEDIDO") echo "NP";
+                        if ($ingreso->tipo_documento == "NOTA DE VENTA") echo "NV";
                         ?>
                     </td>
                     <td align="center" style="white-space: normal;"><?php echo $ingreso->documento_serie . "-" . $ingreso->documento_numero ?></td>
@@ -171,7 +171,7 @@
                         if ($ingreso->tipo_documento == "BOLETA DE VENTA") echo "BO";
                         if ($ingreso->tipo_documento == 4) echo "GR";
                         if ($ingreso->tipo_documento == 5) echo "PCV";
-                        if ($ingreso->tipo_documento == "NOTA DE PEDIDO") echo "NP";
+                        if ($ingreso->tipo_documento == "NOTA DE VENTA") echo "NV";
                         ?>
                     </td>
                     <td align="center"><?php echo $ingreso->documento_serie . "-" . $ingreso->documento_numero ?></td>

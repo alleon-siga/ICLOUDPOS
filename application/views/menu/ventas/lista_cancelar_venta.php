@@ -42,7 +42,7 @@
                     if($venta->id_doc==3) echo "BO";
                     if($venta->id_doc==4) echo "GR";
                     if($venta->id_doc==5) echo "PCV";
-                    if($venta->id_doc==6) echo "NP";
+                    if($venta->id_doc==6) echo "NV";
                     ?>
                     </td>
                     <td><?php echo $venta->documento_Serie."-".$venta->documento_Numero; ?></td>

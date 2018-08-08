@@ -34,7 +34,7 @@
                         if($venta->id_doc==3) echo "BO";
                         if($venta->id_doc==4) echo "GR";
                         if($venta->id_doc==5) echo "PCV";
-                        if($venta->id_doc==6) echo "NP";
+                        if($venta->id_doc==6) echo "NV";
                         ?></td>
                     <td ><?= $venta->serie." - ".$venta->numero_documento ?></td>
                     <td ><?= date('d-m-Y H:i:s', strtotime($venta->fecha)) ?></td>
