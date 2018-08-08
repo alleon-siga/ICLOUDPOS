@@ -148,7 +148,8 @@ class cotizar_model extends CI_Model
             unidades.nombre_unidad as unidad_nombre,
             unidades.abreviatura as unidad_abr,
             SUM(cd.precio * cd.cantidad) as importe, 
-            cd.precio_venta as precio_venta
+            cd.precio_venta as precio_venta,
+            cd.descuento as descuento
             ')
             ->from('cotizacion_detalles as cd')
             ->join('cotizacion as c', 'c.id=cd.cotizacion_id')
@@ -300,7 +301,8 @@ class cotizar_model extends CI_Model
                 'cantidad' => $detalle->cantidad,
                 'impuesto' => $detalle->producto_impuesto,
                 'afectacion_impuesto' => $prod->producto_afectacion_impuesto,
-                'precio_venta' => $detalle->precio_venta
+                'precio_venta' => $detalle->precio_venta,
+                'descuento' => $detalle->descuento
             );
 
             array_push($data, $temp);

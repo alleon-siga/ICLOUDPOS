@@ -530,7 +530,7 @@ $primary_nav = array(
                     ),
                     array(
                         'name' => 'Verificaci&oacute;n Inventario',
-                        'url' => $ruta . 'reporte/verificaInventario',
+                        'url' => $ruta . 'reporte_inventario/verificaInventario',
                         'slug' => 'verificainventario'
                     )
                 )

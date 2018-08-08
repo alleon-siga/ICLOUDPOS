@@ -37,7 +37,9 @@
                     <?php endif; ?>
                 </div>
                 <div class="col-md-2">
-
+                    <div style="padding-top: 30px;"></div>
+                    <input type="checkbox" name="inconsistencia" id="inconsistencia">
+                    <label for="mostrar_detalles" style="cursor: pointer;">Incosistencia</label>
                 </div>
                 <div class="col-md-2">
 
@@ -71,8 +73,11 @@
                     filter: true,
                     width: '100%'
                 });
+                $("#producto_id, #local_id").multipleSelect("checkAll");
 
                 $(document).ready(function () {
+                    $("#inconsistencia").prop('checked', 'true');
+
                     $("#btn_buscar, .btn_buscar").on("click", function () {
                         getReporte();
                     });
@@ -80,14 +85,19 @@
 
                 function getReporte() {
                     $("#historial_list").html($("#loading").html());
+                    var inconsistencia = 0;
+                    if($("#inconsistencia").prop('checked')){
+                        inconsistencia = 1;
+                    }
 
                     var data = {
                         'local_id': $("#local_id").val(),
-                        'producto_id': $("#producto_id").val()
+                        'producto_id': $("#producto_id").val(),
+                        'inconsistencia': inconsistencia
                     };
 
                     $.ajax({
-                        url: '<?= base_url()?>reporte/verificaInventario/filter',
+                        url: '<?= base_url()?>reporte_inventario/verificaInventario/filter',
                         data: data,
                         type: 'POST',
                         success: function (data) {

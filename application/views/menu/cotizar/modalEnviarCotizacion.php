@@ -13,10 +13,14 @@
                         <input type="hidden" name="idCotizacion" value="<?= $idCotizacion ?>">
                         <input type="hidden" name="tipoCliente" value="<?= $tipo_cliente ?>">
                         <div class="row">
-                            <div class="col-md-12"><label class="control-label">Correo electr&oacute;nico</label></div>
+                            <div class="col-md-12">
+                                <label class="control-label panel-admin-text">Asunto</label>
+                                <input id="txtAsunto" name="txtAsunto" type="text" class="form-control" value="<?= "COTIZACION ".valueOption('EMPRESA_NOMBRE'); ?>">
+                            </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12">
+                                <label class="control-label panel-admin-text">Correo electr&oacute;nico</label>
                                 <select id="txtMail" name="txtMail[]" class="contacts" placeholder="Escriba...">
                                     <option value="<?= $correo->email ?>"><?= $correo->email ?></option>
                                 </select>

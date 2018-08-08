@@ -82,12 +82,11 @@ class cotizar extends MY_Controller
     function exportar_pdf($id, $tipoCliente = ""){
         $data['tipo_cliente'] = $tipoCliente;
         $data['cotizar'] = $this->cotizar_model->get_cotizar_detalle($id);
-
         $this->load->library('mpdf53/mpdf');
         $mpdf = new mPDF('utf-8', 'A4', 0, '', 5, 5, 5, 5, 5, 5);
         $html = $this->load->view('menu/cotizar/cotizar_pdf', $data, true);
         $mpdf->WriteHTML($html);
-        $mpdf->Output();
+        $mpdf->Output('COTIZACION_'.$id.'.pdf', 'I');
     }
 
 
@@ -259,6 +258,7 @@ class cotizar extends MY_Controller
         $params['correo'] = $this->input->post('txtMail');
         $params['idCotizacion'] = $this->input->post('idCotizacion');
         $params['tipoCliente'] = $this->input->post('tipoCliente');
+        $params['asunto'] = $this->input->post('txtAsunto');
         $this->email_model->enviarCotizacion($params);
     }
 }
