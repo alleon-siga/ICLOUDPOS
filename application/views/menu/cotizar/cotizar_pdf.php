@@ -80,14 +80,29 @@
     </table>
     <br>
     <table cellpadding="5" cellspacing="0" border="0">
+    <?php
+        $hayDescuento = false;
+        $columnaPie = 6;
+        foreach ($cotizar->detalles as $detalle):
+            if($detalle->descuento > 0){
+                $hayDescuento = true;
+                $columnaPie = 8;
+                break;
+            }
+        endforeach;
+    ?>
         <thead>
             <tr>
                 <td width="5%" style="border-top: #ccc 1px solid; color:<?= $bordes ?>;"><?= getCodigoNombre() ?></td>
                 <td width="45%" style="border-top: #ccc 1px solid; color:<?= $bordes ?>;">Descripci&oacute;n</td>
-                <td width="10%" style="border-top: #ccc 1px solid; color:<?= $bordes ?>;">Cantidad</td>
-                <td width="10%" style="border-top: #ccc 1px solid; color:<?= $bordes ?>;">Unidad</td>
-                <td width="15%" style="border-top: #ccc 1px solid; color:<?= $bordes ?>;">Precio unitario</td>
-                <td width="15%" style="border-top: #ccc 1px solid; color:<?= $bordes ?>;">Precio total</td>
+                <td width="10%" style="text-align: center;border-top: #ccc 1px solid; color:<?= $bordes ?>;">Cantidad</td>
+                <td width="10%" style="text-align: center;border-top: #ccc 1px solid; color:<?= $bordes ?>;">Unidad</td>
+                <?php if($hayDescuento==true): ?>
+                <td width="13%" style="text-align: center;border-top: #ccc 1px solid; color:<?= $bordes ?>;">P. Lista</td>
+                <td width="13%" style="text-align: center;border-top: #ccc 1px solid; color:<?= $bordes ?>;">% Desc.</td>
+                <?php endif; ?>
+                <td width="13%" style="text-align: center;border-top: #ccc 1px solid; color:<?= $bordes ?>;">P.U.</td>                
+                <td width="13%" style="text-align: center;border-top: #ccc 1px solid; color:<?= $bordes ?>;">Precio total</td>
             </tr>
         </thead>
         <tbody>
@@ -105,14 +120,18 @@
                 <td style="white-space: normal; background-color: <?= $color ?>"><?= $detalle->producto_nombre ?></td>
                 <td style="white-space: normal; text-align: center; background-color: <?= $color ?>"><?= $detalle->cantidad ?></td>
                 <td style="white-space: normal; text-align: center; background-color: <?= $color ?>"><?= $detalle->unidad_nombre ?></td>
-                <td style="white-space: normal; text-align: right; background-color: <?= $color ?>"><?= $cotizar->moneda_simbolo . " " . number_format($detalle->precio, 2) ?></td>
+                <?php if($hayDescuento==true): ?>
+                <td style="white-space: normal; text-align: center; background-color: <?= $color ?>"><?= $cotizar->moneda_simbolo . " " . number_format($detalle->precio_venta, 2) ?></td>
+                <td style="white-space: normal; text-align: right; background-color: <?= $color ?>"><?= number_format($detalle->descuento, 2) ?> %</td>
+                <?php endif; ?>
+                <td style="white-space: normal; text-align: right; background-color: <?= $color ?>"><?= $cotizar->moneda_simbolo . " " . number_format($detalle->precio, 2) ?></td>                
                 <td style="white-space: normal; text-align: right; background-color: <?= $color ?>"><?= $cotizar->moneda_simbolo . " " . number_format($detalle->importe, 2) ?></td>
             </tr>
         <?php
             endforeach;
         ?>
             <tr>
-                <td colspan="6" style="border-bottom: #ccc 1px solid; background-color: #F3F3F3;">&nbsp;</td>
+                <td colspan="<?= $columnaPie ?>" style="border-bottom: #ccc 1px solid; background-color: #F3F3F3;">&nbsp;</td>
             </tr>
         </tbody>
     </table>

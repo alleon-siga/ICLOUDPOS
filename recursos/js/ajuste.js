@@ -129,6 +129,7 @@ $(document).ready(function () {
     // EVENTOS FUNCIONALES
 
     $("#local_id").on('change', function () {
+        get_productos_unidades('change');
         $("#local_text").html($("#local_id option:selected").text());
     });
 

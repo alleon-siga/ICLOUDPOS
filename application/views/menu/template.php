@@ -527,6 +527,11 @@ $primary_nav = array(
                         'name' => 'Kardex Valorizado',
                         'url' => $ruta . 'reporte/kardexValorizado',
                         'slug' => 'kardexvalorizado'
+                    ),
+                    array(
+                        'name' => 'Verificaci&oacute;n Inventario',
+                        'url' => $ruta . 'reporte_inventario/verificaInventario',
+                        'slug' => 'verificainventario'
                     )
                 )
             ),

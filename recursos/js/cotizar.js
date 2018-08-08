@@ -550,6 +550,7 @@ function prepare_detalles_productos() {
                 producto.unidad_medida = unidad;
                 producto.cantidad = cantidades[unidad];
                 producto.detalle_importe = producto.cantidad * producto.precio;
+                producto.descuento = lst_producto[i].descuento;
                 productos.push(producto);
             }
         }
