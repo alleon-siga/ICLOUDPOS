@@ -1,18 +1,43 @@
 $(document).ready(function(){
+    $('.chk').on('click', function(){
+        if($(this).prop('checked')){
+            $(this).attr('value', '1');
+        }else{
+            $(this).attr('value', '0');
+        }
+    });
+
 	$('#btnEnviar').on('click', function(){
         if($('#txtMail').val() == null){
             mensaje('warning',"<p>Debe ingresar correo electr&oacute;nico</p>");
             return;
         }
 
-		$("#msjEnviar").html($("#loading").html());
+        var validar1 = validar2 = false;
+        if($('#nv').prop('checked') == false){
+            validar1 = true;
+        }
+
+        if($('#ce').prop('checked') == false){
+            validar2 = true;
+        }
+
+        if(validar1 == true && validar2 == true){
+            mensaje('warning', "Debe seleccionar al menos un archivo adjunto");
+            return;
+        }
+
+        //$('#nv').prop('checked', true);
+        //$('#ce').prop('checked', true);
+
+        $("#msjEnviar").html($("#loading").html());
 		$.ajax({
-			url: ruta + 'cotizar/enviarCotizacion',
+			url: ruta + 'venta/enviarVenta',
 			type: 'POST',
 			data: $('#form1').serialize(),
 			success: function(data){
 				$("#msjEnviar").html('');
-				mensaje('success', '<p>Cotizaci&oacute;n enviada con exito.</p>');
+				mensaje('success', '<p>Venta enviada con exito.</p>');
 				$('#correoModal').modal('hide');
 			},
 			error: function () {

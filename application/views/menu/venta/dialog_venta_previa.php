@@ -61,6 +61,11 @@
                     </button>
                     <?php } ?>
                     <button class="btn btn-primary btn_venta_imprimir"
+                            type="button" data-nombre="A4"
+                            id="btn_venta_imprimir_1"><i
+                                class="fa fa-print"></i> A4
+                    </button>
+                    <button class="btn btn-primary btn_venta_imprimir"
                             type="button" data-nombre="PEDIDO"
                             id="btn_venta_imprimir_1"><i
                                 class="fa fa-print"></i> (F6) Pedido
@@ -586,14 +591,13 @@
                 delay: 2500,
                 allow_dismiss: true
             });
-            var url = '<?= base_url() ?>/venta_new/imprimir/<?= $venta->venta_id ?>/'+nombre;
-            <?php if (SERVER_NAME == SERVER_CRDIGITAL): ?>
-            var win = window.open(url, '_blank');
-            win.focus();
-            <?php else:?>
-            $("#imprimir_frame").attr('src', url);
-            <?php endif; ?>
-
+            var url = '<?= base_url() ?>venta_new/imprimir/<?= $venta->venta_id ?>/'+nombre;
+            if(nombre == "A4"){
+                var win = window.open(url, '_blank');
+                win.focus();
+            }else{
+                $("#imprimir_frame").attr('src', url);
+            }
         });
 //
 //        $(".btn_venta_imprimir_almacen").on('click', function () {

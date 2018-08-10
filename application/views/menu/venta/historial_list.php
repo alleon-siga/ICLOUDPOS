@@ -124,6 +124,12 @@
                                 <i class="fa fa-remove"></i>
                             </a>
                         <?php endif; ?>
+                        <a class="btn btn-sm btn-warning" data-toggle="tooltip" style="margin-right: 5px;"
+                           title="Exportar" data-original-title="Exportar"
+                           href="#"
+                           onclick="enviar_correo('<?= $venta->venta_id ?>', '<?= $venta->tipo_cliente ?>');">
+                           <i class="fa fa-envelope" aria-hidden="true"></i>
+                        </a>
                     </td>
                 </tr>
             <?php endforeach ?>
@@ -280,9 +286,8 @@
         </div>
         <!-- /.modal-content -->
     </div>
-
-
 </div>
+<div class="modal fade" id="correoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static"></div>
 <script type="text/javascript">
     $(function () {
         $('.imprimir').on('click', function () {
@@ -403,5 +408,11 @@
                 alert('ups')
             }
         });
+    }
+
+    function enviar_correo(idVenta, tipo_cliente){
+        $("#correoModal").html($("#loading").html());
+        $("#correoModal").load('<?php echo $ruta ?>' + 'venta/modalEnviarVenta/' + idVenta + '/' + tipo_cliente);
+        $('#correoModal').modal('show');
     }
 </script>
