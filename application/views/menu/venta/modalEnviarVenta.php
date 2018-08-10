@@ -24,18 +24,17 @@
                         <br>
                         <div class="row">
                             <div class="col-md-4">
-                                <input type="checkbox" class="chk" id="nv" name="tipo[]" value="0">
+                                <input type="checkbox" class="chk" id="nv" name="tipo[]" value="NV">
                                 <label for="nv" class="control-label panel-admin-text" style="cursor: hand;">Nota Venta</label>
                             </div>
                             <div class="col-md-6">
-                                <input type="checkbox" class="chk" id="ce" name="tipo[]" value="0"> 
+                                <input type="checkbox" class="chk" id="ce" name="tipo[]" value="CE"> 
                                 <label for="ce" class="control-label panel-admin-text" style="cursor: hand;">Comprobante electr&oacute;nico</label>
                             </div>
                         </div>
                         <br>
                         <?php }else{ ?>
-                            <input type="hidden" name="tipo[]" value="1">
-                            <input type="hidden" name="tipo[]" value="0">
+                            <input type="hidden" name="tipo[]" value="NV">
                         <?php } ?>
                         <div class="row">
                             <div class="col-md-12">

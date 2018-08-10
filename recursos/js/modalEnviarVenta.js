@@ -1,12 +1,4 @@
 $(document).ready(function(){
-    $('.chk').on('click', function(){
-        if($(this).prop('checked')){
-            $(this).attr('value', '1');
-        }else{
-            $(this).attr('value', '0');
-        }
-    });
-
 	$('#btnEnviar').on('click', function(){
         if($('#txtMail').val() == null){
             mensaje('warning',"<p>Debe ingresar correo electr&oacute;nico</p>");
@@ -26,9 +18,6 @@ $(document).ready(function(){
             mensaje('warning', "Debe seleccionar al menos un archivo adjunto");
             return;
         }
-
-        //$('#nv').prop('checked', true);
-        //$('#ce').prop('checked', true);
 
         $("#msjEnviar").html($("#loading").html());
 		$.ajax({

@@ -68,34 +68,34 @@ class email_model extends CI_Model
         $data['totalLetras'] = numtoletras($total, $moneda->nombre);
 
         $this->load->library('mpdf53/mpdf');
-        if($param['notaVenta'] == 1){
-            $mpdf = new mPDF('utf-8', 'A4', 0, '', 5, 5, 5, 5, 5, 5);
-            if (SERVER_NAME == SERVER_CRDIGITAL) {
-                $html = $this->load->view('menu/venta/impresiones/nota_pedido_crdigital', $data, true);
-            } else {
-                $html = $this->load->view('menu/venta/impresiones/nota_pedido_a4', $data, true);
+        foreach($param['tipo'] as $tipo){
+            if($tipo == 'NV'){ //nota de venta
+                $mpdf = new mPDF('utf-8', 'A4', 0, '', 5, 5, 5, 5, 5, 5);
+                if (SERVER_NAME == SERVER_CRDIGITAL) {
+                    $html = $this->load->view('menu/venta/impresiones/nota_pedido_crdigital', $data, true);
+                } else {
+                    $html = $this->load->view('menu/venta/impresiones/nota_pedido_a4', $data, true);
+                }
+                $mpdf->WriteHTML($html);
+                $url = $mpdf->Output("temporal.pdf", 'S');
+
+                $this->mailer->addStringAttachment($url, 'NV'.$data['venta']->serie.'-'.sumCod($param['idVenta'], 6).'.pdf');
+            }elseif($tipo=='CE'){ //comprobante electronico
+                $mpdf = new mPDF('utf-8', 'A4', 0, '', 5, 5, 5, 5, 5, 5);
+                $data['facturacion'] = $this->facturacion_model->get_facturacion(array('id' => $param['idFacturacion']));
+                $data['emisor'] = $this->facturacion_model->get_emisor();
+
+                $html = $this->load->view('menu/facturacion/impresion_a4', $data, true);
+                $mpdf->WriteHTML($html);
+                $url = $mpdf->Output("temporal.pdf", 'S');
+                $this->mailer->addStringAttachment($url, $data['facturacion']->documento_numero_ceros.'.pdf');
+
+                //En formato xml
+                $emisor = $this->db->get('facturacion_emisor')->row();
+                $f = $this->db->get_where('facturacion', array('id' => $param['idFacturacion']))->row();
+                $name = $emisor->ruc . '-' . $f->documento_tipo . '-' . $f->documento_numero . '.XML';
+                $this->mailer->addAttachment('./application/libraries/Facturador/files/xmls/' . $emisor->ruc . '/' . $name, $data['facturacion']->documento_numero_ceros.".xml");
             }
-            $mpdf->WriteHTML($html);
-            $url = $mpdf->Output("temporal.pdf", 'S');
-
-            $this->mailer->addStringAttachment($url, 'NV'.$data['venta']->serie.'-'.sumCod($param['idVenta'], 6).'.pdf');
-        }
-
-        if($param['electronico'] == 1){
-            $mpdf = new mPDF('utf-8', 'A4', 0, '', 5, 5, 5, 5, 5, 5);
-            $data['facturacion'] = $this->facturacion_model->get_facturacion(array('id' => $param['idFacturacion']));
-            $data['emisor'] = $this->facturacion_model->get_emisor();
-
-            $html = $this->load->view('menu/facturacion/impresion_a4', $data, true);
-            $mpdf->WriteHTML($html);
-            $url = $mpdf->Output("temporal.pdf", 'S');
-            $this->mailer->addStringAttachment($url, $data['facturacion']->documento_numero_ceros.'.pdf');
-
-            //En formato xml
-            $emisor = $this->db->get('facturacion_emisor')->row();
-            $f = $this->db->get_where('facturacion', array('id' => $param['idFacturacion']))->row();
-            $name = $emisor->ruc . '-' . $f->documento_tipo . '-' . $f->documento_numero . '.XML';
-            $this->mailer->addAttachment('./application/libraries/Facturador/files/xmls/' . $emisor->ruc . '/' . $name, $data['facturacion']->documento_numero_ceros.".xml");
         }
 
         if (!$this->mailer->send()) {
