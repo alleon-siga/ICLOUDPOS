@@ -2070,4 +2070,22 @@ FROM (`detalle_venta`) JOIN `venta` ON `venta`.`venta_id`=`detalle_venta`.`id_ve
         $this->db->where("k.io = 2 AND k.tipo = 7 AND k.operacion = 5 AND dv.id_venta= $venta_id AND k.serie='$serie' AND k.numero='$numero'");
         return $this->db->get()->result();
     }
+
+    public function getCorreoCliente($id_venta)
+    {
+        $this->db->select("cl.email, cl.razon_social");
+        $this->db->from('venta v');
+        $this->db->join('cliente cl', 'v.id_cliente = cl.id_cliente');
+        $this->db->where('v.venta_id', $id_venta);
+        return $this->db->get()->row();
+    }
+
+    public function getFacturacion($id_venta)
+    {
+        $this->db->select("f.id");
+        $this->db->from('venta v');
+        $this->db->join('facturacion f', 'v.venta_id = f.ref_id');
+        $this->db->where('v.venta_id', $id_venta);
+        return $this->db->get()->row();
+    }
 }

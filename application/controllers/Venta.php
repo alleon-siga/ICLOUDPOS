@@ -27,6 +27,7 @@ class venta extends MY_Controller
             $this->load->model('credito/credito_model');
             $this->load->model('credito_cuotas_abono/credito_cuotas_abono_model');
             $this->load->model('banco/banco_model');
+            $this->load->model('emails/email_model');
             $this->load->helper('form');
             $this->load->library('mpdf53/mpdf');
             $this->load->library('Pdf');
@@ -3152,5 +3153,31 @@ JOIN detalleingreso ON detalleingreso.id_ingreso=ingreso.id_ingreso WHERE detall
                 break;
             }
         }
+    }
+
+    function modalEnviarVenta($idVenta, $tipo_cliente)
+    {
+        $data['idVenta'] = $idVenta;
+        $data['tipo_cliente'] = $tipo_cliente;
+        $datos = $this->venta_model->getCorreoCliente($idVenta);
+        $data['email'] = $datos->email;
+        $data['razon_social'] = $datos->razon_social;
+        $data['facturacion'] = $this->venta_model->getFacturacion($idVenta);
+        $this->load->view('menu/venta/modalEnviarVenta', $data);
+    }
+
+    function enviarVenta()
+    {
+        $params['correo'] = $this->input->post('txtMail');
+        $params['idVenta'] = $this->input->post('idVenta');
+        $params['tipoCliente'] = $this->input->post('tipoCliente');
+        $params['asunto'] = $this->input->post('txtAsunto');
+        $params['razon_social'] = $this->input->post('razon_social');
+        $params['idFacturacion'] = $this->input->post('idFacturacion');
+
+        $tipo = $this->input->post('tipo');
+        $params['notaVenta'] = $tipo[0];
+        $params['electronico'] = $tipo[1];
+        $this->email_model->enviarVenta($params);
     }
 }

@@ -39,14 +39,9 @@
                             </tr>
                           </table>
                         </td>
-                        <td>
-                          <img src="<?= base_url('recursos/img/facebook.png') ?>" width="36" height="36" alt="facebook" style="display:block;">
-                          <img src="<?= base_url('recursos/img/linkedin.png') ?>" width="36" height="36" alt="linkedin" style="display:block;">
-                          <img src="<?= base_url('recursos/img/youtube.png') ?>" width="36" height="36" alt="youtube" style="display:block;">
-                        </td>
                       </tr>
                       <tr>
-                        <td colspan="2" align="center" style="color: #888888">
+                        <td align="center" style="color: #888888">
                           <br /><br /><br /><font color="#888888">Enviado por</font><br />
                           <img height="50" src="<?= base_url('recursos/img/logo/' . valueOption("EMPRESA_LOGO", '')) ?>">
                           <br />

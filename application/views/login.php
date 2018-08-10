@@ -69,13 +69,8 @@
                         if (msj == 'ok') {
                             window.location.href = "<?php echo $ruta;?>" + "principal/";
                         } else {
-                          //  document.getElementById("error").innerHTML = "<a>Usuario o clave incorrecta, por favor vuelva a intentar</a>";
-
-                          //  document.getElementById('light').style.display='block';document.getElementById('fade').style.display='block';
-               $("#light").html('Usuario o clave incorrecta, por favor vuelva a intentar')
-    $("#light").delay("slow").fadeIn().delay(2000).fadeOut();
-
-
+                            $("#light").html('Usuario o clave incorrecta, por favor vuelva a intentar')
+                            $("#light").delay("slow").fadeIn().delay(2000).fadeOut();
                         }
                     }
                 });
@@ -131,7 +126,7 @@
 .white_content {
     display: none;
     position: absolute;
-    top: 45%;
+    top: 35%;
     left: 22%;
     width: 270px;
     height: 70px;
@@ -154,22 +149,17 @@ color: white;
 <img src="<?php echo $ruta; ?>recursos/img/placeholders/backgrounds/fondo_login.png" alt="Login Full Background"
      class="full-bg animation-pulseSlow">
 
-<div id="login-container" class="animation-fadeIn" style="padding:4%;  position:relative; top:60px">
+<div id="login-container" class="animation-fadeIn" style="padding:4%;  position:relative; top:20px">
 
     <div class="login-title text-center" style="-webkit-border-radius: 18px 18px 18px 18px; border-radius: 18px 18px 18px 18px;
 -webkit-box-shadow: 0 0 4px 4px #000000; box-shadow: 0 0 4px 4px #000000; background-color: rgba(102, 102, 102, 0.6); color: rgba(102, 102, 102, 0.6);">
 
         <div>
-
-            <div class="sidebar-user-avatar" style="margin-left:0px; position: relative; left:10%; margin-top:-2%">
-                    <img src="<?php echo base_url();?>/recursos/img/punto_de_venta_v2.jpg" alt="avatar">
-            </div>
-
-                <h1>
-                    <strong><?php echo valueOptionDB('EMPRESA_NOMBRE', 'NEW LEVEL') ?></strong><br>
-                    <small><strong>Iniciar Sesi&oacute;n</strong></small> <!--or <strong>Register</strong></small>-->
-                </h1>
-            </div>
+            <img style="height: 100px;" src="<?php echo base_url();?>/recursos/img/punto_de_venta_v2.jpg" alt="avatar">
+            <h1>
+                <strong><?php echo valueOptionDB('EMPRESA_NOMBRE', 'NEW LEVEL') ?></strong>
+            </h1>
+        </div>
 
 
 <div id="light" class="white_content"></div>
@@ -220,7 +210,7 @@ color: white;
             <div class="">
 
                 <div class="">
-                    <button id="btnlogin" type="button" class="btn_login"> Iniciar
+                    <button id="btnlogin" type="button" class="btn_login"> Iniciar Sesi&oacute;n
                     </button>
                 </div>
             </div>

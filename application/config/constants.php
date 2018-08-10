@@ -88,3 +88,4 @@ define('RAZON_SOCIAL_EXISTE', 'La Razon Social ingresada ya existe');
 
 define('CREDITO_DEBE', 'PagoPendiente');
 define('COTIZACION_MAIL', 'teayudo.pe');
+define('EMITIDO_ATRAVEZDE', 'http://teayudo.pe/assets/images/logoBlue.png');

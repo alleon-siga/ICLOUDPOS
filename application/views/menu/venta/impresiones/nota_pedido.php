@@ -147,8 +147,7 @@
             </td>
         </tr>
         <tr>
-            <td colspan="2"
-            ">Pagado:</td>
+            <td colspan="2">Pagado:</td>
             <td style="text-align: right;"><?= $venta->moneda_simbolo . ' ' . $venta->venta_pagado ?></td>
         </tr>
         <tr>
