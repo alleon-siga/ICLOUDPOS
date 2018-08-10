@@ -84,7 +84,13 @@
                             $finalCant -= $k->cantidad;
                             $finalCt -= $k->cantidad * $k->costo;
                         }
-                        $finalCu = $finalCt / $finalCant;
+
+                        if($finalCant==0){
+                            $finalCu = 0;
+                        }else{
+                            $finalCu = $finalCt / $finalCant;    
+                        }
+                        
                         if($k->simbolo!=1029){
                             $k->simbolo = 'S/';
                         }

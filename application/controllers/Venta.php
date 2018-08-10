@@ -3174,10 +3174,7 @@ JOIN detalleingreso ON detalleingreso.id_ingreso=ingreso.id_ingreso WHERE detall
         $params['asunto'] = $this->input->post('txtAsunto');
         $params['razon_social'] = $this->input->post('razon_social');
         $params['idFacturacion'] = $this->input->post('idFacturacion');
-
-        $tipo = $this->input->post('tipo');
-        $params['notaVenta'] = $tipo[0];
-        $params['electronico'] = $tipo[1];
+        $params['tipo'] = $this->input->post('tipo');
         $this->email_model->enviarVenta($params);
     }
 }
