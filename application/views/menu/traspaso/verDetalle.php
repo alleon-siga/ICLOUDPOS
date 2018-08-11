@@ -43,8 +43,8 @@
                                 <td><?= getCodigoValue($dato->producto_id, $dato->producto_codigo_interno) ?></td>
                                 <td><?= $dato->producto_nombre ?></td>
                                 <td><?= $dato->origen ?></td>
-                                <td><?= number_format($dato->cantidad, 0) ?></td>
                                 <td><?= $dato->um ?></td>
+                                <td><?= $dato->cantidad ?></td>
                                 <td>
                                     <a class="btn btn-primary" title="Imprimir" href="#" onclick="imprimir('<?= $dato->id ?>', '<?= $dato->local_origen ?>')">
                                         <i class="fa fa-print"></i>

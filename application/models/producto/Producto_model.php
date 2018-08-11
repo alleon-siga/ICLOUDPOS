@@ -359,14 +359,14 @@ class producto_model extends CI_Model
             $this->db->insert($this->tabla, $pe);
             $id_producto = $this->db->insert_id();
 
-            //guardo los costos unitarios
             $this->producto_costo_unitario_model->save_costos(array(
                 'producto_id' => $id_producto,
                 'moneda_id' => $moneda_id,
                 'costo' => $pe['producto_costo_unitario'],
                 'contable_costo' => $contable_costo,
                 'activo' => '1',
-                'contable_activo' => $moneda_contable_id
+                'contable_activo' => $moneda_contable_id,
+                'tipo_impuesto_compra' => empty($datoTipoImp->tipo_impuesto_compra)? NULL : $datoTipoImp->tipo_impuesto_compra
             ), $tasa);
 
             $countunidad = 0;
@@ -500,13 +500,21 @@ class producto_model extends CI_Model
             $this->db->where($this->id, $producto['producto_id']);
             $this->db->update($this->tabla, $producto);
 
+            //10-08-18 recupero el tipo_impuesto_compra en la tabla producto_costo_unitario (por jorge)
+            $this->db->select('tipo_impuesto_compra');
+            $this->db->from('producto_costo_unitario');
+            $this->db->where('producto_id', $producto['producto_id']);
+            $this->db->where('activo', '1');
+            $datoTipoImp = $this->db->get()->row();
+
             $this->producto_costo_unitario_model->save_costos(array(
                 'producto_id' => $producto['producto_id'],
                 'moneda_id' => $moneda_id,
                 'costo' => $producto['producto_costo_unitario'],
                 'contable_costo' => $contable_costo,
                 'activo' => '1',
-                'contable_activo' => $moneda_contable_id
+                'contable_activo' => $moneda_contable_id,
+                'tipo_impuesto_compra' => $datoTipoImp->tipo_impuesto_compra //empty($datoTipoImp->tipo_impuesto_compra)? NULL : $datoTipoImp->tipo_impuesto_compra
             ), $tasa);
 
 

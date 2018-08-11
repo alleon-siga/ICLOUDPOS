@@ -35,6 +35,7 @@
                             </div>
                             <div class="col-md-4">
                                 <h4><?php echo $locales[0]['local_nombre'] ?></h4>
+                                <input type="hidden" name="fecha" value="<?= date('d/m/Y') ?> - <?= date('d/m/Y') ?>"/>
                             </div>
                         </div>
                     </div>

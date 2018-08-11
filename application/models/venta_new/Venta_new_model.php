@@ -816,6 +816,7 @@ class venta_new_model extends CI_Model
                 'afectacion_impuesto' => $prod->producto_afectacion_impuesto,
                 'impuesto_porciento' => $p->porcentaje_impuesto,
                 'precio_venta' => $producto->precio_venta,
+                'tipo_impuesto_compra' => $costo_u->tipo_impuesto_compra
             );
             array_push($venta_detalle, $producto_detalle);
 

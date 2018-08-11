@@ -16,7 +16,6 @@ class producto_costo_unitario_model extends CI_Model
 
     public function save_costos($data = array(), $tasa = 0)
     {
-
         $this->db->where('producto_id', $data['producto_id']);
         $this->db->delete($this->table);
 
@@ -57,8 +56,10 @@ class producto_costo_unitario_model extends CI_Model
             $values = array(
                 'producto_id' => $data['producto_id'],
                 'contable_activo' => '0',
-                'contable_costo' => 0
+                'contable_costo' => 0,
+                'tipo_impuesto_compra' => $data['tipo_impuesto_compra']
             );
+
             if ($m->id_moneda != $costo->moneda_id) {
                 $values['moneda_id'] = $m->id_moneda;
                 $values['activo'] = '0';
