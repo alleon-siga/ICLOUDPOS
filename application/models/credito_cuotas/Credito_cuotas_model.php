@@ -115,6 +115,24 @@ class credito_cuotas_model extends CI_Model {
         return $this->db->get()->result();
     }
 
+    function get_pagos_pendientes_detallado($params)
+    {
+        $this->db->select("v.venta_id, v.fecha, v.numero, v.serie, v.total, d.abr_doc, cl.razon_social, fecha_vencimiento, cca.monto_restante, cca.monto_abono, cc.nro_letra, m.simbolo, cc.monto, cc.nro_letra");
+        $this->db->from('venta v');
+        $this->db->join('cliente cl', 'cl.id_cliente = v.id_cliente');
+        $this->db->join('credito c', 'v.venta_id = c.id_venta');
+        $this->db->join('credito_cuotas cc', 'v.venta_id = cc.id_venta');
+        $this->db->join('moneda m', 'c.id_moneda = m.id_moneda');
+        $this->db->join('documentos d', 'v.id_documento = d.id_doc');
+        $this->db->join('credito_cuotas_abono cca', 'cca.credito_cuota_id = cc.id_credito_cuota AND cca.fecha_abono = cc.ultimo_pago', 'left');
+        $this->db->where("v.venta_status='COMPLETADO'");
+        $this->db->where('cc.ispagado = 0');
+        if($params['local_id']>0){
+            $this->db->where('v.local_id = '.$params['local_id']);
+        }       
+        return $this->db->get()->result();
+    }
+
     public function update($where,$data){
         $this->db->trans_start();
         $this->db->where($where);

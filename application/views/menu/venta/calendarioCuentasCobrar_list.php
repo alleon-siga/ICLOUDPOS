@@ -23,12 +23,88 @@
     font-size: 1em !important;
   }
 </style>
-<hr>
-<div class="row" id="cuerpoCalendar">
-    <div class="col-md-12">
-      <div id='calendar'></div>
+<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#calendario">Calendario</a></li>
+  <li><a data-toggle="tab" href="#lista">Lista</a></li>
+</ul>
+<div class="tab-content">
+  <div id="calendario" class="tab-pane fade in active">
+    <div class="row" id="cuerpoCalendar">
+        <div class="col-md-12">
+          <div id='calendar'></div>
+        </div>
     </div>
+  </div>
+  <div id="lista" class="tab-pane fade">
+    <div class="table-responsive">
+        <table class='table table-striped dataTable table-bordered no-footer tableStyle' style="overflow:scroll">
+            <thead>
+              <tr>
+                  <th># Venta</th>
+                  <th>F. Venta</th>
+                  <th># Comprobante</th>
+                  <th>Cliente</th>
+                  <th>Importe Venta</th>
+                  <th>Valor Cuota</th>
+                  <th>Importe Abonado</th>
+                  <th>Pendiente Pago</th>
+                  <th>Nro Cuota</th>
+                  <th>Cuotas Atrasadas</th>
+                  <th>F. Vencimiento</th>
+              </tr>
+            </thead>
+            <tbody>
+              <?php foreach ($tablas as $tabla): ?>
+              <tr>
+                  <td><?= $tabla->venta_id  ?></td>
+                  <td><?= date("d/m/Y", strtotime($tabla->fecha)) ?></td>
+                  <td>
+                  <?php
+                    if ($tabla->numero != ''){
+                      echo $tabla->des_doc . ' ' . $tabla->serie . '-' . sumCod($tabla->numero, 6);
+                    }else{
+                      echo '<span style="color: #0000FF">NO EMITIDO</span>';
+                    }
+                  ?>                  
+                  </td>
+                  <td><?= $tabla->razon_social ?></td>
+                  <td style="text-align: right;"><?= $tabla->simbolo.' '.$tabla->total ?></td>
+                  <td style="text-align: right;"><?= $tabla->simbolo.' '.$tabla->monto ?></td>
+                  <td style="text-align: right;"><?= $tabla->simbolo ?> <?= empty($tabla->monto_abono)? 0 : $tabla->monto_abono ?></td>
+                  <td style="text-align: right;"><?= $tabla->simbolo ?> <?= empty($tabla->monto_restante)? 0 : $tabla->monto_restante ?></td>
+                  <td><?php $a = explode("/", $tabla->nro_letra); echo $a[0];  ?></td>
+                  <td>
+                  <?php
+                    $fs = strtotime(date('Y-m-d'));
+                    $fv = strtotime($tabla->fecha_vencimiento);
+                    if($fs >= $fv){
+                      echo '1';
+                    }else{
+                      echo '0';
+                    }
+                  ?>
+                  </td>
+                  <td><?= date("d/m/Y", strtotime($tabla->fecha_vencimiento))  ?></td>
+              </tr>
+              <?php endforeach ?>
+            </tbody>
+        </table>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <br>
+            <button type="button" id="exportar_excel_lista" title="Exportar Excel" class="btn btn-primary">
+                <i class="fa fa-file-excel-o fa-fw"></i>
+            </button>
+            <button type="button" id="exportar_pdf_lista" title="Exportar Pdf" class="btn btn-primary">
+                <i class="fa fa-file-pdf-o fa-fw"></i>
+            </button>
+        </div>
+    </div>
+  </div>
 </div>
+<hr>
+
 <script type="text/javascript">
     var eventos = [];
     <?php foreach ($lists as $list):?>
@@ -67,5 +143,35 @@
       options.events.push(datos);
     }    
     $('#calendar').fullCalendar(options);
-  });  
+
+    $('#exportar_excel_lista').on('click', function () {
+        exportar_excel_lista();
+    });
+
+    $("#exportar_pdf_lista").on('click', function () {
+        exportar_pdf_lista();
+    });
+
+    TablesDatatables.init(0);
+  });
+
+    function exportar_pdf_lista() {
+        var data = {
+          'local_id': $("#local_id").val(),
+          'opcion': 'lista'
+        };
+
+        var win = window.open('<?= base_url()?>venta/calendarioCuentasCobrar/pdf?data=' + JSON.stringify(data), '_blank');
+        win.focus();
+    }
+
+    function exportar_excel_lista() {
+        var data = {
+          'local_id': $("#local_id").val(),
+          'opcion': 'lista'
+        };
+
+        var win = window.open('<?= base_url()?>venta/calendarioCuentasCobrar/excel?data=' + JSON.stringify(data), '_blank');
+        win.focus();
+    }
 </script>

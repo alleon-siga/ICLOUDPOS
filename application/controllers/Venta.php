@@ -3130,12 +3130,41 @@ JOIN detalleingreso ON detalleingreso.id_ingreso=ingreso.id_ingreso WHERE detall
                 $params['fecha_ini'] = date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0])));
                 $params['fecha_fin'] = date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])));
                 $data['lists'] = $this->credito_cuotas_model->get_cronograma_by_fecha($params);
+                $data['tablas'] = $this->credito_cuotas_model->get_pagos_pendientes_detallado($params);
                 $this->load->view('menu/venta/calendarioCuentasCobrar_list', $data);
                 break;
             }
             case 'pdf': {
+                $params = json_decode($this->input->get('data'));
+                $input = array(
+                    'local_id' => $params->local_id,
+                );
+                if($params->opcion=='lista'){
+                    $data['tablas'] = $this->credito_cuotas_model->get_pagos_pendientes_detallado($input);
+                    $local = $this->db->get_where('local', array('int_local_id' => $input['local_id']))->row();
+                    $data['local_nombre'] = !empty($local->local_nombre)? $local->local_nombre: 'TODOS';
+                    $data['local_direccion'] = !empty($local->direccion)? $local->direccion: 'TODOS';
+                    $this->load->library('mpdf53/mpdf');
+                    $mpdf = new mPDF('utf-8', 'A4-L', 0, '', 5, 5, 5, 5, 5, 5);
+                    $html = $this->load->view('menu/venta/calendarioCuentasCobrar_list_detallado_pdf', $data, true);
+                    $mpdf->WriteHTML($html);
+                    $mpdf->Output();
+                }
+                break;
             }
             case 'excel': {
+                $params = json_decode($this->input->get('data'));
+                $input = array(
+                    'local_id' => $params->local_id,
+                );
+                if($params->opcion=='lista'){
+                    $data['tablas'] = $this->credito_cuotas_model->get_pagos_pendientes_detallado($input);
+                    $local = $this->db->get_where('local', array('int_local_id' => $input['local_id']))->row();
+                    $data['local_nombre'] = !empty($local->local_nombre)? $local->local_nombre: 'TODOS';
+                    $data['local_direccion'] = !empty($local->direccion)? $local->direccion: 'TODOS';
+                    echo $this->load->view('menu/venta/calendarioCuentasCobrar_list_detallado_excel', $data, true);
+                }
+                break;
             }
             default: {
                 $usu = $this->session->userdata('nUsuCodigo');

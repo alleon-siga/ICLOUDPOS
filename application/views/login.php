@@ -64,7 +64,7 @@
                 $.ajax({
                     type: "POST",
                     data: $('#frmLogin').serialize(),
-                    url: "<?php echo $ruta;?>" + "inicio/validar_login",
+                    url: "<?php echo $ruta;?>" + "inicio/validar_login/principal",
                     success: function (msj) {
                         if (msj == 'ok') {
                             window.location.href = "<?php echo $ruta;?>" + "principal/";
