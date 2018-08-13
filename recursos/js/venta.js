@@ -1,9 +1,11 @@
 var ruta = $('#base_url').val()
 var lst_producto = []
+var is_edit = false;
 
 var auto_add = false
 
 $(document).ready(function () {
+
   //Nuevo producto
   /*$("#agregarproveedor").load(ruta + 'proveedor/form');
    $("#agregarmarca").load(ruta + 'marca/form');
@@ -291,12 +293,16 @@ $(document).ready(function () {
 
           form_precio.append(create_precio_template(i, data.unidades[i]))
           var def_value = 0
-          if (unidad_minima.id_unidad == data.unidades[i].id_unidad)
-            def_value = 1
+          if (unidad_minima.id_unidad == data.unidades[i].id_unidad) {
+            if (data.unidades.length == 1)
+              def_value = 1
+            else
+              def_value = 0
+          }
 
           prepare_unidades_value(producto_id, local_id, data.unidades[i], def_value)
 
-          if (auto_add && data.unidades.length == 1) {
+          if (auto_add && data.unidades.length == 1 && is_edit == false) {
             var cant = get_value_producto(producto_id, local_id, data.unidades[i].id_unidad, -1)
             if (cant != -1) {
               var cantidad_plus = $('#cantidad_' + data.unidades[i].id_unidad)
@@ -331,8 +337,9 @@ $(document).ready(function () {
 
         $('.cantidad-input[data-index="' + (--index) + '"]').first().trigger('focus')
 
-        if (auto_add && data.unidades.length == 1) {
+        if (auto_add && data.unidades.length == 1 && is_edit == false) {
           $('#add_producto').click()
+          is_edit = false;
         }
       },
       complete: function (data) {
@@ -1192,6 +1199,7 @@ function save_venta_caja (imprimir) {
 //funcion para agregar los productos de la venta
 function add_producto () {
 
+  is_edit = false;
   var producto_id = $('#producto_id').val()
   var local_id = $('#local_id').val()
   var precio_id = $('#precio_id').val()
@@ -1295,6 +1303,7 @@ function add_producto () {
 //edita un producto en la tabla
 function edit_producto (producto_id) {
 
+  is_edit = true;
   $('#producto_id').val(producto_id).trigger('chosen:updated')
   $('#producto_id').change()
   var producto = {}
