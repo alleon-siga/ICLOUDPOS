@@ -477,7 +477,7 @@
                         <div class="help-key badge label-success" style="display: none;">7</div>
                         <select name="tipo_documento" id="tipo_documento" class="form-control">
                             <?php foreach ($tipo_documentos as $key => $value): ?>
-                                <option <?= $value->des_doc == $comprobantes_default->config_value ? 'selected="selected"' : '' ?>
+                                <option <?= $value->id_doc == $comprobantes_default->config_value ? 'selected="selected"' : '' ?>
                                         value="<?= $value->id_doc ?>"><?= $value->des_doc ?></option>
                             <?php endforeach; ?>
                         </select>
@@ -542,6 +542,9 @@
                         <select name="tipo_impuesto" id="tipo_impuesto" class="form-control">
                             <option value="1">Incluye impuesto</option>
                             <option value="2">Agregar impuesto</option>
+                        <?php if ($comprobantes_default->config_value == '6'): ?>
+                            <option value="3">No considerar impuesto</option>
+                        <?php endif; ?>                            
                         </select>
                     </div>
                 </div>

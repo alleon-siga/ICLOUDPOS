@@ -120,7 +120,7 @@
         <div class="col-md-8">
             <div class="form-control">
                 <?php foreach($documentos as $doc) { ?>
-                <input type="radio" name="DOCUMENTO_DEFECTO" value="<?= $doc->des_doc ?>" <?php echo validOption("DOCUMENTO_DEFECTO", $doc->des_doc, '0') ? 'checked' : '' ?>> <?= $doc->des_doc ?>
+                <input type="radio" name="DOCUMENTO_DEFECTO" value="<?= $doc->id_doc ?>" <?php echo validOption("DOCUMENTO_DEFECTO", $doc->id_doc, '0') ? 'checked' : '' ?>> <?= $doc->des_doc ?>
                 &nbsp;&nbsp;&nbsp;
                 <?php } ?>
             </div>

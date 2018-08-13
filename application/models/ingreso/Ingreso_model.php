@@ -424,7 +424,8 @@ class ingreso_model extends CI_Model
                         'producto_id' => $key,
                         'moneda_id' => $compra['id_moneda'],
                         'costo' => $new_costo_unitario,
-                        'activo' => '1'
+                        'activo' => '1',
+                        'tipo_impuesto_compra' => $cab_pie['tipo_impuesto']
                     ), $compra['tasa_cambio']);
                 }
 
