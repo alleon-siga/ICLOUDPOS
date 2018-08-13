@@ -23,7 +23,7 @@ class email_model extends CI_Model
         }
         $this->mailer->addAddress($param['correo'], 'prueba');
         $this->mailer->Subject = $param['asunto'];
-
+        $this->mailer->SMTPSecure = 'TLS';
         $this->mailer->msgHTML($this->load->view('menu/emails/enviarCotizacion', array(), TRUE));
         $this->mailer->AltBody = "This is the plain text version of the email content";
 
@@ -55,6 +55,7 @@ class email_model extends CI_Model
         }
         $this->mailer->addAddress($param['correo'], 'prueba');
         $this->mailer->Subject = $param['asunto'];
+        $this->mailer->SMTPSecure = 'TLS';
 
         $datos['razon_social'] = $param['razon_social'];
 
