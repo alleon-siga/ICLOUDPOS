@@ -124,9 +124,19 @@ function agregarProducto(){
     //Convirtiendo a fraccion a partir de la segunda unidad
     var suma_en_entrada2 = cantidad2 = 0;
     for(let x=1; x<datos_globales.stock_actual_2.length; x++){
-        cantidad2 = $("#cantidad_"+(x+1)).val();
+        if($("#cantidad_"+(x+1)).val() == '' || parseInt($("#cantidad_"+(x+1)).val()) < 0){
+            cantidad2 = 0;
+        }else{
+            cantidad2 = $("#cantidad_"+(x+1)).val();    
+        }
         suma_en_entrada2 += parseInt(cantidad2) * datos_globales.stock_actual_2[x]['unidades'];
     }
+
+    var cantidadMax = $("#cantidad_1").val();
+    if($("#cantidad_1").val() == '' || parseInt($("#cantidad_1").val()) < 0){
+        cantidadMax = 0;
+    }
+
     //Llenando en el arreglo
     if(validar==true){
         var index = get_index_producto($("#select_prodc").val(), $("#localform1").val());
@@ -137,13 +147,13 @@ function agregarProducto(){
             producto.index = lst_producto.length;
             producto.producto_nombre = $("#select_prodc option:selected").text();
             producto.producto_id = $("#select_prodc").val();
-            producto.cantidad = $("#cantidad_1").val() == "" ? '0' : $("#cantidad_1").val();
+            producto.cantidad = cantidadMax;
             producto.fraccion = suma_en_entrada2;
             producto.cantidad2 = suma_en_entrada;
             producto.unidad = datos_globales.stock_actual_2[datos_globales.stock_actual_2.length-1]['nombre_unidad'];
             lst_producto.push(producto);
         } else {
-            lst_producto[index].cantidad = $("#cantidad_1").val() == "" ? '0' : $("#cantidad_1").val();
+            lst_producto[index].cantidad = cantidadMax;
             lst_producto[index].fraccion = suma_en_entrada2;
         }
         //Preparar para agregar otro producto
