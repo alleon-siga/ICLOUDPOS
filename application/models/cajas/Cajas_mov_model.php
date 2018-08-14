@@ -178,11 +178,12 @@ class cajas_mov_model extends CI_Model
             if ($mov->operacion == 'TRASPASO') {
                 $mov->numero = 'Operacion Interna';
 
-                $cuenta = $this->db->get_where('caja_desglose', array('id' => $mov->ref_id))->row();
                 if ($mov->movimiento == 'INGRESO') {
+                    $cuenta = $this->db->get_where('caja_desglose', array('id' => $cuenta_id))->row();
                     $mov->numero = 'Desde ' . $cuenta->descripcion;
                     $mov->ref_val = "";
                 } else {
+                    $cuenta = $this->db->get_where('caja_desglose', array('id' => $mov->ref_id))->row();
                     $mov->numero = 'Hacia ' . $cuenta->descripcion;
                 }
             }
