@@ -50,11 +50,15 @@
                   <th>Pendiente Pago</th>
                   <th>Nro Cuota</th>
                   <th>Cuotas Atrasadas</th>
+                  <th>F. Pago</th>
                   <th>F. Vencimiento</th>
               </tr>
             </thead>
             <tbody>
-              <?php foreach ($tablas as $tabla): ?>
+              <?php 
+                foreach ($tablas as $tabla):
+                  if($tabla->var_credito_estado=='PagoPendiente'){
+              ?>
               <tr>
                   <td><?= $tabla->venta_id  ?></td>
                   <td><?= date("d/m/Y", strtotime($tabla->fecha)) ?></td>
@@ -84,9 +88,19 @@
                     }
                   ?>
                   </td>
-                  <td><?= date("d/m/Y", strtotime($tabla->fecha_vencimiento))  ?></td>
+                  <td>                  
+                  <?
+                    if(!empty($tabla->ultimo_pago)){
+                      echo date("d/m/Y", strtotime($tabla->ultimo_pago));
+                    }
+                  ?>
+                  </td>
+                  <td><?= date("d/m/Y", strtotime($tabla->fecha_vencimiento)); ?></td>
               </tr>
-              <?php endforeach ?>
+              <?php 
+                  }
+                endforeach;
+              ?>
             </tbody>
         </table>
     </div>

@@ -24,11 +24,15 @@ header("Expires: 0");
         <th>Pendiente Pago</th>
         <th>Nro Cuota</th>
         <th>Cuotas Atrasadas</th>
+        <th>F. Pago</th>
         <th>F. Vencimiento</th>
     </tr>
   </thead>
   <tbody>
-    <?php foreach ($tablas as $tabla): ?>
+    <?php 
+      foreach ($tablas as $tabla):
+        if($tabla->var_credito_estado=='PagoPendiente'){
+    ?>
     <tr>
         <td><?= $tabla->venta_id  ?></td>
         <td><?= date("d/m/Y", strtotime($tabla->fecha)) ?></td>
@@ -42,10 +46,10 @@ header("Expires: 0");
         ?>                  
         </td>
         <td><?= $tabla->razon_social ?></td>
-        <td><?= $tabla->simbolo.' '.$tabla->total ?></td>
-        <td><?= $tabla->simbolo.' '.$tabla->monto ?></td>
-        <td><?= $tabla->simbolo ?> <?= empty($tabla->monto_abono)? 0 : $tabla->monto_abono ?></td>
-        <td><?= $tabla->simbolo ?> <?= empty($tabla->monto_restante)? 0 : $tabla->monto_restante ?></td>
+        <td style="text-align: right;"><?= $tabla->simbolo.' '.$tabla->total ?></td>
+        <td style="text-align: right;"><?= $tabla->simbolo.' '.$tabla->monto ?></td>
+        <td style="text-align: right;"><?= $tabla->simbolo ?> <?= empty($tabla->monto_abono)? 0 : $tabla->monto_abono ?></td>
+        <td style="text-align: right;"><?= $tabla->simbolo ?> <?= empty($tabla->monto_restante)? 0 : $tabla->monto_restante ?></td>
         <td><?php $a = explode("/", $tabla->nro_letra); echo $a[0];  ?></td>
         <td>
         <?php
@@ -58,8 +62,18 @@ header("Expires: 0");
           }
         ?>
         </td>
-        <td><?= date("d/m/Y", strtotime($tabla->fecha_vencimiento))  ?></td>
+        <td>                  
+        <?
+          if(!empty($tabla->ultimo_pago)){
+            echo date("d/m/Y", strtotime($tabla->ultimo_pago));
+          }
+        ?>
+        </td>
+        <td><?= date("d/m/Y", strtotime($tabla->fecha_vencimiento)); ?></td>
     </tr>
-    <?php endforeach ?>
+    <?php 
+        }
+      endforeach;
+    ?>
   </tbody>
 </table>
