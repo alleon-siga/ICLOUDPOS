@@ -177,6 +177,8 @@ class Pedidos extends REST_Controller
         $venta['comprobante_id'] = 0;
         $venta['venta_nota'] = "";
         $venta['fact_elect'] = $this->input->post('fact_elect');
+        $venta['latitud'] = $this->input->post('latitud') != "null" ? $this->input->post('latitud') : null;
+        $venta['longitud'] = $this->input->post('longitud') != "null" ? $this->input->post('longitud') : null;
 
         $detalles_productos = json_decode($this->input->post('detalles_productos', true));
         $traspasos = json_decode($this->input->post('traspasos', true));
