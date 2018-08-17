@@ -179,6 +179,7 @@ class Pedidos extends REST_Controller
         $venta['fact_elect'] = $this->input->post('fact_elect');
         $venta['latitud'] = $this->input->post('latitud') != "null" ? $this->input->post('latitud') : null;
         $venta['longitud'] = $this->input->post('longitud') != "null" ? $this->input->post('longitud') : null;
+        $venta['plataforma'] = 1;
 
         $detalles_productos = json_decode($this->input->post('detalles_productos', true));
         $traspasos = json_decode($this->input->post('traspasos', true));

@@ -508,7 +508,8 @@ class venta_new_model extends CI_Model
             'nota' => $venta['venta_nota'],
             'dni_garante' => $venta['dni_garante'],
             'latitud' => isset($venta['latitud']) ? $venta['latitud'] : null,
-            'longitud' => isset($venta['longitud']) ? $venta['longitud'] : null
+            'longitud' => isset($venta['longitud']) ? $venta['longitud'] : null,
+            'plataforma' => $venta['plataforma']
         );
 
         if ($venta['venta_status'] == 'CAJA') {
@@ -646,7 +647,8 @@ class venta_new_model extends CI_Model
             'nota' => $venta['venta_nota'],
             'dni_garante' => $venta['dni_garante'],
             'latitud' => isset($venta['latitud']) ? $venta['latitud'] : null,
-            'longitud' => isset($venta['longitud']) ? $venta['longitud'] : null
+            'longitud' => isset($venta['longitud']) ? $venta['longitud'] : null,
+            'plataforma' => $venta['plataforma']
         );
 
         //inserto la venta
