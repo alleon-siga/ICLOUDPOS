@@ -506,7 +506,10 @@ class venta_new_model extends CI_Model
             'tipo_impuesto' => $venta['tipo_impuesto'],
             'comprobante_id' => $venta['comprobante_id'],
             'nota' => $venta['venta_nota'],
-            'dni_garante' => $venta['dni_garante']
+            'dni_garante' => $venta['dni_garante'],
+            'latitud' => isset($venta['latitud']) ? $venta['latitud'] : null,
+            'longitud' => isset($venta['longitud']) ? $venta['longitud'] : null,
+            'plataforma' => $venta['plataforma']
         );
 
         if ($venta['venta_status'] == 'CAJA') {
@@ -642,7 +645,10 @@ class venta_new_model extends CI_Model
             'tipo_impuesto' => $venta['tipo_impuesto'],
             'comprobante_id' => $venta['comprobante_id'],
             'nota' => $venta['venta_nota'],
-            'dni_garante' => $venta['dni_garante']
+            'dni_garante' => $venta['dni_garante'],
+            'latitud' => isset($venta['latitud']) ? $venta['latitud'] : null,
+            'longitud' => isset($venta['longitud']) ? $venta['longitud'] : null,
+            'plataforma' => $venta['plataforma']
         );
 
         //inserto la venta
