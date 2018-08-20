@@ -145,24 +145,32 @@ class producto extends MY_Controller
         return $data;
     }
 
-    function index()
+    function index($action = '')
     {
-        $data = $this->_prepareFlashData();
+        switch ($action) {
+            case 'excel': {
+                $data = $this->_prepareFlashData();
+                $data["lstProducto"] = $this->producto_model->get_all_productos();
+                $data['columnas'] = $this->columnas;
+                echo $this->load->view('menu/producto/producto_list_excel', $data, true);
+                break;
+            }
+            default: {
+                $data = $this->_prepareFlashData();
 
-        $data["lstProducto"] = $this->producto_model->get_all_productos();
-        $data['columnas'] = $this->columnas;
-        //$data["lstProducto"] = $this->_getUnidades($data['lstProducto']);
+                $data["lstProducto"] = $this->producto_model->get_all_productos();
+                $data['columnas'] = $this->columnas;
+                //$data["lstProducto"] = $this->_getUnidades($data['lstProducto']);
 
-        $dataCuerpo['cuerpo'] = $this->load->view('menu/producto/producto', $data, true);
+                $dataCuerpo['cuerpo'] = $this->load->view('menu/producto/producto', $data, true);
 
-        if ($this->input->is_ajax_request())
-            echo $dataCuerpo['cuerpo'];
-        else
-            $this->load->view('menu/template', $dataCuerpo);
-
-
+                if ($this->input->is_ajax_request())
+                    echo $dataCuerpo['cuerpo'];
+                else
+                    $this->load->view('menu/template', $dataCuerpo);
+            }
+        }
     }
-
 
     function stock($local = 0, $detalle = 0, $unidadMinima = 0)
     {

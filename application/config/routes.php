@@ -42,7 +42,9 @@ $route['default_controller'] = "inicio";
 $route['404_override'] = '';
 
 $route['facturacion/consulta/(:any)'] = 'facturacion_consulta/consulta/$1';
-$route['facturador'] = "facturador";
+$route['facturador'] = 'facturador/facturador';
+$route['facturador/(:any)'] = 'facturador/facturador/$1';
+$route['facturador/producto/(:any)'] = 'facturador/producto/$1';
 
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */

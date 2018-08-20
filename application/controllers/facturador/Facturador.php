@@ -50,5 +50,5 @@ class Facturador extends MY_Controller
                 }
             endif;
         }
-    }    
+    }
 }

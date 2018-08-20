@@ -1550,19 +1550,20 @@ class venta_new_model extends CI_Model
 
     public function ultimasCompras($id)
     {
-        $this->db->select('DATE(i.fecha_registro) AS fecha,d.precio,d.cantidad,u.nombre_unidad, m.simbolo, d.id_producto, u.id_unidad');
+        $this->db->select('DATE(i.fecha_registro) AS fecha,pcu.costo AS precio,d.cantidad, m.simbolo, d.id_producto, d.unidad_medida');
         $this->db->from('detalleingreso d');
         $this->db->join('ingreso i', 'd.id_ingreso=i.id_ingreso');
-        $this->db->join('unidades u', 'd.unidad_medida=u.id_unidad');
         $this->db->join('moneda m', 'i.id_moneda = m.id_moneda');
+        $this->db->join('producto_costo_unitario pcu', 'd.id_producto = pcu.producto_id AND i.id_moneda = pcu.moneda_id');
         $this->db->where('id_producto', $id['id_producto']);
         $this->db->order_by('i.fecha_registro DESC');
         $this->db->limit(10);
         $datos = $this->db->get()->result();
         $x=0;
         foreach ($datos as $dato) {
-            $cantidad = $this->unidades_model->convert_minimo_by_um($datos[$x]->id_producto, $datos[$x]->id_unidad, $datos[$x]->cantidad);
+            $cantidad = $this->unidades_model->convert_minimo_by_um($datos[$x]->id_producto, $datos[$x]->unidad_medida, $datos[$x]->cantidad);
             $datos[$x]->cantidad = $cantidad;
+            $datos[$x]->nombre_unidad = $this->unidades_model->get_um_min_by_producto($datos[$x]->id_producto);
             $x++;
         }
         return $datos;

@@ -1161,4 +1161,90 @@ class producto_model extends CI_Model
         $query = $this->db->get();
         return $query->result_array();
     }
+
+    function getCosteo($params)
+    {
+        $this->db->select('p.producto_id, p.producto_codigo_interno, p.producto_nombre, m.nombre_marca');
+        $this->db->from('producto p');
+        $this->db->join('marcas m', 'm.id_marca = p.producto_marca', 'left');
+        if($params['marca_id'] > 0){
+            $this->db->where("p.producto_marca", $params['marca_id']);
+        }
+        if($params['grupo_id'] > 0){
+            $this->db->where("p.produto_grupo", $params['grupo_id']);
+        }
+        if($params['familia_id'] > 0){
+            $this->db->where("p.producto_familia", $params['familia_id']);
+        }
+        if($params['linea_id'] > 0){
+            $this->db->where("p.producto_linea", $params['linea_id']);
+        }
+        if($params['producto_id'] != ''){
+            $this->db->where("p.producto_id IN(".implode(",", $params['producto_id']).")");
+        }
+        $this->db->order_by('p.producto_id', 'desc');
+        $query = $this->db->get();
+        $datos = $query->result();
+
+        $x=0;
+        foreach($datos as $dato){
+            $datos[$x]->nombre_unidad = $this->unidades_model->get_um_min_by_producto($dato->producto_id);
+            $costo = $this->producto_costo_unitario_model->getProductoCostoUnitario($dato->producto_id);
+            $datos[$x]->costo_mn = (isset($costo['costo']['1029']))? $costo['costo']['1029'] : 0.00;
+            $datos[$x]->costo_me = (isset($costo['costo']['1030']))? $costo['costo']['1030'] : 0.00;
+            $datos[$x]->tipo_cambio = (isset($costo['tipo_cambio']))? $costo['tipo_cambio'] : 0.00;
+            $datos[$x]->contable_costo_mn = (isset($costo['contable_costo']['1029']))? $costo['contable_costo']['1029'] : 0.00;
+            $datos[$x]->contable_costo_me = (isset($costo['contable_costo']['1030']))? $costo['contable_costo']['1030'] : 0.00;
+            $datos[$x]->porcentaje_utilidad = (isset($costo['porcentaje_utilidad']))? $costo['porcentaje_utilidad'] : 0.00;
+            $x++;
+        }
+        return $datos;
+    }
+
+    function editarCosteo($data)
+    {
+        $monedas = $this->db->get_where('moneda')->result();
+        $this->db->trans_start();
+        foreach($monedas as $moneda){
+            foreach ($data as $dato){
+                $this->db->select('COUNT(*) AS cantidad');
+                $this->db->where('producto_id', $dato->producto_id);
+                $this->db->where('moneda_id', $moneda->id_moneda);
+                $this->db->from('producto_costo_unitario');
+                $query = $this->db->get();
+                $num = $query->row();
+
+                if($num->cantidad > 0){
+                    $values = array(
+                        'contable_costo' => ($moneda->id_moneda=='1029')? $dato->contable_costo_mn : $dato->contable_costo_me,
+                        'tipo_cambio' => $dato->tipo_cambio,
+                        'porcentaje_utilidad' => $dato->porcentaje_utilidad
+                    );
+                    $this->db->where('producto_id', $dato->producto_id);
+                    $this->db->where('moneda_id', $moneda->id_moneda);
+                    $this->db->update('producto_costo_unitario', $values);
+                }else{
+                    $values = array(
+                        'producto_id' => $dato->producto_id,
+                        'moneda_id' => $moneda->id_moneda,
+                        'activo' => '0',
+                        'contable_costo' => ($moneda->id_moneda=='1029')? $dato->contable_costo_mn : $dato->contable_costo_me,
+                        'contable_activo' => '0',
+                        'porcentaje_utilidad' => $dato->porcentaje_utilidad,
+                        'tipo_cambio' => $dato->tipo_cambio
+                    );
+                    $this->db->insert('producto_costo_unitario', $values);
+                }
+            }
+        }
+
+        $this->db->trans_complete();
+        if ($this->db->trans_status() === FALSE) {
+            $this->db->trans_off();
+            return false;
+        } else {
+            $this->db->trans_off();
+            return true;
+        }
+    }
 }

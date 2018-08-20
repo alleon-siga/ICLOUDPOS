@@ -375,11 +375,13 @@ if ($this->session->userdata('tema')) {
                                 <a href="<?= $ruta ?>facturador/principal" class="menulink"><i class="fa fa-home sidebar-nav-icon"></i>MENU PRINCIPAL</a>
                             </li>
                             <li>
-                                <a href="#" class="sidebar-nav-menu open">                                                    
-                                    <i class="fa fa-angle-left sidebar-nav-indicator "></i>OPCION 1
+                                <a href="#" class="sidebar-nav-menu">                                                    
+                                    <i class="fa fa-angle-left sidebar-nav-indicator "></i>Productos
                                 </a>
-                                <ul style="display: block;">
-                                    <li><a href="<?= $ruta ?>facturador/principal" class="menulink"><i class="gi gi-barcode sidebar-nav-icon"></i>Menu 1</a></li>
+                                <ul>
+                                    <li>
+                                        <a href="<?= $ruta ?>facturador/producto/costeo" class="menulink"><i class="gi gi-barcode sidebar-nav-icon"></i>Costeo</a>
+                                    </li>
                                 </ul>
                             </li>
                         </ul>
@@ -430,15 +432,14 @@ if ($this->session->userdata('tema')) {
                                             class="fa fa-angle-down"></i>
                                 </a>
                                 <ul class="dropdown-menu dropdown-custom dropdown-menu-right">
-                                    <li>
-                                        <!-- Opens the user settings modal that can be found at the bottom of each page (page_footer.php in PHP version) -->
+                                    <!--<li>
                                         <a href="#modal-user-settings" data-toggle="modal">
                                             <i class="fa fa-user fa-fw pull-right"></i>
                                             Mi perfil
                                             <input type="hidden" value="<?= $ruta ?>" id="ruta_base">
                                         </a>
                                     </li>
-                                    <li class="divider"></li>
+                                    <li class="divider"></li>-->
                                     <li>
                                         <a href="<?= $ruta ?>Logout_facturador"><i class="fa fa-ban fa-fw pull-right"></i> Cerrar
                                             Sesión</a>
@@ -485,15 +486,14 @@ if ($this->session->userdata('tema')) {
                                         class="fa fa-angle-down"></i>
                             </a>
                             <ul class="dropdown-menu dropdown-custom dropdown-menu-right">
-                                <li>
-                                    <!-- Opens the user settings modal that can be found at the bottom of each page (page_footer.php in PHP version) -->
+                                <!--<li>
                                     <a href="#modal-user-settings" data-toggle="modal">
                                         <i class="fa fa-user fa-fw pull-right"></i>
                                         Mi perfil
                                         <input type="hidden" value="<?= $ruta ?>" id="ruta_base">
                                     </a>
                                 </li>
-                                <li class="divider"></li>
+                                <li class="divider"></li>-->
                                 <li>
                                     <a href="<?= $ruta ?>Logout_facturador"><i class="fa fa-ban fa-fw pull-right"></i> Cerrar
                                         Sesión</a>
@@ -508,13 +508,13 @@ if ($this->session->userdata('tema')) {
                     <div id="horizontal-menu-collapse" class="collapse navbar-collapse">
                         <ul class="nav navbar-nav">
                             <li>
-                                <a class="menulink" href="<?= $ruta ?>facturador/principal">Menu 1</a>
+                                <a class="menulink" style="display: none;" href="<?= $ruta ?>facturador/principal">Menu 1</a>
                             </li>
                             <li>
-                                <a class="menulink" href="<?= $ruta ?>facturador/principal">Menu 2</a>
+                                <a class="menulink" style="display: none;" href="<?= $ruta ?>facturador/principal">Menu 2</a>
                             </li>
                             <li>
-                                <a class="menulink" href="<?= $ruta ?>facturador/principal">Menu 3</a>
+                                <a class="menulink" style="display: none;" href="<?= $ruta ?>facturador/principal">Menu 3</a>
                             </li>
                         </ul>
                     </div>

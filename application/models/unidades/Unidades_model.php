@@ -171,7 +171,11 @@ class unidades_model extends CI_Model
             ->where('orden', $orden_max->orden)
             ->get('unidades_has_producto')->row();
 
-        return $this->get_nombre_unidad($minima_unidad->um_id);
+        if(count($minima_unidad)==0){
+            return "NO TIENE UNIDADES";
+        }else{
+            return $this->get_nombre_unidad($minima_unidad->um_id);    
+        }
     }
 
     function get_nombre_unidad($id)
