@@ -678,8 +678,6 @@ AND cantidad < producto_stockminimo + (producto_stockminimo * 30)/100 and cantid
 
     function pdf_valorizacion($local, $marca, $grupo, $linea, $familia, $monedas, $usar)
     {
-        set_time_limit(0);
-        ini_set('memory_limit', '512M');
         $condicion = array();
         if ($local != 0) {
             $condicion['inventario.id_local'] = $local;
@@ -715,145 +713,22 @@ AND cantidad < producto_stockminimo + (producto_stockminimo * 30)/100 and cantid
         }
 
         $data['productos'] = $this->inventario_model->get_valorizacion($condicion);
+
         $all_stock = false;
-        if ($local == 0)
+        if ($local == "")
             $all_stock = true;
-        $data["productos"] = $this->_getUnidMinima($data['productos'], $usar, $all_stock);
 
-        $pdf = new Pdf('P', 'mm', 'A4', true, 'UTF-8', false);
-        $pdf->setPageOrientation('L');
-        // $pdf->SetCreator(PDF_CREATOR);
-        $pdf->SetTitle('Valorizacion de Inventario');
-        // $pdf->SetSubject('FICHA DE MIEMBROS');
-        $pdf->SetPrintHeader(false);
-//echo K_PATH_IMAGES;
-// datos por defecto de cabecera, se pueden modificar en el archivo tcpdf_config_alt.php de libraries/config
-        // $pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, "AL.•.G.•.D.•.G.•.A.•.D.•.U.•.<br>Gran Logia de la República de Venezuela", "Gran Logia de la <br> de Venezuela", array(0, 64, 255), array(0, 64, 128));
+        $data["productos"] = $this->_getUnidMinima($data['productos'], $data['usar'], $all_stock);
 
+        $local = $this->db->get_where('local', array('int_local_id' => $local))->row();
+        $data['local_nombre'] = !empty($local->local_nombre)? $local->local_nombre: 'TODOS';
+        $data['local_direccion'] = !empty($local->direccion)? $local->direccion: 'TODOS';
 
-        $pdf->setFooterData($tc = array(0, 64, 0), $lc = array(0, 64, 128));
-
-// datos por defecto de cabecera, se pueden modificar en el archivo tcpdf_config.php de libraries/config
-
-// se pueden modificar en el archivo tcpdf_config.php de libraries/config
-        $pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
-
-// se pueden modificar en el archivo tcpdf_config.php de libraries/config
-        $pdf->SetMargins(PDF_MARGIN_LEFT, 0, PDF_MARGIN_RIGHT);
-        //  $pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
-        $pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
-
-// se pueden modificar en el archivo tcpdf_config.php de libraries/config
-        //  $pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
-
-//relación utilizada para ajustar la conversión de los píxeles
-        $pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
-
-
-// ---------------------------------------------------------
-// establecer el modo de fuente por defecto
-        $pdf->setFontSubsetting(true);
-
-// Establecer el tipo de letra
-
-//Si tienes que imprimir carácteres ASCII estándar, puede utilizar las fuentes básicas como
-// Helvetica para reducir el tamaño del archivo.
-        $pdf->SetFont('helvetica', '', 14, '', true);
-
-// Añadir una página
-// Este método tiene varias opciones, consulta la documentación para más información.
-        $pdf->AddPage();
-
-        $pdf->SetFontSize(8);
-
-        $textoheader = "";
-        $pdf->writeHTMLCell(
-            $w = 0, $h = 0, $x = '60', $y = '',
-            $textoheader, $border = 0, $ln = 1, $fill = 0,
-            $reseth = true, $align = 'C', $autopadding = true);
-
-//fijar efecto de sombra en el texto
-//        $pdf->setTextShadow(array('enabled' => true, 'depth_w' => 0.2, 'depth_h' => 0.2, 'color' => array(196, 196, 196), 'opacity' => 1, 'blend_mode' => 'Normal'));
-
-        $pdf->SetFontSize(12);
-        $pdf->writeHTMLCell($w = 0, $h = 0, $x = '', $y = '', "<br><br><b>" . $this->session->userdata('EMPRESA_NOMBRE') . "</b><br><br>", $border = 0, $ln = 1, $fill = 0, $reseth = true, $align = 'L', $autopadding = true);
-        $pdf->writeHTMLCell($w = 0, $h = 0, $x = '', $y = '', "<b><u>Valorizacion de Inventario</u></b><br>", $border = 0, $ln = 1, $fill = 0, $reseth = true, $align = 'C', $autopadding = true);
-        $pdf->writeHTMLCell($w = 0, $h = 0, $x = '', $y = '', "<b>Fecha Emision " . date('d-m-Y') . "</b><br>", $border = 0, $ln = 1, $fill = 0, $reseth = true, $align = 'L', $autopadding = true);
-
-
-        //preparamos y maquetamos el contenido a crear
-        $html = '';
-        $html .= "<style type=text/css>";
-        $html .= "th{color: #000; font-weight: bold; background-color: #CED6DB; }";
-        $html .= "td{color: #222; font-weight: bold; background-color: #fff;}";
-        $html .= "table{border:0.2px}";
-        $html .= "body{font-size:15px}";
-        $html .= "</style>";
-
-
-        if (isset($data['productos'])) {
-
-            $html .= "<table><tr><th>Id Producto</th><th>Nombre</th><th>Marca</th><th>Grupo</th> ";
-            $html .= "<th>Unidad</th><th>Moneda</th><th>Precio de venta</th><th>Costo de compra</th><th>Stock Actual</th><th>Total</th></tr>";
-
-            $total = 0;
-            foreach ($data['productos'] as $producto) {
-
-                $subtotal = $producto['stock'] * $producto['producto_costo_unitario'];
-                $total = $subtotal + $total;
-
-                $precio = $producto['precio'];
-                $producto_costo_unitario = $producto['producto_costo_unitario'];
-                if (isset($operacion)) {
-                    $string = '$precio$operacion$tasa_soles ';
-                    eval("\$string = \"$string\";");
-                    eval("\$precio = ($string);");
-
-                    $string = '$producto_costo_unitario$operacion$tasa_soles ';
-                    eval("\$string = \"$string\";");;
-                    eval("\$producto_costo_unitario = ($string);");
-
-                    $string = '$subtotal$operacion$tasa_soles ';
-                    eval("\$string = \"$string\";");
-                    eval("\$subtotal = ($string);");
-                }
-
-
-                $html .= " <tr><td >" . sumCod($producto['producto_id']) . "</td><td >" . $producto['producto_nombre'] . "</td><td >" . $producto['nombre_marca'] . "</td>";
-                $html .= "<td>" . $producto['nombre_grupo'] . "</td><td> " . $producto['nombre_unidad'] . "</td><td>" . $moneda_nombre . "</td><td>" . number_format($precio, 2, '.', ',') . "</td><td>" . number_format($producto_costo_unitario, 2, '.', ',') . "</td>";
-                $html .= "<td >" . number_format($producto['stock'], 2, '.', ',') . "</td><td>" . number_format($subtotal, 2, '.', ',') . "</td></tr>";
-
-            }
-        }
-
-        $html .= "</table>";
-        $html .= '<table><tr><td colspan="8" align="right"><b>Total:</b></td><td colspan="2">';
-
-        $simbolo = $moneda_simbolo;
-        if (isset($operacion)) {
-            $precio = $total;
-            $string = ' $precio$operacion$tasa_soles ';
-            //   echo $string. "<br>";
-            eval("\$string = \"$string\";");
-            eval("\$string = \"$string\";");
-            eval("\$result = ($string);");
-
-            $html .= $simbolo . " " . number_format($result, 2);
-        } else {
-            $html .= $simbolo . " " . number_format($total, 2);
-        }
-        $html .= "</td></tr></table>";
-
-// Imprimimos el texto con writeHTMLCell()
-        $pdf->writeHTMLCell($w = 0, $h = 0, $x = '', $y = '', $html, $border = 0, $ln = 1, $fill = 0, $reseth = true, $align = '', $autopadding = true);
-
-// ---------------------------------------------------------
-// Cerrar el documento PDF y preparamos la salida
-// Este método tiene varias opciones, consulte la documentación para más información.
-        $nombre_archivo = utf8_decode("Reporte-Valorizacion-Inventario.pdf");
-        $pdf->Output($nombre_archivo, 'D');
-
-
+        $this->load->library('mpdf53/mpdf');
+        $mpdf = new mPDF('utf-8', 'A4-L', 0, '', 5, 5, 5, 5, 5, 5);
+        $html = $this->load->view('menu/inventario/tabla_valorizacion_pdf', $data, true);
+        $mpdf->WriteHTML($html);
+        $mpdf->Output();
     }
 
     function excel_valorizacion($local, $marca, $grupo, $linea, $familia, $monedas, $usar)

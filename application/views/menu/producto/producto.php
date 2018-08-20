@@ -66,8 +66,6 @@
         </div>
 
     </div>
-    <br>
-
     <div class="table-responsive" id="productostable">
         <table class='table table-striped dataTable table-bordered table-responsive tableStyle' id="table" style="width: 100%;">
             <thead>
@@ -125,17 +123,22 @@
                 </tr>
 
             <?php endforeach; ?>
-
-
             </tbody>
         </table>
-
     </div>
-
-
+    <div class="row">
+        <div class="col-md-12">
+            <br>
+            <button type="button" id="exportar_excel" title="Exportar Excel" class="btn btn-primary">
+                <i class="fa fa-file-excel-o fa-fw"></i>
+            </button>
+            <!--<button type="button" id="exportar_pdf" title="Exportar Pdf" class="btn btn-primary">
+                <i class="fa fa-file-pdf-o fa-fw"></i>
+            </button>-->
+        </div>
+    </div>
+    <br>
 </div>
-
-
 <div class="modal fade" id="productomodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
      aria-hidden="true">
 
@@ -442,7 +445,11 @@
 <!-- Load and execute javascript code used only in this page -->
 
 
-<script>$(function () {
+<script>
+    $(function () {
+        $('#exportar_excel').on('click', function () {
+            exportar_excel();
+        });
             //CONFIGURACIONES INICIALES
             //App.sidebar('close-sidebar');
 
@@ -524,4 +531,11 @@
         $("#confirmarcerrar").modal('hide');
     }
 
+    function exportar_excel() {
+        var data = {
+        };
+
+        var win = window.open('<?= base_url()?>producto/index/excel?data=' + JSON.stringify(data), '_blank');
+        win.focus();
+    }
 </script>

@@ -83,13 +83,13 @@
 </div>
 <div class="row">
     <div class="col-md-10">
-        <a href="<?= $ruta; ?>inventario/pdf_valorizacion/<?php if (isset($local)) echo $local; else echo 0; ?>/<?php if (isset($marca)) echo $marca; else echo 0; ?>
+        <a target="_blank" href="<?= $ruta; ?>inventario/pdf_valorizacion/<?php if (isset($local)) echo $local; else echo 0; ?>/<?php if (isset($marca)) echo $marca; else echo 0; ?>
 /<?php if (isset($grupo)) echo $grupo; else echo 0; ?>/<?php if (isset($linea)) echo $linea; else echo 0; ?>
 /<?php if (isset($familia)) echo $familia; else echo 0; ?>/<?php if (isset($moneda)) echo $moneda; else echo 0; ?>/<?php if (isset($usar)) echo $usar; else echo 0; ?>" class="btn  btn-default btn-lg" data-toggle="tooltip"
            title="Exportar a PDF"
            data-original-title="fa fa-file-pdf-o"><i class="fa fa-file-pdf-o fa-fw"></i></a>
 
-        <a href="<?= $ruta; ?>inventario/excel_valorizacion/<?php if (isset($local)) echo $local; else echo 0; ?>/<?php if (isset($marca)) echo $marca; else echo 0; ?>
+        <a target="_blank" href="<?= $ruta; ?>inventario/excel_valorizacion/<?php if (isset($local)) echo $local; else echo 0; ?>/<?php if (isset($marca)) echo $marca; else echo 0; ?>
 /<?php if (isset($grupo)) echo $grupo; else echo 0; ?>/<?php if (isset($linea)) echo $linea; else echo 0; ?>
 /<?php if (isset($familia)) echo $familia; else echo 0; ?>/<?php if (isset($moneda)) echo $moneda; else echo 0; ?>/<?php if (isset($usar)) echo $usar; else echo 0; ?>" class="btn btn-default btn-lg" data-toggle="tooltip"
            title="Exportar a Excel"
