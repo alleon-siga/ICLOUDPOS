@@ -952,7 +952,7 @@
                                                                        type="number"
                                                                        class="form-control <?php echo $precio_class ?>"
                                                                        required
-                                                                       value="<?= number_format($precio['precio'], 2, '.', '') ?>"
+                                                                       value="<?= number_format($precio['precio'], 4, '.', '') ?>"
                                                                        name="precio_valor_<?= $countunidad ?>[<?= $countproducto ?>]">
 
                                                             </td>
@@ -1761,7 +1761,7 @@
                 var precio_venta = $("#precio_venta" + row);
                 var unidades = $("#unidad\\[" + row + "\\]").val();
 
-                precio_venta.val(parseFloat(unidades * $(this).val()).toFixed(2));
+                precio_venta.val(parseFloat(unidades * $(this).val()).toFixed(4));
             });
 
             $(".precio_venta").keyup(function () {
@@ -1770,7 +1770,7 @@
                 var unidades = $("#unidad\\[" + row + "\\]").val();
 
 
-                precio_unitario.val(parseFloat($(this).val() / unidades).toFixed(2));
+                precio_unitario.val(parseFloat($(this).val() / unidades).toFixed(4));
             });
 
             $('.unidades').keyup(function () {
@@ -1780,7 +1780,7 @@
                 var precio_venta = $("#precio_venta" + row);
 
                 if (precio_unitario != 0 && !isNaN(precio_unitario) && unidades != 0)
-                    precio_venta.val(parseFloat(unidades * precio_unitario).toFixed(2));
+                    precio_venta.val(parseFloat(unidades * precio_unitario).toFixed(4));
 
 
             });
@@ -1840,7 +1840,7 @@
                 var precio_venta = $("#precio_venta" + row);
                 var unidades = $("#unidad\\[" + row + "\\]").val();
 
-                precio_venta.val(parseFloat(unidades * $(this).val()).toFixed(2));
+                precio_venta.val(parseFloat(unidades * $(this).val()).toFixed(4));
             });
 
             $(".precio_venta").keyup(function () {
@@ -1849,7 +1849,7 @@
                 var unidades = $("#unidad\\[" + row + "\\]").val();
 
 
-                precio_unitario.val(parseFloat($(this).val() / unidades).toFixed(2));
+                precio_unitario.val(parseFloat($(this).val() / unidades).toFixed(4));
             });
 
             $('.unidades').keyup(function () {
@@ -1859,7 +1859,7 @@
                 var precio_venta = $("#precio_venta" + row);
 
                 if (precio_unitario != 0 && !isNaN(precio_unitario) && unidades != 0)
-                    precio_venta.val(parseFloat(unidades * precio_unitario).toFixed(2));
+                    precio_venta.val(parseFloat(unidades * precio_unitario).toFixed(4));
 
 
             });
@@ -1937,7 +1937,7 @@
                 var precio_venta = $("#precio_venta" + row);
                 var unidades = $("#unidad\\[" + row + "\\]").val();
 
-                precio_venta.val(parseFloat(unidades * $(this).val()).toFixed(2));
+                precio_venta.val(parseFloat(unidades * $(this).val()).toFixed(4));
             });
 
             $(".precio_venta").keyup(function () {
@@ -1946,7 +1946,7 @@
                 var unidades = $("#unidad\\[" + row + "\\]").val();
 
 
-                precio_unitario.val(parseFloat($(this).val() / unidades).toFixed(2));
+                precio_unitario.val(parseFloat($(this).val() / unidades).toFixed(4));
             });
 
             $('.unidades').keyup(function () {
@@ -1956,7 +1956,7 @@
                 var precio_venta = $("#precio_venta" + row);
 
                 if (precio_unitario != 0 && !isNaN(precio_unitario) && unidades != 0)
-                    precio_venta.val(parseFloat(unidades * precio_unitario).toFixed(2));
+                    precio_venta.val(parseFloat(unidades * precio_unitario).toFixed(4));
 
 
             });
@@ -2029,7 +2029,7 @@
                 var precio_venta = $("#precio_venta" + row);
                 var unidades = $("#unidad\\[" + row + "\\]").val();
 
-                precio_venta.val(parseFloat(unidades * $(this).val()).toFixed(2));
+                precio_venta.val(parseFloat(unidades * $(this).val()).toFixed(4));
             });
 
             $(".precio_venta").keyup(function () {
@@ -2038,7 +2038,7 @@
                 var unidades = $("#unidad\\[" + row + "\\]").val();
 
 
-                precio_unitario.val(parseFloat($(this).val() / unidades).toFixed(2));
+                precio_unitario.val(parseFloat($(this).val() / unidades).toFixed(4));
             });
 
             $('.unidades').keyup(function () {
@@ -2048,7 +2048,7 @@
                 var precio_venta = $("#precio_venta" + row);
 
                 if (precio_unitario != 0 && !isNaN(precio_unitario) && unidades != 0)
-                    precio_venta.val(parseFloat(unidades * precio_unitario).toFixed(2));
+                    precio_venta.val(parseFloat(unidades * precio_unitario).toFixed(4));
 
             });
 
