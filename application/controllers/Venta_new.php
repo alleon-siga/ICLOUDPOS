@@ -528,6 +528,8 @@ class venta_new extends MY_Controller
             ))->row();
         }
 
+
+
         header('Content-Type: application/json');
         echo json_encode($data);
     }
