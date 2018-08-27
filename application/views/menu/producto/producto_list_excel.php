@@ -35,7 +35,7 @@ header("Expires: 0");
                         if ($col->nombre_columna == 'producto_vencimiento')
                             echo $pd[$col->nombre_join] != null ? date('d-m-Y', strtotime($pd[$col->nombre_join])) : '';
                         else
-                            echo $pd[$col->nombre_join];
+                            echo utf8_decode($pd[$col->nombre_join]);
                         echo "</td>";
                     }
 

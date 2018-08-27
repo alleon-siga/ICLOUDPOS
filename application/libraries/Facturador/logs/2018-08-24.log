@@ -1,0 +1,7 @@
+ERROR - 2018-08-24 10:09:32 --> -1: Archivo no encontrado. C:\xampp\htdocs\icloudpos\application\libraries\Facturador\src\..\files\certificates\20490961195.pfx
+ERROR - 2018-08-24 10:18:21 --> -1: Archivo no encontrado. C:\xampp\htdocs\icloudpos\application\libraries\Facturador\src\..\files\certificates\20490961195.pfx
+ERROR - 2018-08-24 10:25:08 --> -1: Archivo no encontrado. C:\xampp\htdocs\icloudpos\application\libraries\Facturador\src\..\files\certificates\20490961195.pfx
+ERROR - 2018-08-24 10:25:26 --> -1: Archivo no encontrado. C:\xampp\htdocs\icloudpos\application\libraries\Facturador\src\..\files\certificates\20490961195.pfx
+ERROR - 2018-08-24 10:27:01 --> -1: Archivo no encontrado. C:\xampp\htdocs\icloudpos\application\libraries\Facturador\src\..\files\certificates\20490961195.pfx
+ERROR - 2018-08-24 10:27:45 --> -1: Ha ocurrido un error al firmar el certificado. openssl_pkcs12_read() return FALSE;
+ERROR - 2018-08-24 10:27:54 --> -1: Ha ocurrido un error al firmar el certificado. openssl_pkcs12_read() return FALSE;
