@@ -648,7 +648,7 @@ class venta_new_model extends CI_Model
             'dni_garante' => $venta['dni_garante'],
             'latitud' => isset($venta['latitud']) ? $venta['latitud'] : null,
             'longitud' => isset($venta['longitud']) ? $venta['longitud'] : null,
-            'plataforma' => $venta['plataforma']
+            'plataforma' => isset($venta['plataforma'])? $venta['plataforma']:0
         );
 
         //inserto la venta
