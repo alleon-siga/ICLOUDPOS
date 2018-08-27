@@ -473,6 +473,59 @@ class facturacion extends MY_Controller
         echo $params['ruc'];
     }
 
+    function reporte_venta($action = '')
+    {
+
+        $data['emisor'] = $this->facturacion_model->get_emisor();
+
+        switch ($action) {
+            case 'filter': {
+                $params['local_id'] = $this->input->post('local_id');
+                $data['lists'] = $this->facturacion_model->get_ventas_emitidas($params);
+
+                $this->load->view('menu/facturacion/reportes/venta_list', $data);
+                break;
+            }
+            case 'pdf': {
+                $params = json_decode($this->input->get('data'));
+                $date_range = explode(' - ', $params->fecha);
+                $data = array();
+
+                $this->load->library('mpdf53/mpdf');
+                $mpdf = new mPDF('utf-8', 'A4', 0, '', 5, 5, 5, 5, 5, 5);
+                $html = $this->load->view('menu/facturacion/reportes/venta_list_pdf', $data, true);
+                $mpdf->WriteHTML($html);
+                $mpdf->Output();
+                break;
+            }
+            case 'excel': {
+                $params = json_decode($this->input->get('data'));
+                $date_range = explode(' - ', $params->fecha);
+                $data = array();
+
+                echo $this->load->view('menu/facturacion/reportes/venta_list_excel', $data, true);
+                break;
+            }
+            default: {
+                if ($this->session->userdata('esSuper') == 1) {
+                    $data['locales'] = $this->local_model->get_all();
+                } else {
+                    $usu = $this->session->userdata('nUsuCodigo');
+                    $data['locales'] = $this->local_model->get_all_usu($usu);
+                }
+
+
+                $dataCuerpo['cuerpo'] = $this->load->view('menu/facturacion/reportes/venta', $data, true);
+                if ($this->input->is_ajax_request()) {
+                    echo $dataCuerpo['cuerpo'];
+                } else {
+                    $this->load->view('menu/template', $dataCuerpo);
+                }
+                break;
+            }
+        }
+    }
+
     function consultarRuc()
     {
         require_once(APPPATH . 'libraries/RucSunat/RucSunat.php');

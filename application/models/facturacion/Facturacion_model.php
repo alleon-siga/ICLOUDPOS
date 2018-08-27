@@ -88,6 +88,25 @@ class facturacion_model extends CI_Model
         return $this->db->get()->result();
     }
 
+    function get_ventas_emitidas($params)
+    {
+
+        $this->db->select('v.*, f.cliente_nombre')
+            ->from('venta AS v')
+            ->join('facturacion as f', 'v.venta_id = f.ref_id');
+
+        $this->db->where('estado', 3);
+        $this->db->group_by('v.venta_id');
+
+        $ventas = $this->db->get()->result();
+
+        foreach ($ventas as $venta) {
+            $venta->comprobantes = $this->db->get_where('facturacion', array('ref_id' => $venta->venta_id))->result();
+        }
+
+        return $ventas;
+    }
+
     function save_emisor($data)
     {
         $this->db->empty_table('facturacion_emisor');
@@ -592,6 +611,65 @@ class facturacion_model extends CI_Model
 
     }
 
+    function anularComprobante($id, $motivo)
+    {
+        $this->load->model('correlativos/correlativos_model');
+
+        $facturacion = $this->db->get_where('facturacion', array('id' => $id))->row();
+        $facturacion_detalle = $this->db->get_where('facturacion_detalle', array('facturacion_id' => $id))->result();
+
+
+        if ($facturacion->documento_tipo == '03') {
+            $correlativo = $this->correlativos_model->get_correlativo($facturacion->local_id, 8);
+            $numero = 'B' . $correlativo->serie . '-' . $correlativo->correlativo;
+            $this->correlativos_model->sumar_correlativo($facturacion->local_id, 8);
+        }
+        if ($facturacion->documento_tipo == '01') {
+            $correlativo = $this->correlativos_model->get_correlativo($facturacion->local_id, 9);
+            $numero = 'F' . $correlativo->serie . '-' . $correlativo->correlativo;
+            $this->correlativos_model->sumar_correlativo($facturacion->local_id, 9);
+        }
+
+        $this->db->insert('facturacion', array(
+            'local_id' => $facturacion->local_id,
+            'fecha' => date('Y-m-d'),
+            'documento_tipo' => TIPO_COMPROBANTE::$NOTA_CREDITO,
+            'documento_numero' => $numero,
+            'documento_mod_tipo' => $facturacion->documento_tipo,
+            'documento_mod_numero' => $facturacion->documento_numero,
+            'documento_mod_motivo' => $motivo,
+            'cliente_tipo' => $facturacion->cliente_tipo,
+            'cliente_identificacion' => $facturacion->cliente_identificacion,
+            'cliente_nombre' => $facturacion->cliente_nombre,
+            'cliente_direccion' => $facturacion->cliente_direccion,
+            'total_gravadas' => $facturacion->total_gravadas,
+            'total_exoneradas' => $facturacion->total_exoneradas,
+            'total_inafectas' => $facturacion->total_inafectas,
+            'subtotal' => $facturacion->subtotal,
+            'impuesto' => $facturacion->impuesto,
+            'total' => $facturacion->total,
+            'estado' => 0,
+            'nota' => 'No enviado',
+            'ref_id' => $facturacion->ref_id,
+        ));
+
+        $facturacion_id = $this->db->insert_id();
+
+        foreach ($facturacion_detalle as $detalle) {
+            $this->db->insert('facturacion_detalle', array(
+                'facturacion_id' => $facturacion_id,
+                'producto_codigo' => $detalle->producto_codigo,
+                'producto_descripcion' => $detalle->producto_descripcion,
+                'um' => $detalle->um,
+                'cantidad' => $detalle->cantidad,
+                'precio' => $detalle->precio,
+                'impuesto' => $detalle->impuesto
+            ));
+        }
+
+        return $this->crearXml($facturacion_id);
+    }
+
     function anularVenta($venta_id, $numero, $motivo)
     {
         $this->load->model('venta_new/venta_new_model');
@@ -896,7 +974,12 @@ class facturacion_model extends CI_Model
         $total_venta = 0;
 
         foreach ($venta->detalles as $d) {
-            $d->precio = $d->precio - ($d->precio * $descuento / 100);
+            if ($descuento > 0){
+                $importe = ($d->cantidad * $d->precio);
+                $desc = ($importe * $descuento / 100);
+                $d->precio = ($importe - $desc) / $d->cantidad;
+            }
+
 
             if ($d->afectacion_impuesto == OP_GRAVABLE)
                 $total_gravadas += $d->cantidad * $d->precio;
@@ -1056,7 +1139,11 @@ class facturacion_model extends CI_Model
                     ))->row();
 
 
-                    $boleta[$boleta_key]['precio'] = $boleta[$boleta_key]['precio'] - ($boleta[$boleta_key]['precio'] * $descuento / 100);
+                    if ($descuento > 0){
+                        $importe = ($boleta[$boleta_key]['cantidad'] * $boleta[$boleta_key]['precio']);
+                        $desc = ($importe * $descuento / 100);
+                        $boleta[$boleta_key]['precio'] = ($importe - $desc) / $boleta[$boleta_key]['cantidad'];
+                    }
 
                     if ($detalle_venta->afectacion_impuesto == OP_GRAVABLE)
                         $total_gravadas += $boleta[$boleta_key]['precio'] * $boleta[$boleta_key]['cantidad'];

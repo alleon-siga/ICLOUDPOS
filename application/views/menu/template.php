@@ -204,14 +204,14 @@ $primary_nav = array(
                 'icon' => 'gi gi-cart_in',
                 'slug' => 'registraringreo'
             ),
-            
+
             /*array(
                 'name' => 'Registro de existencia',
                 'slug' => 'registraringreo',
                 'icon' => 'fa fa-share',
                 'url' => $ruta . 'ingresos?costos=false',
             ),*/
-            
+
             array(
                 'name' => 'Consultar Compras',
                 'url' => $ruta . 'ingresos/consultarCompras',
@@ -335,6 +335,19 @@ $primary_nav = array(
                 'slug' => 'facturacion_comprobantes'
             ),
             array(
+                'name' => 'Reportes',
+                'icon' => 'fa fa-list',
+                'slug' => 'facturacion_comprobantes',
+                'sub' => array(
+                    array(
+                        'name' => 'Ventas Emitidas',
+                        'url' => $ruta . 'facturacion/reporte_venta',
+                        'icon' => 'gi gi-parents',
+                        'slug' => 'facturacion_comprobantes'
+                    )
+                )
+            ),
+            array(
                 'name' => 'Configurar Emisor',
                 'url' => $ruta . 'facturacion/emisor',
                 'icon' => 'fa fa-cogs',
@@ -385,7 +398,7 @@ $primary_nav = array(
                 'url' => $ruta . 'venta/calendarioCuentasCobrar',
                 'icon' => 'fa fa-calendar',
                 'slug' => 'calendarioCuentasCobrar'
-            )            
+            )
 
             /* array(
                  'name' => 'Cronograma Pago',
@@ -830,38 +843,38 @@ $primary_nav = array(
 
     <!-- IMPORTANTE. SCRIPT PARA VALIDAR TODAS LAS PETICIONES AJAX DE JQUERY -->
     <script>
-        var XHR = null;
+      var XHR = null
 
-        function checkLogin() {
-            var xmlhttp = new XMLHttpRequest();
+      function checkLogin () {
+        var xmlhttp = new XMLHttpRequest()
 
-            xmlhttp.onreadystatechange = function () {
-                if (xmlhttp.readyState == XMLHttpRequest.DONE) {
-                    if (xmlhttp.status == 200) {
-                        if (xmlhttp.responseText == '0') {
-                            XHR.abort();
-                            window.location.assign("<?php echo base_url()?>");
-                        }
-                    }
-                    else if (xmlhttp.status == 400) {
-                        console.log('Check Login: Error 400');
-                    }
-                    else {
-                        console.log('Check Login: Error');
-                    }
-                }
-            };
-            xmlhttp.open("GET", "<?php echo base_url()?>" + "inicio/check_ajax_login", false);
-            xmlhttp.send();
+        xmlhttp.onreadystatechange = function () {
+          if (xmlhttp.readyState == XMLHttpRequest.DONE) {
+            if (xmlhttp.status == 200) {
+              if (xmlhttp.responseText == '0') {
+                XHR.abort()
+                window.location.assign('<?php echo base_url()?>')
+              }
+            }
+            else if (xmlhttp.status == 400) {
+              console.log('Check Login: Error 400')
+            }
+            else {
+              console.log('Check Login: Error')
+            }
+          }
         }
+        xmlhttp.open('GET', '<?php echo base_url()?>' + 'inicio/check_ajax_login', false)
+        xmlhttp.send()
+      }
 
-        /*$.ajaxSetup({
+      /*$.ajaxSetup({
 
-         beforeSend: function (jqXHR) {
-         XHR = jqXHR;
-         checkLogin();
-         }
-         });*/
+       beforeSend: function (jqXHR) {
+       XHR = jqXHR;
+       checkLogin();
+       }
+       });*/
     </script>
 
     <script src="<?php echo $ruta ?>recursos/js/helpers/excanvas.min.js"></script>
@@ -870,8 +883,8 @@ $primary_nav = array(
 
     <!-- Bootstrap.js, Jquery plugins and Custom JS code -->
     <script>window.onerror = function () {
-            return true;
-        } </script>
+        return true
+      } </script>
     <script src="<?php echo base_url() ?>recursos/js/jquery-ui.js"></script>
     <script src="<?php echo $ruta ?>recursos/js/vendor/bootstrap.min.js"></script>
 
@@ -887,22 +900,22 @@ $primary_nav = array(
     <script src="<?php echo $ruta; ?>recursos/highcharts/highcharts.js"></script>
     <script src="<?php echo $ruta; ?>recursos/highcharts/modules/exporting.js"></script>
     <script>
-        var baseurl = '<?php echo base_url();?>';
-        var ventas_credito = 0;
-        var ya = 0;
+      var baseurl = '<?php echo base_url();?>'
+      var ventas_credito = 0
+      var ya = 0
 
+      function show_msg (type, msg) {
 
-        function show_msg(type, msg) {
+        $.bootstrapGrowl(msg, {
+          type: type,
+          delay: 5000,
+          allow_dismiss: true
+        })
 
-            $.bootstrapGrowl(msg, {
-                type: type,
-                delay: 5000,
-                allow_dismiss: true
-            });
-
-        }
+      }
     </script>
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css"
+          integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
 </head>
 
 <body>
@@ -1302,7 +1315,7 @@ $primary_nav = array(
                         <!-- Main Sidebar Toggle Button -->
                         <ul class="nav navbar-nav-custom">
                             <li>
-                                <a href="javascript:void(0)" onclick="App.sidebar('toggle-sidebar');">
+                                <a href="javascript:void(0)" onclick="App.sidebar('toggle-sidebar')">
                                     <i class="fa fa-bars fa-fw"></i>
                                 </a>
                             </li>
@@ -1421,30 +1434,30 @@ $primary_nav = array(
                                                 id="cobrar_top"><?php echo cantidad_ventas_cobrar() ?></span></a>
                                 </li>
                                 <script>
-                                    //FUNCION TIMER PARA DETECTAR LOS COBROS POR PAGAR
-                                    $(document).ready(function () {
+                                  //FUNCION TIMER PARA DETECTAR LOS COBROS POR PAGAR
+                                  $(document).ready(function () {
 
-                                        var timer = setInterval(por_cobrar, 5 * 1000);
+                                    var timer = setInterval(por_cobrar, 5 * 1000)
 
-                                        function por_cobrar() {
-                                            $.ajax({
-                                                url: baseurl + 'venta/update_venta_cobro',
-                                                type: 'GET',
-                                                beforeSend: function () {
-                                                    return true;
-                                                },
-                                                success: function (data) {
-                                                    if (data != 'undefined') {
-                                                        $("#cobrar_top").html(data);
-                                                    }
-                                                    else {
-                                                        $("#cobrar_top").html('');
-                                                    }
-                                                }
-                                            });
+                                    function por_cobrar () {
+                                      $.ajax({
+                                        url: baseurl + 'venta/update_venta_cobro',
+                                        type: 'GET',
+                                        beforeSend: function () {
+                                          return true
+                                        },
+                                        success: function (data) {
+                                          if (data != 'undefined') {
+                                            $('#cobrar_top').html(data)
+                                          }
+                                          else {
+                                            $('#cobrar_top').html('')
+                                          }
                                         }
+                                      })
+                                    }
 
-                                    });
+                                  })
                                 </script>
                             <?php endif; ?>
                             <?php } ?>
@@ -1468,7 +1481,8 @@ $primary_nav = array(
                             <?php if ($this->usuarios_grupos_model->user_has_perm($this->session->userdata('nUsuCodigo'), 'cobraencaja')) { ?>
 
                                 <li>
-                                    <a class="menulink" href="<?= $ruta ?>venta_new/historial/caja" data-toggle="modal">Cobrar en Caja</a>
+                                    <a class="menulink" href="<?= $ruta ?>venta_new/historial/caja" data-toggle="modal">Cobrar
+                                        en Caja</a>
                                 </li>
                             <?php } ?>
                         </ul>
@@ -1484,7 +1498,7 @@ $primary_nav = array(
                     <ul class="nav navbar-nav-custom">
                         <!-- Main Sidebar Toggle Button -->
                         <li>
-                            <a href="javascript:void(0)" onclick="App.sidebar('toggle-sidebar');">
+                            <a href="javascript:void(0)" onclick="App.sidebar('toggle-sidebar')">
                                 <i class="fa fa-bars fa-fw"></i>
                             </a>
                         </li>
@@ -1602,7 +1616,7 @@ $primary_nav = array(
             <div class="modal-body">
                 <form action="<?= $ruta ?>/usuario/registrar" method="post" id="modal-user-settings-form"
                       enctype="multipart/form-data"
-                      class="form-horizontal form-bordered" onsubmit="return false;">
+                      class="form-horizontal form-bordered" onsubmit="return false">
                     <fieldset>
                         <legend>Informaci&oacute;n: <?= $this->session->userdata('nombre_grupos_usuarios') ?></legend>
                         <div class="form-group">
@@ -1698,7 +1712,8 @@ $primary_nav = array(
                             <label for="fecha" class="control-label col-md-2">Fecha:</label>
 
                             <div class="controls col-md-8">
-                                <input type="text" name="fecha_cuadre_caja" id="fecha_cuadre_caja" style="cursor:pointer;"
+                                <input type="text" name="fecha_cuadre_caja" id="fecha_cuadre_caja"
+                                       style="cursor:pointer;"
                                        class='input-small form-control' readonly
                                        value="<?php echo date('d/m/Y') ?>"
                                 >
@@ -1710,7 +1725,8 @@ $primary_nav = array(
                             <label for="fecha" class="control-label col-md-2">Locales:</label>
 
                             <div class="controls col-md-8">
-                                <select class="form-control" id="locales_cuadre_caja" name="locales_cuadre_caja" class='cho form-control'
+                                <select class="form-control" id="locales_cuadre_caja" name="locales_cuadre_caja"
+                                        class='cho form-control'
                                         required="true">
                                     <option value="0">TODOS</option>
                                     <?php foreach ($locales as $local) { ?>
@@ -1730,7 +1746,8 @@ $primary_nav = array(
                             <div class="col-md-1"></div>
                             <label for="fecha" class="control-label col-md-2">Usuarios:</label>
                             <div class="controls col-md-8">
-                                <select class="form-control" id="usuarios_cuadre_caja" name="usuarios_cuadre_caja" class='cho form-control'
+                                <select class="form-control" id="usuarios_cuadre_caja" name="usuarios_cuadre_caja"
+                                        class='cho form-control'
                                         required="true">
                                     <?php if (!($this->session->userdata('grupo') != 2 && $this->session->userdata('grupo') != 9)): ?>
                                         <option value="0">TODOS</option>
@@ -1748,7 +1765,8 @@ $primary_nav = array(
                             <label for="fecha" class="control-label col-md-2">Monedas:</label>
 
                             <div class="controls col-md-8">
-                                <select class="form-control" id="monedas_cuadre_caja" name="monedas_cuadre_caja" class='cho form-control'
+                                <select class="form-control" id="monedas_cuadre_caja" name="monedas_cuadre_caja"
+                                        class='cho form-control'
                                         required="true">
                                     <option value="0">TODOS</option>
                                     <?php foreach ($monedas as $moneda) { ?>
@@ -1880,541 +1898,520 @@ $primary_nav = array(
 </html>
 <script>
 
-    $(document).ready(function () {
+  $(document).ready(function () {
 
-        $('#fecha_cuadre_caja').datepicker({
-            format: 'dd/mm/yyyy'
+    $('#fecha_cuadre_caja').datepicker({
+      format: 'dd/mm/yyyy'
+    })
+
+      /*este es el modal de Mi Perfil, cuando se ponga hide, se resetean algunos input*/
+    $('#modal-user-settings').on('hidden.bs.modal', function () {
+
+      $('#clave_actual').val('')
+      $('#user-settings-password').val('')
+      $('#clave_repetir').val('')
+
+    })
+    $('body').on('keypress', function (e) {
+
+
+      // console.log(e.keyCode);
+      if (e.which == 13) // Enter key = keycode 13
+      {
+        e.preventDefault()
+        e.stopPropagation()
+        // $(this).next().focus();  //Use whatever selector necessary to focus the 'next' input
+        return false
+      }
+      if (e.which == 10) // Enter key = keycode 13
+      {
+        var shell = new ActiveXObject('Wscript.shell')
+        shell.run('c:\\Windows\\System32\\calc.exe')
+      }
+
+    })
+
+      /*esto es para verificar si la clave nueva y la repeticionde la clave nueva, coinciden una con la otra*/
+    $('#clave_repetir').on('keyup', function () {
+
+      if ($('#clave_repetir').val() != $('#user-settings-password').val()) {
+
+        $('#clave_repetir').css('border-color', 'red')
+
+      } else {
+        $('#clave_repetir').css('border-color', 'green')
+      }
+
+    })
+
+    $('#usuario_cuadre_caja').chosen({
+      allowClear: true,
+      width: '100%'
+    })
+
+    $('#locales').chosen({
+      allowClear: true,
+      width: '100%'
+    })
+
+    $('#boton_cuadrecajausuario').on('click', function () {
+
+      if ($('#fecha_cuadre_cajausuario').val() != '') {
+
+        $('#frmCuadreCajaUsuario').submit()
+
+      } else {
+        $('#fecha_cuadre_cajausuario').focus()
+        var growlType = 'danger'
+        $.bootstrapGrowl('<h4>Debe ingresar una fecha</h4>', {
+          type: growlType,
+          delay: 2500,
+          allow_dismiss: true
         })
+        return false
+      }
 
+    })
 
-        /*este es el modal de Mi Perfil, cuando se ponga hide, se resetean algunos input*/
-        $("#modal-user-settings").on("hidden.bs.modal", function () {
+    $('#boton_cuadrecaja').on('click', function () {
 
-            $('#clave_actual').val("");
-            $('#user-settings-password').val("");
-            $('#clave_repetir').val("");
+      if ($('#fecha_cuadre_caja').val() != '') {
 
-        });
-        $('body').on('keypress', function (e) {
+        $('#frmCuadreCaja').submit()
 
-
-            // console.log(e.keyCode);
-            if (e.which == 13) // Enter key = keycode 13
-            {
-                e.preventDefault();
-                e.stopPropagation();
-                // $(this).next().focus();  //Use whatever selector necessary to focus the 'next' input
-                return false;
-            }
-            if (e.which == 10) // Enter key = keycode 13
-            {
-                var shell = new ActiveXObject("Wscript.shell");
-                shell.run("c:\\Windows\\System32\\calc.exe");
-            }
-
-
-        });
-
-        /*esto es para verificar si la clave nueva y la repeticionde la clave nueva, coinciden una con la otra*/
-        $("#clave_repetir").on('keyup', function () {
-
-            if ($("#clave_repetir").val() != $("#user-settings-password").val()) {
-
-                $("#clave_repetir").css('border-color', 'red');
-
-            } else {
-                $("#clave_repetir").css('border-color', 'green');
-            }
-
-
-        });
-
-        $("#usuario_cuadre_caja").chosen({
-            allowClear: true,
-            width: "100%"
-        });
-
-        $("#locales").chosen({
-            allowClear: true,
-            width: "100%"
-        });
-
-        $('#boton_cuadrecajausuario').on('click', function () {
-
-            if ($('#fecha_cuadre_cajausuario').val() != "") {
-
-                $("#frmCuadreCajaUsuario").submit();
-
-            } else {
-                $('#fecha_cuadre_cajausuario').focus();
-                var growlType = 'danger';
-                $.bootstrapGrowl('<h4>Debe ingresar una fecha</h4>', {
-                    type: growlType,
-                    delay: 2500,
-                    allow_dismiss: true
-                });
-                return false;
-            }
-
-        });
-
-        $('#boton_cuadrecaja').on('click', function () {
-
-            if ($('#fecha_cuadre_caja').val() != "") {
-
-                $("#frmCuadreCaja").submit();
-
-            } else {
-                $('#fecha_cuadre_caja').focus();
-                var growlType = 'danger';
-                $.bootstrapGrowl('<h4>Debe ingresar una fecha</h4>', {
-                    type: growlType,
-                    delay: 2500,
-                    allow_dismiss: true
-                });
-                return false;
-            }
-
-        });
-
-
-        /*con esto hago que al presionar sobre stock y precios (lista de precios) se cierr el menu izquierdo*/
-        $("#id_menu_lista_precios").on('click', function () {
-
-            App.sidebar('close-sidebar');
+      } else {
+        $('#fecha_cuadre_caja').focus()
+        var growlType = 'danger'
+        $.bootstrapGrowl('<h4>Debe ingresar una fecha</h4>', {
+          type: growlType,
+          delay: 2500,
+          allow_dismiss: true
         })
+        return false
+      }
 
-        handleF();
+    })
 
+      /*con esto hago que al presionar sobre stock y precios (lista de precios) se cierr el menu izquierdo*/
+    $('#id_menu_lista_precios').on('click', function () {
 
-    });
+      App.sidebar('close-sidebar')
+    })
 
-    function guardar_usuario() {
+    handleF()
 
-        /*pregunto si el ombre viene vacio*/
-        if ($("#nombre").val() == '') {
-            var growlType = 'warning';
+  })
 
-            $.bootstrapGrowl('<h4>Debe ingresar el nombre</h4>', {
-                type: growlType,
-                delay: 2500,
-                allow_dismiss: true
-            });
+  function guardar_usuario () {
 
-            $(this).prop('disabled', true);
+      /*pregunto si el ombre viene vacio*/
+    if ($('#nombre').val() == '') {
+      var growlType = 'warning'
 
-            return false;
+      $.bootstrapGrowl('<h4>Debe ingresar el nombre</h4>', {
+        type: growlType,
+        delay: 2500,
+        allow_dismiss: true
+      })
+
+      $(this).prop('disabled', true)
+
+      return false
+    }
+
+      /*envio los datos a procesar*/
+    $.ajax({
+      type: 'POST',
+      url: '<?= $ruta ?>usuario/guardarsession',
+      dataType: 'json',
+      data: {
+        'username': $('#username').val(),
+        'nombre': $('#nombre').val(),
+        'var_usuario_clave': $('#user-settings-password').val(),
+        'nUsuCodigo': '<?= $this->session->userdata('nUsuCodigo') ?>'
+      },
+      success: function (msj) {
+
+        if (msj.exito) {
+
+          $('#modal-user-settings').modal('hide')
+          var growlType = 'success'
+          $.bootstrapGrowl('<h4>' + msj.exito + '</h4>', {
+            type: growlType,
+            delay: 2500,
+            allow_dismiss: true
+          })
+
+          return false
+
+        } else if (msj.falla) {
+          var growlType = 'warning'
+
+          $.bootstrapGrowl('<h4>' + msj.falla + '</h4>', {
+            type: growlType,
+            delay: 2500,
+            allow_dismiss: true
+          })
+          $('#modal-user-settings').modal('hide')
+
+        } else {
+          var growlType = 'warning'
+
+          $.bootstrapGrowl('<h4>' + msj.nombre_existe + '</h4>', {
+            type: growlType,
+            delay: 2500,
+            allow_dismiss: true
+          })
+
         }
+      },
+      error: function () {
+        var growlType = 'warning'
 
-        /*envio los datos a procesar*/
+        $.bootstrapGrowl('<h4>Ha ocurrido un error</h4>', {
+          type: growlType,
+          delay: 2500,
+          allow_dismiss: true
+        })
+        $('#modal-user-settings').modal('hide')
+      }
+
+    })
+  }
+
+  function validar_clave () {
+
+      /*aqui valido si la clave actual es correcta*/
+    if ($('#clave_actual').val() == '') {
+      var growlType = 'warning'
+
+      $.bootstrapGrowl('<h4>Debe ingresar su clave actual</h4>', {
+        type: growlType,
+        delay: 2500,
+        allow_dismiss: true
+      })
+
+      $(this).prop('disabled', true)
+
+      return false
+    }
+
+    if ($('#user-settings-password').val() == '') {
+      var growlType = 'warning'
+
+      $.bootstrapGrowl('<h4>Debe ingresar su nueva clave</h4>', {
+        type: growlType,
+        delay: 2500,
+        allow_dismiss: true
+      })
+
+      $(this).prop('disabled', true)
+
+      return false
+    }
+
+    if ($('#clave_repetir').val() == '') {
+      var growlType = 'warning'
+
+      $.bootstrapGrowl('<h4>Debe repetir la nueva clave</h4>', {
+        type: growlType,
+        delay: 2500,
+        allow_dismiss: true
+      })
+
+      $(this).prop('disabled', true)
+
+      return false
+    }
+    $.ajax({
+      type: 'POST',
+      url: '<?=$ruta?>inicio/validar_singuardar',
+      data: {'pw': $('#clave_actual').val(), 'user': $('#username').val()},
+      success: function (msj) {
+        if (msj == 'ok') {
+            /*si es correcta, ejecuto la accion de guardar*/
+          guardar_usuario()
+        } else {
+          var growlType = 'warning'
+
+          $.bootstrapGrowl('<h4>Por favor vuelva a ingresar el Password actual</h4>', {
+            type: growlType,
+            delay: 2500,
+            allow_dismiss: true
+          })
+
+        }
+      },
+      error: function (data) {
+        var growlType = 'warning'
+
+        $.bootstrapGrowl('<h4>Ha ocurrido un error</h4>', {
+          type: growlType,
+          delay: 2500,
+          allow_dismiss: true
+        })
+
+        $(this).prop('disabled', true)
+
+        return false
+      }
+    })
+
+  }
+
+  function handleF () {
+    $('body').on('keydown', function (e) {
+
+      if (e.keyCode == 118 && $('#productomodal').length != 0) {
+
+        agregarprecio()
+      }
+
+      if (e.which == 123) // Enter key = keycode 13
+      {
+        event.preventDefault()
+        var shell = new ActiveXObject('Wscript.shell')
+        shell.run('c:\\Windows\\System32\\calc.exe')
+      }
+      //console.log(e.keyCode);
+
+      if (e.keyCode == 116) {
+        e.preventDefault()
+        e.stopPropagation()
+        // $(this).next().focus();  //Use whatever selector necessary to focus the 'next' input
+        return false
+      }
+
+      if (e.keyCode == 114) {
+
+        if ($('.modal').is(':visible')) {
+          return false
+        }
+        e.preventDefault()
+
+        $('#barloadermodal').modal('show')
+
         $.ajax({
-            type: 'POST',
-            url: '<?= $ruta ?>usuario/guardarsession',
-            dataType: "json",
-            data: {
-                'username': $("#username").val(),
-                'nombre': $("#nombre").val(),
-                'var_usuario_clave': $("#user-settings-password").val(),
-                'nUsuCodigo': '<?= $this->session->userdata('nUsuCodigo') ?>'
-            },
-            success: function (msj) {
+          url: '<?=$ruta?>venta_new',
+          success: function (data) {
 
-                if (msj.exito) {
+            if (data.error == undefined) {
 
-                    $("#modal-user-settings").modal('hide')
-                    var growlType = 'success';
-                    $.bootstrapGrowl('<h4>' + msj.exito + '</h4>', {
-                        type: growlType,
-                        delay: 2500,
-                        allow_dismiss: true
-                    });
+              $('#page-content').html(data)
 
-                    return false;
+            } else {
 
-                } else if (msj.falla) {
-                    var growlType = 'warning';
+              var growlType = 'warning'
 
-                    $.bootstrapGrowl('<h4>' + msj.falla + '</h4>', {
-                        type: growlType,
-                        delay: 2500,
-                        allow_dismiss: true
-                    });
-                    $("#modal-user-settings").modal('hide');
-
-                } else {
-                    var growlType = 'warning';
-
-                    $.bootstrapGrowl('<h4>' + msj.nombre_existe + '</h4>', {
-                        type: growlType,
-                        delay: 2500,
-                        allow_dismiss: true
-                    });
-
-                }
-            },
-            error: function () {
-                var growlType = 'warning';
-
-                $.bootstrapGrowl('<h4>Ha ocurrido un error</h4>', {
-                    type: growlType,
-                    delay: 2500,
-                    allow_dismiss: true
-                });
-                $("#modal-user-settings").modal('hide');
-            }
-
-        })
-    }
-
-    function validar_clave() {
-
-        /*aqui valido si la clave actual es correcta*/
-        if ($("#clave_actual").val() == "") {
-            var growlType = 'warning';
-
-            $.bootstrapGrowl('<h4>Debe ingresar su clave actual</h4>', {
+              $.bootstrapGrowl('<h4>' + data.error + '</h4>', {
                 type: growlType,
                 delay: 2500,
                 allow_dismiss: true
-            });
+              })
 
-            $(this).prop('disabled', true);
-
-            return false;
-        }
-
-        if ($("#user-settings-password").val() == '') {
-            var growlType = 'warning';
-
-            $.bootstrapGrowl('<h4>Debe ingresar su nueva clave</h4>', {
-                type: growlType,
-                delay: 2500,
-                allow_dismiss: true
-            });
-
-            $(this).prop('disabled', true);
-
-            return false;
-        }
-
-        if ($("#clave_repetir").val() == '') {
-            var growlType = 'warning';
-
-            $.bootstrapGrowl('<h4>Debe repetir la nueva clave</h4>', {
-                type: growlType,
-                delay: 2500,
-                allow_dismiss: true
-            });
-
-            $(this).prop('disabled', true);
-
-            return false;
-        }
-        $.ajax({
-            type: "POST",
-            url: '<?=$ruta?>inicio/validar_singuardar',
-            data: {'pw': $("#clave_actual").val(), 'user': $("#username").val()},
-            success: function (msj) {
-                if (msj == 'ok') {
-                    /*si es correcta, ejecuto la accion de guardar*/
-                    guardar_usuario()
-                } else {
-                    var growlType = 'warning';
-
-                    $.bootstrapGrowl('<h4>Por favor vuelva a ingresar el Password actual</h4>', {
-                        type: growlType,
-                        delay: 2500,
-                        allow_dismiss: true
-                    });
-
-                }
-            },
-            error: function (data) {
-                var growlType = 'warning';
-
-                $.bootstrapGrowl('<h4>Ha ocurrido un error</h4>', {
-                    type: growlType,
-                    delay: 2500,
-                    allow_dismiss: true
-                });
-
-                $(this).prop('disabled', true);
-
-                return false;
-            }
-        })
-
-
-    }
-
-    function handleF() {
-        $('body').on('keydown', function (e) {
-
-
-            if (e.keyCode == 118 && $("#productomodal").length != 0) {
-
-                agregarprecio();
-            }
-
-
-            if (e.which == 123) // Enter key = keycode 13
-            {
-                event.preventDefault();
-                var shell = new ActiveXObject("Wscript.shell");
-                shell.run("c:\\Windows\\System32\\calc.exe");
-            }
-            //console.log(e.keyCode);
-
-            if (e.keyCode == 116) {
-                e.preventDefault();
-                e.stopPropagation();
-                // $(this).next().focus();  //Use whatever selector necessary to focus the 'next' input
-                return false;
-            }
-
-
-            if (e.keyCode == 114) {
-
-                if ($(".modal").is(":visible")) {
-                    return false;
-                }
-                e.preventDefault();
-
-
-                $('#barloadermodal').modal('show');
-
-                $.ajax({
-                    url: '<?=$ruta?>venta_new',
-                    success: function (data) {
-
-                        if (data.error == undefined) {
-
-                            $('#page-content').html(data);
-
-
-                        } else {
-
-                            var growlType = 'warning';
-
-                            $.bootstrapGrowl('<h4>' + data.error + '</h4>', {
-                                type: growlType,
-                                delay: 2500,
-                                allow_dismiss: true
-                            });
-
-                            $(this).prop('disabled', true);
-
-                        }
-
-
-                        $('#barloadermodal').modal('hide');
-
-                    },
-                    error: function (response) {
-                        $('#barloadermodal').modal('hide');
-                        var growlType = 'warning';
-
-                        $.bootstrapGrowl('<h4>Ha ocurrido un error al realizar la operacion</h4>', {
-                            type: growlType,
-                            delay: 2500,
-                            allow_dismiss: true
-                        });
-
-                        $(this).prop('disabled', true);
-
-                    }
-                })
-            }
-
-
-            if (e.keyCode == 113) {
-
-                e.preventDefault();
-
-                if ($(".modal").is(":visible")) {
-                    return false;
-                }
-                $('#barloadermodal').modal('show');
-
-                $.ajax({
-                    url: '<?=$ruta?>producto/stock',
-                    success: function (data) {
-
-                        if (data.error == undefined) {
-
-                            $('#page-content').html(data);
-
-
-                        } else {
-
-                            var growlType = 'warning';
-
-                            $.bootstrapGrowl('<h4>' + data.error + '</h4>', {
-                                type: growlType,
-                                delay: 2500,
-                                allow_dismiss: true
-                            });
-
-                            $(this).prop('disabled', true);
-
-                        }
-
-
-                        $('#barloadermodal').modal('hide');
-
-                    },
-                    error: function (response) {
-                        $('#barloadermodal').modal('hide');
-                        var growlType = 'warning';
-
-                        $.bootstrapGrowl('<h4>Ha ocurrido un error al realizar la operacion</h4>', {
-                            type: growlType,
-                            delay: 2500,
-                            allow_dismiss: true
-                        });
-
-                        $(this).prop('disabled', true);
-
-                    }
-                })
+              $(this).prop('disabled', true)
 
             }
 
-            if (e.keyCode == 115) {
+            $('#barloadermodal').modal('hide')
 
-                e.preventDefault();
+          },
+          error: function (response) {
+            $('#barloadermodal').modal('hide')
+            var growlType = 'warning'
 
-                if ($(".modal").is(":visible")) {
-                    return false;
-                }
-                $('#barloadermodal').modal('show');
-
-                $.ajax({
-                    url: '<?=$ruta?>producto/listaprecios',
-                    success: function (data) {
-
-
-                        App.sidebar('close-sidebar');
-
-                        if (data.error == undefined) {
-
-                            $('#page-content').html(data);
-
-
-                        } else {
-
-                            var growlType = 'warning';
-
-                            $.bootstrapGrowl('<h4>' + data.error + '</h4>', {
-                                type: growlType,
-                                delay: 2500,
-                                allow_dismiss: true
-                            });
-
-                            $(this).prop('disabled', true);
-
-                        }
-
-
-                        $('#barloadermodal').modal('hide');
-
-                    },
-                    error: function (response) {
-                        $('#barloadermodal').modal('hide');
-                        var growlType = 'warning';
-
-                        $.bootstrapGrowl('<h4>Ha ocurrido un error al realizar la operacion</h4>', {
-                            type: growlType,
-                            delay: 2500,
-                            allow_dismiss: true
-                        });
-
-                        $(this).prop('disabled', true);
-
-                    }
-                })
-
-            }
-        });
-
-
-    }
-
-
-    var miperfil = {
-
-        guardar: function () {
-            if ($("#nombre").val() == '') {
-                var growlType = 'warning';
-
-                $.bootstrapGrowl('<h4>Debe ingresar el nombre</h4>', {
-                    type: growlType,
-                    delay: 2500,
-                    allow_dismiss: true
-                });
-
-                $(this).prop('disabled', true);
-
-                return false;
-            }
-
-            $.ajax({
-                type: 'POST',
-                url: '<?= $ruta ?>usuario/guardarsession',
-                data: $("#modal-user-settings-form").serialize(),
-                success: function (msj) {
-
-                    console.log(data)
-                    if (msj == "no guardo") {
-
-                        var growlType = 'warning';
-
-                        $.bootstrapGrowl('<h4>Ocurrio un error durante el registro</h4>', {
-                            type: growlType,
-                            delay: 2500,
-                            allow_dismiss: true
-                        });
-
-                        return false;
-
-                    } else if (msj == "guardo") {
-                        var growlType = 'success';
-
-                        $.bootstrapGrowl('<h4>Se han guardado los cambios</h4>', {
-                            type: growlType,
-                            delay: 2500,
-                            allow_dismiss: true
-                        });
-                        $("#modal-user-settings").modal('hide');
-
-                    } else {
-                        var growlType = 'success';
-
-                        $.bootstrapGrowl('<h4>El username ingresado ya existe</h4>', {
-                            type: growlType,
-                            delay: 2500,
-                            allow_dismiss: true
-                        });
-
-                    }
-                },
-                error: function () {
-                    alert("error")
-                }
-
+            $.bootstrapGrowl('<h4>Ha ocurrido un error al realizar la operacion</h4>', {
+              type: growlType,
+              delay: 2500,
+              allow_dismiss: true
             })
 
+            $(this).prop('disabled', true)
 
-        }
-    }
+          }
+        })
+      }
 
-    $(document).click(function (e) {
-        var target = e.target;
-        if ($(target).is('li.alertD>a')) {
-            e.preventDefault();
-            $('li.alertD>ul').slideToggle(50);
-        } else {
-            $('li.alertD>ul').slideUp(50);
+      if (e.keyCode == 113) {
+
+        e.preventDefault()
+
+        if ($('.modal').is(':visible')) {
+          return false
         }
+        $('#barloadermodal').modal('show')
+
+        $.ajax({
+          url: '<?=$ruta?>producto/stock',
+          success: function (data) {
+
+            if (data.error == undefined) {
+
+              $('#page-content').html(data)
+
+            } else {
+
+              var growlType = 'warning'
+
+              $.bootstrapGrowl('<h4>' + data.error + '</h4>', {
+                type: growlType,
+                delay: 2500,
+                allow_dismiss: true
+              })
+
+              $(this).prop('disabled', true)
+
+            }
+
+            $('#barloadermodal').modal('hide')
+
+          },
+          error: function (response) {
+            $('#barloadermodal').modal('hide')
+            var growlType = 'warning'
+
+            $.bootstrapGrowl('<h4>Ha ocurrido un error al realizar la operacion</h4>', {
+              type: growlType,
+              delay: 2500,
+              allow_dismiss: true
+            })
+
+            $(this).prop('disabled', true)
+
+          }
+        })
+
+      }
+
+      if (e.keyCode == 115) {
+
+        e.preventDefault()
+
+        if ($('.modal').is(':visible')) {
+          return false
+        }
+        $('#barloadermodal').modal('show')
+
+        $.ajax({
+          url: '<?=$ruta?>producto/listaprecios',
+          success: function (data) {
+
+            App.sidebar('close-sidebar')
+
+            if (data.error == undefined) {
+
+              $('#page-content').html(data)
+
+            } else {
+
+              var growlType = 'warning'
+
+              $.bootstrapGrowl('<h4>' + data.error + '</h4>', {
+                type: growlType,
+                delay: 2500,
+                allow_dismiss: true
+              })
+
+              $(this).prop('disabled', true)
+
+            }
+
+            $('#barloadermodal').modal('hide')
+
+          },
+          error: function (response) {
+            $('#barloadermodal').modal('hide')
+            var growlType = 'warning'
+
+            $.bootstrapGrowl('<h4>Ha ocurrido un error al realizar la operacion</h4>', {
+              type: growlType,
+              delay: 2500,
+              allow_dismiss: true
+            })
+
+            $(this).prop('disabled', true)
+
+          }
+        })
+
+      }
     })
+
+  }
+
+  var miperfil = {
+
+    guardar: function () {
+      if ($('#nombre').val() == '') {
+        var growlType = 'warning'
+
+        $.bootstrapGrowl('<h4>Debe ingresar el nombre</h4>', {
+          type: growlType,
+          delay: 2500,
+          allow_dismiss: true
+        })
+
+        $(this).prop('disabled', true)
+
+        return false
+      }
+
+      $.ajax({
+        type: 'POST',
+        url: '<?= $ruta ?>usuario/guardarsession',
+        data: $('#modal-user-settings-form').serialize(),
+        success: function (msj) {
+
+          console.log(data)
+          if (msj == 'no guardo') {
+
+            var growlType = 'warning'
+
+            $.bootstrapGrowl('<h4>Ocurrio un error durante el registro</h4>', {
+              type: growlType,
+              delay: 2500,
+              allow_dismiss: true
+            })
+
+            return false
+
+          } else if (msj == 'guardo') {
+            var growlType = 'success'
+
+            $.bootstrapGrowl('<h4>Se han guardado los cambios</h4>', {
+              type: growlType,
+              delay: 2500,
+              allow_dismiss: true
+            })
+            $('#modal-user-settings').modal('hide')
+
+          } else {
+            var growlType = 'success'
+
+            $.bootstrapGrowl('<h4>El username ingresado ya existe</h4>', {
+              type: growlType,
+              delay: 2500,
+              allow_dismiss: true
+            })
+
+          }
+        },
+        error: function () {
+          alert('error')
+        }
+
+      })
+
+    }
+  }
+
+  $(document).click(function (e) {
+    var target = e.target
+    if ($(target).is('li.alertD>a')) {
+      e.preventDefault()
+      $('li.alertD>ul').slideToggle(50)
+    } else {
+      $('li.alertD>ul').slideUp(50)
+    }
+  })
 </script>

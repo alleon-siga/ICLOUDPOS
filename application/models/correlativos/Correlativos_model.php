@@ -23,7 +23,7 @@ class correlativos_model extends CI_Model
             $this->db->insert('correlativos', array(
                 'id_local' => $local_id,
                 'id_documento' => $documento_id,
-                'serie' => '0001',
+                'serie' => '001',
                 'correlativo' => '1'
             ));
 

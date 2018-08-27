@@ -71,7 +71,8 @@ class venta_new_model extends CI_Model
             cliente.tipo_cliente as tipo_cliente,
             venta.dni_garante as nombre_vd,
             (select SUM(detalle_venta.cantidad) from detalle_venta
-            where detalle_venta.id_venta=venta.venta_id) as total_bultos
+            where detalle_venta.id_venta=venta.venta_id) as total_bultos,
+            venta.nota_facturada as nota_facturada
             ')
             ->from('venta')
             ->join('documentos', 'venta.id_documento=documentos.id_doc')
@@ -479,7 +480,7 @@ class venta_new_model extends CI_Model
                 return false;
             }
         }
- 
+
         if (sizeof($traspasos) > 0) {
             $this->save_traspasos($traspasos, $venta['id_usuario'], $venta['condicion_pago']);
         }
@@ -509,8 +510,8 @@ class venta_new_model extends CI_Model
             'dni_garante' => $venta['dni_garante'],
             'latitud' => isset($venta['latitud']) ? $venta['latitud'] : null,
             'longitud' => isset($venta['longitud']) ? $venta['longitud'] : null,
-            'plataforma' => isset($venta['plataforma'])? $venta['plataforma']:0
-         );
+            'plataforma' => isset($venta['plataforma']) ? $venta['plataforma'] : 0
+        );
 
         if ($venta['venta_status'] == 'CAJA') {
             $venta_contado['total'] = $venta['total_importe'];
@@ -883,17 +884,17 @@ class venta_new_model extends CI_Model
                 $tipo = -2;
 
             $costo = 0;
-            if($ArrfectImp[$key]=='1'){
-                if($venta->tipo_impuesto==1){ //incluye impuesto
+            if ($ArrfectImp[$key] == '1') {
+                if ($venta->tipo_impuesto == 1) { //incluye impuesto
                     $costo = $precio[$key] / (($impPorciento[$key] / 100) + 1);
-                }else{ //agrega impuesto
+                } else { //agrega impuesto
                     $costo = $precio[$key];
                 }
-            }else{
+            } else {
                 $costo = $precio[$key];
             }
 
-            if($venta->moneda_tasa > 0){
+            if ($venta->moneda_tasa > 0) {
                 $costo = $costo * $venta->moneda_tasa;
             }
 
@@ -944,7 +945,7 @@ class venta_new_model extends CI_Model
             'usuario_id' => $id_usuario,
             'local_destino' => $traspasos[0]->parent_local,
             'fecha' => date('Y-m-d H:i:s'),
-            'motivo' => ($condicion_pago=='1') ? 'VENTA AL CONTADO': 'VENTA AL CREDITO'
+            'motivo' => ($condicion_pago == '1') ? 'VENTA AL CONTADO' : 'VENTA AL CREDITO'
         );
         $this->db->insert('traspaso', $values);
         $idTraspaso = $this->db->insert_id();
@@ -957,7 +958,7 @@ class venta_new_model extends CI_Model
                 ->where('producto_id', $traspaso->id_producto)
                 ->where('orden', $orden_max->orden)
                 ->get('unidades_has_producto')->row();
-            
+
             $result = $this->traspaso_model->traspasar_productos($traspaso->id_producto, $traspaso->local_id, $traspaso->parent_local, $id_usuario, array(
                 'um_id' => $minima_unidad->um_id,
                 'cantidad' => $traspaso->cantidad,
@@ -1022,17 +1023,17 @@ class venta_new_model extends CI_Model
                 $referencias->ref_val == "";
 
             $costo = 0;
-            if($afectacion_impuesto[$key]=='1'){
-                if($venta->tipo_impuesto==1){ //incluye impuesto
+            if ($afectacion_impuesto[$key] == '1') {
+                if ($venta->tipo_impuesto == 1) { //incluye impuesto
                     $costo = $precio[$key] / (($impuesto_porciento[$key] / 100) + 1);
-                }else{ //agrega impuesto
+                } else { //agrega impuesto
                     $costo = $precio[$key];
                 }
-            }else{
+            } else {
                 $costo = $precio[$key];
             }
 
-            if($venta->moneda_tasa > 0){
+            if ($venta->moneda_tasa > 0) {
                 $costo = $costo * $venta->moneda_tasa;
             }
 
@@ -1126,6 +1127,26 @@ class venta_new_model extends CI_Model
                     $this->db->delete('facturacion');
                 }
             }
+        }
+
+        if (valueOptionDB('FACTURACION', 0) == 1 && ($venta->id_documento == 6 && $venta->nota_facturada == 1)) {
+            $facturaciones = $this->db->get_where('facturacion', array(
+                'ref_id' => $venta_id,
+                'documento_tipo !=' => '07'
+            ))->result();
+
+            foreach ($facturaciones as $facturacion) {
+
+                if ($facturacion->estado == 3 || $facturacion->estado == 2) {
+                    $resp = $this->facturacion_model->anularComprobante($facturacion->id, $motivo);
+                } else {
+                    $this->db->where('id', $facturacion->id);
+                    $this->db->delete('facturacion');
+                }
+            }
+
+            $this->db->where('venta_id', $venta_id);
+            $this->db->update('venta', array('nota_facturada' => 0));
         }
 
         if ($venta->id_documento == '1') {
@@ -1263,19 +1284,19 @@ class venta_new_model extends CI_Model
                 $referencias->ref_val == "";
 
             $costo = 0;
-            if($afectacion_impuesto[$key]=='1'){
-                if($venta->tipo_impuesto==1){ //incluye impuesto
+            if ($afectacion_impuesto[$key] == '1') {
+                if ($venta->tipo_impuesto == 1) { //incluye impuesto
                     $costo = $precio[$key] / (($impuesto_porciento[$key] / 100) + 1);
-                }else{ //agrega impuesto
+                } else { //agrega impuesto
                     $costo = $precio[$key];
                 }
-            }else{
+            } else {
                 $costo = $precio[$key];
             }
 
-            if($venta->moneda_tasa > 0){
+            if ($venta->moneda_tasa > 0) {
                 $costo = $costo * $venta->moneda_tasa;
-            }            
+            }
 
             $values = array(
                 'local_id' => $venta->local_id,
@@ -1337,8 +1358,26 @@ class venta_new_model extends CI_Model
                     $this->db->delete('facturacion');
                 }
             }
+        }
 
+        if (valueOptionDB('FACTURACION', 0) == 1 && ($venta->documento_id == 6 && $venta->nota_facturada == 1)) {
+            $facturaciones = $this->db->get_where('facturacion', array(
+                'ref_id' => $venta_id,
+                'documento_tipo !=' => '07'
+            ))->result();
 
+            foreach ($facturaciones as $facturacion) {
+
+                if ($facturacion->estado == 3 || $facturacion->estado == 2) {
+                    $resp = $this->facturacion_model->anularComprobante($facturacion->id, $motivo);
+                } else {
+                    $this->db->where('id', $facturacion->id);
+                    $this->db->delete('facturacion');
+                }
+            }
+
+//            $this->db->where('venta_id', $venta_id);
+//            $this->db->update('venta', array('nota_facturada' => 0));
         }
 
         $venta = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
@@ -1565,7 +1604,7 @@ class venta_new_model extends CI_Model
         $this->db->order_by('i.fecha_registro DESC');
         $this->db->limit(10);
         $datos = $this->db->get()->result();
-        $x=0;
+        $x = 0;
         foreach ($datos as $dato) {
             $cantidad = $this->unidades_model->convert_minimo_by_um($datos[$x]->id_producto, $datos[$x]->unidad_medida, $datos[$x]->cantidad);
             $datos[$x]->cantidad = $cantidad;
