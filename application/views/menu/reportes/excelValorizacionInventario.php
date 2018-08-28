@@ -58,13 +58,13 @@ if (isset($productos)) {
     foreach ($productos as $producto) {
 
 
-        $subtotal = $producto['stock'] * $producto['producto_costo_unitario'];
+        $subtotal = $producto['stock'] * $producto['costo'];
 
         $total = $subtotal + $total;
 
 
         $precio = $producto['precio'];
-        $producto_costo_unitario = $producto['producto_costo_unitario'];
+        $producto_costo_unitario = $producto['costo'];
         if (isset($operacion)) {
             $string = '$precio$operacion$tasa_soles ';
             eval("\$string = \"$string\";");

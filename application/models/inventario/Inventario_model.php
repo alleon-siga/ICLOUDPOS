@@ -82,8 +82,9 @@ class inventario_model extends CI_Model
     {
         // $this->db->distinct();
         $this->db->select(' producto.producto_nombre as nombre, producto.*, unidades_has_producto.id_unidad, unidades.nombre_unidad, local.local_nombre, inventario.id_local, inventario.cantidad, inventario.fraccion ,lineas.nombre_linea,
-		 marcas.nombre_marca, familia.nombre_familia, grupos.nombre_grupo, proveedor.proveedor_nombre, grupos.id_grupo,unidades.nombre_unidad as nombre_fraccion');
+		 marcas.nombre_marca, familia.nombre_familia, grupos.nombre_grupo, proveedor.proveedor_nombre, grupos.id_grupo,unidades.nombre_unidad as nombre_fraccion, producto_costo_unitario.costo');
         $this->db->from('producto');
+        $this->db->join('producto_costo_unitario', 'producto.producto_id = producto_costo_unitario.producto_id AND moneda_id = 1029');
         $this->db->join('lineas', 'lineas.id_linea=producto.producto_linea', 'left');
         $this->db->join('marcas', 'marcas.id_marca=producto.producto_marca', 'left');
         $this->db->join('familia', 'familia.id_familia=producto.producto_familia', 'left');

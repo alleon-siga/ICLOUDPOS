@@ -45,19 +45,19 @@
 
                     <?php
                     if (isset($operacion)) {
-                        $precio = $producto['producto_costo_unitario'];
+                        $precio = $producto['costo'];
                         $string = ' $precio$operacion$tasa_soles ';
                         eval("\$string = \"$string\";");
                         eval("\$result = ($string);");
 
                         echo number_format($result, 2);
                     } else {
-                        echo number_format($producto['producto_costo_unitario'], 2);
+                        echo number_format($producto['costo'], 2);
                     }
                     ?>
                 </td>
                 <td><?=  number_format($producto['stock'],2) ?></td>
-                <td><?php $subtotal = $producto['stock'] * $producto['producto_costo_unitario'];
+                <td><?php $subtotal = $producto['stock'] * $producto['costo'];
 
 
                     if (isset($operacion)) {
