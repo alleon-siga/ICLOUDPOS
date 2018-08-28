@@ -747,7 +747,6 @@ $(document).ready(function () {
           var nuevaFecha = fecha[2] + '/' + fecha[1] + '/' + fecha[0]
           tabla += '<td>' + nuevaFecha + '</td>'
           tabla += '<td>' + data.simbolo + ' ' + data.precio + '</td>'
-          tabla += '<td>' + parseInt(data.cantidad) + '</td>'
           tabla += '<td>' + data.nombre_unidad + '</td>'
           tabla += '</tr>'
         })

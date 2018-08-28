@@ -36,6 +36,7 @@ class venta_new_model extends CI_Model
             local.direccion as local_direccion,
             venta.id_documento as documento_id,
             documentos.des_doc as documento_nombre,
+            documentos.abr_doc as documento_abr,
             correlativos.serie as serie_documento,
             venta.factura_impresa as factura_impresa,
             venta.id_cliente as cliente_id,
@@ -71,8 +72,7 @@ class venta_new_model extends CI_Model
             cliente.tipo_cliente as tipo_cliente,
             venta.dni_garante as nombre_vd,
             (select SUM(detalle_venta.cantidad) from detalle_venta
-            where detalle_venta.id_venta=venta.venta_id) as total_bultos,
-            venta.nota_facturada as nota_facturada
+            where detalle_venta.id_venta=venta.venta_id) as total_bultos
             ')
             ->from('venta')
             ->join('documentos', 'venta.id_documento=documentos.id_doc')
@@ -141,6 +141,10 @@ class venta_new_model extends CI_Model
 
         if (isset($where['usuarios_id']) && !empty($where['usuarios_id'])) {
             $this->db->where('venta.id_vendedor', $where['usuarios_id']);
+        }
+
+        if (isset($where['id_documento']) && !empty($where['id_documento'])) {
+            $this->db->where('venta.id_documento', $where['id_documento']);
         }
 
         $ventas = $this->db->get()->result();
@@ -480,7 +484,7 @@ class venta_new_model extends CI_Model
                 return false;
             }
         }
-
+ 
         if (sizeof($traspasos) > 0) {
             $this->save_traspasos($traspasos, $venta['id_usuario'], $venta['condicion_pago']);
         }
@@ -507,10 +511,7 @@ class venta_new_model extends CI_Model
             'tipo_impuesto' => $venta['tipo_impuesto'],
             'comprobante_id' => $venta['comprobante_id'],
             'nota' => $venta['venta_nota'],
-            'dni_garante' => $venta['dni_garante'],
-            'latitud' => isset($venta['latitud']) ? $venta['latitud'] : null,
-            'longitud' => isset($venta['longitud']) ? $venta['longitud'] : null,
-            'plataforma' => isset($venta['plataforma']) ? $venta['plataforma'] : 0
+            'dni_garante' => $venta['dni_garante']
         );
 
         if ($venta['venta_status'] == 'CAJA') {
@@ -646,10 +647,7 @@ class venta_new_model extends CI_Model
             'tipo_impuesto' => $venta['tipo_impuesto'],
             'comprobante_id' => $venta['comprobante_id'],
             'nota' => $venta['venta_nota'],
-            'dni_garante' => $venta['dni_garante'],
-            'latitud' => isset($venta['latitud']) ? $venta['latitud'] : null,
-            'longitud' => isset($venta['longitud']) ? $venta['longitud'] : null,
-            'plataforma' => isset($venta['plataforma'])? $venta['plataforma']:0
+            'dni_garante' => $venta['dni_garante']
         );
 
         //inserto la venta
@@ -884,17 +882,17 @@ class venta_new_model extends CI_Model
                 $tipo = -2;
 
             $costo = 0;
-            if ($ArrfectImp[$key] == '1') {
-                if ($venta->tipo_impuesto == 1) { //incluye impuesto
+            if($ArrfectImp[$key]=='1'){
+                if($venta->tipo_impuesto==1){ //incluye impuesto
                     $costo = $precio[$key] / (($impPorciento[$key] / 100) + 1);
-                } else { //agrega impuesto
+                }else{ //agrega impuesto
                     $costo = $precio[$key];
                 }
-            } else {
+            }else{
                 $costo = $precio[$key];
             }
 
-            if ($venta->moneda_tasa > 0) {
+            if($venta->moneda_tasa > 0){
                 $costo = $costo * $venta->moneda_tasa;
             }
 
@@ -945,7 +943,7 @@ class venta_new_model extends CI_Model
             'usuario_id' => $id_usuario,
             'local_destino' => $traspasos[0]->parent_local,
             'fecha' => date('Y-m-d H:i:s'),
-            'motivo' => ($condicion_pago == '1') ? 'VENTA AL CONTADO' : 'VENTA AL CREDITO'
+            'motivo' => ($condicion_pago=='1') ? 'VENTA AL CONTADO': 'VENTA AL CREDITO'
         );
         $this->db->insert('traspaso', $values);
         $idTraspaso = $this->db->insert_id();
@@ -958,7 +956,7 @@ class venta_new_model extends CI_Model
                 ->where('producto_id', $traspaso->id_producto)
                 ->where('orden', $orden_max->orden)
                 ->get('unidades_has_producto')->row();
-
+            
             $result = $this->traspaso_model->traspasar_productos($traspaso->id_producto, $traspaso->local_id, $traspaso->parent_local, $id_usuario, array(
                 'um_id' => $minima_unidad->um_id,
                 'cantidad' => $traspaso->cantidad,
@@ -1023,17 +1021,17 @@ class venta_new_model extends CI_Model
                 $referencias->ref_val == "";
 
             $costo = 0;
-            if ($afectacion_impuesto[$key] == '1') {
-                if ($venta->tipo_impuesto == 1) { //incluye impuesto
+            if($afectacion_impuesto[$key]=='1'){
+                if($venta->tipo_impuesto==1){ //incluye impuesto
                     $costo = $precio[$key] / (($impuesto_porciento[$key] / 100) + 1);
-                } else { //agrega impuesto
+                }else{ //agrega impuesto
                     $costo = $precio[$key];
                 }
-            } else {
+            }else{
                 $costo = $precio[$key];
             }
 
-            if ($venta->moneda_tasa > 0) {
+            if($venta->moneda_tasa > 0){
                 $costo = $costo * $venta->moneda_tasa;
             }
 
@@ -1127,26 +1125,6 @@ class venta_new_model extends CI_Model
                     $this->db->delete('facturacion');
                 }
             }
-        }
-
-        if (valueOptionDB('FACTURACION', 0) == 1 && ($venta->id_documento == 6 && $venta->nota_facturada == 1)) {
-            $facturaciones = $this->db->get_where('facturacion', array(
-                'ref_id' => $venta_id,
-                'documento_tipo !=' => '07'
-            ))->result();
-
-            foreach ($facturaciones as $facturacion) {
-
-                if ($facturacion->estado == 3 || $facturacion->estado == 2) {
-                    $resp = $this->facturacion_model->anularComprobante($facturacion->id, $motivo);
-                } else {
-                    $this->db->where('id', $facturacion->id);
-                    $this->db->delete('facturacion');
-                }
-            }
-
-            $this->db->where('venta_id', $venta_id);
-            $this->db->update('venta', array('nota_facturada' => 0));
         }
 
         if ($venta->id_documento == '1') {
@@ -1284,19 +1262,19 @@ class venta_new_model extends CI_Model
                 $referencias->ref_val == "";
 
             $costo = 0;
-            if ($afectacion_impuesto[$key] == '1') {
-                if ($venta->tipo_impuesto == 1) { //incluye impuesto
+            if($afectacion_impuesto[$key]=='1'){
+                if($venta->tipo_impuesto==1){ //incluye impuesto
                     $costo = $precio[$key] / (($impuesto_porciento[$key] / 100) + 1);
-                } else { //agrega impuesto
+                }else{ //agrega impuesto
                     $costo = $precio[$key];
                 }
-            } else {
+            }else{
                 $costo = $precio[$key];
             }
 
-            if ($venta->moneda_tasa > 0) {
+            if($venta->moneda_tasa > 0){
                 $costo = $costo * $venta->moneda_tasa;
-            }
+            }            
 
             $values = array(
                 'local_id' => $venta->local_id,
@@ -1358,26 +1336,8 @@ class venta_new_model extends CI_Model
                     $this->db->delete('facturacion');
                 }
             }
-        }
 
-        if (valueOptionDB('FACTURACION', 0) == 1 && ($venta->documento_id == 6 && $venta->nota_facturada == 1)) {
-            $facturaciones = $this->db->get_where('facturacion', array(
-                'ref_id' => $venta_id,
-                'documento_tipo !=' => '07'
-            ))->result();
 
-            foreach ($facturaciones as $facturacion) {
-
-                if ($facturacion->estado == 3 || $facturacion->estado == 2) {
-                    $resp = $this->facturacion_model->anularComprobante($facturacion->id, $motivo);
-                } else {
-                    $this->db->where('id', $facturacion->id);
-                    $this->db->delete('facturacion');
-                }
-            }
-
-//            $this->db->where('venta_id', $venta_id);
-//            $this->db->update('venta', array('nota_facturada' => 0));
         }
 
         $venta = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
@@ -1582,7 +1542,7 @@ class venta_new_model extends CI_Model
 
     public function ultimasVentas($venta)
     {
-        $this->db->select('date(v.fecha) AS fecha, dv.precio, dv.cantidad, u.nombre_unidad, venta_id, m.simbolo');
+        $this->db->select('date(v.fecha) AS fecha, dv.precio, u.nombre_unidad, venta_id, m.simbolo, dv.unidad_medida, dv.id_producto');
         $this->db->from('detalle_venta dv');
         $this->db->join('venta v', 'v.venta_id=dv.id_venta');
         $this->db->join('unidades u', 'dv.unidad_medida=u.id_unidad');
@@ -1590,7 +1550,15 @@ class venta_new_model extends CI_Model
         $this->db->where('id_producto', $venta['id_producto']);
         $this->db->where('id_cliente', $venta['id_cliente']);
         $this->db->order_by('v.fecha DESC');
-        return $this->db->get()->result();
+        $this->db->limit(10);
+        $datos = $this->db->get()->result();
+        $x=0;
+        foreach ($datos as $dato) {
+            $datos[$x]->precio = number_format($this->unidades_model->get_maximo_costo($datos[$x]->id_producto, $datos[$x]->unidad_medida, $datos[$x]->precio), 2);
+            $datos[$x]->nombre_unidad = $this->unidades_model->get_um_min_by_producto($datos[$x]->id_producto);
+            $x++;
+        }
+        return $datos;
     }
 
     public function ultimasCompras($id)
@@ -1604,7 +1572,7 @@ class venta_new_model extends CI_Model
         $this->db->order_by('i.fecha_registro DESC');
         $this->db->limit(10);
         $datos = $this->db->get()->result();
-        $x = 0;
+        $x=0;
         foreach ($datos as $dato) {
             $cantidad = $this->unidades_model->convert_minimo_by_um($datos[$x]->id_producto, $datos[$x]->unidad_medida, $datos[$x]->cantidad);
             $datos[$x]->cantidad = $cantidad;
@@ -1612,5 +1580,75 @@ class venta_new_model extends CI_Model
             $x++;
         }
         return $datos;
+    }
+
+    function prepare_venta($id)
+    {
+
+        $venta = $this->get_ventas(array('venta_id' => $id));
+
+        $venta->detalles = $this->db->select('
+            dv.id_detalle as detalle_id,
+            v.local_id AS local_id,
+            local.local_nombre AS local_nombre,
+            dv.id_producto as producto_id,
+            producto.producto_codigo_interno as producto_codigo_interno,
+            producto.producto_nombre as producto_nombre,
+            dv.precio as precio,
+            dv.precio_venta as precio_venta,
+            dv.cantidad as cantidad,
+            (SELECT cantidad FROM producto_almacen WHERE id_producto = dv.id_producto AND id_local = v.local_id LIMIT 1) AS cantidad_almacen,
+            (SELECT fraccion FROM producto_almacen WHERE id_producto = dv.id_producto AND id_local = v.local_id LIMIT 1) AS fraccion_almacen,
+            dv.unidad_medida as unidad_id,
+            unidades.nombre_unidad as unidad_nombre,
+            unidades.abreviatura as unidad_abr,
+            SUM(dv.precio * dv.cantidad) as importe,
+            dv.impuesto_porciento as impuesto,
+            IFNULL(dv.afectacion_impuesto, 0) as afectacion_impuesto,
+            dv.precio_venta as precio_venta
+            ')
+            ->from('detalle_venta as dv')
+            ->join('venta as v', 'dv.id_venta = v.venta_id')
+            ->join('local', 'local.int_local_id=v.local_id')
+            ->join('producto', 'producto.producto_id=dv.id_producto')
+            ->join('unidades', 'unidades.id_unidad=dv.unidad_medida')
+            ->where('dv.id_venta', $venta->venta_id)
+            ->group_by('dv.id_detalle')
+            ->get()->result();
+
+        $result = array();
+
+        foreach ($venta->detalles as $detalle) {
+
+            if (!isset($result[$detalle->producto_id])) {
+                $result[$detalle->producto_id] = new stdClass();
+                $result[$detalle->producto_id]->producto_nombre = $detalle->producto_nombre;
+                $result[$detalle->producto_id]->producto_id = $detalle->producto_id;
+                $result[$detalle->producto_id]->impuesto = $detalle->impuesto;
+                $result[$detalle->producto_id]->afectacion_impuesto = $detalle->afectacion_impuesto;
+                $result[$detalle->producto_id]->precio = $detalle->precio;
+                $result[$detalle->producto_id]->precio_venta = $detalle->precio_venta;
+                $result[$detalle->producto_id]->um_min = $this->unidades_model->get_um_min_by_producto($detalle->producto_id);
+                $result[$detalle->producto_id]->um_min_abr = $this->unidades_model->get_um_min_by_producto_abr($detalle->producto_id);
+                $result[$detalle->producto_id]->total_min = 0;
+                $result[$detalle->producto_id]->unidades = array();
+                $unidades = $this->unidades_model->get_unidades_precios($detalle->producto_id, 3);
+                foreach ($unidades as $unidad) {
+                    $result[$detalle->producto_id]->unidades[$unidad->id_unidad] = new stdClass();
+                    $result[$detalle->producto_id]->unidades[$unidad->id_unidad]->unidad_id = $unidad->id_unidad;
+                    $result[$detalle->producto_id]->unidades[$unidad->id_unidad]->unidad_nombre = $unidad->nombre_unidad;
+                    $result[$detalle->producto_id]->unidades[$unidad->id_unidad]->unidad_abr = $unidad->abr;
+                    $result[$detalle->producto_id]->unidades[$unidad->id_unidad]->cantidad = 0;
+                    $result[$detalle->producto_id]->unidades[$unidad->id_unidad]->unidades = $unidad->unidades;
+                    $result[$detalle->producto_id]->unidades[$unidad->id_unidad]->orden = $unidad->orden;
+                }
+            }
+            $result[$detalle->producto_id]->unidades[$detalle->unidad_id]->cantidad = $detalle->cantidad;
+            $result[$detalle->producto_id]->total_min += $this->unidades_model->convert_minimo_by_um($detalle->producto_id, $detalle->unidad_id, $detalle->cantidad);
+
+        }
+
+        $venta->detalles = $result;
+        return $venta;
     }
 }
