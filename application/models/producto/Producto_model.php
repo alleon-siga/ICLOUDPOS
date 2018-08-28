@@ -57,7 +57,7 @@ class producto_model extends CI_Model
             if (count($terms) > 0) {
                 $query .= " AND ";
                 $n = 1;
-                if (getCodigo() == 'AUTO')
+                if (getCodigo() == 'INTERNO')
                     $codigo = 'producto_codigo_interno';
                 else
                     $codigo = 'producto_id';

@@ -56,7 +56,7 @@
                                     id="vc_total_pagar"
                                     name="vc_total_pagar"
                                     readonly
-                                    onkeydown="return soloDecimal(this, event);">
+                                    onkeydown="return soloDecimal(this, event)">
                         </div>
                     </div>
                 </div>
@@ -79,7 +79,7 @@
                                     value="0.00"
                                     name="vc_importe"
                                     id="vc_importe"
-                                    onkeydown="return soloDecimal(this, event);">
+                                    onkeydown="return soloDecimal(this, event)">
 
                         </div>
                     </div>
@@ -125,7 +125,8 @@
                         <label for="vc_num_oper" class="control-label panel-admin-text">Operaci&oacute;n #:</label>
                     </div>
                     <div class="col-md-9">
-                        <input type="text" tabindex="0" class='input-square input-small form-control' name="vc_num_oper" id="vc_num_oper" autocomplete="off">
+                        <input type="text" tabindex="0" class='input-square input-small form-control' name="vc_num_oper"
+                               id="vc_num_oper" autocomplete="off">
                     </div>
                 </div>
             </div>
@@ -151,21 +152,21 @@
 
             <div class="row">
                 <div class="col-md-12">
-                <?php
+                    <?php
                     $boton = json_decode(valueOption("BOTONES_VENTA"));
                     $arrHtml[0] = '<button class="btn btn-default save_venta_contado" data-imprimir="0" type="button" id="btn_venta_contado"><i class="fa fa-save"></i> Guardar</button>';
                     $arrHtml[1] = '<a href="#" class="btn btn-default save_venta_contado ocultar_caja" id="btn_venta_contado_imprimir_2" data-imprimir="2" type="button"><i class="fa fa-print"></i> (F6)Guardar & Imprimir</a>';
                     $arrHtml[2] = '<a href="#" class="btn btn-default save_venta_contado ocultar_caja" id="btn_venta_contado_imprimir" data-imprimir="1" type="button"><i class="fa fa-print"></i> Guardar & Detalles</a>';
                     $arr = array('GUARDAR', 'GUARDAR & IMPRIMIR', 'GUARDAR & DETALLES');
                     foreach ($boton as $clave => $valor) {
-                        if($valor=='1'){
+                        if ($valor == '1') {
                             echo $arrHtml[$clave];
                         }
                     }
-                ?>
+                    ?>
                     <button class="btn btn-danger"
                             type="button"
-                            onclick="$('#dialog_venta_contado').modal('hide');"><i
+                            onclick="$('#dialog_venta_contado').modal('hide')"><i
                                 class="fa fa-close"></i> Cancelar
                     </button>
                 </div>
@@ -175,111 +176,125 @@
 </div>
 
 <script>
-    $(document).ready(function () {
+  var bancos = []
+  <?php foreach ($bancos as $banco): ?>
+  bancos.push({
+    banco_id: '<?= $banco->banco_id ?>',
+    banco_nombre: '<?= $banco->banco_nombre ?>',
+    moneda_id: '<?= $banco->id_moneda ?>'
+  })
+  <?php endforeach ?>
+  $(document).ready(function () {
 
-        $(document).keyup(function (e) {
+    $(document).keyup(function (e) {
 
+    })
 
-        });
+    $('.save_venta_contado').on('click', function () {
+      var tipo_pago = $('#contado_tipo_pago').val()
+      if (tipo_pago == '1') {
+        save_venta_contado($(this).attr('data-imprimir'))
 
-        $(".save_venta_contado").on('click', function () {
-            var tipo_pago = $("#contado_tipo_pago").val();
-            if (tipo_pago == '1') {
-                save_venta_contado($(this).attr('data-imprimir'));
+      } else if (tipo_pago == '2') {
+        if ($('#vc_forma_pago').val() == '3' && $('#vc_vuelto').val() < 0) {
+          show_msg('warning', '<h4>Error. </h4><p>El importe no puede ser menor que el total a pagar. Recomendamos una venta al Cr&eacute;dito.</p>')
+          setTimeout(function () {
+            $('#vc_importe').trigger('focus')
+          }, 500)
+          return false
+        }
+        if ($('#vc_forma_pago').val() != '3' && $('#vc_num_oper').val() == '') {
+          show_msg('warning', '<h4>Error. </h4><p>El campo Operaci&oacute;n # es obligatorio.</p>')
+          setTimeout(function () {
+            $('#vc_num_oper').trigger('focus')
+          }, 500)
+          return false
+        }
+        if (($('#vc_forma_pago').val() == '4' || $('#vc_forma_pago').val() == '8' || $('#vc_forma_pago').val() == '9' || $('#vc_forma_pago').val() == '7') && $('#vc_banco_id').val() == '') {
+          show_msg('warning', '<h4>Error. </h4><p>Debe seleccionar un Banco</p>')
+          setTimeout(function () {
+            $('#vc_banco_id').trigger('focus')
+          }, 500)
+          return false
+        }
 
-            } else if (tipo_pago == '2') {
-                if ($("#vc_forma_pago").val() == '3' && $("#vc_vuelto").val() < 0) {
-                    show_msg('warning', '<h4>Error. </h4><p>El importe no puede ser menor que el total a pagar. Recomendamos una venta al Cr&eacute;dito.</p>');
-                    setTimeout(function () {
-                        $("#vc_importe").trigger('focus');
-                    }, 500);
-                    return false;
-                }
-                if ($("#vc_forma_pago").val() != '3' && $("#vc_num_oper").val() == '') {
-                    show_msg('warning', '<h4>Error. </h4><p>El campo Operaci&oacute;n # es obligatorio.</p>');
-                    setTimeout(function () {
-                        $("#vc_num_oper").trigger('focus');
-                    }, 500);
-                    return false;
-                }
-                if (($("#vc_forma_pago").val() == '4' || $("#vc_forma_pago").val() == '8' || $("#vc_forma_pago").val() == '9' || $("#vc_forma_pago").val() == '7') && $("#vc_banco_id").val() == '') {
-                    show_msg('warning', '<h4>Error. </h4><p>Debe seleccionar un Banco</p>');
-                    setTimeout(function () {
-                        $("#vc_banco_id").trigger('focus');
-                    }, 500);
-                    return false;
-                }
+        save_venta_credito($(this).attr('data-imprimir'))
+      }
 
-                save_venta_credito($(this).attr('data-imprimir'));
-            }
+    })
 
-        });
+    $('#vc_forma_pago').on('change', function () {
+      var forma_pago = $('#vc_forma_pago').val()
 
-        $("#vc_forma_pago").on('change', function () {
-            var forma_pago = $("#vc_forma_pago").val();
+      $('#vc_tipo_tarjeta_block').hide()
+      $('#vc_importe_block').hide()
+      $('#vc_vuelto_block').hide()
+      $('#vc_num_oper_block').hide()
+      $('#vc_banco_block').hide()
+      $('#vc_num_oper').val('')
+      $('#vc_vuelto').val('0.00')
+      $('#vc_importe').val($('#vc_total_pagar').val())
 
-            $("#vc_tipo_tarjeta_block").hide();
-            $("#vc_importe_block").hide();
-            $("#vc_vuelto_block").hide();
-            $("#vc_num_oper_block").hide();
-            $("#vc_banco_block").hide();
-            $("#vc_num_oper").val('');
-            $("#vc_vuelto").val('0.00');
-            $("#vc_importe").val($("#vc_total_pagar").val());
+      //efectivo
+      if (forma_pago == '3') {
+        $('#vc_importe_block').show()
+        $('#vc_vuelto_block').show()
+        setTimeout(function () {
+          $('#vc_importe').trigger('focus')
+        }, 500)
+      }
+      //tarjeta
+      else if (forma_pago == '7') {
+        $('#vc_banco_block').show()
+        $('#vc_num_oper_block').show()
+        $('#vc_tipo_tarjeta_block').show()
+        setTimeout(function () {
+          $('#vc_num_oper').trigger('focus')
+        }, 500)
+      }
+      else if (forma_pago == '5' || forma_pago == '6' || forma_pago == '10') {
+        $('#vc_num_oper_block').show()
+        setTimeout(function () {
+          $('#vc_num_oper').trigger('focus')
+        }, 500)
+      }
 
-            //efectivo
-            if (forma_pago == '3') {
-                $("#vc_importe_block").show();
-                $("#vc_vuelto_block").show();
-                setTimeout(function () {
-                    $("#vc_importe").trigger('focus');
-                }, 500);
-            }
-            //tarjeta
-            else if (forma_pago == '7') {
-                $("#vc_banco_block").show();
-                $("#vc_num_oper_block").show();
-                $("#vc_tipo_tarjeta_block").show();
-                setTimeout(function () {
-                    $("#vc_num_oper").trigger('focus');
-                }, 500);
-            }
-            else if (forma_pago == '5' || forma_pago == '6' || forma_pago == '10') {
-                $("#vc_num_oper_block").show();
-                setTimeout(function () {
-                    $("#vc_num_oper").trigger('focus');
-                }, 500);
-            }
+      else if (forma_pago == '4' || forma_pago == '8' || forma_pago == '9') {
+        var banco_select = $('#vc_banco_id')
+        banco_select.html('<option value="">Seleccione</option>')
+        for (var i = 0; i < bancos.length; i++) {
+          if (bancos[i].moneda_id == $('#moneda_id').val()) {
+            banco_select.append('<option value="' + bancos[i].banco_id + '">' + bancos[i].banco_nombre + '</option>')
+          }
+        }
+        $('#vc_num_oper_block').show()
+        $('#vc_banco_block').show()
+        setTimeout(function () {
+          $('#vc_banco_id').trigger('focus')
+        }, 500)
 
-            else if (forma_pago == '4' || forma_pago == '8' || forma_pago == '9') {
-                $("#vc_num_oper_block").show();
-                $("#vc_banco_block").show();
-                setTimeout(function () {
-                    $("#vc_banco_id").trigger('focus');
-                }, 500);
+      }
+    })
 
-            }
-        });
+    $('#vc_importe').on('focus', function () {
+      $(this).select()
+    })
 
-        $("#vc_importe").on('focus', function () {
-            $(this).select();
-        });
+    $('#vc_importe').on('keyup', function () {
+      var importe = isNaN(parseFloat($('#vc_importe').val())) ? 0 : parseFloat($('#vc_importe').val())
+      if (importe > 0) {
+        var vuelto = parseFloat(importe - parseFloat($('#vc_total_pagar').val()))
+        $('#vc_vuelto').val(vuelto.toFixed(2))
+      }
+      else {
+        $('#vc_vuelto').val('0'.toFixed(2))
+      }
+    })
 
-        $("#vc_importe").on('keyup', function () {
-            var importe = isNaN(parseFloat($("#vc_importe").val())) ? 0 : parseFloat($("#vc_importe").val());
-            if (importe > 0) {
-                var vuelto = parseFloat(importe - parseFloat($("#vc_total_pagar").val()));
-                $("#vc_vuelto").val(vuelto.toFixed(2));
-            }
-            else {
-                $("#vc_vuelto").val('0'.toFixed(2))
-            }
-        });
+    $('#vc_num_oper').on('focus', function () {
+      $(this).select()
+    })
 
-        $("#vc_num_oper").on('focus', function () {
-            $(this).select();
-        });
-
-    });
+  })
 
 </script>

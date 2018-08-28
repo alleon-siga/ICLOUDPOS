@@ -24,6 +24,7 @@ class venta_new extends MY_Controller
             $this->load->model('diccionario_termino/diccionario_termino_model');
             $this->load->model('clientesgrupos/clientes_grupos_model');
             $this->load->model('usuario/usuario_model');
+            $this->load->model('banco/banco_model');
         } else {
             redirect(base_url(), 'refresh');
         }
@@ -47,7 +48,7 @@ class venta_new extends MY_Controller
         $data['dialog_venta_contado'] = $this->load->view('menu/venta/dialog_venta_contado', array(
             'tarjetas' => $this->db->get('tarjeta_pago')->result(),
             'metodos' => $this->metodos_pago_model->get_all(),
-            'bancos' => $this->db->get_where('banco', array('banco_status' => 1))->result()
+            'bancos' => $this->banco_model->get_all_in_object()
         ), true);
 
 
@@ -257,7 +258,7 @@ class venta_new extends MY_Controller
         $data['dialog_venta_contado'] = $this->load->view('menu/venta/dialog_venta_contado', array(
             'tarjetas' => $this->db->get('tarjeta_pago')->result(),
             'metodos' => $this->metodos_pago_model->get_all(),
-            'bancos' => $this->db->get_where('banco', array('banco_status' => 1))->result()
+            'bancos' => $this->banco_model->get_all_in_object()
         ), true);
 
         $data['dialog_venta_credito'] = $this->load->view('menu/venta/dialog_venta_credito', array(
@@ -953,7 +954,7 @@ class venta_new extends MY_Controller
         $this->load->view('menu/venta/dialog_venta_contado', array(
             'tarjetas' => $this->db->get('tarjeta_pago')->result(),
             'metodos' => $this->metodos_pago_model->get_all(),
-            'bancos' => $this->db->get_where('banco', array('banco_status' => 1))->result()
+            'bancos' => $this->banco_model->get_all_in_object()
         ));
     }
 

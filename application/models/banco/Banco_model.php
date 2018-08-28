@@ -19,6 +19,17 @@ class banco_model extends CI_Model
             ->get()->result_array();
     }
 
+    function get_all_in_object()
+    {
+        return $this->db->select('banco.*, moneda.*, caja_desglose.saldo as saldo, caja_desglose.descripcion as descripcion, caja.moneda_id as moneda_id')
+            ->from('banco')
+            ->join('caja_desglose', 'caja_desglose.id = banco.cuenta_id', 'left')
+            ->join('caja', 'caja.id = caja_desglose.caja_id', 'left')
+            ->join('moneda', 'moneda.id_moneda = caja.moneda_id', 'left')
+            ->where('banco_status', 1)
+            ->get()->result();
+    }
+
     function get_by($campo, $valor)
     {
         $this->db->where($campo, $valor);
