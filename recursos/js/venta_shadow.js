@@ -5,14 +5,6 @@ var is_edit = false;
 var auto_add = false
 
 $(document).ready(function () {
-
-  //Nuevo producto
-  /*$("#agregarproveedor").load(ruta + 'proveedor/form');
-   $("#agregarmarca").load(ruta + 'marca/form');
-   $("#agregargrupo").load(ruta + 'grupo/form');
-   $("#agregarfamilia").load(ruta + 'familia/form');
-   $("#agregarlinea").load(ruta + 'linea/form');*/
-
   $(document).off('keyup')
   $(document).off('keydown')
 
@@ -339,7 +331,7 @@ $(document).ready(function () {
     });
 
     $('#chkCostoContable').on('click', function(){
-      alert("hola");
+      alert($('#producto_id').data('contable-costo'));
     });
   });
 
