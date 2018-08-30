@@ -678,7 +678,6 @@
 <script>
     var venta = [];
     $(function () {
-
         <?php if($venta != NULL):?>
 
         venta.local_id = <?= $venta->local_id ?>;
@@ -701,6 +700,7 @@
             um_min: '<?= $detalle->um_min ?>',
             um_min_abr: '<?= $detalle->um_min_abr ?>',
             total_min: <?= $detalle->total_min ?>,
+            contable_costo: <?= $detalle->contable_costo ?>,
             unidades: []
         };
         <?php foreach ($detalle->unidades as $unidad):?>
@@ -751,7 +751,8 @@
                 prod.total_min,
                 prod.unidades,
                 prod.impuesto,
-                prod.afectacion_impuesto
+                prod.afectacion_impuesto,
+                prod.contable_costo
             );
         }
 
@@ -761,7 +762,7 @@
     });
 
 
-    function add_producto_from_venta(producto_id, producto_nombre, precio, precio_venta, um_min, um_min_abr, total_min, unidades, impuesto, afectacion_impuesto) {
+    function add_producto_from_venta(producto_id, producto_nombre, precio, precio_venta, um_min, um_min_abr, total_min, unidades, impuesto, afectacion_impuesto, contable_costo) {
 
         var local_id = $("#local_id").val();
         var precio_id = $("#precio_id").val();
@@ -810,7 +811,7 @@
             producto.total_minimo += parseFloat(producto.total_local[local_index]);
 
         producto.subtotal = parseFloat(producto.total_minimo * producto.precio_descuento);
-
+        producto.contable_costo = parseFloat(contable_costo);
         lst_producto.push(producto);
 
         update_view(get_active_view());

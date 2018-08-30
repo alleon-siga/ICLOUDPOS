@@ -1597,13 +1597,15 @@ class venta_new_model extends CI_Model
             SUM(dv.precio * dv.cantidad) as importe,
             dv.impuesto_porciento as impuesto,
             IFNULL(dv.afectacion_impuesto, 0) as afectacion_impuesto,
-            dv.precio_venta as precio_venta
+            dv.precio_venta as precio_venta,
+            pcu.contable_costo as contable_costo
             ')
             ->from('detalle_venta as dv')
             ->join('venta as v', 'dv.id_venta = v.venta_id')
             ->join('local', 'local.int_local_id=v.local_id')
             ->join('producto', 'producto.producto_id=dv.id_producto')
             ->join('unidades', 'unidades.id_unidad=dv.unidad_medida')
+            ->join('producto_costo_unitario pcu', 'dv.id_producto = pcu.producto_id AND v.id_moneda = pcu.moneda_id')
             ->where('dv.id_venta', $venta->venta_id)
             ->group_by('dv.id_detalle')
             ->get()->result();
@@ -1637,7 +1639,7 @@ class venta_new_model extends CI_Model
             }
             $result[$detalle->producto_id]->unidades[$detalle->unidad_id]->cantidad = $detalle->cantidad;
             $result[$detalle->producto_id]->total_min += $this->unidades_model->convert_minimo_by_um($detalle->producto_id, $detalle->unidad_id, $detalle->cantidad);
-
+            $result[$detalle->producto_id]->contable_costo = $detalle->contable_costo;
         }
 
         $venta->detalles = $result;

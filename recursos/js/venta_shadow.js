@@ -331,7 +331,11 @@ $(document).ready(function () {
     });
 
     $('#chkCostoContable').on('click', function(){
-      alert($('#producto_id').data('contable-costo'));
+      if($(this).prop('checked')==true){
+        $('#precio_unitario').val($(this).val());
+      }else{
+        $('#precio_unitario').val($('.precio-selected').val());
+      }
     });
   });
 
@@ -1023,7 +1027,6 @@ function add_producto () {
         detalle.unidad_abr = input.attr('data-unidad_abr')
         detalle.unidades = input.attr('data-unidades')
         detalle.orden = input.attr('data-orden')
-        //detalle. = input.attr('data-contable-costo')
         producto.detalles.push(detalle)
 
       })
@@ -1092,13 +1095,12 @@ function edit_producto (producto_id) {
   var template = '<option value="' + producto.producto_id + '"'
   template += ' data-impuesto="' + producto.producto_impuesto + '"'
   template += ' data-afectacion_impuesto="' + producto.afectacion_impuesto + '"'
-  template += ' data-contable-costo="' + producto.contable_costo + '"'
   template += '>' + decodeURIComponent(producto.producto_nombre) + '</option>'
 
   $('#producto_complete').val(decodeURIComponent(producto.producto_nombre))
-
   prod.html(template)
   prod.change()
+  $('#chkCostoContable').val(producto.contable_costo);
 }
 
 //elimina un producto de la tabla
