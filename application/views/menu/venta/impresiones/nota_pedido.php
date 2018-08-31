@@ -109,8 +109,15 @@
         <?php $i = 0; ?>
         <?php foreach ($venta->detalles as $detalle): ?>
             <tr>
-                <td colspan="3"
-                    style="<?= $i++ != 0 ? 'border-top: 1px dashed #0b0b0b;' : '' ?>"><?= $detalle->producto_nombre ?></td>
+                <td colspan="3" style="<?= $i++ != 0 ? 'border-top: 1px dashed #0b0b0b;' : '' ?>">
+                    <?php
+                        $presentacion = '';
+                        if(valueOption('EMBALAJE_IMPRESION')==1){
+                            $presentacion = "(x ".$detalle->cantidad_und.' '.$detalle->simbolo_und.")";
+                        }
+                    ?>
+                    <?= $detalle->producto_nombre.' '.$presentacion ?>
+                </td>
             </tr>
             <tr>
                 <td><?= number_format($detalle->cantidad, 0) . " " . $detalle->unidad_abr ?></td>

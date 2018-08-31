@@ -224,7 +224,7 @@ class venta_new_model extends CI_Model
         }
         $venta->venta_documentos = $this->db->get_where('venta_documento', array('venta_id' => $venta_id))->result();
 
-        $venta->detalles = $this->db->select('
+        $venta->detalles = $this->db->select("
             detalle_venta.id_detalle as detalle_id,
             detalle_venta.id_producto as producto_id,
             producto.producto_codigo_interno as producto_codigo_interno,
@@ -238,7 +238,7 @@ class venta_new_model extends CI_Model
             detalle_venta.detalle_importe as importe,
             detalle_venta.afectacion_impuesto as afectacion_impuesto,
             detalle_venta.impuesto_porciento as impuesto_porciento
-            ')
+            ")
             ->from('detalle_venta')
             ->join('producto', 'producto.producto_id=detalle_venta.id_producto')
             ->join('unidades', 'unidades.id_unidad=detalle_venta.unidad_medida')
@@ -247,13 +247,15 @@ class venta_new_model extends CI_Model
             ->get()->result();
 
         $venta->descuento = 0;
+        $x = 0;        
         foreach ($venta->detalles as $detalle) {
             if ($detalle->precio < $detalle->precio_venta) {
                 $venta->descuento += ($detalle->precio_venta * $detalle->cantidad) - $detalle->importe;
             }
-
+            $venta->detalles[$x]->cantidad_und = $this->unidades_model->get_cantidad_und_max($detalle->producto_id);
+            $venta->detalles[$x]->simbolo_und = $this->unidades_model->get_um_min_by_producto_abr($detalle->producto_id);
+            $x++;
         }
-
         return $venta;
     }
 

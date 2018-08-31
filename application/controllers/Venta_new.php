@@ -629,7 +629,8 @@ class venta_new extends MY_Controller
             'DOCUMENTO_DEFECTO',
             'BOTONES_VENTA',
             'NOMBRE_PRODUCTO',
-            'COTIZACION_COLOR_FORMATO'
+            'COTIZACION_COLOR_FORMATO',
+            'EMBALAJE_IMPRESION'
         );
 
         if ($action == 'get') {

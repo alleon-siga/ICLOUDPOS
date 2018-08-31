@@ -472,4 +472,15 @@ class unidades_model extends CI_Model
             return false;
         }
     }
+
+    function get_cantidad_und_max($producto_id)
+    {
+        $orden_min = $this->db->select_min('orden', 'orden')->where('producto_id', $producto_id)->get('unidades_has_producto')->row();
+        $this->db->select('unidades_has_producto.id_unidad as um_id, unidades_has_producto.unidades as um_number');
+        $this->db->from('unidades_has_producto');
+        $this->db->where('producto_id', $producto_id);
+        $this->db->where('orden', $orden_min->orden);
+        $unidad = $this->db->get()->row();
+        return $unidad->um_number;
+    }
 }

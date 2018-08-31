@@ -28,6 +28,84 @@
 <div class="row block">
 
     <?= form_open_multipart(base_url() . 'venta_new/opciones/save', array('id' => 'formguardar')) ?>
+    <h3>Configuraciones de venta</h3>
+    <div class="row form-group">
+        <div class="col-md-4">
+            <label class="control-label panel-admin-text">Cobrar en Caja:</label>
+        </div>
+        <div class="col-md-8">
+            <div class="form-control">
+                <input type="radio" name="COBRAR_CAJA" id="" class='' value="1"
+                    <?php echo validOption("COBRAR_CAJA", '1', '0') ? 'checked' : '' ?>> SI
+                &nbsp;&nbsp;&nbsp;
+                <input type="radio" name="COBRAR_CAJA" id="" class='' value="0"
+                    <?php echo validOption("COBRAR_CAJA", '0', '0') ? 'checked' : '' ?>> NO
+            </div>
+        </div>
+    </div>
+    <div class="row form-group">
+        <div class="col-md-4">
+            <label class="control-label panel-admin-text">Documento de venta por defecto:</label>
+        </div>
+        <div class="col-md-8">
+            <div class="form-control">
+                <?php foreach($documentos as $doc) { ?>
+                <input type="radio" name="DOCUMENTO_DEFECTO" value="<?= $doc->id_doc ?>" <?php echo validOption("DOCUMENTO_DEFECTO", $doc->id_doc, '0') ? 'checked' : '' ?>> <?= $doc->des_doc ?>
+                &nbsp;&nbsp;&nbsp;
+                <?php } ?>
+            </div>
+        </div>
+    </div>
+    <div class="row form-group">
+        <div class="col-md-4">
+            <label class="control-label panel-admin-text">Botones para guardar venta:</label>
+        </div>
+        <div class="col-md-8">
+            <div class="form-control">
+        <?php
+            $boton = json_decode(valueOption("BOTONES_VENTA"));
+            $arr = array('Guardar', 'Guardar & imprimir', 'Guardar & detalles');
+            foreach ($boton as $clave => $valor) {
+        ?>
+                <input type="checkbox" class="BOTONES_VENTA" name="BOTONES_VENTA[]" value="<?= $valor ?>" <?php echo ($valor=='1')? 'checked' : '' ?>> <?= $arr[$clave] ?>&nbsp;&nbsp;&nbsp;
+        <?php
+            } 
+        ?>
+            </div>
+        </div>
+    </div>
+    <div class="row form-group">
+        <div class="col-md-4">
+            <label class="control-label panel-admin-text">Configurar nombre de producto:</label>
+        </div>
+        <div class="col-md-8">
+            <div class="form-control">
+        <?php
+            $boton = json_decode(valueOption("NOMBRE_PRODUCTO"));
+            $arr = array('Grupo', 'Familia', 'Linea', 'Modelo', 'Marca', 'Codigo interno');
+            foreach ($boton as $clave => $valor) {
+        ?>
+                <input type="checkbox" class="NOMBRE_PRODUCTO" name="NOMBRE_PRODUCTO[]" value="<?= $valor ?>" <?php echo ($valor=='1')? 'checked' : '' ?>> <?= $arr[$clave] ?>&nbsp;&nbsp;&nbsp;
+        <?php
+            } 
+        ?>
+            </div>
+        </div>
+    </div>
+    <div class="row form-group">
+        <div class="col-md-4">
+            <label class="control-label panel-admin-text">Mostrar embalaje en impresi&oacute;n:</label>
+        </div>
+        <div class="col-md-8">
+            <div class="form-control">
+                <input type="radio" name="EMBALAJE_IMPRESION" id="" class='' value="1"
+                    <?php echo validOption("EMBALAJE_IMPRESION", '1', '0') ? 'checked' : '' ?>> SI
+                &nbsp;&nbsp;&nbsp;
+                <input type="radio" name="EMBALAJE_IMPRESION" id="" class='' value="0"
+                    <?php echo validOption("EMBALAJE_IMPRESION", '0', '0') ? 'checked' : '' ?>> NO
+            </div>
+        </div>
+    </div>
     <h3>Cr&eacute;dito</h3>
     <div class="row form-group">
         <div class="col-md-4">
@@ -99,69 +177,6 @@
             </div>
         </div>
     </div>-->
-    <div class="row form-group">
-        <div class="col-md-4">
-            <label class="control-label panel-admin-text">Cobrar en Caja:</label>
-        </div>
-        <div class="col-md-8">
-            <div class="form-control">
-                <input type="radio" name="COBRAR_CAJA" id="" class='' value="1"
-                    <?php echo validOption("COBRAR_CAJA", '1', '0') ? 'checked' : '' ?>> SI
-                &nbsp;&nbsp;&nbsp;
-                <input type="radio" name="COBRAR_CAJA" id="" class='' value="0"
-                    <?php echo validOption("COBRAR_CAJA", '0', '0') ? 'checked' : '' ?>> NO
-            </div>
-        </div>
-    </div>
-    <div class="row form-group">
-        <div class="col-md-4">
-            <label class="control-label panel-admin-text">Documento de venta por defecto:</label>
-        </div>
-        <div class="col-md-8">
-            <div class="form-control">
-                <?php foreach($documentos as $doc) { ?>
-                <input type="radio" name="DOCUMENTO_DEFECTO" value="<?= $doc->id_doc ?>" <?php echo validOption("DOCUMENTO_DEFECTO", $doc->id_doc, '0') ? 'checked' : '' ?>> <?= $doc->des_doc ?>
-                &nbsp;&nbsp;&nbsp;
-                <?php } ?>
-            </div>
-        </div>
-    </div>
-    <div class="row form-group">
-        <div class="col-md-4">
-            <label class="control-label panel-admin-text">Botones para guardar venta:</label>
-        </div>
-        <div class="col-md-8">
-            <div class="form-control">
-        <?php
-            $boton = json_decode(valueOption("BOTONES_VENTA"));
-            $arr = array('Guardar', 'Guardar & imprimir', 'Guardar & detalles');
-            foreach ($boton as $clave => $valor) {
-        ?>
-                <input type="checkbox" class="BOTONES_VENTA" name="BOTONES_VENTA[]" value="<?= $valor ?>" <?php echo ($valor=='1')? 'checked' : '' ?>> <?= $arr[$clave] ?>&nbsp;&nbsp;&nbsp;
-        <?php
-            } 
-        ?>
-            </div>
-        </div>
-    </div>
-    <div class="row form-group">
-        <div class="col-md-4">
-            <label class="control-label panel-admin-text">Configurar nombre de producto:</label>
-        </div>
-        <div class="col-md-8">
-            <div class="form-control">
-        <?php
-            $boton = json_decode(valueOption("NOMBRE_PRODUCTO"));
-            $arr = array('Grupo', 'Familia', 'Linea', 'Modelo', 'Marca', 'Codigo interno');
-            foreach ($boton as $clave => $valor) {
-        ?>
-                <input type="checkbox" class="NOMBRE_PRODUCTO" name="NOMBRE_PRODUCTO[]" value="<?= $valor ?>" <?php echo ($valor=='1')? 'checked' : '' ?>> <?= $arr[$clave] ?>&nbsp;&nbsp;&nbsp;
-        <?php
-            } 
-        ?>
-            </div>
-        </div>
-    </div>
     <?php if (validOption('ACTIVAR_SHADOW', 1)): ?>
         <div class="row form-group">
             <div class="col-md-4">

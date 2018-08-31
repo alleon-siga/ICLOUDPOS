@@ -333,6 +333,7 @@ $( "input#proveedor_nrofax" ).keyup(function() {
             error: function(data){
               console.log('Error Ajax Peticion');
               console.log(data);
+              $('div.modaloader').removeClass('see');
             }
         });
     }else if (RUC_DNI.length==11){
@@ -369,6 +370,7 @@ $( "input#proveedor_nrofax" ).keyup(function() {
             error: function(data){
               console.log('Error Ajax Peticion');
               console.log(data);
+              $('div.modaloader').removeClass('see');
             }
         });
     }else{

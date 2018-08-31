@@ -1,0 +1,1 @@
+INSERT INTO configuraciones VALUES('61', 'EMBALAJE_IMPRESION', '0');

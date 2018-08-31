@@ -758,6 +758,7 @@ $( "input#ruc_j.dni" ).keyup(function() {
             error: function(data){
               console.log('Error Ajax Peticion');
               console.log(data);
+              $('div.modaloader').removeClass('see');
             }
         });
     }else{
@@ -804,6 +805,7 @@ $( "input#ruc_j.ruc" ).keyup(function() {
             error: function(data){
               console.log('Error Ajax Peticion');
               console.log(data);
+              $('div.modaloader').removeClass('see');
             }
         });
     }else{
