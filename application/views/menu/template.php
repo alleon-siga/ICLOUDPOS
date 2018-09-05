@@ -572,7 +572,7 @@ $primary_nav = array(
                     ),
                     array(
                         'name' => 'Margen de utilidad',
-                        'url' => $ruta . 'reporte/margenUtilidad',
+                        'url' => $ruta . 'reporte_ventas/margenUtilidad',
                         'icon' => 'fa fa-area-chart',
                         'slug' => 'margenutilidad'
                     ),
@@ -637,7 +637,7 @@ $primary_nav = array(
                     ),
                     array(
                         'name' => 'Estado de Resultados',
-                        'url' => $ruta . 'reporte/estadoResultado',
+                        'url' => $ruta . 'reporte_caja/estadoResultado',
                         'slug' => 'estadoresultado'
                     )
                 )

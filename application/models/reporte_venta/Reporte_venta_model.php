@@ -76,4 +76,345 @@ class reporte_venta_model extends CI_Model
 
         return $this->db->query($query)->result();
     }
+
+    function getMargenUtilidad($params)
+    {
+        $marca_id = $grupo_id = $familia_id = $linea_id = $producto_id = $local_id = '';
+        $local_id .= ($params['local_id']>0)? " AND v.local_id=".$params['local_id'] : "";
+        $marca_id .= ($params['marca_id']>0)? " AND p.producto_marca=".$params['marca_id'] : "";
+        $grupo_id .= ($params['grupo_id']>0)? " AND p.produto_grupo=".$params['grupo_id'] : "";
+        $familia_id .= ($params['familia_id']>0)? " AND p.producto_familia=".$params['familia_id'] : "";
+        $linea_id .= ($params['linea_id']>0)? " AND p.producto_linea=".$params['linea_id'] : "";
+        $producto_id .= ($params['producto_id']!='')? " AND p.producto_id IN(".implode(",", $params['producto_id']).")" : "";
+        $search = $marca_id.$grupo_id.$familia_id.$linea_id.$producto_id.$local_id;
+
+        $query = "SELECT
+                    l.local_nombre,
+                    p.producto_nombre,
+                    u.nombre_unidad,
+                    SUM(up.unidades * dv.cantidad) AS cantidad,
+                    dv.detalle_costo_promedio,
+                    SUM(
+                        IF(
+                            v.tipo_impuesto = '2',
+                            dv.detalle_importe * (
+                                (dv.impuesto_porciento / 100) + 1
+                            ),
+                            dv.detalle_importe
+                        )
+                    ) AS detalle_importe,
+                    AVG(
+                        IF (
+                            v.tipo_impuesto = '1',
+                            (
+                                (dv.detalle_importe / (up.unidades * dv.cantidad)) / ((dv.impuesto_porciento / 100) + 1)
+                            ),
+                            (
+                                IF(
+                                    v.tipo_impuesto = '2',
+                                    (
+                                        ((dv.detalle_importe * ((dv.impuesto_porciento / 100) + 1)) / (up.unidades * dv.cantidad)) / ((dv.impuesto_porciento / 100) + 1)
+                                    ),
+                                    (
+                                        dv.detalle_importe / (up.unidades * dv.cantidad)
+                                    )
+                                )
+                            )
+                        )
+                    ) AS costoVentaSi,
+                    AVG(
+                        IF (
+                            v.tipo_impuesto = '3',
+                        IF (
+                            v.tipo_impuesto = '3',
+                            (
+                                IF (
+                                    v.tipo_impuesto = '2',
+                                    dv.detalle_importe * (
+                                        (dv.impuesto_porciento / 100) + 1
+                                    ),
+                                    dv.detalle_importe
+                                ) / (up.unidades * dv.cantidad)
+                            ),
+                            (
+                                IF (
+                                    v.tipo_impuesto = '2',
+                                    dv.detalle_importe * (
+                                        (dv.impuesto_porciento / 100) + 1
+                                    ),
+                                    dv.detalle_importe
+                                ) / (up.unidades * dv.cantidad)
+                            ) / (
+                                (dv.impuesto_porciento / 100) + 1
+                            )
+                        ),
+                        (
+                            IF (
+                                v.tipo_impuesto = '3',
+                                (
+                                    IF (
+                                        v.tipo_impuesto = '2',
+                                        dv.detalle_importe * (
+                                            (dv.impuesto_porciento / 100) + 1
+                                        ),
+                                        dv.detalle_importe
+                                    ) / (up.unidades * dv.cantidad)
+                                ),
+                                (
+                                    IF (
+                                        v.tipo_impuesto = '2',
+                                        dv.detalle_importe * (
+                                            (dv.impuesto_porciento / 100) + 1
+                                        ),
+                                        dv.detalle_importe
+                                    ) / (up.unidades * dv.cantidad)
+                                ) / (
+                                    (dv.impuesto_porciento / 100) + 1
+                                )
+                            )
+                        ) * (
+                            (dv.impuesto_porciento / 100) + 1
+                        )
+                        )
+                    ) AS costoVenta,
+                    AVG(dv.detalle_costo_ultimo) AS detalle_costo_ultimo,
+                    AVG(
+                        IF (
+                            dv.tipo_impuesto_compra = '1',
+                            (
+                                dv.detalle_costo_ultimo / (
+                                    (dv.impuesto_porciento / 100) + 1
+                                )
+                            ),
+                            dv.detalle_costo_ultimo
+                        )
+                    ) AS costoCompraSi,
+                    AVG(
+                        IF(
+                            dv.tipo_impuesto_compra = '1',
+                            (
+                                dv.detalle_costo_ultimo - 
+                                (
+                                    dv.detalle_costo_ultimo / (
+                                        (dv.impuesto_porciento / 100) + 1
+                                    )
+                                )
+                            ),
+                            IF(
+                                dv.tipo_impuesto_compra = '2',
+                                (
+                                    dv.detalle_costo_ultimo *  (
+                                        (dv.impuesto_porciento / 100) + 1
+                                    ) - 
+                                    dv.detalle_costo_ultimo
+                                ),
+                                '0'
+                            )
+                        )
+                    )
+                    AS impCompra,
+                    AVG(
+                        IF(
+                            dv.tipo_impuesto_compra = '1',
+                            (
+                                (
+                                    dv.detalle_costo_ultimo / (
+                                        (dv.impuesto_porciento / 100) + 1
+                                    )
+                                ) +
+                                (
+                                    dv.detalle_costo_ultimo - 
+                                    (
+                                        dv.detalle_costo_ultimo / (
+                                            (dv.impuesto_porciento / 100) + 1
+                                        )
+                                    )
+                                )
+                            ),
+                            (
+                                IF(
+                                    dv.tipo_impuesto_compra = '2',
+                                    (
+                                        dv.detalle_costo_ultimo * 
+                                        (
+                                            (dv.impuesto_porciento / 100) + 1
+                                        )
+                                    ),
+                                    (
+                                        dv.detalle_costo_ultimo
+                                    )
+                                )
+                            )
+                        )
+                    ) AS costoCompraImp,
+                    SUM(
+                        (up.unidades * dv.cantidad) *
+                        (
+                            IF(
+                                dv.tipo_impuesto_compra = '1',
+                                (
+                                    (
+                                        dv.detalle_costo_ultimo / (
+                                            (dv.impuesto_porciento / 100) + 1
+                                        )
+                                    ) +
+                                    (
+                                        dv.detalle_costo_ultimo - 
+                                        (
+                                            dv.detalle_costo_ultimo / (
+                                                (dv.impuesto_porciento / 100) + 1
+                                            )
+                                        )
+                                    )
+                                ),
+                                (
+                                    IF(
+                                        dv.tipo_impuesto_compra = '2',
+                                        (
+                                            dv.detalle_costo_ultimo * 
+                                            (
+                                                (dv.impuesto_porciento / 100) + 1
+                                            )
+                                        ),
+                                        (
+                                            dv.detalle_costo_ultimo
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    ) AS costoTotal,
+                    SUM(
+                        (up.unidades * dv.cantidad) *
+                        IF (
+                            v.tipo_impuesto = '1',
+                            (
+                                (dv.detalle_importe / (up.unidades * dv.cantidad)) / ((dv.impuesto_porciento / 100) + 1)
+                            ),
+                            (
+                                IF(
+                                    v.tipo_impuesto = '2',
+                                    (
+                                        ((dv.detalle_importe * ((dv.impuesto_porciento / 100) + 1)) / (up.unidades * dv.cantidad)) / ((dv.impuesto_porciento / 100) + 1)
+                                    ),
+                                    (
+                                        dv.detalle_importe / (up.unidades * dv.cantidad)
+                                    )
+                                )
+                            )
+                        )
+                    ) AS subtotal,
+                    SUM(
+                        (
+                            IF (
+                                v.tipo_impuesto = '3',
+                                (
+                                    IF (
+                                        v.tipo_impuesto = '2',
+                                        dv.detalle_importe * (
+                                            (dv.impuesto_porciento / 100) + 1
+                                        ),
+                                        dv.detalle_importe
+                                    ) / (up.unidades * dv.cantidad)
+                                ),
+                                (
+                                    IF (
+                                        v.tipo_impuesto = '2',
+                                        dv.detalle_importe * (
+                                            (dv.impuesto_porciento / 100) + 1
+                                        ),
+                                        dv.detalle_importe
+                                    ) / (up.unidades * dv.cantidad)
+                                ) / (
+                                    (dv.impuesto_porciento / 100) + 1
+                                )
+                            )
+                        ) - 
+                        (
+                            IF (
+                                dv.tipo_impuesto_compra = '1',
+                                (
+                                    dv.detalle_costo_ultimo / (
+                                        (dv.impuesto_porciento / 100) + 1
+                                    )
+                                ),
+                                dv.detalle_costo_ultimo
+                            )
+                        )
+                    ) AS utilidadXund,
+                    SUM(
+                        (
+                            (
+                                IF (
+                                    v.tipo_impuesto = '3',
+                                    (
+                                        IF (
+                                            v.tipo_impuesto = '2',
+                                            dv.detalle_importe * (
+                                                (dv.impuesto_porciento / 100) + 1
+                                            ),
+                                            dv.detalle_importe
+                                        ) / (up.unidades * dv.cantidad)
+                                    ),
+                                    (
+                                        IF (
+                                            v.tipo_impuesto = '2',
+                                            dv.detalle_importe * (
+                                                (dv.impuesto_porciento / 100) + 1
+                                            ),
+                                            dv.detalle_importe
+                                        ) / (up.unidades * dv.cantidad)
+                                    ) / (
+                                        (dv.impuesto_porciento / 100) + 1
+                                    )
+                                )
+                            ) - 
+                            (
+                                IF (
+                                    dv.tipo_impuesto_compra = '1',
+                                    (
+                                        dv.detalle_costo_ultimo / (
+                                            (dv.impuesto_porciento / 100) + 1
+                                        )
+                                    ),
+                                    dv.detalle_costo_ultimo
+                                )
+                            )
+                        ) * (up.unidades * dv.cantidad)
+                    ) AS utilidadTotal,
+                    dv.impuesto_porciento,
+                    v.tipo_impuesto
+                FROM
+                    detalle_venta dv
+                INNER JOIN venta v ON v.venta_id = dv.id_venta
+                INNER JOIN `local` l ON v.local_id = l.int_local_id
+                INNER JOIN producto p ON p.producto_id = dv.id_producto
+                INNER JOIN unidades_has_producto up ON dv.id_producto = up.producto_id
+                AND dv.unidad_medida = up.id_unidad
+                INNER JOIN unidades_has_producto up2 ON dv.id_producto = up2.producto_id
+                AND (
+                    SELECT
+                        id_unidad
+                    FROM
+                        unidades_has_producto
+                    WHERE
+                        unidades_has_producto.producto_id = dv.id_producto
+                    ORDER BY
+                        orden DESC
+                    LIMIT 1
+                ) = up2.id_unidad
+                INNER JOIN unidades u ON u.id_unidad = up2.id_unidad
+                INNER JOIN producto_costo_unitario pcu ON p.producto_id = pcu.producto_id
+                AND v.id_moneda = pcu.moneda_id
+                AND activo = 1
+            WHERE 
+                v.venta_status='COMPLETADO'
+                AND v.id_moneda = ".$params['moneda_id']."
+                AND v.fecha >= '".$params['fecha_ini']."'
+                AND v.fecha <= '".$params['fecha_fin']."'
+                $search";
+
+        $query .= " GROUP BY p.producto_id";
+        return $this->db->query($query)->result();
+    }
 }
