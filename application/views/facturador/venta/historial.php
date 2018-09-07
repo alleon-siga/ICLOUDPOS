@@ -48,19 +48,13 @@
                         </select>
                     </div>
                     <div class="col-md-2">
-                        <label class="control-label panel-admin-text">Tipo Documento</label>
-                        <select name="id_documento" id="id_documento" class='cho form-control'>
-                            <option value="">Todos</option>
-                            <?php foreach ($documentos as $documento): ?>
-                                <option value="<?= $documento->id_doc ?>"><?= $documento->des_doc ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
                         <label class="control-label panel-admin-text" style="color: #fff;">.</label><br>
                         <button id="btn_buscar" class="btn btn-default">
                             <i class="fa fa-search"></i>
                         </button>
+                    </div>
+                    <div class="col-md-2">
+
                     </div>
                 </div>
             </div>

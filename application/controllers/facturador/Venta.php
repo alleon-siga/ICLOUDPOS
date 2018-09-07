@@ -27,7 +27,6 @@ class venta extends MY_Controller
         $data['locales'] = $this->local_model->get_all();
         $data['monedas'] = $this->db->get_where('moneda', array('status_moneda' => 1))->result();
         $data['condiciones_pagos'] = $this->db->get_where('condiciones_pago', array('status_condiciones' => 1))->result();
-        $data['documentos'] = $this->documentos_model->get_documentosBy('ventas = 1');
         $dataCuerpo['cuerpo'] = $this->load->view('facturador/venta/historial', $data, true);
         if ($this->input->is_ajax_request()) {
             echo $dataCuerpo['cuerpo'];
@@ -46,7 +45,7 @@ class venta extends MY_Controller
         $params['fecha_fin'] = str_replace("/", "-", $date_range[1]);
         $params['moneda_id'] = $this->input->post('moneda_id');
         $params['usuarios_id'] = $this->input->post('usuarios_id');
-        $params['id_documento'] = $this->input->post('id_documento');
+        $params['id_documento'] = 6;
         $data['moneda'] = $this->db->get_where('moneda', array('id_moneda' => $params['moneda_id']))->row();
         $data['ventas'] = $this->venta->get_ventas($params, 'venta');
         $data['venta_totales'] = $this->venta->get_ventas_totales($params, 'venta');
@@ -100,7 +99,7 @@ class venta extends MY_Controller
         $data["clientes"] = $this->cliente_model->get_all();
         $data["monedas"] = $this->monedas_model->get_all();
         $data["tipo_pagos"] = $this->condiciones_pago_model->get_by('id_condiciones', '1');
-        $data['tipo_documentos'] = $this->db->get_where('documentos', array('ventas' => 1))->result();
+        $data['tipo_documentos'] = $this->db->get_where('documentos', "id_doc IN(1,3)")->result();
         $data['precios'] = $this->precios_model->get_all_by('mostrar_precio', '1', array('campo' => 'orden', 'tipo' => 'ASC'));
         $data['comprobantes'] = $this->db->get_where('comprobantes', array('estado' => 1))->result();
         $data['comprobantes_default'] = $this->db->get_where('configuraciones', array('config_id' => '55'))->row();
@@ -175,7 +174,7 @@ class venta extends MY_Controller
     {
         $venta['venta_id'] = $this->input->post('venta_id');
         $venta['local_id'] = $this->input->post('local_venta_id');
-        $venta['id_documento'] = $this->input->post('tipo_documento');
+        $venta['id_documento'] = '0'.$this->input->post('tipo_documento');
         $venta['id_cliente'] = $this->input->post('cliente_id');
         $venta['id_usuario'] = $this->input->post('vendedor_id');
         $venta['condicion_pago'] = $this->input->post('tipo_pago');

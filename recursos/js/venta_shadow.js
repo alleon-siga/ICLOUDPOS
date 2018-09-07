@@ -938,16 +938,15 @@ function save_venta_contado (imprimir) {
             }
           })
 
-        }
-        else {
+        } else {
           $.ajax({
-            url: ruta + 'venta_new',
+            url: ruta + 'facturador/venta/historial',
             success: function (data) {
               $('#loading_save_venta').modal('hide')
               $('.modal-backdrop').remove()
               $('#page-content').html(data)
             }
-          })
+          });
         }
       }
       else if (data.success == '3') {

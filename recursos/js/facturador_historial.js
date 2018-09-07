@@ -56,7 +56,6 @@ function get_ventas() {
     var fecha = $('#date_range').val();
     var moneda_id = $("#moneda_id").val();
     var condicion_pago_id = $("#condicion_pago_id").val();
-    var id_documento = $("#id_documento").val();
 
     $.ajax({
         url: $('#ruta').val() + 'facturador/venta/get_ventas/',
@@ -65,8 +64,7 @@ function get_ventas() {
             'fecha': fecha,
             'estado': estado,
             'moneda_id': moneda_id,
-            'condicion_pago_id': condicion_pago_id,
-            'id_documento': id_documento
+            'condicion_pago_id': condicion_pago_id
         },
         type: 'POST',
         success: function (data) {

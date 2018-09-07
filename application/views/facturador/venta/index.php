@@ -720,9 +720,6 @@
         $("#cliente_id").val(venta.cliente_id).trigger("chosen:updated");
         $("#cliente_id").change();
 
-        $("#tipo_documento").val(venta.documento_id).trigger("chosen:updated");
-        $("#tipo_documento").change();
-
         $("#tipo_pago").val(venta.condicion_id).trigger("chosen:updated");
         $("#tipo_pago").change();
 
