@@ -798,9 +798,9 @@ $primary_nav = array(
     <!-- Include a specific file here from css/themes/ folder to alter the default theme of the template -->
 
     <link id="theme-link" rel="stylesheet"
-          href="<?php if ($template['theme'] != "") {
+          href="<?php echo $ruta; ?>recursos/css/<?php if ($template['theme'] != "") {
               echo $template['theme'];
-          } ?>">
+          } ?>.css">
 
     <!-- The themes stylesheet of this template (for using specific theme color in individual elements - must included last) -->
     <link rel="stylesheet" href="<?php echo $ruta; ?>recursos/css/themes.css">
@@ -1729,13 +1729,15 @@ $primary_nav = array(
                                         class='cho form-control'
                                         required="true">
                                     <option value="0">TODOS</option>
-                                    <?php foreach ($locales as $local) { ?>
-                                        <option
-                                                value="<?= $local['int_local_id'] ?>"
-                                            <?= $local['int_local_id'] == $this->session->userdata('id_local') ? 'selected' : '' ?>
-                                        ><?= $local['local_nombre'] ?></option>
-                                    <?php } ?>
-
+                                <?php
+                                    if(!empty($locales)){
+                                        foreach ($locales as $local) {
+                                    ?>
+                                        <option value="<?= $local['int_local_id'] ?>" <?= $local['int_local_id'] == $this->session->userdata('id_local') ? 'selected' : '' ?>><?= $local['local_nombre'] ?></option>
+                                <?php
+                                        } 
+                                    }
+                                ?>
                                 </select>
                             </div>
                         </div>
@@ -1752,9 +1754,10 @@ $primary_nav = array(
                                     <?php if (!($this->session->userdata('grupo') != 2 && $this->session->userdata('grupo') != 9)): ?>
                                         <option value="0">TODOS</option>
                                     <?php endif; ?>
-                                    <?php foreach ($usuarios as $usuario) { ?>
-                                        <option
-                                                value="<?= $usuario->nUsuCodigo ?>"><?= $usuario->nombre ?></option>
+                                    <?php if(!empty($usuarios)){ ?>
+                                        <?php foreach ($usuarios as $usuario) { ?>
+                                        <option value="<?= $usuario->nUsuCodigo ?>"><?= $usuario->nombre ?></option>
+                                        <?php } ?>
                                     <?php } ?>
                                 </select>
                             </div>
@@ -1769,11 +1772,15 @@ $primary_nav = array(
                                         class='cho form-control'
                                         required="true">
                                     <option value="0">TODOS</option>
-                                    <?php foreach ($monedas as $moneda) { ?>
-                                        <option
-                                                value="<?= $moneda->id_moneda ?>"><?= $moneda->nombre ?></option>
-                                    <?php } ?>
-
+                            <?php
+                                if(!empty($monedas)){
+                                    foreach ($monedas as $moneda) {
+                            ?>
+                                    <option value="<?= $moneda->id_moneda ?>"><?= $moneda->nombre ?></option>
+                            <?php 
+                                    }
+                                }
+                            ?>
                                 </select>
                             </div>
                         </div>
@@ -1800,23 +1807,21 @@ $primary_nav = array(
             <form id="frmCuadreCajaUsuario" class='validate form-horizontal' target="_blank" method="post"
                   action="<?php echo $ruta; ?>exportar/toPDF_cuadre_caja_reporte">
                 <div class="modal-body">
-
-                    <?php //var_dump($usuarios); ?>
                     <div class="controls">
                         <select name="usuario" id="usuario_cuadre_caja" class='cho form-control'
                                 required="true">
                             <option value="TODOS">TODOS</option>
-                            <?php
-
+                        <?php
+                        if(!empty($usuarios)){
                             if (count($usuarios) > 0) {
-
                                 foreach ($usuarios as $usuario) {
-                                    ?>
-                                    <option value="<?= $usuario->nUsuCodigo ?>"><?= $usuario->username ?></option>
-
-
-                                <?php }
-                            } ?>
+                        ?>
+                            <option value="<?= $usuario->nUsuCodigo ?>"><?= $usuario->username ?></option>
+                        <?php 
+                                }
+                            }
+                        }
+                        ?>
                         </select>
                     </div>
                     <fieldset>

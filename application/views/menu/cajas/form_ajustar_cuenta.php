@@ -120,7 +120,7 @@
                                             value="<?= $caja->id ?>"
                                             data-moneda_id="<?= $caja->moneda_id ?>"
                                             data-simbolo="<?= $caja->simbolo ?>"
-                                            data-tasa="<?= $caja_actual->id == $md->id_moneda ? $caja->tasa_soles : 1 / $caja_actual->tasa_soles ?>"
+                                            data-tasa="<?= $caja_actual->id == $md->id_moneda ? $caja->tasa_soles : ($caja_actual->tasa_soles==0)? 0 : 1 / $caja_actual->tasa_soles ?>"
                                     ><?= 'Caja ' . $caja->nombre ?></option>
                                 <?php endforeach; ?>
                             </select>

@@ -21,7 +21,6 @@ class email_model extends CI_Model
         foreach($param['correo'] as $correo){
             $this->mailer->addAddress($correo, 'prueba');    
         }
-        $this->mailer->addAddress($param['correo'], 'prueba');
         $this->mailer->Subject = $param['asunto'];
         $this->mailer->SMTPSecure = 'TLS';
         $this->mailer->msgHTML($this->load->view('menu/emails/enviarCotizacion', array(), TRUE));
@@ -53,7 +52,6 @@ class email_model extends CI_Model
         foreach($param['correo'] as $correo){
             $this->mailer->addAddress($correo, 'prueba');    
         }
-        $this->mailer->addAddress($param['correo'], 'prueba');
         $this->mailer->Subject = $param['asunto'];
         $this->mailer->SMTPSecure = 'TLS';
 
