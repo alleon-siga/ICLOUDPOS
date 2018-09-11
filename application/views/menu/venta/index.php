@@ -56,24 +56,22 @@
                             <?php endforeach; ?>
                         </select>
                     </div>
-
-                    <div class="col-md-7">
-                        <div class="input-group">
-                            <div class="help-key badge label-success" style="display: none;">1</div>
-                            <select name="cliente_id" id="cliente_id" class='form-control'>
-                                <?php foreach ($clientes as $cliente): ?>
-                                    <option
-                                            value="<?php echo $cliente['id_cliente']; ?>"
-                                            data-ruc="<?= $cliente['ruc'] ?>"
-                                        <?= $cliente['id_cliente'] == 1 ? 'selected' : '' ?>
-                                    ><?php echo $cliente['razon_social']; ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                            <a id="cliente_new" href="#" class="input-group-addon btn-default">
-                                <i class="fa fa-plus-circle"></i>
-                            </a>
-                        </div>
-
+                    <div class="col-md-6">
+                        <div class="help-key badge label-success" style="display: none;">1</div>
+                        <select name="cliente_id" id="cliente_id" class='form-control'>
+                            <?php foreach ($clientes as $cliente): ?>
+                                <option
+                                        value="<?php echo $cliente['id_cliente']; ?>"
+                                        data-ruc="<?= $cliente['ruc'] ?>"
+                                    <?= $cliente['id_cliente'] == 1 ? 'selected' : '' ?>
+                                ><?php echo $cliente['razon_social']; ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-1" style="padding-left: 0px;">
+                        <a id="cliente_new" href="#" class="input-group-addon btn-default">
+                            <i class="fa fa-plus-circle"></i>
+                        </a>
                     </div>
                 </div>
 
@@ -260,12 +258,12 @@
                                     <div class="input-group-addon">%</div>
                                 </div>
                             </div>
-                            <div class="col-md-1 text-right" style="padding-right: 2px;">
+                            <div class="col-md-1">
                                 <label class="control-label panel-admin-text">SubTotal:</label>
                             </div>
                             <div class="col-md-2">
                                 <div class="input-group">
-                                    <div class="input-group-addon tipo_moneda"><?= $md->simbolo ?></div>
+                                    <div class="input-group-addon tipo_moneda" style="padding: 0px; min-width: 25px;"><?= $md->simbolo ?></div>
                                     <input type="text" style="text-align: right;" 
                                            data-sub = "0.00"
                                            class='form-control'

@@ -3204,6 +3204,7 @@ JOIN detalleingreso ON detalleingreso.id_ingreso=ingreso.id_ingreso WHERE detall
         $params['razon_social'] = $this->input->post('razon_social');
         $params['idFacturacion'] = $this->input->post('idFacturacion');
         $params['tipo'] = $this->input->post('tipo');
-        $this->email_model->enviarVenta($params);
+        $datos = $this->email_model->enviarVenta($params);
+        echo json_encode($datos);
     }
 }

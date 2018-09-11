@@ -19,14 +19,19 @@ $(document).ready(function(){
             return;
         }
 
-        $("#msjEnviar").html($("#loading").html());
+        $('#barloadermodal').modal('show');
 		$.ajax({
 			url: ruta + 'venta/enviarVenta',
 			type: 'POST',
 			data: $('#form1').serialize(),
+            dataType: 'json',
 			success: function(data){
-				$("#msjEnviar").html('');
-				mensaje('success', '<p>Venta enviada con exito.</p>');
+                $("#barloadermodal").modal('hide');
+                if(data.error==true){
+                    mensaje('danger', '<p>'+data.mensaje+'</p>');
+                }else{
+                    mensaje('success', '<p>'+data.mensaje+'</p>');
+                }
 				$('#correoModal').modal('hide');
 			},
 			error: function () {

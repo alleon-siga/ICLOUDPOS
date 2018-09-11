@@ -17,7 +17,7 @@
             <th>Fec. Venc.</th>
             <th>Doc.</th>
             <th># Documento</th>
-            <th width="20%">Cliente</th>
+            <th width="30%">Cliente</th>
             <th>Vendedor</th>
             <th>Tip. Cam.</th>
             <th>Total</th>
@@ -39,7 +39,7 @@
                     </td>
                     <td style="text-align: center;"><?= $detalle->tipo_cliente == '2' ? $term[1]->valor : $term[0]->valor ?></td>
                     <td><?= $detalle->ruc ?></td>
-                    <td><?= $detalle->cliente_nombre ?></td>
+                    <td style="white-space: normal;"><?= $detalle->cliente_nombre ?></td>
                     <td><?= $detalle->vendedor_nombre ?></td>
                     <td><?= $detalle->moneda_tasa ?></td>
                     <td style="text-align: right;"><?= $detalle->moneda_simbolo ?> <?= number_format($detalle->total, 2) ?></td>

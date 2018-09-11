@@ -449,7 +449,11 @@ $(document).ready(function () {
         $('#subtotal_um').html(input.attr('data-unidad_nombre'))
         input.addClass('precio-selected')
       } else {
-        $('#precio_unitario').val(parseFloat(pu.val() / $('#total_minimo').val()).toFixed(2))
+        if($('#total_minimo').val()==0){
+          $('#precio_unitario').val(0).toFixed(2);
+        }else{
+          $('#precio_unitario').val(parseFloat(pu.val() / $('#total_minimo').val()).toFixed(2));
+        }
       }
 
       if (flag == false) {
@@ -480,7 +484,11 @@ $(document).ready(function () {
       $('#editar_su').click()
       $('#add_producto').trigger('focus')
     } else {
-      $('#precio_unitario').val(parseFloat($('#importe').val() / $('#total_minimo').val()).toFixed(2))
+      if($('#total_minimo').val()==0){
+        $('#precio_unitario').val(0).toFixed(2);
+      }else{
+        $('#precio_unitario').val(parseFloat($('#importe').val() / $('#total_minimo').val()).toFixed(2));
+      }
     }
   })
 
@@ -1346,8 +1354,8 @@ function update_view (type) {
     switch (type) {
       case 'detalle': {
         $('#head_productos').html('<tr>' +
-          '<th>#</th>' +
-          '<th>Producto</th>' +
+          '<th width="5%">#</th>' +
+          '<th width="40%">Producto</th>' +
           '<th>Detalles</th>' +
           '<th>Acciones</th>' +
           '</tr>')
@@ -1360,8 +1368,8 @@ function update_view (type) {
       case 'general': {
         $('#table_producto').css('white-space', 'nowrap')
         $('#head_productos').html('<tr>' +
-          '<th>#</th>' +
-          '<th>Producto</th>' +
+          '<th width="5%">#</th>' +
+          '<th width="40%">Producto</th>' +
           '<th>Total Minimo</th>' +
           '<th>Precio Unitario</th>' +
           '<th>Precio Descuento</th>' +
@@ -1382,8 +1390,8 @@ function update_view (type) {
 function addTable (producto, type) {
   var template = '<tr>'
 
-  template += '<td>' + (producto.index + 1) + '</td>'
-  template += '<td>' + decodeURIComponent(producto.producto_nombre) + '</td>'
+  template += '<td style="white-space: normal;">' + (producto.index + 1) + '</td>'
+  template += '<td style="white-space: normal;">' + decodeURIComponent(producto.producto_nombre) + '</td>'
   if (type == 'general') {
     template += '<td style="text-align: center;">' + producto.total_minimo + ' (' + producto.um_min + ')</td>'
     template += '<td>' + producto.precio_unitario + '</td>'
@@ -1577,9 +1585,6 @@ function refresh_right_panel () {
       $(this).val(parseFloat($(this).attr('data-value')))
     })
   }
-
-  var index = $('.precio-input').length - 1
-  $('.precio-input[data-index="' + index + '"]').first().trigger('click')
 
   var subtotal = 0, impuesto = 0, total_importe = 0, total_descuento = 0
 

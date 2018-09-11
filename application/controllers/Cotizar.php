@@ -259,6 +259,7 @@ class cotizar extends MY_Controller
         $params['idCotizacion'] = $this->input->post('idCotizacion');
         $params['tipoCliente'] = $this->input->post('tipoCliente');
         $params['asunto'] = $this->input->post('txtAsunto');
-        $this->email_model->enviarCotizacion($params);
+        $datos = $this->email_model->enviarCotizacion($params);
+        echo json_encode($datos);
     }
 }

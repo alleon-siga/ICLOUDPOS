@@ -45,7 +45,6 @@
                             </div>
                         </div>
                     </form>
-                    <div id="msjEnviar"></div>
                 </div>
             </div>
         </div>
