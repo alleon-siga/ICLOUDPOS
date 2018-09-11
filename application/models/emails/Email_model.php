@@ -36,15 +36,14 @@ class email_model extends CI_Model
 
         $this->mailer->addStringAttachment($url, 'COTIZACION_'.$param['idCotizacion'].'.pdf');
 
-        if (!$this->mailer->send()) {
-            $this->setError('EL correo no pudo ser enviado');
-            log_message('error', 'Message could not be sent. Mailer Error: ' . $this->mailer->ErrorInfo);
-            var_dump(log_message('error', 'Message could not be sent. Mailer Error: ' . $this->mailer->ErrorInfo));
-            return FALSE;
-        } else {
-            log_message('info', 'El correo de confirmacion ha sido enviado');
-            return TRUE;
+        if (!$this->mailer->send()){
+            $datos['error'] = true;
+            $datos['mensaje'] = 'Mensaje no pudo ser enviado: ' . $this->mailer->ErrorInfo;
+        }else{
+            $datos['error'] = false;
+            $datos['mensaje'] = 'Cotizacion enviada con exito.';
         }
+        return $datos;
     }
 
     public function enviarVenta($param)
@@ -97,15 +96,14 @@ class email_model extends CI_Model
             }
         }
 
-        if (!$this->mailer->send()) {
-            $this->setError('EL correo no pudo ser enviado');
-            log_message('error', 'Message could not be sent. Mailer Error: ' . $this->mailer->ErrorInfo);
-            var_dump(log_message('error', 'Message could not be sent. Mailer Error: ' . $this->mailer->ErrorInfo));
-            return FALSE;
-        } else {
-            log_message('info', 'El correo de confirmacion ha sido enviado');
-            return TRUE;
+        if (!$this->mailer->send()){
+            $datos['error'] = true;
+            $datos['mensaje'] = 'Mensaje no pudo ser enviado: ' . $this->mailer->ErrorInfo;
+        }else{
+            $datos['error'] = false;
+            $datos['mensaje'] = 'Cotizacion enviada con exito.';
         }
+        return $datos;
     }
 
     public function setError($msg)
