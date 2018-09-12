@@ -90,12 +90,19 @@ class facturacion_model extends CI_Model
 
     function get_ventas_emitidas($params)
     {
-
         $this->db->select('v.*, f.cliente_nombre')
             ->from('venta AS v')
             ->join('facturacion as f', 'v.venta_id = f.ref_id');
-
         $this->db->where('estado', 3);
+        if($params['local_id']>0){
+            $this->db->where('v.local_id', $params['local_id']);
+        }
+        if(!empty($params['fecha_ini']) && !empty($params['fecha_fin'])){
+            $this->db->where("DATE(v.fecha) >='".$params['fecha_ini']."' AND DATE(v.fecha)<='".$params['fecha_fin']."'");
+        }
+        if(!empty($params['doc_id']>0)){
+            $this->db->where('f.documento_tipo', $params['doc_id']);
+        }
         $this->db->group_by('v.venta_id');
 
         $ventas = $this->db->get()->result();

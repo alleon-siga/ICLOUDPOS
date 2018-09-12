@@ -481,8 +481,12 @@ class facturacion extends MY_Controller
         switch ($action) {
             case 'filter': {
                 $params['local_id'] = $this->input->post('local_id');
+                $date_range = explode(" - ", $this->input->post('fecha'));
+                $params['fecha_ini'] = date('Y-m-d', strtotime(str_replace("/", "-", $date_range[0])));
+                $params['fecha_fin'] = date('Y-m-d', strtotime(str_replace("/", "-", $date_range[1])));                
+                $params['doc_id'] = $this->input->post('doc_id');
                 $data['lists'] = $this->facturacion_model->get_ventas_emitidas($params);
-
+                $data['emisor'] = $this->facturacion_model->get_emisor();
                 $this->load->view('menu/facturacion/reportes/venta_list', $data);
                 break;
             }
