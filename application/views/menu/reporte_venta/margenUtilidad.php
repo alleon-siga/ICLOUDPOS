@@ -236,7 +236,7 @@
                     };
 
                     $.ajax({
-                        url: '<?= base_url()?>reporte/margenUtilidad/filter',
+                        url: '<?= base_url()?>reporte_ventas/margenUtilidad/filter',
                         data: data,
                         type: 'POST',
                         success: function (data) {

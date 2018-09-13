@@ -138,6 +138,11 @@ class gastos extends MY_Controller
         $cuenta = $this->db->join('caja', 'caja.id = caja_desglose.caja_id')
             ->get_where('caja_desglose', array('caja_desglose.id' => $this->input->post('cuenta_id')))->row();
 
+        $tasa_cambio = 0;
+        if($cuenta->moneda_id!=1029){
+            $tasa = $this->monedas_model->get_by('id_moneda', $cuenta->moneda_id);
+            $tasa_cambio = $tasa['tasa_soles'];
+        }
         $gastos = array(
             'id_gastos' => $id,
             'fecha' => date('Y-m-d', strtotime($this->input->post('fecha'))) . " " . date("H:i:s"),
@@ -162,7 +167,8 @@ class gastos extends MY_Controller
             'moneda_id' => $cuenta->moneda_id,
             'tipo_pago' => $this->input->post('tipo_pago'),
             'c_tasa_interes' => $this->input->post('c_tasa_interes'),
-            'capital' => $this->input->post('c_precio_contado')
+            'capital' => $this->input->post('c_precio_contado'),
+            'tasa_cambio' => $tasa_cambio
         );
         
         $detalle = array();

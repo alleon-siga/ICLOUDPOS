@@ -197,55 +197,6 @@ class reporte_model extends CI_Model
         return $this->db->query($query)->result();
     }
 
-    function getMargenUtilidad($params)
-    {
-        $marca_id = $grupo_id = $familia_id = $linea_id = $producto_id = $local_id = '';
-        $local_id .= ($params['local_id']>0)? " AND v.local_id=".$params['local_id'] : "";
-        $marca_id .= ($params['marca_id']>0)? " AND p.producto_marca=".$params['marca_id'] : "";
-        $grupo_id .= ($params['grupo_id']>0)? " AND p.produto_grupo=".$params['grupo_id'] : "";
-        $familia_id .= ($params['familia_id']>0)? " AND p.producto_familia=".$params['familia_id'] : "";
-        $linea_id .= ($params['linea_id']>0)? " AND p.producto_linea=".$params['linea_id'] : "";
-        $producto_id .= ($params['producto_id']!='')? " AND p.producto_id IN(".implode(",", $params['producto_id']).")" : "";
-        $search = $marca_id.$grupo_id.$familia_id.$linea_id.$producto_id.$local_id;
-
-        $query = "SELECT l.local_nombre, p.producto_nombre, u.nombre_unidad, SUM(up.unidades * dv.cantidad) AS cantidad, 
-            dv.detalle_costo_promedio, 
-            SUM(IF(v.tipo_impuesto='2', dv.detalle_importe * ((dv.impuesto_porciento / 100) + 1), dv.detalle_importe)) AS detalle_importe,
-            AVG(IF(v.tipo_impuesto='3', (IF(v.tipo_impuesto='2', dv.detalle_importe * ((dv.impuesto_porciento / 100) + 1), dv.detalle_importe) / (up.unidades * dv.cantidad)), (IF(v.tipo_impuesto='2', dv.detalle_importe * ((dv.impuesto_porciento / 100) + 1), dv.detalle_importe) / (up.unidades * dv.cantidad)) / ((dv.impuesto_porciento / 100) + 1))) AS costoVentaSi,
-            AVG(IF(v.tipo_impuesto='3', IF(v.tipo_impuesto='3', (IF(v.tipo_impuesto='2', dv.detalle_importe * ((dv.impuesto_porciento / 100) + 1), dv.detalle_importe) / (up.unidades * dv.cantidad)), (IF(v.tipo_impuesto='2', dv.detalle_importe * ((dv.impuesto_porciento / 100) + 1), dv.detalle_importe) / (up.unidades * dv.cantidad)) / ((dv.impuesto_porciento / 100) + 1)), (IF(v.tipo_impuesto='3', (IF(v.tipo_impuesto='2', dv.detalle_importe * ((dv.impuesto_porciento / 100) + 1), dv.detalle_importe) / (up.unidades * dv.cantidad)), (IF(v.tipo_impuesto='2', dv.detalle_importe * ((dv.impuesto_porciento / 100) + 1), dv.detalle_importe) / (up.unidades * dv.cantidad)) / ((dv.impuesto_porciento / 100) + 1)))*((dv.impuesto_porciento / 100) + 1))) AS costoVenta,
-            AVG(dv.detalle_costo_ultimo) AS detalle_costo_ultimo, 
-            AVG( dv.detalle_costo_ultimo / ((dv.impuesto_porciento / 100) + 1) ) AS costoCompraSi,
-            SUM((up.unidades * dv.cantidad) * dv.detalle_costo_ultimo) AS costoTotal,
-            SUM((up.unidades * dv.cantidad) * IF(v.tipo_impuesto='3', (IF(v.tipo_impuesto='2', dv.detalle_importe * ((dv.impuesto_porciento / 100) + 1), dv.detalle_importe) / (up.unidades * dv.cantidad)), (IF(v.tipo_impuesto='2', dv.detalle_importe * ((dv.impuesto_porciento / 100) + 1), dv.detalle_importe) / (up.unidades * dv.cantidad)) / ((dv.impuesto_porciento / 100) + 1))) AS subtotal,
-            SUM( (IF(v.tipo_impuesto='3', (IF(v.tipo_impuesto='2', dv.detalle_importe * ((dv.impuesto_porciento / 100) + 1), dv.detalle_importe) / (up.unidades * dv.cantidad)), (IF(v.tipo_impuesto='2', dv.detalle_importe * ((dv.impuesto_porciento / 100) + 1), dv.detalle_importe) / (up.unidades * dv.cantidad)) / ((dv.impuesto_porciento / 100) + 1))) - (dv.detalle_costo_ultimo / ((dv.impuesto_porciento / 100) + 1)) ) AS utilidadXund,
-            SUM( ((IF(v.tipo_impuesto='3', (IF(v.tipo_impuesto='2', dv.detalle_importe * ((dv.impuesto_porciento / 100) + 1), dv.detalle_importe) / (up.unidades * dv.cantidad)), (IF(v.tipo_impuesto='2', dv.detalle_importe * ((dv.impuesto_porciento / 100) + 1), dv.detalle_importe) / (up.unidades * dv.cantidad)) / ((dv.impuesto_porciento / 100) + 1))) - (dv.detalle_costo_ultimo / ((dv.impuesto_porciento / 100) + 1))) * (up.unidades * dv.cantidad) ) AS utilidadTotal,
-            dv.impuesto_porciento, v.tipo_impuesto
-            FROM detalle_venta dv
-                INNER JOIN venta v ON v.venta_id=dv.id_venta
-                INNER JOIN `local` l ON v.local_id = l.int_local_id
-                INNER JOIN producto p ON p.producto_id=dv.id_producto 
-                INNER JOIN unidades_has_producto up ON dv.id_producto=up.producto_id 
-                AND dv.unidad_medida=up.id_unidad
-                INNER JOIN unidades_has_producto up2 ON dv.id_producto=up2.producto_id 
-                AND (
-                    select id_unidad from unidades_has_producto 
-                    where unidades_has_producto.producto_id = dv.id_producto
-                    ORDER BY orden DESC LIMIT 1
-                ) = up2.id_unidad 
-                INNER JOIN unidades u ON u.id_unidad=up2.id_unidad
-                INNER JOIN producto_costo_unitario pcu ON  p.producto_id = pcu.producto_id AND v.id_moneda = pcu.moneda_id AND activo=1 
-            WHERE 
-                v.venta_status='COMPLETADO'
-                AND v.id_moneda = ".$params['moneda_id']."
-                AND v.fecha >= '".$params['fecha_ini']."'
-                AND v.fecha <= '".$params['fecha_fin']."'
-                $search";
-
-        $query .= " GROUP BY p.producto_id";
-
-        return $this->db->query($query)->result();
-    }
-
     function getStockVentas($params)
     {
         $this->db->select("p.producto_id, p.producto_codigo_interno, f.nombre_familia, p.producto_nombre, m.nombre_marca, l.nombre_linea");
@@ -556,7 +507,7 @@ class reporte_model extends CI_Model
             $where .= "v.fecha >= '".$params['fecha_ini']."' AND v.fecha <= '".$params['fecha_fin']."'";
         }
 
-        $query = "SELECT v.venta_id, DATE_FORMAT(v.fecha, '%d/%m/%Y') AS fecha, pr.proveedor_nombre, p.producto_nombre, u.nombre_unidad, SUM(up.unidades * dv.cantidad) AS cantidad, dv.detalle_costo_promedio, dv.detalle_importe, l.local_nombre, dv.detalle_costo_ultimo, dv.impuesto_porciento, v.tipo_impuesto
+        $query = "SELECT v.venta_id, DATE_FORMAT(v.fecha, '%d/%m/%Y') AS fecha, pr.proveedor_nombre, p.producto_nombre, u.nombre_unidad, SUM(up.unidades * dv.cantidad) AS cantidad, dv.detalle_costo_promedio, dv.detalle_importe, l.local_nombre, dv.detalle_costo_ultimo, dv.impuesto_porciento, v.tipo_impuesto, dv.tipo_impuesto_compra, v.id_moneda
             FROM detalle_venta dv
             INNER JOIN venta v ON v.venta_id=dv.id_venta 
             INNER JOIN producto p ON p.producto_id=dv.id_producto 
@@ -612,108 +563,6 @@ class reporte_model extends CI_Model
         }
         $query .= " GROUP BY v.venta_id, dv.id_detalle ORDER BY v.venta_id";
         return $this->db->query($query)->result();
-    }
-
-    function getEstadoResultado($params)
-    {
-        // Ventas
-        $this->db->select("SUM(dv.detalle_importe) / ((dv.impuesto_porciento / 100) + 1) AS detalle_importe, SUM(dv.detalle_costo_ultimo / ((dv.impuesto_porciento / 100) + 1) * dv.cantidad) AS costo_venta, m.simbolo");
-        $this->db->from('venta v');
-        $this->db->join('detalle_venta dv', 'v.venta_id = dv.id_venta');
-        $this->db->join('moneda m', 'v.id_moneda = m.id_moneda');
-        $this->db->where("v.venta_status='COMPLETADO'");
-        if($params['local_id']>0){
-            $this->db->where('v.local_id = '.$params['local_id']);
-        }
-        if($params['moneda_id']>0){
-            $this->db->where('v.id_moneda = '.$params['moneda_id']);
-        }
-        if($params['mes'] != '' && $params['year'] != ''){
-            $this->db->where('YEAR(v.fecha) = '.$params['year'].' AND MONTH(v.fecha) = '.$params['mes']);
-        }
-        $ventas = $this->db->get()->row();
-
-        //Grupo de gasto
-        $this->db->select('id_grupo_gastos, nom_grupo_gastos');
-        $this->db->from('grupo_gastos');
-        $grupos = $this->db->get()->result_array();
-
-        $x=0;
-        foreach ($grupos as $grupo){
-            //Tipo de gasto
-            $this->db->select('id_tipos_gasto, nombre_tipos_gasto');
-            $this->db->from('tipos_gasto');
-            $this->db->where('status_tipos_gasto', '1');
-            $this->db->where('id_grupo_gastos', $grupo['id_grupo_gastos']);
-            $this->db->where("nombre_tipos_gasto != 'PRESTAMO BANCARIO'");
-            $tipo_gastos = $this->db->get()->result_array();
-
-            $a = 0;
-            $totSubtotal = 0;
-            foreach ($tipo_gastos as $tipo_gasto) {
-                //Sumas los gastos deacuerdo al tipo y grupo
-                $this->db->select('SUM(subtotal) AS subtotal');
-                $this->db->from('gastos');
-                $this->db->where('status_gastos', '0'); //Gasto confirmado
-                $this->db->where('tipo_gasto', $tipo_gasto['id_tipos_gasto']);
-                if($params['local_id']>0){
-                    $this->db->where('local_id = '.$params['local_id']);
-                }
-                if($params['moneda_id']>0){
-                    $this->db->where('id_moneda = '.$params['moneda_id']);
-                }
-                if($params['mes'] != '' && $params['year'] != ''){
-                    $this->db->where('YEAR(fecha) = '.$params['year'].' AND MONTH(fecha) = '.$params['mes']);
-                }
-                $suma = $this->db->get()->row_array();
-
-                $tipo_gastos[$a]['suma'] = $suma['subtotal'];
-
-                //Prestamo bancario
-                if($tipo_gasto['nombre_tipos_gasto']=='INTERES' || $tipo_gasto['nombre_tipos_gasto']=='COMISION'){
-                    if($tipo_gasto['nombre_tipos_gasto'] == 'INTERES'){
-                        $this->db->select('SUM(interes) AS subtotal');
-                    }else{
-                        $this->db->select('SUM(comision) AS subtotal');
-                    }
-                    $this->db->from('ingreso i');
-                    $this->db->join('ingreso_credito ic', 'i.id_ingreso = ic.ingreso_id');
-                    $this->db->where("i.tipo_ingreso='GASTO' AND tipo_documento='CRONOGRAMA DE PAGOS'");
-                    if($params['local_id']>0){
-                        $this->db->where('local_id = '.$params['local_id']);
-                    }
-                    if($params['moneda_id']>0){
-                        $this->db->where('id_moneda = '.$params['moneda_id']);
-                    }
-                    if($params['mes'] != '' && $params['year'] != ''){
-                        $this->db->where('YEAR(fecha_emision) = '.$params['year'].' AND MONTH(fecha_emision) = '.$params['mes']);
-                    }
-                    $suma = $this->db->get()->row_array();
-                    $tipo_gastos[$a]['suma'] += $suma['subtotal'];
-                }
-
-                $totSubtotal += $tipo_gastos[$a]['suma'];
-                $a++;
-            }
-            $grupos[$x]['nom'] = $tipo_gastos;
-            $grupos[$x]['suma'] = $totSubtotal;
-            $x++;
-        }
-
-        $datos['simbolo'] = $ventas->simbolo;
-        $datos['ventas'] = $ventas->detalle_importe;
-        $datos['costo'] = $ventas->costo_venta;
-        $datos['margen_bruto'] = $datos['ventas'] - $datos['costo'];
-        $datos['gastos'] = $grupos;
-        //utilidad operativa = margen bruto - gasto de venta - gasto administrativo - planilla - gastos de servicio
-        $datos['utilidad'] = $datos['margen_bruto'] - $grupos[0]['suma'] - $grupos[1]['suma'] - $grupos[3]['suma'] - $grupos[5]['suma'];
-        //UTILIDAD ANTES DE IMPUESTOS = utilidad operativa - gasto financiero
-        $datos['utilidad_si'] = $datos['utilidad'] - $grupos[2]['suma'];
-        //IMPUESTO A LA RENTA  = UTILIDAD ANTES DE IMPUESTOS * 0.3
-        $datos['impuesto'] = $datos['utilidad_si'] * 0.3;
-        //UTILIDAD NETA = UTILIDAD ANTES DE IMPUESTOS - IMPUESTO A LA RENTA
-        $datos['utilidad_neta'] = $datos['utilidad_si'] - $datos['impuesto'];
-        return $datos;
     }
 
     function getkardexValorizado($where)

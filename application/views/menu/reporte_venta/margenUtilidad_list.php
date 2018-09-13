@@ -45,30 +45,18 @@
             $impuesto = (($ingreso->impuesto_porciento / 100) + 1);
             $cantidad = $ingreso->cantidad;
             $costoCompraSi = $ingreso->costoCompraSi; //Costo de compra unitario sin impuesto
-            $costoCompra = $ingreso->detalle_costo_ultimo; //Costo de compra unitario con impuesto
-            $impCompra = $costoCompra - $costoCompraSi; //Impuesto de compra
+            $costoCompraImp = $ingreso->costoCompraImp; //Costo de compra unitario con impuesto
+            $impCompra = $ingreso->impCompra; //Impuesto de compra
             $precioVenta = $ingreso->detalle_importe; //precio de venta
             $costoVentaSi = $ingreso->costoVentaSi;
             $costoVenta = $ingreso->costoVenta;
             $costoTotal = $ingreso->costoTotal;
             $subtotal = $ingreso->subtotal;
             $impVenta = $precioVenta - $subtotal;
-            //$utilidadXund = $costoVentaSi - $costoCompraSi;
             $utilidadXund = $ingreso->utilidadXund;
-            //$utilidadTotal = $utilidadXund * $cantidad;
             $utilidadTotal = $ingreso->utilidadTotal;
-            /*if($costoCompraSi>0){
-                //$porRenta = ($utilidadXund / $costoCompraSi) * 100; //Porcentaje de rentabilidad
-                $porRenta = $ingreso->porRenta;
-            }else{
-                $porRenta = 0;
-            }*/
-            //Totales
-            //$totalCostoImpuesto += $costoCompra;
-            //$totalPrecioImpuesto += $costoVenta;
             $totalCostoTotal += $costoTotal;
             $totalSubTotal += $subtotal;
-            //$totalImpuestoV += $impVenta;
             $totalVentaTotal += $precioVenta;
             $totalUtilidadTotal += $utilidadTotal;
     ?>
@@ -78,7 +66,7 @@
                 <td><?= $ingreso->nombre_unidad ?></td>
                 <td style="text-align: right;"><?= number_format($costoCompraSi, 2) ?></td>
                 <td style="text-align: right;"><?= number_format($impCompra, 2) ?></td>
-                <td style="text-align: right;"><?= number_format($costoCompra, 2) ?></td>
+                <td style="text-align: right;"><?= number_format($costoCompraImp, 2) ?></td>
                 <td style="text-align: right;"><?= number_format($impuesto, 2) ?></td>
                 <td style="text-align: right;"><?= number_format($costoVentaSi, 2) ?></td>
                 <td style="text-align: right;"><?= number_format($costoVenta, 2) ?></td>
@@ -156,7 +144,7 @@
             'familia_id': $("#familia_id").val()
         };
 
-        var win = window.open('<?= base_url()?>reporte/margenUtilidad/pdf?data=' + JSON.stringify(data), '_blank');
+        var win = window.open('<?= base_url()?>reporte_ventas/margenUtilidad/pdf?data=' + JSON.stringify(data), '_blank');
         win.focus();
     }
 
@@ -172,7 +160,7 @@
             'familia_id': $("#familia_id").val()
         };
 
-        var win = window.open('<?= base_url()?>reporte/margenUtilidad/excel?data=' + JSON.stringify(data), '_blank');
+        var win = window.open('<?= base_url()?>reporte_ventas/margenUtilidad/excel?data=' + JSON.stringify(data), '_blank');
         win.focus();
     }
 </script>

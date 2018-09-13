@@ -106,11 +106,10 @@
         var data = {
             'local_id': $("#local_id").val(),
             'year': $("#year").val(),
-            'mes': $("#mes").val(),
-            'moneda_id': $("#moneda_id").val()
+            'mes': $("#mes").val()
         };
 
-        var win = window.open('<?= base_url()?>reporte/estadoResultado/pdf?data=' + JSON.stringify(data), '_blank');
+        var win = window.open('<?= base_url()?>reporte_caja/estadoResultado/pdf?data=' + JSON.stringify(data), '_blank');
         win.focus();
     }
 
@@ -118,11 +117,10 @@
         var data = {
             'local_id': $("#local_id").val(),
             'year': $("#year").val(),
-            'mes': $("#mes").val(),
-            'moneda_id': $("#moneda_id").val()
+            'mes': $("#mes").val()
         };
 
-        var win = window.open('<?= base_url()?>reporte/estadoResultado/excel?data=' + JSON.stringify(data), '_blank');
+        var win = window.open('<?= base_url()?>reporte_caja/estadoResultado/excel?data=' + JSON.stringify(data), '_blank');
         win.focus();
     }
 </script>
