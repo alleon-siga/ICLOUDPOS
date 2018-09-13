@@ -1,9 +1,9 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
-class venta_new_model extends CI_Model
+class venta_shadow_model extends CI_Model
 {
 
-    private $table = 'venta';
+    private $table = 'venta_shadow';
 
     function __construct()
     {
@@ -19,137 +19,65 @@ class venta_new_model extends CI_Model
         $this->load->model('cajas/cajas_mov_model');
         $this->load->model('comprobante/comprobante_model');
         $this->load->model('producto/producto_model');
-        $this->load->model('facturacion/facturacion_model');
     }
 
     function get_ventas($where = array(), $action = '')
     {
         $this->db->select('
-           venta.venta_id as venta_id,
-            venta.comprobante_id as comprobante_id,
-            venta.fecha as venta_fecha,
-            venta.created_at as venta_creado,
-            venta.pagado as venta_pagado,
-            venta.vuelto as venta_vuelto,
-            venta.local_id as local_id,
-            local.local_nombre as local_nombre,
-            local.direccion as local_direccion,
-            venta.id_documento as documento_id,
-            documentos.des_doc as documento_nombre,
-            documentos.abr_doc as documento_abr,
-            correlativos.serie as serie_documento,
-            venta.factura_impresa as factura_impresa,
-            venta.id_cliente as cliente_id,
-            cliente.razon_social as cliente_nombre,
-            cliente.identificacion as ruc,
-            cliente.ruc as cliente_tipo_identificacion,
-            cliente.direccion as cliente_direccion,
-            cliente.telefono1 as cliente_telefono,
-            venta.id_vendedor as vendedor_id,
-            usuario.username as vendedor_nombre,
-            venta.condicion_pago as condicion_id,
-            condiciones_pago.nombre_condiciones as condicion_nombre,
-            venta.venta_status as venta_estado,
-            venta.id_moneda as moneda_id,
-            venta.tasa_cambio as moneda_tasa,
-            moneda.nombre as moneda_nombre,
-            moneda.simbolo as moneda_simbolo,
-            venta.total as total,
-            venta.inicial as inicial,
-            venta.total_impuesto as impuesto,
-            venta.subtotal as subtotal,
-            credito.dec_credito_montodebito as credito_pagado,
-            credito.dec_credito_montocuota as credito_pendiente,
-            credito.var_credito_estado as credito_estado,
-            credito.tasa_interes as tasa_interes,
-            credito.periodo_gracia as periodo_gracia,
-            venta.serie as serie,
-            venta.numero as numero,
-            venta.fecha_facturacion as fecha_facturacion,
-            venta.nota as nota,
-            venta.dni_garante as nombre_caja,
-            venta.tipo_impuesto as tipo_impuesto,
-            cliente.tipo_cliente as tipo_cliente,
-            venta.dni_garante as nombre_vd,
-            (select SUM(detalle_venta.cantidad) from detalle_venta
-            where detalle_venta.id_venta=venta.venta_id) as total_bultos
+            v.id as id,
+            v.comprobante_id as comprobante_id,
+            v.fecha as venta_fecha,
+            v.created_at as venta_creado,
+            v.pagado as venta_pagado,
+            v.vuelto as venta_vuelto,
+            v.local_id as local_id,
+            l.local_nombre as local_nombre,
+            l.direccion as local_direccion,
+            v.id_documento as documento_id,
+            d.des_doc as documento_nombre,
+            d.abr_doc as documento_abr,
+            v.factura_impresa as factura_impresa,
+            v.id_cliente as cliente_id,
+            c.razon_social as cliente_nombre,
+            c.identificacion as ruc,
+            c.ruc as cliente_tipo_identificacion,
+            c.direccion as cliente_direccion,
+            c.telefono1 as cliente_telefono,
+            v.id_vendedor as vendedor_id,
+            u.username as vendedor_nombre,
+            v.condicion_pago as condicion_id,
+            cp.nombre_condiciones as condicion_nombre,
+            v.venta_status as venta_estado,
+            v.id_moneda as moneda_id,
+            v.tasa_cambio as moneda_tasa,
+            m.nombre as moneda_nombre,
+            m.simbolo as moneda_simbolo,
+            v.total as total,
+            v.inicial as inicial,
+            v.total_impuesto as impuesto,
+            v.subtotal as subtotal,
+            v.serie as serie,
+            v.numero as numero,
+            v.fecha_facturacion as fecha_facturacion,
+            v.nota as nota,
+            v.dni_garante as nombre_caja,
+            v.tipo_impuesto as tipo_impuesto,
+            c.tipo_cliente as tipo_cliente,
+            v.dni_garante as nombre_vd,
+            (select SUM(dv.cantidad) from venta_shadow_detalle dv where dv.id_venta_shadow = v.id) as total_bultos
             ')
-            ->from('venta')
-            ->join('documentos', 'venta.id_documento=documentos.id_doc')
-            ->join('condiciones_pago', 'venta.condicion_pago=condiciones_pago.id_condiciones')
-            ->join('cliente', 'venta.id_cliente=cliente.id_cliente')
-            ->join('usuario', 'venta.id_vendedor=usuario.nUsuCodigo')
-            ->join('moneda', 'venta.id_moneda=moneda.id_moneda')
-            ->join('correlativos', 'venta.id_documento=correlativos.id_documento and venta.local_id=correlativos.id_local', 'left')
-            ->join('local', 'venta.local_id=local.int_local_id')
-            ->join('credito', 'venta.venta_id=credito.id_venta', 'left')
-            ->order_by('venta.fecha', 'desc');
+            ->from('venta_shadow v')
+            ->join('documentos d', 'v.id_documento=d.id_doc')
+            ->join('condiciones_pago cp', 'v.condicion_pago=cp.id_condiciones')
+            ->join('cliente c', 'v.id_cliente=c.id_cliente')
+            ->join('usuario u', 'v.id_vendedor=u.nUsuCodigo')
+            ->join('moneda m', 'v.id_moneda=m.id_moneda')
+            ->join('local l', 'v.local_id=l.int_local_id')
+            ->order_by('v.fecha', 'desc');
 
-        if (isset($where['venta_id'])) {
-            $this->db->where('venta.venta_id', $where['venta_id']);
-            $venta = $this->db->get()->row();
-            $venta->comprobante_nombre = '';
-            $venta->comprobante = '';
-            if ($venta->comprobante_id > 0) {
-                $comprobante = $this->db->join('comprobante_ventas', 'comprobante_ventas.comprobante_id = comprobantes.id')
-                    ->get_where('comprobantes', array(
-                        'comprobante_id' => $venta->comprobante_id,
-                        'venta_id' => $venta->venta_id
-                    ))->row();
-                if ($comprobante != NULL) {
-                    $venta->comprobante_nombre = $comprobante->nombre;
-                    $venta->fecha_venc = $comprobante->fecha_venc;
-                    $venta->comprobante = $comprobante->serie . sumCod($comprobante->numero, $comprobante->longitud);
-                }
-            }
-            return $venta;
-        }
-
-        if (isset($where['local_id']))
-            $this->db->where('venta.local_id', $where['local_id']);
-
-        if (isset($where['moneda_id']))
-            $this->db->where('venta.id_moneda', $where['moneda_id']);
-
-        if (isset($where['condicion_id']) && $where['condicion_id'] != "")
-            $this->db->where('venta.condicion_pago', $where['condicion_id']);
-
-        if (isset($where['id_cliente']) && $where['id_cliente'] != "")
-            $this->db->where('venta.id_cliente', $where['id_cliente']);
-
-        if (isset($where['estado']))
-            if ($action == '')
-                $this->db->where('(venta.venta_status = "COMPLETADO" OR venta.venta_status = "ANULADO")');
-            else if ($action == 'anular')
-                $this->db->where('venta.venta_status = "COMPLETADO"');
-            else if ($where['estado'] != "")
-                $this->db->where('venta.venta_status', $where['estado']);
-
-        if (isset($where['fecha_ini']) && isset($where['fecha_fin'])) {
-            $this->db->where('venta.fecha >=', date('Y-m-d H:i:s', strtotime($where['fecha_ini'] . " 00:00:00")));
-            $this->db->where('venta.fecha <=', date('Y-m-d H:i:s', strtotime($where['fecha_fin'] . " 23:59:59")));
-        }
-
-        if (isset($where['mes']) && isset($where['year']) && isset($where['dia_min']) && isset($where['dia_max'])) {
-            $last_day = last_day($where['year'], sumCod($where['mes'], 2));
-            if ($last_day > $where['dia_max'])
-                $last_day = $where['dia_max'];
-
-            $this->db->where('venta.fecha >=', $where['year'] . '-' . sumCod($where['mes'], 2) . '-' . $where['dia_min'] . " 00:00:00");
-            $this->db->where('venta.fecha <=', $where['year'] . '-' . sumCod($where['mes'], 2) . '-' . $last_day . " 23:59:59");
-        }
-
-        if (isset($where['usuarios_id']) && !empty($where['usuarios_id'])) {
-            $this->db->where('venta.id_vendedor', $where['usuarios_id']);
-        }
-
-        if (isset($where['id_documento']) && !empty($where['id_documento'])) {
-            $this->db->where('venta.id_documento', $where['id_documento']);
-        }
-
-        $ventas = $this->db->get()->result();
-
-        return $ventas;
+        $this->db->where('v.id', $where['id']);
+        $venta = $this->db->get()->row();
+        return $venta;
     }
 
     function get_ventas_totales($where = array(), $action = '')
@@ -224,7 +152,7 @@ class venta_new_model extends CI_Model
         }
         $venta->venta_documentos = $this->db->get_where('venta_documento', array('venta_id' => $venta_id))->result();
 
-        $venta->detalles = $this->db->select("
+        $venta->detalles = $this->db->select('
             detalle_venta.id_detalle as detalle_id,
             detalle_venta.id_producto as producto_id,
             producto.producto_codigo_interno as producto_codigo_interno,
@@ -238,7 +166,7 @@ class venta_new_model extends CI_Model
             detalle_venta.detalle_importe as importe,
             detalle_venta.afectacion_impuesto as afectacion_impuesto,
             detalle_venta.impuesto_porciento as impuesto_porciento
-            ")
+            ')
             ->from('detalle_venta')
             ->join('producto', 'producto.producto_id=detalle_venta.id_producto')
             ->join('unidades', 'unidades.id_unidad=detalle_venta.unidad_medida')
@@ -247,15 +175,13 @@ class venta_new_model extends CI_Model
             ->get()->result();
 
         $venta->descuento = 0;
-        $x = 0;        
         foreach ($venta->detalles as $detalle) {
             if ($detalle->precio < $detalle->precio_venta) {
                 $venta->descuento += ($detalle->precio_venta * $detalle->cantidad) - $detalle->importe;
             }
-            $venta->detalles[$x]->cantidad_und = $this->unidades_model->get_cantidad_und_max($detalle->producto_id);
-            $venta->detalles[$x]->simbolo_und = $this->unidades_model->get_um_min_by_producto_abr($detalle->producto_id);
-            $x++;
+
         }
+
         return $venta;
     }
 
@@ -376,123 +302,20 @@ class venta_new_model extends CI_Model
 
     }
 
-    function save_venta_caja($venta)
+    function save_venta_contado($venta, $productos)
     {
-
-        $venta_actual = $this->db->get_where('venta', array('venta_id' => $venta['venta_id']))->row();
-
-        $moneda_id = $venta_actual->id_moneda;
-
-        if ($venta['tipo_pago'] == 4 || $venta['tipo_pago'] == 8 || $venta['tipo_pago'] == 9 || $venta['tipo_pago'] == 7) {
-            $banco = $this->db->get_where('banco', array('banco_id' => $venta['banco_id']))->row();
-            $cuenta_id = $banco->cuenta_id;
-        } else {
-            $cuenta_id = $this->cajas_model->get_cuenta_id(array(
-                'moneda_id' => $moneda_id,
-                'local_id' => $venta_actual->local_id));
-        }
+        $cuenta_id = $this->cajas_model->get_cuenta_id(array(
+            'moneda_id' => $venta['id_moneda'],
+            'local_id' => $venta['local_id']));
 
         if ($cuenta_id == NULL) {
             $this->error = 'No existe una cuenta para este local';
             return false;
         }
 
-        $cuenta_old = $this->cajas_model->get_cuenta($cuenta_id);
-
-        $venta_total = $venta_actual->total;
-        if ($venta_actual->condicion_pago == 2)
-            $venta_total = $venta_actual->inicial;
-
-        $this->cajas_model->update_saldo($cuenta_id, $venta_total);
-
-        $this->cajas_mov_model->save_mov(array(
-            'caja_desglose_id' => $cuenta_id,
-            'usuario_id' => $venta['id_usuario'],
-            'fecha_mov' => date('Y-m-d H:i:s'),
-            'movimiento' => 'INGRESO',
-            'operacion' => 'VENTA',
-            'medio_pago' => $venta['tipo_pago'],
-            'saldo' => $venta_total,
-            'saldo_old' => $cuenta_old->saldo,
-            'ref_id' => $venta_actual->venta_id,
-            'ref_val' => $venta['num_oper'],
-        ));
-
-
-        //guardo la relacion del modo de pago
-        if ($venta_actual->condicion_pago == 1 || ($venta_actual->condicion_pago == 2 && $venta_actual->inicial > 0)) {
-
-            if ($venta['tipo_pago'] != 7) {
-                $contado = array(
-                    'id_venta' => $venta_actual->venta_id,
-                    'status' => 'PagoCancelado',
-                    'montopagado' => $venta_total
-                );
-                $this->db->insert('contado', $contado);
-            } elseif ($venta['tipo_pago'] == 7) {
-                $tarjeta = array(
-                    'venta_id' => $venta_actual->venta_id,
-                    'tarjeta_pago_id' => $venta['tarjeta'],
-                    'numero' => $venta['num_oper']
-                );
-                $this->db->insert('venta_tarjeta', $tarjeta);
-            }
-        }
-
-        $update_venta = array(
-            'pagado' => $venta['importe'],
-            'vuelto' => $venta['vuelto'],
-            'venta_status' => 'COMPLETADO'
-        );
-
-        if ($venta_actual->condicion_pago == 1) {
-            $correlativo = $this->correlativos_model->get_correlativo($venta_actual->local_id, $venta_actual->id_documento);
-            $update_venta['fecha_facturacion'] = $venta_actual->fecha;
-            $update_venta['serie'] = $correlativo->serie;
-            $update_venta['numero'] = $correlativo->correlativo;
-            $this->correlativos_model->sumar_correlativo($venta_actual->local_id, $venta_actual->id_documento);
-
-            // Hago la facturacion de comprobantes
-            if ($venta_actual->comprobante_id > 0)
-                $this->comprobante_model->facturar($venta_actual->venta_id, $venta_actual->comprobante_id);
-        }
-
-        $this->db->where('venta_id', $venta['venta_id']);
-        $this->db->update('venta', $update_venta);
-
-        if ($venta_actual->condicion_pago == 1) {
-            if (valueOptionDB('FACTURACION', 0) == 1 && ($venta_actual->id_documento == 1 || $venta_actual->id_documento == 3)) {
-                $resp = $this->facturacion_model->facturarVenta($venta['venta_id']);
-            }
-        }
-
-        return true;
-    }
-
-    function save_venta_contado($venta, $productos, $traspasos = array())
-    {
-        if ($venta['venta_status'] != 'CAJA') {
-            if ($venta['vc_forma_pago'] == 4 || $venta['vc_forma_pago'] == 8 || $venta['vc_forma_pago'] == 9 || $venta['vc_forma_pago'] == 7) {
-                $banco = $this->db->get_where('banco', array('banco_id' => $venta['vc_banco_id']))->row();
-                $cuenta_id = $banco->cuenta_id;
-            } else {
-                $cuenta_id = $this->cajas_model->get_cuenta_id(array(
-                    'moneda_id' => $venta['id_moneda'],
-                    'local_id' => $venta['local_id']));
-            }
-
-            if ($cuenta_id == NULL) {
-                $this->error = 'No existe una cuenta para este local';
-                return false;
-            }
-        }
- 
-        if (sizeof($traspasos) > 0) {
-            $this->save_traspasos($traspasos, $venta['id_usuario'], $venta['condicion_pago']);
-        }
-
         //preparo la venta
         $venta_contado = array(
+            'venta_id' => $venta['venta_id'],
             'local_id' => $venta['local_id'],
             'id_documento' => $venta['id_documento'],
             'id_cliente' => $venta['id_cliente'],
@@ -516,221 +339,14 @@ class venta_new_model extends CI_Model
             'dni_garante' => $venta['dni_garante']
         );
 
-        if ($venta['venta_status'] == 'CAJA') {
-            $venta_contado['total'] = $venta['total_importe'];
-        } else {
-            $correlativo = $this->correlativos_model->get_correlativo($venta['local_id'], $venta['id_documento']);
-            $venta_contado['fecha_facturacion'] = date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $venta['fecha_venta']) . date(" H:i:s")));
-            $venta_contado['serie'] = $correlativo->serie;
-            $venta_contado['numero'] = $correlativo->correlativo;
-
-            $this->correlativos_model->sumar_correlativo($venta['local_id'], $venta['id_documento']);
-            if ($venta['id_documento'] != 6) { //Si es diferente a la nota de venta
-                //Correlativo para la guia de remision
-                $correlativo = $this->correlativos_model->get_correlativo($venta['local_id'], 4);
-                $this->correlativos_model->sumar_correlativo($venta['local_id'], 4);
-                $venta_contado['nro_guia'] = $correlativo->correlativo;
-            }
-        }
-
         //inserto la venta
-        $this->db->insert('venta', $venta_contado);
-        $venta_id = $this->db->insert_id();
+        $this->db->insert('venta_shadow', $venta_contado);
+        $id_venta_shadow = $this->db->insert_id();
 
-        if ($venta['venta_status'] != 'CAJA') {
-            // Hago la facturacion de comprobantes
-            if (validOption('COMPROBANTE', 1))
-                $this->comprobante_model->facturar($venta_id, $venta['comprobante_id']);
+        $this->save_producto_detalles($id_venta_shadow, $venta['id_documento'], $venta['local_id'], $productos, $venta['id_usuario']);
 
-            $cuenta_old = $this->cajas_model->get_cuenta($cuenta_id);
-
-            $this->cajas_model->update_saldo($cuenta_id, $venta_contado['total']);
-
-            $this->cajas_mov_model->save_mov(array(
-                'caja_desglose_id' => $cuenta_id,
-                'usuario_id' => $venta['id_usuario'],
-                'fecha_mov' => date('Y-m-d H:i:s'),
-                'movimiento' => 'INGRESO',
-                'operacion' => 'VENTA',
-                'medio_pago' => $venta['vc_forma_pago'],
-                'saldo' => $venta_contado['total'],
-                'saldo_old' => $cuenta_old->saldo,
-                'ref_id' => $venta_id,
-                'ref_val' => $venta['vc_num_oper']
-            ));
-        }
-
-        $this->correlativos_model->update_nota_pedido($venta['local_id'], $venta_id);
-
-        $this->save_producto_detalles($venta_id, $venta['id_documento'], $venta['local_id'], $productos, $venta['id_usuario']);
-
-        if ($venta['venta_status'] == 'COMPLETADO') {
-            //guardo la relacion del modo de pago
-            if ($venta['vc_forma_pago'] != 7) {
-                $contado = array(
-                    'id_venta' => $venta_id,
-                    'status' => 'PagoCancelado',
-                    'montopagado' => $venta['vc_total_pagar']
-                );
-                $this->db->insert('contado', $contado);
-            } elseif ($venta['vc_forma_pago'] == 7) {
-                $tarjeta = array(
-                    'venta_id' => $venta_id,
-                    'tarjeta_pago_id' => $venta['vc_tipo_tarjeta'],
-                    'numero' => $venta['vc_num_oper']
-                );
-                $this->db->insert('venta_tarjeta', $tarjeta);
-            }
-        }
-
-        $this->recalc_totales($venta_id);
-
-        if (valueOptionDB('FACTURACION', 0) == 1 && ($venta['id_documento'] == 1 || $venta['id_documento'] == 3)) {
-            if ($venta['venta_status'] != 'CAJA') {
-                $resp = $this->facturacion_model->facturarVenta($venta_id);
-            }
-        } elseif (valueOptionDB('FACTURACION', 0) == 1) {
-            log_message('debug', 'Facturacion electronica. Documento erroneo. Doc: ' . $venta['id_documento']);
-        }
-
-        return $venta_id;
-
-    }
-
-    function save_venta_credito($venta, $productos, $traspasos = array(), $cuotas)
-    {
-
-        if ($venta['venta_status'] != 'CAJA' && $venta['c_inicial'] > 0) {
-            if ($venta['vc_forma_pago'] == 4 || $venta['vc_forma_pago'] == 8 || $venta['vc_forma_pago'] == 9 || $venta['vc_forma_pago'] == 7) {
-                $banco = $this->db->get_where('banco', array('banco_id' => $venta['vc_banco_id']))->row();
-                $cuenta_id = $banco->cuenta_id;
-            } else {
-                $cuenta_id = $this->cajas_model->get_cuenta_id(array(
-                    'moneda_id' => $venta['id_moneda'],
-                    'local_id' => $venta['local_id']));
-            }
-
-            if ($cuenta_id == NULL) {
-                $this->error = 'No existe una cuenta para este local';
-                return false;
-            }
-        }
-
-        if (sizeof($traspasos) > 0) {
-            $this->save_traspasos($traspasos, $venta['id_usuario'], $venta['condicion_pago']);
-        }
-
-        if ($venta['venta_status'] == 'CAJA' && $venta['c_inicial'] == 0)
-            $venta['venta_status'] = 'COMPLETADO';
-
-        $imp = (100 + IMPUESTO) / 100;
-        $venta['subtotal'] = ($venta['c_precio_credito'] + $venta['c_inicial']) / $imp;
-        $venta['impuesto'] = ($venta['c_precio_credito'] + $venta['c_inicial']) - $venta['subtotal'];
-
-        //preparo la venta
-        $venta_contado = array(
-            'local_id' => $venta['local_id'],
-            'id_documento' => $venta['id_documento'],
-            'id_cliente' => $venta['id_cliente'],
-            'id_vendedor' => $venta['id_usuario'],
-            'condicion_pago' => $venta['condicion_pago'],
-            'id_moneda' => $venta['id_moneda'],
-            'venta_status' => $venta['venta_status'],
-            'fecha' => date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $venta['fecha_venta']) . date(" H:i:s"))),
-            'factura_impresa' => 0,
-            'subtotal' => $venta['subtotal'],
-            'total_impuesto' => $venta['impuesto'],
-            'total' => $venta['c_precio_credito'] + $venta['c_inicial'],
-            'pagado' => $venta['vc_importe'],
-            'vuelto' => $venta['vc_vuelto'],
-            'tasa_cambio' => $venta['tasa_cambio'],
-            'dni_garante' => $venta['c_dni_garante'],
-            'inicial' => $venta['c_inicial'],
-            'tipo_impuesto' => $venta['tipo_impuesto'],
-            'comprobante_id' => $venta['comprobante_id'],
-            'nota' => $venta['venta_nota'],
-            'dni_garante' => $venta['dni_garante']
-        );
-
-        //inserto la venta
-        $this->db->insert('venta', $venta_contado);
-        $venta_id = $this->db->insert_id();
-
-        if ($venta['venta_status'] != 'CAJA' && $venta_contado['inicial'] > 0) {
-
-
-            $cuenta_old = $this->cajas_model->get_cuenta($cuenta_id);
-
-            $this->cajas_model->update_saldo($cuenta_id, $venta_contado['inicial']);
-
-            $this->cajas_mov_model->save_mov(array(
-                'caja_desglose_id' => $cuenta_id,
-                'usuario_id' => $venta['id_usuario'],
-                'fecha_mov' => date('Y-m-d H:i:s'),
-                'movimiento' => 'INGRESO',
-                'operacion' => 'VENTA',
-                'medio_pago' => $venta['vc_forma_pago'],
-                'saldo' => $venta_contado['inicial'],
-                'saldo_old' => $cuenta_old->saldo,
-                'ref_id' => $venta_id,
-                'ref_val' => $venta['vc_num_oper'],
-            ));
-        }
-
-
-        $this->correlativos_model->update_nota_pedido($venta['local_id'], $venta_id);
-
-
-        $this->save_producto_detalles($venta_id, $venta['id_documento'], $venta['local_id'], $productos, $venta['id_usuario']);
-
-
-        $this->db->insert('credito', array(
-            'id_venta' => $venta_id,
-            'int_credito_nrocuota' => $venta['c_numero_cuotas'],
-            'dec_credito_montocuota' => $venta['c_precio_credito'],
-            'var_credito_estado' => 'PagoPendiente',
-            'dec_credito_montodebito' => 0.00,
-            'id_moneda' => $venta['id_moneda'],
-            'tasa_cambio' => $venta['tasa_cambio'],
-            'periodo_gracia' => $venta['c_periodo_gracia'],
-            'tasa_interes' => $venta['c_tasa_interes']
-        ));
-
-        foreach ($cuotas as $cuota) {
-            $this->db->insert('credito_cuotas', array(
-                'id_venta' => $venta_id,
-                'nro_letra' => $cuota->letra,
-                'fecha_giro' => date('Y-m-d', strtotime(str_replace('/', '-', $venta['c_fecha_giro']))),
-                'fecha_vencimiento' => date('Y-m-d', strtotime(str_replace('/', '-', $cuota->fecha))),
-                'monto' => $cuota->monto,
-                'ispagado' => 0,
-                'isgiro' => 0
-            ));
-        }
-
-        if ($venta['venta_status'] == 'COMPLETADO' && $venta_contado['inicial'] > 0) {
-            //guardo la relacion del modo de pago
-            if ($venta['vc_forma_pago'] != 7) {
-                $contado = array(
-                    'id_venta' => $venta_id,
-                    'status' => 'PagoCancelado',
-                    'montopagado' => $venta_contado['inicial']
-                );
-                $this->db->insert('contado', $contado);
-            } elseif ($venta['vc_forma_pago'] == 7) {
-                $tarjeta = array(
-                    'venta_id' => $venta_id,
-                    'tarjeta_pago_id' => $venta['vc_tipo_tarjeta'],
-                    'numero' => $venta['vc_num_oper']
-                );
-                $this->db->insert('venta_tarjeta', $tarjeta);
-            }
-        }
-
-        $this->recalc_totales($venta_id);
-
-        return $venta_id;
-
+        $this->recalc_totales($id_venta_shadow);
+        return $id_venta_shadow;
     }
 
     function cerrar_venta($venta_id, $correlativos = array())
@@ -775,10 +391,10 @@ class venta_new_model extends CI_Model
     }
 
     private
-    function save_producto_detalles($venta_id, $doc_id, $local_id, $productos, $id_usuario)
+    function save_producto_detalles($id_venta_shadow, $doc_id, $local_id, $productos, $id_usuario)
     {
         //Preparo los detalles de la venta para insertarlo y sus historicos
-        $venta = $this->get_ventas(array('venta_id' => $venta_id));
+        $venta = $this->get_ventas(array('id' => $id_venta_shadow));
         $cantidades = array();
         $venta_detalle = array();
         $venta_contable_detalle = array();
@@ -810,7 +426,7 @@ class venta_new_model extends CI_Model
 
             //preparo el detalle de la venta
             $producto_detalle = array(
-                'id_venta' => $venta_id,
+                'id_venta_shadow' => $id_venta_shadow,
                 'id_producto' => $producto->id_producto,
                 'precio' => $producto->precio,
                 'cantidad' => $producto->cantidad,
@@ -827,150 +443,13 @@ class venta_new_model extends CI_Model
             );
             array_push($venta_detalle, $producto_detalle);
 
-            if (validOption('ACTIVAR_SHADOW', 1) && $doc_id != 6) {
-                //preparo el detalle de la venta contable cuando el shadow stock esta activo
-                $producto_detalle = array(
-                    'venta_id' => $venta_id,
-                    'producto_id' => $producto->id_producto,
-                    'unidad_id' => $producto->unidad_medida,
-                    'precio' => $producto->precio,
-                    'cantidad' => $producto->cantidad
-                );
-                array_push($venta_contable_detalle, $producto_detalle);
-            }
             $precio[$producto->id_producto] = $this->unidades_model->get_maximo_costo($producto->id_producto, $producto->unidad_medida, $producto->precio);
             $ArrfectImp[$producto->id_producto] = $prod->producto_afectacion_impuesto;
             $impPorciento[$producto->id_producto] = $p->porcentaje_impuesto;
         }
 
         //inserto los detalles de la venta
-        $this->db->insert_batch('detalle_venta', $venta_detalle);
-
-        if (validOption('ACTIVAR_SHADOW', 1) && $doc_id != 6)
-            $this->db->insert_batch('venta_contable_detalle', $venta_contable_detalle);
-
-
-        foreach ($cantidades as $key => $value) {
-
-            $old_cantidad = $this->db->get_where('producto_almacen', array(
-                "id_local" => $local_id,
-                "id_producto" => $key
-            ))->row();
-
-            //Llevo la cantidad vieja tambien a la minima expresion y la sumo con la minima expresion
-            $old_cantidad_min = $old_cantidad != NULL ? $this->unidades_model->convert_minimo_um($key, $old_cantidad->cantidad, $old_cantidad->fraccion) : 0;
-
-            $result = $this->unidades_model->get_cantidad_fraccion($key, $old_cantidad_min - $value);
-
-            //CREAR EL HISTORICO DE LA VENTA *************************************
-            /*$this->historico_model->set_historico(array(
-                'producto_id' => $key,
-                'local_id' => $local_id,
-                'usuario_id' => $this->session->userdata('nUsuCodigo'),
-                'cantidad' => $value,
-                'cantidad_actual' => $this->unidades_model->convert_minimo_um($key, $result['cantidad'], $result['fraccion']),
-                'tipo_movimiento' => "VENTA",
-                'tipo_operacion' => 'SALIDA',
-                'referencia_valor' => 'Se realizo una Venta',
-                'referencia_id' => $venta_id
-            ));*/
-
-            $tipo = 0;
-            if ($venta->documento_id == 1)
-                $tipo = 1;
-            if ($venta->documento_id == 3)
-                $tipo = 3;
-            if ($venta->documento_id == 6)
-                $tipo = -2;
-
-            $costo = 0;
-            if($ArrfectImp[$key]=='1'){
-                if($venta->tipo_impuesto==1){ //incluye impuesto
-                    $costo = $precio[$key] / (($impPorciento[$key] / 100) + 1);
-                }else{ //agrega impuesto
-                    $costo = $precio[$key];
-                }
-            }else{
-                $costo = $precio[$key];
-            }
-
-            if($venta->moneda_tasa > 0){
-                $costo = $costo * $venta->moneda_tasa;
-            }
-
-            $values = array(
-                'local_id' => $local_id,
-                'producto_id' => $key,
-                'cantidad' => $value,
-                'io' => 2,
-                'tipo' => $tipo,
-                'operacion' => 1,
-                'serie' => $venta->serie != null ? $venta->serie : '-',
-                'numero' => $venta->numero != null ? sumCod($venta->numero, 6) : '-',
-                'ref_id' => $venta->venta_id,
-                'usuario_id' => $id_usuario,
-                'costo' => $costo,
-                'moneda_id' => $venta->moneda_id
-            );
-            $this->kardex_model->set_kardex($values);
-
-            if ($old_cantidad != NULL) {
-                //Actualizo el almacen
-                $this->db->where(array(
-                    'id_local' => $local_id,
-                    'id_producto' => $key
-                ));
-                $this->db->update('producto_almacen', array(
-                    'cantidad' => $result['cantidad'],
-                    'fraccion' => $result['fraccion']
-                ));
-            } else {
-                $this->db->insert('producto_almacen', array(
-                    'id_producto' => $key,
-                    'id_local' => $local_id,
-                    'cantidad' => $result['cantidad'],
-                    'fraccion' => $result['fraccion']
-                ));
-            }
-        }
-    }
-
-    private
-    function save_traspasos($traspasos, $id_usuario, $condicion_pago)
-    {
-        $next_id = $this->db->select_max('venta_id')->get('venta')->row();
-        //Guardo en tabla traspaso
-        $values = array(
-            'ref_id' => $next_id->venta_id + 1,
-            'usuario_id' => $id_usuario,
-            'local_destino' => $traspasos[0]->parent_local,
-            'fecha' => date('Y-m-d H:i:s'),
-            'motivo' => ($condicion_pago=='1') ? 'VENTA AL CONTADO': 'VENTA AL CREDITO'
-        );
-        $this->db->insert('traspaso', $values);
-        $idTraspaso = $this->db->insert_id();
-        //Hago los traspasos en caso de haber
-        foreach ($traspasos as $traspaso) {
-            $orden_max = $this->db->select_max('orden', 'orden')
-                ->where('producto_id', $traspaso->id_producto)->get('unidades_has_producto')->row();
-
-            $minima_unidad = $this->db->select('id_unidad as um_id')
-                ->where('producto_id', $traspaso->id_producto)
-                ->where('orden', $orden_max->orden)
-                ->get('unidades_has_producto')->row();
-            
-            $result = $this->traspaso_model->traspasar_productos($traspaso->id_producto, $traspaso->local_id, $traspaso->parent_local, $id_usuario, array(
-                'um_id' => $minima_unidad->um_id,
-                'cantidad' => $traspaso->cantidad,
-                'venta_id' => $next_id->venta_id + 1
-            ));
-            //aqui guarda los detalles de traspaso
-            $this->db->insert("traspaso_detalle", array(
-                'traspaso_id' => $idTraspaso,
-                'local_origen' => $traspaso->local_id,
-                'kardex_id' => $result["entrada_id"]
-            ));
-        }
+        $this->db->insert_batch('venta_shadow_detalle', $venta_detalle);
     }
 
     public
@@ -1143,8 +622,8 @@ class venta_new_model extends CI_Model
 
     private function recalc_totales($venta_id)
     {
-        $venta = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
-        $detalles = $this->db->get_where('detalle_venta', array('id_venta' => $venta_id))->result();
+        $venta = $this->db->get_where('venta_shadow', array('id' => $venta_id))->row();
+        $detalles = $this->db->get_where('venta_shadow_detalle', array('id_venta_shadow' => $venta_id))->result();
 
         $impuesto = 0;
         $subtotal = 0;
@@ -1152,7 +631,6 @@ class venta_new_model extends CI_Model
         foreach ($detalles as $d) {
             $total += $d->cantidad * $d->precio;
         }
-
 
         if ($venta->tipo_impuesto == 1) {
             foreach ($detalles as $d) {
@@ -1175,8 +653,8 @@ class venta_new_model extends CI_Model
             $subtotal = $total;
         }
 
-        $this->db->where('venta_id', $venta_id);
-        $this->db->update('venta', array(
+        $this->db->where('id', $venta_id);
+        $this->db->update('venta_shadow', array(
             'total' => $total,
             'subtotal' => $subtotal,
             'total_impuesto' => $impuesto,
@@ -1420,131 +898,9 @@ class venta_new_model extends CI_Model
         $mpdf->Output($nombre_archivo, 'I');
     }
 
-    public function save_recarga($venta)
-    {
-        $data = array(
-            'local_id' => $venta['local_id'],
-            'id_documento' => $venta['id_documento'],
-            'id_cliente' => $venta['id_cliente'],
-            'id_vendedor' => $venta['id_usuario'],
-            'condicion_pago' => $venta['condicion_pago'],
-            'id_moneda' => $venta['id_moneda'],
-            'venta_status' => $venta['venta_status'],
-            'fecha' => date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $venta['fecha_venta']) . date(" H:i:s"))),
-            'factura_impresa' => 0,
-            'subtotal' => number_format($venta['total_importe'] / 1.18, 2),
-            'total_impuesto' => number_format($venta['total_importe'] - ($venta['total_importe'] / 1.18), 2),
-            'total' => $venta['total_importe'],
-            'pagado' => $venta['vc_importe'],
-            'vuelto' => $venta['vc_vuelto'],
-            'tasa_cambio' => 0,
-            'dni_garante' => null,
-            'inicial' => 0,
-            'tipo_impuesto' => 1,
-            'comprobante_id' => 0,
-            'nota' => null,
-            'dni_garante' => null,
-        );
-        if ($venta['condicion_pago'] == '1') {
-            $correlativo = $this->correlativos_model->get_correlativo($venta['local_id'], $venta['id_documento']);
-            $data['fecha_facturacion'] = date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $venta['fecha_venta']) . date(" H:i:s")));
-            $data['serie'] = $correlativo->serie;
-            $data['numero'] = $correlativo->correlativo;
-            $this->correlativos_model->sumar_correlativo($venta['local_id'], $venta['id_documento']);
-        }
-        //inserto la venta
-        $this->db->insert('venta', $data);
-        $venta_id = $this->db->insert_id();
-
-        $product = $this->db->get_where('producto', array('producto_nombre' => 'RECARGA VIRTUAL'))->row();
-        $data = array(
-            'id_venta' => $venta_id,
-            'id_producto' => $product->producto_id,
-            'precio' => number_format($venta['total_importe'], 2),
-            'cantidad' => 1,
-            'unidad_medida' => 1,
-            'detalle_importe' => number_format($venta['total_importe'], 2),
-            'impuesto_id' => 1,
-            'impuesto_porciento' => 18.00,
-            'precio_venta' => number_format($venta['total_importe'], 2)
-        );
-        //inserto en detalle
-        $this->db->insert('detalle_venta', $data);
-
-        if ($venta['condicion_pago'] == 2) { //Al credito
-            $data = array(
-                'id_venta' => $venta_id,
-                'int_credito_nrocuota' => 1,
-                'dec_credito_montocuota' => number_format($venta['total_importe'], 2),
-                'var_credito_estado' => 'PagoPendiente',
-                'id_moneda' => $venta['id_moneda'],
-                'tasa_cambio' => 0
-            );
-            $this->db->insert('credito', $data);
-
-            $data = array(
-                'nro_letra' => '1 / 1',
-                'fecha_giro' => date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $venta['fecha_venta']) . date(" H:i:s"))),
-                'fecha_vencimiento' => date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $venta['fecha_venta']) . date(" H:i:s"))),
-                'monto' => number_format($venta['total_importe'], 2),
-                'isgiro' => '0',
-                'id_venta' => $venta_id,
-                'ispagado' => '0'
-            );
-            $this->db->insert('credito_cuotas', $data);
-        } else {
-            if ($venta['vc_forma_pago'] == 4 || $venta['vc_forma_pago'] == 8 || $venta['vc_forma_pago'] == 9 || $venta['vc_forma_pago'] == 7) {
-                $banco = $this->db->get_where('banco', array('banco_id' => $venta['vc_banco_id']))->row();
-                $cuenta_id = $banco->cuenta_id;
-            } else {
-                $cuenta_id = $this->cajas_model->get_cuenta_id(array(
-                    'moneda_id' => $venta['id_moneda'],
-                    'local_id' => $venta['local_id']));
-            }
-
-            if ($cuenta_id == NULL) {
-                $this->error = 'No existe una cuenta para este local';
-                return false;
-            }
-
-            $cuenta_old = $this->cajas_model->get_cuenta($cuenta_id);
-
-            $this->cajas_model->update_saldo($cuenta_id, $venta['total_importe']);
-
-            $this->cajas_mov_model->save_mov(array(
-                'caja_desglose_id' => $cuenta_id,
-                'usuario_id' => $venta['id_usuario'],
-                'fecha_mov' => date('Y-m-d H:i:s'),
-                'movimiento' => 'INGRESO',
-                'operacion' => 'VENTA',
-                'medio_pago' => $venta['vc_forma_pago'],
-                'saldo' => $venta['total_importe'],
-                'saldo_old' => $cuenta_old->saldo,
-                'ref_id' => $venta_id,
-                'ref_val' => $venta['vc_num_oper']
-            ));
-        }
-
-        $data = array(
-            'id_venta' => $venta_id,
-            'rec_trans' => $venta['cod_tran'],
-            'rec_nro' => $venta['rec_nro'],
-            'rec_ope' => $venta['rec_ope'],
-            'rec_pob' => $venta['rec_pob']
-        );
-        //inserto la recarga
-        $this->db->insert('recarga', $data);
-        //Actualizo cliente
-        $update['nota'] = $venta['nota'];
-        $update['telefono1'] = $venta['telefono1'];
-        $this->db->where('id_cliente', $venta['id_cliente']);
-        $this->db->update('cliente', $update);
-        return $venta_id;
-    }
-
     public function ultimasVentas($venta)
     {
-        $this->db->select('date(v.fecha) AS fecha, dv.precio, u.nombre_unidad, venta_id, m.simbolo, dv.unidad_medida, dv.id_producto');
+        $this->db->select('date(v.fecha) AS fecha, dv.precio, dv.cantidad, u.nombre_unidad, venta_id, m.simbolo');
         $this->db->from('detalle_venta dv');
         $this->db->join('venta v', 'v.venta_id=dv.id_venta');
         $this->db->join('unidades u', 'dv.unidad_medida=u.id_unidad');
@@ -1552,15 +908,7 @@ class venta_new_model extends CI_Model
         $this->db->where('id_producto', $venta['id_producto']);
         $this->db->where('id_cliente', $venta['id_cliente']);
         $this->db->order_by('v.fecha DESC');
-        $this->db->limit(10);
-        $datos = $this->db->get()->result();
-        $x=0;
-        foreach ($datos as $dato) {
-            $datos[$x]->precio = number_format($this->unidades_model->get_maximo_costo($datos[$x]->id_producto, $datos[$x]->unidad_medida, $datos[$x]->precio), 2);
-            $datos[$x]->nombre_unidad = $this->unidades_model->get_um_min_by_producto($datos[$x]->id_producto);
-            $x++;
-        }
-        return $datos;
+        return $this->db->get()->result();
     }
 
     public function ultimasCompras($id)
@@ -1608,8 +956,7 @@ class venta_new_model extends CI_Model
             dv.impuesto_porciento as impuesto,
             IFNULL(dv.afectacion_impuesto, 0) as afectacion_impuesto,
             dv.precio_venta as precio_venta,
-            dv.precio_venta as precio_venta,
-            pcu.contable_costo as contable_costo
+            pcu.contable_costo
             ')
             ->from('detalle_venta as dv')
             ->join('venta as v', 'dv.id_venta = v.venta_id')
@@ -1650,8 +997,6 @@ class venta_new_model extends CI_Model
             }
             $result[$detalle->producto_id]->unidades[$detalle->unidad_id]->cantidad = $detalle->cantidad;
             $result[$detalle->producto_id]->total_min += $this->unidades_model->convert_minimo_by_um($detalle->producto_id, $detalle->unidad_id, $detalle->cantidad);
-
-            $result[$detalle->producto_id]->contable_costo = $detalle->contable_costo;
 
         }
 
