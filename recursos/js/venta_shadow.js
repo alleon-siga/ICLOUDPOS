@@ -776,8 +776,61 @@ $(document).ready(function () {
       }
     })
     $('#popover_costoUnitario').show()
-  })
-})
+  });
+
+  //Permite aplicar a todo el detalle el precio comprobante
+  $('#aplicarCosteo').on('click', function(){
+    var trPrecioUnitario, trSubtotal, i;
+    if($('#aplicarCosteo').prop('checked')==false){ //los costo normales
+      i=0;
+      $('#body_productos tr').each(function(){
+        var id_producto = lst_producto[i].producto_id;
+        trPrecioUnitario = parseFloat(lst_producto[i].precio_unitario_bk);
+        trSubtotal = parseFloat(lst_producto[i].subtotal_bk);
+        $(this).find('.trPrecioUnitario').text(trPrecioUnitario.toFixed(2));
+        $(this).find('.trSubtotal').text(trSubtotal.toFixed(2));
+
+        //Actualizando arreglo
+        var index = get_index_producto(id_producto);
+        lst_producto[index].precio_unitario = trPrecioUnitario;
+        lst_producto[index].precio_descuento = trPrecioUnitario;
+        lst_producto[index].subtotal = trSubtotal;
+        i++;
+      });
+      refresh_right_panel();
+    }else{
+      var id_venta = $('#venta_id').val();
+      $.ajax({
+        url: ruta + 'facturador/venta/getCostoUnitarioVenta/'+id_venta,
+        type: 'POST',
+        dataType: 'json',
+        success: function(data){
+          i=0;
+          $('#body_productos tr').each(function(){
+            var id_producto = lst_producto[i].producto_id;
+            var cantidad = parseFloat(lst_producto[i].total_minimo);
+            var porcentaje_utilidad = parseFloat(data.porcentaje_utilidad[id_producto] / 100);
+            var contable_costo = parseFloat(data.contable_costo[id_producto]);
+            var precioComp = (porcentaje_utilidad * contable_costo) + contable_costo;
+
+            trPrecioUnitario = parseFloat(precioComp);
+            trSubtotal = parseFloat(cantidad * trPrecioUnitario);
+            $(this).find('.trPrecioUnitario').text(trPrecioUnitario.toFixed(2));
+            $(this).find('.trSubtotal').text(trSubtotal.toFixed(2));
+
+            //Actualizando arreglo
+            var index = get_index_producto(id_producto);
+            lst_producto[index].precio_unitario = trPrecioUnitario;
+            lst_producto[index].precio_descuento = trPrecioUnitario;
+            lst_producto[index].subtotal = trSubtotal;
+            i++;
+          });
+          refresh_right_panel();
+        }
+      });
+    }
+  });
+});
 
 //FUNCIONES DE MANEJO DE LAS VENTAS
 
@@ -1099,7 +1152,8 @@ function edit_producto (producto_id) {
   $('#producto_complete').val(decodeURIComponent(producto.producto_nombre))
   prod.html(template)
   prod.change()
-  $('#chkCostoContable').val(producto.contable_costo);
+  $('#chkCostoContable').val(producto.precio_comp);
+  $('#chkCostoContable').prop('checked', false);
 }
 
 //elimina un producto de la tabla
@@ -1165,9 +1219,9 @@ function addTable (producto, type) {
   template += '<td>' + decodeURIComponent(producto.producto_nombre) + '</td>'
   if (type == 'general') {
     template += '<td style="text-align: center;">' + producto.total_minimo + ' (' + producto.um_min + ')</td>'
-    template += '<td>' + producto.precio_unitario + '</td>'
+    template += '<td class="trPrecioUnitario">' + parseFloat(producto.precio_unitario).toFixed(2) + '</td>'
     template += '<td>' + (producto.precio_unitario > producto.precio_descuento ? producto.precio_descuento : '-') + '</td>'
-    template += '<td>' + parseFloat(producto.subtotal).toFixed(2) + '</td>'
+    template += '<td class="trSubtotal">' + parseFloat(producto.subtotal).toFixed(2) + '</td>'
   }
   if (type == 'detalle') {
     template += '<td style="text-align: center; width: 400px;">'

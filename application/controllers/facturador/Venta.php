@@ -17,6 +17,7 @@ class venta extends MY_Controller
             $this->load->model('precio/precios_model');
             $this->load->model('metodosdepago/metodos_pago_model');
             $this->load->model('venta_shadow/venta_shadow_model');
+            $this->load->model('producto_costo_unitario/producto_costo_unitario_model');
         } else {
             redirect(base_url(), 'refresh');
         }
@@ -239,6 +240,12 @@ class venta extends MY_Controller
             $data['success'] = "3";
             $data['sin_stock'] = json_encode($sin_stock);
         }
+        echo json_encode($data);
+    }
+
+    function getCostoUnitarioVenta($id_venta)
+    {
+        $data = $this->producto_costo_unitario_model->getCostoUnitarioVenta($id_venta);
         echo json_encode($data);
     }
 }
