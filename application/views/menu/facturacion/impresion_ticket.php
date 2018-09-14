@@ -81,7 +81,7 @@
         </tr>
         <tr>
             <td style="text-transform: uppercase;">
-                Fecha: <?= date('d/m/Y h:i a', strtotime($facturacion->fecha)) ?></td>
+                Fecha: <?= date('d/m/Y', strtotime($facturacion->fecha)) ?></td>
         </tr>
         <tr>
             <td style="text-transform: uppercase;">Raz&oacute;n Social: <?= $facturacion->cliente_nombre ?></td>
