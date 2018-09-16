@@ -6,3 +6,4 @@ application/config/config.php
 application/logs/
 application/libraries/Facturador/files/
 recursos/qr/
+application/config/database.php

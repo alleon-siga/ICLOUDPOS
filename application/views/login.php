@@ -50,183 +50,195 @@
     <script src="<?php echo $ruta; ?>recursos/js/vendor/modernizr-2.7.1-respond-1.4.2.min.js"></script>
 
     <script type="text/javascript">
-        $(document).ready(function () {
-
-            $(document).keypress(function(e){
-                if(e.which == 13) {
-                    $("#btnlogin").click();
-                }
-            });
-
-            $("#btnlogin").click(function (event) {
-                <?php $mensaje = "<a ></a>";?>
-                event.preventDefault();
-                $.ajax({
-                    type: "POST",
-                    data: $('#frmLogin').serialize(),
-                    url: "<?php echo $ruta;?>" + "inicio/validar_login",
-                    success: function (msj) {
-                        if (msj == 'ok') {
-                            window.location.href = "<?php echo $ruta;?>" + "principal/";
-                        } else {
-                            $("#light").html('Usuario o clave incorrecta, por favor vuelva a intentar')
-                            $("#light").delay("slow").fadeIn().delay(2000).fadeOut();
-                        }
+        $(document).on('submit','form#frmLogin',function(e){
+            <?php $mensaje = "<a ></a>";?>
+            e.preventDefault();
+            $.ajax({
+                type: "POST",
+                data: $(this).serialize(),
+                url: "<?php echo $ruta;?>" + "inicio/validar_login",
+                success: function (msj) {
+                    if (msj == 'ok') {
+                        window.location.href = "<?php echo $ruta;?>" + "principal/";
+                    } else {
+                        $("#msg").html('<div class="alert alert-warning alert-dismissible fade in" role="alert"> <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button><strong>Usuario o clave incorrecta, por favor vuelva a intentar</strong></div>')
+                        $("#msg").delay("slow").fadeIn().delay(2000).fadeOut();
                     }
-                });
+                },
+                error: function (msj) {
+                    $("#msg").html('<div class="alert alert-warning alert-dismissible fade in" role="alert"> <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button><strong>Usuario o clave incorrecta, por favor vuelva a intentar</strong></div>')
+                    $("#msg").delay("slow").fadeIn().delay(2000).fadeOut();
+                },
             });
         });
-
-
-
     </script>
-<style type="text/css">
-    .btn_login {
-  background: #7ed962;
-  background-image: -webkit-linear-gradient(top, #7ed962, #4eb82b);
-  background-image: -moz-linear-gradient(top, #7ed962, #4eb82b);
-  background-image: -ms-linear-gradient(top, #7ed962, #4eb82b);
-  background-image: -o-linear-gradient(top, #7ed962, #4eb82b);
-  background-image: linear-gradient(to bottom, #7ed962, #4eb82b);
-  -webkit-border-radius: 6;
-  -moz-border-radius: 6;
-  border-radius: 6px;
-  text-shadow: 1px 1px 3px #666666;
-  font-family: Arial;
-  color: #ffffff;
-  font-size: 16px;
-  padding: 3% 24% 3% 24%;
-  border: solid #44ad34 2px;
-  text-decoration: none;
-}
 
-.btn_login:hover {
-  background: #63b557;
-  background-image: -webkit-linear-gradient(top, #63b557, #1bb52a);
-  background-image: -moz-linear-gradient(top, #63b557, #1bb52a);
-  background-image: -ms-linear-gradient(top, #63b557, #1bb52a);
-  background-image: -o-linear-gradient(top, #63b557, #1bb52a);
-  background-image: linear-gradient(to bottom, #63b557, #1bb52a);
-  text-decoration: none;
-}
-.black_overlay{
-    display: none;
-    position: absolute;
-    top: 0%;
-    left: 0%;
-    width: 100%;
-    height: 100%;
-    background-color: black;
-    z-index:1001;
-    -moz-opacity: 0.8;
-    opacity:.80;
-    filter: alpha(opacity=80);
-}
+    <style type="text/css">
+        .nopadding{
+            padding: 0px !important;
+        }
+        .vpadding{
+            padding-top: 15px !important;
+            padding-bottom: 15px !important;
+        }
+        .noHorizontalPadding{
+            padding-left: 0px;
+            padding-right: 0px;
+        }
+        .nomargin{
+            margin: 0px !important;
+        }
+        .centered{
+            margin: 0px auto;
+            float: none !important;
+            display: inline-block;
+        }
+        .vertical{
+            display: -ms-flexbox;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-flex-direction: column;
+            -ms-flex-direction: column;
+            flex-direction: column;
+            -webkit-align-items: flex-start;
+            -ms-flex-align: start;
+            align-items: flex-start;
+            -webkit-justify-content: center;
+            -ms-flex-pack: center;
+            justify-content: center;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+        }
+        body.login_{
+            background-color: #FFFFFF;
+            overflow-x: hidden;
+        }
+        body.login_ div.full-height{
+            height: 100vh;
+            min-height: 470px;
+        }
+        body.login_ div.full-height.back_img div.lined>span{
+            height: 1px;
+            background-color: #ffcf00;
+        }
 
-.white_content {
-    display: none;
-    position: absolute;
-    top: 35%;
-    left: 22%;
-    width: 270px;
-    height: 70px;
-    padding: 16px;
-    border: 1px solid red;
-    -webkit-border-radius: 10px 10px 10px 10px;
-     border-radius: 10px 10px 10px 10px;
-    background-color: rgba(215, 44, 44, 0.8);
-background: rgba(215, 44, 44, 0.8);
-color: white;
-
-    z-index:1002;
-    overflow: auto;
-}
-</style>
+        body.login_ div.full-height.darkness{
+            background-color: #394263;
+        }
+        body.login_ div.full-height>div.vertical>div.container_form{
+            width: 350px;
+        }
+        body.login_ div.full-height h2{
+        color: #FFFFFF;
+            font-size: 25px;
+        }
+        body.login_ div.full-height form div.form-group>label{
+            position: relative;
+            width: 100%;
+            text-align: left;
+            color: #FFFFFF;
+            font-weight: 100;
+        }
+        body.login_ div.full-height form div.form-group>div.input-group>div.input-group-addon{
+            background-color: #ffffff;
+            border-color: transparent;
+            box-shadow: none;
+        }
+        body.login_ div.full-height form div.form-group>div.input-group>div.input-group-addon>i{
+            color: #394263;
+            font-size: 20px;
+        }
+        body.login_ div.full-height form div.form-group>div.input-group>input.form-control{
+            border-left-color: transparent;
+            height: 45px;
+        }
+        body.login_ div.full-height form div.form-group button{
+            display: inline-block;
+            position: relative;
+            width: 140px;
+            text-align: center;
+            padding: 10px 0px;
+            font-size: 16px;
+            font-weight: 500;
+            background-color: #ffcf00;
+            border: 1px solid #ffcf00;
+            color: #394263;
+            -webkit-transition: all .25s ease;
+               -moz-transition: all .25s ease;
+                -ms-transition: all .25s ease;
+                 -o-transition: all .25s ease;
+                    transition: all .25s ease;
+        }
+        body.login_ div.full-height form div.form-group button:hover{
+            background-color: transparent;
+            color: #ffcf00;
+        }
+        @media (max-width : 400px) {
+            body.login_ div.full-height>div.vertical>div.container_form {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
-<body class='login_body'>
-
-
-<img src="<?php echo $ruta; ?>recursos/img/placeholders/backgrounds/fondo_login.png" alt="Login Full Background"
-     class="full-bg animation-pulseSlow">
-
-<div id="login-container" class="animation-fadeIn" style="padding:4%;  position:relative; top:20px">
-
-    <div class="login-title text-center" style="-webkit-border-radius: 18px 18px 18px 18px; border-radius: 18px 18px 18px 18px;
--webkit-box-shadow: 0 0 4px 4px #000000; box-shadow: 0 0 4px 4px #000000; background-color: rgba(102, 102, 102, 0.6); color: rgba(102, 102, 102, 0.6);">
-
-        <div>
-            <img style="height: 100px;" src="<?php echo base_url();?>/recursos/img/punto_de_venta_v2.jpg" alt="avatar">
-            <h1>
-                <strong><?php echo valueOptionDB('EMPRESA_NOMBRE', 'NEW LEVEL') ?></strong>
-            </h1>
+<body class='login_'>
+    <div class="container-full">
+        <div class="row">
+            <div class="col-xs-12 col-md-6 col-lg-4 full-height darkness">
+                <div class="vertical text-center">
+                    <div class="col-xs-12 noHorizontalPadding centered container_form">
+                        <div class="col-xs-12 noHorizontalPadding text-center">
+                            <img src="recursos/img/punto_de_venta_v2.jpg" alt="iCloudPOS" class="col-xs-12 noHorizontalPadding centered" style="width: 150px;">
+                        </div>
+                        <h2 class="col-xs-12 text-center noHorizontalPadding nomargin vpadding">Ingreso al Área de Cliente</h2>
+                        <form class="col-xs-12" id="frmLogin">
+                            <div class="form-group col-xs-12 noHorizontalPadding">
+                              <label for="user">Correo Electrónico</label>
+                              <div class="input-group">
+                                <div class="input-group-addon">
+                                    <i class="fa fa-user" aria-hidden="true"></i>
+                                </div>
+                                <input type="text" class="form-control" id="user" name="user">
+                              </div>
+                            </div>
+                            <div class="form-group col-xs-12 noHorizontalPadding">
+                              <label for="pw">Contraseña</label>
+                              <div class="input-group">
+                                <div class="input-group-addon">
+                                    <i class="fa fa-unlock-alt" aria-hidden="true"></i>
+                                </div>
+                                <input type="text" class="form-control" id="pw" name="pw">
+                              </div>
+                            </div>
+                            <div class="col-xs-12 noHorizontalPadding vpadding" id="msg"></div>
+                            <div class="form-group col-xs-12 noHorizontalPadding text-center">
+                                <button type="submit" class="centered">Acceder</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="col-xs-12 col-md-6 col-lg-8 full-height back_img hidden-xs hidden-sm">
+                <div class="vertical">
+                    <div class="col-xs-12 noHorizontalPadding text-center">
+                        <div class="col-xs-12 noHorizontalPadding text-center">
+                            <img src="recursos/img/logo/logo_rif.png" alt="" class="col-xs-12 noHorizontalPadding centered" style="width: 150px;">
+                        </div>
+                        <div class="col-xs-12 noHorizontalPadding vpadding lined text-center">
+                            <span class="col-xs-10 centered"></span>
+                        </div>
+                        <h1 class="col-xs-12 noHorizontalPadding nomargin">SISTEMA DE ADMINISTRACIÓN INTERNA</h1>
+                    </div>
+                </div>
+                
+            </div>
         </div>
-
-
-<div id="light" class="white_content"></div>
-
-        <div id="error"></div>
-
-<?php // echo md5('12345678'); ?>
-        <!-- Login Form -->
-
-        <hr style="border: 0; border-top: 1px solid #848484; border-bottom: 1px solid #333; height:0; margin-left: -2%;  width: 104%;"><br>
-        <form method="post" id="frmLogin" class="form-horizontal">
-            <div class="form-group" style=" padding-left: 16%;">
-                <div class="col-xs-10">
-                    <div class="input-group">
-                        <span class="input-group-addon" style="color: white ; border-radius: 6px 0px 0px 6px ; border: 1px solid black; background-color: rgba(102, 102, 102, 0.8); color: white; font-size: 20px"><i class="gi gi-user"></i></span>
-                        <input style="color: white; -webkit-border-radius: 0px 6px 6px 0px;border-radius: 0px 6px 6px 0px;background-color: rgba(102, 102, 102, 0.8); border: 1px solid black" type="text" id="user" name="user" value="" class="input-lg form-control " placeholder="Usuario">
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group" style=" padding-left: 16%;" >
-                <div class="col-xs-10">
-                    <div class="input-group">
-
-                        <span class="input-group-addon" style="color: white ; border-radius: 6px 0px 0px 6px ; border: 1px solid black; background-color: rgba(102, 102, 102, 0.8); color: white; font-size: 20px"><i class="gi gi-asterisk"></i></span>
-                        <input style="-webkit-border-radius: 0px 6px 6px 0px;border-radius: 0px 6px 6px 0px;background-color: rgba(102, 102, 102, 0.8);color: white; border: 1px solid black" type="password" id="pw" name="pw" value="" class="form-control  input-lg" placeholder="Contraseña">
-                    </div>
-                </div>
-            </div>
-
-           <!-- <div class="form-group">
-
-                <div class="col-xs-12">
-                    <div class="input-group">
-                        <span class="input-group-addon"><i class="gi gi-shop"></i></span>
-                        <select name="cboTienda" id="cboTienda" class="form-control input-lg">
-                            <?php if (count($lstLocal) > 0): ?>
-                                <?php foreach ($lstLocal as $l): ?>
-                                    <option
-                                        value="<?php echo $l['int_local_id']; ?>"><?php echo $l['local_nombre']; ?></option>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </select>
-
-                    </div>
-                </div>
-            </div>-->
-            <div class="">
-
-                <div class="">
-                    <button id="btnlogin" type="button" class="btn_login"> Iniciar Sesi&oacute;n
-                    </button>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="col-xs-12 text-center">
-                </div>
-            </div>
-            <br><br><br>
-        </form>
-        <!-- END Login Form -->
-
-
-        <!-- END Register Form -->
     </div>
-
-</div>
 </body>
 
 </html>
