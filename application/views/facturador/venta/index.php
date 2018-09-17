@@ -285,6 +285,7 @@
                     <div class="col-md-12">
                         <div class="box-content box-nomargin">
                                             <span style="float: right; margin-bottom: 5px;">
+                                                <input type="checkbox" id="aplicarCosteo"> <b>Aplicar</b>&nbsp;
                                                 <input type="checkbox" id="tabla_vista"> <b>Mostrar Detalles</b>
                                             </span>
                             <table
@@ -700,7 +701,7 @@
             um_min: '<?= $detalle->um_min ?>',
             um_min_abr: '<?= $detalle->um_min_abr ?>',
             total_min: <?= $detalle->total_min ?>,
-            contable_costo: <?= $detalle->contable_costo ?>,
+            precio_comp: <?= $detalle->precio_comp ?>,
             unidades: []
         };
         <?php foreach ($detalle->unidades as $unidad):?>
@@ -749,7 +750,7 @@
                 prod.unidades,
                 prod.impuesto,
                 prod.afectacion_impuesto,
-                prod.contable_costo
+                prod.precio_comp
             );
         }
 
@@ -759,7 +760,7 @@
     });
 
 
-    function add_producto_from_venta(producto_id, producto_nombre, precio, precio_venta, um_min, um_min_abr, total_min, unidades, impuesto, afectacion_impuesto, contable_costo) {
+    function add_producto_from_venta(producto_id, producto_nombre, precio, precio_venta, um_min, um_min_abr, total_min, unidades, impuesto, afectacion_impuesto, precio_comp) {
 
         var local_id = $("#local_id").val();
         var precio_id = $("#precio_id").val();
@@ -808,7 +809,9 @@
             producto.total_minimo += parseFloat(producto.total_local[local_index]);
 
         producto.subtotal = parseFloat(producto.total_minimo * producto.precio_descuento);
-        producto.contable_costo = parseFloat(contable_costo);
+        producto.precio_comp = parseFloat(precio_comp);
+        producto.precio_unitario_bk = parseFloat(precio_venta);
+        producto.subtotal_bk = parseFloat(producto.total_minimo * producto.precio_descuento);
         lst_producto.push(producto);
 
         update_view(get_active_view());

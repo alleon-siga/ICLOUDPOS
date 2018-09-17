@@ -61,9 +61,11 @@
                         <a class="btn btn-default" data-toggle="tooltip" style="margin-right: 5px;" title="Ver" data-original-title="Ver" href="#" onclick="ver('<?= $venta->venta_id ?>');">
                             <i class="fa fa-search"></i>
                         </a>
+                    <?php if($venta->venta_estado=='COMPLETADO' && $venta->condicion_id=='1'){ ?>
                         <a class="btn btn-primary" data-toggle="tooltip" style="margin-right: 5px;" title="Ver" data-original-title="Ver" href="#" onclick="shadow('<?= $venta->venta_id ?>');">
                             <i class="fa fa-dollar"></i>
                         </a>
+                    <?php } ?>
                     <?php
                         }
                     ?>

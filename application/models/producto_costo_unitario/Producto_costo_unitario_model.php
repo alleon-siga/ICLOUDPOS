@@ -219,4 +219,23 @@ class producto_costo_unitario_model extends CI_Model
         }
         return $arr;
     }
+
+    function getCostoUnitarioVenta($param)
+    {
+        $moneda_id = $param['moneda_id'];
+        $producto_id = $param['producto_id'];
+
+        $this->db->select('pcu.contable_costo, pcu.porcentaje_utilidad, pcu.producto_id');
+        $this->db->from('producto_costo_unitario pcu');
+        $this->db->where('pcu.moneda_id', $moneda_id);
+        $this->db->where_in('pcu.producto_id', $producto_id);
+        $query = $this->db->get();
+        $datos = $query->result();
+        $arr = array();
+        foreach($datos as $dato){
+            $arr['contable_costo'][$dato->producto_id] = $dato->contable_costo;
+            $arr['porcentaje_utilidad'][$dato->producto_id] = $dato->porcentaje_utilidad;
+        }
+        return $arr;
+    }
 }

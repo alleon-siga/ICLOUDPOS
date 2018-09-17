@@ -83,7 +83,7 @@ $(document).ready(function () {
     });
 
     //Permite actualizar el calculo por fila
-    $('#tabla').on('keyup','input',function(e){
+    $('#tabla').on('change','input',function(e){
         var tr = $(this).closest('tr');
         var porcentaje_utilidad = parseFloat(tr.find('input[name="txtPorcPrecio"]').val());
         var costoContableMn = parseFloat(tr.find('input[name="txtCostoContMn"]').val());

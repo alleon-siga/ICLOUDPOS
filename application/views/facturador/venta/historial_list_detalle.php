@@ -107,8 +107,8 @@
                                 <th width="10%">UM</th>
                                 <th width="10%">Precio</th>
                                 <th width="10%">Subtotal</th>
-                                <th width="10%">P. Contable</th>
-                                <th width="10%">Acciones</th>
+                                <!--<th width="10%">P. Contable</th>
+                                <th width="10%">Acciones</th>-->
                             </tr>
                             </thead>
                             <tbody>
@@ -119,11 +119,11 @@
                                         <input type="hidden" name="Id" value="<?= $detalle->producto_id ?>" data-simbolo="<?= $venta->moneda_simbolo ?>" data-venta="<?= $venta->venta_id ?>" data-unidad="<?= $detalle->unidad_id_min ?>" data-moneda="<?= $venta->moneda_id ?>" data-impuesto="<?= $detalle->impuesto_porciento ?>" data-importe="<?= $detalle->importe ?>">
                                     </td>
                                     <td style="white-space: normal;"><?= $detalle->producto_nombre ?></td>
-                                    <td style="white-space: normal;"><input type="number" class="form-control Cantidad" name="Cantidad" value="<?= $detalle->cantidad ?>"></td>
+                                    <td style="white-space: normal;"><?= number_format($detalle->cantidad, 0) ?><!--<input type="number" class="form-control Cantidad" name="Cantidad" value="">--></td>
                                     <td style="white-space: normal;"><?= $detalle->unidad_nombre ?></td>
-                                    <td style="white-space: normal;"><input type="number" class="form-control Precio" name="Precio" data-precio="<?= $detalle->precio ?>" value="<?= $detalle->precio ?>"></td>
-                                    <td style="white-space: normal;" class="importe"><?= $venta->moneda_simbolo . " " . $detalle->importe ?></td>
-                                    <td><input type="checkbox" class="costoContable" name="chkCostoContable" value="<?= $detalle->contable_costo ?>"></td>
+                                    <td style="white-space: normal;"><?= $venta->moneda_simbolo . " " . number_format($detalle->precio, 2) ?><!--<input type="number" class="form-control Precio" name="Precio" data-precio="" value="">--></td>
+                                    <td style="white-space: normal;" class="importe"><?= $venta->moneda_simbolo . " " . number_format($detalle->importe, 2) ?></td>
+                                    <!--<td><input type="checkbox" class="costoContable" name="chkCostoContable" value="<?= $detalle->contable_costo ?>"></td>
                                     <td>
                                         <div class="input-group">
                                             <a class="input-group-addon btn-primary btnEditar" data-toggle="tooltip" title="Editar" href="#">
@@ -136,7 +136,7 @@
                                                 <i class="fa fa-plus"></i>
                                             </a>
                                         </div>
-                                    </td>
+                                    </td>-->
                                 </tr>
                             <?php endforeach; ?>
                                 <!--<tr style="">
@@ -274,9 +274,9 @@
                                 <th>UM</th>
                                 <th>Precio</th>
                                 <th>Subtotal</th>
-                                <th style="display: none;">identify</th>
+                                <!--<th style="display: none;">identify</th>
                                 <th style="display: none;">impuesto</th>
-                                <th></th>
+                                <th></th>-->
                             </tr>
                             </thead>
                             <tbody>
@@ -286,11 +286,11 @@
                                     <td><?= $detalle->producto_nombre ?></td>
                                     <td><?= number_format($detalle->cantidad, 0) ?></td>
                                     <td><?= $detalle->unidad_nombre ?></td>
-                                    <td style="text-align: right" class="precio"><?= $detalle->precio ?></td>
-                                    <td style="text-align: right" class="importe"><?= $venta->moneda_simbolo . " " . $detalle->importe ?></td>
-                                    <td style="display: none;"><?= $venta->venta_id.'_'.$detalle->producto_id.'_'.$detalle->unidad_id ?></td>
+                                    <td style="text-align: right" class="precio"><?= $venta->moneda_simbolo . " " . number_format($detalle->precio,2) ?></td>
+                                    <td style="text-align: right" class="importe"><?= $venta->moneda_simbolo . " " . number_format($detalle->importe, 2) ?></td>
+                                    <!--<td style="display: none;"><?= $venta->venta_id.'_'.$detalle->producto_id.'_'.$detalle->unidad_id ?></td>
                                     <td style="display: none;" class="impuesto"><?= $detalle->impuesto_porciento ?></td>
-                                    <td><input type="checkbox" class="" name="chkCostoContable" value="<?= $detalle->precio ?>" data-producto="<?= $detalle->producto_id ?>" data-moneda="<?= $venta->moneda_id ?>"></td>
+                                    <td><input type="checkbox" class="costoContable" name="chkCostoContable" value="<?= $detalle->precio ?>" data-producto="<?= $detalle->producto_id ?>" data-moneda="<?= $venta->moneda_id ?>"></td>-->
                                 </tr>
                             <?php endforeach; ?>
                             </tbody>

@@ -1608,8 +1608,13 @@ class venta_new_model extends CI_Model
             dv.impuesto_porciento as impuesto,
             IFNULL(dv.afectacion_impuesto, 0) as afectacion_impuesto,
             dv.precio_venta as precio_venta,
+<<<<<<< HEAD
             dv.precio_venta as precio_venta,
             pcu.contable_costo as contable_costo
+=======
+            pcu.contable_costo as contable_costo,
+            pcu.porcentaje_utilidad as porcentaje_utilidad
+>>>>>>> remotes/origin/REQ-0017
             ')
             ->from('detalle_venta as dv')
             ->join('venta as v', 'dv.id_venta = v.venta_id')
@@ -1650,9 +1655,13 @@ class venta_new_model extends CI_Model
             }
             $result[$detalle->producto_id]->unidades[$detalle->unidad_id]->cantidad = $detalle->cantidad;
             $result[$detalle->producto_id]->total_min += $this->unidades_model->convert_minimo_by_um($detalle->producto_id, $detalle->unidad_id, $detalle->cantidad);
+<<<<<<< HEAD
 
             $result[$detalle->producto_id]->contable_costo = $detalle->contable_costo;
 
+=======
+            $result[$detalle->producto_id]->precio_comp = (($detalle->porcentaje_utilidad / 100) * $detalle->contable_costo) + $detalle->contable_costo;
+>>>>>>> remotes/origin/REQ-0017
         }
 
         $venta->detalles = $result;
