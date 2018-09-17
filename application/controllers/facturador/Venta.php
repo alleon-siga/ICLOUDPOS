@@ -243,9 +243,11 @@ class venta extends MY_Controller
         echo json_encode($data);
     }
 
-    function getCostoUnitarioVenta($id_venta)
+    function getCostoUnitarioVenta()
     {
-        $data = $this->producto_costo_unitario_model->getCostoUnitarioVenta($id_venta);
+        $param['moneda_id'] = $this->input->post('moneda_id');
+        $param['producto_id'] = $this->input->post('producto_id');
+        $data = $this->producto_costo_unitario_model->getCostoUnitarioVenta($param);
         echo json_encode($data);
     }
 }
