@@ -130,8 +130,14 @@
         body.login_ div.full-height.darkness{
             background-color: #394263;
         }
+
+        body.login_ div.full-height.darkness>div.logo_white{
+            padding-top: 10vh;
+        }
+
         body.login_ div.full-height>div.vertical>div.container_form{
             width: 350px;
+            padding-top: 30vh;
         }
         body.login_ div.full-height h2{
         color: #FFFFFF;
@@ -193,14 +199,13 @@
     <div class="container-full">
         <div class="row">
             <div class="col-xs-12 col-md-6 col-lg-4 full-height darkness">
-                <div class="text-center" style="margin-top: 10px;">
+                <div class="col-xs-12 noHorizontalPadding logo_white text-center">
                     <img src="recursos/img/logo/logo_svg_white.svg" alt="iCloudPOS" class="col-xs-12 noHorizontalPadding centered" style="width: 175px;">
                 </div>
                 <div class="vertical text-center">
                     <div class="col-xs-12 noHorizontalPadding centered container_form">
                         <div class="col-xs-12 noHorizontalPadding text-center empresa_nombre">
                             <?= valueOption('EMPRESA_NOMBRE','ICLOUDPOS') ?>
-                   
                         </div>
                         <h2 class="col-xs-12 text-center noHorizontalPadding nomargin vpadding">Ingreso al Área de Cliente</h2>
                         <form class="col-xs-12" id="frmLogin">
