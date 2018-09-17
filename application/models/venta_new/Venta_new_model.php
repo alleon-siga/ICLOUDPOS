@@ -232,6 +232,7 @@ class venta_new_model extends CI_Model
             detalle_venta.precio as precio,
             detalle_venta.precio_venta as precio_venta,
             detalle_venta.cantidad as cantidad,
+            detalle_venta.cantidad_devuelta as cantidad_devuelta,
             detalle_venta.unidad_medida as unidad_id,
             unidades.nombre_unidad as unidad_nombre,
             unidades.abreviatura as unidad_abr,
@@ -1154,7 +1155,7 @@ class venta_new_model extends CI_Model
         $subtotal = 0;
         $total = 0;
         foreach ($detalles as $d) {
-            $total += $d->cantidad * $d->precio;
+            $total += ($d->cantidad - $d->cantidad_devuelta) * $d->precio;
         }
 
 
@@ -1162,7 +1163,7 @@ class venta_new_model extends CI_Model
             foreach ($detalles as $d) {
                 if ($d->afectacion_impuesto == OP_GRAVABLE) {
                     $factor = (100 + $d->impuesto_porciento) / 100;
-                    $impuesto += ($d->cantidad * $d->precio) - (($d->cantidad * $d->precio) / $factor);
+                    $impuesto += (($d->cantidad - $d->cantidad_devuelta) * $d->precio) - ((($d->cantidad - $d->cantidad_devuelta) * $d->precio) / $factor);
                 }
             }
             $subtotal = $total - $impuesto;
@@ -1171,7 +1172,7 @@ class venta_new_model extends CI_Model
             foreach ($detalles as $d) {
                 if ($d->afectacion_impuesto == OP_GRAVABLE) {
                     $factor = (100 + $d->impuesto_porciento) / 100;
-                    $impuesto += (($d->cantidad * $d->precio) * $factor) - ($d->cantidad * $d->precio);
+                    $impuesto += ((($d->cantidad - $d->cantidad_devuelta) * $d->precio) * $factor) - (($d->cantidad - $d->cantidad_devuelta) * $d->precio);
                 }
             }
             $total = $subtotal + $impuesto;
@@ -1215,8 +1216,13 @@ class venta_new_model extends CI_Model
             $afectacion_impuesto[$detalle->producto_id] = $detalle_temp->afectacion_impuesto;
 
             $this->db->where('id_detalle', $detalle->detalle_id);
+            $this->db->select('cantidad_devuelta');
+            $this->db->from('detalle_venta');
+            $cantidadD = $this->db->get()->row();
+
+            $this->db->where('id_detalle', $detalle->detalle_id);
             $this->db->update('detalle_venta', array(
-                'cantidad_devuelta' => $detalle->devolver,
+                'cantidad_devuelta' => $cantidadD->cantidad_devuelta + $detalle->devolver,
                 'detalle_importe' => $detalle->new_importe
             ));
             //Guardando en tabla venta_devolucion
