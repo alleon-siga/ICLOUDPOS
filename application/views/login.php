@@ -183,16 +183,24 @@
                 width: 95%;
             }
         }
+        .empresa_nombre{
+            color: #fff;
+            font-size: 2em;
+        }
     </style>
 </head>
 <body class='login_'>
     <div class="container-full">
         <div class="row">
             <div class="col-xs-12 col-md-6 col-lg-4 full-height darkness">
+                <div class="text-center" style="margin-top: 10px;">
+                    <img src="recursos/img/logo/logo_svg_white.svg" alt="iCloudPOS" class="col-xs-12 noHorizontalPadding centered" style="width: 175px;">
+                </div>
                 <div class="vertical text-center">
                     <div class="col-xs-12 noHorizontalPadding centered container_form">
-                        <div class="col-xs-12 noHorizontalPadding text-center">
-                            <img src="recursos/img/logo/logo_svg_white.svg" alt="iCloudPOS" class="col-xs-12 noHorizontalPadding centered" style="width: 175px;">
+                        <div class="col-xs-12 noHorizontalPadding text-center empresa_nombre">
+                            <?= valueOption('EMPRESA_NOMBRE','ICLOUDPOS') ?>
+                   
                         </div>
                         <h2 class="col-xs-12 text-center noHorizontalPadding nomargin vpadding">Ingreso al Área de Cliente</h2>
                         <form class="col-xs-12" id="frmLogin">
@@ -211,7 +219,7 @@
                                 <div class="input-group-addon">
                                     <i class="fa fa-unlock-alt" aria-hidden="true"></i>
                                 </div>
-                                <input type="text" class="form-control" id="pw" name="pw">
+                                <input type="password" class="form-control" id="pw" name="pw">
                               </div>
                             </div>
                             <div class="col-xs-12 noHorizontalPadding vpadding" id="msg"></div>
