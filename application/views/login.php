@@ -180,7 +180,7 @@
         }
         @media (max-width : 400px) {
             body.login_ div.full-height>div.vertical>div.container_form {
-                width: 100%;
+                width: 95%;
             }
         }
     </style>
@@ -192,7 +192,7 @@
                 <div class="vertical text-center">
                     <div class="col-xs-12 noHorizontalPadding centered container_form">
                         <div class="col-xs-12 noHorizontalPadding text-center">
-                            <img src="recursos/img/punto_de_venta_v2.jpg" alt="iCloudPOS" class="col-xs-12 noHorizontalPadding centered" style="width: 150px;">
+                            <img src="recursos/img/logo/logo_svg_white.svg" alt="iCloudPOS" class="col-xs-12 noHorizontalPadding centered" style="width: 175px;">
                         </div>
                         <h2 class="col-xs-12 text-center noHorizontalPadding nomargin vpadding">Ingreso al Área de Cliente</h2>
                         <form class="col-xs-12" id="frmLogin">
