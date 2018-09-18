@@ -79,7 +79,7 @@ class ComunicacionBaja
 
         $ext_ref = $xml->createElement('cac:DigitalSignatureAttachment');
         $ext_ref->appendChild($xml->createElement('cac:ExternalReference'))
-            ->appendChild($xml->createElement('cbc:URI', '#' . 'RA-' . date('Ymd', strtotime($cabecera['FECHA_EMISION'])) . '-' . $cabecera['NUMERO_DOCUMENTO']));
+            ->appendChild($xml->createElement('cbc:URI', '#' . date('Ymd', strtotime($cabecera['FECHA_EMISION'])) . '-' . $cabecera['NUMERO_DOCUMENTO']));
         $firma_ref->appendChild($ext_ref);
 
         $root->appendChild($firma_ref);
@@ -128,7 +128,7 @@ class ComunicacionBaja
         $response = $this->emisor->sign($file, 0);
         if ($response['CODIGO'] == 0) {
             $hash_cpe = $response['HASH_CPE'];
-            $response = $this->emisor->sendBill($file);
+            $response = $this->emisor->sendSummary($file);
             $response['HASH_CPE'] = $hash_cpe;
         }
         return $response;
