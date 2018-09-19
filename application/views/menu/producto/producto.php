@@ -31,7 +31,7 @@
 
     <div class="row">
 
-        <div class="btn-group" role="group" aria-label="..." align="center">
+        <div class="btn-group col-md-7" role="group" aria-label="..." align="center">
 
 
             <a class="btn btn-primary" onclick="agregar();">
@@ -63,6 +63,11 @@
                     <i class="fa fa-barcode"></i> Series
                 </a>
             <?php endif; ?>
+        </div>
+        <div class="col-md-5 text-right">
+            <a class="btn btn-warning" href="<?= $ruta ?>recursos/plantillas_datos/producto.xlsm">
+                <i class="fa fa-download"></i> Plantilla
+            </a>
         </div>
 
     </div>

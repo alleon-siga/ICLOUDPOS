@@ -233,5 +233,16 @@ class cliente_model extends CI_Model
 
     }
 
+    function importar($datos)
+    {
+      $this->db->insert('cliente', $datos);
+    }
 
+    function contarCliente($campo, $valor)
+    {
+        $this->db->select("COUNT(*) AS total");
+        $this->db->where($campo, $valor);
+        $query = $this->db->get('cliente');
+        return $query->row();
+    }
 }
