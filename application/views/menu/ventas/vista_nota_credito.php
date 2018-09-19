@@ -18,7 +18,7 @@
 			<td><?= $dato->producto_nombre ?></td>
 			<td><?= $dato->cantidad ?></td>
 			<td><?= $dato->nombre_unidad ?></td>
-			<td><?= number_format($dato->precio,2) ?></td>
+			<td><?= $md->simbolo.' '.number_format($dato->precio,2) ?></td>
 			<td><?= $md->simbolo.' '.number_format($dato->cantidad * $dato->precio,2) ?></td>
 		</tr>
 <?php $Subtotal += ($dato->cantidad * $dato->precio) ?>
