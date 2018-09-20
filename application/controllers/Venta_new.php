@@ -630,7 +630,8 @@ class venta_new extends MY_Controller
             'BOTONES_VENTA',
             'NOMBRE_PRODUCTO',
             'COTIZACION_COLOR_FORMATO',
-            'EMBALAJE_IMPRESION'
+            'EMBALAJE_IMPRESION',
+            'NUMERO_DECIMALES'
         );
 
         if ($action == 'get') {
