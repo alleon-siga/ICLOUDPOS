@@ -2,7 +2,6 @@
 <table class="table table-bordered">
     <thead>
     <tr>
-        <th>Id.Dev.</th>
         <th>Producto</th>
         <th>Cantidad</th>
         <th>UM</th>
@@ -14,9 +13,8 @@
 <?php $Subtotal = 0; ?>    	
 <?php foreach ($data as $dato) { ?>
 		<tr>
-			<td><?= $dato->id ?></td>
 			<td><?= $dato->producto_nombre ?></td>
-			<td><?= $dato->cantidad ?></td>
+			<td><?= number_format($dato->cantidad,0) ?></td>
 			<td><?= $dato->nombre_unidad ?></td>
 			<td><?= $md->simbolo.' '.number_format($dato->precio,2) ?></td>
 			<td><?= $md->simbolo.' '.number_format($dato->cantidad * $dato->precio,2) ?></td>
@@ -26,7 +24,7 @@
     </tbody>
     <tfoot>
     	<tr>
-    		<td align="right" colspan="5">Subtotal</td>
+    		<td align="right" colspan="4">Subtotal</td>
     		<td><?= $md->simbolo.' '.number_format($Subtotal,2) ?></td>
     	</tr>
     </tfoot>

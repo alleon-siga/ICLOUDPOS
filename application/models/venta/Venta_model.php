@@ -2061,7 +2061,7 @@ FROM (`detalle_venta`) JOIN `venta` ON `venta`.`venta_id`=`detalle_venta`.`id_ve
         $serie = $params['serie'];
         $numero = $params['numero'];
 
-        $this->db->select('k.id, p.producto_nombre, (k.cantidad * - 1) AS cantidad, u.nombre_unidad, dv.precio');
+        $this->db->select('p.producto_nombre, dv.cantidad_devuelta AS cantidad, u.nombre_unidad, dv.precio');
         $this->db->from('kardex AS k');
         $this->db->join('producto AS p', 'p.producto_id = k.producto_id');
         $this->db->join('detalle_venta dv', 'k.ref_id = dv.id_venta AND k.producto_id = dv.id_producto');

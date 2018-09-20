@@ -155,7 +155,7 @@
             'fecha': $("#fecha").val()
         };
 
-        var win = window.open('<?= base_url()?>reporte/utilidadProducto/pdf?data=' + JSON.stringify(data), '_blank');
+        var win = window.open('<?= base_url()?>reporte_caja/gastosDia/pdf?data=' + JSON.stringify(data), '_blank');
         win.focus();
     }
 
@@ -165,7 +165,7 @@
             'fecha': $("#fecha").val()
         };
 
-        var win = window.open('<?= base_url()?>reporte/utilidadProducto/excel?data=' + JSON.stringify(data), '_blank');
+        var win = window.open('<?= base_url()?>reporte_caja/gastosDia/excel?data=' + JSON.stringify(data), '_blank');
         win.focus();
     }
 </script>

@@ -983,6 +983,8 @@ class venta_new extends MY_Controller
 
     function verificarAnulacion($id_venta)
     {
-        
+        $dato = $this->venta->verificarAnulacion($id_venta);
+        $data['num_reg'] = $dato->numReg;
+        echo json_encode($data);
     }
 }

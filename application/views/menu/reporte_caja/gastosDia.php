@@ -124,7 +124,7 @@
                     };
 
                     $.ajax({
-                        url: '<?= base_url()?>reporte/gastosDia/filter',
+                        url: '<?= base_url()?>reporte_caja/gastosDia/filter',
                         data: data,
                         type: 'POST',
                         success: function (data) {
