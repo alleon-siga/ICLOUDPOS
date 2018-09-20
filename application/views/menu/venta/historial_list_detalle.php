@@ -1,3 +1,6 @@
+<?php
+    $ruta = base_url();
+?>
 <style>
     .totales {
         width: 100%;
@@ -596,6 +599,14 @@
                 return false;
             }
             return flag;
+
+            $.ajax({
+                url: ruta + 'venta_new/verificarAnulacion/' + $('#venta_id').val(),
+                dataType: 'json',
+                success: function(){
+                    
+                }
+            });
         }
 
         function devolver_venta() {

@@ -980,4 +980,9 @@ class venta_new extends MY_Controller
         $data = $this->venta->ultimasCompras($venta);
         echo json_encode($data);
     }
+
+    function verificarAnulacion($id_venta)
+    {
+        
+    }
 }

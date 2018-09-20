@@ -1672,4 +1672,19 @@ class venta_new_model extends CI_Model
         $venta->detalles = $result;
         return $venta;
     }
+
+    function verificarAnulacion($venta_id)
+    {
+        $venta_id = $params['venta_id'];
+        $serie = $params['serie'];
+        $numero = $params['numero'];
+
+        $this->db->select('k.id, p.producto_nombre, (k.cantidad * - 1) AS cantidad, u.nombre_unidad, dv.precio');
+        $this->db->from('kardex AS k');
+        $this->db->join('producto AS p', 'p.producto_id = k.producto_id');
+        $this->db->join('detalle_venta dv', 'k.ref_id = dv.id_venta AND k.producto_id = dv.id_producto');
+        $this->db->join('unidades AS u', 'u.id_unidad = k.unidad_id');
+        $this->db->where("k.io = 2 AND k.tipo = 7 AND k.operacion = 5 AND dv.id_venta= $venta_id AND k.serie='$serie' AND k.numero='$numero'");
+        return $this->db->get()->result();
+    }
 }
