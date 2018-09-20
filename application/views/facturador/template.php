@@ -394,6 +394,16 @@ if ($this->session->userdata('tema')) {
                                     </li>
                                 </ul>
                             </li>
+                            <li>
+                                <a href="#" class="sidebar-nav-menu">                                                    
+                                    <i class="fa fa-angle-left sidebar-nav-indicator "></i>Reportes
+                                </a>
+                                <ul>
+                                    <li>
+                                        <a href="<?= $ruta ?>facturador/reporte/reporte" class="menulink"><i class="gi gi-barcode sidebar-nav-icon"></i>Reporte</a>
+                                    </li>
+                                </ul>
+                            </li>
                         </ul>
                         <!-- END Sidebar Navigation -->
                     <!-- END Sidebar Notifications -->

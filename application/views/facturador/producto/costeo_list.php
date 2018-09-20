@@ -27,8 +27,8 @@
             </tr>
             <tr>
                 <th width="10%">Codigo</th>
-                <th width="30">Producto</th>
-                <th width="10">Marca</th>
+                <th width="30%">Producto</th>
+                <th width="10%">Marca</th>
                 <th width="10%">Unidad</th>
                 <th width="5%">Costo <br>Real S/</th>
                 <th width="5%">Costo <br>Contable S/</th>
