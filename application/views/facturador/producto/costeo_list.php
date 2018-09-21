@@ -1,10 +1,6 @@
 <?php $ruta = base_url(); ?>
 <?php $md = get_moneda_defecto() ?>
-<?
-    /*echo "<pre>";
-    echo print_r($lists);
-    echo "</pre>";*/
-?>
+
 <div class="table-responsive">
     <table class="table dataTable table-bordered no-footer tableStyle" id="tabla">
         <thead>
