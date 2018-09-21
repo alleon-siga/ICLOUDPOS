@@ -13,7 +13,7 @@ class facturador_model extends CI_Model
         $query = $this->db->where('var_usuario_clave', $data['password']);
         $query = $this->db->where('uf.activo', 1);
         $query = $this->db->where('uf.deleted', 0);
-        $query = $this->db->join('local l', 'l.int_local_id=uf.id_local');
+        $query = $this->db->join('local l', 'l.int_local_id=uf.id_local', 'left');
         $query = $this->db->get('usuario_facturador uf');
         return $query->row_array();
     }
