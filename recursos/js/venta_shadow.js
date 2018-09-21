@@ -542,11 +542,11 @@ $(document).ready(function () {
       $('.cantidad-input[data-index="0"]').first().trigger('focus')
       return false
     }
-    else if (total > stock) {
+   /* else if (total > stock) {
       show_msg('warning', '<h4>Error. </h4><p>Stock Insuficiente.</p>')
       $('.cantidad-input[data-index="0"]').first().trigger('focus')
       return false
-    }
+    }*/
     else if ($('#editar_pu').attr('data-estado') == '1') {
       show_msg('warning', '<h4>Error. </h4><p>Por favor debe confirmar el Precio Unitario de Venta.</p>')
       $('#precio_unitario').trigger('focus')
