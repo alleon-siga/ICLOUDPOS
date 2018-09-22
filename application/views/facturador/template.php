@@ -402,6 +402,9 @@ if ($this->session->userdata('tema')) {
                                     <li>
                                         <a href="<?= $ruta ?>facturador/reporte/reporte" class="menulink"><i class="gi gi-barcode sidebar-nav-icon"></i>Reporte</a>
                                     </li>
+                                    <li>
+                                        <a href="<?= $ruta ?>facturador/reporte/reporte_cr_cc" class="menulink"><i class="gi gi-barcode sidebar-nav-icon"></i>C. Reales vs Contables</a>
+                                    </li>
                                 </ul>
                             </li>
                         </ul>
