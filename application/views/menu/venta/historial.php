@@ -369,7 +369,6 @@
                 }
 
                 function save_venta_contado(imprimir) {
-
                     if (isNaN(parseFloat($('#vc_importe').val()))) {
                         show_msg('warning', '<h4>Error. </h4><p>El importe tiene que ser numerico.</p>');
                         setTimeout(function () {
@@ -456,10 +455,11 @@
                                         allow_dismiss: true
                                     });
 
+                                    $("#barloadermodal").modal('hide');
+
                                     var url = ruta + 'venta_new/imprimir/' + data.venta.venta_id + '/PEDIDO';
                                     $("#imprimir_frame_venta").attr('src', url);
-
-                                    $("#barloadermodal").modal('hide');
+                                    
                                     get_ventas();
                                 }
                                 else {
@@ -482,12 +482,11 @@
                         },
                         complete: function (data) {
                             $('.save_venta_contado').removeAttr('disabled');
+                            <?php if($venta_action == 'caja'):?>
+                                myVar = setInterval(get_pendientes, 2000);
+                            <?php endif;?>
                         }
                     });
-
-                    <?php if($venta_action == 'caja'):?>
-                        myVar = setInterval(get_pendientes, 2000);
-                    <?php endif;?>
                 }
 
 
