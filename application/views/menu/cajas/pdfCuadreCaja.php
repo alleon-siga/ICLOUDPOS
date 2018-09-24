@@ -200,7 +200,7 @@
                     $detalle = $detalle_ingreso[$moneda['id_moneda']][$metodo->id_metodo];
                     if($detalle['importe']>0){
                         if($detalle['nombre']==="EFECTIVO"){
-                            $saldototal=$detalle['importe']-$total_egresos;
+                            $saldototal=$detalle['importe'];
                             echo number_format($saldototal, 2);
                         }
                     }
