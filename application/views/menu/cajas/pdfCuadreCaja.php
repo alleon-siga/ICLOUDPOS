@@ -194,16 +194,16 @@
         <table border="1" cellspacing="0" cellpadding="3">
             <tr>
                 <td style="width: 60%; font-weight: bold;">SALDO</td>
-                <td style="text-align: right; font-weight: bold;"><?= $moneda['simbolo'] ?> <?php
-                $detalle = $detalle_ingreso[$moneda['id_moneda']][$metodo->id_metodo]; 
-                if($detalle['nombre']=="EFECTIVO"){
-                    if($venta_contado[$moneda['id_moneda']]->total >= $compra_contado[$moneda['id_moneda']]->total){ 
-                        echo number_format($venta_contado[$moneda['id_moneda']]->total-$compra_contado[$moneda['id_moneda']]->total, 2) ;
-                    }else{
-                        echo number_format(0,2);
+                <td style="text-align: right; font-weight: bold;"><?= $moneda['simbolo'] ?> 
+                <?php
+                foreach ($metodos as $metodo){
+                    $detalle = $detalle_ingreso[$moneda['id_moneda']][$metodo->id_metodo];
+                    if($detalle['importe']>0){
+                        if($detalle['nombre']==="EFECTIVO"){
+                            $saldototal=$detalle['importe']-$total_egresos;
+                            echo number_format($saldototal, 2);
+                        }
                     }
-                }else{ 
-                    echo number_format(0,2);
                 }
                 ?>
                     
