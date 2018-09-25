@@ -220,7 +220,7 @@ class Pedidos extends REST_Controller
                     $data['total_venta'] = $fact->total;
                     $data['fecha_emision'] = $fact->fecha;
                     $data['clie_tipo_ident'] = $fact->total > 700 ? $fact->cliente_tipo : "-";
-                    $data['clie_nro_doc'] = $fact->total > 700 ? $fact->identificacion : "-";
+                    $data['clie_nro_doc'] = $fact->total > 700 ? $fact->cliente_identificacion : "-";
 
                     $fact_emisor = $this->db->get('facturacion_emisor')->row();
                     $data['ruc'] = $fact_emisor->ruc;
