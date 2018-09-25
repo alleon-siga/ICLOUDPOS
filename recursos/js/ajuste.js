@@ -407,7 +407,7 @@ function save_ajuste() {
                     }
                 });
             }else{
-                show_msg('danger', data.mensaje);
+                show_msg('danger', '<h4>Error. </h4><p>Ha ocurrido un error insperado al guardar la venta.</p>');
             }
         },
         error: function (data) {
@@ -1073,6 +1073,9 @@ function get_productos_unidades(evento) {
             data: {'producto_id': producto_id, 'moneda_id': moneda_id},
             success: function (data) {
                 if(data.success=='0'){
+                    $('.block_producto_unidades').hide();
+                    $('#close_add_producto').trigger('click');
+                    $("#loading").hide();
                     mensaje('danger', data.mensaje);
                 }else{
                     var form = $("#producto_form");
@@ -1113,14 +1116,13 @@ function get_productos_unidades(evento) {
 
                         refresh_right_panel();
                         refresh_totals();
+
+                        $("#loading").hide();
+                        $(".block_producto_unidades").show();
+                        $('.cantidad-input[data-index="0"]').first().trigger('focus');
+                        $(".modal-backdrop").remove();
                     }
                 }
-            },
-            complete: function (data) {
-                $("#loading").hide();
-                $(".block_producto_unidades").show();
-                $('.cantidad-input[data-index="0"]').first().trigger('focus');
-                $(".modal-backdrop").remove();
             },
             error: function (data) {
                 alert('Ha ocurrido un Error Inesperado.');

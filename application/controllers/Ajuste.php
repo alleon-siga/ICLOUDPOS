@@ -175,10 +175,8 @@ class Ajuste extends MY_Controller
         if ($ajuste_id) {
             $data['success'] = '1';
             $data['ajuste'] = $this->db->get_where('ajuste', array('id' => $ajuste_id))->row();
-        } else{
+        } else
             $data['success'] = '0';
-            $data['mensaje'] = 'Este producto no tiene precios de ventas o unitarios asignados, por favor verificar en el m&oacute;dulo de productos.';
-        }
 
 
         echo json_encode($data);
