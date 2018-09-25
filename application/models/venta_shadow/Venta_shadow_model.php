@@ -421,7 +421,65 @@ class venta_shadow_model extends CI_Model
                 'producto_id' => $producto->id_producto,
                 'moneda_id' => $venta->moneda_id
             ))->row();
+            $prod = $this->db->get_where('producto', array('producto_id' => $producto->id_producto))->row();
 
+            //preparo el detalle de la venta
+            $producto_detalle = array(
+                'id_venta_shadow' => $id_venta_shadow,
+                'id_producto' => $producto->id_producto,
+                'precio' => $producto->precio,
+                'cantidad' => $producto->cantidad,
+                'unidad_medida' => $producto->unidad_medida,
+                'detalle_importe' => $producto->detalle_importe,
+                'detalle_costo_promedio' => $this->producto_model->get_costo_promedio($producto->id_producto, $producto->unidad_medida),
+                'detalle_costo_ultimo' => $producto->cbxaplic ==0?$costo_u->costo:$costo_u->contable_costo,
+                'detalle_utilidad' => 0,
+                'impuesto_id' => $p->id_impuesto,
+                'afectacion_impuesto' => $prod->producto_afectacion_impuesto,
+                'impuesto_porciento' => $p->porcentaje_impuesto,
+                'precio_venta' => $producto->precio_venta,
+                'tipo_impuesto_compra' => $costo_u->tipo_impuesto_compra
+            );
+            array_push($venta_detalle, $producto_detalle);
+
+            $precio[$producto->id_producto] = $this->unidades_model->get_maximo_costo($producto->id_producto, $producto->unidad_medida, $producto->precio);
+            $ArrfectImp[$producto->id_producto] = $prod->producto_afectacion_impuesto;
+            $impPorciento[$producto->id_producto] = $p->porcentaje_impuesto;
+        }
+
+        //inserto los detalles de la venta
+        $this->db->insert_batch('venta_shadow_detalle', $venta_detalle);
+    }
+    function save_producto_detalles_contable($id_venta_shadow, $doc_id, $local_id, $productos, $id_usuario)
+    {
+        //Preparo los detalles de la venta para insertarlo y sus historicos
+        $venta = $this->get_ventas(array('id' => $id_venta_shadow));
+        $cantidades = array();
+        $venta_detalle = array();
+        $venta_contable_detalle = array();
+        $precio = array(); //precio unitario de venta
+        $ArrfectImp = array(); //Afectacion de impuesto
+        $impPorciento = array(); //Impuesto porciento
+        foreach ($productos as $producto) {
+
+            //preparo los datos para el historico
+            if (!isset($cantidades[$producto->id_producto]))
+                $cantidades[$producto->id_producto] = 0;
+
+            $cantidades[$producto->id_producto] += $this->unidades_model->convert_minimo_by_um(
+                $producto->id_producto,
+                $producto->unidad_medida,
+                $producto->cantidad
+            );
+
+            $p = $this->db
+                ->join('impuestos', 'impuestos.id_impuesto=producto.producto_impuesto')
+                ->get_where('producto', array('producto_id' => $producto->id_producto))->row();
+
+            $costo_u = $this->db->get_where('producto_costo_unitario', array(
+                'producto_id' => $producto->id_producto,
+                'moneda_id' => $venta->moneda_id
+            ))->row();
             $prod = $this->db->get_where('producto', array('producto_id' => $producto->id_producto))->row();
 
             //preparo el detalle de la venta
@@ -451,7 +509,6 @@ class venta_shadow_model extends CI_Model
         //inserto los detalles de la venta
         $this->db->insert_batch('venta_shadow_detalle', $venta_detalle);
     }
-
     public
     function get_next_id()
     {

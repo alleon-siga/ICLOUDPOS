@@ -903,6 +903,12 @@ function prepare_detalles_productos () {
         producto.unidad_medida = unidad
         producto.cantidad = cantidades[unidad]
         producto.detalle_importe = producto.cantidad * producto.precio
+        if($('#aplicarCosteo').prop('checked')==true){
+            producto.cbxaplic=1
+        }else{
+            producto.cbxaplic=0
+        }
+        
         productos.push(producto)
       }
     }
