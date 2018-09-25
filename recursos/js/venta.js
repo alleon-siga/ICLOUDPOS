@@ -1174,9 +1174,13 @@ function save_venta_credito (imprimir) {
         $('.save_venta_credito').removeAttr('disabled')
       }
       else {
-        show_msg('danger', '<h4>Error. </h4><p>Ha ocurrido un error insperado al guardar la venta.</p>')
-        $('#dialog_venta_credito').modal('show')
-        $('.save_venta_credito').removeAttr('disabled')
+        if (data.msg){
+          show_msg('danger', '<h4>Error. </h4><p>' + data.msg + '</p>')
+        }else{
+          show_msg('danger', '<h4>Error. </h4><p>Ha ocurrido un error insperado al guardar la venta.</p>')
+        }
+        $('#dialog_venta_credito').modal('show');
+        $('.save_venta_credito').removeAttr('disabled');
       }
     },
     error: function (data) {

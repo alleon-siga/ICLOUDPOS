@@ -15,14 +15,17 @@ class ajuste_model extends CI_Model
 
     function save_ajuste($ajuste, $productos, $otros_val)
     {
-
-
         //inserto la venta
         $this->db->insert('ajuste', $ajuste);
         $ajuste_id = $this->db->insert_id();
+        
 
+        $result = $this->save_producto_detalles($ajuste_id, $ajuste['local_id'], $productos, $otros_val);
 
-        $this->save_producto_detalles($ajuste_id, $ajuste['local_id'], $productos, $otros_val);
+        if(!$result){
+
+            return false;
+        }
 
         return $ajuste_id;
 
