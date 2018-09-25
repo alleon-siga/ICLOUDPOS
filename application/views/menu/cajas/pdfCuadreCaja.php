@@ -93,7 +93,7 @@
     $total_ingresos = $venta_contado[$moneda['id_moneda']]->total
         + $venta_inicial[$moneda['id_moneda']]->total
         + $anulacion_ingreso[$moneda['id_moneda']]->total
-//        + $venta_credito[$moneda['id_moneda']]->total
+//       + $venta_credito[$moneda['id_moneda']]->total
         + $cobranza_cuota[$moneda['id_moneda']]->total;
 
     $total_egresos = $compra_contado[$moneda['id_moneda']]->total
@@ -194,20 +194,8 @@
         <table border="1" cellspacing="0" cellpadding="3">
             <tr>
                 <td style="width: 60%; font-weight: bold;">SALDO</td>
-                <td style="text-align: right; font-weight: bold;"><?= $moneda['simbolo'] ?> 
-                <?php
-                foreach ($metodos as $metodo){
-                    $detalle = $detalle_ingreso[$moneda['id_moneda']][$metodo->id_metodo];
-                    if($detalle['importe']>0){
-                        if($detalle['nombre']==="EFECTIVO"){
-                            $saldototal=$detalle['importe'];
-                            echo number_format($saldototal, 2);
-                        }
-                    }
-                }
-                ?>
-                    
-                </td>
+                <td style="text-align: right; font-weight: bold;">
+                  <?= $moneda['simbolo'] ?><?= $total_pago_efectivo[$moneda['id_moneda']]->total != NULL ?  number_format($total_pago_efectivo[$moneda['id_moneda']]->total-$total_descuento_efectivo[$moneda['id_moneda']]->total,2) : 0?> </td>
             </tr>
         </table>
     </div>
