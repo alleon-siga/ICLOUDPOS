@@ -431,7 +431,7 @@ class venta_shadow_model extends CI_Model
                 'cantidad' => $producto->cantidad,
                 'unidad_medida' => $producto->unidad_medida,
                 'detalle_importe' => $producto->detalle_importe,
-                'detalle_costo_promedio' => $this->producto_model->get_costo_promedio($producto->id_producto, $producto->unidad_medida),
+                'detalle_costo_promedio' => $producto->cbxaplic ==0?$costo_u->costo:$costo_u->contable_costo,
                 'detalle_costo_ultimo' => $producto->cbxaplic ==0?$costo_u->costo:$costo_u->contable_costo,
                 'detalle_utilidad' => 0,
                 'impuesto_id' => $p->id_impuesto,
