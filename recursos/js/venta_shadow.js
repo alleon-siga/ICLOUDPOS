@@ -333,8 +333,10 @@ $(document).ready(function () {
     $('#chkCostoContable').on('click', function(){
       if($(this).prop('checked')==true){
         $('#precio_unitario').val($(this).val());
+        $('#importe').val(parseFloat($('#precio_unitario').val()*$('#total_minimo').val()).toFixed(2));
       }else{
         $('#precio_unitario').val($('.precio-selected').val());
+        $('#importe').val(parseFloat($('.precio-selected').val()*$('#total_minimo').val()).toFixed(2));
       }
     });
   });
@@ -904,11 +906,15 @@ function prepare_detalles_productos () {
         producto.cantidad = cantidades[unidad]
         producto.detalle_importe = producto.cantidad * producto.precio
         if($('#aplicarCosteo').prop('checked')==true){
-            producto.cbxaplic=1
+            producto.cbxaplic=1 //activa shadow
         }else{
             producto.cbxaplic=0
         }
-        
+        if($('#chkCostoContable').prop('checked')==true){
+            producto.cbxaplicitem=1 //activa shadow
+        }else{
+            producto.cbxaplicitem=0
+        }
         productos.push(producto)
       }
     }
