@@ -202,6 +202,7 @@
                                     <div class="loading-icon"></div>
                                 </div>
                             </div>
+                            
                             <div class="col-md-8">
                                 <label id="popover_precioUnitario" class="control-label badge label-info"
                                        style="width: 50% !important; font-size: 15px; cursor: pointer; display:none; float: left; position: absolute; z-index: 3000;"></label>
@@ -211,8 +212,9 @@
                             </div>
                             <div id="producto_precio" class="col-md-8 row text-center venta_input">
                             </div>
-                            <div class="col-md-2">
-                            </div>
+                            <div class="col-md-2 text-center">
+                                    <input type="checkbox" name="chkCostoContable" data-costocontable="" id="chkCostoContable" value="" style="margin-top:15px;">
+                                </div>
                         </div>
                         <hr class="hr-margin-10">
                         <!-- SECCION DE PRECIO UNITARIO E IMPORTE -->
@@ -264,11 +266,8 @@
                                 </div>
                                 <h6 id="subtotal_um" style="text-align: center; margin-bottom: 0; margin-top: 2px;"></h6>
                             </div>
-                            <div class="col-md-2 text-right">
-                                <div class="col-md-1 text-left">
-                                    <input type="checkbox" name="chkCostoContable" data-costocontable="" id="chkCostoContable" value="" style="margin-top:15px;">
-                                </div>
-                                <div class="col-md-11 text-right" style="padding-left: 0px;width: 80px;padding-right: 0px;">
+                            <div class="col-md-2 text-right">                                
+                                <div class="col-md-12 text-right" style="padding-left: 0px;width: 80px;padding-right: 0px;">
                                     <button type="button" id="add_producto" class="btn btn-primary" >
                                         Agregar <span class="help-key-side badge label-success"
                                                       style="display: none;">[Enter]</span></button>
