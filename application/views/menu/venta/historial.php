@@ -142,6 +142,10 @@
             <script type="text/javascript">
 
                 $(function () {
+                <?php if($venta_action == 'caja'):?>
+                    stop_get_pendientes();
+                <?php endif;?>
+
                     //CONFIGURACIONES INICIALES
                     App.sidebar('close-sidebar');
 
@@ -202,51 +206,6 @@
                     });
                     <?php endif;?>
 
-                    <?php if($venta_action == 'caja'):?>
-                    var myVar = setInterval(get_pendientes, 2000);
-
-                    function get_pendientes() {
-                        if ($('#venta_action').val() == 'caja') {
-                            var local_id = $("#venta_local").val();
-                            var estado = $("#venta_estado").val();
-                            var moneda_id = $("#moneda_id").val();
-
-
-                            $.ajax({
-                                url: '<?= base_url()?>venta_new/get_pendientes',
-                                data: {
-                                    'local_id': local_id,
-                                    'estado': estado,
-                                    'moneda_id': moneda_id
-                                },
-                                type: 'POST',
-                                success: function (data) {
-                                    $('#total_caja').val(data);
-                                    var caja_r = parseInt(data);
-                                    var caja_actual = parseInt($('#tabla_caja > tbody > tr').length)
-
-                                    if (caja_actual < caja_r) {
-                                        $('#caja_class').removeClass('fa-search');
-                                        $('#caja_class').addClass('fa-refresh');
-                                        $('#total_caja').html(caja_r - caja_actual);
-                                    }
-                                    else {
-                                        $('#caja_class').removeClass('fa-refresh');
-                                        $('#caja_class').addClass('fa-search');
-                                        $('#total_caja').html('');
-                                    }
-                                },
-                                error: function () {
-
-                                }
-                            });
-                        } else {
-                            clearInterval(myVar);
-                        }
-                    }
-
-                    <?php endif;?>
-
                     $('select').chosen();
 
                     get_ventas();
@@ -261,6 +220,55 @@
                     $('.chosen-container').css('width', '100%');
 
                 });
+
+                <?php if($venta_action == 'caja'):?>
+                var myVar = setInterval(get_pendientes, 2000);
+
+                function get_pendientes() {
+                    if ($('#venta_action').val() == 'caja') {
+                        var local_id = $("#venta_local").val();
+                        var estado = $("#venta_estado").val();
+                        var moneda_id = $("#moneda_id").val();
+
+
+                        $.ajax({
+                            url: '<?= base_url()?>venta_new/get_pendientes',
+                            data: {
+                                'local_id': local_id,
+                                'estado': estado,
+                                'moneda_id': moneda_id
+                            },
+                            type: 'POST',
+                            success: function (data) {
+                                $('#total_caja').val(data);
+                                var caja_r = parseInt(data);
+                                var caja_actual = parseInt($('#tabla_caja > tbody > tr').length)
+
+                                if (caja_actual < caja_r) {
+                                    $('#caja_class').removeClass('fa-search');
+                                    $('#caja_class').addClass('fa-refresh');
+                                    $('#total_caja').html(caja_r - caja_actual);
+                                }
+                                else {
+                                    $('#caja_class').removeClass('fa-refresh');
+                                    $('#caja_class').addClass('fa-search');
+                                    $('#total_caja').html('');
+                                }
+                            },
+                            error: function () {
+
+                            }
+                        });
+                    } else {
+                        clearInterval(myVar);
+                    }
+                }
+
+                function stop_get_pendientes(){
+                    clearInterval(myVar);
+                }
+
+                <?php endif;?>
 
                 function get_ventas() {
                     $("#historial_list").html($("#loading").html());
@@ -317,7 +325,7 @@
                 }
 
                 function cobrar(venta_id) {
-
+                    stop_get_pendientes();
                     $("#dialog_venta_detalle").html($("#loading").html());
                     $("#dialog_venta_detalle").modal('show');
 
@@ -361,7 +369,6 @@
                 }
 
                 function save_venta_contado(imprimir) {
-
                     if (isNaN(parseFloat($('#vc_importe').val()))) {
                         show_msg('warning', '<h4>Error. </h4><p>El importe tiene que ser numerico.</p>');
                         setTimeout(function () {
@@ -448,10 +455,11 @@
                                         allow_dismiss: true
                                     });
 
+                                    $("#barloadermodal").modal('hide');
+
                                     var url = ruta + 'venta_new/imprimir/' + data.venta.venta_id + '/PEDIDO';
                                     $("#imprimir_frame_venta").attr('src', url);
-
-                                    $("#barloadermodal").modal('hide');
+                                    
                                     get_ventas();
                                 }
                                 else {
@@ -474,6 +482,9 @@
                         },
                         complete: function (data) {
                             $('.save_venta_contado').removeAttr('disabled');
+                            <?php if($venta_action == 'caja'):?>
+                                myVar = setInterval(get_pendientes, 2000);
+                            <?php endif;?>
                         }
                     });
                 }

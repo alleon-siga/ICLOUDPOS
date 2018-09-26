@@ -205,7 +205,7 @@
                 <div class="vertical text-center">
                     <div class="col-xs-12 noHorizontalPadding centered container_form">
                         <div class="col-xs-12 noHorizontalPadding text-center empresa_nombre">
-                            <?= valueOption('EMPRESA_NOMBRE','ICLOUDPOS') ?>
+                            <?= valueOptionDB('EMPRESA_NOMBRE','ICLOUDPOS') ?>
                         </div>
                         <h2 class="col-xs-12 text-center noHorizontalPadding nomargin vpadding">Ingreso al Área de Cliente</h2>
                         <form class="col-xs-12" id="frmLogin">

@@ -187,7 +187,46 @@ class exportar extends MY_Controller
             }
 
             $data['venta_contado'][$mon['id_moneda']] = $this->db->get()->row();
+            //VENTA CONTADO EFECTIVO
+            $this->db->select_sum('caja_movimiento.saldo', 'total')
+                ->from('venta')
+                ->join('caja_movimiento', 'caja_movimiento.ref_id = venta.venta_id')
+                ->where('caja_movimiento.operacion', 'VENTA')
+                ->where('venta.id_moneda', $mon["id_moneda"])
+                ->where('caja_movimiento.fecha_mov >=', $fecha)
+                ->where('caja_movimiento.fecha_mov <', $fechadespues)
+                ->where('caja_movimiento.medio_pago',3);
 
+            if ($id_local != 0) {
+                $this->db->where('venta.local_id', $id_local);
+            }
+
+            if ($id_usuario != 0) {
+                $this->db->where('venta.id_vendedor', $id_usuario);
+            }
+
+            $data['total_pago_efectivo'][$mon['id_moneda']] = $this->db->get()->row();
+            //saldooooo carlos
+            $this->db->select_sum('caja_pendiente.monto','total')
+                ->from('caja_pendiente')
+                ->join('venta', 'caja_pendiente.ref_id=venta.venta_id', 'left')
+                ->join('caja_movimiento', 'caja_movimiento.ref_id=venta.venta_id', 'left')
+                ->where('venta.id_moneda', $mon["id_moneda"])
+                ->where('caja_pendiente.created_at >=', $fecha)
+                ->where('caja_pendiente.created_at <', $fechadespues)
+                ->where('caja_movimiento.medio_pago',3)
+                ->where('(caja_pendiente.tipo="VENTA_DEVUELTA" OR caja_pendiente.tipo="VENTA_ANULADA")');
+
+            if ($id_local != 0) {
+                $this->db->where('venta.local_id', $id_local);
+            }
+
+            if ($id_usuario != 0) {
+                $this->db->where('venta.id_vendedor', $id_usuario);
+            }
+
+            $data['total_descuento_efectivo'][$mon['id_moneda']] = $this->db->get()->row();
+            //
             $this->db->select('*')
                 ->from('venta')
                 ->join('caja_movimiento', 'caja_movimiento.ref_id = venta.venta_id')
@@ -504,7 +543,33 @@ class exportar extends MY_Controller
 
 
             $data['detalle_ingreso'][$mon['id_moneda']] = $detalle_ingreso;
+            //ANULACIONES VENTAS EFECTIVO
+            $this->db->select_sum('caja_movimiento.saldo', 'total')
+                ->from('caja_movimiento')
+                ->join('caja_desglose', 'caja_desglose.id = caja_movimiento.caja_desglose_id')
+                ->join('caja_pendiente', 'caja_pendiente.id = caja_movimiento.ref_id')
+                ->join('venta', 'venta.venta_id = caja_pendiente.ref_id')
+                ->join('caja', 'caja.id = caja_desglose.caja_id')
+                ->where('caja_movimiento.fecha_mov >=', $fecha)
+                ->where('caja_movimiento.fecha_mov <', $fechadespues)
+                ->where('caja.moneda_id', $mon["id_moneda"])
+                ->where('caja_movimiento.medio_pago', 3)
+                ->where("(caja_movimiento.operacion = 'VENTA_ANULADA' OR caja_movimiento.operacion = 'VENTA_DEVUELTA')")
+                ->where('caja_desglose.estado', 1)
+                ->where('caja_pendiente.estado', 1);
 
+            if ($id_local != 0) {
+                $this->db->where('caja.local_id', $id_local);
+            }
+
+            if ($id_usuario != 0) {
+                $this->db->where('venta.id_vendedor', $id_usuario);
+            }
+
+            $data['anulacion_egreso_efe'][$mon['id_moneda']] = $this->db->get()->row();
+
+
+            $data['detalle_ingreso_efe'][$mon['id_moneda']] = $detalle_ingreso;
             //EGRESO EFECTIVO Y CHEQUE
             $this->db->select('caja_movimiento.*, caja_pendiente.ref_id as my_ref, caja_pendiente.tipo')
                 ->from('caja_movimiento')
@@ -607,8 +672,8 @@ class exportar extends MY_Controller
 
         $data['metodos'] = $metodos;
 
-//        echo $this->load->view('menu/cajas/pdfCuadreCaja', $data, true);
-//        return false;
+         //        echo $this->load->view('menu/cajas/pdfCuadreCaja', $data, true);
+         //        return false;
 
         $mpdf = new mPDF('utf-8', array(80, 200));
         $mpdf->WriteHTML($this->load->view('menu/cajas/pdfCuadreCaja', $data, true));

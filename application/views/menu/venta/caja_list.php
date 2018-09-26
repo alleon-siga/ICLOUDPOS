@@ -190,7 +190,7 @@
     });
 
     function ver(venta_id) {
-
+        stop_get_pendientes();
         $("#dialog_venta_detalle").html($("#loading").html());
         $("#dialog_venta_detalle").modal('show');
 
@@ -208,5 +208,13 @@
         });
     }
 
+    function cerrarDetalle(){
+        $('#dialog_venta_detalle').modal('hide');
+        myVar = setInterval(get_pendientes, 2000);
+    }
 
+    function cerrarDialogVenta(){
+        $('#dialog_venta_contado').modal('hide');
+        myVar = setInterval(get_pendientes, 2000);
+    }
 </script>

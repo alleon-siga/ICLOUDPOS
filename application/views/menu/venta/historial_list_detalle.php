@@ -362,8 +362,7 @@
                 <div class="row">
                     <div class="text-right">
                         <div class="col-md-12">
-                            <input type="button" class='btn btn-danger' value="Cerrar"
-                                   data-dismiss="modal">
+                            <input id="btnCerrarDetalle" type="button" class='btn btn-danger' value="Cerrar" onclick="cerrarDetalle()">
                         </div>
                     </div>
 
