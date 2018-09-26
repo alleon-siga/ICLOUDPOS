@@ -266,7 +266,7 @@
                             </div>
                             <div class="col-md-2 text-right">
                                 <div class="col-md-1 text-left">
-                                    <input type="checkbox" name="chkCostoContable" id="chkCostoContable" value="" style="margin-top:15px;">
+                                    <input type="checkbox" name="chkCostoContable" data-costocontable="" id="chkCostoContable" value="" style="margin-top:15px;">
                                 </div>
                                 <div class="col-md-11 text-right" style="padding-left: 0px;width: 80px;padding-right: 0px;">
                                     <button type="button" id="add_producto" class="btn btn-primary" >
@@ -705,6 +705,8 @@
                                     um_min_abr: '<?= $detalle->um_min_abr ?>',
                                     total_min: <?= $detalle->total_min ?>,
                                     precio_comp: <?= $detalle->precio_comp ?>,
+                                    contable_costo: <?= $detalle->contable_costo ?>,
+                                    real_costo: <?= $detalle->real_costo ?>,
                                     unidades: []
                                 };
         <?php foreach ($detalle->unidades as $unidad): ?>
@@ -753,7 +755,9 @@
                                         prod.unidades,
                                         prod.impuesto,
                                         prod.afectacion_impuesto,
-                                        prod.precio_comp
+                                        prod.precio_comp,
+                                        prod.contable_costo,
+                                        prod.real_costo
                                         );
                             }
 
@@ -763,7 +767,7 @@
                     });
 
 
-                    function add_producto_from_venta(producto_id, producto_nombre, precio, precio_venta, um_min, um_min_abr, total_min, unidades, impuesto, afectacion_impuesto, precio_comp) {
+                    function add_producto_from_venta(producto_id, producto_nombre, precio, precio_venta, um_min, um_min_abr, total_min, unidades, impuesto, afectacion_impuesto, precio_comp, contable_costo,real_costo) {
 
                         var local_id = $("#local_id").val();
                         var precio_id = $("#precio_id").val();
@@ -813,6 +817,8 @@
 
                         producto.subtotal = parseFloat(producto.total_minimo * producto.precio_descuento);
                         producto.precio_comp = parseFloat(precio_comp);
+                        producto.contable_costo = parseFloat(contable_costo);
+                        producto.real_costo = parseFloat(real_costo);
                         producto.precio_unitario_bk = parseFloat(precio_venta);
                         producto.subtotal_bk = parseFloat(producto.total_minimo * producto.precio_descuento);
                         lst_producto.push(producto);
