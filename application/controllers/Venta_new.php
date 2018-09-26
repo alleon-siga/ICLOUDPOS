@@ -514,21 +514,31 @@ class venta_new extends MY_Controller
     function anular_venta()
     {
         $venta_id = $this->input->post('venta_id');
-        $numero = $this->input->post('numero');
-        $serie = $this->input->post('serie');
         $metodo_pago = $this->input->post('metodo_pago');
         $cuenta_id = $this->input->post('cuenta_id');
         $motivo = $this->input->post('motivo');
-        $this->venta->anular_venta($venta_id, $serie, $numero, $metodo_pago, $cuenta_id, $motivo);
 
-        $data['venta'] = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
-        if (valueOptionDB('FACTURACION', 0) == 1 && ($data['venta']->id_documento == 1 || $data['venta']->id_documento == 3)) {
-            $data['facturacion'] = $this->db->order_by('id', 'desc')->get_where('facturacion', array(
-                'documento_tipo' => '07',
-                'ref_id' => $data['venta']->venta_id
+        $venta = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
+        if (valueOptionDB('FACTURACION', 0) == 1 && ($venta->id_documento == 1 || $venta->id_documento == 3)) {
+            $facturacion = $this->db->order_by('id', 'desc')->get_where('facturacion', array(
+                'documento_tipo' => '0' . $venta->id_documento,
+                'ref_id' => $venta->venta_id
             ))->row();
-        }
 
+            if ($facturacion->estado == 3 || $facturacion->estado == 4) {
+                $this->venta->anular_venta($venta_id, $metodo_pago, $cuenta_id, $motivo);
+
+                $data['venta'] = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
+                $data['facturacion'] = $this->db->order_by('id', 'desc')->get_where('facturacion', array(
+                    'documento_tipo' => '07',
+                    'ref_id' => $data['venta']->venta_id
+                ))->row();
+            } else {
+                $data['msg'] = 'No se ha podido anular el documento. Debe informarla a la SUNAT o darle baja en facturacion';
+            }
+        } else {
+            $this->venta->anular_venta($venta_id, $metodo_pago, $cuenta_id, $motivo);
+        }
 
 
         header('Content-Type: application/json');
@@ -828,7 +838,7 @@ class venta_new extends MY_Controller
                 $x++;
             }
             $this->load->view('menu/venta/impresiones/traspaso', $data);
-        }elseif ($tipo_impresion == 'A4') {
+        } elseif ($tipo_impresion == 'A4') {
             $data['venta'] = $this->venta->get_venta_detalle($venta_id);
             $data['identificacion'] = $this->db->get_where('configuraciones', array('config_key' => 'EMPRESA_IDENTIFICACION'))->row();
             $total = $data['venta']->total;
@@ -837,7 +847,7 @@ class venta_new extends MY_Controller
             $this->load->library('mpdf53/mpdf');
             $mpdf = new mPDF('utf-8', 'A4', 0, '', 5, 5, 5, 5, 5, 5);
             if (SERVER_NAME == SERVER_CRDIGITAL) {
-                $html = $this->load->view('menu/venta/impresiones/nota_pedido_crdigital', $data, true);    
+                $html = $this->load->view('menu/venta/impresiones/nota_pedido_crdigital', $data, true);
             } else {
                 $html = $this->load->view('menu/venta/impresiones/nota_pedido_a4', $data, true);
             }

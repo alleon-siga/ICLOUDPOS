@@ -28,7 +28,7 @@ class ComunicacionBaja
         $root->setAttribute("xmlns:cbc", "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2");
         $root->setAttribute("xmlns:ds", "http://www.w3.org/2000/09/xmldsig#");
         $root->setAttribute("xmlns:ext", "urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2");
-        $root->setAttribute("xmlns:sac", "urn:sunat:names:specification:ubl:peru:schema:xsd:SunatAggregateComponents1");
+        $root->setAttribute("xmlns:sac", "urn:sunat:names:specification:ubl:peru:schema:xsd:SunatAggregateComponents-1");
         $root->setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
 
         $root = $xml->appendChild($root);

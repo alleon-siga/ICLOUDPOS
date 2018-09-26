@@ -983,7 +983,7 @@ class venta_new_model extends CI_Model
     }
 
     public
-    function anular_venta($venta_id, $serie, $numero, $metodo_pago, $cuenta_id, $motivo, $id_usuario = false)
+    function anular_venta($venta_id, $metodo_pago, $cuenta_id, $motivo, $id_usuario = false)
     {
         $venta = $this->get_venta_detalle($venta_id);
         $cantidades = array();
@@ -1125,11 +1125,8 @@ class venta_new_model extends CI_Model
             ))->row();
 
             if ($facturacion != null) {
-                if ($facturacion->estado == 3 || $facturacion->estado == 2) {
+                if ($facturacion->estado == 3) {
                     $resp = $this->facturacion_model->anularVenta($venta_id, $serie . '-' . $numero, $motivo);
-                } else {
-                    $this->db->where('id', $facturacion->id);
-                    $this->db->delete('facturacion');
                 }
             }
         }

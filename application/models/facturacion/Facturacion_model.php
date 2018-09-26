@@ -94,13 +94,13 @@ class facturacion_model extends CI_Model
             ->from('venta AS v')
             ->join('facturacion as f', 'v.venta_id = f.ref_id');
         $this->db->where('estado', 3);
-        if($params['local_id']>0){
+        if ($params['local_id'] > 0) {
             $this->db->where('v.local_id', $params['local_id']);
         }
-        if(!empty($params['fecha_ini']) && !empty($params['fecha_fin'])){
-            $this->db->where("DATE(v.fecha) >='".$params['fecha_ini']."' AND DATE(v.fecha)<='".$params['fecha_fin']."'");
+        if (!empty($params['fecha_ini']) && !empty($params['fecha_fin'])) {
+            $this->db->where("DATE(v.fecha) >='" . $params['fecha_ini'] . "' AND DATE(v.fecha)<='" . $params['fecha_fin'] . "'");
         }
-        if(!empty($params['doc_id']>0)){
+        if (!empty($params['doc_id'] > 0)) {
             $this->db->where('f.documento_tipo', $params['doc_id']);
         }
         $this->db->group_by('v.venta_id');
@@ -162,6 +162,11 @@ class facturacion_model extends CI_Model
         ));
 
         return $facturador;
+    }
+
+    function getEstado($ticket, $data){
+        $facturador = $this->getFacturador();
+        return $facturador->getEstado($ticket, $data);
     }
 
     function getEstadoResumen($resumen_id)
@@ -618,6 +623,60 @@ class facturacion_model extends CI_Model
 
     }
 
+    function enviarBaja($id)
+    {
+        $facturador = $this->getFacturador();
+
+        if ($facturador === FALSE) {
+            return false;
+        }
+
+        $baja = $this->db->get_where('facturacion_baja', array('id' => $id))->row();
+        $baja_detalles = $this->db->join('facturacion', 'facturacion.id = facturacion_baja_comprobantes.comprobante_id')
+            ->get_where('facturacion_baja_comprobantes', array('baja_id' => $id))->result();
+
+        foreach ($baja_detalles as $detalle) {
+            if ($detalle->estado != 3) {
+                $this->db->where('baja_id', $id);
+                $this->db->where('comprobante_id', $detalle->comprobante_id);
+                $this->db->delete('facturacion_baja_comprobantes');
+
+                $this->db->where('id', $detalle->comprobante_id);
+                $this->db->update('facturacion', array('estado_comprobante' => 1));
+            }
+        }
+
+        $baja_detalles = $this->db->join('facturacion', 'facturacion.id = facturacion_baja_comprobantes.comprobante_id')
+            ->get_where('facturacion_baja_comprobantes', array('baja_id' => $id))->result();
+
+        if (count($baja_detalles) > 0) {
+
+            $cabecera = array(
+                'FECHA_EMISION' => $baja->fecha_emision,
+                'NUMERO_DOCUMENTO' => $baja->correlativo,
+                'FECHA_REFERENCIA' => $baja_detalles[0]->fecha
+            );
+
+            $detalles = array();
+
+            foreach ($baja_detalles as $bd) {
+                $detalles[] = array(
+                    'TIPO_DOCUMENTO' => $bd->documento_tipo,
+                    'DOCUMENTO_BAJA_SERIE' => explode('-', $bd->documento_numero)[0],
+                    'DOCUMENTO_BAJA_NUMERO' => explode('-', $bd->documento_numero)[1],
+                    'BAJA_DESCRIPCION' => $bd->motivo,
+                );
+            }
+
+            return $facturador->enviarBaja($cabecera, $detalles);
+        } else {
+            $this->db->where('id', $id);
+            $this->db->delete('facturacion_baja');
+            return FALSE;
+        }
+
+    }
+
     function anularComprobante($id, $motivo)
     {
         $this->load->model('correlativos/correlativos_model');
@@ -981,7 +1040,7 @@ class facturacion_model extends CI_Model
         $total_venta = 0;
 
         foreach ($venta->detalles as $d) {
-            if ($descuento > 0){
+            if ($descuento > 0) {
                 $importe = ($d->cantidad * $d->precio);
                 $desc = ($importe * $descuento / 100);
                 $d->precio = ($importe - $desc) / $d->cantidad;
@@ -1146,7 +1205,7 @@ class facturacion_model extends CI_Model
                     ))->row();
 
 
-                    if ($descuento > 0){
+                    if ($descuento > 0) {
                         $importe = ($boleta[$boleta_key]['cantidad'] * $boleta[$boleta_key]['precio']);
                         $desc = ($importe * $descuento / 100);
                         $boleta[$boleta_key]['precio'] = ($importe - $desc) / $boleta[$boleta_key]['cantidad'];
