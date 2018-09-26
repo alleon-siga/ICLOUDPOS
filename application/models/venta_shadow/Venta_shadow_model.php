@@ -417,7 +417,7 @@ class venta_shadow_model extends CI_Model {
                 'detalle_importe' => $producto->detalle_importe,
                 'detalle_costo_promedio' => $producto->aplishadow == 0 ? empty($producto->aplishadowitem) ? $producto->real_costo : $producto->contable_costo:$producto->contable_costo,
                 'detalle_costo_ultimo' => $producto->aplishadow == 0 ? empty($producto->aplishadowitem) ? $producto->real_costo : $producto->contable_costo:$producto->contable_costo,
-                'detalle_utilidad' => 0,
+                'detalle_utilidad' => $producto->aplishadow == 0 ? empty($producto->aplishadowitem) ? $producto->precio-$producto->real_costo : $producto->precio-$producto->contable_costo:$producto->precio-$producto->contable_costo,
                 'impuesto_id' => $p->id_impuesto,
                 'afectacion_impuesto' => $prod->producto_afectacion_impuesto,
                 'impuesto_porciento' => $p->porcentaje_impuesto,

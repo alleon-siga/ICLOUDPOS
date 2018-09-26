@@ -326,13 +326,12 @@ $(document).ready(function () {
         //SUSCRIBOS EVENTOS
         prepare_unidades_events()
         prepare_precio_events()
-        
         refresh_right_panel()
         refresh_totals()
-
         prepare_precio_value(producto_id, unidad_minima)
 
-        
+        refresh_right_panel()
+        refresh_totals()
 // alert(index);
         $('#loading').hide()
         $('.block_producto_unidades').show()
@@ -1873,6 +1872,7 @@ function prepare_precio_value (producto_id, unidad_minima) {
   $('#descuento').val(descuento > 0 ? descuento : 0)
 
   if (precio == -1) {
+      
     $('#precio_unitario').val($('#precio_' + unidad_minima.id_unidad).val())
     $('#precio_unitario').attr('data-index', parseInt($('.precio-input').length - 1))
     $('#precio_unitario_um').html(unidad_minima.nombre_unidad)
