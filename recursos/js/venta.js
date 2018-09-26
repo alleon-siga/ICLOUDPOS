@@ -326,11 +326,13 @@ $(document).ready(function () {
         //SUSCRIBOS EVENTOS
         prepare_unidades_events()
         prepare_precio_events()
+        
+        refresh_right_panel()
+        refresh_totals()
 
         prepare_precio_value(producto_id, unidad_minima)
 
-        refresh_right_panel()
-        refresh_totals()
+        
 // alert(index);
         $('#loading').hide()
         $('.block_producto_unidades').show()
