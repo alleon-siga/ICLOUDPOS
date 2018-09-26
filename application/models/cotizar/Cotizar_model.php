@@ -161,11 +161,14 @@ class cotizar_model extends CI_Model
             ->get()->result();
 
         $cotizacion->descuento = 0;
+        $x = 0;
         foreach ($cotizacion->detalles as $detalle) {
             if ($detalle->precio < $detalle->precio_venta) {
                 $cotizacion->descuento += ($detalle->precio_venta * $detalle->cantidad) - ($detalle->precio * $detalle->cantidad);
             }
-
+            $cotizacion->detalles[$x]->cantidad_und = $this->unidades_model->get_cantidad_und_max($detalle->producto_id);
+            $cotizacion->detalles[$x]->simbolo_und = $this->unidades_model->get_um_min_by_producto_abr($detalle->producto_id);
+            $x++;
         }
 
         return $cotizacion;

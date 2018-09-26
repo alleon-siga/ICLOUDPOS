@@ -538,9 +538,14 @@
                             Accept: 'application/json'
                         },
                         success: function (data) {
-                            $("#documento_serie").val(data.correlativos.serie);
-                            $("#documento_numero").val(data.correlativos.correlativo);
-                            $('#dialog_venta_confirm').modal('show');
+                            if(data.correlativos==null){
+                                mensaje('danger', 'Falta registrar el documento de eliminaci&oacute;n y su correlativo "NC"');
+                            }else{
+                                $("#documento_serie").val(data.correlativos.serie);
+                                $("#documento_numero").val(data.correlativos.correlativo);
+                                $('#dialog_venta_confirm').modal('show');    
+                            }
+                            
                         }
                     });
 
