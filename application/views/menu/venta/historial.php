@@ -339,11 +339,11 @@
                   success: function (data) {
                     $('#caja_venta_id').val(venta_id)
                     if (data.venta.condicion_id == '1')
-                      $('#vc_total_pagar').val(formatPrice(data.venta.total))
+                      $('#vc_total_pagar').val(data.venta.total)
                     else if (data.venta.condicion_id == '2')
-                      $('#vc_total_pagar').val(formatPrice(data.venta.inicial))
+                      $('#vc_total_pagar').val(data.venta.inicial)
 
-                    $('#vc_importe').val(formatPrice($('#vc_total_pagar').val()))
+                    $('#vc_importe').val($('#vc_total_pagar').val())
                     $('#vc_vuelto').val(0)
                     $('#vc_num_oper').val('')
 

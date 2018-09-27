@@ -404,4 +404,8 @@
         $("#correoModal").load('<?php echo $ruta ?>' + 'venta/modalEnviarVenta/' + idVenta + '/' + tipo_cliente);
         $('#correoModal').modal('show');
     }
+
+    function cerrarDetalle(){
+        $('#dialog_venta_detalle').modal('hide');
+    }
 </script>

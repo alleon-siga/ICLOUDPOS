@@ -705,10 +705,10 @@
             }
 
             precio_credito = parseFloat((((precio_contado - saldo_inicial) * tasa_interes) / 100) + (precio_contado - saldo_inicial));
-            $("#c_precio_credito").val(formatPrice(precio_credito));
+            $("#c_precio_credito").val(precio_credito);
 
-            $("#c_total_deuda").html(formatPrice(precio_credito + saldo_inicial));
-            $("#c_total_saldo").html(formatPrice(precio_credito));
+            $("#c_total_deuda").html(precio_credito + saldo_inicial);
+            $("#c_total_saldo").html(precio_credito);
 
             generar_proyeccion(precio_credito, trigger);
 
@@ -748,7 +748,7 @@
 
                 var template = '<tr class="proyeccion_cuota" data-cuota="' + i + '">';
                 template += '<td style="text-align: center;">' + i + '</td>';
-                template += '<td style="text-align: right;">' + $('.tipo_moneda').first().html() + ' ' + formatPrice(saldo / i) + '</td>';
+                template += '<td style="text-align: right;">' + $('.tipo_moneda').first().html() + ' ' + (saldo / i) + '</td>';
                 template += '</tr>';
 
                 body.append(template);
@@ -796,7 +796,7 @@
         function generar_cuotas(numero_cuotas, saldo) {
             $('#last_fecha_giro').val($("#c_fecha_giro").val());
             var body = $("#body_cuotas");
-            var monto = formatPrice(saldo / numero_cuotas);
+            var monto = saldo / numero_cuotas;
 
             body.html("");
             for (var i = 0; i < numero_cuotas; i++) {
