@@ -112,7 +112,7 @@
                                 <a class="btn btn-danger" data-toggle="tooltip" style="margin-right: 5px;"
                                    title="Devolver Venta" data-original-title="Devolver Venta"
                                    href="#"
-                                   onclick="devolver('<?= $venta->venta_id ?>');">
+                                   onclick="alert('Las devoluciones parciales no estan disponible por el momento.');">
                                     <i class="fa fa-arrow-circle-left"></i>
                                 </a>
                             <?php endif; ?>

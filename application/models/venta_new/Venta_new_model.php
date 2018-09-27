@@ -368,7 +368,7 @@ class venta_new_model extends CI_Model
         $this->db->update('kardex', array(
             'tipo' => $iddoc,
             'serie' => $update_venta['serie'],
-            'numero' => sumCod($update_venta['numero'], 6)
+            'numero' => sumCod($update_venta['numero'], 8)
         ));
 
         if (valueOptionDB('FACTURACION', 0) == 1 && ($iddoc == 1 || $iddoc == 3)) {
@@ -461,7 +461,18 @@ class venta_new_model extends CI_Model
         $this->db->where('venta_id', $venta['venta_id']);
         $this->db->update('venta', $update_venta);
 
+
+
         if ($venta_actual->condicion_pago == 1) {
+
+            $this->db->where('io', 2);
+            $this->db->where('operacion', 1);
+            $this->db->where('ref_id', $venta['venta_id']);
+            $this->db->update('kardex', array(
+                'serie' => $update_venta['serie'],
+                'numero' => sumCod($update_venta['numero'], 8)
+            ));
+
             if (valueOptionDB('FACTURACION', 0) == 1 && ($venta_actual->id_documento == 1 || $venta_actual->id_documento == 3)) {
                 $resp = $this->facturacion_model->facturarVenta($venta['venta_id']);
             }
@@ -908,7 +919,7 @@ class venta_new_model extends CI_Model
                 'tipo' => $tipo,
                 'operacion' => 1,
                 'serie' => $venta->serie != null ? $venta->serie : '-',
-                'numero' => $venta->numero != null ? sumCod($venta->numero, 6) : '-',
+                'numero' => $venta->numero != null ? sumCod($venta->numero, 8) : '-',
                 'ref_id' => $venta->venta_id,
                 'usuario_id' => $id_usuario,
                 'costo' => $costo,
@@ -979,7 +990,7 @@ class venta_new_model extends CI_Model
     function get_next_id()
     {
         $next_id = $this->db->select_max('venta_id')->get('venta')->row();
-        return sumCod($next_id->venta_id + 1, 6);
+        return sumCod($next_id->venta_id + 1, 8);
     }
 
     public

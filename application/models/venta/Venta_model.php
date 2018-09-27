@@ -2057,17 +2057,25 @@ FROM (`detalle_venta`) JOIN `venta` ON `venta`.`venta_id`=`detalle_venta`.`id_ve
 
     public function get_nota_credito($params)
     {
-        $venta_id = $params['venta_id'];
-        $serie = $params['serie'];
-        $numero = $params['numero'];
+        $query = "
+            SELECT 
+                p.producto_id,
+                p.producto_codigo_interno,
+                p.producto_nombre,
+                dv.cantidad_devuelta AS cantidad,
+                u.nombre_unidad,
+                dv.precio
+            FROM
+                detalle_venta AS dv
+                    JOIN
+                producto AS p ON p.producto_id = dv.id_producto
+                    JOIN
+                unidades AS u ON u.id_unidad = dv.unidad_medida
+            WHERE
+                dv.id_venta = ".$params['venta_id']."
+        ";
 
-        $this->db->select('k.id, p.producto_nombre, (k.cantidad * - 1) AS cantidad, u.nombre_unidad, dv.precio');
-        $this->db->from('kardex AS k');
-        $this->db->join('producto AS p', 'p.producto_id = k.producto_id');
-        $this->db->join('detalle_venta dv', 'k.ref_id = dv.id_venta AND k.producto_id = dv.id_producto');
-        $this->db->join('unidades AS u', 'u.id_unidad = k.unidad_id');
-        $this->db->where("k.io = 2 AND k.tipo = 7 AND k.operacion = 5 AND dv.id_venta= $venta_id AND k.serie='$serie' AND k.numero='$numero'");
-        return $this->db->get()->result();
+        return $this->db->query($query)->result();
     }
 
     public function getCorreoCliente($id_venta)
