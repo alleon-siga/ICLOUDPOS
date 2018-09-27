@@ -18,8 +18,8 @@
 <div class="modal-dialog modal-lg">
 <?php 
     $ruta = base_url();
-    $nombre_producto = json_decode(valueOption("NOMBRE_PRODUCTO"));
-    $numero_decimales = valueOption("NUMERO_DECIMALES");
+    $nombre_producto = json_decode(valueOption("NOMBRE_PRODUCTO", 2));
+    $numero_decimales = valueOption("NUMERO_DECIMALES", 2);
 ?>
     <script src="<?= $ruta ?>recursos/js/helpers/excanvas.min.js"></script>
     <script src="<?= $ruta ?>recursos/js/pages/readyInboxCompose.js"></script>
