@@ -1113,7 +1113,7 @@ function add_producto() {
             lst_producto[index].precio_id = precio_id
             lst_producto[index].precio_unitario = parseFloat($('#precio_unitario').val())
             lst_producto[index].descuento = isNaN(parseFloat($('#descuento').val())) ? 0 : parseFloat($('#descuento').val())
-            lst_producto[index].precio_descuento = lst_producto[index].descuento > 0 ? (lst_producto[index].precio_unitario - (lst_producto[index].precio_unitario * lst_producto[index].descuento / 100)) : lst_producto[index].precio_unitario
+            lst_producto[index].precio_descuento = lst_producto[index].descuento > 0 ? (lst_producto[index].precio_unitario - (lst_producto[index].precio_unitario * lst_producto[index].descuento / 100)).toFixed(2) : lst_producto[index].precio_unitario
             lst_producto[index].total_local['local' + local_id] = parseFloat($('#total_minimo').val())
             lst_producto[index].total_minimo = 0
             lst_producto[index].shadowitem = shadowitem
@@ -1136,7 +1136,7 @@ function add_producto() {
             lst_producto[index].precio_id = precio_id
             lst_producto[index].precio_unitario = parseFloat($('#precio_unitario').val())
             lst_producto[index].descuento = isNaN(parseFloat($('#descuento').val())) ? 0 : parseFloat($('#descuento').val())
-            lst_producto[index].precio_descuento = lst_producto[index].descuento > 0 ? (lst_producto[index].precio_unitario - (lst_producto[index].precio_unitario * lst_producto[index].descuento / 100)) : lst_producto[index].precio_unitario
+            lst_producto[index].precio_descuento = lst_producto[index].descuento > 0 ? (lst_producto[index].precio_unitario - (lst_producto[index].precio_unitario * lst_producto[index].descuento / 100)).toFixed(2) : lst_producto[index].precio_unitario
             lst_producto[index].total_local['local' + local_id] = parseFloat($('#total_minimo').val())
             lst_producto[index].total_minimo = 0
             lst_producto[index].shadowitem = 0
