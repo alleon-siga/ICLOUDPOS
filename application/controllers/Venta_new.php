@@ -524,10 +524,9 @@ class venta_new extends MY_Controller
                 if ($facturacion->estado == 3 || $facturacion->estado == 4) {
                     $this->venta->anular_venta($venta_id, $metodo_pago, $cuenta_id, $motivo);
 
-                    $data['venta'] = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
                     $data['facturacion'] = $this->db->order_by('id', 'desc')->get_where('facturacion', array(
                         'documento_tipo' => '07',
-                        'ref_id' => $data['venta']->venta_id
+                        'ref_id' => $venta_id
                     ))->row();
                 } else {
                     $data['msg'] = 'No se ha podido anular el documento. Debe informarla a la SUNAT o darle baja en facturacion';
@@ -539,6 +538,8 @@ class venta_new extends MY_Controller
         } else {
             $this->venta->anular_venta($venta_id, $metodo_pago, $cuenta_id, $motivo);
         }
+
+        $data['venta'] = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
 
 
         header('Content-Type: application/json');
