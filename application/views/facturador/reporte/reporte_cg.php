@@ -31,7 +31,7 @@
 </style>
 <ul class="breadcrumb breadcrumb-top">
     <li>Reporte</li>
-    <li><a href="">Costos Reales Vs Contables</a></li>
+    <li><a href="">Costeo General</a></li>
 </ul>
 <link rel="stylesheet" href="<?= $ruta ?>recursos/css/plugins.css">
 <link rel="stylesheet" href="<?= $ruta ?>recursos/js/datepicker-range/daterangepicker.css">
@@ -103,11 +103,11 @@
                             <label class="control-label">Producto:</label>
                             <div id="divSelect">
                                 <select id="producto_id" name="producto_id" multiple="multiple">
-                                 <?php foreach ($productos as $producto): ?>
+                                    <?php foreach ($productos as $producto): ?>
                                         <option value="<?= $producto->producto_id ?>"
                                                 data-impuesto="<?= $producto->porcentaje_impuesto ?>">
-                                            <?php $barra = $barra_activa->activo == 1 && $producto->barra != "" ? "CB: " . $producto->barra : "" ?>
-                                            <?= getCodigoValue($producto->producto_id, $producto->codigo) . ' - ' . $producto->producto_nombre . " " . $barra ?>
+                                                    <?php $barra = $barra_activa->activo == 1 && $producto->barra != "" ? "CB: " . $producto->barra : "" ?>
+                                                    <?= getCodigoValue($producto->producto_id, $producto->codigo) . ' - ' . $producto->producto_nombre . " " . $barra ?>
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
@@ -116,23 +116,18 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-2">
-                    <label class="control-label panel-admin-text">Moneda</label>
-                    <select name="moneda_id" id="moneda_id" class='ctrl form-control'>
-                        <?php foreach ($monedas as $moneda): ?>
-                            <option value="<?= $moneda->id_moneda ?>"
-                                    data-simbolo="<?= $moneda->simbolo ?>"
-                                <?= $moneda->id_moneda == MONEDA_DEFECTO ? 'selected' : '' ?>><?= $moneda->nombre ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
                 <div class="col-md-3">
-                    <label class="control-label panel-admin-text">Fecha</label>
-                    <input type="text" id="fecha" class="form-control" readonly style="cursor: pointer;" name="fecha" value="<?= date('01/m/Y') ?> - <?= date('d/m/Y') ?>"/>
-                </div>
-                
+                    <?php if (isset($locales)): ?>
+                        <select id="local_id" class="form-control ctrl">
+                            <option value="0">TODOS</option>
+                            <?php foreach ($locales as $local): ?>
+                                <option <?php if ($this->session->userdata('id_local') == $local['int_local_id']) echo "selected"; ?>
+                                    value="<?= $local['int_local_id']; ?>"> <?= $local['local_nombre'] ?> </option>
+                                <?php endforeach; ?>
+                        </select>
+                    <?php endif; ?>
+                </div>                
                 <div class="col-md-1">
-                    <div style="padding-top: 30px;"></div>
                     <button id="btn_buscar" class="btn btn-default">
                         <i class="fa fa-search"></i> Buscar
                     </button>
@@ -154,7 +149,7 @@
             </div>
             <div class="row-fluid">
                 <div class="span12">
-                    <div id="historial_list">
+                    <div id="historial_cg_list">
 
                     </div>
                 </div>
@@ -172,7 +167,7 @@
                 });
                 $(document).ready(function () {
                     //CONFIGURACIONES INICIALES
-                    
+
                     $("#charm").tcharm({
                         'position': 'right',
                         'display': false,
@@ -218,10 +213,10 @@
                     $('.ctrl').chosen();
 
                     $("#btn_buscar, .btn_buscar").on("click", function () {
-                        getReporte();
+                        getReporte_cg();
                     });
 
-                     $('.chosen-container').css('width', '100%');
+                    $('.chosen-container').css('width', '100%');
 
                     $("#btn_filter_reset").on('click', function () {
                         $('#marca_id').val('0').trigger('chosen:updated');
@@ -230,28 +225,32 @@
                         $('#linea_id').val('0').trigger('chosen:updated');
                         $('#producto_id').multipleSelect('uncheckAll');
                         $("#charm").tcharm('hide');
-                        getReporte();
+                        getReporte_cg();
                         filtro();
                     });
-                    $('#marca_id, #grupo_id, #familia_id, #linea_id').on('change', function(){
+                    $('#marca_id, #grupo_id, #familia_id, #linea_id').on('change', function () {
                         filtro();
                     });
                 });
 
-                function getReporte() {
-                    $("#historial_cr_list").html($("#loading").html());
+                function getReporte_cg() {
+                    $("#historial_cg_list").html($("#loading").html());
 
                     var data = {
-                        'caja_id': $("#caja_select").val(),
-                        'fecha': $("#fecha").val()
+                        'local_id': $("#local_id").val(),
+                        'producto_id': $("#producto_id").val(),
+                        'grupo_id': $("#grupo_id").val(),
+                        'marca_id': $("#marca_id").val(),
+                        'linea_id': $("#linea_id").val(),
+                        'familia_id': $("#familia_id").val()
                     };
 
                     $.ajax({
-                        url: '<?= base_url()?>facturador/reporte/reporte/filter',
+                        url: '<?= base_url() ?>facturador/reporte/reporte_cg/filter',
                         data: data,
                         type: 'POST',
                         success: function (data) {
-                            $("#historial_cr_list").html(data);
+                            $("#historial_cg_list").html(data);
                         },
                         error: function () {
                             $.bootstrapGrowl('<h4>Error.</h4> <p>Ha ocurrido un error en la operaci&oacute;n</p>', {
@@ -259,12 +258,12 @@
                                 delay: 5000,
                                 allow_dismiss: true
                             });
-                            $("#historial_cr_list").html('');
+                            $("#historial_cg_list").html('');
                         }
                     });
                     $("#charm").tcharm('hide');
                 }
-                function filtro(){
+                function filtro() {
                     var data = {
                         'grupo_id': $("#grupo_id").val(),
                         'marca_id': $("#marca_id").val(),
@@ -273,7 +272,7 @@
                     };
 
                     $.ajax({
-                        url: '<?= base_url()?>reporte/selectProducto',
+                        url: '<?= base_url() ?>reporte/selectProducto',
                         data: data,
                         type: 'POST',
                         success: function (data) {

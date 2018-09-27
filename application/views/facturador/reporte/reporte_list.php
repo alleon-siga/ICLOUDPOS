@@ -25,8 +25,6 @@
                 <th>Precio Venta</th>
                 <th>Costo Compra</th>
                 <th>Cantidad Vendida</th>
-                <th>Total PV</th>
-                <th>Total CC</th>
             </tr>
         </thead>
         <tbody>
@@ -43,8 +41,6 @@
                 <td><?= number_format($ingreso->precio_venta2, 2) ?></td>
                 <td><?= number_format($ingreso->detalle_costo_ultimo2, 2) ?></td>
                 <td><?= number_format($ingreso->cantidad2, 2) ?></td>
-                <td><?= number_format($ingreso->detalle_importe2, 2) ?></td>
-                <td><?= number_format($ingreso->detalle_importe_cc2, 2) ?></td>
             </tr>
     <?php
         endforeach;
