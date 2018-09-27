@@ -525,16 +525,21 @@ class venta_new extends MY_Controller
                 'ref_id' => $venta->venta_id
             ))->row();
 
-            if ($facturacion->estado == 3 || $facturacion->estado == 4) {
-                $this->venta->anular_venta($venta_id, $metodo_pago, $cuenta_id, $motivo);
+            if($facturacion != NULL){
+                if ($facturacion->estado == 3 || $facturacion->estado == 4) {
+                    $this->venta->anular_venta($venta_id, $metodo_pago, $cuenta_id, $motivo);
 
-                $data['venta'] = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
-                $data['facturacion'] = $this->db->order_by('id', 'desc')->get_where('facturacion', array(
-                    'documento_tipo' => '07',
-                    'ref_id' => $data['venta']->venta_id
-                ))->row();
-            } else {
-                $data['msg'] = 'No se ha podido anular el documento. Debe informarla a la SUNAT o darle baja en facturacion';
+                    $data['venta'] = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
+                    $data['facturacion'] = $this->db->order_by('id', 'desc')->get_where('facturacion', array(
+                        'documento_tipo' => '07',
+                        'ref_id' => $data['venta']->venta_id
+                    ))->row();
+                } else {
+                    $data['msg'] = 'No se ha podido anular el documento. Debe informarla a la SUNAT o darle baja en facturacion';
+                }
+            }
+            else{
+                $this->venta->anular_venta($venta_id, $metodo_pago, $cuenta_id, $motivo);
             }
         } else {
             $this->venta->anular_venta($venta_id, $metodo_pago, $cuenta_id, $motivo);
