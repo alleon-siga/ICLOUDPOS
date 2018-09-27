@@ -1066,19 +1066,20 @@ class Reporte extends MY_Controller
             }
         }
     }
-    function utilidadProducto($action = '')
+    
+    function gastosDia($action = '')
     {
         switch ($action) {
             case 'filter': {
-                $params['local_id'] = $this->input->post('local_id');
+                $params['caja_id'] = $this->input->post('caja_id');
                 if(!empty($this->input->post('fecha'))){
                     $date_range = explode(" - ", $this->input->post('fecha'));
                     $params['fecha_ini'] = date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0])));
                     $params['fecha_fin'] = date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])));
                 }
-                $data['lists'] = $this->reporte_model->getUtilidadProducto($params);
+                $data['lists'] = $this->reporte_model->getGastosDia($params);
 
-                $this->load->view('menu/reportes/utilidadProducto_list', $data);
+                $this->load->view('menu/reportes/gastosDia_list', $data);
                 break;
             }
             case 'pdf': {
@@ -1089,7 +1090,7 @@ class Reporte extends MY_Controller
                     'fecha_ini' => date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0]))),
                     'fecha_fin' => date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])))
                 );
-                $data['lists'] = $this->reporte_model->getUtilidadProducto($input);
+                $data['lists'] = $this->reporte_model->getGastosDia($input);
 
                 $local = $this->db->get_where('local', array('int_local_id' => $input['local_id']))->row();
                 $data['local_nombre'] = !empty($local->local_nombre)? $local->local_nombre: 'TODOS';
@@ -1100,7 +1101,7 @@ class Reporte extends MY_Controller
                 $data['condicion_pago'] = $input['condicion_pago'];
                 $this->load->library('mpdf53/mpdf');
                 $mpdf = new mPDF('utf-8', 'A4-L', 0, '', 5, 5, 5, 5, 5, 5);
-                $html = $this->load->view('menu/reportes/utilidadProducto_list_pdf', $data, true);
+                $html = $this->load->view('menu/reportes/gastosDia_list_pdf', $data, true);
                 $mpdf->WriteHTML($html);
                 $mpdf->Output();
                 break;
@@ -1113,22 +1114,18 @@ class Reporte extends MY_Controller
                     'fecha_ini' => date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0]))),
                     'fecha_fin' => date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])))
                 );
-                $data['lists'] = $this->reporte_model->getUtilidadProducto($input);
+                $data['lists'] = $this->reporte_model->getGastosDia($input);
 
                 $local = $this->db->get_where('local', array('int_local_id' => $input['local_id']))->row();
                 $data['local_nombre'] = !empty($local->local_nombre)? $local->local_nombre: 'TODOS';
                 $data['local_direccion'] = !empty($local->direccion)? $local->direccion: 'TODOS';
-                echo $this->load->view('menu/reportes/utilidadProducto_list_excel', $data, true);
+                echo $this->load->view('menu/reportes/gastosDia_list_excel', $data, true);
                 break;
             }
             default: {
-                if ($this->session->userdata('esSuper') == 1) {
-                    $data['locales'] = $this->local_model->get_all();
-                } else {
-                    $usu = $this->session->userdata('nUsuCodigo');
-                    $data['locales'] = $this->local_model->get_all_usu($usu);
-                }
-                $dataCuerpo['cuerpo'] = $this->load->view('menu/reportes/utilidadProducto', $data, true);
+                $data['cajas'] = $this->cajas_model->get_caja();
+                $data['monedas'] = $this->db->get_where('moneda', array('status_moneda' => 1))->result();
+                $dataCuerpo['cuerpo'] = $this->load->view('menu/reportes/gastosDia', $data, true);
                 if ($this->input->is_ajax_request()) {
                     echo $dataCuerpo['cuerpo'];
                 } else {

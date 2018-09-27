@@ -591,7 +591,7 @@ $primary_nav = array(
                     ),
                     array(
                         'name' => 'Utilidades por venta',
-                        'url' => $ruta . 'reporte/utilidadProducto',
+                        'url' => $ruta . 'reporte_ventas/utilidadProducto',
                         'icon' => 'fa fa-area-chart',
                         'slug' => 'utilidadProducto'
                     ),

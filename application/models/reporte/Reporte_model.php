@@ -494,11 +494,11 @@ class reporte_model extends CI_Model
         return $this->db->get()->result();
     }
 
-    function getUtilidadProducto($params)
+    function getGastosDia($params)
     {
-        $where = "v.venta_status='COMPLETADO'";
+        $where = "v.venta_status='COMPLETADO' AND ";
         if($params['local_id']>0){
-            $where .= " AND v.local_id = ".$params['local_id'];
+            $where .= "v.local_id = ".$params['local_id'];
         }
         if(!empty($params['fecha_ini']) && !empty($params['fecha_fin'])){
             if(!empty($where)){
@@ -507,7 +507,7 @@ class reporte_model extends CI_Model
             $where .= "v.fecha >= '".$params['fecha_ini']."' AND v.fecha <= '".$params['fecha_fin']."'";
         }
 
-        $query = "SELECT v.venta_id, DATE_FORMAT(v.fecha, '%d/%m/%Y') AS fecha, pr.proveedor_nombre, p.producto_nombre, u.nombre_unidad, SUM(up.unidades * dv.cantidad) AS cantidad, dv.detalle_costo_promedio, dv.detalle_importe, l.local_nombre, dv.detalle_costo_ultimo, dv.impuesto_porciento, v.tipo_impuesto, dv.tipo_impuesto_compra, v.id_moneda
+        $query = "SELECT v.venta_id, DATE_FORMAT(v.fecha, '%d/%m/%Y') AS fecha, pr.proveedor_nombre, p.producto_nombre, u.nombre_unidad, SUM(up.unidades * dv.cantidad) AS cantidad, dv.detalle_costo_promedio, dv.detalle_importe, l.local_nombre, dv.detalle_costo_ultimo, dv.impuesto_porciento, v.tipo_impuesto
             FROM detalle_venta dv
             INNER JOIN venta v ON v.venta_id=dv.id_venta 
             INNER JOIN producto p ON p.producto_id=dv.id_producto 
@@ -521,8 +521,7 @@ class reporte_model extends CI_Model
                 where unidades_has_producto.producto_id = dv.id_producto
                 ORDER BY orden DESC LIMIT 1
             ) = up2.id_unidad 
-            INNER JOIN unidades u ON u.id_unidad=up2.id_unidad
-            INNER JOIN producto_costo_unitario pcu ON  p.producto_id = pcu.producto_id AND v.id_moneda = pcu.moneda_id AND activo=1 ";
+            INNER JOIN unidades u ON u.id_unidad=up2.id_unidad";
         if(!empty($where)){
             $query .= " WHERE ". $where;
         }
