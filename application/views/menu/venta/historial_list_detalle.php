@@ -274,7 +274,7 @@
                                     <th style="vertical-align: middle;" width="10%">Subtotal</th>
                                 </tr>
                                 </thead>
-                                <tbody>                                    
+                                <tbody>
                                 <?php foreach ($venta->detalles as $detalle): ?>
                                     <tr>
                                         <td><?= getCodigoValue($detalle->producto_id, $detalle->producto_codigo_interno) ?></td>
@@ -295,15 +295,13 @@
                     <br>
                     <div class="row">
                         <div class="col-md-8">
-                            <?php if (isset($kardex) && count($kardex) > 0): ?>
+                            <?php if (isset($kardex) && $kardex != NULL): ?>
                                 <h4>Anulaciones</h4>
-                                <?php foreach ($kardex as $k): ?>
-                                    <h5>
-                                        <a href="javascript:ver_nc('<?= $venta->venta_id ?>','<?= $k->serie ?>','<?= $k->numero ?>')"><?= 'NC ' . $k->serie . ' - ' . $k->numero ?></a>
-                                        <br><br>
-                                        <span style="color: red">Fecha y hora de anulaci&oacute;n: <b><?= date('d/m/Y H:i', strtotime($k->fecha)) . '</b> Anulado por: ' . '<b>' . $k->nombre . '</b>' ?></span>
-                                    </h5>
-                                <?php endforeach; ?>
+                                <h5>
+                                    <a href="javascript:ver_nc('<?= $venta->venta_id ?>','<?= $kardex->serie ?>','<?= $kardex->numero ?>')"><?= 'NC ' . $kardex->serie . ' - ' . $kardex->numero ?></a>
+                                    <br><br>
+                                    <span style="color: red">Fecha y hora de anulaci&oacute;n: <b><?= date('d/m/Y H:i', strtotime($kardex->fecha)) . '</b> Anulado por: ' . '<b>' . $kardex->nombre . '</b>' ?></span>
+                                </h5>
                             <?php endif; ?>
                             <?php if ($venta->condicion_id == '2'): ?>
                                 <h4>Cuotas y Vencimientos</h4>
@@ -471,251 +469,251 @@
     </div>
 
     <script>
-        $('.devolver_input').bind('keyup change click mouseleave', function () {
-            var id = $(this).attr('data-id');
-            var impuesto = parseFloat($(this).attr('data-impuesto'));
-            var tipo_impuesto = $('#tipo_impuesto').val();
-            var devolver = isNaN(parseFloat($(this).val())) ? 0 : parseFloat($(this).val());
-            var cantidad = isNaN(parseFloat($('#cantidad_' + id).attr('data-cantidad'))) ? 0 : parseFloat($('#cantidad_' + id).attr('data-cantidad'));
-            var precio = parseFloat($('#precio_' + id).html().trim());
+      $('.devolver_input').bind('keyup change click mouseleave', function () {
+        var id = $(this).attr('data-id')
+        var impuesto = parseFloat($(this).attr('data-impuesto'))
+        var tipo_impuesto = $('#tipo_impuesto').val()
+        var devolver = isNaN(parseFloat($(this).val())) ? 0 : parseFloat($(this).val())
+        var cantidad = isNaN(parseFloat($('#cantidad_' + id).attr('data-cantidad'))) ? 0 : parseFloat($('#cantidad_' + id).attr('data-cantidad'))
+        var precio = parseFloat($('#precio_' + id).html().trim())
 
-            var factor = parseFloat((100 + impuesto) / 100);
+        var factor = parseFloat((100 + impuesto) / 100)
 
-            var cantidad_td = $('#cantidad_' + id);
-            var subtotal_td = $('#subtotal_' + id);
+        var cantidad_td = $('#cantidad_' + id)
+        var subtotal_td = $('#subtotal_' + id)
 
-            cantidad_td.html(parseFloat(cantidad - devolver).toFixed(0));
-            subtotal_td.html(parseFloat((cantidad - devolver) * precio).toFixed(2));
+        cantidad_td.html(parseFloat(cantidad - devolver).toFixed(0))
+        subtotal_td.html(parseFloat((cantidad - devolver) * precio).toFixed(2))
 
-            var subtotales = 0;
-            $('.subtotales').each(function () {
-                subtotales += parseFloat($(this).html())
-            });
+        var subtotales = 0
+        $('.subtotales').each(function () {
+          subtotales += parseFloat($(this).html())
+        })
 
-            if (tipo_impuesto == 2) {
-                subtotales = subtotales * factor;
-            }
-
-            var total_devolver = parseFloat($('#total_pagado').html() - subtotales);
-
-            $('#total_devolver').html(formatPrice(total_devolver));
-        });
-
-        $('.devolver_input').on('focus', function () {
-            $(this).select();
-        });
-
-        $('#devolver_venta_button').on('click', function () {
-
-            if (!validar_venta())
-                return false;
-
-            var template = '<h3>Devoluvi&oacute;n de la Venta ' + $('#venta_numero').html().trim() + '</h3>';
-            template += '<hr class="hr-margin-10">';
-            template += '<h4><label>Productos Devueltos:</label></h4>';
-            $('.producto_detalles_list').each(function () {
-                var id = $(this).attr('data-id');
-                var producto_codigo = $('#producto_codigo_' + id).html().trim();
-                var producto_nombre = $('#producto_nombre_' + id).html().trim();
-                var unidad_nombre = $('#unidad_nombre_' + id).html().trim();
-                var cantidad_devuelta = $('#cantidad_devuelta_' + id).val();
-
-                if (cantidad_devuelta != 0 && cantidad_devuelta != "") {
-                    template += '<div class="row">';
-                    template += '<div class="col-md-8">' + producto_codigo + ' - ' + producto_nombre + '</div>';
-                    template += '<div class="col-md-4">' + cantidad_devuelta + ' ' + unidad_nombre + '</div>';
-                    template += '</div>';
-                    template += '<hr class="hr-margin-5">';
-                }
-            });
-            template += '<hr class="hr-margin-10">';
-            template += '<h4><label>Total a devolver:</label> ' + $('#total_devolver_text').html().trim() + '</h4>';
-
-            $('#confirm_venta_text').html(template);
-            $('#confirm_venta_button').attr('onclick', 'devolver_venta();');
-
-            $("#documento_serie").val("");
-            $("#documento_numero").val("");
-
-            $.ajax({
-                url: '<?php echo base_url() . 'local/get_notas_correlativo'; ?>/' + parseInt($('#venta_numero').html().trim()),
-                type: 'GET',
-                headers: {
-                    Accept: 'application/json'
-                },
-                success: function (data) {
-                    $("#documento_serie").val(data.correlativos.serie);
-                    $("#documento_numero").val(data.correlativos.correlativo);
-                    $('#dialog_venta_confirm').modal('show');
-                }
-            });
-
-        });
-
-        function validar_venta() {
-            var flag = true;
-            var n = 0;
-            $('.producto_detalles_list').each(function () {
-                var id = $(this).attr('data-id');
-                var cantidad = parseFloat($('#cantidad_' + id).html());
-                var old_cantidad = parseFloat($('#cantidad_' + id).attr('data-cantidad'));
-
-                if (cantidad < 0) {
-                    $.bootstrapGrowl('<h4>Error.</h4> <p>No puede hacer una devoluci&oacute;n mayor a la cantidad.</p>', {
-                        type: 'warning',
-                        delay: 5000,
-                        allow_dismiss: true
-                    });
-                    $('#cantidad_devuelta_' + id).trigger('focus');
-                    flag = false;
-                    return false;
-                }
-
-                if (cantidad == old_cantidad)
-                    n++;
-
-            });
-            if (n == $('.producto_detalles_list').length) {
-                $.bootstrapGrowl('<h4>Error.</h4> <p>Por favor devuelva una cantidad.</p>', {
-                    type: 'warning',
-                    delay: 5000,
-                    allow_dismiss: true
-                });
-                $('#cantidad_devuelta_' + id).trigger('focus');
-                return false;
-            }
-
-            var total_importe = parseFloat($("#total_pagado").html()) - parseFloat($("#total_devolver").html());
-            if (total_importe == 0) {
-                $.bootstrapGrowl('<h4>Error.</h4> <p>No puede devolver la totalidad de la venta. Realice una anulacion.</p>', {
-                    type: 'warning',
-                    delay: 5000,
-                    allow_dismiss: true
-                });
-                return false;
-            }
-            return flag;
+        if (tipo_impuesto == 2) {
+          subtotales = subtotales * factor
         }
 
-        function devolver_venta() {
-            var serie = $("#documento_serie").val();
-            var numero = $("#documento_numero").val();
-            if (serie == "" || numero == "") {
-                show_msg('warning', 'Complete la serie y numero del documento');
-                return false;
-            }
+        var total_devolver = parseFloat($('#total_pagado').html() - subtotales)
 
-            if (serie.length != 3) {
-                show_msg('warning', 'La serie tiene que tener 3 caracteres alfanumericos');
-                return false;
-            }
+        $('#total_devolver').html(formatPrice(total_devolver))
+      })
 
-            if (!Number.isInteger(parseFloat(numero))) {
-                show_msg('warning', 'El correlativo tiene que ser numerico');
-                return false;
-            }
+      $('.devolver_input').on('focus', function () {
+        $(this).select()
+      })
 
-            if (parseFloat(numero) <= 0) {
-                show_msg('warning', 'El correlativo no puede ser negativo');
-                return false;
-            }
+      $('#devolver_venta_button').on('click', function () {
 
-            if (numero.length > 8) {
-                show_msg('warning', 'El correlativo no puede ser mayor que 8 caracteres numericos');
-                return false;
-            }
+        if (!validar_venta())
+          return false
 
-            if ($("#motivo").val() == "") {
-                show_msg('warning', 'El motivo es requerido');
-                return false;
-            }
+        var template = '<h3>Devoluvi&oacute;n de la Venta ' + $('#venta_numero').html().trim() + '</h3>'
+        template += '<hr class="hr-margin-10">'
+        template += '<h4><label>Productos Devueltos:</label></h4>'
+        $('.producto_detalles_list').each(function () {
+          var id = $(this).attr('data-id')
+          var producto_codigo = $('#producto_codigo_' + id).html().trim()
+          var producto_nombre = $('#producto_nombre_' + id).html().trim()
+          var unidad_nombre = $('#unidad_nombre_' + id).html().trim()
+          var cantidad_devuelta = $('#cantidad_devuelta_' + id).val()
 
-            $("#confirm_venta_text").html($("#loading").html());
+          if (cantidad_devuelta != 0 && cantidad_devuelta != '') {
+            template += '<div class="row">'
+            template += '<div class="col-md-8">' + producto_codigo + ' - ' + producto_nombre + '</div>'
+            template += '<div class="col-md-4">' + cantidad_devuelta + ' ' + unidad_nombre + '</div>'
+            template += '</div>'
+            template += '<hr class="hr-margin-5">'
+          }
+        })
+        template += '<hr class="hr-margin-10">'
+        template += '<h4><label>Total a devolver:</label> ' + $('#total_devolver_text').html().trim() + '</h4>'
 
-            var venta_id = $("#venta_id").val();
+        $('#confirm_venta_text').html(template)
+        $('#confirm_venta_button').attr('onclick', 'devolver_venta();')
 
-            var total_importe = parseFloat($("#total_pagado").html()) - parseFloat($("#total_devolver").html());
-            if ($("#total_pagado").attr('data-documento') == '1') {
-                var subtotales = 0;
-                $('.subtotales').each(function () {
-                    subtotales += parseFloat($(this).html())
-                });
-                total_importe = parseFloat($("#total_pagado").attr('data-subtotal')) - subtotales;
-            }
+        $('#documento_serie').val('')
+        $('#documento_numero').val('')
 
-            var devoluciones = prepare_devolucion();
+        $.ajax({
+          url: '<?php echo base_url() . 'local/get_notas_correlativo'; ?>/' + parseInt($('#venta_numero').html().trim()),
+          type: 'GET',
+          headers: {
+            Accept: 'application/json'
+          },
+          success: function (data) {
+            $('#documento_serie').val(data.correlativos.serie)
+            $('#documento_numero').val(data.correlativos.correlativo)
+            $('#dialog_venta_confirm').modal('show')
+          }
+        })
 
-            $.ajax({
-                url: '<?php echo base_url() . 'venta_new/devolver_venta'; ?>',
-                type: 'POST',
-                data: {
-                    'venta_id': venta_id,
-                    'total_importe': total_importe,
-                    'devoluciones': devoluciones,
-                    'serie': $("#documento_serie").val(),
-                    'numero': $("#documento_numero").val(),
-                    'motivo': $("#motivo").val()
-                },
+      })
 
-                success: function (data) {
-                    $('#dialog_venta_confirm').modal('hide');
-                    $('#dialog_venta_detalle').modal('hide');
-                    $(".modal-backdrop").remove();
-                    $.bootstrapGrowl('<h4>Correcto.</h4> <p>Venta devuelta con exito.</p>', {
-                        type: 'success',
-                        delay: 5000,
-                        allow_dismiss: true
-                    });
+      function validar_venta () {
+        var flag = true
+        var n = 0
+        $('.producto_detalles_list').each(function () {
+          var id = $(this).attr('data-id')
+          var cantidad = parseFloat($('#cantidad_' + id).html())
+          var old_cantidad = parseFloat($('#cantidad_' + id).attr('data-cantidad'))
 
-                    if ($('#facturacion_electronica').val() == 1 && (data.venta.id_documento == 1 || data.venta.id_documento == 3)) {
-                        if (data.facturacion != undefined) {
-                            if (data.facturacion.estado == 1) {
-                                show_msg('success', '<h4>Facturacion Electronica:</h4> ' + data.facturacion.nota);
-                            }
-                            else {
-                                show_msg('danger', '<h4>Facturacion Electronica:</h4> ' + data.facturacion.nota);
-                            }
-                        }
+          if (cantidad < 0) {
+            $.bootstrapGrowl('<h4>Error.</h4> <p>No puede hacer una devoluci&oacute;n mayor a la cantidad.</p>', {
+              type: 'warning',
+              delay: 5000,
+              allow_dismiss: true
+            })
+            $('#cantidad_devuelta_' + id).trigger('focus')
+            flag = false
+            return false
+          }
 
-                    }
+          if (cantidad == old_cantidad)
+            n++
 
-                    get_ventas();
-                },
-                error: function () {
-
-                    $.bootstrapGrowl('<h4>Error.</h4> <p>Ha ocurrido un error en la operaci&oacute;n</p>', {
-                        type: 'danger',
-                        delay: 5000,
-                        allow_dismiss: true
-                    });
-                    $('#dialog_venta_confirm').modal('show');
-
-                    $('#devolver_venta_button').click();
-                }
-            });
+        })
+        if (n == $('.producto_detalles_list').length) {
+          $.bootstrapGrowl('<h4>Error.</h4> <p>Por favor devuelva una cantidad.</p>', {
+            type: 'warning',
+            delay: 5000,
+            allow_dismiss: true
+          })
+          $('#cantidad_devuelta_' + id).trigger('focus')
+          return false
         }
 
-        function prepare_devolucion() {
-            var devoluciones = [];
-
-            $('.producto_detalles_list').each(function () {
-                var id = $(this).attr('data-id');
-                var devolver = isNaN(parseFloat($('#cantidad_devuelta_' + id).val())) ? 0 : parseFloat($('#cantidad_devuelta_' + id).val());
-                var devolucion = {};
-
-                if (devolver != 0) {
-                    devolucion.detalle_id = id;
-                    devolucion.producto_id = $(this).attr('data-producto_id');
-                    devolucion.unidad_id = $(this).attr('data-unidad_id');
-                    devolucion.devolver = devolver;
-                    devolucion.new_cantidad = parseFloat($('#cantidad_' + id).html());
-                    devolucion.new_importe = parseFloat($('#subtotal_' + id).html());
-                    devolucion.precio = parseFloat($('#precio_' + id).html());
-                    devoluciones.push(devolucion);
-                }
-            });
-
-            return JSON.stringify(devoluciones);
+        var total_importe = parseFloat($('#total_pagado').html()) - parseFloat($('#total_devolver').html())
+        if (total_importe == 0) {
+          $.bootstrapGrowl('<h4>Error.</h4> <p>No puede devolver la totalidad de la venta. Realice una anulacion.</p>', {
+            type: 'warning',
+            delay: 5000,
+            allow_dismiss: true
+          })
+          return false
         }
+        return flag
+      }
+
+      function devolver_venta () {
+        var serie = $('#documento_serie').val()
+        var numero = $('#documento_numero').val()
+        if (serie == '' || numero == '') {
+          show_msg('warning', 'Complete la serie y numero del documento')
+          return false
+        }
+
+        if (serie.length != 3) {
+          show_msg('warning', 'La serie tiene que tener 3 caracteres alfanumericos')
+          return false
+        }
+
+        if (!Number.isInteger(parseFloat(numero))) {
+          show_msg('warning', 'El correlativo tiene que ser numerico')
+          return false
+        }
+
+        if (parseFloat(numero) <= 0) {
+          show_msg('warning', 'El correlativo no puede ser negativo')
+          return false
+        }
+
+        if (numero.length > 8) {
+          show_msg('warning', 'El correlativo no puede ser mayor que 8 caracteres numericos')
+          return false
+        }
+
+        if ($('#motivo').val() == '') {
+          show_msg('warning', 'El motivo es requerido')
+          return false
+        }
+
+        $('#confirm_venta_text').html($('#loading').html())
+
+        var venta_id = $('#venta_id').val()
+
+        var total_importe = parseFloat($('#total_pagado').html()) - parseFloat($('#total_devolver').html())
+        if ($('#total_pagado').attr('data-documento') == '1') {
+          var subtotales = 0
+          $('.subtotales').each(function () {
+            subtotales += parseFloat($(this).html())
+          })
+          total_importe = parseFloat($('#total_pagado').attr('data-subtotal')) - subtotales
+        }
+
+        var devoluciones = prepare_devolucion()
+
+        $.ajax({
+          url: '<?php echo base_url() . 'venta_new/devolver_venta'; ?>',
+          type: 'POST',
+          data: {
+            'venta_id': venta_id,
+            'total_importe': total_importe,
+            'devoluciones': devoluciones,
+            'serie': $('#documento_serie').val(),
+            'numero': $('#documento_numero').val(),
+            'motivo': $('#motivo').val()
+          },
+
+          success: function (data) {
+            $('#dialog_venta_confirm').modal('hide')
+            $('#dialog_venta_detalle').modal('hide')
+            $('.modal-backdrop').remove()
+            $.bootstrapGrowl('<h4>Correcto.</h4> <p>Venta devuelta con exito.</p>', {
+              type: 'success',
+              delay: 5000,
+              allow_dismiss: true
+            })
+
+            if ($('#facturacion_electronica').val() == 1 && (data.venta.id_documento == 1 || data.venta.id_documento == 3)) {
+              if (data.facturacion != undefined) {
+                if (data.facturacion.estado == 1) {
+                  show_msg('success', '<h4>Facturacion Electronica:</h4> ' + data.facturacion.nota)
+                }
+                else {
+                  show_msg('danger', '<h4>Facturacion Electronica:</h4> ' + data.facturacion.nota)
+                }
+              }
+
+            }
+
+            get_ventas()
+          },
+          error: function () {
+
+            $.bootstrapGrowl('<h4>Error.</h4> <p>Ha ocurrido un error en la operaci&oacute;n</p>', {
+              type: 'danger',
+              delay: 5000,
+              allow_dismiss: true
+            })
+            $('#dialog_venta_confirm').modal('show')
+
+            $('#devolver_venta_button').click()
+          }
+        })
+      }
+
+      function prepare_devolucion () {
+        var devoluciones = []
+
+        $('.producto_detalles_list').each(function () {
+          var id = $(this).attr('data-id')
+          var devolver = isNaN(parseFloat($('#cantidad_devuelta_' + id).val())) ? 0 : parseFloat($('#cantidad_devuelta_' + id).val())
+          var devolucion = {}
+
+          if (devolver != 0) {
+            devolucion.detalle_id = id
+            devolucion.producto_id = $(this).attr('data-producto_id')
+            devolucion.unidad_id = $(this).attr('data-unidad_id')
+            devolucion.devolver = devolver
+            devolucion.new_cantidad = parseFloat($('#cantidad_' + id).html())
+            devolucion.new_importe = parseFloat($('#subtotal_' + id).html())
+            devolucion.precio = parseFloat($('#precio_' + id).html())
+            devoluciones.push(devolucion)
+          }
+        })
+
+        return JSON.stringify(devoluciones)
+      }
     </script>
 <?php endif; ?>

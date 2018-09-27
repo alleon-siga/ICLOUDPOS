@@ -112,7 +112,7 @@
                                 <a class="btn btn-danger" data-toggle="tooltip" style="margin-right: 5px;"
                                    title="Devolver Venta" data-original-title="Devolver Venta"
                                    href="#"
-                                   onclick="devolver('<?= $venta->venta_id ?>');">
+                                   onclick="alert('Las devoluciones parciales no estan disponible por el momento.');">
                                     <i class="fa fa-arrow-circle-left"></i>
                                 </a>
                             <?php endif; ?>
@@ -232,17 +232,6 @@
                                 <option value="<?= $cuenta->id ?>"><?= $cuenta->descripcion ?></option>
                             <?php endforeach; ?>
                         </select>
-                    </div>
-                </div>
-                <br>
-                <div class="row">
-                    <div class="col-md-4 col-md-offset-1">
-                        <label>Serie</label>
-                        <input type="text" id="documento_serie" class="form-control">
-                    </div>
-                    <div class="col-md-5">
-                        <label>Numero</label>
-                        <input type="text" id="documento_numero" class="form-control">
                     </div>
                 </div>
                 <br>
