@@ -72,7 +72,7 @@
         </tfoot>-->
     </table>
 </div>
-<!--<div class="row">
+<div class="row">
     <div class="col-md-12">
         <br>
         <button type="button" id="exportar_excel" title="Exportar Excel" class="btn btn-primary">
@@ -82,37 +82,56 @@
             <i class="fa fa-file-pdf-o fa-fw"></i>
         </button>
     </div>
-</div>-->
+</div>
 <script type="text/javascript">
     $(document).ready(function () {
-        //TablesDatatables.init(0, 'asc');
+        TablesDatatables.init(0);
 
-        /*$('#exportar_excel').on('click', function () {
-         exportar_excel();
-         });
-         
-         $("#exportar_pdf").on('click', function () {
-         exportar_pdf();
-         });*/
+        $('#exportar_excel').on('click', function () {
+            exportar_excel();
+        });
+
+        $("#exportar_pdf").on('click', function () {
+            exportar_pdf();
+        });
+
+        $('.nav-tabs a[href="#grafico"]').on('shown.bs.tab', function(event){
+            var data = {
+                'local_id': $("#local_id").val(),
+                'producto_id': $("#producto_id").val(),
+                'grupo_id': $("#grupo_id").val(),
+                'marca_id': $("#marca_id").val(),
+                'linea_id': $("#linea_id").val(),
+                'familia_id': $("#familia_id").val()
+            };
+        });
     });
 
-    /*function exportar_pdf() {
-     var data = {
-     'local_id': $("#local_id").val(),
-     'fecha': $("#fecha").val()
-     };
-     
-     var win = window.open('<? //base_url()?>facturador/reporte/reporte/pdf?data=' + JSON.stringify(data), '_blank');
-     win.focus();
-     }
-     
-     function exportar_excel() {
-     var data = {
-     'local_id': $("#local_id").val(),
-     'fecha': $("#fecha").val()
-     };
-     
-     var win = window.open('<? //base_url()?>facturador/reporte/reporte/excel?data=' + JSON.stringify(data), '_blank');
-     win.focus();
-     }*/
+    function exportar_pdf() {
+        var data = {
+            'local_id': $("#local_id").val(),
+            'producto_id': $("#producto_id").val(),
+            'grupo_id': $("#grupo_id").val(),
+            'marca_id': $("#marca_id").val(),
+            'linea_id': $("#linea_id").val(),
+            'familia_id': $("#familia_id").val()
+        };
+
+        var win = window.open('<?= base_url()?>facturador/reporte/reporte_cg/pdf?data=' + JSON.stringify(data), '_blank');
+        win.focus();
+    }
+
+    function exportar_excel() {
+        var data = {
+            'local_id': $("#local_id").val(),
+            'producto_id': $("#producto_id").val(),
+            'grupo_id': $("#grupo_id").val(),
+            'marca_id': $("#marca_id").val(),
+            'linea_id': $("#linea_id").val(),
+            'familia_id': $("#familia_id").val()
+        };
+
+        var win = window.open('<?= base_url()?>facturador/reporte/reporte_cg/excel?data=' + JSON.stringify(data), '_blank');
+        win.focus();
+    }
 </script>

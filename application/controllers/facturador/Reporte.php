@@ -123,20 +123,22 @@ class Reporte extends MY_Controller
                 break;
             }
             case 'excel': {
-                /*$params = json_decode($this->input->get('data'));
-                $date_range = explode(' - ', $params->fecha);
+                $params = json_decode($this->input->get('data'));
                 $input = array(
                     'local_id' => $params->local_id,
-                    'fecha_ini' => date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0]))),
-                    'fecha_fin' => date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])))
+                    'marca_id' => $params->marca_id,
+                    'grupo_id' => $params->grupo_id,
+                    'familia_id' => $params->familia_id,
+                    'linea_id' => $params->linea_id,
+                    'producto_id' => $params->producto_id
                 );
-                $data['lists'] = $this->reporte_shadow_model->getReporte($input);
+                $data['lists'] = $this->reporte_shadow_model->getReporte_cg($input);
 
                 $local = $this->db->get_where('local', array('int_local_id' => $input['local_id']))->row();
                 $data['local_nombre'] = !empty($local->local_nombre)? $local->local_nombre: 'TODOS';
                 $data['local_direccion'] = !empty($local->direccion)? $local->direccion: 'TODOS';
-                echo $this->load->view('facturador/reporte/reporte_list_excel', $data, true);
-                break;*/
+                echo $this->load->view('facturador/reporte/reporte_cg_list_excel', $data, true);
+                break;
             }
             default: {
                 $data['locales'] = $this->local_model->get_all();    
