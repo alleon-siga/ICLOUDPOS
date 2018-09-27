@@ -82,5 +82,47 @@ class reporte_shadow_model extends CI_Model {
 //        $this->db->group_by('p.producto_codigo_interno');
 //        return $this->db->get()->result();
     }
+    function getReporte_cv($params) {
+        
+        $marca_id = $grupo_id = $familia_id = $linea_id = $producto_id = $local_id = '';
+        $local_id .= ($params['local_id']>0)? " AND v.local_id=".$params['local_id'] : "";
+        $marca_id .= ($params['marca_id']>0)? " AND p.producto_marca=".$params['marca_id'] : "";
+        $grupo_id .= ($params['grupo_id']>0)? " AND p.produto_grupo=".$params['grupo_id'] : "";
+        $familia_id .= ($params['familia_id']>0)? " AND p.producto_familia=".$params['familia_id'] : "";
+        $linea_id .= ($params['linea_id']>0)? " AND p.producto_linea=".$params['linea_id'] : "";
+        $producto_id .= ($params['producto_id']!='')? " AND p.producto_id IN(".implode(",", $params['producto_id']).")" : "";
+        $search = $marca_id.$grupo_id.$familia_id.$linea_id.$producto_id.$local_id;
 
+        $query="SELECT 
+                p.producto_codigo_interno, p.producto_nombre, p.producto_marca, u.nombre_unidad,
+                pcu.costo as costo_real, 
+                pcu.contable_costo as contable_costo,
+                (pcu.costo / pcu.tipo_cambio) as costo_real_d, 
+                (pcu.contable_costo / pcu.tipo_cambio) as costo_contable_d, 
+                pcu.tipo_cambio, 
+                pcu.porcentaje_utilidad,
+                ((pcu.contable_costo * pcu.porcentaje_utilidad) / 100)+pcu.contable_costo as precio_compra_s,
+                (((pcu.contable_costo / pcu.tipo_cambio) * pcu.porcentaje_utilidad) / 100)+(pcu.contable_costo / pcu.tipo_cambio) as precio_compra_d
+                FROM `producto` as p
+                INNER JOIN producto_costo_unitario as pcu
+                on
+                pcu.producto_id=p.producto_id
+                INNER JOIN producto_almacen as pa
+                on
+                pa.id_producto=p.producto_id
+                INNER JOIN `local` as l
+                on
+                l.int_local_id=pa.id_local
+                INNER JOIN unidades_has_producto as uhp
+                on
+                uhp.producto_id=p.producto_id
+                INNER JOIN unidades as u
+                on
+                u.id_unidad=uhp.id_unidad
+                WHERE l.int_local_id=".$params['local_id'].""
+                . " $search";
+                $query.="GROUP BY p.producto_codigo_interno";
+                
+                return $this->db->query($query)->result();
+    }
 }

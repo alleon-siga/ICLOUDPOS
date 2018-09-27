@@ -405,6 +405,9 @@ if ($this->session->userdata('tema')) {
                                     <li>
                                         <a href="<?= $ruta ?>facturador/reporte/reporte_cg" class="menulink"><i class="gi gi-barcode sidebar-nav-icon"></i>Costeo General</a>
                                     </li>
+                                    <li>
+                                        <a href="<?= $ruta ?>facturador/reporte/reporte_cv" class="menulink"><i class="gi gi-barcode sidebar-nav-icon"></i>Compras vs Ventas</a>
+                                    </li>
                                 </ul>
                             </li>
                             <li>
