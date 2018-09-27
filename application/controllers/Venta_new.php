@@ -640,7 +640,8 @@ class venta_new extends MY_Controller
             'BOTONES_VENTA',
             'NOMBRE_PRODUCTO',
             'COTIZACION_COLOR_FORMATO',
-            'EMBALAJE_IMPRESION'
+            'EMBALAJE_IMPRESION',
+            'NUMERO_DECIMALES'
         );
 
         if ($action == 'get') {
@@ -988,6 +989,13 @@ class venta_new extends MY_Controller
     {
         $venta['id_producto'] = $this->input->post('id_producto');
         $data = $this->venta->ultimasCompras($venta);
+        echo json_encode($data);
+    }
+
+    function verificarAnulacion($id_venta)
+    {
+        $dato = $this->venta->verificarAnulacion($id_venta);
+        $data['num_reg'] = $dato->numReg;
         echo json_encode($data);
     }
 }

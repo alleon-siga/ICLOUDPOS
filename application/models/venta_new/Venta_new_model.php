@@ -1725,4 +1725,12 @@ class venta_new_model extends CI_Model
         $venta->detalles = $result;
         return $venta;
     }
+
+    function verificarAnulacion($venta_id)
+    {
+        $this->db->select('COUNT(*) AS numReg');
+        $this->db->from('kardex AS k');
+        $this->db->where("k.io = 2 AND k.tipo = 7 AND k.operacion = 5 AND k.ref_id = $venta_id");
+        return $this->db->get()->row();
+    }
 }

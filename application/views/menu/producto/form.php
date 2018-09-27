@@ -19,6 +19,7 @@
 <?php 
     $ruta = base_url();
     $nombre_producto = json_decode(valueOption("NOMBRE_PRODUCTO"));
+    $numero_decimales = valueOption("NUMERO_DECIMALES");
 ?>
     <script src="<?= $ruta ?>recursos/js/helpers/excanvas.min.js"></script>
     <script src="<?= $ruta ?>recursos/js/pages/readyInboxCompose.js"></script>
@@ -604,7 +605,7 @@
                             </div>
                             <div class="col-md-2">
                                 <input type="hidden" name="tasa_convert_contable" id="tasa_convert_contable"
-                                       data-value-s="<?php echo isset($contable_costo) ? number_format($contable_costo, 2, '.', '') : '0.00' ?>"
+                                       data-value-s="<?php echo isset($contable_costo) ? number_format($contable_costo, $numero_decimales, '.', '') : '0.00' ?>"
                                        value="<?php echo isset($tasa) ? $tasa : '0.00' ?>">
                                 <div class="input-prepend input-append">
                                     <div class="input-group">
@@ -612,7 +613,7 @@
                                                 class="input-group-addon tipo_tasa_contable"><?php echo isset($simbolo) ? $simbolo : $md->simbolo ?></div>
                                         <input type="number" name="contable_costo" id="contable_costo"
                                                class='cho form-control'
-                                               value="<?php echo (isset($contable_costo)) ? number_format($contable_costo, 2, '.', '') : '0.00' ?>"/>
+                                               value="<?php echo (isset($contable_costo)) ? number_format($contable_costo, $numero_decimales, '.', '') : '0.00' ?>"/>
                                     </div>
                                 </div>
 
@@ -652,7 +653,6 @@
 
                                     ?>
                                 </select>
-
                             </div>
                             <div class="col-md-3">
                                 <input type="hidden" name="tasa_convert" id="tasa_convert"
@@ -952,7 +952,7 @@
                                                                        type="number"
                                                                        class="form-control <?php echo $precio_class ?>"
                                                                        required
-                                                                       value="<?= number_format($precio['precio'], 4, '.', '') ?>"
+                                                                       value="<?= number_format($precio['precio'], $numero_decimales, '.', '') ?>"
                                                                        name="precio_valor_<?= $countunidad ?>[<?= $countproducto ?>]">
 
                                                             </td>
@@ -1257,13 +1257,13 @@
 
 
         $("#cu_moneda").change(function (e) {
-            $("#costo_unitario").val(parseFloat($("#cu_moneda option:selected").attr('data-costo')).toFixed(2));
+            $("#costo_unitario").val(parseFloat($("#cu_moneda option:selected").attr('data-costo')).toFixed(<?= $numero_decimales ?>));
             $(".tipo_tasa").html($("#cu_moneda option:selected").attr('data-simbolo'));
             $("#tasa_convert").val($("#cu_moneda option:selected").attr('data-tasa'));
         });
 
         $("#cu_moneda_contable").change(function (e) {
-            $("#contable_costo").val(parseFloat($("#cu_moneda_contable option:selected").attr('data-costo')).toFixed(2));
+            $("#contable_costo").val(parseFloat($("#cu_moneda_contable option:selected").attr('data-costo')).toFixed(<?= $numero_decimales ?>));
             $(".tipo_tasa_contable").html($("#cu_moneda_contable option:selected").attr('data-simbolo'));
             $("#tasa_convert_contable").val($("#cu_moneda_contable option:selected").attr('data-tasa'));
         });
@@ -1761,7 +1761,7 @@
                 var precio_venta = $("#precio_venta" + row);
                 var unidades = $("#unidad\\[" + row + "\\]").val();
 
-                precio_venta.val(parseFloat(unidades * $(this).val()).toFixed(4));
+                precio_venta.val(parseFloat(unidades * $(this).val()).toFixed(<?= $numero_decimales ?>));
             });
 
             $(".precio_venta").keyup(function () {
@@ -1770,7 +1770,7 @@
                 var unidades = $("#unidad\\[" + row + "\\]").val();
 
 
-                precio_unitario.val(parseFloat($(this).val() / unidades).toFixed(4));
+                precio_unitario.val(parseFloat($(this).val() / unidades).toFixed(<?= $numero_decimales ?>));
             });
 
             $('.unidades').keyup(function () {
@@ -1780,7 +1780,7 @@
                 var precio_venta = $("#precio_venta" + row);
 
                 if (precio_unitario != 0 && !isNaN(precio_unitario) && unidades != 0)
-                    precio_venta.val(parseFloat(unidades * precio_unitario).toFixed(4));
+                    precio_venta.val(parseFloat(unidades * precio_unitario).toFixed(<?= $numero_decimales ?>));
 
 
             });
@@ -1840,7 +1840,7 @@
                 var precio_venta = $("#precio_venta" + row);
                 var unidades = $("#unidad\\[" + row + "\\]").val();
 
-                precio_venta.val(parseFloat(unidades * $(this).val()).toFixed(4));
+                precio_venta.val(parseFloat(unidades * $(this).val()).toFixed(<?= $numero_decimales ?>));
             });
 
             $(".precio_venta").keyup(function () {
@@ -1849,7 +1849,7 @@
                 var unidades = $("#unidad\\[" + row + "\\]").val();
 
 
-                precio_unitario.val(parseFloat($(this).val() / unidades).toFixed(4));
+                precio_unitario.val(parseFloat($(this).val() / unidades).toFixed(<?= $numero_decimales ?>));
             });
 
             $('.unidades').keyup(function () {
@@ -1859,7 +1859,7 @@
                 var precio_venta = $("#precio_venta" + row);
 
                 if (precio_unitario != 0 && !isNaN(precio_unitario) && unidades != 0)
-                    precio_venta.val(parseFloat(unidades * precio_unitario).toFixed(4));
+                    precio_venta.val(parseFloat(unidades * precio_unitario).toFixed(<?= $numero_decimales ?>));
 
 
             });
@@ -1937,7 +1937,7 @@
                 var precio_venta = $("#precio_venta" + row);
                 var unidades = $("#unidad\\[" + row + "\\]").val();
 
-                precio_venta.val(parseFloat(unidades * $(this).val()).toFixed(4));
+                precio_venta.val(parseFloat(unidades * $(this).val()).toFixed(<?= $numero_decimales ?>));
             });
 
             $(".precio_venta").keyup(function () {
@@ -1946,7 +1946,7 @@
                 var unidades = $("#unidad\\[" + row + "\\]").val();
 
 
-                precio_unitario.val(parseFloat($(this).val() / unidades).toFixed(4));
+                precio_unitario.val(parseFloat($(this).val() / unidades).toFixed(<?= $numero_decimales ?>));
             });
 
             $('.unidades').keyup(function () {
@@ -1956,7 +1956,7 @@
                 var precio_venta = $("#precio_venta" + row);
 
                 if (precio_unitario != 0 && !isNaN(precio_unitario) && unidades != 0)
-                    precio_venta.val(parseFloat(unidades * precio_unitario).toFixed(4));
+                    precio_venta.val(parseFloat(unidades * precio_unitario).toFixed(<?= $numero_decimales ?>));
 
 
             });
@@ -2029,7 +2029,7 @@
                 var precio_venta = $("#precio_venta" + row);
                 var unidades = $("#unidad\\[" + row + "\\]").val();
 
-                precio_venta.val(parseFloat(unidades * $(this).val()).toFixed(4));
+                precio_venta.val(parseFloat(unidades * $(this).val()).toFixed(<?= $numero_decimales ?>));
             });
 
             $(".precio_venta").keyup(function () {
@@ -2038,7 +2038,7 @@
                 var unidades = $("#unidad\\[" + row + "\\]").val();
 
 
-                precio_unitario.val(parseFloat($(this).val() / unidades).toFixed(4));
+                precio_unitario.val(parseFloat($(this).val() / unidades).toFixed(<?= $numero_decimales ?>));
             });
 
             $('.unidades').keyup(function () {
@@ -2048,7 +2048,7 @@
                 var precio_venta = $("#precio_venta" + row);
 
                 if (precio_unitario != 0 && !isNaN(precio_unitario) && unidades != 0)
-                    precio_venta.val(parseFloat(unidades * precio_unitario).toFixed(4));
+                    precio_venta.val(parseFloat(unidades * precio_unitario).toFixed(<?= $numero_decimales ?>));
 
             });
 
@@ -2190,7 +2190,7 @@
                          * va a entrar aqui solamente sobre el input de Dolares*/
                         if (inputseleccionado.attr('data-nombre') == 'Soles') {
                             /*si el input sobre el que presione la tecla, es igual a Soles hago el calculo*/
-                            calculo = parseFloat(inputseleccionado.val() / tasa.val()).toFixed(2)
+                            calculo = parseFloat(inputseleccionado.val() / tasa.val()).toFixed(<?= $numero_decimales ?>)
                             costounitario = inputseleccionado.val();
 
                             /*le asigno el valor del nuevo costo unitario a este campo hidden*/
@@ -2201,7 +2201,7 @@
                             costounitario = $('input[type=number].precio_compra[data-nombre="Soles"]').val()
 
                             /*hago el calculo*/
-                            calculo = parseFloat(inputseleccionado.val() * tasa.val()).toFixed(2)
+                            calculo = parseFloat(inputseleccionado.val() * tasa.val()).toFixed(<?= $numero_decimales ?>)
 
                             /*le asigno el valor del calculo a este campo hidden*/
                             $("#calculado_costo_unitario").val(calculo)
@@ -2249,7 +2249,7 @@
                     if ($("#precio_compra" + j).attr('data-nombre') == 'Soles') {
                         costounitario = $("#precio_compra" + j).val();
 
-                        calculo = parseFloat(costounitario / tasa.val()).toFixed(2)
+                        calculo = parseFloat(costounitario / tasa.val()).toFixed(<?= $numero_decimales ?>)
                         if (primera_carga == true) {
 
                         } else {
@@ -2263,7 +2263,7 @@
 
                     } else if ($("#precio_compra" + j).attr('data-nombre') == 'Dolares') {
 
-                        calculo = parseFloat(costounitario / tasa.val()).toFixed(2)
+                        calculo = parseFloat(costounitario / tasa.val()).toFixed(<?= $numero_decimales ?>)
                         $("#precio_compra" + j).val(calculo)
                     }
 
