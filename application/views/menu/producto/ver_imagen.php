@@ -9,7 +9,7 @@
      * Fix for elevateZoom with jQuery modal
      */
     div.modal-backdrop + div.zoomContainer {
-        z-index: 1051; // modal --> z-index: 1050;
+        z-index: 1051;
     }
 
     /*set a border on the images to prevent shifting*/

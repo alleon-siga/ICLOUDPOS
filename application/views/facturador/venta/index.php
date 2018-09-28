@@ -47,8 +47,8 @@
                         <select name="local_venta_id" id="local_venta_id" class='form-control'>
                             <?php foreach ($locales as $local): ?>
                                 <option <?= $local->local_id == $local->local_defecto ? 'selected="selected"' : '' ?>
-                                        value="<?= $local->local_id ?>"><?= $local->local_nombre ?></option>
-                            <?php endforeach; ?>
+                                    value="<?= $local->local_id ?>"><?= $local->local_nombre ?></option>
+                                <?php endforeach; ?>
                         </select>
                     </div>
                     <div class="col-md-7">
@@ -57,11 +57,11 @@
                             <select name="cliente_id" id="cliente_id" class='form-control'>
                                 <?php foreach ($clientes as $cliente): ?>
                                     <option
-                                            value="<?php echo $cliente['id_cliente']; ?>"
-                                            data-ruc="<?= $cliente['ruc'] ?>"
+                                        value="<?php echo $cliente['id_cliente']; ?>"
+                                        data-ruc="<?= $cliente['ruc'] ?>"
                                         <?= $cliente['id_cliente'] == 1 ? 'selected' : '' ?>
-                                    ><?php echo $cliente['razon_social']; ?></option>
-                                <?php endforeach; ?>
+                                        ><?php echo $cliente['razon_social']; ?></option>
+                                    <?php endforeach; ?>
                             </select>
                             <a id="cliente_new" href="#" class="input-group-addon btn-default">
                                 <i class="fa fa-plus-circle"></i>
@@ -84,8 +84,8 @@
                         <select name="local_id" id="local_id" class='form-control'>
                             <?php foreach ($locales as $local): ?>
                                 <option <?= $local->local_id == $local->local_defecto ? 'selected="selected"' : '' ?>
-                                        value="<?= $local->local_id ?>"><?= $local->local_nombre ?></option>
-                            <?php endforeach; ?>
+                                    value="<?= $local->local_id ?>"><?= $local->local_nombre ?></option>
+                                <?php endforeach; ?>
                         </select>
                     </div>
 
@@ -137,7 +137,7 @@
                                 <?php if (validOption('ACTIVAR_SHADOW', 1)): ?>
                                     <label id="stock_contable" style="font-size: 15px; cursor: pointer;"
                                            class="control-label badge"></label>
-                                <?php endif; ?>
+                                       <?php endif; ?>
 
                                 <!--CERRAR VENTANA DE AGREGAR PRODUCTOS-->
                                 <a style="float: right;" class="badge label-danger" id="close_add_producto">x</a>
@@ -180,18 +180,18 @@
                                     <a href="#" id="precioUnitario">Precio Unitario:</a>
                                 </label>
                                 <br>
-                                <?php if($this->session->userdata('grupo')=='2' || $this->session->userdata('grupo')=='9'){ //Administrador y gerente ?>
-                                <label class="control-label panel-admin-text">
-                                    <a href="#" id="costoUnitario" style="color: red;">Costo Unitario:</a>
-                                </label>
-                                <?php }  ?>
+                                <?php if ($this->session->userdata('grupo') == '2' || $this->session->userdata('grupo') == '9') { //Administrador y gerente ?>
+                                    <label class="control-label panel-admin-text">
+                                        <a href="#" id="costoUnitario" style="color: red;">Costo Unitario:</a>
+                                    </label>
+                                <?php } ?>
                                 <div style="display: none;">
                                     <!--<div class="help-key badge label-success" style="display: none;">4</div>-->
                                     <select name="precio_id" id="precio_id" class='form-control'>
                                         <?php foreach ($precios as $precio): ?>
                                             <option <?= $precio['id_precio'] == 3 ? 'selected="selected"' : '' ?>
-                                                    value="<?= $precio['id_precio'] ?>">
-                                                <?= $precio['nombre_precio'] ?>
+                                                value="<?= $precio['id_precio'] ?>">
+                                                    <?= $precio['nombre_precio'] ?>
                                             </option>
                                         <?php endforeach; ?>
                                     </select>
@@ -202,6 +202,7 @@
                                     <div class="loading-icon"></div>
                                 </div>
                             </div>
+                            
                             <div class="col-md-8">
                                 <label id="popover_precioUnitario" class="control-label badge label-info"
                                        style="width: 50% !important; font-size: 15px; cursor: pointer; display:none; float: left; position: absolute; z-index: 3000;"></label>
@@ -211,8 +212,9 @@
                             </div>
                             <div id="producto_precio" class="col-md-8 row text-center venta_input">
                             </div>
-                            <div class="col-md-2">
-                            </div>
+                            <div class="col-md-2 text-center">
+                                    <input type="checkbox" name="chkCostoContable" data-costocontable="" id="chkCostoContable" value="" style="margin-top:15px;">
+                                </div>
                         </div>
                         <hr class="hr-margin-10">
                         <!-- SECCION DE PRECIO UNITARIO E IMPORTE -->
@@ -231,12 +233,10 @@
                                            onkeydown="return soloDecimal4(this, event);" readonly>
                                     <a id="editar_pu" data-estado="0" href="#" class="input-group-addon"
                                        style="padding: 0px; min-width: 25px;">
-                                       <i class="fa fa-edit"></i>
+                                        <i class="fa fa-edit"></i>
                                     </a>
-                                </div>
-                                <input type="checkbox" name="chkCostoContable" id="chkCostoContable" value="">
-                                <h6 id="precio_unitario_um"
-                                    style="text-align: center; margin-bottom: 0; margin-top: 2px;"></h6>
+                                </div>                                
+                                <h6 id="precio_unitario_um" style="text-align: center; margin-bottom: 0; margin-top: 2px;"></h6>
                             </div>
                             <div class="col-md-1 text-right" style="padding-right: 2px;">
                                 <label class="control-label panel-admin-text">Descuento:</label>
@@ -266,12 +266,14 @@
                                 </div>
                                 <h6 id="subtotal_um" style="text-align: center; margin-bottom: 0; margin-top: 2px;"></h6>
                             </div>
+                            <div class="col-md-2 text-right">                                
+                                <div class="col-md-12 text-right" style="padding-left: 0px;width: 80px;padding-right: 0px;">
+                                    <button type="button" id="add_producto" class="btn btn-primary" >
+                                        Agregar <span class="help-key-side badge label-success"
+                                                      style="display: none;">[Enter]</span></button>
+                                </div>
 
-                            <div class="col-md-2 text-right">
 
-                                <button type="button" id="add_producto" class="btn btn-primary">
-                                    Agregar <span class="help-key-side badge label-success"
-                                                  style="display: none;">[Enter]</span></button>
                             </div>
                         </div>
                     </div>
@@ -284,13 +286,13 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="box-content box-nomargin">
-                                            <span style="float: right; margin-bottom: 5px;">
-                                                <input type="checkbox" id="aplicarCosteo"> <b>Aplicar</b>&nbsp;
-                                                <input type="checkbox" id="tabla_vista"> <b>Mostrar Detalles</b>
-                                            </span>
+                            <span style="float: right; margin-bottom: 5px;">
+                                <input type="checkbox" id="aplicarCosteo"> <b>Aplicar</b>&nbsp;
+                                <input type="checkbox" id="tabla_vista"> <b>Mostrar Detalles</b>
+                            </span>
                             <table
-                                    class="table table-striped dataTable table-condensed table-bordered dataTable-noheader table-has-pover dataTable-nosort"
-                                    data-nosort="0">
+                                class="table table-striped dataTable table-condensed table-bordered dataTable-noheader table-has-pover dataTable-nosort"
+                                data-nosort="0">
                                 <thead id="head_productos"></thead>
                                 <tbody id="body_productos"></tbody>
                             </table>
@@ -315,22 +317,22 @@
                                value="<?= date('d/m/Y') ?>" readonly>
                     </div>
                 </div>
-                <?php if(isset($usuarios)){ ?>
-                <div class="row">
-                    <div class="col-md-5 label-title">
-                        <label class="control-label">Vendedor:</label>
-                    </div>
-                    <div class="col-md-7">                       
-                        <select name="vendedor_id" id="vendedor_id" class='form-control'>
-                            <?php foreach ($usuarios as $usuario): ?>
-                                <option <?= $usuario->id == $this->session->userdata('id') ? 'selected="selected"' : '' ?>
+                <?php if (isset($usuarios)) { ?>
+                    <div class="row">
+                        <div class="col-md-5 label-title">
+                            <label class="control-label">Vendedor:</label>
+                        </div>
+                        <div class="col-md-7">                       
+                            <select name="vendedor_id" id="vendedor_id" class='form-control'>
+                                <?php foreach ($usuarios as $usuario): ?>
+                                    <option <?= $usuario->id == $this->session->userdata('id') ? 'selected="selected"' : '' ?>
                                         value="<?= $usuario->id ?>"><?= $usuario->username ?></option>
-                            <?php endforeach; ?>
-                        </select>
+                                    <?php endforeach; ?>
+                            </select>
+                        </div>
                     </div>
-                </div>
                 <?php } else { ?>
-                <input type="hidden" name="vendedor_id" id="vendedor_id" value="<?= $this->session->userdata('id') ?>">
+                    <input type="hidden" name="vendedor_id" id="vendedor_id" value="<?= $this->session->userdata('id') ?>">
                 <?php } ?>
                 <!--SELECCION MONEDA-->
                 <div class="row">
@@ -345,12 +347,12 @@
                         <select name="moneda_id" id="moneda_id" class='form-control'>
                             <?php foreach ($monedas as $moneda): ?>
                                 <option
-                                        data-tasa="<?php echo $moneda['tasa_soles'] ?>"
-                                        data-nombre="<?php echo $moneda['nombre'] ?>"
-                                        data-simbolo="<?php echo $moneda['simbolo'] ?>"
-                                        data-oper="<?php echo $moneda['ope_tasa'] ?>"
-                                        value="<?= $moneda['id_moneda'] ?>"><?= $moneda['nombre'] ?></option>
-                            <?php endforeach; ?>
+                                    data-tasa="<?php echo $moneda['tasa_soles'] ?>"
+                                    data-nombre="<?php echo $moneda['nombre'] ?>"
+                                    data-simbolo="<?php echo $moneda['simbolo'] ?>"
+                                    data-oper="<?php echo $moneda['ope_tasa'] ?>"
+                                    value="<?= $moneda['id_moneda'] ?>"><?= $moneda['nombre'] ?></option>
+                                <?php endforeach; ?>
                         </select>
                     </div>
                 </div>
@@ -368,7 +370,7 @@
                                    name="tasa" id="tasa" value="0.00"
                                    onkeydown="return soloDecimal4(this, event);">
                             <a id="refresh_tasa" href="#" class="input-group-addon" style="display: none;"><i
-                                        class="fa fa-refresh"></i></a>
+                                    class="fa fa-refresh"></i></a>
                         </div>
                     </div>
                 </div>
@@ -452,9 +454,9 @@
                         <div class="help-key badge label-success" style="display: none;">6</div>
                         <select name="tipo_pago" id="tipo_pago" class='form-control'>
                             <?php //foreach ($tipo_pagos as $pago): ?>
-                                <option
-                                        value="<?= $tipo_pagos['id_condiciones'] ?>"><?= $tipo_pagos['nombre_condiciones'] ?></option>
-                            <?php //endforeach; ?>
+                            <option
+                                value="<?= $tipo_pagos['id_condiciones'] ?>"><?= $tipo_pagos['nombre_condiciones'] ?></option>
+                                <?php //endforeach; ?>
                         </select>
                     </div>
                 </div>
@@ -470,8 +472,8 @@
                         <select name="tipo_documento" id="tipo_documento" class="form-control">
                             <?php foreach ($tipo_documentos as $key => $value): ?>
                                 <option <?= $value->id_doc == $comprobantes_default->config_value ? 'selected="selected"' : '' ?>
-                                        value="<?= $value->id_doc ?>"><?= $value->des_doc ?></option>
-                            <?php endforeach; ?>
+                                    value="<?= $value->id_doc ?>"><?= $value->des_doc ?></option>
+                                <?php endforeach; ?>
                         </select>
                     </div>
                 </div>
@@ -488,8 +490,8 @@
                             <option value="">Seleccione</option>
                             <?php foreach ($comprobantes as $comprobante): ?>
                                 <option
-                                        value="<?= $comprobante->id ?>"><?= $comprobante->nombre ?></option>
-                            <?php endforeach; ?>
+                                    value="<?= $comprobante->id ?>"><?= $comprobante->nombre ?></option>
+                                <?php endforeach; ?>
                         </select>
                     </div>
                 </div>
@@ -534,9 +536,9 @@
                         <select name="tipo_impuesto" id="tipo_impuesto" class="form-control">
                             <option value="1">Incluye impuesto</option>
                             <option value="2">Agregar impuesto</option>
-                        <?php if ($comprobantes_default->config_value == '6'): ?>
-                            <option value="3">No considerar impuesto</option>
-                        <?php endif; ?>                            
+                            <?php if ($comprobantes_default->config_value == '6'): ?>
+                                <option value="3">No considerar impuesto</option>
+                            <?php endif; ?>                            
                         </select>
                     </div>
                 </div>
@@ -626,13 +628,13 @@
 <div class="block">
     <div class="form-actions">
         <button class="btn" id="terminar_venta" type="button"><i
-                    class="fa fa-save fa-3x text-info fa-fw"></i> <br>F6
+                class="fa fa-save fa-3x text-info fa-fw"></i> <br>F6
             Guardar
         </button>
         <button type="button" class="btn" id="reiniciar_venta"><i class="fa fa-refresh fa-3x text-info fa-fw"></i><br>Reiniciar
         </button>
         <button class="btn" type="button" id="cancelar_venta"><i
-                    class="fa fa-remove fa-3x text-warning fa-fw"></i><br>Cancelar
+                class="fa fa-remove fa-3x text-warning fa-fw"></i><br>Cancelar
         </button>
     </div>
 </div>
@@ -677,147 +679,153 @@
 <script src="<?php echo base_url('recursos/js/autocomplete/jquery-ui.min.js') ?>"></script>
 <script src="<?php echo base_url('recursos/js/venta_shadow.js') ?>"></script>
 <script>
-    var venta = [];
-    $(function () {
-        <?php if($venta != NULL):?>
+                    var venta = [];
+                    $(function () {
+<?php if ($venta != NULL): ?>
 
-        venta.local_id = <?= $venta->local_id ?>;
-        venta.cliente_id = <?= $venta->cliente_id ?>;
-        venta.documento_id = <?= $venta->documento_id ?>;
-        venta.tipo_impuesto = <?= $venta->tipo_impuesto ?>;
-        venta.condicion_id = <?= $venta->condicion_id ?>;
-        venta.moneda_id = <?= $venta->moneda_id ?>;
-        venta.moneda_tasa = <?= $venta->moneda_tasa ?>;
-        venta.detalles = [];
+                            venta.local_id = <?= $venta->local_id ?>;
+                            venta.cliente_id = <?= $venta->cliente_id ?>;
+                            venta.documento_id = <?= $venta->documento_id ?>;
+                            venta.tipo_impuesto = <?= $venta->tipo_impuesto ?>;
+                            venta.condicion_id = <?= $venta->condicion_id ?>;
+                            venta.moneda_id = <?= $venta->moneda_id ?>;
+                            venta.moneda_tasa = <?= $venta->moneda_tasa ?>;
+                            venta.detalles = [];
 
-        <?php foreach ($venta->detalles as $detalle):?>
-        var temp = {
-            producto_id: <?= $detalle->producto_id ?>,
-            impuesto: <?= $detalle->impuesto?>,
-            afectacion_impuesto: <?= $detalle->afectacion_impuesto ?>,
-            producto_nombre: '<?= $detalle->producto_nombre ?>',
-            precio: <?= $detalle->precio ?>,
-            precio_venta: <?= $detalle->precio_venta ?>,
-            um_min: '<?= $detalle->um_min ?>',
-            um_min_abr: '<?= $detalle->um_min_abr ?>',
-            total_min: <?= $detalle->total_min ?>,
-            precio_comp: <?= $detalle->precio_comp ?>,
-            unidades: []
-        };
-        <?php foreach ($detalle->unidades as $unidad):?>
-        var uni = {
-            unidad_id: <?= $unidad->unidad_id ?>,
-            unidad_nombre: '<?= $unidad->unidad_nombre ?>',
-            unidad_abr: '<?= $unidad->unidad_abr ?>',
-            cantidad: <?= $unidad->cantidad ?>,
-            unidades: <?= $unidad->unidades ?>,
-            orden: <?= $unidad->orden ?>
-        };
-        temp.unidades.push(uni);
-        <?php endforeach;?>
-        venta.detalles.push(temp);
-        <?php endforeach;?>
+    <?php foreach ($venta->detalles as $detalle): ?>
+                                var temp = {
+                                    producto_id: <?= $detalle->producto_id ?>,
+                                    impuesto: <?= $detalle->impuesto ?>,
+                                    afectacion_impuesto: <?= $detalle->afectacion_impuesto ?>,
+                                    producto_nombre: '<?= $detalle->producto_nombre ?>',
+                                    precio: <?= $detalle->precio ?>,
+                                    precio_venta: <?= $detalle->precio_venta ?>,
+                                    um_min: '<?= $detalle->um_min ?>',
+                                    um_min_abr: '<?= $detalle->um_min_abr ?>',
+                                    total_min: <?= $detalle->total_min ?>,
+                                    precio_comp: <?= $detalle->precio_comp ?>,
+                                    contable_costo: <?= $detalle->contable_costo ?>,
+                                    real_costo: <?= $detalle->real_costo ?>,
+                                    unidades: []
+                                };
+        <?php foreach ($detalle->unidades as $unidad): ?>
+                                    var uni = {
+                                        unidad_id: <?= $unidad->unidad_id ?>,
+                                        unidad_nombre: '<?= $unidad->unidad_nombre ?>',
+                                        unidad_abr: '<?= $unidad->unidad_abr ?>',
+                                        cantidad: <?= $unidad->cantidad ?>,
+                                        unidades: <?= $unidad->unidades ?>,
+                                        orden: <?= $unidad->orden ?>
+                                    };
+                                    temp.unidades.push(uni);
+        <?php endforeach; ?>
+                                venta.detalles.push(temp);
+    <?php endforeach; ?>
 
-        $("#cliente_id").val(venta.cliente_id).trigger("chosen:updated");
-        $("#cliente_id").change();
+                            $("#cliente_id").val(venta.cliente_id).trigger("chosen:updated");
+                            $("#cliente_id").change();
 
-        $("#tipo_pago").val(venta.condicion_id).trigger("chosen:updated");
-        $("#tipo_pago").change();
+                            $("#tipo_pago").val(venta.condicion_id).trigger("chosen:updated");
+                            $("#tipo_pago").change();
 
-        $("#moneda_id").val(venta.moneda_id).trigger("chosen:updated");
-        $("#moneda_id").change();
+                            $("#moneda_id").val(venta.moneda_id).trigger("chosen:updated");
+                            $("#moneda_id").change();
 
-        $("#local_venta_id").val(venta.local_id).trigger("chosen:updated");
-        $("#local_venta_id").change();
+                            $("#local_venta_id").val(venta.local_id).trigger("chosen:updated");
+                            $("#local_venta_id").change();
 
-        $("#local_id").val(venta.local_id).trigger("chosen:updated");
-        $("#local_id").change();
+                            $("#local_id").val(venta.local_id).trigger("chosen:updated");
+                            $("#local_id").change();
 
-        $('#tipo_impuesto').val(venta.tipo_impuesto);
+                            $('#tipo_impuesto').val(venta.tipo_impuesto);
 
-        $('#tasa').val(venta.moneda_tasa);
+                            $('#tasa').val(venta.moneda_tasa);
 
-        for (var i = 0; i < venta.detalles.length; i++) {
-            var prod = venta.detalles[i];
-            add_producto_from_venta(
-                prod.producto_id,
-                prod.producto_nombre,
-                prod.precio,
-                prod.precio_venta,
-                prod.um_min,
-                prod.um_min_abr,
-                prod.total_min,
-                prod.unidades,
-                prod.impuesto,
-                prod.afectacion_impuesto,
-                prod.precio_comp
-            );
-        }
+                            for (var i = 0; i < venta.detalles.length; i++) {
+                                var prod = venta.detalles[i];
+                                add_producto_from_venta(
+                                        prod.producto_id,
+                                        prod.producto_nombre,
+                                        prod.precio,
+                                        prod.precio_venta,
+                                        prod.um_min,
+                                        prod.um_min_abr,
+                                        prod.total_min,
+                                        prod.unidades,
+                                        prod.impuesto,
+                                        prod.afectacion_impuesto,
+                                        prod.precio_comp,
+                                        prod.contable_costo,
+                                        prod.real_costo
+                                        );
+                            }
 
-        <?php endif;?>
-
-
-    });
-
-
-    function add_producto_from_venta(producto_id, producto_nombre, precio, precio_venta, um_min, um_min_abr, total_min, unidades, impuesto, afectacion_impuesto, precio_comp) {
-
-        var local_id = $("#local_id").val();
-        var precio_id = $("#precio_id").val();
+<?php endif; ?>
 
 
-        //AGREGO EL PRODUCTO E INICIALIZO SUS VALORES
-        var producto = {};
-        producto.index = lst_producto.length;
-        producto.producto_id = producto_id;
-        producto.producto_impuesto = impuesto;
-        producto.afectacion_impuesto = afectacion_impuesto;
-        producto.producto_nombre = encodeURIComponent(producto_nombre);
-        producto.precio_id = precio_id;
-        producto.precio_unitario = parseFloat(precio_venta);
-        producto.precio_descuento = parseFloat(precio);
-        producto.descuento = parseFloat(0);
-
-        producto.um_min = um_min;
-        producto.um_min_abr = um_min_abr;
-
-        producto.total_local = {};
-        producto.detalles = [];
-
-        producto.total_local['local' + local_id] = parseFloat(total_min);
+                    });
 
 
-        for (var i = 0; i < unidades.length; i++) {
-            var input = unidades[i];
-            var detalle = {};
+                    function add_producto_from_venta(producto_id, producto_nombre, precio, precio_venta, um_min, um_min_abr, total_min, unidades, impuesto, afectacion_impuesto, precio_comp, contable_costo,real_costo) {
 
-            detalle.local_id = local_id;
-            detalle.local_nombre = encodeURIComponent($('#local_id option:selected').text());
-            detalle.cantidad = parseFloat(input.cantidad);
-            detalle.unidad = input.unidad_id;
-            detalle.unidad_nombre = input.unidad_nombre;
-            detalle.unidad_abr = input.unidad_abr;
-            detalle.unidades = input.unidades;
-            detalle.orden = input.orden;
-
-            producto.detalles.push(detalle);
-        }
+                        var local_id = $("#local_id").val();
+                        var precio_id = $("#precio_id").val();
 
 
-        producto.total_minimo = 0;
-        for (var local_index in producto.total_local)
-            producto.total_minimo += parseFloat(producto.total_local[local_index]);
+                        //AGREGO EL PRODUCTO E INICIALIZO SUS VALORES
+                        var producto = {};
+                        producto.index = lst_producto.length;
+                        producto.producto_id = producto_id;
+                        producto.producto_impuesto = impuesto;
+                        producto.afectacion_impuesto = afectacion_impuesto;
+                        producto.producto_nombre = encodeURIComponent(producto_nombre);
+                        producto.precio_id = precio_id;
+                        producto.precio_unitario = parseFloat(precio_venta);
+                        producto.precio_descuento = parseFloat(precio);
+                        producto.descuento = parseFloat(0);
 
-        producto.subtotal = parseFloat(producto.total_minimo * producto.precio_descuento);
-        producto.precio_comp = parseFloat(precio_comp);
-        producto.precio_unitario_bk = parseFloat(precio_venta);
-        producto.subtotal_bk = parseFloat(producto.total_minimo * producto.precio_descuento);
-        lst_producto.push(producto);
+                        producto.um_min = um_min;
+                        producto.um_min_abr = um_min_abr;
 
-        update_view(get_active_view());
+                        producto.total_local = {};
+                        producto.detalles = [];
 
-        refresh_right_panel();
+                        producto.total_local['local' + local_id] = parseFloat(total_min);
 
-    }
+
+                        for (var i = 0; i < unidades.length; i++) {
+                            var input = unidades[i];
+                            var detalle = {};
+
+                            detalle.local_id = local_id;
+                            detalle.local_nombre = encodeURIComponent($('#local_id option:selected').text());
+                            detalle.cantidad = parseFloat(input.cantidad);
+                            detalle.unidad = input.unidad_id;
+                            detalle.unidad_nombre = input.unidad_nombre;
+                            detalle.unidad_abr = input.unidad_abr;
+                            detalle.unidades = input.unidades;
+                            detalle.orden = input.orden;
+
+                            producto.detalles.push(detalle);
+                        }
+
+
+                        producto.total_minimo = 0;
+                        for (var local_index in producto.total_local)
+                            producto.total_minimo += parseFloat(producto.total_local[local_index]);
+
+                        producto.subtotal = parseFloat(producto.total_minimo * producto.precio_descuento);
+                        producto.precio_comp = parseFloat(precio_comp);
+                        producto.contable_costo = parseFloat(contable_costo);
+                        producto.real_costo = parseFloat(real_costo);
+                        producto.precio_unitario_bk = parseFloat(precio_venta);
+                        producto.subtotal_bk = parseFloat(producto.total_minimo * producto.precio_descuento);
+                        lst_producto.push(producto);
+
+                        update_view(get_active_view());
+
+                        refresh_right_panel();
+
+                    }
 
 </script>

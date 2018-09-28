@@ -1,10 +1,6 @@
 <?php $ruta = base_url(); ?>
 <?php $md = get_moneda_defecto() ?>
-<?
-    /*echo "<pre>";
-    echo print_r($lists);
-    echo "</pre>";*/
-?>
+
 <div class="table-responsive">
     <table class="table dataTable table-bordered no-footer tableStyle" id="tabla">
         <thead>
@@ -27,8 +23,8 @@
             </tr>
             <tr>
                 <th width="10%">Codigo</th>
-                <th width="30">Producto</th>
-                <th width="10">Marca</th>
+                <th width="30%">Producto</th>
+                <th width="10%">Marca</th>
                 <th width="10%">Unidad</th>
                 <th width="5%">Costo <br>Real S/</th>
                 <th width="5%">Costo <br>Contable S/</th>
