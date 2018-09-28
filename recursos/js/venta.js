@@ -815,7 +815,7 @@ function end_venta () {
     if (tipo_pago == '1') {
       flag = true
 
-      $('#vc_total_pagar').val(formatPrice($('#total_importe').val()))
+      $('#vc_total_pagar').val($('#total_importe').val())
       $('#vc_importe').val($('#vc_total_pagar').val())
       $('#vc_vuelto').val(0)
       $('#vc_num_oper').val('')
@@ -833,7 +833,7 @@ function end_venta () {
       flag = true
       $('#c_cliente').val($('#cliente_id option:selected').text().trim())
       $('#c_fecha_giro').val($('#fecha_venta').val())
-      credito_init(formatPrice($('#total_importe').val()), 'COMPLETADO')
+      credito_init($('#total_importe').val(), 'COMPLETADO')
       refresh_credito_window()
       $('#dialog_venta_credito').modal('show')
     }
@@ -841,14 +841,14 @@ function end_venta () {
     //Contado
     if (tipo_pago == '1') {
       flag = true
-      caja_init(formatPrice($('#total_importe').val()))
+      caja_init($('#total_importe').val())
     }
     //Credito
     else if (tipo_pago == '2') {
       flag = true
       $('#c_cliente').val($('#cliente_id option:selected').text().trim())
       $('#c_fecha_giro').val($('#fecha_venta').val())
-      credito_init(formatPrice($('#total_importe').val()), 'CAJA')
+      credito_init($('#total_importe').val(), 'CAJA')
       refresh_credito_window()
       $('#dialog_venta_credito').modal('show')
     }

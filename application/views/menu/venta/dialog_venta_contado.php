@@ -297,4 +297,7 @@
 
   })
 
+  function cerrarDialogVenta(){
+    $('#dialog_venta_contado').modal('hide');
+  }
 </script>
