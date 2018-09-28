@@ -1038,12 +1038,13 @@ function save_venta_contado (imprimir) {
         $('#loading_save_venta').modal('hide')
         $('.save_venta_contado').removeAttr('disabled')
       } else {
-        if (data.msg)
+        if (data.msg){
           show_msg('danger', '<h4>Error. </h4><p>' + data.msg + '</p>')
-        else
+        }else{
           show_msg('danger', '<h4>Error. </h4><p>Ha ocurrido un error insperado al guardar la venta.</p>')
-        $('#dialog_venta_contado').modal('show')
-        $('.save_venta_contado').removeAttr('disabled')
+        }
+        $('#loading_save_venta').modal('hide');
+        $('.save_venta_contado').removeAttr('disabled');
       }
     },
     error: function (data) {
@@ -1165,14 +1166,13 @@ function save_venta_credito (imprimir) {
         $('#loading_save_venta').modal('hide')
         $('.save_venta_credito').removeAttr('disabled')
       } else {
-        if (data.msg) {
+        if(data.msg){
           show_msg('danger', '<h4>Error. </h4><p>' + data.msg + '</p>')
-        } else {
-
+        }else{
           show_msg('danger', '<h4>Error. </h4><p>Ha ocurrido un error insperado al guardar la venta.</p>')
-          $('#dialog_venta_credito').modal('show')
-          $('.save_venta_credito').removeAttr('disabled')
         }
+        $('#loading_save_venta').modal('hide');
+        $('.save_venta_credito').removeAttr('disabled');
       }
     },
     error: function (data) {

@@ -166,7 +166,7 @@
                     ?>
                     <button class="btn btn-danger"
                             type="button"
-                            onclick="cerrarDialogVenta()"><i
+                            onclick="$('#dialog_venta_contado').modal('hide'); $('.modal-backdrop').remove();"><i
                                 class="fa fa-close"></i> Cancelar
                     </button>
                 </div>

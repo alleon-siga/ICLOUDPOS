@@ -25,6 +25,7 @@ class venta_new extends MY_Controller
             $this->load->model('clientesgrupos/clientes_grupos_model');
             $this->load->model('usuario/usuario_model');
             $this->load->model('banco/banco_model');
+            $this->load->model('producto_costo_unitario/producto_costo_unitario_model');
         } else {
             redirect(base_url(), 'refresh');
         }
@@ -274,7 +275,6 @@ class venta_new extends MY_Controller
 
     function save_venta()
     {
-
         $venta['local_id'] = $this->input->post('local_venta_id');
         $venta['id_documento'] = $this->input->post('tipo_documento');
         $venta['id_cliente'] = $this->input->post('cliente_id');
@@ -324,47 +324,51 @@ class venta_new extends MY_Controller
                 'producto_id' => $d->id_producto,
                 'local_id' => $venta['local_id'],
                 'unidad_id' => $d->unidad_medida,
-                'cantidad' => $d->cantidad
+                'cantidad' => $d->cantidad,
+                'moneda_id' => $venta['id_moneda']
             );
         }
 
-        $sin_stock = $this->inventario_model->check_stock($validar_detalle);
+        $existenciaCosto = $this->producto_costo_unitario_model->check_costo_unitario($validar_detalle);
+        if(!$existenciaCosto){
+            $data['msg'] = "Este producto no tiene precios de ventas o unitarios asignados, por favor verificar en el módulo de productos.";
+            $data['success'] = '0';
+        }else{
+            $sin_stock = $this->inventario_model->check_stock($validar_detalle);
 
-        if (count($sin_stock) == 0) {
-
-            if ($venta['condicion_pago'] == '1') {
-                $venta_id = $this->venta->save_venta_contado($venta, $detalles_productos, $traspasos);
-            } elseif ($venta['condicion_pago'] == '2') {
-                $venta_id = $this->venta->save_venta_credito($venta, $detalles_productos, $traspasos, $cuotas);
-            }
-
-            if ($venta_id) {
-//                $cot_id = $this->input->post('cot_id');
-//                if ($cot_id != "-1") {
-//                    $this->db->where('id', $cot_id);
-//                    $this->db->update('cotizacion', array('estado' => 'COMPLETADO'));
-//                }
-                $data['success'] = '1';
-                $data['venta'] = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
-                if (valueOptionDB('FACTURACION', 0) == 1 && $data['venta']->condicion_pago == 1 && ($data['venta']->id_documento == 1 || $data['venta']->id_documento == 3)) {
-                    $data['facturacion'] = $this->db->get_where('facturacion', array(
-                        'documento_tipo' => sumCod($data['venta']->id_documento, 2),
-                        'ref_id' => $data['venta']->venta_id
-                    ))->row();
+            if (count($sin_stock) == 0) {
+                if ($venta['condicion_pago'] == '1') {
+                    $venta_id = $this->venta->save_venta_contado($venta, $detalles_productos, $traspasos);
+                } elseif ($venta['condicion_pago'] == '2') {
+                    $venta_id = $this->venta->save_venta_credito($venta, $detalles_productos, $traspasos, $cuotas);
                 }
+
+                if ($venta_id) {
+    //                $cot_id = $this->input->post('cot_id');
+    //                if ($cot_id != "-1") {
+    //                    $this->db->where('id', $cot_id);
+    //                    $this->db->update('cotizacion', array('estado' => 'COMPLETADO'));
+    //                }
+                    $data['success'] = '1';
+                    $data['venta'] = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
+                    if (valueOptionDB('FACTURACION', 0) == 1 && $data['venta']->condicion_pago == 1 && ($data['venta']->id_documento == 1 || $data['venta']->id_documento == 3)) {
+                        $data['facturacion'] = $this->db->get_where('facturacion', array(
+                            'documento_tipo' => sumCod($data['venta']->id_documento, 2),
+                            'ref_id' => $data['venta']->venta_id
+                        ))->row();
+                    }
+                } else {
+                    if (isset($this->venta->error))
+                        $data['msg'] = $this->venta->error;
+                    $data['success'] = '0';
+                }
+
             } else {
-                if (isset($this->venta->error))
-                    $data['msg'] = $this->venta->error;
-                $data['success'] = '0';
+                $data['success'] = "3";
+                $data['sin_stock'] = json_encode($sin_stock);
             }
-
-        } else {
-            $data['success'] = "3";
-            $data['sin_stock'] = json_encode($sin_stock);
         }
-
         echo json_encode($data);
-
     }
 
     function save_venta_contable()
