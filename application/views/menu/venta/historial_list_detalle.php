@@ -1,18 +1,18 @@
 <?php
-    $ruta = base_url();
+$ruta = base_url();
 ?>
-<style>
-    .totales {
-        width: 100%;
-        text-align: right;
-    }
+    <style>
+        .totales {
+            width: 100%;
+            text-align: right;
+        }
 
-    .totales tr td {
-        padding: 5px 0;
-        font-weight: bold;
-    }
-</style>
-<input type="hidden" id="venta_id" value="<?= $venta->venta_id ?>">
+        .totales tr td {
+            padding: 5px 0;
+            font-weight: bold;
+        }
+    </style>
+    <input type="hidden" id="venta_id" value="<?= $venta->venta_id ?>">
 <?php if ($detalle == 'venta'): ?>
     <div class="modal-dialog" style="width: 60%">
         <div class="modal-content">
@@ -363,7 +363,8 @@
                 <div class="row">
                     <div class="text-right">
                         <div class="col-md-12">
-                            <input id="btnCerrarDetalle" type="button" class='btn btn-danger' value="Cerrar" onclick="cerrarDetalle()">
+                            <input id="btnCerrarDetalle" type="button" class='btn btn-danger' value="Cerrar"
+                                   onclick="cerrarDetalle()">
                         </div>
                     </div>
 
@@ -506,62 +507,62 @@
         $(this).select()
       })
 
-        $('#devolver_venta_button').on('click', function () {
-            if (!validar_venta())
-                return false;
+      $('#devolver_venta_button').on('click', function () {
+        if (!validar_venta())
+          return false
 
-            var error = false;
-            $.ajax({
-                url: '<?= $ruta ?>venta_new/verificarAnulacion/' + $('#venta_id').val(),
-                type: 'post',
-                dataType: 'json',
-                success: function(datos){
-                    if(parseInt(datos.num_reg)>0){
-                        mensaje('warning', "<h4>Error.</h4> <p>S&oacute;lo se permite realizar una sola devoluci&oacute;n. Realice una anulaci&oacute;n.</p>");
-                    }else{
-                        var template = '<h3>Devoluvi&oacute;n de la Venta ' + $('#venta_numero').html().trim() + '</h3>';
-                        template += '<hr class="hr-margin-10">';
-                        template += '<h4><label>Productos Devueltos:</label></h4>';
-                        $('.producto_detalles_list').each(function () {
-                            var id = $(this).attr('data-id');
-                            var producto_codigo = $('#producto_codigo_' + id).html().trim();
-                            var producto_nombre = $('#producto_nombre_' + id).html().trim();
-                            var unidad_nombre = $('#unidad_nombre_' + id).html().trim();
-                            var cantidad_devuelta = $('#cantidad_devuelta_' + id).val();
+        var error = false
+        $.ajax({
+          url: '<?= $ruta ?>venta_new/verificarAnulacion/' + $('#venta_id').val(),
+          type: 'post',
+          dataType: 'json',
+          success: function (datos) {
+            if (parseInt(datos.num_reg) > 0) {
+              mensaje('warning', '<h4>Error.</h4> <p>S&oacute;lo se permite realizar una sola devoluci&oacute;n. Realice una anulaci&oacute;n.</p>')
+            } else {
+              var template = '<h3>Devoluvi&oacute;n de la Venta ' + $('#venta_numero').html().trim() + '</h3>'
+              template += '<hr class="hr-margin-10">'
+              template += '<h4><label>Productos Devueltos:</label></h4>'
+              $('.producto_detalles_list').each(function () {
+                var id = $(this).attr('data-id')
+                var producto_codigo = $('#producto_codigo_' + id).html().trim()
+                var producto_nombre = $('#producto_nombre_' + id).html().trim()
+                var unidad_nombre = $('#unidad_nombre_' + id).html().trim()
+                var cantidad_devuelta = $('#cantidad_devuelta_' + id).val()
 
-                            if (cantidad_devuelta != 0 && cantidad_devuelta != "") {
-                                template += '<div class="row">';
-                                template += '<div class="col-md-8">' + producto_codigo + ' - ' + producto_nombre + '</div>';
-                                template += '<div class="col-md-4">' + cantidad_devuelta + ' ' + unidad_nombre + '</div>';
-                                template += '</div>';
-                                template += '<hr class="hr-margin-5">';
-                            }
-                        });
-                        template += '<hr class="hr-margin-10">';
-                        template += '<h4><label>Total a devolver:</label> ' + $('#total_devolver_text').html().trim() + '</h4>';
-
-                        $('#confirm_venta_text').html(template);
-                        $('#confirm_venta_button').attr('onclick', 'devolver_venta();');
-
-                        $("#documento_serie").val("");
-                        $("#documento_numero").val("");
-
-                        $.ajax({
-                            url: '<?php echo base_url() . 'local/get_notas_correlativo'; ?>/' + parseInt($('#venta_numero').html().trim()),
-                            type: 'GET',
-                            headers: {
-                                Accept: 'application/json'
-                            },
-                            success: function (data) {
-                                $("#documento_serie").val(data.correlativos.serie);
-                                $("#documento_numero").val(data.correlativos.correlativo);
-                                $('#dialog_venta_confirm').modal('show');
-                            }
-                        });
-                    }
+                if (cantidad_devuelta != 0 && cantidad_devuelta != '') {
+                  template += '<div class="row">'
+                  template += '<div class="col-md-8">' + producto_codigo + ' - ' + producto_nombre + '</div>'
+                  template += '<div class="col-md-4">' + cantidad_devuelta + ' ' + unidad_nombre + '</div>'
+                  template += '</div>'
+                  template += '<hr class="hr-margin-5">'
                 }
-            });
-        });
+              })
+              template += '<hr class="hr-margin-10">'
+              template += '<h4><label>Total a devolver:</label> ' + $('#total_devolver_text').html().trim() + '</h4>'
+
+              $('#confirm_venta_text').html(template)
+              $('#confirm_venta_button').attr('onclick', 'devolver_venta();')
+
+              $('#documento_serie').val('')
+              $('#documento_numero').val('')
+
+              $.ajax({
+                url: '<?php echo base_url() . 'local/get_notas_correlativo'; ?>/' + parseInt($('#venta_numero').html().trim()),
+                type: 'GET',
+                headers: {
+                  Accept: 'application/json'
+                },
+                success: function (data) {
+                  $('#documento_serie').val(data.correlativos.serie)
+                  $('#documento_numero').val(data.correlativos.correlativo)
+                  $('#dialog_venta_confirm').modal('show')
+                }
+              })
+            }
+          }
+        })
+      })
 
       function validar_venta () {
         var flag = true

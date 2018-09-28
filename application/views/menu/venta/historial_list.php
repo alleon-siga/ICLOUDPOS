@@ -410,4 +410,8 @@
         $('#nc_modal').modal('hide');
         $('#dialog_venta_detalle').modal('show');
     }
+
+    function cerrarDetalle() {
+      $('#dialog_venta_detalle').modal('hide');
+    }
 </script>
