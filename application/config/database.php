@@ -52,9 +52,9 @@ $query_builder = TRUE;
 $db['default'] = array(
     'dsn' => '',
     'hostname' => 'localhost',
-    'username' => 'root',    
+    'username' => 'teayudop_root',
     'password' => 'nexus1108',
-    'database' => DATABASE_HOST != false ? DATABASE_HOST : 'icloudpos_shadow',    
+    'database' => DATABASE_HOST != false ? DATABASE_HOST : 'teayudop_desarrollo',
     'dbdriver' => 'mysqli',
     'dbprefix' => '',
     'pconnect' => FALSE,
