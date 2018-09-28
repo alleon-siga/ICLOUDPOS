@@ -35,14 +35,13 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
             <tr>
 
                 <th>ID</th>
-                <th>Nombre</th>
-                <th>Estado</th>
-                <th>Principal</th>
-                <th>Localizaci&oacute;n</th>
-                <th>Direcci&oacute;n</th>
-
-                <th class="desktop">Acciones</th>
-
+                <th width="10%">Nombre</th>
+                <th width="5%">Estado</th>
+                <th width="20%">Principal</th>
+                <th width="20%">Localizaci&oacute;n</th>
+                <th width="20%">Direcci&oacute;n</th>
+                <th width="10%">Telef&oacute;no</th>
+                <th class="desktop" width="15%">Acciones</th>
             </tr>
             </thead>
             <tbody>
@@ -52,15 +51,14 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                     ?>
                     <tr id=<?= $local->int_local_id ?>>
 
-                        <td class="center"><?= $local->int_local_id ?></td>
-                        <td><?= $local->local_nombre ?></td>
-                        <td><?= $local->local_status == 1 ? 'Activado' : 'Desactivado' ?></td>
-                        <td><?= $local->principal == 1 ? 'SI' : 'NO' ?></td>
-                        <td><?= $local->distrito_id != null ? $local->pais . ' / ' . $local->estado . ' / ' . $local->ciudad . ' / ' . $local->distrito : 'Sin Localizaci&oacute;n' ?></td>
-                        <td><?= $local->direccion != null && $local->telefono != null ? $local->direccion . ' / TEL: ' . $local->telefono : 'Sin Direcci&oacute;n' ?></td>
-
-
-                        <td class="center">
+                        <td class="center" style="white-space: normal;"><?= $local->int_local_id ?></td>
+                        <td style="white-space: normal;"><?= $local->local_nombre ?></td>
+                        <td style="white-space: normal;"><?= $local->local_status == 1 ? 'Activado' : 'Desactivado' ?></td>
+                        <td style="white-space: normal;"><?= $local->principal == 1 ? 'SI' : 'NO' ?></td>
+                        <td style="white-space: normal;"><?= $local->distrito_id != null ? $local->pais . ' / ' . $local->estado . ' / ' . $local->ciudad . ' / ' . $local->distrito : 'Sin Localizaci&oacute;n' ?></td>
+                        <td style="white-space: normal;"><?= ($local->direccion != null)? $local->direccion : 'Sin Direcci&oacute;n' ?></td>
+                        <td style="white-space: normal;"><?= $local->telefono ?></td>
+                        <td class="center" style="white-space: normal;">
                             <div class="btn-group acciones_<?= $local->int_local_id ?>">
                                 <a href="#" style="margin-right: 5px;"
                                    class="btn btn-primary"
@@ -69,7 +67,6 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                                    data-original-title="fa fa-comment-o"
                                    onclick="correlativos('<?= $local->int_local_id ?>',  '<?= $local->local_nombre ?>')">
                                     <i class="fa fa-list-ol"></i></a>
-
                                 <a href="#" style="margin-right: 5px;"
                                    class="btn btn-default"
                                    data-toggle="tooltip"
@@ -77,8 +74,6 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                                    data-original-title="fa fa-comment-o"
                                    onclick="editar('<?= $local->int_local_id ?>')">
                                     <i class="fa fa-edit"></i></a>
-
-
                                 <a href="#"
                                    class="btn btn-danger eliminar_<?= $local->int_local_id ?>"
                                    data-toggle="tooltip"
@@ -86,13 +81,11 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                                    data-original-title="fa fa-comment-o"
                                    onclick="borrar('<?= $local->int_local_id ?>',  '<?= $local->local_nombre ?>');">
                                     <i class="fa fa-trash-o"></i></a>
-
                             </div>
                         </td>
                     </tr>
                 <?php }
             } ?>
-
             </tbody>
         </table>
     </div>
