@@ -1,6 +1,7 @@
 <?php $ruta = base_url(); ?>
 <ul class="breadcrumb breadcrumb-top">
     <li>Reporte</li>
+    <li>Venta</li>
     <li><a href="">Utilidades por venta</a></li>
 </ul>
 <link rel="stylesheet" href="<?= $ruta ?>recursos/css/plugins.css">
@@ -109,7 +110,7 @@
                     };
 
                     $.ajax({
-                        url: '<?= base_url()?>reporte/utilidadProducto/filter',
+                        url: '<?= base_url()?>reporte_ventas/utilidadProducto/filter',
                         data: data,
                         type: 'POST',
                         success: function (data) {

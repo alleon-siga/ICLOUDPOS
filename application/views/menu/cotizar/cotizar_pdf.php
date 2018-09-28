@@ -121,10 +121,15 @@
                 }else{
                     $color ="#F3F3F3";
                 }
+
+                $presentacion = '';
+                if(valueOption('EMBALAJE_IMPRESION')==1){
+                    $presentacion = "(x ".$detalle->cantidad_und.' '.$detalle->simbolo_und.")";
+                }
         ?>
             <tr>
                 <td style="white-space: normal; background-color: <?= $color ?>"><?= getCodigoValue($detalle->producto_id, $detalle->producto_codigo_interno) ?></td>
-                <td style="white-space: normal; background-color: <?= $color ?>"><?= $detalle->producto_nombre ?></td>
+                <td style="white-space: normal; background-color: <?= $color ?>"><?= $detalle->producto_nombre.' '.$presentacion ?></td>
                 <td style="white-space: normal; text-align: center; background-color: <?= $color ?>"><?= $detalle->cantidad ?></td>
                 <td style="white-space: normal; text-align: center; background-color: <?= $color ?>"><?= $detalle->unidad_nombre ?></td>
                 <?php if($hayDescuento==true): ?>

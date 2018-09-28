@@ -2,7 +2,7 @@
 <table class="table table-bordered">
     <thead>
     <tr>
-        <th>Id.Dev.</th>
+        <th><?= getCodigoNombre() ?></th>
         <th>Producto</th>
         <th>Cantidad</th>
         <th>UM</th>
@@ -11,23 +11,23 @@
     </tr>
     </thead>
     <tbody>
-<?php $Subtotal = 0; ?>    	
-<?php foreach ($data as $dato) { ?>
-		<tr>
-			<td><?= $dato->id ?></td>
-			<td><?= $dato->producto_nombre ?></td>
-			<td><?= $dato->cantidad ?></td>
-			<td><?= $dato->nombre_unidad ?></td>
-			<td><?= $md->simbolo.' '.number_format($dato->precio,2) ?></td>
-			<td><?= $md->simbolo.' '.number_format($dato->cantidad * $dato->precio,2) ?></td>
-		</tr>
-<?php $Subtotal += ($dato->cantidad * $dato->precio) ?>
-<?php } ?>
+    <?php $Subtotal = 0; ?>
+    <?php foreach ($data as $dato) { ?>
+        <tr>
+            <td><?= getCodigoValue($dato->producto_id, $dato->producto_codigo_interno) ?></td>
+            <td><?= $dato->producto_nombre ?></td>
+            <td><?= $dato->cantidad ?></td>
+            <td><?= $dato->nombre_unidad ?></td>
+            <td><?= $md->simbolo . ' ' . number_format($dato->precio, 2) ?></td>
+            <td><?= $md->simbolo . ' ' . number_format($dato->cantidad * $dato->precio, 2) ?></td>
+        </tr>
+        <?php $Subtotal += ($dato->cantidad * $dato->precio) ?>
+    <?php } ?>
     </tbody>
     <tfoot>
-    	<tr>
-    		<td align="right" colspan="5">Subtotal</td>
-    		<td><?= $md->simbolo.' '.number_format($Subtotal,2) ?></td>
-    	</tr>
+    <tr>
+        <td align="right" colspan="5">Subtotal</td>
+        <td><?= $md->simbolo . ' ' . number_format($Subtotal, 2) ?></td>
+    </tr>
     </tfoot>
- </table>
+</table>

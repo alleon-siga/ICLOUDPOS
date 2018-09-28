@@ -106,6 +106,20 @@
             </div>
         </div>
     </div>
+    <div class="row form-group">
+        <div class="col-md-4">
+            <label class="control-label panel-admin-text">N&uacute;mero de decimales en productos:</label>
+        </div>
+        <div class="col-md-8">
+            <div class="form-control">
+                <input type="radio" name="NUMERO_DECIMALES" id="" class='' value="2"
+                    <?php echo validOption("NUMERO_DECIMALES", '2', '0') ? 'checked' : '' ?>> 2
+                &nbsp;&nbsp;&nbsp;
+                <input type="radio" name="NUMERO_DECIMALES" id="" class='' value="4"
+                    <?php echo validOption("NUMERO_DECIMALES", '4', '0') ? 'checked' : '' ?>> 4
+            </div>
+        </div>
+    </div>
     <h3>Cr&eacute;dito</h3>
     <div class="row form-group">
         <div class="col-md-4">

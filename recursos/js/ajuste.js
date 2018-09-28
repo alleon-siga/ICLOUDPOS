@@ -387,7 +387,6 @@ function save_ajuste() {
         dataType: 'json',
         data: form + '&detalles_productos=' + detalles_productos,
         success: function (data) {
-
             if (data.success == '1') {
                 show_msg('success', '<h4>Correcto. </h4><p>El ajuste se ha guardado con exito.</p>');
                 $.ajax({
@@ -407,7 +406,7 @@ function save_ajuste() {
                         }
                     }
                 });
-            } else {
+            }else{
                 show_msg('danger', '<h4>Error. </h4><p>Ha ocurrido un error insperado al guardar la venta.</p>');
             }
         },
@@ -1073,51 +1072,57 @@ function get_productos_unidades(evento) {
             },
             data: {'producto_id': producto_id, 'moneda_id': moneda_id},
             success: function (data) {
-                var form = $("#producto_form");
-                form.html('');
+                if(data.success=='0'){
+                    $('.block_producto_unidades').hide();
+                    $('#close_add_producto').trigger('click');
+                    $("#loading").hide();
+                    mensaje('danger', data.mensaje);
+                }else{
+                    var form = $("#producto_form");
+                    form.html('');
 
-                if (data.unidades.length > 0) {
+                    if (data.unidades.length > 0) {
 
-                    var unidad_minima = data.unidades[data.unidades.length - 1];
-                    $("#um_minimo").html(unidad_minima.nombre_unidad);
-                    $("#um_minimo").attr('data-abr', unidad_minima.abr);
+                        var unidad_minima = data.unidades[data.unidades.length - 1];
+                        $("#um_minimo").html(unidad_minima.nombre_unidad);
+                        $("#um_minimo").attr('data-abr', unidad_minima.abr);
 
-                    var index = 0;
-                    for (var i = 0; i < data.unidades.length; i++) {
+                        var index = 0;
+                        for (var i = 0; i < data.unidades.length; i++) {
 
-                        if (data.unidades[i].presentacion == '1')
-                            form.append(create_unidades_template(index++, data.unidades[i], unidad_minima));
+                            if (data.unidades[i].presentacion == '1')
+                                form.append(create_unidades_template(index++, data.unidades[i], unidad_minima));
 
-                        prepare_unidades_value(producto_id, local_id, data.unidades[i]);
-                    }
-
-
-                    //Este ciclo es para los datos iniciales del total y el importe
-                    var total = 0;
-                    $(".cantidad-input").each(function () {
-                        var input = $(this);
-                        if (input.val() != 0) {
-                            total += parseFloat(input.val() * input.attr('data-unidades'));
+                            prepare_unidades_value(producto_id, local_id, data.unidades[i]);
                         }
-                    });
-                    $("#total_minimo").val(total);
-                    console.log(data);
-                    $('#costo_unitario').val(data.costo.costo);
-                    set_stock_info();
 
 
-                    //SUSCRIBOS EVENTOS
-                    prepare_unidades_events();
+                        //Este ciclo es para los datos iniciales del total y el importe
+                        var total = 0;
+                        $(".cantidad-input").each(function () {
+                            var input = $(this);
+                            if (input.val() != 0) {
+                                total += parseFloat(input.val() * input.attr('data-unidades'));
+                            }
+                        });
+                        $("#total_minimo").val(total);
+                        console.log(data);
+                        $('#costo_unitario').val(data.costo.costo);
+                        set_stock_info();
 
-                    refresh_right_panel();
-                    refresh_totals();
+
+                        //SUSCRIBOS EVENTOS
+                        prepare_unidades_events();
+
+                        refresh_right_panel();
+                        refresh_totals();
+
+                        $("#loading").hide();
+                        $(".block_producto_unidades").show();
+                        $('.cantidad-input[data-index="0"]').first().trigger('focus');
+                        $(".modal-backdrop").remove();
+                    }
                 }
-            },
-            complete: function (data) {
-                $("#loading").hide();
-                $(".block_producto_unidades").show();
-                $('.cantidad-input[data-index="0"]').first().trigger('focus');
-                $(".modal-backdrop").remove();
             },
             error: function (data) {
                 alert('Ha ocurrido un Error Inesperado.');

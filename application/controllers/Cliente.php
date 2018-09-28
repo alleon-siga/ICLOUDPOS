@@ -662,4 +662,79 @@ class cliente extends MY_Controller
         }
     }
 
+    function importar()
+    {
+        $datos['error'] = false;
+
+        if(!empty($_FILES) && $_FILES['file']['size'] != '0'){
+            $type = $_FILES['file']['type'];
+            if($type!='application/vnd.ms-excel'){
+                $datos['error'] = true;
+                $datos['mensaje'] = "Debe seleccionar un archivo valido, solo se permite archivo con extesion .csv";
+            }
+        }else{
+            $datos['error'] = true;
+            $datos['mensaje'] = "Archivo no encontrado";
+        }
+
+        if($datos['error']==false){
+            $ruta_destino = $_FILES['file']['tmp_name'];
+            $fila = 1;
+            if (($gestor = fopen($ruta_destino, "r")) !== FALSE) {
+                $resumen = '';
+                while (($datos = fgetcsv($gestor, 1000, ";")) !== FALSE) {
+                    if($fila>1){
+                        if(trim($datos[8])=='' && (trim($datos[7])=='' && trim($datos[6])=='')){
+                            $resumen .= "Linea $fila: El dni, ruc o nombre, razon social es obligatorio\r\n";
+                        }else{
+                            $dato = $this->cliente_model->contarCliente('identificacion', $datos[8]);
+                            $total = $dato->total;
+                            if($total>0){
+                                $resumen .= "Linea $fila: El ruc o dni ya existe\r\n";
+                            }else{
+                                $dato = $this->cliente_model->contarCliente('razon_social', utf8_encode($datos[7]).' '.utf8_encode($datos[6])); //apellidos y nombres
+                                $total = $dato->total;
+                                if($total>0){
+                                    $resumen .= "Linea $fila: El nombre o la razon social ya existe\r\n";
+                                }else{
+                                    $param['direccion'] = $datos[0];
+                                    $param['provincia'] = $datos[1];
+                                    $param['ciudad'] = $datos[2];
+                                    $param['distrito'] = $datos[3];
+                                    $param['email'] = $datos[4];
+                                    $param['grupo_id'] = $datos[5];
+                                    $param['nombres'] = $datos[6];
+                                    $param['apellido_paterno'] = $datos[7];
+                                    $param['razon_social'] = $datos[7].' '.$datos[6];
+                                    $param['identificacion'] = $datos[8];
+                                    $param['telefono1'] = $datos[9];
+                                    $param['nota'] = $datos[10];
+                                    $param['tipo_cliente'] = $datos[11]; //0=persona, 1=empresa
+                                    $param['dni'] = $datos[12]; //representante
+                                    $param['genero'] = $datos[13];
+                                    $param['ruc'] = ($param['tipo_cliente']=='0')? '1':'2'; //1=persona, 2=empresa
+                                    $param['agente_retension'] = $datos[14];
+                                    $param['agente_retension_valor'] = $datos[15];
+                                    $param['linea_credito'] = $datos[16];
+                                    $this->cliente_model->importar($param);
+                                }
+                            }
+                        }
+                    }
+                    $fila++;
+                }
+                fclose($gestor);
+                $datos['error'] = false;
+                $datos['mensaje'] = "Datos de clientes importados con exito";
+                //Archivo para log
+                $fp = fopen('./recursos/plantillas_datos/logs.txt', 'w');
+                fwrite($fp, $resumen);
+                fclose($fp);
+            }else{
+                $datos['error'] = true;
+                $datos['mensaje'] = "No se puede abrir el archivo";
+            }
+        }
+        echo json_encode($datos);
+    }
 }

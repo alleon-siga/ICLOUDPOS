@@ -246,6 +246,13 @@ class Ajuste extends MY_Controller
             'moneda_id' => $moneda_id
         ))->row();
 
+        if($data['costo']==null){
+            $data['mensaje'] = 'Este producto no tiene precios de ventas o unitarios asignados, por favor verificar en el m&oacute;dulo de productos.';
+            $data['success'] = '0';
+        }else{
+            $data['success'] = '1';
+        }
+
         header('Content-Type: application/json');
         echo json_encode($data);
     }

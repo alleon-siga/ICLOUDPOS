@@ -331,7 +331,12 @@ class venta_shadow_model extends CI_Model {
         $this->db->insert('venta_shadow', $venta_contado);
         $id_venta_shadow = $this->db->insert_id();
 
-        $this->save_producto_detalles($id_venta_shadow, $venta['id_documento'], $venta['local_id'], $productos, $venta['id_usuario']);
+        $result = $this->save_producto_detalles($id_venta_shadow, $venta['id_documento'], $venta['local_id'], $productos, $venta['id_usuario']);
+
+        if(!$result){
+            $this->error = 'Este producto no tiene precios de ventas o unitarios asignados, por favor verificar en el m&oacute;dulo de productos.';
+            return false;
+        }        
 
         $this->recalc_totales($id_venta_shadow);
         return $id_venta_shadow;
