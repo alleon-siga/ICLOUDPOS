@@ -25,13 +25,11 @@
 
 table th
 {
-	background-color:#ADADAD !important;
+	background-color:#00000 !important;
 	color:#fff !important;
 	font-family: "Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif !important;
     
 }
-
-
 table tbody td div a
 {
 	text-align:center !important;

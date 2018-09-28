@@ -249,11 +249,7 @@
                                 align:"left"
                                 
                             });
-                            $("#charm").tcharm({
-                                'position': 'right',
-                                'display': true,
-                                'top': '50px'
-                            });
+                            $(".tcharm-trigger").show();
                         }
                     });
                     $('.chosen-container').css('width', '100%');
