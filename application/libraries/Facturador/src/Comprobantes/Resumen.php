@@ -96,6 +96,9 @@ class Resumen extends Comprobante
 
 
             $estado_item = $this->xml->createElement('cac:Status');
+            // 1 - Nuevo
+            // 2 - Modificada
+            // 3 - Anulada
             $estado_item->appendChild($this->xml->createElement('cbc:ConditionCode', $detalle['ESTADO_ITEM']));
             $doc_line->appendChild($estado_item);
 

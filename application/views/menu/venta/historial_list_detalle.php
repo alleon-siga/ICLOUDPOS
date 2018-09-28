@@ -114,12 +114,14 @@
                             <table class="table table-bordered">
                                 <thead>
                                 <tr>
-                                    <th><?= getCodigoNombre() ?></th>
-                                    <th>Producto</th>
-                                    <th>Cantidad</th>
-                                    <th>UM</th>
-                                    <th>Precio</th>
-                                    <th>Subtotal</th>
+                                    <th style="vertical-align: middle;" width="5%"><?= getCodigoNombre() ?></th>
+                                    <th style="vertical-align: middle;" width="36%">Producto</th>
+                                    <th width="8%">Cantidad<br>Vendida</th>
+                                    <th width="8%">Cantidad<br>Devuelta</th>
+                                    <th style="vertical-align: middle;" width="8%">Cantidad</th>
+                                    <th style="vertical-align: middle;" width="15%">UM</th>
+                                    <th style="vertical-align: middle;" width="10%">Precio</th>
+                                    <th style="vertical-align: middle;" width="10%">Subtotal</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -128,6 +130,8 @@
                                         <td><?= getCodigoValue($detalle->producto_id, $detalle->producto_codigo_interno) ?></td>
                                         <td><?= $detalle->producto_nombre ?></td>
                                         <td><?= number_format($detalle->cantidad, 0) ?></td>
+                                        <td><?= number_format($detalle->cantidad_devuelta, 0) ?></td>
+                                        <td><?= number_format($detalle->cantidad - $detalle->cantidad_devuelta, 0) ?></td>
                                         <td><?= $detalle->unidad_nombre ?></td>
                                         <td style="text-align: right"><?= $detalle->precio ?></td>
                                         <td style="text-align: right"><?= $venta->moneda_simbolo . " " . $detalle->importe ?></td>
@@ -260,20 +264,24 @@
                             <table class="table table-bordered">
                                 <thead>
                                 <tr>
-                                    <th><?= getCodigoNombre() ?></th>
-                                    <th>Producto</th>
-                                    <th>Cantidad</th>
-                                    <th>UM</th>
-                                    <th>Precio</th>
-                                    <th>Subtotal</th>
+                                    <th style="vertical-align: middle;" width="5%"><?= getCodigoNombre() ?></th>
+                                    <th style="vertical-align: middle;" width="36%">Producto</th>
+                                    <th width="8%">Cantidad<br>Vendida</th>
+                                    <th width="8%">Cantidad<br>Devuelta</th>
+                                    <th style="vertical-align: middle;" width="8%">Cantidad</th>
+                                    <th style="vertical-align: middle;" width="15%">UM</th>
+                                    <th style="vertical-align: middle;" width="10%">Precio</th>
+                                    <th style="vertical-align: middle;" width="10%">Subtotal</th>
                                 </tr>
                                 </thead>
-                                <tbody>
+                                <tbody>                                    
                                 <?php foreach ($venta->detalles as $detalle): ?>
                                     <tr>
                                         <td><?= getCodigoValue($detalle->producto_id, $detalle->producto_codigo_interno) ?></td>
                                         <td><?= $detalle->producto_nombre ?></td>
                                         <td><?= number_format($detalle->cantidad, 0) ?></td>
+                                        <td><?= number_format($detalle->cantidad_devuelta, 0) ?></td>
+                                        <td><?= number_format($detalle->cantidad - $detalle->cantidad_devuelta, 0) ?></td>
                                         <td><?= $detalle->unidad_nombre ?></td>
                                         <td style="text-align: right"><?= $detalle->precio ?></td>
                                         <td style="text-align: right"><?= $venta->moneda_simbolo . " " . $detalle->importe ?></td>
@@ -415,7 +423,7 @@
                                     <td id="producto_codigo_<?= $detalle->detalle_id ?>"><?= getCodigoValue($detalle->producto_id, $detalle->producto_codigo_interno) ?></td>
                                     <td id="producto_nombre_<?= $detalle->detalle_id ?>"><?= $detalle->producto_nombre ?></td>
                                     <td id="cantidad_<?= $detalle->detalle_id ?>"
-                                        data-cantidad="<?= number_format($detalle->cantidad, 0) ?>"><?= number_format($detalle->cantidad, 0) ?></td>
+                                        data-cantidad="<?= number_format($detalle->cantidad - $detalle->cantidad_devuelta, 0) ?>"><?= number_format($detalle->cantidad - $detalle->cantidad_devuelta, 0) ?></td>
                                     <td style="width: 150px;">
                                         <input class="form-control devolver_input"
                                                id="cantidad_devuelta_<?= $detalle->detalle_id ?>"
