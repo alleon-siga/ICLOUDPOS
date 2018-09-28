@@ -6,13 +6,22 @@
 </ul>
 <div class="block">
     <!-- Progress Bars Wizard Title -->
-
-
-    <a class="btn btn-primary" onclick="agregar();">
-        <i class="fa fa-plus "> Nuevo</i>
-    </a>
+    <div class="row">
+        <div class="col-md-7">
+            <a class="btn btn-primary" onclick="agregar();">
+                <i class="fa fa-plus "> Nuevo</i>
+            </a>
+        </div>
+        <div class="col-md-5 text-right">
+            <a class="btn btn-warning" href="<?= $ruta ?>recursos/plantillas_datos/cliente.csv">
+                <i class="fa fa-download"></i> Plantilla
+            </a>
+            <a class="btn btn-default" onclick="importar()">
+                <i class="fa fa-download"></i> Importar
+            </a>
+        </div>
+    </div>
     <br>
-
     <div class="table-responsive">
         <table class="table table-striped dataTable tableStyle" id="example">
             <thead>
@@ -77,21 +86,68 @@
 </div>
 <script src="<?php echo $ruta; ?>recursos/js/Validacion.js?<?php echo date("Hms"); ?>"></script>
 <script type="text/javascript">
-        $('#exportar_excel').on('click', function () {
-            location.href = "<?= $ruta ?>cliente/excel";
-        });
+    $(document).ready(function(){
+        $('#formImportar').on('submit', function(e){
+            e.preventDefault();
 
-        $("#exportar_pdf").on('click', function () {
-            location.href = "<?= $ruta ?>cliente/pdf";
+            var file = $('#file').val();
+            var allowedExtensions = /(.csv)$/i; /* /(.jpg|.jpeg|.png|.gif)$/i; */
+            var error = false;
+
+            if(file==''){
+                mensaje('warning', 'Debe seleccionar el archivo');
+                error = true;
+            }else if(!allowedExtensions.exec(file)){
+                mensaje('warning', 'Debe seleccionar un archivo v&aacute;lido, s&oacute;lo se permite archivo con extesion .csv');
+                error = true;
+            }
+
+            if(error==false){
+                var f = $(this);
+                var formData = new FormData(document.getElementById('formImportar'));
+                $.ajax({
+                    url: '<?= $ruta ?>cliente/importar',
+                    type: 'post',
+                    dataType: 'json',
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function(data){
+                        $("#barloadermodal").modal('hide');
+                        if(data.error==true){
+                            mensaje('warning', data.mensaje);
+                        }else{
+                            mensaje('success', data.mensaje);
+                        }
+                        $('#resumen').css('display','block');
+                    },
+                    beforeSend: function(){
+                        $('#barloadermodal').modal('show');
+                    }
+                });
+            }
         });
+    });
+
+    $('#exportar_excel').on('click', function () {
+        location.href = "<?= $ruta ?>cliente/excel";
+    });
+
+    $("#exportar_pdf").on('click', function () {
+        location.href = "<?= $ruta ?>cliente/pdf";
+    });
+
     function borrar(id, nom) {
-
         $('#borrar').modal('show');
         $("#id_borrar").attr('value', id);
         $("#nom_borrar").attr('value', nom);
         $("#identificacion_borrar").attr('value', identificacion);
     }
 
+    function importar() {
+        $('#importar').modal('show');
+    }
 
     function editar(id) {
         $('#load_div').show()
@@ -102,8 +158,6 @@
                     //$(".alert-danger").css('display','none');
             $('#load_div').hide()
             }, 500)
-
-
     }
 
     function agregar() {
@@ -112,7 +166,6 @@
         $('#agregar').modal({show: true, keyboard: false, backdrop: 'static'});
 
     }
-
 
     var cliente = {
         ajaxgrupo: function () {
@@ -239,9 +292,7 @@
      aria-hidden="true">
 
 </div>
-
-<div class="modal fade" id="borrar" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-     aria-hidden="true">
+<div class="modal fade" id="borrar" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <form name="formeliminar" id="formeliminar" method="post" action="<?= $ruta ?>cliente/eliminar">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -258,14 +309,47 @@
                 <div class="modal-footer">
                     <button type="button" id="confirmar" class="btn btn-primary" onclick="eliminar()">Confirmar</button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-
                 </div>
             </div>
-            <!-- /.modal-content -->
         </div>
-
+    </form>
+</div>
+<div class="modal fade" id="importar" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <form name="formImportar" id="formImportar" method="post" action="<?= $ruta ?>cliente/importar" enctype="multipart/form-data">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Importar Cliente</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-3">Seleccione archivo</div>
+                        <div class="col-md-9">
+                            <input name="file" id="file" type="file" class="form-control">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12" id="resumen" style="display: none;">
+                            <button type="button" id="descargar" class="btn btn-warning">Descargar resumen</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" id="importar" class="btn btn-primary">Importar</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </form>
 </div>
 <script src="<?php echo $ruta ?>recursos/js/pages/tablesDatatables.js"></script>
 <script>$(function () {
         TablesDatatables.init();
-    });</script>
+
+        $('#descargar').on('click', function(){
+            var win = window.open('<?= $ruta ?>recursos/plantillas_datos/logs.txt', '_blank');
+            win.focus();
+        });
+    });
+</script>

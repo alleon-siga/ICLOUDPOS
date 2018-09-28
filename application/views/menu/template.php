@@ -591,7 +591,7 @@ $primary_nav = array(
                     ),
                     array(
                         'name' => 'Utilidades por venta',
-                        'url' => $ruta . 'reporte/utilidadProducto',
+                        'url' => $ruta . 'reporte_ventas/utilidadProducto',
                         'icon' => 'fa fa-area-chart',
                         'slug' => 'utilidadProducto'
                     ),
@@ -645,7 +645,7 @@ $primary_nav = array(
                 'sub' => array(
                     array(
                         'name' => 'Gastos del d&iacute;a',
-                        'url' => $ruta . 'reporte/gastosDia',
+                        'url' => $ruta . 'reporte_caja/gastosDia',
                         'slug' => 'gastosDia'
                     ),
                     array(

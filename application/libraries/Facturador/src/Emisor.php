@@ -404,7 +404,7 @@ class Emisor
 
                 unlink($file . '.ZIP');
                 $name = explode('-', $file_name);
-                $name = $name[1].'-'.$name[2].'-'.$name[3];
+                $name = $name[1] . '-' . $name[2] . '-' . $name[3];
                 return array(
                     'CODIGO' => '0',
                     'MENSAJE' =>
@@ -463,7 +463,11 @@ class Emisor
 
     public function getStatus($ticket, $data)
     {
-        $file_name = $this->get('NRO_DOCUMENTO') . '-RC-' . date('Ymd', strtotime($data['FECHA_EMISION'])) . '-' . $data['CORRELATIVO'];
+        if (isset($data['codigo']))
+            $codigo = $data['codigo'];
+        else
+            $codigo = 'RC';
+        $file_name = $this->get('NRO_DOCUMENTO') . '-' . $codigo . '-' . date('Ymd', strtotime($data['FECHA_EMISION'])) . '-' . $data['CORRELATIVO'];
         $file = $this->path_xml . DIRECTORY_SEPARATOR . $this->get('NRO_DOCUMENTO') . DIRECTORY_SEPARATOR . $file_name;
 
         $xml = new \DOMDocument("1.0", "ISO-8859-1");

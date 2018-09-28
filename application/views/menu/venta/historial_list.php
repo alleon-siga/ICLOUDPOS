@@ -112,7 +112,7 @@
                                 <a class="btn btn-danger" data-toggle="tooltip" style="margin-right: 5px;"
                                    title="Devolver Venta" data-original-title="Devolver Venta"
                                    href="#"
-                                   onclick="devolver('<?= $venta->venta_id ?>');">
+                                   onclick="alert('Las devoluciones parciales no estan disponible por el momento.');">
                                     <i class="fa fa-arrow-circle-left"></i>
                                 </a>
                             <?php endif; ?>
@@ -185,7 +185,7 @@
         <input type="hidden" name="hd_credito" id="hd_credito" value="">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" onclick="$('#nc_modal').modal('hide');" aria-hidden="true">
+                <button type="button" class="close" onclick="cerrarNotaCredito()" aria-hidden="true">
                     &times;
                 </button>
                 <h4 class="modal-title">Nota de cr&eacute;dito</h4>
@@ -198,7 +198,7 @@
                     <i class="fa fa-print"></i> Imprimir
                 </button>
                 <a href="#" class="btn btn-danger" id="cerrar_pago_modal"
-                   onclick="$('#nc_modal').modal('hide');">Cerrar</a>
+                   onclick="cerrarNotaCredito()">Cerrar</a>
             </div>
         </div>
     </div>
@@ -232,17 +232,6 @@
                                 <option value="<?= $cuenta->id ?>"><?= $cuenta->descripcion ?></option>
                             <?php endforeach; ?>
                         </select>
-                    </div>
-                </div>
-                <br>
-                <div class="row">
-                    <div class="col-md-4 col-md-offset-1">
-                        <label>Serie</label>
-                        <input type="text" id="documento_serie" class="form-control">
-                    </div>
-                    <div class="col-md-5">
-                        <label>Numero</label>
-                        <input type="text" id="documento_numero" class="form-control">
                     </div>
                 </div>
                 <br>
@@ -392,6 +381,7 @@
     }
 
     function ver_nc(venta_id, serie, numero) {
+        $("#dialog_venta_detalle").modal('hide');
         $("#nc_modal").modal('show');
         $('#hd_venta_id').attr('value', venta_id);
         $('#hd_serie').attr('value', serie);
@@ -414,5 +404,10 @@
         $("#correoModal").html($("#loading").html());
         $("#correoModal").load('<?php echo $ruta ?>' + 'venta/modalEnviarVenta/' + idVenta + '/' + tipo_cliente);
         $('#correoModal').modal('show');
+    }
+
+    function cerrarNotaCredito(){
+        $('#nc_modal').modal('hide');
+        $('#dialog_venta_detalle').modal('show');
     }
 </script>

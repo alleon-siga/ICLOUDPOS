@@ -16,79 +16,14 @@ class facturacion extends MY_Controller
 
     function test()
     {
-        $this->load->model('facturacion/picado_model');
-        $productos = array();
-        $temp = new stdClass();
-        $temp->id = 1;
-        $temp->um_id = 1;
-        $temp->precio = 50;
-        $temp->cantidad = 100;
-        $productos[] = $temp;
+//        var_dump($this->facturacion_model->enviarBaja(1));
 
-        $temp = new stdClass();
-        $temp->id = 2;
-        $temp->um_id = 1;
-        $temp->precio = 50;
-        $temp->cantidad = 100;
-        $productos[] = $temp;
-
-        $temp = new stdClass();
-        $temp->id = 3;
-        $temp->um_id = 1;
-        $temp->precio = 50;
-        $temp->cantidad = 100;
-        $productos[] = $temp;
-
-        $temp = new stdClass();
-        $temp->id = 41;
-        $temp->um_id = 1;
-        $temp->precio = 50;
-        $temp->cantidad = 100;
-        $productos[] = $temp;
-
-        $temp = new stdClass();
-        $temp->id = 5;
-        $temp->um_id = 1;
-        $temp->precio = 50;
-        $temp->cantidad = 100;
-        $productos[] = $temp;
-
-        $response = $this->picado_model->split($productos);
-        $n = 0;
-        foreach ($response['BOLETAS'] as $boleta) {
-
-            echo '<br>BOLETA: ' . ++$n;
-            $importe = 0;
-            foreach ($boleta as $detalle) {
-                echo '<br>ID: ' . $detalle['id'];
-                echo '<br>UM: ' . $detalle['um_id'];
-                echo '<br>PRECIO: ' . $detalle['precio'];
-                echo '<br>CANTIDAD: ' . $detalle['cantidad'];
-                echo '<br>IMPORTE: ' . $detalle['cantidad'] * $detalle['precio'];
-                $importe += $detalle['cantidad'] * $detalle['precio'];
-            }
-            echo '<hr><br>TOTAL: ' . $importe;
-
-            echo '<hr>';
-
-        }
-
-//        $this->facturacion_model->getEstadoResumen();
-//        header('Content-Type: text/xml');
-//        var_dump($this->facturacion_model->enviarResumenBoletas());
-
-//        $this->db->update('facturacion', array('estado' => 0));
-//        $fact = $this->db->get('facturacion')->result();
-//        foreach ($fact as $f) {
-//            $this->facturacion_model->crearXml($f->id);
-//        }
-//        $this->db->update('facturacion', array(
-//            'estado' => 2,
-//            'hash_cdr' => NULL
-//        ));
-//        foreach ($fact as $f) {
-//            $this->facturacion_model->emitirXml($f->id);
-//        }
+        echo 'sdsd';
+        var_dump($this->facturacion_model->getEstado('1', array(
+            'codigo' => 'RA',
+            'FECHA_EMISION' => '2018-09-20',
+            'CORRELATIVO' => '1'
+        )));
     }
 
     function enviar($action = '')
@@ -483,7 +418,7 @@ class facturacion extends MY_Controller
                 $params['local_id'] = $this->input->post('local_id');
                 $date_range = explode(" - ", $this->input->post('fecha'));
                 $params['fecha_ini'] = date('Y-m-d', strtotime(str_replace("/", "-", $date_range[0])));
-                $params['fecha_fin'] = date('Y-m-d', strtotime(str_replace("/", "-", $date_range[1])));                
+                $params['fecha_fin'] = date('Y-m-d', strtotime(str_replace("/", "-", $date_range[1])));
                 $params['doc_id'] = $this->input->post('doc_id');
                 $data['lists'] = $this->facturacion_model->get_ventas_emitidas($params);
                 $data['emisor'] = $this->facturacion_model->get_emisor();
