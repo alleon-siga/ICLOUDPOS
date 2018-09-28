@@ -64,6 +64,21 @@
                             </div>
                         </div>
                         <div class="row">
+                            <label class="control-label">Producto:</label>
+                            <div id="divSelect">
+                                <select id="producto_id" name="producto_id" multiple="multiple">
+                                    <?php foreach ($productos as $producto): ?>
+                                        <option value="<?= $producto->producto_id ?>"
+                                                data-impuesto="<?= $producto->porcentaje_impuesto ?>">
+                                                    <?php $barra = $barra_activa->activo == 1 && $producto->barra != "" ? "CB: " . $producto->barra : "" ?>
+                                                    <?= getCodigoValue($producto->producto_id, $producto->codigo) . ' - ' . $producto->producto_nombre . " " . $barra ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+
+                        </div>
+                        <div class="row">
                             <label class="control-label">Marca:</label>
                             <select id="marca_id" name="marca_id" class="form-control ctrl">
                                 <option value="0">Todos</option>
@@ -99,26 +114,12 @@
                                 <?php endforeach; ?>
                             </select>
                         </div>
-                        <div class="row">
-                            <label class="control-label">Producto:</label>
-                            <div id="divSelect">
-                                <select id="producto_id" name="producto_id" multiple="multiple">
-                                    <?php foreach ($productos as $producto): ?>
-                                        <option value="<?= $producto->producto_id ?>"
-                                                data-impuesto="<?= $producto->porcentaje_impuesto ?>">
-                                                    <?php $barra = $barra_activa->activo == 1 && $producto->barra != "" ? "CB: " . $producto->barra : "" ?>
-                                                    <?= getCodigoValue($producto->producto_id, $producto->codigo) . ' - ' . $producto->producto_nombre . " " . $barra ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
 
-                        </div>
                     </div>
                 </div>
                 <div class="col-md-2">
                     <?php if (isset($locales)): ?>
-                    <label class="control-label panel-admin-text">Locales</label>
+                        <label class="control-label panel-admin-text">Locales</label>
                         <select id="local_id" class="form-control ctrl">
                             <option value="0">TODOS</option>
                             <?php foreach ($locales as $local): ?>
@@ -131,7 +132,7 @@
                 <div class="col-md-2">
                     <label class="control-label panel-admin-text">&nbsp;</label>
                     <select name="estado_cr_id" id="estado_cr_id" class='ctrl form-control'>
-                        
+
                         <option value="Contable" selected="">Contable</option>
                         <option value="Reales" >Reales</option>
                     </select>
@@ -142,8 +143,8 @@
                         <?php foreach ($monedas as $moneda): ?>
                             <option value="<?= $moneda->id_moneda ?>"
                                     data-simbolo="<?= $moneda->simbolo ?>"
-                                <?= $moneda->id_moneda == MONEDA_DEFECTO ? 'selected' : '' ?>><?= $moneda->nombre ?></option>
-                        <?php endforeach; ?>
+                                    <?= $moneda->id_moneda == MONEDA_DEFECTO ? 'selected' : '' ?>><?= $moneda->nombre ?></option>
+                                <?php endforeach; ?>
                     </select>
                 </div>
                 <div class="col-md-2">
@@ -153,7 +154,7 @@
                 <div class="col-md-1">
                     <div style="padding-top: 30px;"></div>
                     <button id="btn_buscar" class="btn btn-default">
-                        <i class="fa fa-search"></i> Buscar
+                        <i class="fa fa-search"></i> Buscar <span id="pruebatext"></span>
                     </button>
                 </div>
                 <div class="col-md-2">
@@ -188,7 +189,8 @@
             <script type="text/javascript">
                 $("#producto_id").multipleSelect({
                     filter: true,
-                    width: '100%'
+                    width: '100%',
+                    single: true
                 });
                 $(document).ready(function () {
                     //CONFIGURACIONES INICIALES
@@ -234,15 +236,27 @@
                             "firstDay": 1
                         }
                     });
-
                     $('.ctrl').chosen();
-
                     $("#btn_buscar, .btn_buscar").on("click", function () {
-                        getReporte_cg();
+                        
+                        if ($("#producto_id").val()>0) {
+                            getReporte_cv();
+                        } else {
+                            $.bootstrapGrowl('<h4>Precaución.</h4> <p>Debe Seleccionar un producto</p>', {
+                                type: 'warning',
+                                delay: 5000,
+                                allow_dismiss: true,
+                                align:"left"
+                                
+                            });
+                            $("#charm").tcharm({
+                                'position': 'right',
+                                'display': true,
+                                'top': '50px'
+                            });
+                        }
                     });
-
                     $('.chosen-container').css('width', '100%');
-
                     $("#btn_filter_reset").on('click', function () {
                         $('#marca_id').val('0').trigger('chosen:updated');
                         $('#grupo_id').val('0').trigger('chosen:updated');
@@ -250,17 +264,15 @@
                         $('#linea_id').val('0').trigger('chosen:updated');
                         $('#producto_id').multipleSelect('uncheckAll');
                         $("#charm").tcharm('hide');
-                        getReporte_cg();
+                        getReporte_cv();
                         filtro();
                     });
                     $('#marca_id, #grupo_id, #familia_id, #linea_id').on('change', function () {
                         filtro();
                     });
                 });
-
                 function getReporte_cv() {
                     $("#historial_cv_list").html($("#loading").html());
-
                     var data = {
                         'local_id': $("#local_id").val(),
                         'estado_cr_id': $("#estado_cr_id").val(),
@@ -272,7 +284,6 @@
                         'linea_id': $("#linea_id").val(),
                         'familia_id': $("#familia_id").val()
                     };
-
                     $.ajax({
                         url: '<?= base_url() ?>facturador/reporte/reporte_cv/filter',
                         data: data,
@@ -291,6 +302,7 @@
                     });
                     $("#charm").tcharm('hide');
                 }
+                $('[data-toggle="tooltip"]').tooltip();
                 function filtro() {
                     var data = {
                         'grupo_id': $("#grupo_id").val(),
@@ -298,7 +310,6 @@
                         'linea_id': $("#linea_id").val(),
                         'familia_id': $("#familia_id").val()
                     };
-
                     $.ajax({
                         url: '<?= base_url() ?>reporte/selectProducto',
                         data: data,
