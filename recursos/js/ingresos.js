@@ -1512,6 +1512,7 @@ function accionGuardar() {
 
             }
             $("#barloadermodal").modal('hide');
+            $("#confirmarmodal").modal('hide');
             $('.modal-backdrop').remove();
         },
         error: function (data) {
