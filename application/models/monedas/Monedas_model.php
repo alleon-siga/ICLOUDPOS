@@ -79,6 +79,9 @@ class monedas_model extends CI_Model
             $this->db->where('id_moneda', $moneda['id_moneda']);
             $this->db->update('moneda', $moneda);
 
+            $estado['estado'] = $moneda['status_moneda'];
+            $this->db->where('moneda_id', $moneda['id_moneda']);
+            $this->db->update('caja', $estado);
             $this->db->trans_complete();
 
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

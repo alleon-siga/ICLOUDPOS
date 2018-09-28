@@ -38,7 +38,7 @@
             <td><?= $cuenta->atraso ?></td>
         </tr>
 
-        <? foreach ($cuenta->detalles as $detalle): ?>
+        <?php foreach ($cuenta->detalles as $detalle): ?>
             <tr class="tabla_detalles">
                 <td colspan="3">
                     <?= $detalle->pago_nombre?>

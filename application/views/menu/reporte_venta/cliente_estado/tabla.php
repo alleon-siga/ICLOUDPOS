@@ -102,7 +102,7 @@ $total_saldo = 0; ?>
                 </td>
             </tr>
 
-            <? foreach ($cobranza->detalles as $detalle): ?>
+            <?php foreach ($cobranza->detalles as $detalle): ?>
                 <tr>
                     <td style="text-align: right;"><?= date('d/m/Y', strtotime($detalle->fecha)) ?></td>
                     <td><?= $detalle->letra ?></td>

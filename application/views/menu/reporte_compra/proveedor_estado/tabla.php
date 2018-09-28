@@ -89,7 +89,7 @@ $total_cuenta = 0; ?>
                 </tr>
             <?php endif; ?>
 
-            <? foreach ($pago->detalles as $detalle): ?>
+            <?php foreach ($pago->detalles as $detalle): ?>
 
                 <tr>
                     <td><?= date('d/m/Y', strtotime($detalle->fecha)) ?></td>

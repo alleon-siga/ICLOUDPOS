@@ -1,6 +1,6 @@
 var ruta = $('#base_url').val()
 var lst_producto = []
-var is_edit = false
+var is_edit = false;
 
 var auto_add = false
 
@@ -21,7 +21,8 @@ $(document).ready(function () {
 
   if ($('#venta_estado').val() == 'CAJA') {
     $('.ocultar_caja').hide()
-  } else if ($('#venta_estado').val() == 'COMPLETADO') {
+  }
+  else if ($('#venta_estado').val() == 'COMPLETADO') {
     $('.ocultar_caja').show()
   }
 
@@ -318,11 +319,6 @@ $(document).ready(function () {
           if (input.val() != 0) {
             total += parseFloat(input.val() * input.attr('data-unidades'))
           }
-          prepare_unidades_events()
-          prepare_precio_events()
-          refresh_right_panel()
-          refresh_totals()
-          prepare_precio_value(producto_id, unidad_minima)
         })
         $('#total_minimo').val(total)
         set_stock_info(producto_id)
@@ -330,8 +326,7 @@ $(document).ready(function () {
         //SUSCRIBOS EVENTOS
         prepare_unidades_events()
         prepare_precio_events()
-        refresh_right_panel()
-        refresh_totals()
+
         prepare_precio_value(producto_id, unidad_minima)
 
         refresh_right_panel()
@@ -344,7 +339,7 @@ $(document).ready(function () {
 
         if (auto_add && data.unidades.length == 1 && is_edit == false) {
           $('#add_producto').click()
-          is_edit = false
+          is_edit = false;
         }
       },
       complete: function (data) {
@@ -381,8 +376,7 @@ $(document).ready(function () {
         for (var i = 0; i < data.unidades.length; i++) {
           form_precio.append(create_precio_template(i, data.unidades[i]))
         }
-        refresh_totals()
-        refresh_right_panel()
+
         prepare_precio_value(producto_id, unidad_minima)
 
       },
@@ -407,7 +401,8 @@ $(document).ready(function () {
       pu.trigger('focus')
       edit_pu.attr('data-estado', '1')
       edit_pu.html('<i class="fa fa-check"></i>')
-    } else {
+    }
+    else {
       pu.attr('readonly', 'readonly')
       edit_pu.attr('data-estado', '0')
       edit_pu.html('<i class="fa fa-edit"></i>')
@@ -454,10 +449,10 @@ $(document).ready(function () {
         $('#subtotal_um').html(input.attr('data-unidad_nombre'))
         input.addClass('precio-selected')
       } else {
-        if ($('#total_minimo').val() == 0) {
-          $('#precio_unitario').val(0).toFixed(2)
-        } else {
-          $('#precio_unitario').val(parseFloat(pu.val() / $('#total_minimo').val()).toFixed(2))
+        if($('#total_minimo').val()==0){
+          $('#precio_unitario').val(0).toFixed(2);
+        }else{
+          $('#precio_unitario').val(parseFloat(pu.val() / $('#total_minimo').val()).toFixed(2));
         }
       }
 
@@ -479,7 +474,8 @@ $(document).ready(function () {
     if (e.keyCode == tecla_enter) {
       $('#editar_pu').click()
       $('#add_producto').trigger('focus')
-    } else
+    }
+    else
       refresh_totals()
   })
 
@@ -488,10 +484,10 @@ $(document).ready(function () {
       $('#editar_su').click()
       $('#add_producto').trigger('focus')
     } else {
-      if ($('#total_minimo').val() == 0) {
-        $('#precio_unitario').val(0).toFixed(2)
-      } else {
-        $('#precio_unitario').val(parseFloat($('#importe').val() / $('#total_minimo').val()).toFixed(2))
+      if($('#total_minimo').val()==0){
+        $('#precio_unitario').val(0).toFixed(2);
+      }else{
+        $('#precio_unitario').val(parseFloat($('#importe').val() / $('#total_minimo').val()).toFixed(2));
       }
     }
   })
@@ -507,13 +503,13 @@ $(document).ready(function () {
     if ($(this).val() != $('#MONEDA_DEFECTO_ID').val()) {
       $('#block_tasa').show()
       $('#tasa').trigger('focus')
-      refresh_totals()
-    } else {
+    }
+    else {
       $('#block_tasa').hide()
     }
     $('#moneda_text').html(nombre)
-
     refresh_right_panel()
+
   })
 
   $('#tasa').on('keyup', function () {
@@ -530,7 +526,7 @@ $(document).ready(function () {
       show_msg('warning', '<h4>Error. </h4><p>El Cliente no tiene ruc para realizar venta en factura.</p>')
       select_productos(55)
     }
-    refresh_totals()
+
   })
 
   $('#tipo_documento').on('change', function () {
@@ -567,15 +563,18 @@ $(document).ready(function () {
       show_msg('warning', '<h4>Error. </h4><p>Inserte una cantidad para realizar la venta.</p>')
       $('.cantidad-input[data-index="0"]').first().trigger('focus')
       return false
-    } else if (total > stock) {
+    }
+    else if (total > stock) {
       show_msg('warning', '<h4>Error. </h4><p>Stock Insuficiente.</p>')
       $('.cantidad-input[data-index="0"]').first().trigger('focus')
       return false
-    } else if ($('#editar_pu').attr('data-estado') == '1') {
+    }
+    else if ($('#editar_pu').attr('data-estado') == '1') {
       show_msg('warning', '<h4>Error. </h4><p>Por favor debe confirmar el Precio Unitario de Venta.</p>')
       $('#precio_unitario').trigger('focus')
       return false
-    } else if ($('#editar_su').attr('data-estado') == '1') {
+    }
+    else if ($('#editar_su').attr('data-estado') == '1') {
       show_msg('warning', '<h4>Error. </h4><p>Por favor debe confirmar el Subtotal de Venta.</p>')
       $('#importe').trigger('focus')
       return false
@@ -815,7 +814,7 @@ function end_venta () {
     if (tipo_pago == '1') {
       flag = true
 
-      $('#vc_total_pagar').val(formatPrice($('#total_importe').val()))
+      $('#vc_total_pagar').val($('#total_importe').val())
       $('#vc_importe').val($('#vc_total_pagar').val())
       $('#vc_vuelto').val(0)
       $('#vc_num_oper').val('')
@@ -833,22 +832,23 @@ function end_venta () {
       flag = true
       $('#c_cliente').val($('#cliente_id option:selected').text().trim())
       $('#c_fecha_giro').val($('#fecha_venta').val())
-      credito_init(formatPrice($('#total_importe').val()), 'COMPLETADO')
+      credito_init($('#total_importe').val(), 'COMPLETADO')
       refresh_credito_window()
       $('#dialog_venta_credito').modal('show')
     }
-  } else if (estado == 'CAJA') {
+  }
+  else if (estado == 'CAJA') {
     //Contado
     if (tipo_pago == '1') {
       flag = true
-      caja_init(formatPrice($('#total_importe').val()))
+      caja_init($('#total_importe').val())
     }
     //Credito
     else if (tipo_pago == '2') {
       flag = true
       $('#c_cliente').val($('#cliente_id option:selected').text().trim())
       $('#c_fecha_giro').val($('#fecha_venta').val())
-      credito_init(formatPrice($('#total_importe').val()), 'CAJA')
+      credito_init($('#total_importe').val(), 'CAJA')
       refresh_credito_window()
       $('#dialog_venta_credito').modal('show')
     }
@@ -984,7 +984,8 @@ function save_venta_contado (imprimir) {
         if ($('#facturacion_electronica').val() == 1 && data.venta.venta_status == 'COMPLETADO' && (data.venta.id_documento == 1 || data.venta.id_documento == 3)) {
           if (data.facturacion.estado == 1) {
             show_msg('success', '<h4>Facturacion Electronica:</h4> ' + data.facturacion.nota)
-          } else {
+          }
+          else {
             show_msg('danger', '<h4>Facturacion Electronica:</h4> ' + data.facturacion.nota)
           }
         }
@@ -1003,7 +1004,8 @@ function save_venta_contado (imprimir) {
               $('#dialog_venta_imprimir').modal('show')
             }
           })
-        } else if (imprimir == '2') {
+        }
+        else if (imprimir == '2') {
           var venta_id = data.venta.venta_id
           $.ajax({
             url: ruta + 'venta_new',
@@ -1023,7 +1025,8 @@ function save_venta_contado (imprimir) {
             }
           })
 
-        } else {
+        }
+        else {
           $.ajax({
             url: ruta + 'venta_new',
             success: function (data) {
@@ -1033,11 +1036,13 @@ function save_venta_contado (imprimir) {
             }
           })
         }
-      } else if (data.success == '3') {
+      }
+      else if (data.success == '3') {
         show_msg('danger', '<h4>Error. </h4><p>Stock insuficiente.</p>')
         $('#loading_save_venta').modal('hide')
         $('.save_venta_contado').removeAttr('disabled')
-      } else {
+      }
+      else {
         if (data.msg)
           show_msg('danger', '<h4>Error. </h4><p>' + data.msg + '</p>')
         else
@@ -1131,7 +1136,8 @@ function save_venta_credito (imprimir) {
               }
             })
           }, 500)
-        } else if (imprimir == '2') {
+        }
+        else if (imprimir == '2') {
           var venta_id = data.venta.venta_id
           $.ajax({
             url: ruta + 'venta_new',
@@ -1150,7 +1156,8 @@ function save_venta_credito (imprimir) {
               $('#imprimir_frame_venta').attr('src', url)
             }
           })
-        } else {
+        }
+        else {
           $.ajax({
             url: ruta + 'venta_new',
             success: function (data) {
@@ -1160,19 +1167,20 @@ function save_venta_credito (imprimir) {
             }
           })
         }
-      } else if (data.success == '3') {
+      }
+      else if (data.success == '3') {
         show_msg('danger', '<h4>Error. </h4><p>Stock insuficiente.</p>')
         $('#loading_save_venta').modal('hide')
         $('.save_venta_credito').removeAttr('disabled')
-      } else {
-        if (data.msg) {
+      }
+      else {
+        if (data.msg){
           show_msg('danger', '<h4>Error. </h4><p>' + data.msg + '</p>')
-        } else {
-
+        }else{
           show_msg('danger', '<h4>Error. </h4><p>Ha ocurrido un error insperado al guardar la venta.</p>')
-          $('#dialog_venta_credito').modal('show')
-          $('.save_venta_credito').removeAttr('disabled')
         }
+        $('#dialog_venta_credito').modal('show');
+        $('.save_venta_credito').removeAttr('disabled');
       }
     },
     error: function (data) {
@@ -1190,7 +1198,8 @@ function save_venta_caja (imprimir) {
 
   if (tipo_pago == '1') {
     save_venta_contado(imprimir)
-  } else if (tipo_pago == '2') {
+  }
+  else if (tipo_pago == '2') {
     save_venta_credito(imprimir)
   }
 
@@ -1201,7 +1210,7 @@ function save_venta_caja (imprimir) {
 //funcion para agregar los productos de la venta
 function add_producto () {
 
-  is_edit = false
+  is_edit = false;
   var producto_id = $('#producto_id').val()
   var local_id = $('#local_id').val()
   var precio_id = $('#precio_id').val()
@@ -1263,7 +1272,8 @@ function add_producto () {
     producto.subtotal = parseFloat(producto.total_minimo * producto.precio_descuento)
 
     lst_producto.push(producto)
-  } else {
+  }
+  else {
     //EDITO LA INFORMACION DETALLADA DEL PRODUCTO
     lst_producto[index].precio_id = precio_id
     lst_producto[index].precio_unitario = parseFloat($('#precio_unitario').val())
@@ -1304,7 +1314,7 @@ function add_producto () {
 //edita un producto en la tabla
 function edit_producto (producto_id) {
 
-  is_edit = true
+  is_edit = true;
   $('#producto_id').val(producto_id).trigger('chosen:updated')
   $('#producto_id').change()
   var producto = {}
@@ -1528,7 +1538,8 @@ function refresh_totals () {
       }
       if ($('#precio_id').val() == '3') {
         importe_total += parseFloat(precio_unitario * input.val() * input.attr('data-unidades'))
-      } else
+      }
+      else
         importe_total += parseFloat($('#precio_' + input.attr('data-unidad_id')).val() * input.val())
     }
   })
@@ -1544,7 +1555,6 @@ function refresh_right_panel () {
   if ($('#sc').val() == 1) {
     if ($('#tipo_documento').val() == 6)
       $('#stock_contable').hide()
-
     else
       $('#stock_contable').show()
   }
@@ -1572,15 +1582,11 @@ function refresh_right_panel () {
 
     $('.precio-input').each(function () {
       $(this).val(parseFloat($(this).attr('data-value') / tasa).toFixed(3))
-      $('#precio_unitario').val($(this).val())
-      refresh_totals()
     })
 
   } else {
     $('.precio-input').each(function () {
       $(this).val(parseFloat($(this).attr('data-value')))
-      $('#precio_unitario').val($(this).val())
-      refresh_totals()
     })
   }
 
@@ -1597,7 +1603,8 @@ function refresh_right_panel () {
       }
     }
     subtotal = parseFloat(total_importe - impuesto)
-  } else if ($('#tipo_impuesto').val() == 2) {
+  }
+  else if ($('#tipo_impuesto').val() == 2) {
     subtotal = parseFloat(total)
     for (var i = 0; i < lst_producto.length; i++) {
       var afect_impuesto = lst_producto[i].afectacion_impuesto
@@ -1608,7 +1615,8 @@ function refresh_right_panel () {
       }
     }
     total_importe = parseFloat(subtotal + impuesto)
-  } else if ($('#tipo_impuesto').val() == 3 && $('#tipo_documento').val() == 6) {
+  }
+  else if ($('#tipo_impuesto').val() == 3 && $('#tipo_documento').val() == 6) {
     total_importe = parseFloat(total)
     subtotal = total
     impuesto = parseFloat(0)
@@ -1676,13 +1684,15 @@ function set_stock_info () {
             if (stock > 0) {
               $('#stock_contable').addClass('label-success')
               $('#stock_contable').removeClass('label-danger')
-            } else {
+            }
+            else {
               $('#stock_contable').addClass('label-danger')
               $('#stock_contable').removeClass('label-success')
             }
 
             $('#stock_contable').html('SC: ' + stock + ' ' + data.shadow.unidad_abr)
-          } else {
+          }
+          else {
             $('#stock_contable').addClass('label-danger')
             $('#stock_contable').removeClass('label-success')
             $('#stock_contable').html(parseFloat('SC: -' + stock_total_minimo) + data.shadow.unidad_nombre)
@@ -1765,7 +1775,8 @@ function prepare_unidades_value (producto_id, local_id, unidad, def_value) {
   if (cant == -1) {
     cantidad.attr('value', def_value)
     cantidad.attr('data-value', def_value)
-  } else {
+  }
+  else {
     cantidad.attr('value', cant)
     cantidad.attr('data-value', cant)
   }
@@ -1864,12 +1875,12 @@ function prepare_precio_value (producto_id, unidad_minima) {
   $('#descuento').val(descuento > 0 ? descuento : 0)
 
   if (precio == -1) {
-
     $('#precio_unitario').val($('#precio_' + unidad_minima.id_unidad).val())
     $('#precio_unitario').attr('data-index', parseInt($('.precio-input').length - 1))
     $('#precio_unitario_um').html(unidad_minima.nombre_unidad)
     $('#precio_' + unidad_minima.id_unidad).addClass('precio-selected')
-  } else {
+  }
+  else {
     $('#precio_unitario').val(precio)
     $('.precio-input').each(function () {
       var input = $(this)
@@ -1878,12 +1889,9 @@ function prepare_precio_value (producto_id, unidad_minima) {
         $('#precio_unitario').attr('data-index', input.attr('data-index'))
         $('#precio_unitario_um').html(input.attr('data-unidad_nombre'))
         input.addClass('precio-selected')
-
       }
     })
   }
-  refresh_totals()
-  refresh_right_panel()
 }
 
 //preparo los eventos de los precios
@@ -1905,7 +1913,6 @@ function prepare_precio_events () {
     e.preventDefault()
     $('#precio_unitario').val($('#' + $(this).attr('data-precio')).val())
     $('#' + $(this).attr('data-precio')).click()
-    refresh_totals()
   })
 
 }
@@ -1933,8 +1940,7 @@ function get_value_producto (producto_id, local_id, um_id, defecto) {
   }
   if (defecto != undefined)
     return defecto
-  else
-    return 0
+  else return 0
 }
 
 function get_precio_producto (producto_id) {

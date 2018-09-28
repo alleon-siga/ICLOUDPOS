@@ -1671,13 +1671,14 @@ class venta_new_model extends CI_Model
             pcu.contable_costo as contable_costo,
 
             pcu.contable_costo as contable_costo,
-            pcu.porcentaje_utilidad as porcentaje_utilidad
-
+            pcu.porcentaje_utilidad as porcentaje_utilidad,
+            producto_costo_unitario.costo as real_costo
             ')
             ->from('detalle_venta as dv')
             ->join('venta as v', 'dv.id_venta = v.venta_id')
             ->join('local', 'local.int_local_id=v.local_id')
             ->join('producto', 'producto.producto_id=dv.id_producto')
+            ->join('producto_costo_unitario', 'producto_costo_unitario.producto_id=dv.id_producto')
             ->join('unidades', 'unidades.id_unidad=dv.unidad_medida')
             ->join('producto_costo_unitario pcu', 'dv.id_producto = pcu.producto_id AND v.id_moneda = pcu.moneda_id')
             ->where('dv.id_venta', $venta->venta_id)
@@ -1716,8 +1717,7 @@ class venta_new_model extends CI_Model
 
 
             $result[$detalle->producto_id]->contable_costo = $detalle->contable_costo;
-
-
+            $result[$detalle->producto_id]->real_costo = $detalle->real_costo;
             $result[$detalle->producto_id]->precio_comp = (($detalle->porcentaje_utilidad / 100) * $detalle->contable_costo) + $detalle->contable_costo;
 
         }
