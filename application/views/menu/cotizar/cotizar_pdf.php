@@ -160,7 +160,7 @@
                 <table border="0" align="right">
                 <?php if ($cotizar->documento_id == 1): ?>
                     <tr>
-                        <td style="text-align: left; font-weight: bold; bold; width: 160px; height: 25px;">SUBTOTAL</td>
+                        <td style="text-align: left; font-weight: bold; width: 160px; height: 25px;">SUBTOTAL</td>
                         <td style="text-align: right;"><?= $cotizar->subtotal ?></td>
                     </tr>
                     <tr>
