@@ -158,7 +158,7 @@ class ingresos extends MY_Controller
             //echo 'campo:'.$this->input->post('tasa_id', true).':fin';
 
             if ($this->form_validation->run() == false):
-                echo "Error de Validacion de Formularios";
+                $json['error'] = 'El nombre del proveedor es requerido.';
             else:
                 /*if (isset($_POST['subTotal']) && $_POST['subTotal'] != "" && isset($_POST['montoigv']) && $_POST['montoigv'] != "" &&
                     isset($_POST['totApagar']) && $_POST['totApagar'] != "") {*/
