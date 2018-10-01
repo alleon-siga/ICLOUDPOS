@@ -8,11 +8,11 @@ echo "<input type='hidden' id='base_url' value='" . base_url() . "'>"
 <?php
 /* Template variables */
 $template = array(
-    'name' => 'ICLOUD POS',
-    'version' => '2.0',
-    'author' => 'Te Ayudo',
+    'name' => '<?= $info->nombre_empresa ?>',
+    'version' => '<?= $info->version ?>',
+    'author' => '<?= $info->nombre_empresa ?>',
     'robots' => 'noindex, nofollow',
-    'title' => 'ICLOUD POS',
+    'title' => '<?= $info->nombre_empresa ?>',
     'description' => 'Cuentas con un negocio u empresas cuyo giro son la venta al por mayor y menor de abarrotes, ferretería, licorería, accesorios entre otros? Entonces solicita tu prueba gratis de un mes, solo escríbenos un correo y nos pondremos en contacto contigo. También si deseas podemos realizar una demostración en vivo del programa sin ningún compromiso. Nuestro programa es compatible con Windows, Android y IOS',
     // true                     enable page preloader
     // false                    disable page preloader
@@ -60,7 +60,7 @@ if ($this->session->userdata('tema')) {
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-    <title>ICLOUD POS</title>
+    <title><?= $info->nombre_empresa ?></title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
     <!-- Icons -->
@@ -211,7 +211,7 @@ if ($this->session->userdata('tema')) {
     <!-- Preloader functionality (initialized in js/app.js) - pageLoading() -->
     <!-- Used only if page preloader is enabled from inc/config (PHP version) or the class 'page-loading' is added in #page-wrapper element (HTML version) -->
     <div class="preloader themed-background">
-        <h1 class="push-top-bottom text-light text-center"><strong>Te</strong>Ayudo</h1>
+        <h1 class="push-top-bottom text-light text-center"><strong><?= $info->nombre_empresa ?></strong></h1>
 
         <div class="inner">
             <h3 class="text-light visible-lt-ie9 visible-lt-ie10"><strong>Loading..</strong></h3>
@@ -306,7 +306,7 @@ if ($this->session->userdata('tema')) {
                 <div class="sidebar-content">
                     <!-- Brand -->
                     <a href="<?= $ruta ?>principal" class="sidebar-brand">
-                        <i class="gi gi-cart_out"></i><strong>ICLOUD POS</strong>
+                        <i class="gi gi-cart_out"></i><strong><?= $info->nombre_empresa ?></strong>
                     </a>
                     <!-- END Brand -->
 
@@ -314,7 +314,7 @@ if ($this->session->userdata('tema')) {
                     <div class="sidebar-section sidebar-user clearfix">
                         <div class="sidebar-user-avatar">
                             <a href="<?= $ruta ?>principal">
-                                <img src="<?php echo $ruta ?>recursos/img/punto_de_venta_v2.jpg"
+                                <img src="<?php echo $ruta ?>recursos/img/<?= $info->ruta_logo3 ?>"
                                      alt="avatar">
                             </a>
                         </div>
@@ -518,7 +518,7 @@ if ($this->session->userdata('tema')) {
                         </li>
                         <li class="dropdown">
                             <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">
-                                <img src="<?php echo $ruta ?>recursos/img/punto_de_venta_v2.jpg"
+                                <img src="<?php echo $ruta ?>recursos/img/<?= $info->ruta_logo3 ?>"
                                      alt="avatar"> <i
                                         class="fa fa-angle-down"></i>
                             </a>

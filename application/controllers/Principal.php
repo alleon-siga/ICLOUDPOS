@@ -71,7 +71,7 @@ class principal extends MY_Controller
         $data['ventastotalhoy'] = 0;
         $data['comprashoy'] = count($this->ingreso_model->get_ingresos_by(array('DATE(fecha_registro)' => date('Y-m-d'))));
         $data['cuentasporcobrar'] = $this->cliente_model->get_total_cuentas_por_cobrar();
-
+        $data['info'] = $this->opciones_model->get_version();
         $dataCuerpo['cuerpo'] = $this->load->view('menu/principal', $data, true);
 
         if ($this->input->is_ajax_request()) {

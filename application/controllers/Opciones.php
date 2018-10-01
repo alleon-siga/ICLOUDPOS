@@ -39,8 +39,8 @@ class opciones extends MY_Controller
 
         if ($action == 'get') {
             $data['configuraciones'] = $this->opciones_model->get_opciones($keys);
+            $data['info'] = $this->opciones_model->get_version();
             $dataCuerpo['cuerpo'] = $this->load->view('menu/opciones/opciones', $data, true);
-
             if ($this->input->is_ajax_request()) {
                 echo $dataCuerpo['cuerpo'];
             } else {
