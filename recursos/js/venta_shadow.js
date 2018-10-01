@@ -304,7 +304,8 @@ $(document).ready(function () {
                 //SUSCRIBOS EVENTOS
                 prepare_unidades_events()
                 prepare_precio_events()
-
+                refresh_right_panel()
+                refresh_totals()
                 prepare_precio_value(producto_id, unidad_minima)
 
                 refresh_right_panel()
@@ -332,10 +333,10 @@ $(document).ready(function () {
         $('#chkCostoContable').on('click', function () {
             if ($(this).prop('checked') == true) {
                 $('#precio_unitario').val($(this).val());
-                refresh_totals();
+                $('#importe').val(parseFloat($('#precio_unitario').val() * $('#total_minimo').val()).toFixed(2));
             } else {
                 $('#precio_unitario').val($('.precio-selected').val());
-                refresh_totals();
+                $('#importe').val(parseFloat($('.precio-selected').val() * $('#total_minimo').val()).toFixed(2));
             }
         });
     });
@@ -555,7 +556,7 @@ $(document).ready(function () {
             return false
         }
         add_producto()
-    })
+    });
 
     $('#close_add_producto').on('click', function () {
         $('#producto_id').html('<option></option>').change()
@@ -887,37 +888,34 @@ function prepare_detalles_productos() {
 
         var precios = {}
         for (var j = 0; j < lst_producto[i].detalles.length; j++) {
-            if (precios[lst_producto[i].detalles[j].unidad] == undefined)
-                precios[lst_producto[i].detalles[j].unidad] = lst_producto[i].detalles[j].unidades
-        }
-
-        for (var unidad in cantidades) {
-            if (cantidades[unidad] != 0) {
-
-                var producto = {}
-                producto.id_producto = lst_producto[i].producto_id
-                producto.precio = precios[unidad] * lst_producto[i].precio_descuento
-                producto.precio_venta = precios[unidad] * lst_producto[i].precio_unitario
-                producto.unidad_medida = unidad
-                producto.cantidad = cantidades[unidad]
-                producto.detalle_importe = producto.cantidad * producto.precio
-                producto.contable_costo = lst_producto[i].contable_costo
-                producto.real_costo = lst_producto[i].real_costo
-                if ($('#aplicarCosteo').prop('checked') == true) {
-                    producto.aplishadow = 1
-                } else {
-                    producto.aplishadow = 0
-                }
-                
-                    producto.aplishadowitem = lst_producto[i].shadowitem
-                
-                productos.push(producto)
+            if (precios[lst_producto[i].detalles[j].unidad] === undefined) {
+                precios[lst_producto[i].detalles[j].unidad] = lst_producto[i].detalles[j].unidades;
             }
         }
 
+        for (var unidad in cantidades) {
+            if (cantidades[unidad] !== 0) {
+                var producto = {};
+                producto.id_producto = lst_producto[i].producto_id;
+                producto.precio = precios[unidad] * lst_producto[i].precio_descuento;
+                producto.precio_venta = precios[unidad] * lst_producto[i].precio_unitario;
+                producto.unidad_medida = unidad;
+                producto.cantidad = cantidades[unidad];
+                producto.detalle_importe = producto.cantidad * producto.precio;
+                producto.contable_costo = lst_producto[i].contable_costo;
+                producto.real_costo = lst_producto[i].real_costo;
+                if ($('#aplicarCosteo').prop('checked') === true) {
+                    producto.aplishadow = 1;
+                } else {
+                    producto.aplishadow = 0;
+                }
+                producto.aplishadowitem = lst_producto[i].shadowitem;
+                productos.push(producto);
+            }
+        }
     }
 
-    return JSON.stringify(productos)
+    return JSON.stringify(productos);
 
 }
 
@@ -1048,65 +1046,123 @@ function add_producto() {
     var producto_id = $('#producto_id').val()
     var local_id = $('#local_id').val()
     var precio_id = $('#precio_id').val()
-    var shadowitem = 1
+    var shadowitem = 1;
     var index = get_index_producto(producto_id)
 
     if (index == -1) {
         //AGREGO EL PRODUCTO E INICIALIZO SUS VALORES
         var producto = {}
-        producto.index = lst_producto.length
-        producto.producto_id = producto_id
-        producto.producto_impuesto = parseFloat($('#producto_id option:selected').attr('data-impuesto'))
-        producto.afectacion_impuesto = parseFloat($('#producto_id option:selected').attr('data-afectacion_impuesto'))
-        producto.producto_nombre = encodeURIComponent($('#producto_id option:selected').text())
-        producto.precio_id = precio_id
-        producto.precio_unitario = parseFloat($('#precio_unitario').val())
-        producto.precio_unitario_bk = parseFloat($('#precio_unitario').val())
-        producto.descuento = isNaN(parseFloat($('#descuento').val())) ? 0 : parseFloat($('#descuento').val())
-        producto.precio_descuento = producto.descuento > 0 ? (producto.precio_unitario - (producto.precio_unitario * producto.descuento / 100)) : producto.precio_unitario
+        if ($('#chkCostoContable').prop('checked') == true) {
+            producto.index = lst_producto.length
+            producto.producto_id = producto_id
+            producto.producto_impuesto = parseFloat($('#producto_id option:selected').attr('data-impuesto'))
+            producto.afectacion_impuesto = parseFloat($('#producto_id option:selected').attr('data-afectacion_impuesto'))
+            producto.producto_nombre = encodeURIComponent($('#producto_id option:selected').text())
+            producto.precio_id = precio_id
+            lst_producto[index].shadowitem = shadowitem
+            producto.precio_unitario = parseFloat($('#precio_unitario').val())
+            producto.precio_unitario_bk = parseFloat($('#precio_unitario').val())
+            producto.descuento = isNaN(parseFloat($('#descuento').val())) ? 0 : parseFloat($('#descuento').val())
+            producto.precio_descuento = producto.descuento > 0 ? (producto.precio_unitario - (producto.precio_unitario * producto.descuento / 100)) : producto.precio_unitario
 
-        producto.um_min = $('#um_minimo').html().trim()
-        producto.um_min_abr = $('#um_minimo').attr('data-abr')
+            producto.um_min = $('#um_minimo').html().trim()
+            producto.um_min_abr = $('#um_minimo').attr('data-abr')
 
-        producto.total_local = {}
-        producto.detalles = []
+            producto.total_local = {}
+            producto.detalles = []
 
-        $('#local_id option').each(function () {
-            var local = $(this)
-            if (local.val() == local_id)
-                producto.total_local['local' + local.val()] = parseFloat($('#total_minimo').val())
-            else
-                producto.total_local['local' + local.val()] = 0
-
-            $('.cantidad-input').each(function () {
-                var input = $(this)
-                var detalle = {}
-
-                detalle.local_id = local.val()
-                detalle.local_nombre = encodeURIComponent(local.text())
+            $('#local_id option').each(function () {
+                var local = $(this)
                 if (local.val() == local_id)
-                    detalle.cantidad = isNaN(parseFloat(input.val())) ? 0 : parseFloat(input.val())
+                    producto.total_local['local' + local.val()] = parseFloat($('#total_minimo').val())
                 else
-                    detalle.cantidad = parseFloat(0)
-                detalle.unidad = input.attr('data-unidad_id')
-                detalle.unidad_nombre = input.attr('data-unidad_nombre')
-                detalle.unidad_abr = input.attr('data-unidad_abr')
-                detalle.unidades = input.attr('data-unidades')
-                detalle.orden = input.attr('data-orden')
-                producto.detalles.push(detalle)
+                    producto.total_local['local' + local.val()] = 0
+
+                $('.cantidad-input').each(function () {
+                    var input = $(this)
+                    var detalle = {}
+
+                    detalle.local_id = local.val()
+                    detalle.local_nombre = encodeURIComponent(local.text())
+                    if (local.val() == local_id)
+                        detalle.cantidad = isNaN(parseFloat(input.val())) ? 0 : parseFloat(input.val())
+                    else
+                        detalle.cantidad = parseFloat(0)
+                    detalle.unidad = input.attr('data-unidad_id')
+                    detalle.unidad_nombre = input.attr('data-unidad_nombre')
+                    detalle.unidad_abr = input.attr('data-unidad_abr')
+                    detalle.unidades = input.attr('data-unidades')
+                    detalle.orden = input.attr('data-orden')
+                    producto.detalles.push(detalle)
+
+                })
 
             })
 
-        })
+            producto.total_minimo = 0
+            for (var local_index in producto.total_local)
+                producto.total_minimo += parseFloat(producto.total_local[local_index]);
 
-        producto.total_minimo = 0
-        for (var local_index in producto.total_local)
-            producto.total_minimo += parseFloat(producto.total_local[local_index]);
+            producto.subtotal = parseFloat(producto.total_minimo * producto.precio_descuento)
+            producto.subtotal_bk = parseFloat(producto.total_minimo * producto.precio_descuento)
 
-        producto.subtotal = parseFloat(producto.total_minimo * producto.precio_descuento)
-        producto.subtotal_bk = parseFloat(producto.total_minimo * producto.precio_descuento)
+            lst_producto.push(producto)
+        } else {
+            producto.index = lst_producto.length
+            producto.producto_id = producto_id
+            producto.producto_impuesto = parseFloat($('#producto_id option:selected').attr('data-impuesto'))
+            producto.afectacion_impuesto = parseFloat($('#producto_id option:selected').attr('data-afectacion_impuesto'))
+            producto.producto_nombre = encodeURIComponent($('#producto_id option:selected').text())
+            producto.precio_id = precio_id
+            lst_producto[index].shadowitem = 0
+            producto.precio_unitario = parseFloat($('#precio_unitario').val())
+            producto.precio_unitario_bk = parseFloat($('#precio_unitario').val())
+            producto.descuento = isNaN(parseFloat($('#descuento').val())) ? 0 : parseFloat($('#descuento').val())
+            producto.precio_descuento = producto.descuento > 0 ? (producto.precio_unitario - (producto.precio_unitario * producto.descuento / 100)) : producto.precio_unitario
 
-        lst_producto.push(producto)
+            producto.um_min = $('#um_minimo').html().trim()
+            producto.um_min_abr = $('#um_minimo').attr('data-abr')
+
+            producto.total_local = {}
+            producto.detalles = []
+
+            $('#local_id option').each(function () {
+                var local = $(this)
+                if (local.val() == local_id)
+                    producto.total_local['local' + local.val()] = parseFloat($('#total_minimo').val())
+                else
+                    producto.total_local['local' + local.val()] = 0
+
+                $('.cantidad-input').each(function () {
+                    var input = $(this)
+                    var detalle = {}
+
+                    detalle.local_id = local.val()
+                    detalle.local_nombre = encodeURIComponent(local.text())
+                    if (local.val() == local_id)
+                        detalle.cantidad = isNaN(parseFloat(input.val())) ? 0 : parseFloat(input.val())
+                    else
+                        detalle.cantidad = parseFloat(0)
+                    detalle.unidad = input.attr('data-unidad_id')
+                    detalle.unidad_nombre = input.attr('data-unidad_nombre')
+                    detalle.unidad_abr = input.attr('data-unidad_abr')
+                    detalle.unidades = input.attr('data-unidades')
+                    detalle.orden = input.attr('data-orden')
+                    producto.detalles.push(detalle)
+
+                })
+
+            })
+
+            producto.total_minimo = 0
+            for (var local_index in producto.total_local)
+                producto.total_minimo += parseFloat(producto.total_local[local_index]);
+
+            producto.subtotal = parseFloat(producto.total_minimo * producto.precio_descuento)
+            producto.subtotal_bk = parseFloat(producto.total_minimo * producto.precio_descuento)
+
+            lst_producto.push(producto)
+        }
     } else {
         //EDITO LA INFORMACION DETALLADA DEL PRODUCTO
         if ($('#chkCostoContable').prop('checked') == true) {
@@ -1156,7 +1212,6 @@ function add_producto() {
 
             })
         }
-        
     }
 
     $('#producto_id').html('<option></option>').change()

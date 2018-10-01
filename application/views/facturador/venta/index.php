@@ -78,7 +78,6 @@
                     <div class="col-md-2">
                         <label class="control-label panel-admin-text">Producto:</label>
                     </div>
-
                     <div class="col-md-3">
                         <div class="help-key badge label-success" style="display: none;">2</div>
                         <select name="local_id" id="local_id" class='form-control'>
@@ -88,7 +87,6 @@
                                 <?php endforeach; ?>
                         </select>
                     </div>
-
                     <div class="col-md-7">
                         <input type="text" class="form-control" id="producto_complete">
                     </div>
@@ -202,7 +200,7 @@
                                     <div class="loading-icon"></div>
                                 </div>
                             </div>
-                            
+
                             <div class="col-md-8">
                                 <label id="popover_precioUnitario" class="control-label badge label-info"
                                        style="width: 50% !important; font-size: 15px; cursor: pointer; display:none; float: left; position: absolute; z-index: 3000;"></label>
@@ -213,8 +211,8 @@
                             <div id="producto_precio" class="col-md-8 row text-center venta_input">
                             </div>
                             <div class="col-md-2 text-center">
-                                    <input type="checkbox" name="chkCostoContable" data-costocontable="" id="chkCostoContable" value="" style="margin-top:15px;">
-                                </div>
+                                <input type="checkbox" name="chkCostoContable" data-costocontable="" id="chkCostoContable" value="" style="margin-top:15px;">
+                            </div>
                         </div>
                         <hr class="hr-margin-10">
                         <!-- SECCION DE PRECIO UNITARIO E IMPORTE -->
@@ -591,8 +589,6 @@
         </div>
 
     </div>
-
-
     <div class="modal fade" id="dialog_venta_contado" tabindex="-1" role="dialog"
          aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false"
          aria-hidden="true">
@@ -682,7 +678,6 @@
                     var venta = [];
                     $(function () {
 <?php if ($venta != NULL): ?>
-
                             venta.local_id = <?= $venta->local_id ?>;
                             venta.cliente_id = <?= $venta->cliente_id ?>;
                             venta.documento_id = <?= $venta->documento_id ?>;
@@ -761,17 +756,11 @@
                             }
 
 <?php endif; ?>
-
-
                     });
-
-
-                    function add_producto_from_venta(producto_id, producto_nombre, precio, precio_venta, um_min, um_min_abr, total_min, unidades, impuesto, afectacion_impuesto, precio_comp, contable_costo,real_costo) {
+                    function add_producto_from_venta(producto_id, producto_nombre, precio, precio_venta, um_min, um_min_abr, total_min, unidades, impuesto, afectacion_impuesto, precio_comp, contable_costo, real_costo) {
 
                         var local_id = $("#local_id").val();
                         var precio_id = $("#precio_id").val();
-
-
                         //AGREGO EL PRODUCTO E INICIALIZO SUS VALORES
                         var producto = {};
                         producto.index = lst_producto.length;
@@ -821,9 +810,7 @@
                         producto.precio_unitario_bk = parseFloat(precio_venta);
                         producto.subtotal_bk = parseFloat(producto.total_minimo * producto.precio_descuento);
                         lst_producto.push(producto);
-
                         update_view(get_active_view());
-
                         refresh_right_panel();
 
                     }

@@ -6,22 +6,32 @@
         <label>Total: <?= $moneda->simbolo ?> <span id="total"><?= number_format($venta_totales->total, 2) ?></span></label>
     </div>
 </div>
+<style>
+    table thead {
+        background-color: #2d2d2d !important;
+        color: white !important;
+    }
+    table tr:hover {
+        font-weight: bold !important;
+    }
+</style>
 <div class="table-responsive">
-    <table class='table table-striped dataTable tableStyle'>
+    <table class="table dataTable table-bordered no-footer"  style="overflow:scroll">
         <thead>
             <tr>
-                <th width="5%"># Venta</th>
-                <th width="5%">Fecha Registro</th>
-                <th width="5%">Fecha Venta</th>
-                <th width="5%"># Comprobante</th>
-                <th width="10%">Identificaci&oacute;n</th>
-                <th width="20%">Cliente</th>
-                <th width="10%">Vendedor</th>
-                <th width="5%">Condici&oacute;n</th>
-                <th width="5%">Estado</th>
-                <th width="5%">Tip. Cam.</th>
-                <th width="5%">Total</th>
-                <th width="10%">Acciones</th>
+                <th>#</th>
+                <th>Fecha Registro</th>
+                <th>Fecha Venta</th>
+                <th># Comprobante</th>
+                <th>Identificaci&oacute;n</th>
+                <th>Cliente</th>
+                <th>Vendedor</th>
+                <th>Condici&oacute;n</th>
+                <th>Estado</th>
+                <th>Tip. Cam.</th>
+                <th>Total</th>
+                <th>Convertido</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
@@ -54,6 +64,7 @@
                     <td style="white-space: normal;"><?= $venta->venta_estado ?></td>
                     <td style="white-space: normal;"><?= $venta->moneda_tasa ?></td>
                     <td style="text-align: right;"><?= $venta->moneda_simbolo ?> <?= number_format($venta->total, 2) ?></td>
+                    <td style="text-align: center;"><?php if(($venta->convertidos)>0){ echo '<button class="btn btn-info btn-xs">S</buton>';}else{echo '<button class="btn btn-warning btn-xs">N</buton>';}?></td>
                     <td style="text-align: center; white-space: normal;">
                     <?php
                         if($venta->documento_id==6){

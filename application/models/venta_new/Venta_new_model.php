@@ -71,19 +71,24 @@ class venta_new_model extends CI_Model
             venta.tipo_impuesto as tipo_impuesto,
             cliente.tipo_cliente as tipo_cliente,
             venta.dni_garante as nombre_vd,
+            CASE WHEN venta_shadow.venta_id > 0 THEN "SI" ELSE
+            CASE WHEN iSnULL(venta_shadow.venta_id) THEN "NO" END  END as comprobante_shadow ,
+	    CASE WHEN COUNT(venta_shadow.venta_id) > 0 THEN  COUNT(venta_shadow.venta_id) ELSE
+	    CASE WHEN COUNT(venta_shadow.venta_id) = 0 THEN "" END END as convertidos,
             (select SUM(detalle_venta.cantidad) from detalle_venta
             where detalle_venta.id_venta=venta.venta_id) as total_bultos
-            ')
+            ', FALSE)
             ->from('venta')
             ->join('documentos', 'venta.id_documento=documentos.id_doc')
             ->join('condiciones_pago', 'venta.condicion_pago=condiciones_pago.id_condiciones')
             ->join('cliente', 'venta.id_cliente=cliente.id_cliente')
             ->join('usuario', 'venta.id_vendedor=usuario.nUsuCodigo')
             ->join('moneda', 'venta.id_moneda=moneda.id_moneda')
+            ->join('venta_shadow', 'venta.venta_id=venta_shadow.venta_id', 'left')
             ->join('correlativos', 'venta.id_documento=correlativos.id_documento and venta.local_id=correlativos.id_local', 'left')
             ->join('local', 'venta.local_id=local.int_local_id')
             ->join('credito', 'venta.venta_id=credito.id_venta', 'left')
-            ->order_by('venta.fecha', 'desc');
+           ->group_by('venta.venta_id');
 
         if (isset($where['venta_id'])) {
             $this->db->where('venta.venta_id', $where['venta_id']);
@@ -1669,10 +1674,8 @@ class venta_new_model extends CI_Model
 
             dv.precio_venta as precio_venta,
             pcu.contable_costo as contable_costo,
-
-            pcu.contable_costo as contable_costo,
             pcu.porcentaje_utilidad as porcentaje_utilidad,
-            producto_costo_unitario.costo as real_costo
+            pcu.costo as real_costo
             ')
             ->from('detalle_venta as dv')
             ->join('venta as v', 'dv.id_venta = v.venta_id')
