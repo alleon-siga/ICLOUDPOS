@@ -326,7 +326,8 @@ $(document).ready(function () {
         //SUSCRIBOS EVENTOS
         prepare_unidades_events()
         prepare_precio_events()
-
+        refresh_right_panel()
+        refresh_totals()
         prepare_precio_value(producto_id, unidad_minima)
 
         refresh_right_panel()
@@ -526,7 +527,7 @@ $(document).ready(function () {
       show_msg('warning', '<h4>Error. </h4><p>El Cliente no tiene ruc para realizar venta en factura.</p>')
       select_productos(55)
     }
-
+    refresh_totals()
   })
 
   $('#tipo_documento').on('change', function () {
@@ -1041,14 +1042,14 @@ function save_venta_contado (imprimir) {
         show_msg('danger', '<h4>Error. </h4><p>Stock insuficiente.</p>')
         $('#loading_save_venta').modal('hide')
         $('.save_venta_contado').removeAttr('disabled')
-      }
-      else {
-        if (data.msg)
+      } else {
+        if (data.msg){
           show_msg('danger', '<h4>Error. </h4><p>' + data.msg + '</p>')
-        else
+        }else{
           show_msg('danger', '<h4>Error. </h4><p>Ha ocurrido un error insperado al guardar la venta.</p>')
-        $('#dialog_venta_contado').modal('show')
-        $('.save_venta_contado').removeAttr('disabled')
+        }
+        $('#loading_save_venta').modal('hide');
+        $('.save_venta_contado').removeAttr('disabled');
       }
     },
     error: function (data) {
@@ -1172,14 +1173,13 @@ function save_venta_credito (imprimir) {
         show_msg('danger', '<h4>Error. </h4><p>Stock insuficiente.</p>')
         $('#loading_save_venta').modal('hide')
         $('.save_venta_credito').removeAttr('disabled')
-      }
-      else {
-        if (data.msg){
+      } else {
+        if(data.msg){
           show_msg('danger', '<h4>Error. </h4><p>' + data.msg + '</p>')
         }else{
           show_msg('danger', '<h4>Error. </h4><p>Ha ocurrido un error insperado al guardar la venta.</p>')
         }
-        $('#dialog_venta_credito').modal('show');
+        $('#loading_save_venta').modal('hide');
         $('.save_venta_credito').removeAttr('disabled');
       }
     },

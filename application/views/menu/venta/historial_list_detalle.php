@@ -1,18 +1,18 @@
 <?php
-$ruta = base_url();
+    $ruta = base_url();
 ?>
-    <style>
-        .totales {
-            width: 100%;
-            text-align: right;
-        }
+<style>
+    .totales {
+        width: 100%;
+        text-align: right;
+    }
 
-        .totales tr td {
-            padding: 5px 0;
-            font-weight: bold;
-        }
-    </style>
-    <input type="hidden" id="venta_id" value="<?= $venta->venta_id ?>">
+    .totales tr td {
+        padding: 5px 0;
+        font-weight: bold;
+    }
+</style>
+<input type="hidden" id="venta_id" value="<?= $venta->venta_id ?>">
 <?php if ($detalle == 'venta'): ?>
     <div class="modal-dialog" style="width: 60%">
         <div class="modal-content">
@@ -363,8 +363,7 @@ $ruta = base_url();
                 <div class="row">
                     <div class="text-right">
                         <div class="col-md-12">
-                            <input id="btnCerrarDetalle" type="button" class='btn btn-danger' value="Cerrar"
-                                   onclick="cerrarDetalle()">
+                            <input id="btnCerrarDetalle" type="button" class='btn btn-danger' value="Cerrar" onclick="cerrarDetalle()">
                         </div>
                     </div>
 
