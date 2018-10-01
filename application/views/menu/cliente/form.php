@@ -725,39 +725,40 @@ $( "input#ruc_j.dni" ).keyup(function() {
     var input=$(this);
     DNI=$(this).val();
     if (DNI.length==8) {
-        var formData = new FormData();
-        formData.append('DNI', DNI);
         $.ajax({
-            url: '<?= base_url()?>cliente/getDatosFromAPI_Reniec',
-            type: 'POST',
-            data: formData,
+            url: 'https://api.ozonohost.com/v1/76bd86d4bc0164221ec25e343abc2c2b/?numdni='+DNI,
+            type: 'GET',
             cache: false,
             contentType: false,
             processData: false,
+            dataType: 'json',
             beforeSend: function(){
                 $('div.modaloader').addClass('see');
             },
             success: function(data){
-                console.log(data);
-                if (data=='false') {
+                if (data.success==false) {
                     input.addClass('errorAPI');
                     $('#formagregar input#nombres').val('');
                     $('#formagregar input#apellido_paterno').val('');
+                    $('#formagregar input#direccion_j').val('');
+                    $('#formagregar input#telefono').val('');
+                    mensaje("warning", data.notification);
                 }else{
                     input.removeClass('errorAPI');
-                    var obj = $.parseJSON(data);
-                    var Nombre  = obj['Nombre'];
-                    var Paterno = obj['Paterno'];
-                    var Materno = obj['Materno'];
+                    var Nombre  = data.result.preNombres;
+                    var Paterno = data.result.apePaterno;
+                    var Materno = data.result.apeMaterno;
+                    var direccion = data.result.desDireccion;
+                    var telefono = data.result.deCel;
 
                     $('#formagregar input#nombres').val(Nombre);
                     $('#formagregar input#apellido_paterno').val(Paterno+' '+Materno);
+                    $('#formagregar input#direccion_j').val(direccion);
+                    $('#formagregar input#telefono').val(telefono);
                 }
                 $('div.modaloader').removeClass('see');
             },
             error: function(data){
-              console.log('Error Ajax Peticion');
-              console.log(data);
               $('div.modaloader').removeClass('see');
             }
         });
@@ -765,6 +766,8 @@ $( "input#ruc_j.dni" ).keyup(function() {
        input.addClass('errorAPI');
         $('#formagregar input#nombres').val('');
         $('#formagregar input#apellido_paterno').val('');
+        $('#formagregar input#direccion_j').val('');
+        $('#formagregar input#telefono').val('');
     }
 });
 $( "input#ruc_j.ruc" ).keyup(function() {
