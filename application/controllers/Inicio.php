@@ -23,6 +23,7 @@ class inicio extends MY_Controller
 
         //Aqu� estoy llamando a la vista login, para que me muestre la pagina de log�n por defecto
         $data['opciones'] = $this->opciones_model->get_opciones();
+        $data['info'] = $this->opciones_model->get_version();
         $data["lstLocal"] = $this->l->get_all();//Se cargan la lista de Locales disponibles
         $this->load->view('login', $data);
         

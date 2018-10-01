@@ -3,12 +3,12 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>ICLOUD POS</title>
+    <title><?= $info->nombre_empresa ?></title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1">
     <script src="<?php echo $ruta; ?>recursos/js/vendor/jquery-1.11.1.min.js"></script>
     <meta name="description"
-          content="iCloudPOS, sistema de inventario, ventas y gastos web y movil">
+          content="<?= $info->nombre_empresa ?>, sistema de inventario, ventas y gastos web y movil">
     <meta name="author" content="pixelcave">
     <meta name="robots" content="noindex, nofollow">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1.0">
@@ -134,7 +134,7 @@ color: white;
 -webkit-box-shadow: 0 0 4px 4px #000000; box-shadow: 0 0 4px 4px #000000; background-color: rgba(102, 102, 102, 0.6); color: rgba(102, 102, 102, 0.6);">
 
         <div>
-            <img style="height: 100px;" src="<?php echo base_url();?>/recursos/img/punto_de_venta_v2.jpg" alt="avatar">
+            <img style="height: 100px;" src="<?php echo base_url();?>/recursos/img/logo/<?= $info->ruta_logo3 ?>" alt="avatar">
             <h1>
                 <strong><?php //echo valueOptionDB('EMPRESA_NOMBRE', 'NEW LEVEL') ?>Facturador</strong>
             </h1>

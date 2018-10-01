@@ -67,7 +67,12 @@ class opciones_model extends CI_Model
     	return $query->result_array();
     }
 
-
+    public function get_version()
+    {
+        $this->db->select('*');
+        $this->db->from('version');
+        $query = $this->db->get();
+        return $query->row();
+    }
 }
-
 ?>
