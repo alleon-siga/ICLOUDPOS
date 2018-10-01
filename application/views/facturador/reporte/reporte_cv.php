@@ -192,14 +192,15 @@
                     width: '100%',
                     single: true
                 });
-                $(document).ready(function () {
-                    //CONFIGURACIONES INICIALES
-
-                    $("#charm").tcharm({
+                $("#charm").tcharm({
                         'position': 'right',
                         'display': false,
                         'top': '50px'
                     });
+                $(document).ready(function () {
+                    //CONFIGURACIONES INICIALES
+
+                    
                     App.sidebar('close-sidebar');
                     $('input[name="fecha"]').daterangepicker({
                         "locale": {
@@ -249,7 +250,7 @@
                                 align:"left"
                                 
                             });
-                            $(".tcharm-trigger").show();
+                             $("#charm").show();
                         }
                     });
                     $('.chosen-container').css('width', '100%');
@@ -298,7 +299,6 @@
                     });
                     $("#charm").tcharm('hide');
                 }
-                $('[data-toggle="tooltip"]').tooltip();
                 function filtro() {
                     var data = {
                         'grupo_id': $("#grupo_id").val(),

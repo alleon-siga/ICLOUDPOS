@@ -326,7 +326,8 @@ $(document).ready(function () {
         //SUSCRIBOS EVENTOS
         prepare_unidades_events()
         prepare_precio_events()
-
+        refresh_right_panel()
+        refresh_totals()
         prepare_precio_value(producto_id, unidad_minima)
 
         refresh_right_panel()
@@ -499,13 +500,15 @@ $(document).ready(function () {
 
     $('#tasa').val(tasa)
     $('.tipo_moneda').html(simbolo)
-
+    
     if ($(this).val() != $('#MONEDA_DEFECTO_ID').val()) {
       $('#block_tasa').show()
       $('#tasa').trigger('focus')
+      $("#importe").val($("#precio_unitario").val());
     }
     else {
       $('#block_tasa').hide()
+      $("#importe").val($("#precio_unitario").val());
     }
     $('#moneda_text').html(nombre)
     refresh_right_panel()
@@ -1583,12 +1586,15 @@ function refresh_right_panel () {
     $('.precio-input').each(function () {
       $(this).val(parseFloat($(this).attr('data-value') / tasa).toFixed(3))
     })
-
+    $("#precio_unitario").val($('.precio-selected').val()/$("#total_minimo").val());
+    $("#importe").val($('.precio-input').val()*$("#total_minimo").val());
   } else {
     $('.precio-input').each(function () {
       $(this).val(parseFloat($(this).attr('data-value')))
     })
-  }
+    $("#precio_unitario").val($('.precio-selected').val()/$("#total_minimo").val());
+    $("#importe").val($('.precio-input').val()*$("#total_minimo").val());
+}
 
   var subtotal = 0, impuesto = 0, total_importe = 0, total_descuento = 0
 
