@@ -134,7 +134,7 @@ color: white;
 -webkit-box-shadow: 0 0 4px 4px #000000; box-shadow: 0 0 4px 4px #000000; background-color: rgba(102, 102, 102, 0.6); color: rgba(102, 102, 102, 0.6);">
 
         <div>
-            <img style="height: 100px;" src="<?php echo base_url();?>/recursos/img/<?= $info->ruta_logo3 ?>" alt="avatar">
+            <img style="height: 100px;" src="<?php echo base_url();?>/recursos/img/logo/<?= $info->ruta_logo3 ?>" alt="avatar">
             <h1>
                 <strong><?php //echo valueOptionDB('EMPRESA_NOMBRE', 'NEW LEVEL') ?>Facturador</strong>
             </h1>

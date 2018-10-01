@@ -314,7 +314,7 @@ if ($this->session->userdata('tema')) {
                     <div class="sidebar-section sidebar-user clearfix">
                         <div class="sidebar-user-avatar">
                             <a href="<?= $ruta ?>principal">
-                                <img src="<?php echo $ruta ?>recursos/img/<?= $info->ruta_logo3 ?>"
+                                <img src="<?php echo $ruta ?>recursos/img/logo/<?= $info->ruta_logo3 ?>"
                                      alt="avatar">
                             </a>
                         </div>
@@ -518,7 +518,7 @@ if ($this->session->userdata('tema')) {
                         </li>
                         <li class="dropdown">
                             <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">
-                                <img src="<?php echo $ruta ?>recursos/img/<?= $info->ruta_logo3 ?>"
+                                <img src="<?php echo $ruta ?>recursos/img/logo/<?= $info->ruta_logo3 ?>"
                                      alt="avatar"> <i
                                         class="fa fa-angle-down"></i>
                             </a>
