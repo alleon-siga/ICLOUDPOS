@@ -71,7 +71,14 @@ class venta extends MY_Controller
         $data['venta'] = $datos;
         $this->load->view('facturador/venta/historial_list_detalle', $data);
     }
-
+    function get_venta_detalle_convertido()
+    {
+        $venta_id = $this->input->post('venta_id');
+        $datos = $this->venta->get_venta_detalle_convertido($venta_id);
+        
+        $data['venta'] = $datos;
+        $this->load->view('facturador/venta/historial_list_detalle_convertidos', $data);
+    }
     /*function editarVentaContable()
     {
         $action = $this->input->post('action');

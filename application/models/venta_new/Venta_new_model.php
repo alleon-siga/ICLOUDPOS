@@ -72,7 +72,7 @@ class venta_new_model extends CI_Model
             cliente.tipo_cliente as tipo_cliente,
             venta.dni_garante as nombre_vd,
             CASE WHEN venta_shadow.venta_id > 0 THEN "SI" ELSE
-            CASE WHEN iSnULL(venta_shadow.venta_id) THEN "NO" END  END as comprobante_shadow ,
+            CASE WHEN IsNULL(venta_shadow.venta_id) THEN "NO" END  END as comprobante_shadow ,
 	    CASE WHEN COUNT(venta_shadow.venta_id) > 0 THEN  COUNT(venta_shadow.venta_id) ELSE
 	    CASE WHEN COUNT(venta_shadow.venta_id) = 0 THEN "" END END as convertidos,
             (select SUM(detalle_venta.cantidad) from detalle_venta
@@ -264,7 +264,37 @@ class venta_new_model extends CI_Model
         }
         return $venta;
     }
-
+    function get_venta_detalle_convertido($venta_id)
+    {
+        $query="SELECT doc.des_doc as vdoc,cl.razon_social as vnom ,v.id_moneda as vmon,v.condicion_pago as vcon,
+                v.serie as vser, v.numero as vnum,
+                v.venta_status as vven,v.fecha as vfecha,cp.nombre_condiciones as vcon, v.tasa_cambio as vtasa,
+                @i := @i + 1 as contador,
+                c.razon_social,v.total as vtotal,
+                d.des_doc,
+                vs.fecha,
+                CASE WHEN vs.id_moneda='1029' THEN 'S/.' ELSE
+                CASE WHEN vs.id_moneda='1030' THEN '$' END END as moneda,
+                vs.subtotal,
+                vs.total
+                FROM venta_shadow as vs
+                cross join (select @i := 0) r
+                JOIN documentos as d
+                ON d.id_doc=vs.id_documento
+                JOIN cliente as c
+                ON c.id_cliente=vs.id_cliente
+                JOIN venta as v
+                ON v.venta_id=vs.venta_id
+                JOIN documentos as doc
+                ON doc.id_doc=v.id_documento
+                JOIN cliente as cl
+                ON cl.id_cliente=v.id_cliente
+                JOIN condiciones_pago as cp
+                ON cp.id_condiciones=v.condicion_pago
+                WHERE vs.venta_id='".$venta_id."'";
+        
+        return $this->db->query($query)->result();
+    }
     function get_venta_traspaso($id)
     {
         $this->db->select('c.serie, v.venta_id, v.fecha, cl.tipo_cliente, cl.razon_social, us.username, cl.identificacion, t.id');

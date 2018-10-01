@@ -57,7 +57,24 @@ function ver(venta_id) {
         }
     });
 }
+function detalle(venta_id) {
 
+    $("#dialog_venta_detalle_convertidos").html($("#loading").html());
+    $("#dialog_venta_detalle_convertidos").modal('show');
+
+    $.ajax({
+        url: $('#ruta').val() + 'facturador/venta/get_venta_detalle_convertido/',
+        type: 'POST',
+        data: {'venta_id': venta_id},
+
+        success: function (data) {
+            $("#dialog_venta_detalle_convertidos").html(data);
+        },
+        error: function () {
+            alert('asd')
+        }
+    });
+}
 function shadow(venta_id)
 {
     $('#barloadermodal').modal('show');

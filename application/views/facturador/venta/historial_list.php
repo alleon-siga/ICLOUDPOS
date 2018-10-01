@@ -64,16 +64,16 @@
                     <td style="white-space: normal;"><?= $venta->venta_estado ?></td>
                     <td style="white-space: normal;"><?= $venta->moneda_tasa ?></td>
                     <td style="text-align: right;"><?= $venta->moneda_simbolo ?> <?= number_format($venta->total, 2) ?></td>
-                    <td style="text-align: center;"><?php if(($venta->convertidos)>0){ echo '<button class="btn btn-info btn-xs">S</buton>';}else{echo '<button class="btn btn-warning btn-xs">N</buton>';}?></td>
+                    <td style="text-align: center;"><?php if(($venta->convertidos)>0){ echo '<button class="btn btn-info btn-xs" onclick="detalle('.$venta->venta_id.')">S ('.$venta->convertidos.')</buton>';}else{echo '<button class="btn btn-warning btn-xs">N</buton>';}?></td>
                     <td style="text-align: center; white-space: normal;">
                     <?php
                         if($venta->documento_id==6){
                     ?>
-                        <a class="btn btn-default" data-toggle="tooltip" style="margin-right: 5px;" title="Ver" data-original-title="Ver" href="#" onclick="ver('<?= $venta->venta_id ?>');">
+                        <a class="btn btn-default btn-sm" data-toggle="tooltip" style="margin-right: 5px;" title="Ver" data-original-title="Ver" href="#" onclick="ver('<?= $venta->venta_id ?>');">
                             <i class="fa fa-search"></i>
                         </a>
-                    <?php if($venta->venta_estado=='COMPLETADO' && $venta->condicion_id=='1'){ ?>
-                        <a class="btn btn-primary" data-toggle="tooltip" style="margin-right: 5px;" title="Ver" data-original-title="Ver" href="#" onclick="shadow('<?= $venta->venta_id ?>');">
+                    <?php if($venta->venta_estado=='COMPLETADO'){ ?>
+                        <a class="btn btn-primary btn-sm" data-toggle="tooltip" style="margin-right: 5px;" title="Ver" data-original-title="Ver" href="#" onclick="shadow('<?= $venta->venta_id ?>');">
                             <i class="fa fa-dollar"></i>
                         </a>
                     <?php } ?>
@@ -96,5 +96,6 @@
        class="btn btn-default btn-lg" data-toggle="tooltip" title="Exportar a Excel"
        data-original-title="fa fa-file-excel-o"><i class="fa fa-file-excel-o fa-fw"></i></a>-->
     <div class="modal fade" id="dialog_venta_detalle" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true"></div>
+    <div class="modal fade" id="dialog_venta_detalle_convertidos" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true"></div>
 </div>
 <script src="<?= $ruta; ?>recursos/js/facturador_historial_list.js"></script>

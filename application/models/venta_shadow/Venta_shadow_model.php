@@ -338,7 +338,7 @@ class venta_shadow_model extends CI_Model
             'nota' => $venta['venta_nota'],
             'dni_garante' => $venta['dni_garante']
         );
-
+        
         //inserto la venta
         $this->db->insert('venta_shadow', $venta_contado);
         $id_venta_shadow = $this->db->insert_id();

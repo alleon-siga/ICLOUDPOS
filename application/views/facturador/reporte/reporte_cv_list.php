@@ -95,7 +95,7 @@ foreach ($lists as $ingreso):
                 <th class="CellWithComment">E / S  <span class="CellComment">Entradas / Salidas</span></th>
                 <th>Tipo Doc.</th>
                 <th>Nro Doc.</th>
-                <th class="CellWithComment">NC <span class="CellComment">Nota de Credito</span></th>
+                <th class="CellWithComment">NC <span class="CellComment">Nota de Compra</span></th>
                 <th class="CellWithComment">BO <span class="CellComment">Boleta</span></th>
                 <th class="CellWithComment">FA <span class="CellComment">Factura</span></th>
                 <th class="CellWithComment">NV <span class="CellComment">Nota de Venta</span></th>
@@ -189,7 +189,7 @@ foreach ($lists as $ingreso):
                 <th class="CellWithComment">E / S  <span class="CellComment">Entradas / Salidas</span></th>
                 <th>Tipo Doc.</th>
                 <th>Nro Doc.</th>
-                <th class="CellWithComment">NC <span class="CellComment">Nota de Credito</span></th>
+                <th class="CellWithComment">NC <span class="CellComment">Nota de Compra</span></th>
                 <th class="CellWithComment">BO <span class="CellComment">Boleta</span></th>
                 <th class="CellWithComment">FA <span class="CellComment">Factura</span></th>
                 <th class="CellWithComment">NV <span class="CellComment">Nota de Venta</span></th>
