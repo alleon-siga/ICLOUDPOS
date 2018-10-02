@@ -5,9 +5,7 @@
             <h3>Venta Eliminada</h3>
         </div>
         <div class="modal-body">
-            <?php foreach ( $venta as $shc){
-                echo 's';
-            }?>
+            
         </div>
         <div class="modal-footer" align="right">
             <div class="row">
@@ -23,7 +21,8 @@
 <script>
 $(function(){
     $("#cerrarmodal").on("click", function(){
-        $('#remove_ventaconvertida_shadow').closest('modal');
+        $('#remove_ventaconvertida_shadow').modal('hide');
+        $('#dialog_venta_detalle_convertidos').show();
     })
 })
 </script>

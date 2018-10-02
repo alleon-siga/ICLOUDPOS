@@ -16,6 +16,13 @@
     * html .ui-autocomplete {
         height: 300px;
     }
+    table thead {
+        background-color: #2d2d2d !important;
+        color: white !important;
+    }
+    table tr:hover {
+        font-weight: bold !important;
+    }
 </style>
 <input type="hidden" id="sc" value="<?= valueOption('ACTIVAR_SHADOW') ?>">
 <ul class="breadcrumb breadcrumb-top">

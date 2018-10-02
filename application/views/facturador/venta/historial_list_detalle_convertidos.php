@@ -8,7 +8,6 @@ foreach ($venta as $v) {
     $vnum = $v->vnum;
     $vven = $v->vven;
     $vfecha = $v->vfecha;
-    $vcon = $v->vcon;
     $vtasa = $v->vtasa;
     $vtotal = $v->vtotal;
     $vclien = $v->vclien;
@@ -94,7 +93,7 @@ foreach ($venta as $v) {
                             <th>#</th>
                             <th>Cliente</th>
                             <th>T. Cliente</th>
-                            <th>Documento</th>
+                            <th>Doc.</th>
                             <th>Fecha</th>
                             <th>Moneda</th>
                             <th>Subtotal</th>
@@ -104,7 +103,7 @@ foreach ($venta as $v) {
                             <th width="10%">Acciones</th>-->
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="tablec">
                         <?php $total_c = 0; ?>
                         <?php foreach ($venta as $detalle): ?>
                             <tr>
@@ -113,17 +112,17 @@ foreach ($venta as $v) {
                                 <td><?php
                                     if ($detalle->vclien == 0) {
                                         echo 'P. Natural';
-                                    } else if ($detalle->vclien > 0){
+                                    } else if ($detalle->vclien > 0) {
                                         echo 'P. Juridica';
                                     }
                                     ?></td>
-                                <td><?= $detalle->des_doc ?></td>
+                                <td><?= $detalle->abr_doc ?></td>
                                 <td><?= $detalle->fecha ?></td>
                                 <td><?= $detalle->moneda ?></td>
                                 <td><?= $detalle->subtotal ?></td>
                                 <td><?= $detalle->total ?> <?php $total_c += $detalle->total; ?></td>  
                                 <td><button class="btn btn-info btn-xs" onclick="info(<?= $detalle->id_shadow ?>)"><i class="fa fa-search"></i></button>&nbsp;
-                                    <button class="btn btn-danger btn-xs" onclick="remove(<?= $detalle->id_shadow ?>)"><input type="hidden" id="id_shadow" value="<?= $detalle->id_shadow ?>"><i class="fa fa-trash"></i></button>&nbsp;
+                                    <button class="btn btn-danger btn-xs eliminarv" id="elishadow" data-idshadow="<?= $detalle->id_shadow ?>"><i class="fa fa-trash"></i></button>&nbsp;
                                     <button class="btn btn-success btn-xs"><i class="fa fa-check"></i></button></td>
                             </tr>
                         <?php endforeach; ?>
@@ -158,24 +157,27 @@ foreach ($venta as $v) {
         </div>
     </div>
 </div>
-<div class="modal " id="remove_ventaconvertida_shadow" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true"></div>
+
 <script type="text/javascript" src="<?= base_url() ?>recursos/js/facturador_historial_list_detalle.js"></script>
 <script type="text/javascript">
-                                    function remove(id_shadow) {
-                                        $("#remove_ventaconvertida_shadow").html($("#loading").html());
-                                        $("#remove_ventaconvertida_shadow").modal('show');
-                                        alert(id_shadow)
-                                        $.ajax({
-                                            url: $('#ruta').val() + 'facturador/venta/remove_ventaconvertida_shadow/',
-                                            type: 'POST',
-                                            data: {'id_shadow': id_shadow},
+                                    $("#my-table").on('click', '.eliminarv', function () {
 
-                                            success: function (data) {
-                                                $("#remove_ventaconvertida_shadow").html(data);
-                                            },
-                                            error: function () {
-                                                alert('asd')
-                                            }
-                                        });
-                                    }
+                                        var id = $('#elishadow').attr("data-idshadow");
+                                        if ($('#tablec tr').length > 0) {
+                                            var tr = $(this).closest('tr');                                            
+                                            $.ajax({
+                                                url: $('#ruta').val() + 'facturador/venta/remove_ventaconvertida_shadow/',
+                                                type: 'POST',
+                                                data: {'id_shadow': id},
+                                                success: function (data) {
+                                                },                                                
+                                                dataType: 'json',
+                                                error:function(res1){
+                                                    tr.remove();
+                                                }
+                                            });
+                                        } else {
+                                            alert('Error s');
+                                        }
+                                    });
 </script>

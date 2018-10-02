@@ -84,7 +84,7 @@ class venta extends MY_Controller
         $id_shadow = $this->input->post('id_shadow');
         $datos = $this->venta->remove_ventaconvertida_shadow($id_shadow);
         
-        $data['venta'] = $datos;
+        $data['shadow_v'] = $datos;
         $this->load->view('facturador/venta/remove_ventaconvertida_shadow', $data);
     }
     /*function editarVentaContable()

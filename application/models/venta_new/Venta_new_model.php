@@ -272,7 +272,7 @@ class venta_new_model extends CI_Model
                 v.venta_status as vven,v.fecha as vfecha,cp.nombre_condiciones as vcon, v.tasa_cambio as vtasa,
                 @i := @i + 1 as contador,
                 c.razon_social,v.total as vtotal,
-                d.des_doc,
+                d.abr_doc,
                 vs.fecha,
                 CASE WHEN vs.id_moneda='1029' THEN 'S/.' ELSE
                 CASE WHEN vs.id_moneda='1030' THEN '$' END END as moneda,
@@ -298,10 +298,10 @@ class venta_new_model extends CI_Model
     }
     function remove_ventaconvertida_shadow($id_shadow)
     {
-        $query="SELECT * FROM venta_shadow as vs
-                WHERE vs.venta_id='".$id_shadow."'";
-        
-        return $this->db->query($query)->result();
+        $this->db->where('id', $id_shadow);
+        $this->db->delete('venta_shadow');
+        $this->db->affected_rows();
+        return $this->db->affected_rows();
     }
     function get_venta_traspaso($id)
     {
