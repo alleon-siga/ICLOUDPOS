@@ -268,7 +268,7 @@
                                            data-sub = "0.00"
                                            class='form-control'
                                            name="importe" id="importe" value="0.00"
-                                           onkeydown="return soloDecimal4(this, event);" readonly>
+                                           onkeydown="return soloDecimal(this, event);" readonly>
                                     <a id="editar_su" data-estado="0" href="#" class="input-group-addon" style="padding: 0px; min-width: 25px;"><i class="fa fa-edit"></i></a>
                                 </div>
                                 <h6 id="subtotal_um" style="text-align: center; margin-bottom: 0; margin-top: 2px;"></h6>
