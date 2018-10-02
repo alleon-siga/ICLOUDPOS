@@ -647,11 +647,9 @@ class venta_new extends MY_Controller
             'COTIZACION_COLOR_FORMATO',
             'EMBALAJE_IMPRESION',
             'NUMERO_DECIMALES',
-<<<<<<< HEAD
-            'REDONDEO_VENTAS'
-=======
+            'REDONDEO_VENTAS',     
             'VALOR_COMPROBANTE'
->>>>>>> b78580c08912a77535f8c44b2bc91f294658d098
+
         );
 
         if ($action == 'get') {

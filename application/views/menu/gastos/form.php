@@ -159,6 +159,14 @@
                 </div>
                 <hr>
                 <div class="form-group">
+                    <label class="control-label col-md-3">Medio de Pago</label>
+                    <div class="col-md-9">
+                        <select class="form-control select_chosen" id="cuenta_id" name="cuenta_id">
+                            <option value="">Seleccione</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
                     <label class="control-label col-md-3">Cuenta</label>
                     <div class="col-md-9">
                         <select class="form-control select_chosen" id="cuenta_id" name="cuenta_id">
