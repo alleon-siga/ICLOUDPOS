@@ -647,7 +647,9 @@ class venta_new extends MY_Controller
             'COTIZACION_COLOR_FORMATO',
             'EMBALAJE_IMPRESION',
             'NUMERO_DECIMALES',
-            'REDONDEO_VENTAS'
+            'REDONDEO_VENTAS',     
+            'VALOR_COMPROBANTE'
+
         );
 
         if ($action == 'get') {
