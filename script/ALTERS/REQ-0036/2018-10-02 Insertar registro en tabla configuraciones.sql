@@ -1,0 +1,1 @@
+INSERT INTO configuraciones VALUES('63','VALOR_COMPROBANTE','NOMBRE');
