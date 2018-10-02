@@ -453,7 +453,7 @@ $(document).ready(function () {
         if($('#total_minimo').val()==0){
           $('#precio_unitario').val(0).toFixed(2);
         }else{
-          $('#precio_unitario').val(parseFloat(pu.val() / $('#total_minimo').val()).toFixed(2));
+          $('#precio_unitario').val(parseFloat(pu.val() / $('#total_minimo').val()).toFixed(4));
         }
       }
 
@@ -488,7 +488,7 @@ $(document).ready(function () {
       if($('#total_minimo').val()==0){
         $('#precio_unitario').val(0).toFixed(2);
       }else{
-        $('#precio_unitario').val(parseFloat($('#importe').val() / $('#total_minimo').val()).toFixed(2));
+        $('#precio_unitario').val(parseFloat($('#importe').val() / $('#total_minimo').val()).toFixed(4));
       }
     }
   })
