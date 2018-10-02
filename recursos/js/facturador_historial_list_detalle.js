@@ -75,6 +75,7 @@ $(function () {
             }
         });*/
     });
+    
     $('#my-table').on('click', '.costoContable', function(e){
         var tr = $(this).closest('tr');
         var precio = 0;

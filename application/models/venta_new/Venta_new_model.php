@@ -88,6 +88,7 @@ class venta_new_model extends CI_Model
             ->join('correlativos', 'venta.id_documento=correlativos.id_documento and venta.local_id=correlativos.id_local', 'left')
             ->join('local', 'venta.local_id=local.int_local_id')
             ->join('credito', 'venta.venta_id=credito.id_venta', 'left')
+                ->where('venta.venta_status!="ANULADO"')
            ->group_by('venta.venta_id');
 
         if (isset($where['venta_id'])) {
@@ -266,7 +267,7 @@ class venta_new_model extends CI_Model
     }
     function get_venta_detalle_convertido($venta_id)
     {
-        $query="SELECT doc.des_doc as vdoc,cl.razon_social as vnom ,v.id_moneda as vmon,v.condicion_pago as vcon,
+        $query="SELECT doc.des_doc as vdoc,cl.razon_social as vnom ,c.tipo_cliente as vclien,vs.id as id_shadow,v.id_moneda as vmon,v.condicion_pago as vcon,
                 v.serie as vser, v.numero as vnum,
                 v.venta_status as vven,v.fecha as vfecha,cp.nombre_condiciones as vcon, v.tasa_cambio as vtasa,
                 @i := @i + 1 as contador,
@@ -292,6 +293,13 @@ class venta_new_model extends CI_Model
                 JOIN condiciones_pago as cp
                 ON cp.id_condiciones=v.condicion_pago
                 WHERE vs.venta_id='".$venta_id."'";
+        
+        return $this->db->query($query)->result();
+    }
+    function remove_ventaconvertida_shadow($id_shadow)
+    {
+        $query="SELECT * FROM venta_shadow as vs
+                WHERE vs.venta_id='".$id_shadow."'";
         
         return $this->db->query($query)->result();
     }

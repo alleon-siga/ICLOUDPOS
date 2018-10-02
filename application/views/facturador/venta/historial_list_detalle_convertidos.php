@@ -1,14 +1,3 @@
-<style>
-    .totales {
-        width: 100%;
-        text-align: right;
-    }
-
-    .totales tr td {
-        padding: 5px 0;
-        font-weight: bold;
-    }
-</style>
 <?php
 foreach ($venta as $v) {
     $vdoc = $v->vdoc;
@@ -21,7 +10,8 @@ foreach ($venta as $v) {
     $vfecha = $v->vfecha;
     $vcon = $v->vcon;
     $vtasa = $v->vtasa;
-    $vtotal=$v->vtotal;
+    $vtotal = $v->vtotal;
+    $vclien = $v->vclien;
 }
 ?>
 <div class="modal-dialog" style="width: 60%">
@@ -103,6 +93,7 @@ foreach ($venta as $v) {
                         <tr>
                             <th>#</th>
                             <th>Cliente</th>
+                            <th>T. Cliente</th>
                             <th>Documento</th>
                             <th>Fecha</th>
                             <th>Moneda</th>
@@ -114,18 +105,25 @@ foreach ($venta as $v) {
                         </tr>
                     </thead>
                     <tbody>
-                        <?php  $total_c=0; ?>
+                        <?php $total_c = 0; ?>
                         <?php foreach ($venta as $detalle): ?>
                             <tr>
                                 <td><?= $detalle->contador ?></td>
                                 <td><?= $detalle->razon_social ?></td>
+                                <td><?php
+                                    if ($detalle->vclien == 0) {
+                                        echo 'P. Natural';
+                                    } else if ($detalle->vclien > 0){
+                                        echo 'P. Juridica';
+                                    }
+                                    ?></td>
                                 <td><?= $detalle->des_doc ?></td>
                                 <td><?= $detalle->fecha ?></td>
                                 <td><?= $detalle->moneda ?></td>
                                 <td><?= $detalle->subtotal ?></td>
-                                <td><?= $detalle->total ?> <?php   $total_c+=$detalle->total;?></td>  
-                                <td><button class="btn btn-info btn-xs"><i class="fa fa-search"></i></button>&nbsp;
-                                    <button class="btn btn-danger btn-xs"><i class="fa fa-trash"></i></button>&nbsp;
+                                <td><?= $detalle->total ?> <?php $total_c += $detalle->total; ?></td>  
+                                <td><button class="btn btn-info btn-xs" onclick="info(<?= $detalle->id_shadow ?>)"><i class="fa fa-search"></i></button>&nbsp;
+                                    <button class="btn btn-danger btn-xs" onclick="remove(<?= $detalle->id_shadow ?>)"><input type="hidden" id="id_shadow" value="<?= $detalle->id_shadow ?>"><i class="fa fa-trash"></i></button>&nbsp;
                                     <button class="btn btn-success btn-xs"><i class="fa fa-check"></i></button></td>
                             </tr>
                         <?php endforeach; ?>
@@ -145,8 +143,8 @@ foreach ($venta as $v) {
             </div>
             <br>
             <div class="row text-center">
-                <div class="col-md-12"><label class="control-label">Total Real - Total Contable =  </label> <?= $vtotal-$total_c ?></div>
-                
+                <div class="col-md-12"><label class="control-label">Total Real - Total Contable =  </label> <?= $vtotal - $total_c ?></div>
+
             </div>
         </div>
         <div class="modal-footer" align="right">
@@ -160,4 +158,24 @@ foreach ($venta as $v) {
         </div>
     </div>
 </div>
+<div class="modal " id="remove_ventaconvertida_shadow" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true"></div>
 <script type="text/javascript" src="<?= base_url() ?>recursos/js/facturador_historial_list_detalle.js"></script>
+<script type="text/javascript">
+                                    function remove(id_shadow) {
+                                        $("#remove_ventaconvertida_shadow").html($("#loading").html());
+                                        $("#remove_ventaconvertida_shadow").modal('show');
+                                        alert(id_shadow)
+                                        $.ajax({
+                                            url: $('#ruta').val() + 'facturador/venta/remove_ventaconvertida_shadow/',
+                                            type: 'POST',
+                                            data: {'id_shadow': id_shadow},
+
+                                            success: function (data) {
+                                                $("#remove_ventaconvertida_shadow").html(data);
+                                            },
+                                            error: function () {
+                                                alert('asd')
+                                            }
+                                        });
+                                    }
+</script>
