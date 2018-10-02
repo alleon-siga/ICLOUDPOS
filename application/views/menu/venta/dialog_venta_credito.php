@@ -361,7 +361,7 @@
                     ?>
                         </span>
                         <button type="button" class="btn btn-danger"
-                                onclick="$('#dialog_venta_credito').modal('hide');"><i
+                                onclick="$('#dialog_venta_credito').modal('hide'); $('.modal-backdrop').remove();"><i
                                     class="fa fa-close"></i> Cancelar
                         </button>
                     </div>

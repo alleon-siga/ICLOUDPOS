@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>ICLOUD POS</title>
+    <title><?= $info->nombre_empresa ?></title>
     <meta name="description" content="">
 
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1">
@@ -12,7 +12,7 @@
     <script src="<?php echo $ruta; ?>recursos/js/vendor/jquery-1.11.1.min.js"></script>
 
     <meta name="description"
-          content="iCloudPOS, sistema de inventario, ventas y gastos web y movil">
+          content="<?= $info->nombre_empresa ?>, sistema de inventario, ventas y gastos web y movil">
     <meta name="author" content="pixelcave">
     <meta name="robots" content="noindex, nofollow">
 
@@ -128,7 +128,7 @@
         }
 
         body.login_ div.full-height.darkness{
-            background-color: #394263;
+            background-color: <?= $info->color_fondo ?>;
         }
 
         body.login_ div.full-height.darkness>div.logo_white{
@@ -171,8 +171,8 @@
             padding: 10px 0px;
             font-size: 16px;
             font-weight: 500;
-            background-color: #ffcf00;
-            border: 1px solid #ffcf00;
+            background-color: <?= $info->color_boton ?>;
+            border: 1px solid <?= $info->color_boton ?>;
             color: #394263;
             -webkit-transition: all .25s ease;
                -moz-transition: all .25s ease;
@@ -182,7 +182,7 @@
         }
         body.login_ div.full-height form div.form-group button:hover{
             background-color: transparent;
-            color: #ffcf00;
+            color: <?= $info->color_boton ?>;
         }
         @media (max-width : 400px) {
             body.login_ div.full-height>div.vertical>div.container_form {
@@ -200,12 +200,12 @@
         <div class="row">
             <div class="col-xs-12 col-md-6 col-lg-4 full-height darkness">
                 <div class="col-xs-12 noHorizontalPadding logo_white text-center">
-                    <img src="recursos/img/logo/logo_svg_white.svg" alt="iCloudPOS" class="col-xs-12 noHorizontalPadding centered" style="width: 175px;">
+                    <img src="recursos/img/logo/<?= $info->ruta_logo2 ?>" alt="<?= $info->nombre_empresa ?>" class="col-xs-12 noHorizontalPadding centered" style="width: 175px;">
                 </div>
                 <div class="vertical text-center">
                     <div class="col-xs-12 noHorizontalPadding centered container_form">
                         <div class="col-xs-12 noHorizontalPadding text-center empresa_nombre">
-                            <?= valueOptionDB('EMPRESA_NOMBRE','ICLOUDPOS') ?>
+                            <?= valueOptionDB('EMPRESA_NOMBRE',"$info->nombre_empresa") ?>
                         </div>
                         <h2 class="col-xs-12 text-center noHorizontalPadding nomargin vpadding">Ingreso al Área de Cliente</h2>
                         <form class="col-xs-12" id="frmLogin">
@@ -240,7 +240,7 @@
                 <div class="vertical">
                     <div class="col-xs-12 noHorizontalPadding text-center">
                         <div class="col-xs-12 noHorizontalPadding text-center">
-                            <img src="recursos/img/logo/logo_rif.png" alt="" class="col-xs-12 noHorizontalPadding centered" style="width: 150px;">
+                            <img src="recursos/img/logo/<?= $info->ruta_logo1 ?>" alt="" class="col-xs-12 noHorizontalPadding centered" style="width: 150px;">
                         </div>
                         <div class="col-xs-12 noHorizontalPadding vpadding lined text-center">
                             <span class="col-xs-10 centered"></span>

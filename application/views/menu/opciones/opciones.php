@@ -36,7 +36,7 @@
             <input type="text" name="EMPRESA_NOMBRE" required="true" id="EMPRESA_NOMBRE"
                    class='form-control'
                    maxlength="100"
-                   value="<?= valueOption("EMPRESA_NOMBRE", 'TEAYUDO') ?>">
+                   value="<?= valueOption("EMPRESA_NOMBRE", "$info->nombre_empresa") ?>">
         </div>
     </div>
     <div class="row form-group">

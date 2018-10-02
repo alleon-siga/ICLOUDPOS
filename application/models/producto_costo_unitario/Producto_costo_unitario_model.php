@@ -238,4 +238,19 @@ class producto_costo_unitario_model extends CI_Model
         }
         return $arr;
     }
+
+    function check_costo_unitario($datos)
+    {
+        foreach ($datos as $data) {
+            $this->db->select('COUNT(*) AS num');
+            $this->db->from('producto_costo_unitario');
+            $this->db->where('producto_id', $data['producto_id']);
+            $this->db->where('moneda_id', $data['moneda_id']);
+            $row = $this->db->get()->row();
+            if($row->num<1){
+                return false;
+            }
+        }
+        return true;
+    }
 }

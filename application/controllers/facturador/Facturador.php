@@ -13,13 +13,14 @@ class Facturador extends MY_Controller
         if($this->session->userdata('id')){
             redirect('facturador/principal', 'refresh');
         }
-        $this->load->view('facturador/login');
+        $dataCuerpo['info'] = $this->opciones_model->get_version();
+        $this->load->view('facturador/login', $dataCuerpo);
     }
 
     function principal()
     {
         $dataCuerpo['cuerpo'] = $this->load->view('facturador/principal', NULL, true);
-
+        $dataCuerpo['info'] = $this->opciones_model->get_version();
         if ($this->input->is_ajax_request()) {
             echo $dataCuerpo['cuerpo'];
         } else {

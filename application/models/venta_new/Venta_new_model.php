@@ -617,11 +617,7 @@ class venta_new_model extends CI_Model
 
         $this->correlativos_model->update_nota_pedido($venta['local_id'], $venta_id);
 
-        $result = $this->save_producto_detalles($venta_id, $venta['id_documento'], $venta['local_id'], $productos, $venta['id_usuario']);
-
-        if(!$result){
-            return false;
-        }
+        $this->save_producto_detalles($venta_id, $venta['id_documento'], $venta['local_id'], $productos, $venta['id_usuario']);
 
         if ($venta['venta_status'] == 'COMPLETADO') {
             //guardo la relacion del modo de pago
@@ -739,12 +735,7 @@ class venta_new_model extends CI_Model
 
         $this->correlativos_model->update_nota_pedido($venta['local_id'], $venta_id);
 
-
-        !$result = $this->save_producto_detalles($venta_id, $venta['id_documento'], $venta['local_id'], $productos, $venta['id_usuario']);
-
-        if(!$result){
-            return false;
-        }
+        $this->save_producto_detalles($venta_id, $venta['id_documento'], $venta['local_id'], $productos, $venta['id_usuario']);
 
         $this->db->insert('credito', array(
             'id_venta' => $venta_id,
@@ -867,11 +858,6 @@ class venta_new_model extends CI_Model
                 'producto_id' => $producto->id_producto,
                 'moneda_id' => $venta->moneda_id
             ))->row();
-
-            if ($costo_u == NULL) {
-                $this->error = 'Este producto no tiene precios de ventas o unitarios asignados, por favor verificar en el m&oacute;dulo de productos.';
-                return false;
-            }
 
             $prod = $this->db->get_where('producto', array('producto_id' => $producto->id_producto))->row();
 
@@ -1001,7 +987,6 @@ class venta_new_model extends CI_Model
                 ));
             }
         }
-        return true;
     }
 
     private
