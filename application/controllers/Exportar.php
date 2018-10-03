@@ -516,7 +516,27 @@ class exportar extends MY_Controller
             }
 
             $data['gasto'][$mon['id_moneda']] = $this->db->get()->row();
+            //GASTOS EFECTIVO
+            $this->db->select_sum('gastos.total', 'total')
+                ->from('gastos')
+                ->join('caja_pendiente', "caja_pendiente.ref_id = gastos.id_gastos AND caja_pendiente.tipo = 'GASTOS'")
+                ->join('caja_movimiento', "caja_movimiento.ref_id = caja_pendiente.id AND caja_movimiento.operacion = 'GASTOS'")
+                ->where('caja_movimiento.fecha_mov >=', $fecha)
+                ->where('caja_movimiento.fecha_mov <', $fechadespues)
+                ->where('gastos.id_moneda', $mon["id_moneda"])
+                ->where('gastos.medio_pago', 3)
+                ->where('gastos.status_gastos', 0);
 
+            if ($id_local != 0) {
+                $this->db->where('gastos.local_id', $id_local);
+            }
+
+            if ($id_usuario != 0) {
+                $this->db->where('gastos.responsable_id', $id_usuario);
+            }
+
+            $data['gasto_efec'][$mon['id_moneda']] = $this->db->get()->row();
+            
             //ANULACIONES VENTAS
             $this->db->select_sum('caja_movimiento.saldo', 'total')
                 ->from('caja_movimiento')
