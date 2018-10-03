@@ -21,4 +21,9 @@ class Login_api_model extends CI_Model
 
         return $result;
     }
+
+    function verificar_version() {
+
+        return $this->db->get('version')->row_array();
+    }
 }
