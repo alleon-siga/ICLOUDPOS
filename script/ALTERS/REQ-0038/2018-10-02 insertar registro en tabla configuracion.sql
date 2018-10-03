@@ -1,1 +1,0 @@
-INSERT INTO configuraciones(config_key, config_value) VALUES('REDONDEO_VENTAS', 'SI');

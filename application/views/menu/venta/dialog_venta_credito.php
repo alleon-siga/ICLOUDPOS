@@ -707,8 +707,19 @@
             precio_credito = parseFloat((((precio_contado - saldo_inicial) * tasa_interes) / 100) + (precio_contado - saldo_inicial));
             $("#c_precio_credito").val(precio_credito);
 
-            $("#c_total_deuda").html(precio_credito + saldo_inicial);
-            $("#c_total_saldo").html(precio_credito);
+            //quiere decir si aplicar redondeo esto esta en ventas/configuracion
+            if($('#redondeo_total').val()=='1'){
+                var c_total_deuda = roundPrice(parseFloat(precio_credito + saldo_inicial), 1, 1);
+                c_total_deuda = parseFloat(c_total_deuda).toFixed(2);
+
+                precio_credito = roundPrice(parseFloat(precio_credito), 1, 1);
+                precio_credito = parseFloat(precio_credito).toFixed(2);
+                $("#c_total_deuda").html(c_total_deuda);
+                $("#c_total_saldo").html(precio_credito);
+            }else{
+                $("#c_total_deuda").html(precio_credito + saldo_inicial);
+                $("#c_total_saldo").html(precio_credito);
+            }
 
             generar_proyeccion(precio_credito, trigger);
 

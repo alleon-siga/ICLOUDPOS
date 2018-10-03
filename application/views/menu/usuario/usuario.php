@@ -43,21 +43,22 @@
             <table class='table table-striped table-media dataTable table-bordered'>
                 <thead>
                 <tr>
-                    <th>ID Usuario</th>
-                    <th>Usuario</th>
-                    <th>Ubicaci&oacute;n</th>
-                    <th>Cargo&nbsp;&nbsp;</th>
-                    <th>Acci&oacute;n</th>
+                    <th width="10%">ID Usuario</th>
+                    <th width="15%">Usuario</th>
+                    <th width="35%">Ubicaci&oacute;n</th>
+                    <th width="30%">Cargo&nbsp;&nbsp;</th>
+                    <th width="10%">Acci&oacute;n</th>
                 </tr>
                 </thead>
                 <tbody>
                 <?php if (count($lstUsuario) > 0): ?>
                     <?php foreach ($lstUsuario as $usu): ?>
                         <tr>
-                            <td style="text-align: center;"><?php echo $usu->nUsuCodigo; ?></td>
-                            <td style="text-align: center;"><?php echo $usu->username; ?></td>
-                            <td><?php if(count($locales_usuario)>0){
-
+                            <td style="text-align: center; white-space: normal;"><?php echo $usu->nUsuCodigo; ?></td>
+                            <td style="text-align: center; white-space: normal;"><?php echo $usu->username; ?></td>
+                            <td style="white-space: normal;">
+                            <?php 
+                                if(count($locales_usuario)>0){
                                     foreach($locales_usuario as $row){
                                         $arr = array();
                                         foreach ($row as $value) {
@@ -68,10 +69,11 @@
                                         echo implode(" / ", $arr);
                                     }
 
-                                } ?></td>
-                            <td><?php echo $usu->nombre_grupos_usuarios; ?></td>
-
-                            <td class='actions_big'>
+                                } 
+                            ?>
+                            </td>
+                            <td style="white-space: normal;"><?php echo $usu->nombre_grupos_usuarios; ?></td>
+                            <td class='actions_big' style="white-space: normal;">
                             <?php if ($usu->esSuper != 1)
                             { ?>
                                 <div class="btn-group">
@@ -83,12 +85,9 @@
                                     <a href="#" class='btn btn-default tip' onclick="borrar(<?php echo $usu->nUsuCodigo; ?>,'<?php echo $usu->username; ?>')" title="Eliminar" >
                                         <i class="fa fa-trash-o"></i>
                                     </a>
-
-
                                 </div>
                                 <?php } ?>
                             </td>
-
                         </tr>
                     <?php endforeach; ?>
                 <?php else : ?>
