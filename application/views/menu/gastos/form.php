@@ -161,8 +161,11 @@
                 <div class="form-group">
                     <label class="control-label col-md-3">Medio de Pago</label>
                     <div class="col-md-9">
-                        <select class="form-control select_chosen" id="cuenta_id" name="cuenta_id">
-                            <option value="">Seleccione</option>
+                        <select class="form-control select_chosen" id="metodo_pago" name="metodo_pago">
+                            <option value="" selected="">Seleccione</option>
+                            <?php foreach ($metodo_pago as $metodopago): ?>
+                                    <option value="<?php echo $metodopago['id_metodo'] ?>" <?php if (isset($gastos['id_metodo']) and $gastos['id_metodo'] == $metodopago['id_metodo']) echo 'selected' ?> data-metodo="<?= $metodopago['tipo_metodo']?>"><?= $metodopago['nombre_metodo'] ?></option>
+                                <?php endforeach ?>
                         </select>
                     </div>
                 </div>
@@ -262,7 +265,8 @@
         local_id: <?= $cuenta->local_id ?>,   
         moneda_nombre: '<?= $cuenta->moneda_nombre ?>',
         simbolo: '<?= $cuenta->simbolo ?>',
-        descripion: '<?= $cuenta->descripcion ?>'
+        descripion: '<?= $cuenta->descripcion ?>',
+        banco: '<?= $cuenta->banco ?>'
     });
     <?php endforeach;?>
 

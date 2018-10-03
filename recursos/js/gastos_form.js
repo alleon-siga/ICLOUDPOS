@@ -62,7 +62,46 @@
 
             cuenta_select.chosen();
         });
-
+        $('#metodo_pago').on('change', function () {
+            
+        });
+        $('#metodo_pago').on('change', function () {
+            
+            $('#cuenta_id').chosen('destroy');
+            var cuenta_select = $('#cuenta_id');
+            cuenta_select.html('<option value="">Seleccione</option>');
+            if($('#metodo_pago').find(':selected').data('metodo')=="BANCO"){
+                var slt;
+                for (var i = 0; i < cuentas.length; i++) {
+                    if (cuentas[i].banco == 1) {
+                        
+                        slt = "";
+                        if(cuentas[i].id == caja_desglose_id){
+                            slt = "selected";
+                        }
+                        cuenta_select.append('<option data-moneda="'+ cuentas[i].simbolo +'" value="' + cuentas[i].id + '" '+ slt +'>' + cuentas[i].descripion + ' | ' + cuentas[i].moneda_nombre + '</option>');
+                    }
+                    $('#cuenta_id').chosen('destroy');
+                }
+                $('.idMoneda').text($('#cuenta_id').find(':selected').data('moneda'));
+            }else if($('#metodo_pago').find(':selected').data('metodo')=="CAJA"){
+                var slt;
+                for (var i = 0; i < cuentas.length; i++) {
+                    if (cuentas[i].banco == '') {
+                        slt = "";
+                        if(cuentas[i].id == caja_desglose_id){
+                            slt = "selected";
+                        }
+                        cuenta_select.append('<option data-moneda="'+ cuentas[i].simbolo +'" value="' + cuentas[i].id + '" '+ slt +'>' + cuentas[i].descripion + ' | ' + cuentas[i].moneda_nombre + '</option>');
+                    }
+                    $('#cuenta_id').chosen('destroy');
+                }
+                $('.idMoneda').text($('#cuenta_id').find(':selected').data('moneda'));
+            }else{
+                cuenta_select.html('<option value="">Seleccione</option>');
+                $('#cuenta_id').chosen('destroy');
+            }
+        });
         $('#cuenta_id').on('change', function(){
             $('.idMoneda').text($(this).find(':selected').data('moneda'));
         });

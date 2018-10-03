@@ -108,7 +108,8 @@ class gastos_model extends CI_Model
             'id_impuesto' => $data['id_impuesto'],
             'subtotal' => ($data['gravable']=='0')? $data['total'] : $data['subtotal'],
             'impuesto' => $data['impuesto'],
-            'condicion_pago' => $data['tipo_pago']
+            'condicion_pago' => $data['tipo_pago'],
+            'medio_pago' => $data['metodo_pago']
         );
 
         $this->db->insert('gastos', $gastos);
