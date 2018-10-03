@@ -1,7 +1,7 @@
 $(document).ready(function () {
     //CONFIGURACIONES INICIALES
     App.sidebar('close-sidebar');
-    
+
     $("#agregarproveedor").load(ruta + 'proveedor/form');
 
     $("#charm").tcharm({
@@ -140,7 +140,7 @@ function borrar(id, nom) {
 
 function editar(id) {
     $('#load_div').show();
-    $("#agregar").load(ruta + 'gastos/form/' + id, function(){
+    $("#agregar").load(ruta + 'gastos/form/' + id, function () {
         $('#agregar').modal('show');
         $('#load_div').hide();
     });
@@ -148,7 +148,7 @@ function editar(id) {
 
 function agregar() {
     $('#load_div').show();
-    $("#agregar").load(ruta + 'gastos/form', function(){
+    $("#agregar").load(ruta + 'gastos/form', function () {
         $('#agregar').modal('show');
         $('#load_div').hide();
     });
@@ -175,11 +175,66 @@ var grupo = {
 
             return false;
         }
+        if ($("#cboDocumento").val() == '') {
+            var growlType = 'warning';
 
+            $.bootstrapGrowl('<h4>Debe seleccionar un Documento</h4>', {
+                type: growlType,
+                delay: 2500,
+                allow_dismiss: true
+            });
+
+            $(this).prop('disabled', true);
+
+            return false;
+        }
+        if ($("#tipo_pago").val() == '2') {
+            if ($("#tipo_moneda").val() == '') {
+                var growlType = 'warning';
+
+                $.bootstrapGrowl('<h4>Debe ingresar el tipo moneda</h4>', {
+                    type: growlType,
+                    delay: 2500,
+                    allow_dismiss: true
+                });
+
+                $(this).prop('disabled', true);
+
+                return false;
+            }
+        }
+        if ($("#tipo_pago").val() == '1') {
+            if ($("#metodo_pago").val() == '') {
+                var growlType = 'warning';
+
+                $.bootstrapGrowl('<h4>Debe seleccionar un metodo de Pago</h4>', {
+                    type: growlType,
+                    delay: 2500,
+                    allow_dismiss: true
+                });
+
+                $(this).prop('disabled', true);
+
+                return false;
+            }
+            if ($("#cuenta_id").val() == '') {
+                var growlType = 'warning';
+
+                $.bootstrapGrowl('<h4>Debe seleccionar una cuenta</h4>', {
+                    type: growlType,
+                    delay: 2500,
+                    allow_dismiss: true
+                });
+
+                $(this).prop('disabled', true);
+
+                return false;
+            }
+        }
         if ($("#descripcion").val() == '') {
             var growlType = 'warning';
 
-            $.bootstrapGrowl('<h4>Debe ingresar la descripcion</h4>', {
+            $.bootstrapGrowl('<h4>Debe seleccionar la decripcion</h4>', {
                 type: growlType,
                 delay: 2500,
                 allow_dismiss: true
@@ -190,7 +245,8 @@ var grupo = {
             return false;
         }
 
-        if ($("#total").val() == '' && $('#tipo_gasto option:selected').text()!='PRESTAMO BANCARIO') { //Si esta vacio y si el tipo de gasto no es prestamo bancario
+
+        if ($("#total").val() == '' && $('#tipo_gasto option:selected').text() != 'PRESTAMO BANCARIO') { //Si esta vacio y si el tipo de gasto no es prestamo bancario
             var growlType = 'warning';
 
             $.bootstrapGrowl('<h4>Debe ingresar el monto gastado</h4>', {
@@ -266,20 +322,6 @@ var grupo = {
             return false;
         }
 
-        if ($("#cuenta_id").val() == '') {
-            var growlType = 'warning';
-
-            $.bootstrapGrowl('<h4>Debe seleccionar una cuenta</h4>', {
-                type: growlType,
-                delay: 2500,
-                allow_dismiss: true
-            });
-
-            $(this).prop('disabled', true);
-
-            return false;
-        }
-
         if ($("#gravable").val() == '1') {
             if ($("#id_impuesto").val() == '') {
                 var growlType = 'warning';
@@ -298,16 +340,16 @@ var grupo = {
 
         var impuesto = (($('#id_impuesto option:selected').attr('data-impuesto') / 100) + 1);
         var total = $('#total').val();
-        if($('#gravable').val()=='0'){ //no
+        if ($('#gravable').val() == '0') { //no
             $('#subtotal').attr('value', parseFloat(total).toFixed(2));
             $('#impuesto').attr('value', parseFloat(0).toFixed(2));
-        }else{ //si
+        } else { //si
             $('#subtotal').attr('value', parseFloat(total / impuesto).toFixed(2));
             $('#impuesto').attr('value', parseFloat(total - (total / impuesto)).toFixed(2));
         }
 
 
-        if($('#tipo_pago').val()=='2' && $('#tipo_gasto option:selected').text()!='PRESTAMO BANCARIO'){ //credito y diferente a tipo de gasto prestamo bancario
+        if ($('#tipo_pago').val() == '2' && $('#tipo_gasto option:selected').text() != 'PRESTAMO BANCARIO') { //credito y diferente a tipo de gasto prestamo bancario
             $("#dialog_gasto_prestamo").html('');
             $('#load_div').show();
             $.ajax({
@@ -323,7 +365,7 @@ var grupo = {
                     alert('Error');
                 }
             });
-        }else if($('#tipo_gasto option:selected').text()=='PRESTAMO BANCARIO'){ //si es tipo de gasto prestamo bancario
+        } else if ($('#tipo_gasto option:selected').text() == 'PRESTAMO BANCARIO') { //si es tipo de gasto prestamo bancario
             $("#dialog_gasto_credito").html('');
             $('#load_div').show();
             $.ajax({
@@ -339,13 +381,13 @@ var grupo = {
                     alert('Error');
                 }
             });
-        }else{
+        } else {
             App.formSubmitAjax($("#formagregar").attr('action'), get_gastos, 'agregar', 'formagregar');
             $.bootstrapGrowl('<h4>Solicitud procesada con &eacute;xito</h4>', {
                 type: 'success',
                 delay: 2500,
                 allow_dismiss: true
-            });         
+            });
         }
     }
 }
@@ -376,7 +418,7 @@ function agregarproveedor() {
 }
 
 function agregarTipoGasto() {
-    $("#tipoGastoModal").load(ruta + 'tiposdegasto/form', function(){
+    $("#tipoGastoModal").load(ruta + 'tiposdegasto/form', function () {
         $('#btnGuardarTipoGasto').removeAttr("onclick");
         $('#btnGuardarTipoGasto').attr("onclick", "guardar_tipoGasto()");
         $('#nombre_tipos_gasto').focus();
@@ -384,7 +426,7 @@ function agregarTipoGasto() {
     $('#tipoGastoModal').modal('show');
 }
 
-function updateSelect(id, nombre){
+function updateSelect(id, nombre) {
     $('#tipo_gasto_id').append('<option value="' + id + '">' + nombre + '</option>');
     $("#tipo_gasto_id").trigger('chosen:updated');
     $('#tipo_gasto').append('<option value="' + id + '">' + nombre + '</option>');
@@ -392,7 +434,7 @@ function updateSelect(id, nombre){
     $("#tipo_gasto").trigger('chosen:updated');
 }
 
-function guardar_tipoGasto(){
+function guardar_tipoGasto() {
     if ($("#nombre_tipos_gasto").val() == '') {
         var growlType = 'warning';
 
@@ -425,11 +467,11 @@ function guardar_tipoGasto(){
         headers: {
             Accept: 'application/json'
         },
-        dataType:'json',
+        dataType: 'json',
         data: $("#formagregar").serialize(),
         success: function (data) {
             var growlType = 'success';
-            $.bootstrapGrowl('<h4>'+data.success+'</h4>', {
+            $.bootstrapGrowl('<h4>' + data.success + '</h4>', {
                 type: growlType,
                 delay: 2500,
                 allow_dismiss: true
@@ -440,7 +482,7 @@ function guardar_tipoGasto(){
                 $('#load_div').hide()
             }, 2000);
         },
-        error: function(data){
+        error: function (data) {
             var growlType = 'warning';
             $.bootstrapGrowl('<h4>' + data.error + '</h4>', {
                 type: growlType,

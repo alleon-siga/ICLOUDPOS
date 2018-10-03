@@ -195,7 +195,7 @@
             <tr>
                 <td style="width: 60%; font-weight: bold;">SALDO</td>
                 <td style="text-align: right; font-weight: bold;">
-                  <?= $moneda['simbolo'] ?><?= $total_pago_efectivo[$moneda['id_moneda']]->total != NULL ?  number_format($total_pago_efectivo[$moneda['id_moneda']]->total-$total_descuento_efectivo[$moneda['id_moneda']]->total,2) : 0?> </td>
+                  <?= $moneda['simbolo'] ?><?= $total_pago_efectivo[$moneda['id_moneda']]->total != NULL ?  number_format($total_pago_efectivo[$moneda['id_moneda']]->total-$total_descuento_efectivo[$moneda['id_moneda']]->total-$gasto_efec[$moneda['id_moneda']]->total,2) : 0-$gasto_efec[$moneda['id_moneda']]->total?> </td>
             </tr>
         </table>
     </div>
