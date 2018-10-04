@@ -184,7 +184,8 @@ class gastos_model extends CI_Model
             'numero' => $data['numero'],
             'id_impuesto' => $data['id_impuesto'],
             'subtotal' => $data['subtotal'],
-            'impuesto' => $data['impuesto']
+            'impuesto' => $data['impuesto'],
+            'medio_pago' => $data['metodo_pago']
         );        
         $this->db->where('id_gastos', $data['id_gastos']);
         $this->db->update('gastos', $gastos);

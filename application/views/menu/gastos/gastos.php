@@ -44,16 +44,6 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                     </div>
                 </div>
                 <div class="row">
-                    <label class="control-label">Moneda</label>
-                    <select name="moneda_id" id="moneda_id" class='cho form-control'>
-                        <?php foreach ($monedas as $moneda): ?>
-                            <option value="<?= $moneda->id_moneda ?>"
-                                    data-simbolo="<?= $moneda->simbolo ?>"
-                                <?= $moneda->id_moneda == MONEDA_DEFECTO ? 'selected' : '' ?>><?= $moneda->nombre ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <div class="row">
                     <label class="control-label">Estado</label>
                     <select name="estado_id" id="estado_id" class='cho form-control'>
                        <option value="">TODOS</option>
@@ -125,10 +115,22 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                 </select>
             <?php endif; ?>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
             <label class="control-label panel-admin-text">Fecha</label>
             <input type="text" id="date_range" class="form-control" readonly style="cursor: pointer;"
                    name="daterange" value="<?= date('01/m/Y') ?> - <?= date('d/m/Y') ?>"/>
+        </div>
+        <div class="col-md-2">
+            <label class="control-label panel-admin-text">Moneda</label>
+             <?php if(isset($monedas)): ?>
+                <select id="moneda_id" class="form-control select_chosen">
+                    <?php foreach ($monedas as $moneda): ?>
+                        <option value="<?= $moneda->id_moneda ?>"
+                                    data-simbolo="<?= $moneda->simbolo ?>"
+                                <?= $moneda->id_moneda == MONEDA_DEFECTO ? 'selected' : '' ?>><?= $moneda->nombre ?></option>
+                    <?php endforeach; ?>
+                </select>
+            <?php endif; ?>
         </div>
         <div class="col-md-2">
             <div style="padding-top: 30px;"></div>
