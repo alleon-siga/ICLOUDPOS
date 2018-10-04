@@ -4,19 +4,7 @@ $("#fecha").datepicker({
 
 
 $(document).ready(function () {
-    bloqueo(true);
-    $("#tipo_gasto").on("change", function () {
-        $("#persona_gasto").on("change", function () {
-            $("#proveedor").on("change", function () {
-                if ($("#tipo_gasto").val() == '' || $("#persona_gasto").val() == '' || $("#proveedor").val() == '') {
-                    bloqueo(true);
-                } 
-                if ($("#tipo_gasto").val() != '' || $("#persona_gasto").val() != '' || $("#proveedor").val() != '') {
-                    bloqueo(false);
-                } 
-            });
-        });
-    });
+    
     function bloqueo(bl) {
         document.getElementById('f6guardar').disabled = bl;
         document.getElementById("myFieldset").disabled = bl;
