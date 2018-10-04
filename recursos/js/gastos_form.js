@@ -4,7 +4,25 @@ $("#fecha").datepicker({
 
 
 $(document).ready(function () {
-   
+    bloqueo(true);
+    $("#tipo_gasto").on("change", function () {
+        $("#persona_gasto").on("change", function () {
+            $("#proveedor").on("change", function () {
+                if ($("#tipo_gasto").val() == '' || $("#persona_gasto").val() == '' || $("#proveedor").val() == '') {
+                    bloqueo(true);
+                } 
+                if ($("#tipo_gasto").val() != '' || $("#persona_gasto").val() != '' || $("#proveedor").val() != '') {
+                    bloqueo(false);
+                } 
+            });
+        });
+    });
+    function bloqueo(bl) {
+        document.getElementById('f6guardar').disabled = bl;
+        document.getElementById("myFieldset").disabled = bl;
+        document.getElementById("myFieldset1").disabled = bl;
+        document.getElementById("myFieldset2").disabled = bl;
+    }
     if ($('#tipo_gasto option:selected').text() == 'PRESTAMO BANCARIO') {
         controles(true);
     }
@@ -60,7 +78,7 @@ $(document).ready(function () {
         var opt = $('#tipo_pago').find(':selected').val();
         if (opt === '2') {
             $('#dispago').hide();
-            $('#discuenta').hide();            
+            $('#discuenta').hide();
             $('#selmoneda').show();
         } else if (opt === '1') {
             $('#dispago').show();
@@ -70,41 +88,41 @@ $(document).ready(function () {
     });
     $('#metodo_pago').on('change', function () {
 //        if ($('#tipo_moneda').find(':selected').data('idmonto') != undefined) {
-            $('#cuenta_id').chosen('destroy');
-            var cuenta_select = $('#cuenta_id');
-            cuenta_select.html('<option value="">Seleccione</option>');
-            if ($('#metodo_pago').find(':selected').data('metodo') == "BANCO") {
-                var slt;
-                for (var i = 0; i < cuentas.length; i++) {
-                    if (cuentas[i].banco == 1) {
+        $('#cuenta_id').chosen('destroy');
+        var cuenta_select = $('#cuenta_id');
+        cuenta_select.html('<option value="">Seleccione</option>');
+        if ($('#metodo_pago').find(':selected').data('metodo') == "BANCO") {
+            var slt;
+            for (var i = 0; i < cuentas.length; i++) {
+                if (cuentas[i].banco == 1) {
 
-                        slt = "";
-                        if (cuentas[i].id == caja_desglose_id) {
-                            slt = "selected";
-                        }
+                    slt = "";
+                    if (cuentas[i].id == caja_desglose_id) {
+                        slt = "selected";
+                    }
 
-                        cuenta_select.append('<option data-moneda="' + cuentas[i].simbolo + '" value="' + cuentas[i].id + '" ' + slt + '>' + cuentas[i].descripion + ' | ' + cuentas[i].moneda_nombre + '</option>');
-                    }
-                    $('#cuenta_id').chosen('destroy');
+                    cuenta_select.append('<option data-moneda="' + cuentas[i].simbolo + '" value="' + cuentas[i].id + '" ' + slt + '>' + cuentas[i].descripion + ' | ' + cuentas[i].moneda_nombre + '</option>');
                 }
-                $('.idMoneda').text($('#cuenta_id').find(':selected').data('moneda'));
-            } else if ($('#metodo_pago').find(':selected').data('metodo') == "CAJA") {
-                var slt;
-                for (var i = 0; i < cuentas.length; i++) {
-                    if (cuentas[i].banco == '') {
-                        slt = "";
-                        if (cuentas[i].id == caja_desglose_id) {
-                            slt = "selected";
-                        }
-                        cuenta_select.append('<option data-moneda="' + cuentas[i].simbolo + '" value="' + cuentas[i].id + '" ' + slt + '>' + cuentas[i].descripion + ' | ' + cuentas[i].moneda_nombre + '</option>');
-                    }
-                    $('#cuenta_id').chosen('destroy');
-                }
-                $('.idMoneda').text($('#cuenta_id').find(':selected').data('moneda'));
-            } else {
-                cuenta_select.html('<option value="">Seleccione</option>');
                 $('#cuenta_id').chosen('destroy');
             }
+            $('.idMoneda').text($('#cuenta_id').find(':selected').data('moneda'));
+        } else if ($('#metodo_pago').find(':selected').data('metodo') == "CAJA") {
+            var slt;
+            for (var i = 0; i < cuentas.length; i++) {
+                if (cuentas[i].banco == '') {
+                    slt = "";
+                    if (cuentas[i].id == caja_desglose_id) {
+                        slt = "selected";
+                    }
+                    cuenta_select.append('<option data-moneda="' + cuentas[i].simbolo + '" value="' + cuentas[i].id + '" ' + slt + '>' + cuentas[i].descripion + ' | ' + cuentas[i].moneda_nombre + '</option>');
+                }
+                $('#cuenta_id').chosen('destroy');
+            }
+            $('.idMoneda').text($('#cuenta_id').find(':selected').data('moneda'));
+        } else {
+            cuenta_select.html('<option value="">Seleccione</option>');
+            $('#cuenta_id').chosen('destroy');
+        }
 //        } else if ($('#tipo_moneda').find(':selected').data('idmonto') == undefined) {
 //            var growlType = 'warning';
 //            $.bootstrapGrowl('<h4>Debe seleccionar la moneda</h4>', {
@@ -277,7 +295,10 @@ function editarDetalle(id) {
         }
     });
 }
-
+document.getElementById('cbxactser').onchange = function () {
+    document.getElementById('doc_serie').disabled = this.checked;
+    document.getElementById('doc_numero').disabled = this.checked;
+};
 function controles(a) {
     $('#tipo_pago').prop('disabled', a);
     $('#gravable').prop('disabled', a);

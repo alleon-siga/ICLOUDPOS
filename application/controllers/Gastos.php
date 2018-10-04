@@ -107,7 +107,7 @@ class gastos extends MY_Controller {
                         ->from('caja_desglose')
                         ->join('caja', 'caja.id = caja_desglose.caja_id')
                         ->join('moneda', 'moneda.id_moneda = caja.moneda_id')
-                        ->join('banco', 'banco.cuenta_id = caja_desglose.id','left')
+                        ->join('banco', 'banco.cuenta_id = caja_desglose.id', 'left')
                         ->where('moneda.status_moneda', 1)
                         ->get()->result();
 
@@ -138,10 +138,20 @@ class gastos extends MY_Controller {
                         ->get_where('caja_desglose', array('caja_desglose.id' => $this->input->post('cuenta_id')))->row();
 
         $tasa_cambio = 0;
-        if ($this->input->post('tipo_moneda') != 1029) {
-            $tasa = $this->monedas_model->get_by('id_moneda', $this->input->post('tipo_moneda'));
-            $tasa_cambio = $tasa['tasa_soles'];
+        if (isset($cuenta->moneda_id) && $cuenta->moneda_id!='') {
+            if ($cuenta->moneda_id != 1029) {
+                $tasa = $this->monedas_model->get_by('id_moneda', $cuenta->moneda_id);
+                $tasa_cambio = $tasa['tasa_soles'];
+            }
+            $idmoneda=$cuenta->moneda_id;
+        } else {
+            if ($this->input->post('tipo_moneda') != 1029) {
+                $tasa = $this->monedas_model->get_by('id_moneda', $this->input->post('tipo_moneda'));
+                $tasa_cambio = $tasa['tasa_soles'];
+            }
+            $idmoneda=$this->input->post('tipo_moneda');
         }
+
         $gastos = array(
             'id_gastos' => $id,
             'fecha' => date('Y-m-d', strtotime($this->input->post('fecha'))) . " " . date("H:i:s"),
@@ -164,7 +174,7 @@ class gastos extends MY_Controller {
             'id_impuesto' => $this->input->post('id_impuesto'),
             'subtotal' => $this->input->post('subtotal'),
             'impuesto' => $this->input->post('impuesto'),
-            'moneda_id' => $this->input->post('tipo_moneda'),
+            'moneda_id' => $idmoneda,
             'tipo_pago' => $this->input->post('tipo_pago'),
             'c_tasa_interes' => $this->input->post('c_tasa_interes'),
             'capital' => $this->input->post('c_precio_contado'),
@@ -223,7 +233,7 @@ class gastos extends MY_Controller {
                 'pago' => 'CREDITO',
                 'local_id' => $this->input->post('filter_local_id', true),
                 'ingreso_observacion' => $this->input->post('descripcion', true),
-                'id_moneda' => $cuenta->moneda_id,
+                'id_moneda' => $idmoneda,
                 'tasa_cambio' => NULL,
                 'status' => $status,
                 'facturar' => '0',

@@ -106,7 +106,7 @@
                     </div>
                 </div>
                 <hr>
-                <div id="campogasto">
+                <fieldset id="myFieldset">
                     <div class="form-group">
                         <label class="control-label col-md-3">Condici&oacute;n</label>
                         <div class="col-md-3">
@@ -126,19 +126,19 @@
                             </select>
                         </div>
                         <div id="selmoneda">
-                        <label class="control-label col-md-3">Moneda</label>
-                        <div class="col-md-3">
-                            <select name="tipo_moneda" id="tipo_moneda" class='form-control'>
-                                <option value="" selected="">Seleccione</option>
-                                <?php
-                                foreach ($monedas as $moneda) {
-                                    ?>
-                                    <option value="<?php echo $moneda['id_moneda']; ?>" data-moneda="<?php echo $moneda['simbolo']; ?>" data-idmonto="<?php echo $moneda['id_moneda']; ?>"><?php echo $moneda['nombre']; ?></option>
+                            <label class="control-label col-md-3">Moneda</label>
+                            <div class="col-md-3">
+                                <select name="tipo_moneda" id="tipo_moneda" class='form-control'>
+                                    <option value="" selected="">Seleccione</option>
                                     <?php
-                                }
-                                ?>
-                            </select>
-                        </div>
+                                    foreach ($monedas as $moneda) {
+                                        ?>
+                                        <option value="<?php echo $moneda['id_moneda']; ?>" data-moneda="<?php echo $moneda['simbolo']; ?>" data-idmonto="<?php echo $moneda['id_moneda']; ?>"><?php echo $moneda['nombre']; ?></option>
+                                        <?php
+                                    }
+                                    ?>
+                                </select>
+                            </div>
                         </div>
                     </div>
                     <div class="form-group">
@@ -153,23 +153,27 @@
                             ?>
                             <select name="gravable" id="gravable" class="form-control">
                                 <option value="">Seleccione</option>
-                                <option value="0" <?php if ($gravable == '0') {
-                                echo "selected";
-                            } ?>>NO</option>
-                                <option value="1" <?php if ($gravable == '1') {
-                                echo "selected";
-                            } ?>>SI</option>
+                                <option value="0" <?php
+                                if ($gravable == '0') {
+                                    echo "selected";
+                                }
+                                ?>>NO</option>
+                                <option value="1" <?php
+                                if ($gravable == '1') {
+                                    echo "selected";
+                                }
+                                ?>>SI</option>
                             </select>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="control-label col-md-3">Documento</label>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <select name="cboDocumento" id="cboDocumento" class="form-control">
                                 <option value="">Seleccione</option>                                   
-<?php foreach ($documentos as $documento) { ?>
+                                <?php foreach ($documentos as $documento) { ?>
                                     <option value="<?= $documento->id_doc ?>" <?php if (isset($gastos['id_documento']) and $gastos['id_documento'] == $documento->id_doc) echo 'selected' ?>><?= $documento->des_doc ?></option>
-<?php } ?>
+                                <?php } ?>
                             </select>
                         </div>
                         <div class="col-md-2">
@@ -178,16 +182,21 @@
                         <div class="col-md-3">
                             <input type="text" placeholder="Numero" name="doc_numero" id="doc_numero" value="<?php if (isset($gastos['numero'])) echo $gastos['numero']; ?>" class="form-control" autocomplete="off">
                         </div>
+                        <div class="col-md-1">
+                            <input type="checkbox"  name="cbxactser" id="cbxactser" style="margin-top:10px !important;">
+                        </div>
                     </div>
-                    <hr>
+                </fieldset>
+                <hr>
+                <fieldset id="myFieldset1">
                     <div class="form-group" id="dispago">
                         <label class="control-label col-md-3">Medio de Pago</label>
                         <div class="col-md-9">
                             <select class="form-control select_chosen" id="metodo_pago" name="metodo_pago">
                                 <option value="" selected="">Seleccione</option>
-<?php foreach ($metodo_pago as $metodopago): ?>
+                                <?php foreach ($metodo_pago as $metodopago): ?>
                                     <option value="<?php echo $metodopago['id_metodo'] ?>" <?php if (isset($gastos['id_metodo']) and $gastos['id_metodo'] == $metodopago['id_metodo']) echo 'selected' ?> data-metodo="<?= $metodopago['tipo_metodo'] ?>"><?= $metodopago['nombre_metodo'] ?></option>
-<?php endforeach ?>
+                                <?php endforeach ?>
                             </select>
                         </div>
                     </div>
@@ -205,76 +214,80 @@
                             <textarea name="descripcion" id="descripcion" required="true" class="form-control"><?php if (isset($gastos['descripcion'])) echo $gastos['descripcion']; ?></textarea>
                         </div>
                         <div class="col-md-3">
-                            <a href="javascript:<?php if (isset($gastos['id_gastos'])) {
-    echo "editarDetalle(" . $gastos['id_gastos'] . ")";
-} else {
-    echo "agregarDetalle()";
-} ?>">Agregar detalle</a>
+                            <a href="javascript:<?php
+                            if (isset($gastos['id_gastos'])) {
+                                echo "editarDetalle(" . $gastos['id_gastos'] . ")";
+                            } else {
+                                echo "agregarDetalle()";
+                            }
+                            ?>">Agregar detalle</a>
                         </div>
                     </div>
-                </div>
-<?php
-$display = '';
-if (!isset($gastos['gravable'])) {
-    $display = 'style="display: none;"';
-} elseif ($gastos['gravable'] == '0') {
-    $display = 'style="display: none;"';
-}
-?>
-                <div class="form-group" id="idImp" <?= $display ?>>
-                    <div class="col-md-3">
-                        <select name="id_impuesto" id="id_impuesto" class='form-control'>
-                            <option value="">Seleccione</option>
-                            <?php if (count($impuestos) > 0): ?>
-                                <?php
-                                foreach ($impuestos as $impuesto):
-                                    $selected = '';
-                                    if (isset($gastos['id_impuesto'])) {
-                                        if ($gastos['id_impuesto'] == $impuesto['id_impuesto']) {
-                                            $selected = 'selected="selected"';
+                </fieldset>
+                <?php
+                $display = '';
+                if (!isset($gastos['gravable'])) {
+                    $display = 'style="display: none;"';
+                } elseif ($gastos['gravable'] == '0') {
+                    $display = 'style="display: none;"';
+                }
+                ?>
+                <fieldset id="myFieldset2">
+                    <div class="form-group" id="idImp" <?= $display ?>>
+                        <div class="col-md-3">
+                            <select name="id_impuesto" id="id_impuesto" class='form-control'>
+                                <option value="">Seleccione</option>
+                                <?php if (count($impuestos) > 0): ?>
+                                    <?php
+                                    foreach ($impuestos as $impuesto):
+                                        $selected = '';
+                                        if (isset($gastos['id_impuesto'])) {
+                                            if ($gastos['id_impuesto'] == $impuesto['id_impuesto']) {
+                                                $selected = 'selected="selected"';
+                                            }
+                                        } else {
+                                            if ($impuesto['id_impuesto'] == '1') {
+                                                $selected = 'selected="selected"';
+                                            }
                                         }
-                                    } else {
-                                        if ($impuesto['id_impuesto'] == '1') {
-                                            $selected = 'selected="selected"';
-                                        }
-                                    }
-                                    ?>
-                                    <option value="<?php echo $impuesto['id_impuesto']; ?>" data-impuesto="<?= $impuesto['porcentaje_impuesto'] ?>" <?= $selected ?>>
-        <?php echo $impuesto['nombre_impuesto']; ?>
-                                    </option>
-    <?php endforeach; ?>
-<?php endif; ?>
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="input-group">
-                            <div class="input-group-addon idMoneda" id="idMoneda"></div>
-                            <input type="number" name="impuesto" id="impuesto" class="form-control" value="<?php if (isset($gastos['impuesto'])) echo $gastos['impuesto']; ?>" readonly="readonly">
+                                        ?>
+                                        <option value="<?php echo $impuesto['id_impuesto']; ?>" data-impuesto="<?= $impuesto['porcentaje_impuesto'] ?>" <?= $selected ?>>
+                                            <?php echo $impuesto['nombre_impuesto']; ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <div class="input-group-addon idMoneda" id="idMoneda"></div>
+                                <input type="number" name="impuesto" id="impuesto" class="form-control" value="<?php if (isset($gastos['impuesto'])) echo $gastos['impuesto']; ?>" readonly="readonly">
+                            </div>
+                        </div>
+                        <div class="col-md-5" id="idSt" <?= $display ?>>
+                            <div class="input-group">
+                                <div class="input-group-addon idMoneda" id="idMoneda"></div>
+                                <input readonly="readonly" type="number" name="subtotal" id="subtotal" required="true" class="form-control"
+                                       value="<?php if (isset($gastos['subtotal'])) echo $gastos['subtotal']; ?>"
+                                       onkeydown="return soloDecimal(event);">
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-5" id="idSt" <?= $display ?>>
-                        <div class="input-group">
-                            <div class="input-group-addon idMoneda" id="idMoneda"></div>
-                            <input readonly="readonly" type="number" name="subtotal" id="subtotal" required="true" class="form-control"
-                                   value="<?php if (isset($gastos['subtotal'])) echo $gastos['subtotal']; ?>"
-                                   onkeydown="return soloDecimal(event);">
+                    <div class="form-group">
+                        <label class="control-label col-md-3">Total</label>
+                        <div class="col-md-9">
+                            <div class="input-group">
+                                <div class="input-group-addon idMoneda" id="idMoneda"></div>
+                                <input type="number" name="total" id="total" required="true" class="form-control"
+                                       value="<?php if (isset($gastos['total'])) echo $gastos['total']; ?>"
+                                       onkeydown="return soloDecimal(event);" autocomplete="off">
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label class="control-label col-md-3">Total</label>
-                    <div class="col-md-9">
-                        <div class="input-group">
-                            <div class="input-group-addon idMoneda" id="idMoneda"></div>
-                            <input type="number" name="total" id="total" required="true" class="form-control"
-                                   value="<?php if (isset($gastos['total'])) echo $gastos['total']; ?>"
-                                   onkeydown="return soloDecimal(event);" autocomplete="off">
-                        </div>
-                    </div>
-                </div>
+                </fieldset>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" onclick="grupo.guardar()">F6 Guardar</button>
+                <button type="button" class="btn btn-primary" onclick="grupo.guardar()" id="f6guardar">F6 Guardar</button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
             </div>
             <!-- /.modal-content -->
