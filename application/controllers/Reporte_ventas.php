@@ -437,6 +437,7 @@ class Reporte_ventas extends MY_Controller
         switch ($action) {
             case 'filter': {
                 $params['local_id'] = $this->input->post('local_id');
+                $params['moneda_id'] = $this->input->post('moneda_id');
                 if(!empty($this->input->post('fecha'))){
                     $date_range = explode(" - ", $this->input->post('fecha'));
                     $params['fecha_ini'] = date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0])));
@@ -452,6 +453,7 @@ class Reporte_ventas extends MY_Controller
                 $date_range = explode(' - ', $params->fecha);
                 $input = array(
                     'local_id' => $params->local_id,
+                    'moneda_id' => $params->moneda_id,
                     'fecha_ini' => date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0]))),
                     'fecha_fin' => date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])))
                 );
@@ -476,6 +478,7 @@ class Reporte_ventas extends MY_Controller
                 $date_range = explode(' - ', $params->fecha);
                 $input = array(
                     'local_id' => $params->local_id,
+                    'moneda_id' => $params->moneda_id,
                     'fecha_ini' => date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0]))),
                     'fecha_fin' => date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])))
                 );
@@ -494,6 +497,7 @@ class Reporte_ventas extends MY_Controller
                     $usu = $this->session->userdata('nUsuCodigo');
                     $data['locales'] = $this->local_model->get_all_usu($usu);
                 }
+                $data["monedas"] = $this->monedas_model->get_all();
                 $dataCuerpo['cuerpo'] = $this->load->view('menu/reporte_venta/utilidadProducto', $data, true);
                 if ($this->input->is_ajax_request()) {
                     echo $dataCuerpo['cuerpo'];
