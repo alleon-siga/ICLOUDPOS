@@ -89,6 +89,7 @@
                 </div>
                 <div class="col-md-3">
                     <?php if (isset($locales)): ?>
+                        <label class="control-label panel-admin-text">Ubicación</label>
                         <select id="local_id" class="form-control ctrl">
                             <option value="0">TODOS</option>
                             <?php foreach ($locales as $local): ?>
@@ -98,7 +99,12 @@
                         </select>
                     <?php endif; ?>
                 </div>
+                <div class="col-md-3">
+                    <label class="control-label panel-admin-text">Fecha</label>
+                    <input type="text" id="fecha" class="form-control" readonly style="cursor: pointer;" name="fecha" value="<?= date('01/m/Y') ?> - <?= date('d/m/Y') ?>"/>
+                </div>
                 <div class="col-md-2">
+                    <label class="control-label panel-admin-text">Moneda</label>
                     <select name="moneda_id" id="moneda_id" class='form-control ctrl'>
                         <?php foreach ($monedas as $moneda): ?>
                             <option value="<?= $moneda->id_moneda ?>"
@@ -107,10 +113,8 @@
                         <?php endforeach; ?>
                     </select>
                 </div>
-                <div class="col-md-3">
-                    <input type="text" id="fecha" class="form-control" readonly style="cursor: pointer;" name="fecha" value="<?= date('01/m/Y') ?> - <?= date('d/m/Y') ?>"/>
-                </div>
                 <div class="col-md-1">
+                    <div style="padding-top: 30px;"></div>
                     <button id="btn_buscar" class="btn btn-default">
                         <i class="fa fa-search"></i> Buscar
                     </button>
