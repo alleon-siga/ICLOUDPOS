@@ -15,7 +15,7 @@
                 <div class="col-md-2">
                     <?php if (isset($locales)): ?>
                         <label class="control-label panel-admin-text">Ubicación</label>
-                        <select id="local_id" class="form-control">
+                        <select id="local_id" class="ctrl form-control">
                             <option value="0">TODOS</option>
                             <?php foreach ($locales as $local): ?>
                                 <option <?php if ($this->session->userdata('id_local') == $local['int_local_id']) echo "selected"; ?>
@@ -29,6 +29,14 @@
                     <input type="text" id="fecha" class="form-control" readonly style="cursor: pointer;" name="fecha" value="<?= date('d/m/Y') ?> - <?= date('d/m/Y') ?>"/>
                 </div>
                 <div class="col-md-2">
+                    <label class="control-label panel-admin-text">Moneda</label>
+                    <select name="moneda_id" id="moneda_id" class='ctrl form-control'>
+                        <?php foreach ($monedas as $moneda): ?>
+                        <option value="<?= $moneda['id_moneda'] ?>"
+                        data-simbolo="<?= $moneda['simbolo'] ?>"
+                        <?= $moneda['id_moneda'] == MONEDA_DEFECTO ? 'selected' : ''?>><?= $moneda['nombre']; ?></option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
                 <div class="col-md-1">
                     <div style="padding-top: 30px;"></div>
@@ -106,7 +114,8 @@
 
                     var data = {
                         'local_id': $("#local_id").val(),
-                        'fecha': $("#fecha").val()
+                        'fecha': $("#fecha").val(),
+                        'moneda_id': $("#moneda_id").val()
                     };
 
                     $.ajax({

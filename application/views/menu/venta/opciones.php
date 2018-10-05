@@ -139,7 +139,6 @@
     </div>
     <div class="row form-group">
         <div class="col-md-4">
-<<<<<<< HEAD
             <label class="control-label panel-admin-text">Aplicar redondeo sobre el total en ventas:</label>
         </div>
         <div class="col-md-8">
@@ -149,17 +148,6 @@
                 &nbsp;&nbsp;&nbsp;
                 <input type="radio" name="REDONDEO_VENTAS" id="" class='' value="0"
                     <?php echo validOption("REDONDEO_VENTAS", '0', '1') ? 'checked' : '' ?>> NO
-=======
-            <label class="control-label panel-admin-text">Valor en el comprobante</label>
-        </div>
-        <div class="col-md-8">
-            <div class="form-control">
-                <input type="radio" name="VALOR_COMPROBANTE" id="" value="NOMBRE" <?php echo validOption("VALOR_COMPROBANTE", 'NOMBRE', 'NOMBRE') ? 'checked' : '' ?>>
-                Nombre
-                &nbsp;&nbsp;&nbsp;
-                <input type="radio" name="VALOR_COMPROBANTE" id="" value="DESCRIPCION" <?php echo validOption("VALOR_COMPROBANTE", 'DESCRIPCION', 'NOMBRE') ? 'checked' : '' ?>>
-                Descripci&oacute;n
->>>>>>> b78580c08912a77535f8c44b2bc91f294658d098
             </div>
         </div>
     </div>

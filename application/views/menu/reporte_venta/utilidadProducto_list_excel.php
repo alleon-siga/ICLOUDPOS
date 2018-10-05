@@ -5,23 +5,20 @@
     header("Expires: 0");
 ?>
 <style>
-    .negativo{
-        color: red;
-    }
     .compraxunidad{
-        background-color: #46a3cb !important;
+        background-color: #67908c !important;
     }
     .ventaxunidad{
         background-color: #71bc78 !important;
     }
     .compraxcantidad{
-        background-color: #ef71cd !important;
+        background-color: #e6cca5 !important;
     }
     .ventaxcantidad{
-        background-color: #2fc4a6 !important;
+        background-color: #c2b1b5 !important;
     }
     .resulOperativo{
-        background-color: #dd7e7e !important;
+        background-color: #6ec4c6 !important;
     }
 </style>
 <?php $md = get_moneda_defecto() ?>
@@ -41,14 +38,12 @@
             <th rowspan="2" style="vertical-align: middle;"># Venta</th>
             <th rowspan="2" style="vertical-align: middle;">Local</th>
             <th rowspan="2" style="vertical-align: middle;">Fecha</th>
-            <th rowspan="2" style="vertical-align: middle;">Proveedor</th>
             <th rowspan="2" style="vertical-align: middle;">Producto</th>
             <th rowspan="2" style="vertical-align: middle;">Unidad</th>
-
-            <th colspan="3" class="compraxunidad">Compras x Unidad</th>
-            <th colspan="3" class="ventaxunidad">Ventas x Unidad</th>
-            <th colspan="3" class="compraxcantidad">Compras x Cantidad</th>
             <th rowspan="2" style="vertical-align: middle;">Cantidad</th>
+            <th colspan="3" class="compraxunidad">Compras x Unidad</th>
+            <th colspan="3" class="compraxcantidad">Compras x Cantidad</th>
+            <th colspan="3" class="ventaxunidad">Ventas x Unidad</th>
             <th colspan="3" class="ventaxcantidad">Ventas x Cantidad</th>
             <th colspan="3" class="resulOperativo">Resultado Operativo</th>
         </tr>
@@ -57,13 +52,13 @@
             <th class="compraxunidad">Impuesto</th>
             <th class="compraxunidad">Costo + Impuesto</th>
 
-            <th class="ventaxunidad">Precio unitario</th>
-            <th class="ventaxunidad">Impuesto</th>
-            <th class="ventaxunidad">Precio + Impuesto</th>
-
             <th class="compraxcantidad">Subtotal</th>
             <th class="compraxcantidad">Impuesto</th>
             <th class="compraxcantidad">Costo Total</th>
+
+            <th class="ventaxunidad">Precio unitario</th>
+            <th class="ventaxunidad">Impuesto</th>
+            <th class="ventaxunidad">Precio + Impuesto</th>
 
             <th class="ventaxcantidad">Subtotal</th>
             <th class="ventaxcantidad">Impuesto</th>
@@ -76,27 +71,26 @@
     </thead>
     <tbody>
     <?php
-    $totCostoCompraSi = $totImpCompra = $totCostoCompraImp = $totCostoVentaSi = $totImpVenta = $totCostoVenta = $totCostoCompraCantSi = $totImpCompraCant = $totalCostoTotal = $totCostoVentaCantSi = $totImpVentaCant = $totCostoTotalCant = $totUtilidadXund = $totUtilidadTotal = 0;
+    $totCantidad = $totCostoCompraSi = $totImpCompra = $totCostoCompraImp = $totCostoCompraCantSi = $totImpCompraCant = $totCostoTotal  = $totCostoVentaSi = $totCostoVenta = $totImpVenta = $totCostoVentaCantSi = $totImpVentaCant = $totCostoTotalCant = $totUtilidadXund = $totUtilidadTotal = $totPorRenta = 0;
     foreach ($lists as $ingreso):
     $impuesto = (($ingreso->impuesto_porciento / 100) + 1);
     $cantidad = $ingreso->cantidad;
     $costoCompra = $ingreso->detalle_costo_ultimo; //Costo de compra unitario con impuesto
+    $precioVenta = $ingreso->precio; //precio de venta
+
     //Ventas
     if($ingreso->tipo_impuesto=='1'){ //incluye impuesto
-        $precioVenta = $ingreso->detalle_importe; //precio de venta
-        $costoVentaSi = ($precioVenta / $cantidad) / $impuesto; //Costo de venta unitario sin impuesto
-        $impVenta = ($precioVenta / $cantidad) - $costoVentaSi;
+        $costoVentaSi = $precioVenta / $impuesto; //Costo de venta unitario sin impuesto
+        $impVenta = $precioVenta - $costoVentaSi;
         $costoVenta = $costoVentaSi * $impuesto; //Costo de venta unitario con impuesto
     }elseif($ingreso->tipo_impuesto=='2'){ //agregar impuesto
-        $precioVenta = $ingreso->detalle_importe * $impuesto;
-        $costoVentaSi = ($precioVenta / $cantidad) / $impuesto; //Costo de venta unitario sin impuesto
-        $impVenta = ($precioVenta / $cantidad) - $costoVentaSi;
+        $costoVentaSi = $precioVenta; //Costo de venta unitario sin impuesto
         $costoVenta = $costoVentaSi * $impuesto; //Costo de venta unitario con impuesto
+        $impVenta = $costoVenta - $costoVentaSi;
     }else{ //no incluye impuesto
-        $precioVenta = $ingreso->detalle_importe; //precio de venta
-        $costoVentaSi = ($precioVenta / $cantidad);
-        $impVenta = ($precioVenta / $cantidad) - $costoVentaSi;
-        $costoVenta = $costoVentaSi;
+        $costoVentaSi = $precioVenta;
+        $impVenta = 0;
+        $costoVenta = $costoVentaSi + $impVenta;
     }
     //Compras x unidad
     if($ingreso->tipo_impuesto_compra=='1'){ //incluye impuesto
@@ -114,58 +108,110 @@
     }
     //Compras x cantidad
     $costoCompraCantSi = $costoCompraSi * $cantidad; //subtotal
-    $impCompraCant = $costoCompraCantSi * $impuesto; //impuesto
-    $costoTotal = $costoCompraCantSi + $impCompraCant; //Costo total
+    $impCompraCant = $impCompra * $cantidad; //impuesto
+    $costoTotal = $costoCompraImp * $cantidad; //Costo total
     //ventas x cantidad
     $costoVentaCantSi = $costoVentaSi * $cantidad; //subtotal
-    $impVentaCant = $costoVentaCantSi * $impuesto; //impuesto
-    $costoTotalCant = $costoVentaCantSi + $impVentaCant; //venta total
+    $impVentaCant = $impVenta * $cantidad; //impuesto
+    $costoTotalCant = $costoVenta * $cantidad; //venta total
 
     $utilidadXund = $costoVentaSi - $costoCompraSi;
     $utilidadTotal = $costoVentaCantSi - $costoCompraCantSi;
-    if($costoCompraSi>0){
-        $porRenta = $utilidadTotal / (($costoVentaCantSi) / 100); //Porcentaje de rentabilidad
+    if($costoVentaCantSi>0){
+        $porRenta = 1 - ($costoCompraCantSi / $costoVentaCantSi); //Porcentaje de rentabilidad
     }else{
         $porRenta = 0;
     }
 
-    /*$clase = "";
-    if($utilidadTotal<0){
-        $clase = "negativo";
-    }*/
+    $clase = "";
+    if($porRenta<0){
+        $clase = "color: red;";
+    }
+
+    //Totales
+    $totCantidad += $cantidad;
+    $totCostoCompraSi += $costoCompraSi;
+    $totImpCompra += $impCompra;
+    $totCostoCompraImp += $costoCompraImp;
+    $totCostoCompraCantSi += $costoCompraCantSi;
+    $totImpCompraCant += $impCompraCant;
+    $totCostoTotal += $costoTotal;
+    $totCostoVentaSi += $costoVentaSi;
+    $totImpVenta += $impVenta;
+    $totCostoVenta += $costoVenta;
+    $totCostoVentaCantSi += $costoVentaCantSi;
+    $totImpVentaCant += $impVentaCant;
+    $totCostoTotalCant += $costoTotalCant;
+    $totUtilidadXund += $utilidadXund;
+    $totUtilidadTotal += $utilidadTotal;
+    $totPorRenta += $porRenta;
     ?>
         <tr>
-            <td style="text-align: right;"><?= $ingreso->venta_id ?></td>
-            <td><?= $ingreso->local_nombre ?></td>
-            <td><?= $ingreso->fecha ?></td>
-            <td><?= $ingreso->proveedor_nombre ?></td>
-            <td><?= $ingreso->producto_nombre ?></td>
-            <td><?= $ingreso->nombre_unidad ?></td>
+            <td style="text-align: right; <?= $clase ?>"><?= $ingreso->venta_id ?></td>
+            <td style="<?= $clase ?>"><?= $ingreso->local_nombre ?></td>
+            <td style="<?= $clase ?>"><?= $ingreso->fecha ?></td>
+            <td style="<?= $clase ?>"><?= $ingreso->producto_nombre ?></td>
+            <td style="<?= $clase ?>"><?= $ingreso->nombre_unidad ?></td>
+            <td style="text-align: right; <?= $clase ?>"><?= number_format($cantidad, 0) ?></td>
 
-            <td class="compraxunidad" style="text-align: right;"><?= number_format($costoCompraSi, 2) ?></td>
-            <td class="compraxunidad" style="text-align: right;"><?= number_format($impCompra, 2) ?></td>
-            <td class="compraxunidad" style="text-align: right;"><?= number_format($costoCompraImp, 2) ?></td>
+            <td class="compraxunidad" style="text-align: right; <?= $clase ?>"><?= number_format($costoCompraSi, 2) ?></td>
+            <td class="compraxunidad" style="text-align: right; <?= $clase ?>"><?= number_format($impCompra, 2) ?></td>
+            <td class="compraxunidad" style="text-align: right; <?= $clase ?>"><?= number_format($costoCompraImp, 2) ?></td>
 
-            <td class="ventaxunidad" style="text-align: right;"><?= number_format($costoVentaSi, 2) ?></td>
-            <td class="ventaxunidad" style="text-align: right;"><?= number_format($impVenta, 2) ?></td>
-            <td class="ventaxunidad" style="text-align: right;"><?= number_format($costoVenta, 2) ?></td>
+            <td class="compraxcantidad" style="text-align: right; <?= $clase ?>"><?= number_format($costoCompraCantSi, 2) ?></td>
+            <td class="compraxcantidad" style="text-align: right; <?= $clase ?>"><?= number_format($impCompraCant, 2) ?></td>
+            <td class="compraxcantidad" style="text-align: right; <?= $clase ?>"><?= number_format($costoTotal, 2) ?></td>
 
-            <td class="compraxcantidad" style="text-align: right;"><?= number_format($costoCompraCantSi, 2) ?></td>
-            <td class="compraxcantidad" style="text-align: right;"><?= number_format($impCompraCant, 2) ?></td>
-            <td class="compraxcantidad" style="text-align: right;"><?= number_format($costoTotal, 2) ?></td>
+            <td class="ventaxunidad" style="text-align: right; <?= $clase ?>"><?= number_format($costoVentaSi, 2) ?></td>
+            <td class="ventaxunidad" style="text-align: right; <?= $clase ?>"><?= number_format($impVenta, 2) ?></td>
+            <td class="ventaxunidad" style="text-align: right; <?= $clase ?>"><?= number_format($costoVenta, 2) ?></td>
 
-            <td style="text-align: right;"><?= number_format($cantidad, 2) ?></td>
+            <td class="ventaxcantidad" style="text-align: right; <?= $clase ?>"><?= number_format($costoVentaCantSi, 2) ?></td>
+            <td class="ventaxcantidad" style="text-align: right; <?= $clase ?>"><?= number_format($impVentaCant, 2) ?></td>
+            <td class="ventaxcantidad" style="text-align: right; <?= $clase ?>"><?= number_format($costoTotalCant, 2) ?></td>
 
-            <td class="ventaxcantidad" style="text-align: right;"><?= number_format($costoVentaCantSi, 2) ?></td>
-            <td class="ventaxcantidad" style="text-align: right;"><?= number_format($impVentaCant, 2) ?></td>
-            <td class="ventaxcantidad" style="text-align: right;"><?= number_format($costoTotalCant, 2) ?></td>
-
-            <td class="resulOperativo" style="text-align: right;"><?= number_format($utilidadXund, 2) ?></td>
-            <td class="resulOperativo" style="text-align: right;"><?= number_format($utilidadTotal, 2) ?></td>
-            <td class="resulOperativo" style="text-align: right;"><?= number_format($porRenta, 2) ?></td>
+            <td class="resulOperativo" style="text-align: right; <?= $clase ?>"><?= number_format($utilidadXund, 2) ?></td>
+            <td class="resulOperativo" style="text-align: right; <?= $clase ?>"><?= number_format($utilidadTotal, 2) ?></td>
+            <td class="resulOperativo" style="text-align: right; <?= $clase ?>"><?= number_format($porRenta, 2) ?></td>
         </tr>
     <?php
     endforeach;
+    if(count($lists)>0){
+        $totCostoCompraSi = $totCostoCompraSi / count($lists);
+        $totImpCompra = $totImpCompra / count($lists);
+        $totCostoCompraImp = $totCostoCompraImp / count($lists);
+        $totCostoVentaSi = $totCostoVentaSi / count($lists);
+        $totImpVenta = $totImpVenta / count($lists);
+        $totCostoVenta = $totCostoVenta / count($lists);
+        $totUtilidadXund = $totUtilidadXund / count($lists);
+        $totPorRenta = $totPorRenta / count($lists);
+    }
     ?>
     </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="5">Totales:</td>
+            <td style="text-align: right;"><?= $totCantidad ?></td>
+
+            <td style="text-align: right;"><?= number_format($totCostoCompraSi, 2) ?></td>
+            <td style="text-align: right;"><?= number_format($totImpCompra, 2) ?></td>
+            <td style="text-align: right;"><?= number_format($totCostoCompraImp, 2) ?></td>
+
+            <td style="text-align: right;"><?= number_format($totCostoCompraCantSi, 2) ?></td>
+            <td style="text-align: right;"><?= number_format($totImpCompraCant, 2) ?></td>
+            <td style="text-align: right;"><?= number_format($totCostoTotal, 2) ?></td>
+
+            <td style="text-align: right;"><?= number_format($totCostoVentaSi, 2) ?></td>
+            <td style="text-align: right;"><?= number_format($totImpVenta, 2) ?></td>
+            <td style="text-align: right;"><?= number_format($totCostoVenta, 2) ?></td>
+
+            <td style="text-align: right;"><?= number_format($totCostoVentaCantSi, 2) ?></td>
+            <td style="text-align: right;"><?= number_format($totImpVentaCant, 2) ?></td>
+            <td style="text-align: right;"><?= number_format($totCostoTotalCant, 2) ?></td>
+
+            <td style="text-align: right;"><?= number_format($totUtilidadXund, 2) ?></td>
+            <td style="text-align: right;"><?= number_format($totUtilidadTotal, 2) ?></td>
+            <td style="text-align: right;"><?= number_format($totPorRenta, 2) ?></td>
+        </tr>
+    </tfoot>
 </table>

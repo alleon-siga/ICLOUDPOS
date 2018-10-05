@@ -95,6 +95,9 @@ class Auth extends CI_Controller
 						$opciones['clientes'] = 0;
 					}
 
+					//App version
+					$version = $this->login_api_model->verificar_version();
+
 					// Json Array
 					$json = array(
 						'status'  => 'success',
@@ -107,7 +110,8 @@ class Auth extends CI_Controller
 						'bancos' => $bancos,
 						'tarjetas' => $tarjetas,
 						'grupos_cliente' => $grupos_cliente,
-						'opciones' => $opciones
+						'opciones' => $opciones,
+						'version' => $version
 					);
 
 					echo json_encode($json);
