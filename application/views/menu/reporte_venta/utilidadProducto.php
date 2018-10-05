@@ -114,7 +114,8 @@
 
                     var data = {
                         'local_id': $("#local_id").val(),
-                        'fecha': $("#fecha").val()
+                        'fecha': $("#fecha").val(),
+                        'moneda_id': $("#moneda_id").val()
                     };
 
                     $.ajax({

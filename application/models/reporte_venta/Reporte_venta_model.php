@@ -295,7 +295,6 @@ class reporte_venta_model extends CI_Model
                 INNER JOIN unidades u ON u.id_unidad = up2.id_unidad
                 INNER JOIN producto_costo_unitario pcu ON p.producto_id = pcu.producto_id
                 AND v.id_moneda = pcu.moneda_id
-                AND activo = 1
             WHERE 
                 v.venta_status='COMPLETADO'
                 AND v.id_moneda = ".$params['moneda_id']."
@@ -323,12 +322,11 @@ class reporte_venta_model extends CI_Model
             $where .= "v.fecha >= '".$params['fecha_ini']."' AND v.fecha <= '".$params['fecha_fin']."'";
         }
 
-        $query = "SELECT v.venta_id, DATE_FORMAT(v.fecha, '%d/%m/%Y') AS fecha, pr.proveedor_nombre, p.producto_nombre, u.nombre_unidad, SUM(up.unidades * dv.cantidad) AS cantidad, dv.detalle_costo_promedio, dv.precio, l.local_nombre, dv.detalle_costo_ultimo, dv.impuesto_porciento, v.tipo_impuesto, dv.tipo_impuesto_compra, v.id_moneda
+        $query = "SELECT v.venta_id, DATE_FORMAT(v.fecha, '%d/%m/%Y') AS fecha, p.producto_nombre, u.nombre_unidad, SUM(up.unidades * dv.cantidad) AS cantidad, dv.detalle_costo_promedio, dv.precio, l.local_nombre, dv.detalle_costo_ultimo, dv.impuesto_porciento, v.tipo_impuesto, dv.tipo_impuesto_compra, v.id_moneda
             FROM detalle_venta dv
             INNER JOIN venta v ON v.venta_id=dv.id_venta 
             INNER JOIN producto p ON p.producto_id=dv.id_producto 
             INNER JOIN `local` l ON v.local_id = l.int_local_id
-            LEFT JOIN proveedor pr ON p.producto_proveedor=pr.id_proveedor
             INNER JOIN unidades_has_producto up ON dv.id_producto=up.producto_id 
             AND dv.unidad_medida=up.id_unidad
             INNER JOIN unidades_has_producto up2 ON dv.id_producto=up2.producto_id 
