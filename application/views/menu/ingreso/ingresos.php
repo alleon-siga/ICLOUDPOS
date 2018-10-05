@@ -841,6 +841,115 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
         <!-- /.modal-content -->
     </div>
 </div>
+<div class="modal fade" id="pago_modal" tabindex="-1" role="dialog" style="z-index: 999999;"
+     aria-labelledby="myModalLabel"
+     aria-hidden="true"
+     data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog" style="width: 40%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" onclick="$('#pago_modal').modal('hide');" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title">Pagar Compra</h4>
+            </div>
+            <div class="modal-body">
+                <form id="formpagocom" class="pad-5">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <label class="control-label panel-admin-text">Monto a Pagar</label>
+                        </div>
+                        <div class="col-md-7">
+                            <div class="input-group">
+                                <input type="hidden" id="correlativo">
+                                <div class="input-group-addon tipo_moneda"></div>
+                                <input style="text-align: right;" type="text" id="total_cuota" value=""
+                                       class="form-control" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-5">
+                            <label class="control-label panel-admin-text">Metodo de Pago</label>
+                        </div>
+                        <div class="col-md-7">
+                            <select class="form-control" name="metodo" id="metodo" onchange="verificar_banco_cuota()">
+                                <?php
+                                if (count($metodo_pago) > 0) {
+                                    foreach ($metodo_pago as $metodo) { ?>
+                                        <option <?php if ($metodo['id_metodo'] == "3") echo "selected"; ?>
+                                                data-tipo_metodo="<?= $metodo['tipo_metodo'] ?>"
+                                                value="<?= $metodo['id_metodo'] ?>"><?= $metodo['nombre_metodo'] ?></option>
+                                    <?php }
+                                } ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row caja_block">
+                        <div class="col-md-5">
+                            <label class="control-label panel-admin-text">Seleccione la Cuenta</label>
+                        </div>
+                        <div class="col-md-7">
+                            <select name="caja_id" id="caja_id" class="form-control">
+                                <option value="">Seleccione</option>
+                                <?php foreach ($cajas as $caja): ?>
+                                    <option
+                                            value="<?= $caja->cuenta_id ?>"  <?= $caja->principal == '1' ? 'selected' : '' ?>><?= $caja->descripcion?></option>
+                                <?php endforeach ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row" id="banco_block" style="display: none;">
+                        <div class="col-md-5">
+                            <label class="control-label panel-admin-text">Seleccione el Banco</label>
+                        </div>
+                        <div class="col-md-7">
+                            <select name="banco_id" id="banco_id" class="form-control">
+                                <option value="">Seleccione</option>
+                                <?php foreach ($bancos as $banco): ?>
+                                    <option
+                                            value="<?= $banco['banco_id'] ?>">
+                                        <?= $banco['banco_nombre'] ?> | <?= $banco['descripcion'] ?>
+                                    </option>
+                                <?php endforeach ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row" id="tipo_tarjeta_block" style="display:none;">
+                        <div class="col-md-5">
+                            <label for="tipo_tarjeta" class="control-label panel-admin-text">Tipo de Tarjeta:</label>
+                        </div>
+                        <div class="col-md-7">
+                            <select class="form-control" id="tipo_tarjeta" name="tipo_tarjeta">
+                                <option value="">Seleccione</option>
+                                <?php foreach ($tarjetas as $tarjeta) : ?>
+                                    <option value="<?php echo $tarjeta->id ?>"><?php echo $tarjeta->nombre ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row" id="operacion_block" style="display: none;">
+                        <div class="col-md-5">
+                            <label id="num_oper_label" class="control-label panel-admin-text">Nro de
+                                Operaci&oacute;n</label>
+                        </div>
+                        <div class="col-md-7">
+                            <input type="text" id="num_oper" name="num_oper"
+                                   class="form-control" autocomplete="off"
+                                   value="">
+                        </div>
+                    </div>
+                </form>
+                <br>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-primary" id="guardarPago_pagospendiente" onclick="guardaringreso()"><i
+                            class=""></i> Pagar Monto</a>
+                <a href="#" class="btn btn-danger" id="cerrar_pago_modal" onclick="$('#pago_modal').modal('hide');">Salir</a>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="modal fade" id="loading_save_compra" tabindex="-1" role="dialog" style="top: 50px;"
      aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false"
      aria-hidden="true">
@@ -935,5 +1044,157 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
         $('#cboProveedor').append('<option value="' + id + '">' + nombre + '</option>');
         $('#cboProveedor').val(id)
         $("#cboProveedor").trigger('chosen:updated');
+    }
+    function verificar_banco_cuota() {
+
+        $("#banco_id").val("");
+        $("#tipo_tarjeta").val("");
+        $("#num_oper").val("");
+        $("#cantidad_a_pagar").val($("#total_cuota").val());
+        var tipo = $("#metodo option:selected").attr('data-tipo_metodo');
+        var metodo = $("#metodo").val();
+
+        $("#tipo_tarjeta_block").hide();
+        $("#banco_block").hide();
+        $("#operacion_block").show();
+        $(".caja_block").hide();
+
+        switch (tipo) {
+            case 'CAJA': {
+                $(".caja_block").show();
+                if (metodo == '3')
+                    $("#operacion_block").hide();
+                break;
+            }
+            case 'BANCO': {
+                $("#banco_block").show();
+                $("#operacion_block").show();
+                if (metodo == '7')
+                    $("#tipo_tarjeta_block").show();
+                break;
+            }
+        }
+    }
+    function guardarPago() {
+        var tipo = $('#metodo option:selected').attr('data-tipo_metodo');
+
+        if (tipo == 'BANCO' && $('#banco_id').val() == "") {
+            $.bootstrapGrowl('<h4>Debe ingresar un banco</h4>', {
+                type: 'warning',
+                delay: 2500,
+                allow_dismiss: true
+            });
+            return false;
+        }
+
+        if ($("#metodo").val() == "7" && $("#tipo_tarjeta").val() == "") {
+            $.bootstrapGrowl('<h4>Debe ingresar un tipo de tarjeta</h4>', {
+                type: 'warning',
+                delay: 2500,
+                allow_dismiss: true
+            });
+            return false;
+        }
+
+        if ($("#metodo").val() != "3" && $("#num_oper").val() == "") {
+            $.bootstrapGrowl('<h4>Es necesario el numero de operacion</h4>', {
+                type: 'warning',
+                delay: 2500,
+                allow_dismiss: true
+            });
+            return false;
+        }
+
+        if (tipo == 'CAJA' && $('#caja_id').val() == "") {
+            $.bootstrapGrowl('<h4>Debe ingresar una cuenta</h4>', {
+                type: 'warning',
+                delay: 2500,
+                allow_dismiss: true
+            });
+            return false;
+        }
+
+      
+
+        var params = {
+            'correlativo_cuota': $("#correlativo").val(),
+            'ingreso_id': $("#compra_id").val(),
+            'montodescontar': $("#cantidad_a_pagar").val(),
+            'cuota_id': $("#id_credito_cuota").val(),
+            'metodo_pago': $("#metodo").val(),
+            'tipo_metodo': tipo,
+            'banco': null,
+            'cuenta_id': null,
+            'nro_operacion': null
+
+        };
+
+        if ($("#metodo").val() != "3")
+            params['nro_operacion'] = $("#num_oper").val();
+
+        if (tipo == 'BANCO')
+            params['banco'] = $("#banco_id").val();
+        else
+            params['cuenta_id'] = $("#caja_id").val();
+
+        if ($("#metodo").val() == "7")
+            params['banco'] = $("#tipo_tarjeta").val();
+
+
+        $("#guardarPago_pagospendiente").attr('disabled', 'disabled');
+        $('#cargando_modal').modal('show');
+
+        $.ajax({
+            url: '<?= base_url()?>ingresos/pagoCuotaCredito',
+            type: 'POST',
+            dataType: 'json',
+            data: params,
+            success: function (data) {
+
+                if (data.success == undefined) {
+                    $('#cargando_modal').modal('hide');
+                    $.bootstrapGrowl('<h4>' + data.error + '</h4>', {
+                        type: 'warning',
+                        delay: 2500,
+                        allow_dismiss: true
+                    });
+
+                } else {
+
+                    $.bootstrapGrowl('<h4>El pago se ha realizado satisfactoriamente</h4>', {
+                        type: 'success',
+                        delay: 2500,
+                        allow_dismiss: true
+                    });
+
+                    $('#pago_modal').modal('hide');
+
+                    $.ajax({
+                        url: '<?= base_url()?>ingresos/ver_deuda',
+                        type: 'post',
+                        data: {'id_ingreso': $("#compra_id").val()},
+                        success: function (data) {
+                            $("#pagar_venta").html(data);
+                        },
+                        complete: function () {
+                            $('#cargando_modal').modal('hide');
+                        }
+                    });
+
+                }
+
+            },
+            error: function () {
+                $('#cargando_modal').modal('hide');
+                $.bootstrapGrowl('<h4>Error al realizar la operacion</h4>', {
+                    type: 'warning',
+                    delay: 2500,
+                    allow_dismiss: true
+                });
+            },
+            complete: function () {
+                $("#guardarPago_pagospendiente").removeAttr('disabled');
+            }
+        });
     }
 </script>
