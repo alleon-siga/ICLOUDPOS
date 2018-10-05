@@ -318,7 +318,7 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
 
                                             <div class="col-md-2">
                                                 <div class="controls">
-                                                    <select class="form-control" id="monedas" name="monedas">
+                                                    <select class="form-control" id="monedas" name="monedas" onchange="seleccion(this.value)">
                                                         <?php foreach ($monedas as $mon) { ?>
                                                             <option
                                                                 <?php if (isset($ingreso->id_moneda) and $ingreso->id_moneda == $mon['id_moneda']) {
@@ -841,7 +841,7 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
         <!-- /.modal-content -->
     </div>
 </div>
-<div class="modal fade" id="pago_modal" tabindex="-1" role="dialog" style="z-index: 999999;"
+<div class="modal fade" id="pago_modal" tabindex="-1" role="dialog"
      aria-labelledby="myModalLabel"
      aria-hidden="true"
      data-backdrop="static" data-keyboard="false">
@@ -894,7 +894,7 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                                 <option value="">Seleccione</option>
                                 <?php foreach ($cajas as $caja): ?>
                                     <option
-                                            value="<?= $caja->cuenta_id ?>"  <?= $caja->principal == '1' ? 'selected' : '' ?>><?= $caja->descripcion?></option>
+                                            value="<?= $caja->cuenta_id ?>" data-moneda="<?= $caja->moneda_id ?>" <?= $caja->cuenta_id == '2' ? 'selected' : '' ?>><?= $caja->descripcion?></option>
                                 <?php endforeach ?>
                             </select>
                         </div>
@@ -1012,7 +1012,8 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
 
         }, 10);
     }
-
+  
+    
     function agregargrupo() {
         $("#formagregargrupo").trigger("reset");
         $('#agregargrupo').modal('show');
@@ -1050,7 +1051,6 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
         $("#banco_id").val("");
         $("#tipo_tarjeta").val("");
         $("#num_oper").val("");
-        $("#cantidad_a_pagar").val($("#total_cuota").val());
         var tipo = $("#metodo option:selected").attr('data-tipo_metodo');
         var metodo = $("#metodo").val();
 
@@ -1074,127 +1074,6 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                 break;
             }
         }
-    }
-    function guardarPago() {
-        var tipo = $('#metodo option:selected').attr('data-tipo_metodo');
-
-        if (tipo == 'BANCO' && $('#banco_id').val() == "") {
-            $.bootstrapGrowl('<h4>Debe ingresar un banco</h4>', {
-                type: 'warning',
-                delay: 2500,
-                allow_dismiss: true
-            });
-            return false;
-        }
-
-        if ($("#metodo").val() == "7" && $("#tipo_tarjeta").val() == "") {
-            $.bootstrapGrowl('<h4>Debe ingresar un tipo de tarjeta</h4>', {
-                type: 'warning',
-                delay: 2500,
-                allow_dismiss: true
-            });
-            return false;
-        }
-
-        if ($("#metodo").val() != "3" && $("#num_oper").val() == "") {
-            $.bootstrapGrowl('<h4>Es necesario el numero de operacion</h4>', {
-                type: 'warning',
-                delay: 2500,
-                allow_dismiss: true
-            });
-            return false;
-        }
-
-        if (tipo == 'CAJA' && $('#caja_id').val() == "") {
-            $.bootstrapGrowl('<h4>Debe ingresar una cuenta</h4>', {
-                type: 'warning',
-                delay: 2500,
-                allow_dismiss: true
-            });
-            return false;
-        }
-
-      
-
-        var params = {
-            'correlativo_cuota': $("#correlativo").val(),
-            'ingreso_id': $("#compra_id").val(),
-            'montodescontar': $("#cantidad_a_pagar").val(),
-            'cuota_id': $("#id_credito_cuota").val(),
-            'metodo_pago': $("#metodo").val(),
-            'tipo_metodo': tipo,
-            'banco': null,
-            'cuenta_id': null,
-            'nro_operacion': null
-
-        };
-
-        if ($("#metodo").val() != "3")
-            params['nro_operacion'] = $("#num_oper").val();
-
-        if (tipo == 'BANCO')
-            params['banco'] = $("#banco_id").val();
-        else
-            params['cuenta_id'] = $("#caja_id").val();
-
-        if ($("#metodo").val() == "7")
-            params['banco'] = $("#tipo_tarjeta").val();
-
-
-        $("#guardarPago_pagospendiente").attr('disabled', 'disabled');
-        $('#cargando_modal').modal('show');
-
-        $.ajax({
-            url: '<?= base_url()?>ingresos/pagoCuotaCredito',
-            type: 'POST',
-            dataType: 'json',
-            data: params,
-            success: function (data) {
-
-                if (data.success == undefined) {
-                    $('#cargando_modal').modal('hide');
-                    $.bootstrapGrowl('<h4>' + data.error + '</h4>', {
-                        type: 'warning',
-                        delay: 2500,
-                        allow_dismiss: true
-                    });
-
-                } else {
-
-                    $.bootstrapGrowl('<h4>El pago se ha realizado satisfactoriamente</h4>', {
-                        type: 'success',
-                        delay: 2500,
-                        allow_dismiss: true
-                    });
-
-                    $('#pago_modal').modal('hide');
-
-                    $.ajax({
-                        url: '<?= base_url()?>ingresos/ver_deuda',
-                        type: 'post',
-                        data: {'id_ingreso': $("#compra_id").val()},
-                        success: function (data) {
-                            $("#pagar_venta").html(data);
-                        },
-                        complete: function () {
-                            $('#cargando_modal').modal('hide');
-                        }
-                    });
-
-                }
-
-            },
-            error: function () {
-                $('#cargando_modal').modal('hide');
-                $.bootstrapGrowl('<h4>Error al realizar la operacion</h4>', {
-                    type: 'warning',
-                    delay: 2500,
-                    allow_dismiss: true
-                });
-            },
-            complete: function () {
-                $("#guardarPago_pagospendiente").removeAttr('disabled');
-            }
-        });
+        
     }
 </script>

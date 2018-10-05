@@ -67,6 +67,18 @@ $(document).ready(function () {
             }
         });
     });
+    
+    $("#moneda").on("change",function(){
+        var select=document.getElementById("caja_id");
+             if($("#moneda").val()=='1030'){
+                 $("#caja_id option[data-moneda='$('#moneda').val()']").show();
+                 $("#caja_id option[data-moneda!='$('#moneda').val()']").hide();
+             }
+            if($("#moneda").val()=='1029'){
+                 $("#caja_id option[data-moneda='$('#moneda').val()']").show();
+                 $("#caja_id option[data-moneda!='$('#moneda').val()']").hide();
+             }
+        });
 
 
     $("#cerrar_numero_series").on('click', function () {
@@ -107,7 +119,7 @@ $(document).ready(function () {
     $('body').on('keyup', function (e) {
         if (e.keyCode == 117) {
             e.preventDefault();
-            if ($("#confirmarmodal").is(":visible") == true || $("#dialog_compra_credito").is(":visible") == true) {
+            if ($("#pago_modal").is(":visible") == true || $("#dialog_compra_credito").is(":visible") == true) {
                 guardaringreso();
 
             } else {
@@ -1453,7 +1465,7 @@ function accionGuardar() {
 
             if (data.success && data.error == undefined) {
 
-                $("#confirmarmodal").modal('hide');
+//                $("#confirmarmodal").modal('hide');
 
                 $('#pago_modal').modal('hide');
                 $("#dialog_compra_credito").modal('hide');
@@ -1504,7 +1516,7 @@ function accionGuardar() {
 
             }
             $("#barloadermodal").modal('hide');
-            $("#confirmarmodal").modal('hide');
+//            $("#confirmarmodal").modal('hide');
             $('#pago_modal').modal('hide');
             $('.modal-backdrop').remove();
         },
@@ -1525,8 +1537,8 @@ function accionGuardar() {
 
 
 function cerrar_confirmar() {
-
-    $("#confirmarmodal").modal('hide')
+    $("#pago_modal").modal('hide');
+//    $("#confirmarmodal").modal('hide');
 }
 
 

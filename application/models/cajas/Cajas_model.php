@@ -93,7 +93,21 @@ class cajas_model extends CI_Model
             ->where('caja_desglose.retencion', 0)
             ->get()->result();
     }
-
+    function getCajasSelectall()
+    {
+        return $this->db->select('
+            caja_desglose.id as cuenta_id,
+            caja.moneda_id as moneda_id,
+            caja_desglose.principal as principal,
+            caja_desglose.descripcion as descripcion
+            ')
+            ->from('caja_desglose')
+            ->join('caja', 'caja.id = caja_desglose.caja_id')
+            ->where('caja_desglose.estado', 1)
+            ->where('caja_desglose.retencion', 0)
+                ->group_by('caja_desglose.id')
+            ->get()->result();
+    }
 
     function get($id)
     {
@@ -378,7 +392,7 @@ class cajas_model extends CI_Model
     {
 
         $this->db->insert('caja_pendiente', array(
-            'caja_desglose_id' => isset($data['banco_id'])?$data['banco_id']:$data['caja_d'],
+            'caja_desglose_id' =>  isset($data['cuenta_id']) ? $data['cuenta_id'] : $this->get_valid_cuenta_id($data['moneda_id'], $data['local_id']),
             'usuario_id' => isset($data['id_usuario']) ? $data['id_usuario'] : $this->session->userdata('nUsuCodigo'),
             'tipo' => $data['tipo'],
             'monto' => $data['monto'],

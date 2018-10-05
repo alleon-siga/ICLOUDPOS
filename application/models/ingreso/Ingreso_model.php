@@ -205,40 +205,39 @@ class ingreso_model extends CI_Model
             'tipo_impuesto' => $cab_pie['tipo_impuesto'],
             'id_gastos' => isset($cab_pie['id_gastos']) ? $cab_pie['id_gastos'] : 0,
             'int_usuario_id' => isset($cab_pie['cboUsuario']) ? $cab_pie['cboUsuario'] : 0,
-            'medio_pago' => $cab_pie['medio_pago'],
+            'medio_pago' => $cab_pie['medio_pago'], 
         );
         
         $this->db->insert('ingreso', $compra);
         $insert_id = $this->db->insert_id();
-
+        if ($cab_pie['banco_id'] != 0) {
+            $banco_selected = $this->db->get_where('banco', array('banco_id' => $cab_pie['banco_id']))->row();
+            $cuenta_id = $banco_selected->cuenta_id;
+        } else {
+            $cuenta_id = $cab_pie['caja_id'];
+        }
         if ($compra['ingreso_status'] == 'COMPLETADO' && $compra['total_ingreso'] > 0 && $compra['pago'] == 'CONTADO') {
             $moneda_id = $compra['id_moneda'];
             $this->cajas_model->save_pendiente(array(
-                'banco_id' => $cab_pie['banco_id'],
-                'tipo_tarjeta' => $cab_pie['tipo_tarjeta'],
-                'num_oper' => $cab_pie['num_oper'],
-                'caja_d' => $cab_pie['caja_id'],
                 'monto' => $compra['total_ingreso'],
                 'tipo' => $compra['tipo_ingreso'],
                 'IO' => 2,
                 'ref_id' => $insert_id,
                 'moneda_id' => $moneda_id,
-                'local_id' => $compra['local_id']
+                'local_id' => $compra['local_id'],
+                'cuenta_id'=>$cuenta_id
             ));
         } else if ($compra['ingreso_status'] == 'COMPLETADO' && $compra['total_ingreso'] > 0 && $compra['pago'] == 'CREDITO') {
             if ($credito['c_inicial'] > 0) {
                 $moneda_id = $compra['id_moneda'];
                 $this->cajas_model->save_pendiente(array(
-                'banco_id' => $cab_pie['banco_id'],
-                'tipo_tarjeta' => $cab_pie['tipo_tarjeta'],
-                'num_oper' => $cab_pie['num_oper'],
-                'caja_d' => $cab_pie['caja_id'],
                     'monto' => $credito['c_inicial'],
                     'tipo' => $compra['tipo_ingreso'],
                     'IO' => 2,
                     'ref_id' => $insert_id,
                     'moneda_id' => $moneda_id,
-                    'local_id' => $compra['local_id']
+                    'local_id' => $compra['local_id'],
+                    'cuenta_id'=>$cuenta_id
                 ));
             }
             $this->save_credito($insert_id, $credito, $cuotas);

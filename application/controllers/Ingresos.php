@@ -67,7 +67,7 @@ class ingresos extends MY_Controller
         $data["metodo_pago"] = $this->metodos_pago_model->get_all();
         $data["bancos"] = $this->banco_model->get_all();
         $data["tarjetas"] = $this->tarjeta_api_model->get_all();
-        $data["cajas"] = $this->cajas_model->getCajasSelect();
+        $data["cajas"] = $this->cajas_model->getCajasSelectall();
         $data['barra_activa'] = $this->db->get_where('columnas', array('id_columna' => 36))->row();
         $data["documentos"] = $this->db->get_where('documentos', array('compras' => 1))->result();
         $data['dialog_compra_credito'] = $this->load->view('menu/ingreso/dialog_compra_credito', array(), true);
