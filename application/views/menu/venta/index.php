@@ -63,6 +63,7 @@
                                 <option
                                         value="<?php echo $cliente['id_cliente']; ?>"
                                         data-ruc="<?= $cliente['ruc'] ?>"
+                                        data-identificacion="<?= $cliente['identificacion'] ?>"
                                     <?= $cliente['id_cliente'] == 1 ? 'selected' : '' ?>
                                 ><?php echo $cliente['razon_social']; ?></option>
                             <?php endforeach; ?>

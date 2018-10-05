@@ -640,6 +640,13 @@ $(document).ready(function () {
       return false
     }
 
+    //Validar si es diferente a cliente frecuente, boleta de venta, el total de importe mayor a 700 y que sea un numero valido de dni
+    var dni = $('#cliente_id option:selected').attr('data-identificacion');
+    if( $('#cliente_id').val()>1 && $('#tipo_documento').val() == 3 && parseFloat($('#total_importe').val()) > 700 && (dni=='' || dni.length!=8) ){
+      show_msg('warning', '<h4>Error. </h4><p>El n&uacute;mero de DNI del cliente no es v&aacute;lido</p>');
+      return false;
+    }
+
     if ($('#tipo_documento').val() == 1 && $('#cliente_id option:selected').attr('data-ruc') != 2) {
       show_msg('warning', '<h4>Error. </h4><p>El Cliente no tiene ruc para realizar venta en factura.</p>')
       select_productos(49)
