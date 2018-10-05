@@ -160,7 +160,6 @@ class cajas_model extends CI_Model
         if ($this->db->count_all_results() == 0) {
             $caja['principal'] == 1;
         }
-
         if ($caja['principal'] == 1) {
             $caja['estado'] == 1;
             $this->db->where('principal', 1);
@@ -379,7 +378,7 @@ class cajas_model extends CI_Model
     {
 
         $this->db->insert('caja_pendiente', array(
-            'caja_desglose_id' => isset($data['cuenta_id']) ? $data['cuenta_id'] : $this->get_valid_cuenta_id($data['moneda_id'], $data['local_id']),
+            'caja_desglose_id' => isset($data['banco_id'])?$data['banco_id']:$data['caja_d'],
             'usuario_id' => isset($data['id_usuario']) ? $data['id_usuario'] : $this->session->userdata('nUsuCodigo'),
             'tipo' => $data['tipo'],
             'monto' => $data['monto'],

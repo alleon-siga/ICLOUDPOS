@@ -14,6 +14,10 @@ class ingresos extends MY_Controller
             $this->load->model('precio/precios_model', 'precios');
             $this->load->model('proveedor/proveedor_model');
             $this->load->model('unidades/unidades_model');
+            $this->load->model('cajas/cajas_model');
+            $this->load->model('banco/banco_model');
+            $this->load->model('banco/tarjeta_api_model');
+            $this->load->model('metodosdepago/metodos_pago_model');
             $this->load->model('ingreso/ingreso_model');
             $this->load->model('impuesto/impuestos_model');
             $this->load->model('detalle_ingreso/detalle_ingreso_model');
@@ -33,7 +37,7 @@ class ingresos extends MY_Controller
     }
 
 
-    function index()
+    function index($local_id = false)
     {
 
         if ($this->session->flashdata('success') != FALSE) {
@@ -56,11 +60,14 @@ class ingresos extends MY_Controller
 
         $data['costos'] = !empty($_GET['costos']) ? $_GET['costos'] : $_POST['costos'];
 
-
         $data["impuestos"] = $this->impuestos_model->get_impuestos();
         $data["lstProducto"] = $this->producto_model->select_all_producto();
         $data["lstProveedor"] = $this->proveedor_model->select_all_proveedor();
         $data["monedas"] = $this->monedas_model->get_all();
+        $data["metodo_pago"] = $this->metodos_pago_model->get_all();
+        $data["bancos"] = $this->banco_model->get_all();
+        $data["tarjetas"] = $this->tarjeta_api_model->get_all();
+        $data["cajas"] = $this->cajas_model->getCajasSelect();
         $data['barra_activa'] = $this->db->get_where('columnas', array('id_columna' => 36))->row();
         $data["documentos"] = $this->db->get_where('documentos', array('compras' => 1))->result();
         $data['dialog_compra_credito'] = $this->load->view('menu/ingreso/dialog_compra_credito', array(), true);
@@ -189,10 +196,13 @@ class ingresos extends MY_Controller
                     'tasa_cambio' => $this->input->post('tasa_id', true),
                     'status' => $status,
                     'facturar' => $this->input->post('facturar'),
-                    'tipo_impuesto' => $this->input->post('tipo_impuesto')
+                    'tipo_impuesto' => $this->input->post('tipo_impuesto'),
+                    'medio_pago'=>$this->input->post('metodo'),
+                    'caja_id'=>$this->input->post('caja_id'),
+                    'banco_id'=>$this->input->post('banco_id'),
+                    'tipo_tarjeta'=>$this->input->post('tipo_tarjeta'),
+                    'num_oper'=>$this->input->post('num_oper')
                 );
-
-
                 $credito['c_inicial'] = $this->input->post('c_saldo_inicial') != '' ? $this->input->post('c_saldo_inicial') : 0;
                 $credito['c_precio_contado'] = $this->input->post('c_precio_contado');
                 $credito['c_precio_credito'] = $this->input->post('c_precio_credito');
