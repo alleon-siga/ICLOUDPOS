@@ -151,6 +151,20 @@
             </div>
         </div>
     </div>
+    <div class="row form-group">
+        <div class="col-md-4">
+            <label class="control-label panel-admin-text">Valor en el comprobante</label>
+        </div>
+        <div class="col-md-8">
+            <div class="form-control">
+                <input type="radio" name="VALOR_COMPROBANTE" id="" value="NOMBRE" <?php echo validOption("VALOR_COMPROBANTE", 'NOMBRE', 'NOMBRE') ? 'checked' : '' ?>>
+                Nombre
+                &nbsp;&nbsp;&nbsp;
+                <input type="radio" name="VALOR_COMPROBANTE" id="" value="DESCRIPCION" <?php echo validOption("VALOR_COMPROBANTE", 'DESCRIPCION', 'NOMBRE') ? 'checked' : '' ?>>
+                Descripci&oacute;n
+            </div>
+        </div>
+    </div>
     <h3>Cr&eacute;dito</h3>
     <div class="row form-group">
         <div class="col-md-4">
