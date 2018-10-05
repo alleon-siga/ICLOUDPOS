@@ -5,20 +5,23 @@ header("Pragma: no-cache");
 header("Expires: 0");
 ?>
 <style>
+    .negativo{
+        color: red;
+    }
     .compraxunidad{
-        background-color: #46a3cb !important;
+        background-color: #67908c !important;
     }
     .ventaxunidad{
         background-color: #71bc78 !important;
     }
     .compraxcantidad{
-        background-color: #ef71cd !important;
+        background-color: #e6cca5 !important;
     }
     .ventaxcantidad{
-        background-color: #2fc4a6 !important;
+        background-color: #c2b1b5 !important;
     }
     .resulOperativo{
-        background-color: #dd7e7e !important;
+        background-color: #6ec4c6 !important;
     }
 </style>
 <h4 style="text-align: center; margin: 0;">Reporte de m&aacute;rgen de utilidad</h4>
@@ -34,11 +37,11 @@ header("Expires: 0");
             <th rowspan="2" style="vertical-align: middle;">Local</th>
             <th rowspan="2" style="vertical-align: middle;">Producto</th>
             <th rowspan="2" style="vertical-align: middle;">Unidad</th>
+            <th rowspan="2" style="vertical-align: middle;">Cantidad</th>
 
             <th colspan="3" class="compraxunidad">Compras x Unidad</th>
-            <th colspan="3" class="ventaxunidad">Ventas x Unidad</th>
             <th colspan="3" class="compraxcantidad">Compras x Cantidad</th>
-            <th rowspan="2" style="vertical-align: middle;">Cantidad</th>
+            <th colspan="3" class="ventaxunidad">Ventas x Unidad</th>
             <th colspan="3" class="ventaxcantidad">Ventas x Cantidad</th>
             <th colspan="3" class="resulOperativo">Resultado Operativo</th>
         </tr>
@@ -47,13 +50,13 @@ header("Expires: 0");
             <th class="compraxunidad">Impuesto</th>
             <th class="compraxunidad">Costo + Impuesto</th>
 
-            <th class="ventaxunidad">Precio unitario</th>
-            <th class="ventaxunidad">Impuesto</th>
-            <th class="ventaxunidad">Precio + Impuesto</th>
-
             <th class="compraxcantidad">Subtotal</th>
             <th class="compraxcantidad">Impuesto</th>
             <th class="compraxcantidad">Costo Total</th>
+
+            <th class="ventaxunidad">Precio unitario</th>
+            <th class="ventaxunidad">Impuesto</th>
+            <th class="ventaxunidad">Precio + Impuesto</th>
 
             <th class="ventaxcantidad">Subtotal</th>
             <th class="ventaxcantidad">Impuesto</th>
@@ -110,20 +113,19 @@ header("Expires: 0");
             <td><?= $ingreso->local_nombre ?></td>
             <td><?= $ingreso->producto_nombre ?></td>
             <td><?= $ingreso->nombre_unidad ?></td>
+            <td style="text-align: right;"><?= $cantidad ?></td>
 
             <td style="text-align: right;" class="compraxunidad"><?= number_format($costoCompraSi, 2) ?></td>
             <td style="text-align: right;" class="compraxunidad"><?= number_format($impCompra, 2) ?></td>
             <td style="text-align: right;" class="compraxunidad"><?= number_format($costoCompraImp, 2) ?></td>
 
-            <td style="text-align: right;" class="ventaxunidad"><?= number_format($costoVentaSi, 2) ?></td>
-            <td style="text-align: right;" class="ventaxunidad"><?= number_format($impVenta, 2) ?></td>
-            <td style="text-align: right;" class="ventaxunidad"><?= number_format($costoVenta, 2) ?></td>
-
             <td style="text-align: right;" class="compraxcantidad"><?= number_format($costoCompraCantSi, 2) ?></td>
             <td style="text-align: right;" class="compraxcantidad"><?= number_format($impCompraCant, 2) ?></td>
             <td style="text-align: right;" class="compraxcantidad"><?= number_format($costoTotal, 2) ?></td>
 
-            <td style="text-align: right;"><?= $cantidad ?></td>
+            <td style="text-align: right;" class="ventaxunidad"><?= number_format($costoVentaSi, 2) ?></td>
+            <td style="text-align: right;" class="ventaxunidad"><?= number_format($impVenta, 2) ?></td>
+            <td style="text-align: right;" class="ventaxunidad"><?= number_format($costoVenta, 2) ?></td>
 
             <td style="text-align: right;" class="ventaxcantidad"><?= number_format($costoVentaCantSi, 2) ?></td>
             <td style="text-align: right;" class="ventaxcantidad"><?= number_format($impVentaCant, 2) ?></td>
@@ -139,21 +141,19 @@ header("Expires: 0");
     </tbody>
     <tfoot>
         <tr>
-            <td colspan="3">TOTALES</td>
+            <td colspan="4">TOTALES</td>
 
             <td style="text-align: right;"><?= number_format($totCostoCompraSi, 2); ?></td>
             <td style="text-align: right;"><?= number_format($totImpCompra, 2); ?></td>
             <td style="text-align: right;"><?= number_format($totCostoCompraImp, 2); ?></td>
 
-            <td style="text-align: right;"><?= number_format($totCostoVentaSi, 2) ?></td>
-            <td style="text-align: right;"><?= number_format($totImpVenta, 2) ?></td>
-            <td style="text-align: right;"><?= number_format($totCostoVenta, 2) ?></td>
-
             <td style="text-align: right;"><?= number_format($totCostoCompraCantSi, 2) ?></td>
             <td style="text-align: right;"><?= number_format($totImpCompraCant, 2) ?></td>
             <td style="text-align: right;"><?= number_format($totalCostoTotal, 2) ?></td>
 
-            <td></td>
+            <td style="text-align: right;"><?= number_format($totCostoVentaSi, 2) ?></td>
+            <td style="text-align: right;"><?= number_format($totImpVenta, 2) ?></td>
+            <td style="text-align: right;"><?= number_format($totCostoVenta, 2) ?></td>
 
             <td style="text-align: right;"><?= number_format($totCostoVentaCantSi, 2) ?></td>
             <td style="text-align: right;"><?= number_format($totImpVentaCant, 2) ?></td>
