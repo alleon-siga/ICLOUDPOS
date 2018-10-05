@@ -94,32 +94,13 @@ class reporte_venta_model extends CI_Model
                     u.nombre_unidad,
                     SUM(up.unidades * dv.cantidad) AS cantidad,
                     dv.detalle_costo_promedio,
-                    SUM(
-                        IF(
-                            v.tipo_impuesto = '2',
-                            dv.detalle_importe * (
-                                (dv.impuesto_porciento / 100) + 1
-                            ),
-                            dv.detalle_importe
-                        )
-                    ) AS detalle_importe,
                     AVG(
                         IF (
                             v.tipo_impuesto = '1',
                             (
-                                (dv.detalle_importe / (up.unidades * dv.cantidad)) / ((dv.impuesto_porciento / 100) + 1)
+                                dv.precio / ((dv.impuesto_porciento / 100) + 1)
                             ),
-                            (
-                                IF(
-                                    v.tipo_impuesto = '2',
-                                    (
-                                        ((dv.detalle_importe * ((dv.impuesto_porciento / 100) + 1)) / (up.unidades * dv.cantidad)) / ((dv.impuesto_porciento / 100) + 1)
-                                    ),
-                                    (
-                                        dv.detalle_importe / (up.unidades * dv.cantidad)
-                                    )
-                                )
-                            )
+                            dv.precio
                         )
                     ) AS costoVentaSi,
                     AVG(
@@ -201,7 +182,6 @@ class reporte_venta_model extends CI_Model
                         )
                         )
                     ) AS costoVenta,
-                    AVG(dv.detalle_costo_ultimo) AS detalle_costo_ultimo,
                     AVG(
                         IF (
                             dv.tipo_impuesto_compra = '1',
@@ -271,8 +251,7 @@ class reporte_venta_model extends CI_Model
                             )
                         )
                     ) AS costoCompraImp,
-                    dv.impuesto_porciento,
-                    v.tipo_impuesto
+                    dv.impuesto_porciento
                 FROM
                     detalle_venta dv
                 INNER JOIN venta v ON v.venta_id = dv.id_venta
