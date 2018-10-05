@@ -80,7 +80,7 @@
             $costoCompraImp = $ingreso->costoCompraImp; //Costo de compra unitario con impuesto
             //compras x cantidad
             $costoCompraCantSi = $costoCompraSi * $cantidad; //subtotal
-            //$impCompraCant = $costoCompraCantSi * $impuesto; //impuesto
+            $impCompraCant = $impCompra * $cantidad; //impuesto
             $costoTotal = $costoCompraCantSi + $impCompraCant; //Costo total
             //ventas x unidad
             $costoVentaSi = $ingreso->costoVentaSi; //Precio unitario sin impuesto
