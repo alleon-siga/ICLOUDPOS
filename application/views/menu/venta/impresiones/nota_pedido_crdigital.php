@@ -126,7 +126,7 @@
             <?php foreach ($venta->detalles as $detalle): ?>
                 <tr class="td_productos">
                     <td><?= getCodigoValue($detalle->producto_id, $detalle->producto_codigo_interno) ?></td>
-                    <td><?= number_format($detalle->cantidad, 0) ?></td>
+                    <td><?= $detalle->producto_cualidad=="PESABLE"?$detalle->cantidad:number_format($detalle->cantidad,0) ?></td>
                     <td><?= $detalle->unidad_abr ?></td>
                     <td style="width: 425px;"><?= $detalle->producto_nombre ?></td>
                     <td style="text-align: right; white-space: nowrap;"><?= $venta->moneda_simbolo . ' ' . $detalle->precio ?></td>

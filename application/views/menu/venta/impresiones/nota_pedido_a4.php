@@ -219,7 +219,7 @@
             }
         ?>
             <tr class="td-data">
-                <td style="background-color: <?= $color ?>"><?= number_format($detalle->cantidad, 0) ?></td>
+                <td style="background-color: <?= $color ?>"><?= $detalle->producto_cualidad=="PESABLE"?$detalle->cantidad:number_format($detalle->cantidad,0) ?></td>
                 <td style="background-color: <?= $color ?>; width: 50%;"><?= $detalle->producto_nombre ?></td>
                 <td style="background-color: <?= $color ?>"><?= $detalle->unidad_abr ?></td>
                 <td style="background-color: <?= $color ?>; white-space: nowrap; text-align: right;"><?= $venta->moneda_simbolo . ' ' . $detalle->precio ?></td>

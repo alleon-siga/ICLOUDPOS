@@ -125,7 +125,7 @@
                                            type="number"
                                            style="text-align: center;"
                                            min="0"
-                                           value="<?= $detalle->cantidad ?>">
+                                           value="<?= $detalle->producto_cualidad=="PESABLE"?$detalle->cantidad:number_format($detalle->cantidad,0) ?>">
                                 </td>
                                 <td style="width: 100px;"><?= $detalle->unidad_nombre ?></td>
                                 <td style="width: 150px;">

@@ -210,11 +210,11 @@ class ingreso_model extends CI_Model
         
         $this->db->insert('ingreso', $compra);
         $insert_id = $this->db->insert_id();
-        if ($cab_pie['banco_id'] != 0) {
-            $banco_selected = $this->db->get_where('banco', array('banco_id' => $cab_pie['banco_id']))->row();
+        if ($cab_pie['banco_id'] != 0 || $cab_pie['banco_id_d'] != 0) {
+            $banco_selected = $this->db->get_where('banco', array('banco_id' => $cab_pie['banco_id']!=0?$cab_pie['banco_id']:$cab_pie['banco_id_d']))->row();
             $cuenta_id = $banco_selected->cuenta_id;
         } else {
-            $cuenta_id = $cab_pie['caja_id'];
+            $cuenta_id = $cab_pie['caja_id']!=0?$cab_pie['caja_id']:$cab_pie['caja_id_d'];
         }
         if ($compra['ingreso_status'] == 'COMPLETADO' && $compra['total_ingreso'] > 0 && $compra['pago'] == 'CONTADO') {
             $moneda_id = $compra['id_moneda'];

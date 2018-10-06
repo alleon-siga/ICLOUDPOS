@@ -132,9 +132,9 @@
                                     <tr>
                                         <td><?= getCodigoValue($detalle->producto_id, $detalle->producto_codigo_interno) ?></td>
                                         <td><?= $detalle->producto_nombre ?></td>
-                                        <td><?= number_format($detalle->cantidad, 0) ?></td>
-                                        <td><?= number_format($detalle->cantidad_devuelta, 0) ?></td>
-                                        <td><?= number_format($detalle->cantidad - $detalle->cantidad_devuelta, 0) ?></td>
+                                        <td><?= $detalle->producto_cualidad=="PESABLE"?$detalle->cantidad:number_format($detalle->cantidad,0) ?></td>
+                                        <td><?= $detalle->producto_cualidad=="PESABLE"?$detalle->cantidad_devuelta:number_format($detalle->cantidad_devuelta,0) ?></td>
+                                        <td><?= $detalle->producto_cualidad=="PESABLE"?$detalle->cantidad - $detalle->cantidad_devuelta:number_format($detalle->cantidad - $detalle->cantidad_devuelta,0)?></td>
                                         <td><?= $detalle->unidad_nombre ?></td>
                                         <td style="text-align: right"><?= $detalle->precio ?></td>
                                         <td style="text-align: right"><?= $venta->moneda_simbolo . " " . $detalle->importe ?></td>
@@ -282,9 +282,9 @@
                                     <tr>
                                         <td><?= getCodigoValue($detalle->producto_id, $detalle->producto_codigo_interno) ?></td>
                                         <td><?= $detalle->producto_nombre ?></td>
-                                        <td><?= number_format($detalle->cantidad, 0) ?></td>
-                                        <td><?= number_format($detalle->cantidad_devuelta, 0) ?></td>
-                                        <td><?= number_format($detalle->cantidad - $detalle->cantidad_devuelta, 0) ?></td>
+                                        <td><?= $detalle->producto_cualidad=="PESABLE"?$detalle->cantidad:number_format($detalle->cantidad,0) ?></td>
+                                        <td><?= $detalle->producto_cualidad=="PESABLE"?$detalle->cantidad_devuelta:number_format($detalle->cantidad_devuelta,0)?></td>
+                                        <td><?=$detalle->producto_cualidad=="PESABLE"?$detalle->cantidad - $detalle->cantidad_devuelta:number_format($detalle->cantidad - $detalle->cantidad_devuelta,0)?></td>
                                         <td><?= $detalle->unidad_nombre ?></td>
                                         <td style="text-align: right"><?= $detalle->precio ?></td>
                                         <td style="text-align: right"><?= $venta->moneda_simbolo . " " . $detalle->importe ?></td>
@@ -423,7 +423,7 @@
                                     <td id="producto_codigo_<?= $detalle->detalle_id ?>"><?= getCodigoValue($detalle->producto_id, $detalle->producto_codigo_interno) ?></td>
                                     <td id="producto_nombre_<?= $detalle->detalle_id ?>"><?= $detalle->producto_nombre ?></td>
                                     <td id="cantidad_<?= $detalle->detalle_id ?>"
-                                        data-cantidad="<?= number_format($detalle->cantidad - $detalle->cantidad_devuelta, 0) ?>"><?= number_format($detalle->cantidad - $detalle->cantidad_devuelta, 0) ?></td>
+                                        data-cantidad="<?= $detalle->producto_cualidad=="PESABLE"?$detalle->cantidad - $detalle->cantidad_devuelta:number_format($detalle->cantidad - $detalle->cantidad_devuelta,0) ?>"><?= $detalle->cantidad - $detalle->cantidad_devuelta ?></td>
                                     <td style="width: 150px;">
                                         <input class="form-control devolver_input"
                                                id="cantidad_devuelta_<?= $detalle->detalle_id ?>"
@@ -431,7 +431,7 @@
                                                type="number"
                                                style="text-align: center;"
                                                min="0"
-                                               max="<?= $detalle->cantidad ?>"
+                                               max="<?= $detalle->producto_cualidad=="PESABLE"?$detalle->cantidad:number_format($detalle->cantidad,0) ?>"
                                                data-impuesto="<?= $detalle->impuesto_porciento ?>"
                                                value="0">
                                     </td>

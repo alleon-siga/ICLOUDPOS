@@ -70,7 +70,7 @@
             <?php foreach ($venta->detalles as $detalle): ?>
                 <tr>
                     <td><?= $detalle->producto_nombre ?></td>
-                    <td><?= number_format($detalle->cantidad, 2) . " " . $detalle->unidad_abr ?></td>
+                    <td><?= $detalle->producto_cualidad=="PESABLE"?$detalle->cantidad:number_format($detalle->cantidad,0) . " " . $detalle->unidad_abr ?></td>
                     <td style="text-align: right"><?= $venta->moneda_simbolo . ' ' . $detalle->precio ?></td>
                     <td style="text-align: right"><?= $venta->moneda_simbolo . ' ' . number_format($detalle->importe, 2) ?></td>
                 </tr>

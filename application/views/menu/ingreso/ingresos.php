@@ -8,7 +8,8 @@
 <ul class="breadcrumb breadcrumb-top">
     <li>Ingresos</li>
     <li>
-        <a href=""><?php if ($costos === 'true') {
+        <a href=""><?php
+            if ($costos === 'true') {
 
                 if ($facturar == "SI") {
 
@@ -24,7 +25,6 @@
 
                     echo "Formulario De Ingresos ";
                 }
-
                 ?><?php } else { ?> Registro de Existencia <?php } ?></a>
     </li>
 </ul>
@@ -83,23 +83,27 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
 
                                                 <select name="local" id="local" class='cho form-control'
                                                         required="true" <?php if (isset($ingreso->id_ingreso) and $facturar == "NO") echo 'disabled' ?>>
-                                                    <?php
-
-                                                    if (count($locales) > 0) {
-                                                        foreach ($locales as $local) {
-                                                            ?>
+                                                            <?php
+                                                            if (count($locales) > 0) {
+                                                                foreach ($locales as $local) {
+                                                                    ?>
                                                             <option
-                                                                    value="<?= $local['int_local_id'] ?>"
-                                                                <?php if (isset($ingreso->id_ingreso) and $ingreso->local_id == $local['int_local_id']) {
+                                                                value="<?= $local['int_local_id'] ?>"
+                                                                <?php
+                                                                if (isset($ingreso->id_ingreso) and $ingreso->local_id == $local['int_local_id']) {
                                                                     echo "selected";
                                                                 } else {
-                                                                    if ($local['int_local_id'] == $this->session->userdata('id_local')) echo 'selected';
-                                                                } ?> >
+                                                                    if ($local['int_local_id'] == $this->session->userdata('id_local'))
+                                                                        echo 'selected';
+                                                                }
+                                                                ?> >
                                                                 <?= $local['local_nombre'] ?></option>
 
 
-                                                        <?php }
-                                                    } ?>
+                                                            <?php
+                                                        }
+                                                    }
+                                                    ?>
                                                 </select>
                                                 <input type="hidden" name="local" id="local_hidden"
                                                        value="<?php if (isset($ingreso->local_id)) echo $ingreso->local_id ?>">
@@ -117,11 +121,11 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                                                             required="true">
                                                         <option value="" selected>Seleccione</option>
                                                         <option
-                                                                value="CONTADO" <?php if (isset($ingreso->pago) and $ingreso->pago == "CONTADO") echo "selected" ?>>
+                                                            value="CONTADO" <?php if (isset($ingreso->pago) and $ingreso->pago == "CONTADO") echo "selected" ?>>
                                                             CONTADO
                                                         </option>
                                                         <option
-                                                                value="CREDITO" <?php if (isset($ingreso->pago) and $ingreso->pago == "CREDITO") echo "selected" ?>>
+                                                            value="CREDITO" <?php if (isset($ingreso->pago) and $ingreso->pago == "CREDITO") echo "selected" ?>>
                                                             CREDITO
                                                         </option>
                                                     </select>
@@ -144,8 +148,12 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                                                     <div class="input-append">
                                                         <input type="text" placeholder="día-mes-año"
                                                                name="fecEmision"
-                                                               value="<?php if (isset($ingreso->fecha_emision) and $ingreso->fecha_emision != null)
-                                                                   echo date("d-m-Y", strtotime($ingreso->fecha_emision)); else echo date('d-m-Y'); ?>"
+                                                               value="<?php
+                                                               if (isset($ingreso->fecha_emision) and $ingreso->fecha_emision != null)
+                                                                   echo date("d-m-Y", strtotime($ingreso->fecha_emision));
+                                                               else
+                                                                   echo date('d-m-Y');
+                                                               ?>"
                                                                id="fecEmision"
                                                                class='input-small datepick required form-control'
                                                                required="true" readonly>
@@ -171,16 +179,20 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                                                 <select name="tipo_ingreso" id="" class='cho form-control'
                                                         required="true">
                                                     <option
-                                                            value="<?= COMPRA ?>" <?php if (isset($ingreso->tipo_ingreso) and $ingreso->tipo_ingreso == COMPRA)
-                                                        echo "selected"; ?>><?= COMPRA ?></option>
+                                                        value="<?= COMPRA ?>" <?php
+                                                        if (isset($ingreso->tipo_ingreso) and $ingreso->tipo_ingreso == COMPRA)
+                                                            echo "selected";
+                                                        ?>><?= COMPRA ?></option>
                                                 </select>
                                             </div>
                                         </div>
                                     </div>
-                                    <?php if ($costos === 'true') {
+                                    <?php
+                                    if ($costos === 'true') {
 
                                         echo "<br><br><br>";
-                                    } ?>
+                                    }
+                                    ?>
 
                                     <?php if ($costos === 'true'): ?>
                                         <div class="control-group">
@@ -191,12 +203,12 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                                                 <div class="controls">
                                                     <select name="cboTipDoc" id="cboTipDoc" class='cho form-control'
                                                             required="true">
-                                                    <?php foreach ($documentos as $documento) { ?>
-                                                        <option value="<?= $documento->des_doc ?>" 
-                                                        <?php if (isset($ingreso->tipo_documento) && $ingreso->tipo_documento == $documento->des_doc) echo "selected"; ?>>
-                                                        <?= $documento->des_doc ?>
-                                                        </option>
-                                                    <?php } ?>
+                                                                <?php foreach ($documentos as $documento) { ?>
+                                                            <option value="<?= $documento->des_doc ?>" 
+                                                                    <?php if (isset($ingreso->tipo_documento) && $ingreso->tipo_documento == $documento->des_doc) echo "selected"; ?>>
+                                                                        <?= $documento->des_doc ?>
+                                                            </option>
+                                                        <?php } ?>
                                                     </select>
                                                 </div>
                                             </div>
@@ -214,18 +226,24 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                                                        name="doc_serie" id="doc_serie" autofocus="autofocus"
                                                        required="true"
                                                        maxlength="8"
-                                                       value="<?php if (isset($ingreso->documento_serie) and
-                                                           $ingreso->documento_serie != null and $ingreso->documento_serie != 0
-                                                       ) echo $ingreso->documento_serie; ?>">
+                                                       value="<?php
+                                                       if (isset($ingreso->documento_serie) and
+                                                               $ingreso->documento_serie != null and $ingreso->documento_serie != 0
+                                                       )
+                                                           echo $ingreso->documento_serie;
+                                                       ?>">
                                             </div>
 
                                             <div class="col-md-3">
                                                 <input type="text" class='input-medium required form-control'
                                                        name="doc_numero" id="doc_numero" required="true"
-                                                       value="<?php if (isset($ingreso->documento_numero)
-                                                           and
-                                                           $ingreso->documento_numero != null and $ingreso->documento_numero != 0
-                                                       ) echo $ingreso->documento_numero; ?>"
+                                                       value="<?php
+                                                       if (isset($ingreso->documento_numero)
+                                                               and
+                                                               $ingreso->documento_numero != null and $ingreso->documento_numero != 0
+                                                       )
+                                                           echo $ingreso->documento_numero;
+                                                       ?>"
                                                        maxlength="20">
                                             </div>
 
@@ -237,10 +255,12 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
 
 
                                     <!-- FILA 4 ************************************************************-->
-                                    <?php if ($costos === 'false') {
+                                    <?php
+                                    if ($costos === 'false') {
 
                                         echo "<br><br><br>";
-                                    } ?>
+                                    }
+                                    ?>
 
                                     <div class="control-group">
                                         <div class="col-md-2">
@@ -251,21 +271,23 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                                                 <div class="col-md-10">
                                                     <select name="cboProveedor" id="cboProveedor"
                                                             class='cho form-control' required="true" required="true">
-                                                        <?php if (count($lstProveedor) > 0): ?>
-                                                            <?php foreach ($lstProveedor as $pv): ?>
+                                                                <?php if (count($lstProveedor) > 0): ?>
+                                                                    <?php foreach ($lstProveedor as $pv): ?>
                                                                 <option
-                                                                        value="<?php echo $pv->id_proveedor; ?>"
-                                                                    <?php if (isset($ingreso->id_proveedor) and $ingreso->id_proveedor == $pv->id_proveedor)
-                                                                        echo "selected"; ?>><?php echo $pv->proveedor_nombre; ?></option>
-                                                            <?php endforeach; ?>
-                                                        <?php endif; ?>
+                                                                    value="<?php echo $pv->id_proveedor; ?>"
+                                                                    <?php
+                                                                    if (isset($ingreso->id_proveedor) and $ingreso->id_proveedor == $pv->id_proveedor)
+                                                                        echo "selected";
+                                                                    ?>><?php echo $pv->proveedor_nombre; ?></option>
+                                                                <?php endforeach; ?>
+                                                            <?php endif; ?>
                                                     </select>
                                                 </div>
                                                 <div class="col-md-2" style="padding-left:0;">
                                                     <a class="btn btn-default" data-toggle="tooltip"
-                                                    title="Agregar Proveedor" data-original-title="Agregar Proveedor"
-                                                    href="#" onclick="agregarproveedor()">
-                                                    <i class="hi hi-plus-sign"></i>
+                                                       title="Agregar Proveedor" data-original-title="Agregar Proveedor"
+                                                       href="#" onclick="agregarproveedor()">
+                                                        <i class="hi hi-plus-sign"></i>
                                                     </a>
                                                 </div>
                                             </div>
@@ -283,10 +305,13 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                                                            name="observacion"
                                                            id=""
                                                            class='form-control'
-                                                           value="<?php if (isset($ingreso->ingreso_observacion) and
-                                                               $ingreso->ingreso_observacion != null and $ingreso->ingreso_observacion != 0
-                                                           ) echo $ingreso->ingreso_observacion; ?>"
-                                                    >
+                                                           value="<?php
+                                                           if (isset($ingreso->ingreso_observacion) and
+                                                                   $ingreso->ingreso_observacion != null and $ingreso->ingreso_observacion != 0
+                                                           )
+                                                               echo $ingreso->ingreso_observacion;
+                                                           ?>"
+                                                           >
                                                 </div>
                                             </div>
                                         </div>
@@ -321,14 +346,16 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                                                     <select class="form-control" id="monedas" name="monedas" onchange="seleccion(this.value)">
                                                         <?php foreach ($monedas as $mon) { ?>
                                                             <option
-                                                                <?php if (isset($ingreso->id_moneda) and $ingreso->id_moneda == $mon['id_moneda']) {
-                                                                    echo "selected";
-                                                                } ?>
-                                                                    value="<?= $mon['id_moneda'] ?>"
-                                                                    data-tasa="<? echo $mon['tasa_soles'] ?>"
-                                                                    data-oper="<? echo $mon['ope_tasa'] ?>"
-                                                                    data-simbolo="<? echo $mon['simbolo'] ?>"><?= $mon['nombre'] ?></option>
-                                                        <?php } ?>
+                                                            <?php
+                                                            if (isset($ingreso->id_moneda) and $ingreso->id_moneda == $mon['id_moneda']) {
+                                                                echo "selected";
+                                                            }
+                                                            ?>
+                                                                value="<?= $mon['id_moneda'] ?>"
+                                                                data-tasa="<? echo $mon['tasa_soles'] ?>"
+                                                                data-oper="<? echo $mon['ope_tasa'] ?>"
+                                                                data-simbolo="<? echo $mon['simbolo'] ?>"><?= $mon['nombre'] ?></option>
+                                                            <?php } ?>
                                                     </select>
                                                 </div>
                                             </div>
@@ -342,14 +369,18 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                                             <div class="col-md-1">
                                                 <input type="text" name="tasa_id" id="tasa_id"
                                                        onkeydown="return soloDecimal4(this, event);"
-                                                       value="<?php if (isset($ingreso->tasa_soles)) {
+                                                       value="<?php
+                                                       if (isset($ingreso->tasa_soles)) {
                                                            echo $ingreso->tasa_soles;
-                                                       } ?>" class='form-control'>
+                                                       }
+                                                       ?>" class='form-control'>
 
                                                 <input type="hidden" name="moneda_id" id="moneda_id"
-                                                       value="<?php if (isset($ingreso->id_moneda)) {
+                                                       value="<?php
+                                                       if (isset($ingreso->id_moneda)) {
                                                            echo $ingreso->id_moneda;
-                                                       } ?>">
+                                                       }
+                                                       ?>">
                                             </div>
 
                                         </div>
@@ -395,8 +426,8 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                                                     <?php if (count($lstProducto) > 0): ?>
                                                         <?php foreach ($lstProducto as $pd): ?>
                                                             <option
-                                                                    value="<?php echo $pd['producto_id']; ?>"
-                                                                    data-impuesto="<?= $pd['porcentaje_impuesto'] ?>">
+                                                                value="<?php echo $pd['producto_id']; ?>"
+                                                                data-impuesto="<?= $pd['porcentaje_impuesto'] ?>">
 
                                                                 <?php $barra = $barra_activa->activo == 1 && $pd['producto_codigo_barra'] != "" ? "CB: " . $pd['producto_codigo_barra'] : "" ?>
                                                                 <?php echo getCodigoValue(sumCod($pd['producto_id']), $pd['producto_codigo_interno']) . ' - ' . $pd['producto_nombre'] . ' ' . $barra; ?></option>
@@ -416,7 +447,7 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
 
                                         <div class="col-md-3 text-right">
                                             <button id="agregar_gasto" type="button" class="btn btn-info">
-                                              <i class="fa fa-plus"></i>  Agregar Gasto
+                                                <i class="fa fa-plus"></i>  Agregar Gasto
                                             </button>
                                         </div>
                                     </div>
@@ -444,9 +475,11 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                                             <?php if (count($impuestos) > 0) { ?>
                                                 <?php foreach ($impuestos as $impuesto) { ?>
                                                     <option
-                                                            value="<?php echo $impuesto['porcentaje_impuesto']; ?>" <?php if (strtoupper($impuesto['nombre_impuesto']) == "IGV") echo 'selected' ?>><?php echo $impuesto['nombre_impuesto'] ?></option>
-                                                <?php }
-                                            } ?>
+                                                        value="<?php echo $impuesto['porcentaje_impuesto']; ?>" <?php if (strtoupper($impuesto['nombre_impuesto']) == "IGV") echo 'selected' ?>><?php echo $impuesto['nombre_impuesto'] ?></option>
+                                                        <?php
+                                                    }
+                                                }
+                                                ?>
                                         </select>
                                     </div>
                                 </div>
@@ -490,7 +523,7 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                                                    class='form-control'
                                                    name="precio" id="precio" value="0.00"
                                                    onkeydown="return soloDecimal4(this, event);"
-                                                <?= !validOption('PRECIO_INGRESO', 'COSTO', 'IMPORTE') ? 'readonly' : '' ?>>
+                                                   <?= !validOption('PRECIO_INGRESO', 'COSTO', 'IMPORTE') ? 'readonly' : '' ?>>
                                         </div>
                                     </div>
                                     <div class="col-md-2 text-right"><label class="control-label">SubTotal:</label>
@@ -500,10 +533,12 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                                             <div class="input-group-addon tipo_tasa"></div>
                                             <input type="text" style="text-align: right;"
                                                    class='form-control' <?php if (isset($ingreso->id_ingreso) and $facturar == "SI") { ?>
-                                                value="<?= $ingreso->sub_total_ingreso ?>"
-                                            <?php } else {
-                                                echo !validOption('PRECIO_INGRESO', 'IMPORTE', 'IMPORTE') ? 'readonly' : '';
-                                            } ?>
+                                                       value="<?= $ingreso->sub_total_ingreso ?>"
+                                                       <?php
+                                                   } else {
+                                                       echo!validOption('PRECIO_INGRESO', 'IMPORTE', 'IMPORTE') ? 'readonly' : '';
+                                                   }
+                                                   ?>
                                                    name="total_precio" id="total_precio" value="0.00"
                                                    onkeydown="return soloDecimal4(this, event);">
                                         </div>
@@ -532,12 +567,12 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
 
                                         </div>
                                         <div class="box-content box-nomargin">
-                                    <span style="float: right; margin-bottom: 5px;">
-                                        <input type="checkbox" id="tabla_vista"> <b>Mostrar Detalles</b>
-                                    </span>
+                                            <span style="float: right; margin-bottom: 5px;">
+                                                <input type="checkbox" id="tabla_vista"> <b>Mostrar Detalles</b>
+                                            </span>
                                             <table
-                                                    class="table table-striped dataTable table-condensed table-bordered dataTable-noheader table-has-pover dataTable-nosort"
-                                                    data-nosort="0">
+                                                class="table table-striped dataTable table-condensed table-bordered dataTable-noheader table-has-pover dataTable-nosort"
+                                                data-nosort="0">
                                                 <thead id="head_productos"></thead>
                                                 <tbody id="body_productos"></tbody>
                                             </table>
@@ -568,10 +603,12 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                                                            class='input-square input-small form-control'
                                                            name="subTotal"
                                                            id="subTotal" <?php if (isset($ingreso->id_ingreso) and $facturar == "SI") { ?>
-                                                        value="<?= $ingreso->sub_total_ingreso ?>"
-                                                    <?php } else {
-                                                        echo "readonly";
-                                                    } ?>/>
+                                                               value="<?= $ingreso->sub_total_ingreso ?>"
+                                                               <?php
+                                                           } else {
+                                                               echo "readonly";
+                                                           }
+                                                           ?>/>
                                                 </div>
                                             </div>
                                         </div>
@@ -592,10 +629,12 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                                                            class='input-square input-small form-control'
                                                            name="montoigv"
                                                            id="montoigv" <?php if (isset($ingreso->id_ingreso) and $facturar == "SI") { ?>
-                                                        value="<?= $ingreso->sub_total_ingreso ?>"
-                                                    <?php } else {
-                                                        echo "readonly";
-                                                    } ?>/>
+                                                               value="<?= $ingreso->sub_total_ingreso ?>"
+                                                               <?php
+                                                           } else {
+                                                               echo "readonly";
+                                                           }
+                                                           ?>/>
                                                 </div>
                                             </div>
                                         </div>
@@ -615,10 +654,12 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                                                            class='input-square input-small form-control'
                                                            name="totApagar"
                                                            id="totApagar" <?php if (isset($ingreso->id_ingreso) and $facturar == "SI") { ?>
-                                                        value="<?= $ingreso->total_ingreso ?>"
-                                                    <?php } else {
-                                                        echo "readonly";
-                                                    } ?>/>
+                                                               value="<?= $ingreso->total_ingreso ?>"
+                                                               <?php
+                                                           } else {
+                                                               echo "readonly";
+                                                           }
+                                                           ?>/>
                                                 </div>
                                             </div>
                                         </div>
@@ -655,17 +696,17 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
 
                         <button class="btn" id="btnGuardarCompra"
                                 type="button"><i
-                                    class="fa fa-save fa-3x text-info fa-fw"></i> <br>F6 Guardar
+                                class="fa fa-save fa-3x text-info fa-fw"></i> <br>F6 Guardar
                         </button>
                         <!-- <button type="button" class="btn"><i class="fa fa-folder-open-o fa-3x text-info"></i><br>Abrir </button>-->
                         <?php if (!isset($ingreso->id_ingreso)) { ?>
                             <button class="btn" id="reiniciar"
                                     onclick="confirmDialog('reiniciar_res(<?= $costos ?>);');"><i
-                                        class="fa fa-refresh fa-3x text-info fa-fw"></i><br>Reiniciar
+                                    class="fa fa-refresh fa-3x text-info fa-fw"></i><br>Reiniciar
                             </button>
                         <?php } ?>
                         <button class="btn" type="button" onclick="confirmDialog('cancelarIngreso();');"><i
-                                    class="fa fa-remove fa-3x text-warning fa-fw"></i><br>Cancelar
+                                class="fa fa-remove fa-3x text-warning fa-fw"></i><br>Cancelar
                         </button>
                     </div>
                 </div>
@@ -797,11 +838,11 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                 <div class="row">
                     <div class="col-md-12">
                         <button class="btn btn-default" type="button" id="guardarcantidad"><i
-                                    class="fa fa-save"></i>Guardar
+                                class="fa fa-save"></i>Guardar
                         </button>
 
                         <button class="btn btn-default closemodificarcantidad" type="button"><i
-                                    class="fa fa-close"></i> Cancelar
+                                class="fa fa-close"></i> Cancelar
                         </button>
                     </div>
                 </div>
@@ -874,18 +915,22 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                         </div>
                         <div class="col-md-7">
                             <select class="form-control" name="metodo" id="metodo" onchange="verificar_banco_cuota()">
+                                <option value="" selected="">Seleccione</option>
                                 <?php
                                 if (count($metodo_pago) > 0) {
-                                    foreach ($metodo_pago as $metodo) { ?>
-                                        <option <?php if ($metodo['id_metodo'] == "3") echo "selected"; ?>
-                                                data-tipo_metodo="<?= $metodo['tipo_metodo'] ?>"
-                                                value="<?= $metodo['id_metodo'] ?>"><?= $metodo['nombre_metodo'] ?></option>
-                                    <?php }
-                                } ?>
+                                    foreach ($metodo_pago as $metodo) {
+                                        ?>
+                                        <option 
+                                            data-tipo_metodo="<?= $metodo['tipo_metodo'] ?>"
+                                            value="<?= $metodo['id_metodo'] ?>"><?= $metodo['nombre_metodo'] ?></option>
+                                            <?php
+                                        }
+                                    }
+                                    ?>
                             </select>
                         </div>
                     </div>
-                    <div class="row caja_block" style="display:none;">
+                    <div class="row caja_block"  style="display: none;">
                         <div class="col-md-5">
                             <label class="control-label panel-admin-text">Seleccione la Cuenta</label>
                         </div>
@@ -893,22 +938,38 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                             <select name="caja_id" id="caja_id" class="form-control">
                                 <option value="">Seleccione</option>
                                 <?php foreach ($cajas as $caja): ?>
-                                    <option
-                                            value="<?= $caja->cuenta_id ?>" data-moneda="<?= $caja->moneda_id ?>" <?= $caja->cuenta_id == '2' ? 'selected' : '' ?>><?= $caja->descripcion?></option>
-                                <?php endforeach ?>
+                                    <option class="<?= $caja->cuenta_id ?>"
+                                            value="<?= $caja->cuenta_id ?>" data-moneda="<?= $caja->moneda_id ?>" ><?= $caja->descripcion ?></option>
+                                        <?php endforeach ?>
                             </select>
                         </div>
                     </div>
-                    <div class="row caja_block_efec">
+                    <div class="row caja_block_d"  style="display: none;">
                         <div class="col-md-5">
                             <label class="control-label panel-admin-text">Seleccione la Cuenta</label>
                         </div>
                         <div class="col-md-7">
-                            <select name="caja_id" id="caja_id" class="form-control">
+                            <select name="caja_id_d" id="caja_id_d" class="form-control">
                                 <option value="">Seleccione</option>
-                                <?php foreach ($cajasefe as $cajaefe): ?>
+                                <?php foreach ($cajad as $ca): ?>
+                                    <option class="<?= $ca->cuenta_id ?>"
+                                            value="<?= $ca->cuenta_id ?>" data-moneda="<?= $ca->moneda_id ?>" ><?= $ca->descripcion ?></option>
+                                        <?php endforeach ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row" id="banco_block_d" style="display: none;">
+                        <div class="col-md-5">
+                            <label class="control-label panel-admin-text">Seleccione el Banco</label>
+                        </div>
+                        <div class="col-md-7">
+                            <select name="banco_id_d" id="banco_id_d" class="form-control">
+                                <option value="">Seleccione</option>
+                                <?php foreach (bancosd as $ba): ?>
                                     <option
-                                            value="<?= $cajaefe->cuenta_id ?>" data-moneda="<?= $cajaefe->moneda_id ?>" <?= $cajaefe->cuenta_id == '2' ? 'selected' : '' ?>><?= $cajaefe->descripcion?></option>
+                                        value="<?= $ba['banco_id'] ?>" data-cuenta_c="<?= $ba['cuenta_id'] ?>">
+                                        <?= $ba['banco_nombre'] ?> | <?= $ba['descripcion'] ?>
+                                    </option>
                                 <?php endforeach ?>
                             </select>
                         </div>
@@ -922,7 +983,7 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                                 <option value="">Seleccione</option>
                                 <?php foreach ($bancos as $banco): ?>
                                     <option
-                                            value="<?= $banco['banco_id'] ?>">
+                                        value="<?= $banco['banco_id'] ?>" data-cuenta_c="<?= $banco['cuenta_id'] ?>">
                                         <?= $banco['banco_nombre'] ?> | <?= $banco['descripcion'] ?>
                                     </option>
                                 <?php endforeach ?>
@@ -937,7 +998,7 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                             <select class="form-control" id="tipo_tarjeta" name="tipo_tarjeta">
                                 <option value="">Seleccione</option>
                                 <?php foreach ($tarjetas as $tarjeta) : ?>
-                                    <option value="<?php echo $tarjeta->id ?>"><?php echo $tarjeta->nombre ?></option>
+                                    <option value="<?php echo $tarjeta['id'] ?>"><?php echo $tarjeta['nombre'] ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -958,7 +1019,7 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
             </div>
             <div class="modal-footer">
                 <a href="#" class="btn btn-primary" id="guardarPago_pagospendiente" onclick="guardaringreso()"><i
-                            class=""></i> Pagar Monto</a>
+                        class=""></i> Pagar Monto</a>
                 <a href="#" class="btn btn-danger" id="cerrar_pago_modal" onclick="$('#pago_modal').modal('hide');">Salir</a>
             </div>
         </div>
@@ -994,103 +1055,131 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
 <script src="<?php echo $ruta; ?>recursos/js/Validacion.js"></script>
 <script src="<?php echo $ruta ?>recursos/js/pages/tablesDatatables.js"></script>
 <script>
-    var ruta = '<?php echo $ruta; ?>';
+                    var ruta = '<?php echo $ruta; ?>';
 
-    $(function () {
-        $("select").chosen({width: '100%'});
-        $("#fecEmision").datepicker({format: 'dd-mm-yyyy'});
-        //TablesDatatables.init();
-        $("#agregarproveedor").load(ruta + 'proveedor/form');
-        $("#agregarmarca").load(ruta + 'marca/form');
-        $("#agregargrupo").load(ruta + 'grupo/form');
-        $("#agregarfamilia").load(ruta + 'familia/form');
-        $("#agregarlinea").load(ruta + 'linea/form');
-    });
+                    $(function () {
+                        $("select").chosen({width: '100%'});
+                        $("#fecEmision").datepicker({format: 'dd-mm-yyyy'});
+                        //TablesDatatables.init();
+                        $("#agregarproveedor").load(ruta + 'proveedor/form');
+                        $("#agregarmarca").load(ruta + 'marca/form');
+                        $("#agregargrupo").load(ruta + 'grupo/form');
+                        $("#agregarfamilia").load(ruta + 'familia/form');
+                        $("#agregarlinea").load(ruta + 'linea/form');
+                    });
 
-    function agregarfamilia() {
-        $("#formagregarfamilia").trigger("reset");
-        $('#agregarfamilia').modal('show');
-        setTimeout(function () {
-            $('#confirmar_boton_familia').removeAttr("onclick");
-            $('#confirmar_boton_familia').attr("onclick", "guardar_familia('producto')");
+                    function agregarfamilia() {
+                        $("#formagregarfamilia").trigger("reset");
+                        $('#agregarfamilia').modal('show');
+                        setTimeout(function () {
+                            $('#confirmar_boton_familia').removeAttr("onclick");
+                            $('#confirmar_boton_familia').attr("onclick", "guardar_familia('producto')");
 
-        }, 10);
-    }
+                        }, 10);
+                    }
 
-    function agregarmarca() {
-        $("#formagregarmarca").trigger("reset");
-        $('#agregarmarca').modal('show');
-        setTimeout(function () {
-            $('#confirmar_boton_marca').removeAttr("onclick");
-            $('#confirmar_boton_marca').attr("onclick", "guardar_marca('producto')");
+                    function agregarmarca() {
+                        $("#formagregarmarca").trigger("reset");
+                        $('#agregarmarca').modal('show');
+                        setTimeout(function () {
+                            $('#confirmar_boton_marca').removeAttr("onclick");
+                            $('#confirmar_boton_marca').attr("onclick", "guardar_marca('producto')");
 
-        }, 10);
-    }
-  
-    
-    function agregargrupo() {
-        $("#formagregargrupo").trigger("reset");
-        $('#agregargrupo').modal('show');
-        setTimeout(function () {
-            $('#confirmar_boton_grupo').removeAttr("onclick");
-            $('#confirmar_boton_grupo').attr("onclick", "guardar_grupo('producto')");
-        }, 10);
-    }
+                        }, 10);
+                    }
 
-    function agregarproveedor() {
-        $("#formagregarproveedor").trigger("reset");
-        $('#agregarproveedor').modal('show');
-        setTimeout(function () {
-            $('#confirmar_boton_proveedor').removeAttr("onclick");
-            $('#confirmar_boton_proveedor').attr("onclick", "guardar_proveedor('producto')");
-        }, 10);
-    }
 
-    function agregarlinea() {
-        $("#formagregarlinea").trigger("reset");
-        $('#agregarlinea').modal('show');
-        setTimeout(function () {
-            $('#confirmar_boton_linea').removeAttr("onclick");
-            $('#confirmar_boton_linea').attr("onclick", "guardar_linea('producto')");
-        }, 10);
-    }
+                    function agregargrupo() {
+                        $("#formagregargrupo").trigger("reset");
+                        $('#agregargrupo').modal('show');
+                        setTimeout(function () {
+                            $('#confirmar_boton_grupo').removeAttr("onclick");
+                            $('#confirmar_boton_grupo').attr("onclick", "guardar_grupo('producto')");
+                        }, 10);
+                    }
 
-    function update_proveedor(id, nombre) {
-        $('#cboProveedor').append('<option value="' + id + '">' + nombre + '</option>');
-        $('#cboProveedor').val(id)
-        $("#cboProveedor").trigger('chosen:updated');
-    }
-    function verificar_banco_cuota() {
+                    function agregarproveedor() {
+                        $("#formagregarproveedor").trigger("reset");
+                        $('#agregarproveedor').modal('show');
+                        setTimeout(function () {
+                            $('#confirmar_boton_proveedor').removeAttr("onclick");
+                            $('#confirmar_boton_proveedor').attr("onclick", "guardar_proveedor('producto')");
+                        }, 10);
+                    }
 
-        $("#banco_id").val("");
-        $("#tipo_tarjeta").val("");
-        $("#num_oper").val("");
-        $("#cantidad_a_pagar").val($("#total_cuota").val());
-        var tipo = $("#metodo option:selected").attr('data-tipo_metodo');
-        var metodo = $("#metodo").val();
+                    function agregarlinea() {
+                        $("#formagregarlinea").trigger("reset");
+                        $('#agregarlinea').modal('show');
+                        setTimeout(function () {
+                            $('#confirmar_boton_linea').removeAttr("onclick");
+                            $('#confirmar_boton_linea').attr("onclick", "guardar_linea('producto')");
+                        }, 10);
+                    }
 
-        $("#tipo_tarjeta_block").hide();
-        $("#banco_block").hide();
-        $("#operacion_block").show();
-        $(".caja_block").hide();
-        $(".caja_block_efec").show();
-        switch (tipo) {
-            case 'CAJA': {
-                $(".caja_block_efec").show();
-                $(".caja_block").hide();
-                if (metodo == '3')
-                    $("#operacion_block").hide();
-                    $(".caja_block").hide();
-                break;
-            }
-            case 'BANCO': {
-                $("#banco_block").show();
-                $("#operacion_block").show();
-                $(".caja_block_efec").hide();
-                if (metodo == '7')
-                    $("#tipo_tarjeta_block").show();
-                break;
-            }
-        }
-    }
+                    function update_proveedor(id, nombre) {
+                        $('#cboProveedor').append('<option value="' + id + '">' + nombre + '</option>');
+                        $('#cboProveedor').val(id)
+                        $("#cboProveedor").trigger('chosen:updated');
+                    }
+                    
+                    function verificar_banco_cuota() {
+
+                        $("#banco_id").val("");
+                        $("#tipo_tarjeta").val("");
+                        $("#num_oper").val("");
+                        $("#cantidad_a_pagar").val($("#total_cuota").val());
+                        var tipo = $("#metodo option:selected").attr('data-tipo_metodo');
+                        var metodo = $("#metodo").val();
+
+
+                        $("#tipo_tarjeta_block").hide();
+                        $("#banco_block").hide();
+                        $("#operacion_block").show();
+                        $(".caja_block").hide();
+
+                        switch (tipo) {
+                            case 'CAJA':
+                            {
+
+                                if ($("#monedas option:selected").attr('data-simbolo') == "$") {
+                                    $(".caja_block").hide();
+                                    $("#banco_block").hide();                                    
+                                    $("#banco_block_d").hide();
+                                    $(".caja_block_d").show();
+                                    if (metodo == '3') {
+                                        $("#operacion_block").hide();
+                                    }
+                                } else {
+                                    $(".caja_block").show();
+                                    if (metodo == '3') {
+                                        $("#operacion_block").hide();
+                                    }
+                                }
+
+                                break;
+                            }
+                            case 'BANCO':
+                            {
+                                if ($("#monedas option:selected").attr('data-simbolo') == "$") {
+                                    $(".caja_block").hide();
+                                    $("#banco_block").hide();
+                                    $("#banco_block_d").show();
+                                    $("#operacion_block").show();
+                                    if (metodo == '7') {
+                                        $("#tipo_tarjeta_block").show();
+                                    }
+                                } else {
+                                    $(".caja_block_d").hide();
+                                    $("#banco_block").show();
+                                    $("#operacion_block").show();
+                                    if (metodo == '7') {
+                                        $("#tipo_tarjeta_block").show();
+                                        $(".caja_block_d").hide();
+                                    }
+                                }
+
+                                break;
+                            }
+                        }
+                    }
 </script>

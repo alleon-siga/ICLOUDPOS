@@ -67,18 +67,18 @@ $(document).ready(function () {
             }
         });
     });
-    
-    $("#moneda").on("change",function(){
-        var select=document.getElementById("caja_id");
-             if($("#moneda").val()=='1030'){
-                 $("#caja_id option[data-moneda='$('#moneda').val()']").show();
-                 $("#caja_id option[data-moneda!='$('#moneda').val()']").hide();
-             }
-            if($("#moneda").val()=='1029'){
-                 $("#caja_id option[data-moneda='$('#moneda').val()']").show();
-                 $("#caja_id option[data-moneda!='$('#moneda').val()']").hide();
-             }
-        });
+
+    $("#moneda").on("change", function () {
+        var select = document.getElementById("caja_id");
+        if ($("#moneda").val() == '1030') {
+            $("#caja_id option[data-moneda='$('#moneda').val()']").show();
+            $("#caja_id option[data-moneda!='$('#moneda').val()']").hide();
+        }
+        if ($("#moneda").val() == '1029') {
+            $("#caja_id option[data-moneda='$('#moneda').val()']").show();
+            $("#caja_id option[data-moneda!='$('#moneda').val()']").hide();
+        }
+    });
 
 
     $("#cerrar_numero_series").on('click', function () {
@@ -237,7 +237,11 @@ $(document).ready(function () {
     $("#monedas").change(function (e) {
         updateMonedas();
     });
-
+    if ($("#caja_id").val() == '' || $("#caja_id_d").val() == '' || $("#banco_id").val() == '' || $("#banco_id_d").val() == '') {
+        document.getElementById('guardarPago_pagospendiente').disabled = true;
+    } else {
+        document.getElementById('guardarPago_pagospendiente').disabled = false;
+    }
     function updateMonedas() {
 
         /*esto lo hago para saber si voy a bloquear el select de productos o no*/
@@ -253,6 +257,7 @@ $(document).ready(function () {
 
         $('.tipo_moneda').html(tasa_simbolo);
         $(".tipo_tasa").html(tasa_simbolo);
+
 
         if ($("#monedas option:selected").val() == $('#MONEDA_DEFECTO_ID').val())
             if ($("#facturar").val() == "SI") {
@@ -1457,7 +1462,7 @@ function accionGuardar() {
 
     $.ajax({
         type: 'POST',
-        data: $('#frmCompra').serialize() +'&'+ $('#formpagocom').serialize() + '&lst_producto=' + miJSON + '&cuotas=' + cuotas + '&gastos=' + gastos ,
+        data: $('#frmCompra').serialize() + '&' + $('#formpagocom').serialize() + '&lst_producto=' + miJSON + '&cuotas=' + cuotas + '&gastos=' + gastos,
         url: ruta + 'ingresos/registrar_ingreso',
         dataType: 'json',
         success: function (data) {

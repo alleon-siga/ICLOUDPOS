@@ -120,7 +120,7 @@
                 </td>
             </tr>
             <tr>
-                <td><?= number_format($detalle->cantidad, 0) . " " . $detalle->unidad_abr ?></td>
+                <td ><?= $detalle->producto_cualidad=="PESABLE"?$detalle->cantidad:number_format($detalle->cantidad,0) . "  " . $detalle->unidad_abr ?></td>
                 <td style="text-align: right"><?= $venta->moneda_simbolo . ' ' . $detalle->precio ?></td>
             <?php
                 if(valueOptionDB('REDONDEO_VENTAS', 1)=='1'){ //quiere decir si aplicar redondeo, esto esta en ventas/configuracion
