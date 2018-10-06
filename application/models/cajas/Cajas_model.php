@@ -108,7 +108,22 @@ class cajas_model extends CI_Model
                 ->group_by('caja_desglose.id')
             ->get()->result();
     }
-
+    function getCajasSelecta()
+    {
+        return $this->db->select('
+            caja_desglose.id as cuenta_id,
+            caja.moneda_id as moneda_id,
+            caja_desglose.principal as principal,
+            caja_desglose.descripcion as descripcion
+            ')
+            ->from('caja_desglose')
+            ->join('caja', 'caja.id = caja_desglose.caja_id')
+                ->join('banco', 'banco.cuenta_id !=caja_desglose.id')
+            ->where('caja_desglose.estado', 1)
+            ->where('caja_desglose.retencion', 0)
+                ->group_by('caja_desglose.id')
+            ->get()->result();
+    }
     function get($id)
     {
         return $this->db->join('moneda', 'moneda.id_moneda = caja.moneda_id')

@@ -885,7 +885,7 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                             </select>
                         </div>
                     </div>
-                    <div class="row caja_block">
+                    <div class="row caja_block" style="display:none;">
                         <div class="col-md-5">
                             <label class="control-label panel-admin-text">Seleccione la Cuenta</label>
                         </div>
@@ -895,6 +895,20 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                                 <?php foreach ($cajas as $caja): ?>
                                     <option
                                             value="<?= $caja->cuenta_id ?>" data-moneda="<?= $caja->moneda_id ?>" <?= $caja->cuenta_id == '2' ? 'selected' : '' ?>><?= $caja->descripcion?></option>
+                                <?php endforeach ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row caja_block_efec">
+                        <div class="col-md-5">
+                            <label class="control-label panel-admin-text">Seleccione la Cuenta</label>
+                        </div>
+                        <div class="col-md-7">
+                            <select name="caja_id" id="caja_id" class="form-control">
+                                <option value="">Seleccione</option>
+                                <?php foreach ($cajasefe as $cajaefe): ?>
+                                    <option
+                                            value="<?= $cajaefe->cuenta_id ?>" data-moneda="<?= $cajaefe->moneda_id ?>" <?= $cajaefe->cuenta_id == '2' ? 'selected' : '' ?>><?= $cajaefe->descripcion?></option>
                                 <?php endforeach ?>
                             </select>
                         </div>
@@ -1051,6 +1065,7 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
         $("#banco_id").val("");
         $("#tipo_tarjeta").val("");
         $("#num_oper").val("");
+        $("#cantidad_a_pagar").val($("#total_cuota").val());
         var tipo = $("#metodo option:selected").attr('data-tipo_metodo');
         var metodo = $("#metodo").val();
 
@@ -1058,22 +1073,24 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
         $("#banco_block").hide();
         $("#operacion_block").show();
         $(".caja_block").hide();
-
+        $(".caja_block_efec").show();
         switch (tipo) {
             case 'CAJA': {
-                $(".caja_block").show();
+                $(".caja_block_efec").show();
+                $(".caja_block").hide();
                 if (metodo == '3')
                     $("#operacion_block").hide();
+                    $(".caja_block").hide();
                 break;
             }
             case 'BANCO': {
                 $("#banco_block").show();
                 $("#operacion_block").show();
+                $(".caja_block_efec").hide();
                 if (metodo == '7')
                     $("#tipo_tarjeta_block").show();
                 break;
             }
         }
-        
     }
 </script>
