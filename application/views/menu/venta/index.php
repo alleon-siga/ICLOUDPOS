@@ -37,7 +37,7 @@
         <input type="hidden" id="barra_activa" value="<?= $barra_activa->activo ?>">
         <input type="hidden" id="producto_what_codigo" value="<?= getCodigo() ?>">
         <input type="hidden" id="facturacion_electronica" value="<?= valueOptionDB('FACTURACION', 0) ?>">
-
+        <input type="hidden" id="redondeo_total" value="<?= valueOptionDB('REDONDEO_VENTAS', 1) ?>">
         <div class="row">
 
             <!-- SECCION IZQUIERDA -->
@@ -63,6 +63,7 @@
                                 <option
                                         value="<?php echo $cliente['id_cliente']; ?>"
                                         data-ruc="<?= $cliente['ruc'] ?>"
+                                        data-identificacion="<?= $cliente['identificacion'] ?>"
                                     <?= $cliente['id_cliente'] == 1 ? 'selected' : '' ?>
                                 ><?php echo $cliente['razon_social']; ?></option>
                             <?php endforeach; ?>
@@ -268,7 +269,7 @@
                                            data-sub = "0.00"
                                            class='form-control'
                                            name="importe" id="importe" value="0.00"
-                                           onkeydown="return soloDecimal4(this, event);" readonly>
+                                           onkeydown="return soloDecimal(this, event);" readonly>
                                     <a id="editar_su" data-estado="0" href="#" class="input-group-addon" style="padding: 0px; min-width: 25px;"><i class="fa fa-edit"></i></a>
                                 </div>
                                 <h6 id="subtotal_um" style="text-align: center; margin-bottom: 0; margin-top: 2px;"></h6>
@@ -718,6 +719,7 @@
 <script src="<?php echo base_url('recursos/js/pages/tablesDatatables.js') ?>"></script>
 <script src="<?php echo base_url('recursos/js/Validacion.js') ?>"></script>
 <script src="<?php echo base_url('recursos/js/autocomplete/jquery-ui.min.js') ?>"></script>
+
 <script src="<?php echo base_url('recursos/js/venta.js') ?>"></script>
 <script>
     var cotizacion = [];

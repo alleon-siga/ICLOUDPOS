@@ -235,6 +235,8 @@ class venta_new_model extends CI_Model
             detalle_venta.id_producto as producto_id,
             producto.producto_codigo_interno as producto_codigo_interno,
             producto.producto_nombre as producto_nombre,
+            producto.producto_descripcion as producto_descripcion,
+            producto.producto_cualidad as producto_cualidad,
             detalle_venta.precio as precio,
             detalle_venta.precio_venta as precio_venta,
             detalle_venta.cantidad as cantidad,

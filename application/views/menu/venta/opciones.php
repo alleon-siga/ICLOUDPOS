@@ -50,7 +50,7 @@
         <div class="col-md-8">
             <div class="form-control">
                 <?php foreach($documentos as $doc) { ?>
-                <input type="radio" name="DOCUMENTO_DEFECTO" value="<?= $doc->id_doc ?>" <?php echo validOption("DOCUMENTO_DEFECTO", $doc->id_doc, '0') ? 'checked' : '' ?>> <?= $doc->des_doc ?>
+                <input type="radio" name="DOCUMENTO_DEFECTO" value="<?= $doc->id_doc ?>" <?php echo validOption("DOCUMENTO_DEFECTO", $doc->id_doc, '6') ? 'checked' : '' ?>> <?= $doc->des_doc ?>
                 &nbsp;&nbsp;&nbsp;
                 <?php } ?>
             </div>
@@ -65,11 +65,20 @@
         <?php
             $boton = json_decode(valueOption("BOTONES_VENTA"));
             $arr = array('Guardar', 'Guardar & imprimir', 'Guardar & detalles');
-            foreach ($boton as $clave => $valor) {
+            if(!empty($boton)){
+                foreach ($boton as $clave => $valor) {
         ?>
                 <input type="checkbox" class="BOTONES_VENTA" name="BOTONES_VENTA[]" value="<?= $valor ?>" <?php echo ($valor=='1')? 'checked' : '' ?>> <?= $arr[$clave] ?>&nbsp;&nbsp;&nbsp;
         <?php
-            } 
+                } 
+            }else{
+
+                for($x=0; $x<count($arr);$x++){
+        ?>
+                <input type="checkbox" class="BOTONES_VENTA" name="BOTONES_VENTA[]" value="1" checked=""> <?= $arr[$x] ?>&nbsp;&nbsp;&nbsp;
+        <?php
+                }
+            }
         ?>
             </div>
         </div>
@@ -83,11 +92,19 @@
         <?php
             $boton = json_decode(valueOption("NOMBRE_PRODUCTO"));
             $arr = array('Grupo', 'Familia', 'Linea', 'Modelo', 'Marca', 'Codigo interno');
-            foreach ($boton as $clave => $valor) {
+            if(!empty($boton)){
+                foreach ($boton as $clave => $valor) {
         ?>
                 <input type="checkbox" class="NOMBRE_PRODUCTO" name="NOMBRE_PRODUCTO[]" value="<?= $valor ?>" <?php echo ($valor=='1')? 'checked' : '' ?>> <?= $arr[$clave] ?>&nbsp;&nbsp;&nbsp;
         <?php
-            } 
+                }
+            }else{
+                for($x=0; $x<count($arr);$x++){
+        ?>
+                <input type="checkbox" class="NOMBRE_PRODUCTO" name="NOMBRE_PRODUCTO[]" value="0"> <?= $arr[$x] ?>&nbsp;&nbsp;&nbsp;
+        <?php
+                }
+            }
         ?>
             </div>
         </div>
@@ -113,10 +130,38 @@
         <div class="col-md-8">
             <div class="form-control">
                 <input type="radio" name="NUMERO_DECIMALES" id="" class='' value="2"
-                    <?php echo validOption("NUMERO_DECIMALES", '2', '0') ? 'checked' : '' ?>> 2
+                    <?php echo validOption("NUMERO_DECIMALES", '2', '2') ? 'checked' : '' ?>> 2
                 &nbsp;&nbsp;&nbsp;
                 <input type="radio" name="NUMERO_DECIMALES" id="" class='' value="4"
-                    <?php echo validOption("NUMERO_DECIMALES", '4', '0') ? 'checked' : '' ?>> 4
+                    <?php echo validOption("NUMERO_DECIMALES", '4', '2') ? 'checked' : '' ?>> 4
+            </div>
+        </div>
+    </div>
+    <div class="row form-group">
+        <div class="col-md-4">
+            <label class="control-label panel-admin-text">Aplicar redondeo sobre el total en ventas:</label>
+        </div>
+        <div class="col-md-8">
+            <div class="form-control">
+                <input type="radio" name="REDONDEO_VENTAS" id="" class='' value="1"
+                    <?php echo validOption("REDONDEO_VENTAS", '1', '1') ? 'checked' : '' ?>> SI
+                &nbsp;&nbsp;&nbsp;
+                <input type="radio" name="REDONDEO_VENTAS" id="" class='' value="0"
+                    <?php echo validOption("REDONDEO_VENTAS", '0', '1') ? 'checked' : '' ?>> NO
+            </div>
+        </div>
+    </div>
+    <div class="row form-group">
+        <div class="col-md-4">
+            <label class="control-label panel-admin-text">Valor en el comprobante</label>
+        </div>
+        <div class="col-md-8">
+            <div class="form-control">
+                <input type="radio" name="VALOR_COMPROBANTE" id="" value="NOMBRE" <?php echo validOption("VALOR_COMPROBANTE", 'NOMBRE', 'NOMBRE') ? 'checked' : '' ?>>
+                Nombre
+                &nbsp;&nbsp;&nbsp;
+                <input type="radio" name="VALOR_COMPROBANTE" id="" value="DESCRIPCION" <?php echo validOption("VALOR_COMPROBANTE", 'DESCRIPCION', 'NOMBRE') ? 'checked' : '' ?>>
+                Descripci&oacute;n
             </div>
         </div>
     </div>

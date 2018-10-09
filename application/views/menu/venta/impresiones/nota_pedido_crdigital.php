@@ -126,11 +126,19 @@
             <?php foreach ($venta->detalles as $detalle): ?>
                 <tr class="td_productos">
                     <td><?= getCodigoValue($detalle->producto_id, $detalle->producto_codigo_interno) ?></td>
-                    <td><?= number_format($detalle->cantidad, 0) ?></td>
+                    <td><?= $detalle->producto_cualidad=="PESABLE"?$detalle->cantidad:number_format($detalle->cantidad,0) ?></td>
                     <td><?= $detalle->unidad_abr ?></td>
                     <td style="width: 425px;"><?= $detalle->producto_nombre ?></td>
                     <td style="text-align: right; white-space: nowrap;"><?= $venta->moneda_simbolo . ' ' . $detalle->precio ?></td>
-                    <td style="text-align: right; white-space: nowrap;"><?= $venta->moneda_simbolo . ' ' . $detalle->importe ?></td>
+                    <?php
+                        if(valueOptionDB('REDONDEO_VENTAS', 1)=='1'){ //quiere decir si aplicar redondeo, esto esta en ventas/configuracion
+                            $importe = number_format($detalle->importe, 1);
+                            $importe = number_format($importe, 2);
+                        }else{
+                            $importe = $detalle->importe;
+                        }
+                    ?>
+                    <td style="text-align: right; white-space: nowrap;"><?= $venta->moneda_simbolo . ' ' . $importe ?></td>
                 </tr>
             <?php endforeach; ?>
             <?php for ($i = count($venta->detalles); $i < 13; $i++): ?>
@@ -231,8 +239,16 @@
                 <td style="text-transform: uppercase;">
                     <strong>Total</strong>
                 </td>
+                <?php
+                    if(valueOptionDB('REDONDEO_VENTAS', 1)=='1'){ //quiere decir si aplicar redondeo, esto esta en ventas/configuracion
+                        $total = number_format($venta->total, 1);
+                        $total = number_format($total, 2);
+                    }else{
+                        $total = $venta->total;
+                    }
+                ?>
                 <td style="border-bottom: 0; white-space: nowrap; vertical-align: bottom;">
-                    <?= $venta->moneda_simbolo . ' ' . $venta->total ?>
+                    <?= $venta->moneda_simbolo . ' ' . $total ?>
                 </td>
             </tr>
         </table>

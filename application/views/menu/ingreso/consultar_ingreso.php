@@ -154,9 +154,6 @@
         $("#status").on("change",function(){
 
             if($(this).val()=="COMPLETADO"){
-
-
-
                 $("#estado_facturacion").attr('disabled', false).trigger("chosen:updated");
 
                 $("#estado_facturacion [value='seleccione']")
@@ -165,8 +162,6 @@
                 $("#estado_facturacion")
                     .trigger('chosen:updated');
             }else{
-
-
                 $("#estado_facturacion").append("<option value='seleccione'>Seleccione</option>");
 
                 $('#estado_facturacion')
@@ -175,16 +170,11 @@
                 $("#estado_facturacion").attr('disabled', true).trigger("chosen:updated");
             }
         });
-
-
         $(".campos").on("change",function(){
-
             getINgresos();
         });
         getINgresos();
     });
-
-
     function guardar_cerrar_ingreso(){
 
         var ingreso_contable=false;

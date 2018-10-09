@@ -68,6 +68,18 @@ $(document).ready(function () {
         });
     });
 
+    $("#moneda").on("change", function () {
+        var select = document.getElementById("caja_id");
+        if ($("#moneda").val() == '1030') {
+            $("#caja_id option[data-moneda='$('#moneda').val()']").show();
+            $("#caja_id option[data-moneda!='$('#moneda').val()']").hide();
+        }
+        if ($("#moneda").val() == '1029') {
+            $("#caja_id option[data-moneda='$('#moneda').val()']").show();
+            $("#caja_id option[data-moneda!='$('#moneda').val()']").hide();
+        }
+    });
+
 
     $("#cerrar_numero_series").on('click', function () {
         $("#producto_serie").modal('hide');
@@ -107,11 +119,10 @@ $(document).ready(function () {
     $('body').on('keyup', function (e) {
         if (e.keyCode == 117) {
             e.preventDefault();
-            if ($("#confirmarmodal").is(":visible") == true || $("#dialog_compra_credito").is(":visible") == true) {
+            if ($("#pago_modal").is(":visible") == true || $("#dialog_compra_credito").is(":visible") == true) {
                 guardaringreso();
 
-            }
-            else {
+            } else {
                 /*dependiendo de el valor de costo, se llama a la funcion que valida los campos*/
                 if ($("#costos").val() == 'true') {
                     validar_ingreso()
@@ -164,8 +175,7 @@ $(document).ready(function () {
                 $(this).removeClass('btn-primary');
                 $(this).addClass('btn-warning');
                 $(this).html('Cambiar Moneda');
-            }
-            else {
+            } else {
                 $.bootstrapGrowl('<h4>Debe escribir una tasa válida.</h4>', {
                     type: 'warning',
                     delay: 2500,
@@ -227,7 +237,11 @@ $(document).ready(function () {
     $("#monedas").change(function (e) {
         updateMonedas();
     });
-
+    if ($("#caja_id").val() == '' || $("#caja_id_d").val() == '' || $("#banco_id").val() == '' || $("#banco_id_d").val() == '') {
+        document.getElementById('guardarPago_pagospendiente').disabled = true;
+    } else {
+        document.getElementById('guardarPago_pagospendiente').disabled = false;
+    }
     function updateMonedas() {
 
         /*esto lo hago para saber si voy a bloquear el select de productos o no*/
@@ -244,8 +258,8 @@ $(document).ready(function () {
         $('.tipo_moneda').html(tasa_simbolo);
         $(".tipo_tasa").html(tasa_simbolo);
 
-        if ($("#monedas option:selected").val() == $('#MONEDA_DEFECTO_ID').val())
 
+        if ($("#monedas option:selected").val() == $('#MONEDA_DEFECTO_ID').val())
             if ($("#facturar").val() == "SI") {
                 $("#tasa_id").prop('disabled', false);
             } else {
@@ -265,11 +279,10 @@ $(document).ready(function () {
 
         if (tasa_oper == "/") {
             return (parseFloat(val) / tasa_val).toFixed(2);
-        }
-        else if (tasa_oper == "*") {
+        } else if (tasa_oper == "*") {
             return (parseFloat(val) * tasa_val).toFixed(2);
-        }
-        else return parseFloat(val).toFixed(2);
+        } else
+            return parseFloat(val).toFixed(2);
     }
 
     $("#btnGuardarCompra").click(function () {
@@ -418,8 +431,7 @@ function buscardetalle() {
                 updateView(get_type_view());
 
 
-            }
-            else {
+            } else {
                 $("#botonconfirmar").removeClass('disabled');
                 var growlType = 'warning';
                 $.bootstrapGrowl('<h4>Este Ingreso no tiene detalles</h4>', {
@@ -463,8 +475,7 @@ function confirmDialog(func, title, msg) {
             $("#confirm_msg").html('Si continuas perderas todos los cambios realizados. Estas Seguro?');
 
         $('#confirm_dialog').modal('show');
-    }
-    else {
+    } else {
         $('#confirm_dialog').modal('hide');
     }
 
@@ -623,9 +634,10 @@ function validar_ingreso() {
         return false;
     }
 
-    if ($("#pago").val() == 'CONTADO')
-        $("#confirmarmodal").modal('show');
-    else {
+    if ($("#pago").val() == 'CONTADO') {
+        $("#total_cuota").val($('#totApagar').val());
+        $("#pago_modal").modal('show');
+    } else {
         credito_init($("#totApagar").val(), 'COMPLETADO');
         refresh_credito_window();
         $('#dialog_compra_credito').modal('show');
@@ -721,11 +733,10 @@ function validar_registro_existencia() {
         $(this).prop('disabled', true);
         return false;
     }
-    $("#confirmarmodal").modal('show');
-
+//    $("#confirmarmodal").modal('show');
+    $("#pago_modal").modal('show');
 
 }
-
 
 function guardaringreso() {
     // console.log($('#frmCompra').serialize());
@@ -823,8 +834,7 @@ function agregarProducto() {
 
                 lst_producto.push(producto);
             }
-        }
-        else {
+        } else {
             if (input.val() > 0) {
                 lst_producto[index].cantidad = input.val();
 
@@ -846,8 +856,7 @@ function agregarProducto() {
                     lst_producto[index].series = [];
                 }
                 pasar = true;
-            }
-            else if (input.val() == 0) {
+            } else if (input.val() == 0) {
 
                 lst_producto.splice(index, 1);
 
@@ -924,8 +933,7 @@ function deleteProducto(item, type) {
         for (var i = 0; i < lst_producto.length; i++) {
             lst_producto[i].index = i;
         }
-    }
-    else if (type == 'general') {
+    } else if (type == 'general') {
         var new_list = [];
         for (var i = 0; i < lst_producto.length; i++) {
             if (lst_producto[i].producto_id != item)
@@ -958,7 +966,8 @@ function get_value_producto(producto_id, um_id, defecto) {
     }
     if (defecto != undefined)
         return defecto;
-    else return 0;
+    else
+        return 0;
 }
 
 //funcion interna para sacar el costo unitario del listado dependiendo de sus parametros
@@ -971,7 +980,8 @@ function get_costo_producto(producto_id, um_id, defecto) {
     }
     if (defecto != undefined)
         return defecto;
-    else return 0;
+    else
+        return 0;
 }
 
 //devuelve la vista seleccionada
@@ -1007,25 +1017,27 @@ function updateView(type) {
     $("#body_productos").html('');
 
     $("#head_productos").html('<tr>' +
-        '<th>#</th>' +
-        '<th>Producto</th>' +
-        '<th>Unidad de Medida</th>' +
-        '<th>Cantidad</th>' +
-        '<th>Prec. sin Imp</th>' +
-        '<th>Prec. con Imp</th>' +
-        '<th>Prec. Gasto</th>' +
-        '<th>Subtotal</th>' +
-        '<th>Opciones</th>' +
-        '</tr>');
+            '<th>#</th>' +
+            '<th>Producto</th>' +
+            '<th>Unidad de Medida</th>' +
+            '<th>Cantidad</th>' +
+            '<th>Prec. sin Imp</th>' +
+            '<th>Prec. con Imp</th>' +
+            '<th>Prec. Gasto</th>' +
+            '<th>Subtotal</th>' +
+            '<th>Opciones</th>' +
+            '</tr>');
 
     switch (type) {
-        case 'detalle': {
+        case 'detalle':
+        {
             for (var i = 0; i < lst_producto.length; i++) {
                 addTable(lst_producto[i], type);
             }
             break;
         }
-        case 'general': {
+        case 'general':
+        {
 
             var new_view = [];
             var y = 0;
@@ -1038,8 +1050,7 @@ function updateView(type) {
                     var last_index = new_view.length - 1;
                     new_view[last_index].cantidad = parseFloat(new_view[last_index].cantidad) * parseFloat(new_view[last_index].unidades);
                     new_view[last_index].costo_unitario = lst_producto[y].importe / new_view[last_index].cantidad;
-                }
-                else {
+                } else {
                     new_view[index].cantidad = parseFloat(new_view[index].cantidad) + parseFloat(lst_producto[y].cantidad) * parseFloat(lst_producto[y].unidades);
                     if ($("#costos").val() == 'false') {
                         new_view[index].importe = 0.00;
@@ -1212,8 +1223,7 @@ function calcular_pago() {
 
     if (costos === 'false') {
 
-    }
-    else {
+    } else {
 
         if ($("#tipo_impuesto").val() == 1) {
             total = parseFloat(total_importe);
@@ -1222,16 +1232,14 @@ function calcular_pago() {
                 impuesto += parseFloat(lst_producto[i].importe - (lst_producto[i].importe / factor));
             }
             sub_total = parseFloat(total_importe - impuesto);
-        }
-        else if ($("#tipo_impuesto").val() == 2) {
+        } else if ($("#tipo_impuesto").val() == 2) {
             sub_total = parseFloat(total_importe);
             for (var i = 0; i < lst_producto.length; i++) {
                 var factor = parseFloat((parseFloat(lst_producto[i].producto_impuesto) + 100) / 100);
                 impuesto += parseFloat((lst_producto[i].importe * factor) - lst_producto[i].importe);
             }
             total = parseFloat(sub_total + impuesto);
-        }
-        else {
+        } else {
             total = parseFloat(total_importe);
             sub_total = total;
             impuesto = parseFloat(0);
@@ -1256,7 +1264,8 @@ function add_serie_listaProducto(index, type) {
         var n = 1;
         for (var i = 0; i < lst_producto[index].cantidad; i++) {
             var val = lst_producto[index].series[i];
-            if (val == undefined) val = "";
+            if (val == undefined)
+                val = "";
             html += '<div class="row">';
             html += '<div class="control-group">';
             html += '<div class="col-md-6">';
@@ -1276,7 +1285,8 @@ function add_serie_listaProducto(index, type) {
                 html += '<h4>Otras Series del Producto en el Ingreso: ' + lst_producto[j].unidad_nombre + '</h4>';
                 for (var i = 0; i < lst_producto[j].cantidad; i++) {
                     var val = lst_producto[j].series[i];
-                    if (val == undefined) val = "";
+                    if (val == undefined)
+                        val = "";
                     html += '<div class="row">';
                     html += '<div class="control-group">';
                     html += '<div class="col-md-6">';
@@ -1291,8 +1301,7 @@ function add_serie_listaProducto(index, type) {
                 }
             }
         }
-    }
-    else if (type == 'general') {
+    } else if (type == 'general') {
         html = mostrar_series_general(index);
     }
     html += '<div id="list_series"></div>';
@@ -1317,7 +1326,8 @@ function mostrar_series_general(index) {
             html += '<h4>Nuevas Series de Producto: ' + lst_producto[j].unidad_nombre + '</h4>';
             for (var i = 0; i < lst_producto[j].cantidad; i++) {
                 var val = lst_producto[j].series[i];
-                if (val == undefined) val = "";
+                if (val == undefined)
+                    val = "";
                 html += '<div class="row">';
                 html += '<div class="control-group">';
                 html += '<div class="col-md-6">';
@@ -1342,8 +1352,7 @@ function save_serie_listaProducto() {
             for (var i = 0; i < lst_producto[index].cantidad; i++) {
                 lst_producto[index].series[i] = $("#ps_" + (i + 1)).val();
             }
-        }
-        else if (get_type_view() == 'general') {
+        } else if (get_type_view() == 'general') {
             var n = 1;
             var producto_id = $("#val_index").val();
             for (var j = 0; j < lst_producto.length; j++) {
@@ -1356,8 +1365,7 @@ function save_serie_listaProducto() {
         }
 
         $("#producto_serie").modal('hide');
-    }
-    else {
+    } else {
         $.bootstrapGrowl('<h4>Los numeros de Serie no pueden coincidir</h4>', {
             type: 'warning',
             delay: 2500,
@@ -1432,7 +1440,7 @@ function accionGuardar() {
             index: lst_producto[i].index,
             producto_id: lst_producto[i].producto_id,
             cantidad: lst_producto[i].cantidad,
-            costo_unitario: $('#' + i).find('.conImp').text(),//lst_producto[i].costo_unitario,
+            costo_unitario: $('#' + i).find('.conImp').text(), //lst_producto[i].costo_unitario,
             importe_gasto: lst_producto[i].importe_gasto,
             importe: lst_producto[i].importe,
             unidad: lst_producto[i].unidad,
@@ -1454,7 +1462,7 @@ function accionGuardar() {
 
     $.ajax({
         type: 'POST',
-        data: $('#frmCompra').serialize() + '&lst_producto=' + miJSON + '&cuotas=' + cuotas + '&gastos=' + gastos,
+        data: $('#frmCompra').serialize() + '&' + $('#formpagocom').serialize() + '&lst_producto=' + miJSON + '&cuotas=' + cuotas + '&gastos=' + gastos,
         url: ruta + 'ingresos/registrar_ingreso',
         dataType: 'json',
         success: function (data) {
@@ -1462,7 +1470,9 @@ function accionGuardar() {
 
             if (data.success && data.error == undefined) {
 
-                $("#confirmarmodal").modal('hide');
+//                $("#confirmarmodal").modal('hide');
+
+                $('#pago_modal').modal('hide');
                 $("#dialog_compra_credito").modal('hide');
                 if ($("#ingresomodal").length > 0) {
                     $("#ingresomodal").modal('hide');
@@ -1497,8 +1507,7 @@ function accionGuardar() {
                 }
 
 
-            }
-            else {
+            } else {
                 $("#botonconfirmar").removeClass('disabled');
                 $("#botonconfirmar_save").removeClass('disabled');
                 //botonconfirmar_save
@@ -1512,7 +1521,8 @@ function accionGuardar() {
 
             }
             $("#barloadermodal").modal('hide');
-            $("#confirmarmodal").modal('hide');
+//            $("#confirmarmodal").modal('hide');
+            $('#pago_modal').modal('hide');
             $('.modal-backdrop').remove();
         },
         error: function (data) {
@@ -1532,8 +1542,8 @@ function accionGuardar() {
 
 
 function cerrar_confirmar() {
-
-    $("#confirmarmodal").modal('hide')
+    $("#pago_modal").modal('hide');
+//    $("#confirmarmodal").modal('hide');
 }
 
 
@@ -1622,7 +1632,7 @@ function get_unidades_has_producto(evento) {
                     var tasa_per = $("#tasa_id").val();
 
                     /*if (tasa != '0.00' && tasa != undefined) {
-
+                     
                      if (oper == "/") {
                      cost = ((parseFloat(cost) * parseFloat(tasa)) / parseFloat(tasa_per)).toFixed(2);
                      }
@@ -1667,8 +1677,7 @@ function get_unidades_has_producto(evento) {
                 if (cant == -1) {
                     cantidad.attr('value', '0');
                     cantidad.attr('data-value', '0');
-                }
-                else {
+                } else {
                     cantidad.attr('value', cant);
                     cantidad.attr('data-value', cant);
                 }

@@ -120,9 +120,17 @@
                 </td>
             </tr>
             <tr>
-                <td><?= number_format($detalle->cantidad, 0) . " " . $detalle->unidad_abr ?></td>
+                <td ><?= $detalle->producto_cualidad=="PESABLE"?$detalle->cantidad:number_format($detalle->cantidad,0) . "  " . $detalle->unidad_abr ?></td>
                 <td style="text-align: right"><?= $venta->moneda_simbolo . ' ' . $detalle->precio ?></td>
-                <td style="text-align: right"><?= $venta->moneda_simbolo . ' ' . $detalle->importe ?></td>
+            <?php
+                if(valueOptionDB('REDONDEO_VENTAS', 1)=='1'){ //quiere decir si aplicar redondeo, esto esta en ventas/configuracion
+                    $importe = number_format($detalle->importe, 1);
+                    $importe = number_format($importe, 2);
+                }else{
+                    $importe = $detalle->importe;
+                }
+            ?>
+                <td style="text-align: right"><?= $venta->moneda_simbolo . ' ' . $importe ?></td>
             </tr>
         <?php endforeach; ?>
         <tr>
@@ -146,7 +154,15 @@
         </tr>-->
         <tr>
             <td colspan="2">Total a Pagar:</td>
-            <td style="text-align: right;"><?= $venta->moneda_simbolo . ' ' . $venta->total ?></td>
+            <?php
+                if(valueOptionDB('REDONDEO_VENTAS', 1)=='1'){ //quiere decir si aplicar redondeo, esto esta en ventas/configuracion
+                    $total = number_format($venta->total, 1);
+                    $total = number_format($total, 2);
+                }else{
+                    $total = $venta->total;
+                }
+            ?>
+            <td style="text-align: right;"><?= $venta->moneda_simbolo . ' ' . $total ?></td>
         </tr>
         <tr>
             <td colspan="3">
@@ -195,7 +211,19 @@
             </tr>
             <tr>
                 <td colspan="2">DEUDA PENDIENTE</td>
-                <td style="text-align: right;"><?= $venta->moneda_simbolo . ' ' . number_format($venta->total - $venta->inicial, 2) ?></td>
+                <?php
+                    if(valueOptionDB('REDONDEO_VENTAS', 1)=='1'){ //quiere decir si aplicar redondeo, esto esta en ventas/configuracion
+                        $inicial = number_format($venta->inicial, 1);
+                        $inicial = number_format($inicial, 2);
+
+                        $total = number_format($venta->total, 1);
+                        $total = number_format($total, 2);
+                    }else{
+                        $inicial = $venta->inicial;
+                        $total = $venta->total;
+                    }
+                ?>
+                <td style="text-align: right;"><?= $venta->moneda_simbolo . ' ' . number_format($total - $inicial, 2) ?></td>
             </tr>
             </tbody>
         </table>

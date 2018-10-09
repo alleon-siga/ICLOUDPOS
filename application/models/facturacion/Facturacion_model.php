@@ -608,10 +608,20 @@ class facturacion_model extends CI_Model
                 }
             }
 
+            //Viene de la configuracion de la venta item VALOR_COMPROBANTE
+            if(valueOption('VALOR_COMPROBANTE', 'NOMBRE')=='NOMBRE'){
+                $producto_descripcion = $d->producto_nombre;
+            }else{
+                $producto_descripcion = $d->producto_descripcion;
+                if(empty($producto_descripcion)){
+                    $producto_descripcion = $d->producto_nombre;
+                }
+            }
+
             $this->db->insert('facturacion_detalle', array(
                 'facturacion_id' => $facturacion_id,
                 'producto_codigo' => getCodigoValue(sumCod($d->producto_id, 4), $d->producto_codigo_interno),
-                'producto_descripcion' => $d->producto_nombre,
+                'producto_descripcion' => $producto_descripcion,
                 'um' => $d->unidad_abr,
                 'cantidad' => $d->cantidad,
                 'precio' => $d->precio * $cambio_dolar,
@@ -828,10 +838,19 @@ class facturacion_model extends CI_Model
                 }
             }
 
+            if(valueOption('VALOR_COMPROBANTE', 'NOMBRE')=='NOMBRE'){
+                $producto_descripcion = $d->producto_nombre;
+            }else{
+                $producto_descripcion = $d->producto_descripcion;
+                if(empty($producto_descripcion)){
+                    $producto_descripcion = $d->producto_nombre;
+                }
+            }
+
             $this->db->insert('facturacion_detalle', array(
                 'facturacion_id' => $facturacion_id,
                 'producto_codigo' => getCodigoValue($d->producto_id, $d->producto_codigo_interno),
-                'producto_descripcion' => $d->producto_nombre,
+                'producto_descripcion' => $producto_descripcion,
                 'um' => $d->unidad_abr,
                 'cantidad' => $d->cantidad,
                 'precio' => $d->precio * $cambio_dolar,
@@ -967,11 +986,21 @@ class facturacion_model extends CI_Model
 
             $producto = $this->db->get_where('producto', array('producto_id' => $d->producto_id))->row();
 
+            //Viene de la configuracion de la venta item VALOR_COMPROBANTE
+            if(valueOption('VALOR_COMPROBANTE', 'NOMBRE')=='NOMBRE'){
+                $producto_descripcion = $producto->producto_nombre;
+            }else{
+                $producto_descripcion = $producto->producto_descripcion;
+                if(empty($producto_descripcion)){
+                    $producto_descripcion = $producto->producto_nombre;
+                }
+            }
+
             $unidad = $this->db->get_where('unidades', array('id_unidad' => $d->unidad_id))->row();
             $this->db->insert('facturacion_detalle', array(
                 'facturacion_id' => $facturacion_id,
                 'producto_codigo' => getCodigoValue($producto->producto_id, $producto->producto_codigo_interno),
-                'producto_descripcion' => $producto->producto_nombre,
+                'producto_descripcion' => $producto_descripcion,
                 'um' => $unidad->abreviatura,
                 'cantidad' => $d->devolver,
                 'precio' => $d->precio * $cambio_dolar,
@@ -1113,10 +1142,20 @@ class facturacion_model extends CI_Model
                 }
             }
 
+            //Viene de la configuracion de la venta item VALOR_COMPROBANTE
+            if(valueOption('VALOR_COMPROBANTE', 'NOMBRE')=='NOMBRE'){
+                $producto_descripcion = $d->producto_nombre;
+            }else{
+                $producto_descripcion = $d->producto_descripcion;
+                if(empty($producto_descripcion)){
+                    $producto_descripcion = $d->producto_nombre;
+                }
+            }
+
             $this->db->insert('facturacion_detalle', array(
                 'facturacion_id' => $facturacion_id,
                 'producto_codigo' => getCodigoValue(sumCod($d->producto_id, 4), $d->producto_codigo_interno),
-                'producto_descripcion' => $d->producto_nombre,
+                'producto_descripcion' => $producto_descripcion,
                 'um' => $d->unidad_abr,
                 'cantidad' => $d->cantidad,
                 'precio' => $d->precio * $cambio_dolar,

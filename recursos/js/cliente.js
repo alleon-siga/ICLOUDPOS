@@ -704,6 +704,17 @@ function guardarcliente() {
                 });
                 return false;
         }
+        var ruc = document.formagregarE.ruc_j.value;
+        if ((ruc == '' || ruc.length != 11) && $('#tipo_cliente').val()=='1') {
+            var growlType = 'warning';
+
+            $.bootstrapGrowl('<h4>El n&uacute;mero de RUC es inv&aacute;lido</h4>', {
+                type: growlType,
+                delay: 2500,
+                allow_dismiss: true
+            });
+            return false;
+        }
 
         if ($('#tipo_iden').val() == "") {
                 

@@ -206,26 +206,51 @@ class exportar extends MY_Controller
             }
 
             $data['total_pago_efectivo'][$mon['id_moneda']] = $this->db->get()->row();
-            //saldooooo carlos
-            $this->db->select_sum('caja_pendiente.monto','total')
-                ->from('caja_pendiente')
-                ->join('venta', 'caja_pendiente.ref_id=venta.venta_id', 'left')
-                ->join('caja_movimiento', 'caja_movimiento.ref_id=venta.venta_id', 'left')
-                ->where('venta.id_moneda', $mon["id_moneda"])
-                ->where('caja_pendiente.created_at >=', $fecha)
-                ->where('caja_pendiente.created_at <', $fechadespues)
-                ->where('caja_movimiento.medio_pago',3)
-                ->where('(caja_pendiente.tipo="VENTA_DEVUELTA" OR caja_pendiente.tipo="VENTA_ANULADA")');
+            //INGRESO EN EFECTIVO
+            $this->db->select_sum('caja_movimiento.saldo','total')
+                ->from('caja_movimiento')
+                ->join('caja_pendiente', 'caja_movimiento.ref_id=caja_pendiente.id', 'left')
+                ->join('caja_desglose', 'caja_movimiento.caja_desglose_id=caja_desglose.id', 'left')
+                ->join('caja', 'caja_desglose.caja_id=caja.id', 'left')
+                ->where('caja_movimiento.movimiento','INGRESO')
+                ->where('caja_movimiento.operacion!="AJUSTE"')
+                ->where('(caja_movimiento.medio_pago = 3 OR caja_movimiento.medio_pago = 5)')
+                ->where('caja_movimiento.created_at >=', $fecha)
+                ->where('caja_movimiento.created_at <', $fechadespues)
+                ->where('caja.moneda_id',$mon["id_moneda"]);
 
             if ($id_local != 0) {
-                $this->db->where('venta.local_id', $id_local);
+                $this->db->where('caja.local_id', $id_local);
             }
 
             if ($id_usuario != 0) {
-                $this->db->where('venta.id_vendedor', $id_usuario);
+                $this->db->where('caja_movimiento.usuario_id', $id_usuario);
             }
 
-            $data['total_descuento_efectivo'][$mon['id_moneda']] = $this->db->get()->row();
+            $data['total_ingreso_efe'][$mon['id_moneda']] = $this->db->get()->row();
+            //EGRESO EN EFECTIVO
+            $this->db->select_sum('caja_movimiento.saldo','total')
+                ->from('caja_movimiento')
+                ->join('caja_pendiente', 'caja_movimiento.ref_id=caja_pendiente.id', 'left')
+                ->join('caja_desglose', 'caja_movimiento.caja_desglose_id=caja_desglose.id', 'left')
+                ->join('caja', 'caja_desglose.caja_id=caja.id', 'left')
+                ->where('caja_movimiento.movimiento','EGRESO')
+                ->where('caja_movimiento.operacion!="AJUSTE"')
+                ->where('(caja_movimiento.medio_pago = 3 OR caja_movimiento.medio_pago = 5)')
+                ->where('caja_movimiento.created_at >=', $fecha)
+                ->where('caja_movimiento.created_at <', $fechadespues)
+                ->where('caja.moneda_id', $mon["id_moneda"]);
+
+            if ($id_local != 0) {
+                $this->db->where('caja.local_id', $id_local);
+            }
+
+            if ($id_usuario != 0) {
+                $this->db->where('caja_movimiento.usuario_id', $id_usuario);
+            }
+
+            $data['total_egreso_efe'][$mon['id_moneda']] = $this->db->get()->row();
+          
             //
             $this->db->select('*')
                 ->from('venta')
@@ -516,7 +541,27 @@ class exportar extends MY_Controller
             }
 
             $data['gasto'][$mon['id_moneda']] = $this->db->get()->row();
+            //GASTOS EFECTIVO
+            $this->db->select_sum('gastos.total', 'total')
+                ->from('gastos')
+                ->join('caja_pendiente', "caja_pendiente.ref_id = gastos.id_gastos AND caja_pendiente.tipo = 'GASTOS'")
+                ->join('caja_movimiento', "caja_movimiento.ref_id = caja_pendiente.id AND caja_movimiento.operacion = 'GASTOS'")
+                ->where('caja_movimiento.fecha_mov >=', $fecha)
+                ->where('caja_movimiento.fecha_mov <', $fechadespues)
+                ->where('gastos.id_moneda', $mon["id_moneda"])
+                ->where('gastos.medio_pago', 3)
+                ->where('gastos.status_gastos', 0);
 
+            if ($id_local != 0) {
+                $this->db->where('gastos.local_id', $id_local);
+            }
+
+            if ($id_usuario != 0) {
+                $this->db->where('gastos.responsable_id', $id_usuario);
+            }
+
+            $data['gasto_efec'][$mon['id_moneda']] = $this->db->get()->row();
+            
             //ANULACIONES VENTAS
             $this->db->select_sum('caja_movimiento.saldo', 'total')
                 ->from('caja_movimiento')

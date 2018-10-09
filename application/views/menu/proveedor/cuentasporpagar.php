@@ -48,7 +48,8 @@
                         </select>
                     </div>
                     <div class="col-md-2">
-                        <label class="control-label panel-admin-text">Tipo:</label>
+                        
+                        <label class="control-label panel-admin-text">Tipo:&nbsp;</label>
                         <select name="tipo" id="tipo" class='cho form-control'>
                             <option value="">TODOS</option>
                             <option value="COMPRA">COMPRA</option>

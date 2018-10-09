@@ -88,7 +88,7 @@
                 </tr>
                 <tr>
                     <td></td>
-                    <td style="text-align: right"><?= number_format($d->cantidad, 0) . " " . $d->nombre_unidad ?></td>
+                    <td style="text-align: right"><?= $d->producto_cualidad=="PESABLE"?$d->cantidad:number_format($d->cantidad,0)  . " " . $d->nombre_unidad ?></td>
                 </tr>
             <?php endforeach; ?>
             </tbody>

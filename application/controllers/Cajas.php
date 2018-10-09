@@ -325,7 +325,7 @@ class cajas extends MY_Controller
                 $new_saldo = $caja_desglose->saldo + $caja_pendiente->monto;
             }
 
-            $this->cajas_mov_model->save_mov($data_mov);
+            
 
             $this->db->where('id', $caja_desglose->id);
             $this->db->update('caja_desglose', array('saldo' => $new_saldo));
@@ -345,8 +345,13 @@ class cajas extends MY_Controller
 
                 $this->db->where('id_gastos', $caja_pendiente->ref_id);
                 $this->db->update('ingreso', array('ingreso_status' => 'COMPLETADO'));
+                $movimiento = $this->db->get_where('pagos_ingreso', array(
+                    'pagoingreso_id' => $caja_pendiente->ref_id
+                ))->row();
+                $resgastos=$this->db->get_where('gastos', array('id_gastos'=> $caja_pendiente->ref_id))->row();
+                $data_mov['medio_pago'] = $resgastos->medio_pago;
             }
-
+            $this->cajas_mov_model->save_mov($data_mov);
             if ($caja_pendiente->tipo == 'TRASPASO') {
 
                 $caja_desglose_d = $this->db->get_where('caja_desglose', array('id' => $caja_pendiente->ref_id))->row();

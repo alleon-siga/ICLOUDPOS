@@ -453,7 +453,7 @@ $(document).ready(function () {
         if($('#total_minimo').val()==0){
           $('#precio_unitario').val(0).toFixed(2);
         }else{
-          $('#precio_unitario').val(parseFloat(pu.val() / $('#total_minimo').val()).toFixed(2));
+          $('#precio_unitario').val(parseFloat(pu.val() / $('#total_minimo').val()).toFixed(4));
         }
       }
 
@@ -488,7 +488,7 @@ $(document).ready(function () {
       if($('#total_minimo').val()==0){
         $('#precio_unitario').val(0).toFixed(2);
       }else{
-        $('#precio_unitario').val(parseFloat($('#importe').val() / $('#total_minimo').val()).toFixed(2));
+        $('#precio_unitario').val(parseFloat($('#importe').val() / $('#total_minimo').val()).toFixed(4));
       }
     }
   })
@@ -640,6 +640,13 @@ $(document).ready(function () {
       show_msg('warning', '<h4>Error. </h4><p>El Cliente frecuente no puede realizar ventas mayores a 700.</p>')
       select_productos(49)
       return false
+    }
+
+    //Validar si es diferente a cliente frecuente, boleta de venta, el total de importe mayor a 700 y que sea un numero valido de dni
+    var dni = $('#cliente_id option:selected').attr('data-identificacion');
+    if( $('#cliente_id').val()>1 && $('#tipo_documento').val() == 3 && parseFloat($('#total_importe').val()) > 700 && (dni=='' || dni.length!=8) ){
+      show_msg('warning', '<h4>Error. </h4><p>El n&uacute;mero de DNI del cliente no es v&aacute;lido</p>');
+      return false;
     }
 
     if ($('#tipo_documento').val() == 1 && $('#cliente_id option:selected').attr('data-ruc') != 2) {
@@ -817,7 +824,13 @@ function end_venta () {
     if (tipo_pago == '1') {
       flag = true
 
-      $('#vc_total_pagar').val($('#total_importe').val())
+      if($('#redondeo_total').val()=='1'){ //quiere decir si aplicar redondeo esto esta en ventas/configuracion
+        var total_importe = roundPrice(parseFloat($('#total_importe').val()), 1, 1);
+        $('#vc_total_pagar').val(parseFloat(total_importe).toFixed(2));
+      }else{
+        $('#vc_total_pagar').val($('#total_importe').val())
+      }
+
       $('#vc_importe').val($('#vc_total_pagar').val())
       $('#vc_vuelto').val(0)
       $('#vc_num_oper').val('')
@@ -837,6 +850,7 @@ function end_venta () {
       $('#c_fecha_giro').val($('#fecha_venta').val())
       credito_init($('#total_importe').val(), 'COMPLETADO')
       refresh_credito_window()
+      
       $('#dialog_venta_credito').modal('show')
     }
   }
