@@ -326,16 +326,14 @@ $(document).ready(function () {
         //SUSCRIBOS EVENTOS
         prepare_unidades_events()
         prepare_precio_events()
-        refresh_right_panel()
-        refresh_totals()
         prepare_precio_value(producto_id, unidad_minima)
-
         refresh_right_panel()
-        refresh_totals()
+        //refresh_totals()
+        $('.precio-input[data-index="' + ($(".precio-input").length - 1) + '"]').first().click()
 // alert(index);
         $('#loading').hide()
         $('.block_producto_unidades').show()
-
+        
         $('.cantidad-input[data-index="' + (--index) + '"]').first().trigger('focus')
 
         if (auto_add && data.unidades.length == 1 && is_edit == false) {
@@ -1540,7 +1538,6 @@ function select_productos (tecla) {
 //funcion para refrescar los totales cuando ocurren eventos
 function refresh_totals () {
   var cantidad_input = $('.cantidad-input')
-
   var data_total = 0
   var importe_total = 0
   cantidad_input.each(function () {
