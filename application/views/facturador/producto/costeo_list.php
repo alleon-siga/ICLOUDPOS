@@ -1,6 +1,18 @@
 <?php $ruta = base_url(); ?>
 <?php $md = get_moneda_defecto() ?>
-
+<style>
+    table tr th{
+        background-color: #2d2d2d !important;
+        color: white !important;
+    }
+    table tr th, table tr td{
+        border: 1px solid !important; 
+    }
+    table tr:hover {
+        color: #000 !important;
+        font-weight: bold !important;
+    }
+</style>
 <div class="table-responsive">
     <table class="table dataTable table-bordered no-footer tableStyle" id="tabla">
         <thead>

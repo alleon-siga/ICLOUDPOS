@@ -71,6 +71,136 @@ class venta_new_model extends CI_Model
             venta.tipo_impuesto as tipo_impuesto,
             cliente.tipo_cliente as tipo_cliente,
             venta.dni_garante as nombre_vd,
+            (select SUM(detalle_venta.cantidad) from detalle_venta
+            where detalle_venta.id_venta=venta.venta_id) as total_bultos
+            ')
+            ->from('venta')
+            ->join('documentos', 'venta.id_documento=documentos.id_doc')
+            ->join('condiciones_pago', 'venta.condicion_pago=condiciones_pago.id_condiciones')
+            ->join('cliente', 'venta.id_cliente=cliente.id_cliente')
+            ->join('usuario', 'venta.id_vendedor=usuario.nUsuCodigo')
+            ->join('moneda', 'venta.id_moneda=moneda.id_moneda')
+            ->join('correlativos', 'venta.id_documento=correlativos.id_documento and venta.local_id=correlativos.id_local', 'left')
+            ->join('local', 'venta.local_id=local.int_local_id')
+            ->join('credito', 'venta.venta_id=credito.id_venta', 'left')
+            ->order_by('venta.fecha', 'desc');
+
+        if (isset($where['venta_id'])) {
+            $this->db->where('venta.venta_id', $where['venta_id']);
+            $venta = $this->db->get()->row();
+            $venta->comprobante_nombre = '';
+            $venta->comprobante = '';
+            if ($venta->comprobante_id > 0) {
+                $comprobante = $this->db->join('comprobante_ventas', 'comprobante_ventas.comprobante_id = comprobantes.id')
+                    ->get_where('comprobantes', array(
+                        'comprobante_id' => $venta->comprobante_id,
+                        'venta_id' => $venta->venta_id
+                    ))->row();
+                if ($comprobante != NULL) {
+                    $venta->comprobante_nombre = $comprobante->nombre;
+                    $venta->fecha_venc = $comprobante->fecha_venc;
+                    $venta->comprobante = $comprobante->serie . sumCod($comprobante->numero, $comprobante->longitud);
+                }
+            }
+            return $venta;
+        }
+
+        if (isset($where['local_id']))
+            $this->db->where('venta.local_id', $where['local_id']);
+
+        if (isset($where['moneda_id']))
+            $this->db->where('venta.id_moneda', $where['moneda_id']);
+
+        if (isset($where['condicion_id']) && $where['condicion_id'] != "")
+            $this->db->where('venta.condicion_pago', $where['condicion_id']);
+
+        if (isset($where['id_cliente']) && $where['id_cliente'] != "")
+            $this->db->where('venta.id_cliente', $where['id_cliente']);
+
+        if (isset($where['estado']))
+            if ($action == '')
+                $this->db->where('(venta.venta_status = "COMPLETADO" OR venta.venta_status = "ANULADO")');
+            else if ($action == 'anular')
+                $this->db->where('venta.venta_status = "COMPLETADO"');
+            else if ($where['estado'] != "")
+                $this->db->where('venta.venta_status', $where['estado']);
+
+        if (isset($where['fecha_ini']) && isset($where['fecha_fin'])) {
+            $this->db->where('venta.fecha >=', date('Y-m-d H:i:s', strtotime($where['fecha_ini'] . " 00:00:00")));
+            $this->db->where('venta.fecha <=', date('Y-m-d H:i:s', strtotime($where['fecha_fin'] . " 23:59:59")));
+        }
+
+        if (isset($where['mes']) && isset($where['year']) && isset($where['dia_min']) && isset($where['dia_max'])) {
+            $last_day = last_day($where['year'], sumCod($where['mes'], 2));
+            if ($last_day > $where['dia_max'])
+                $last_day = $where['dia_max'];
+
+            $this->db->where('venta.fecha >=', $where['year'] . '-' . sumCod($where['mes'], 2) . '-' . $where['dia_min'] . " 00:00:00");
+            $this->db->where('venta.fecha <=', $where['year'] . '-' . sumCod($where['mes'], 2) . '-' . $last_day . " 23:59:59");
+        }
+
+        if (isset($where['usuarios_id']) && !empty($where['usuarios_id'])) {
+            $this->db->where('venta.id_vendedor', $where['usuarios_id']);
+        }
+
+        if (isset($where['id_documento']) && !empty($where['id_documento'])) {
+            $this->db->where('venta.id_documento', $where['id_documento']);
+        }
+
+        $ventas = $this->db->get()->result();
+
+        return $ventas;
+    }
+    //ls=lista en shadow
+    function get_ventas_ls($where = array(), $action = '')
+    {
+        $this->db->select('
+           venta.venta_id as venta_id,
+            venta.comprobante_id as comprobante_id,
+            venta.fecha as venta_fecha,
+            venta.created_at as venta_creado,
+            venta.pagado as venta_pagado,
+            venta.vuelto as venta_vuelto,
+            venta.local_id as local_id,
+            local.local_nombre as local_nombre,
+            local.direccion as local_direccion,
+            venta.id_documento as documento_id,
+            documentos.des_doc as documento_nombre,
+            documentos.abr_doc as documento_abr,
+            correlativos.serie as serie_documento,
+            venta.factura_impresa as factura_impresa,
+            venta.id_cliente as cliente_id,
+            cliente.razon_social as cliente_nombre,
+            cliente.identificacion as ruc,
+            cliente.ruc as cliente_tipo_identificacion,
+            cliente.direccion as cliente_direccion,
+            cliente.telefono1 as cliente_telefono,
+            venta.id_vendedor as vendedor_id,
+            usuario.username as vendedor_nombre,
+            venta.condicion_pago as condicion_id,
+            condiciones_pago.nombre_condiciones as condicion_nombre,
+            venta.venta_status as venta_estado,
+            venta.id_moneda as moneda_id,
+            venta.tasa_cambio as moneda_tasa,
+            moneda.nombre as moneda_nombre,
+            moneda.simbolo as moneda_simbolo,
+            venta.total as total,
+            venta.inicial as inicial,
+            venta.total_impuesto as impuesto,
+            venta.subtotal as subtotal,
+            credito.dec_credito_montodebito as credito_pagado,
+            credito.dec_credito_montocuota as credito_pendiente,
+            credito.var_credito_estado as credito_estado,
+            credito.tasa_interes as tasa_interes,
+            credito.periodo_gracia as periodo_gracia,
+            venta.serie as serie,
+            venta.numero as numero,
+            venta.fecha_facturacion as fecha_facturacion,
+            venta.nota as nota,
+            venta.dni_garante as nombre_caja,
+            venta.tipo_impuesto as tipo_impuesto,
+            cliente.tipo_cliente as tipo_cliente,
+            venta.dni_garante as nombre_vd,
             CASE WHEN venta_shadow.venta_id > 0 THEN "SI" ELSE
             CASE WHEN IsNULL(venta_shadow.venta_id) THEN "NO" END  END as comprobante_shadow ,
 	    CASE WHEN COUNT(venta_shadow.venta_id) > 0 THEN  COUNT(venta_shadow.venta_id) ELSE
@@ -157,7 +287,6 @@ class venta_new_model extends CI_Model
 
         return $ventas;
     }
-
     function get_ventas_totales($where = array(), $action = '')
     {
         $this->db->select('

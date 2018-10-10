@@ -48,7 +48,7 @@ class venta extends MY_Controller
         $params['usuarios_id'] = $this->input->post('usuarios_id');
         $params['id_documento'] = 6;
         $data['moneda'] = $this->db->get_where('moneda', array('id_moneda' => $params['moneda_id']))->row();
-        $data['ventas'] = $this->venta->get_ventas($params, 'venta');
+        $data['ventas'] = $this->venta->get_ventas_ls($params, 'venta');
         $data['venta_totales'] = $this->venta->get_ventas_totales($params, 'venta');
         $this->load->view('facturador/venta/historial_list', $data);
     }
