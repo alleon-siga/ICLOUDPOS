@@ -1169,8 +1169,7 @@ class venta_new_model extends CI_Model
         return sumCod($next_id->venta_id + 1, 8);
     }
 
-    public
-    function anular_venta($venta_id, $metodo_pago, $cuenta_id, $motivo, $id_usuario = false)
+    public function anular_venta($venta_id, $metodo_pago, $cuenta_id, $motivo, $id_usuario = false)
     {
         $venta = $this->get_venta_detalle($venta_id);
 
@@ -1358,6 +1357,97 @@ class venta_new_model extends CI_Model
             $this->correlativos_model->sumar_correlativo($venta->local_id, 2);
         }
 
+
+        return $venta_id;
+    }
+
+    public function anular_venta_caja($venta_id, $metodo_pago, $cuenta_id, $motivo, $id_usuario = false)
+    {
+        $venta = $this->get_venta_detalle($venta_id);
+
+        $cantidades = array();
+        $afectacion_impuesto = array();
+        $precio = array();
+        $impuesto_porciento = array();
+
+
+        foreach ($venta->detalles as $detalle) {
+
+            if (!isset($cantidades[$detalle->producto_id]))
+                $cantidades[$detalle->producto_id] = 0;
+
+
+            $cantidades[$detalle->producto_id] += $this->unidades_model->convert_minimo_by_um(
+                $detalle->producto_id,
+                $detalle->unidad_id,
+                $detalle->cantidad
+            );
+            $afectacion_impuesto[$detalle->producto_id] = $detalle->afectacion_impuesto;
+            $precio[$detalle->producto_id] = $this->unidades_model->get_maximo_costo($detalle->producto_id, $detalle->unidad_id, $detalle->precio);
+            $impuesto_porciento[$detalle->producto_id] = $detalle->impuesto_porciento;
+        }
+        foreach ($cantidades as $key => $value) {
+
+            $old_cantidad = $this->db->get_where('producto_almacen', array(
+                'id_producto' => $key,
+                'id_local' => $venta->local_id
+            ))->row();
+
+            $old_cantidad_min = $old_cantidad != NULL ? $this->unidades_model->convert_minimo_um($key, $old_cantidad->cantidad, $old_cantidad->fraccion) : 0;
+
+            $result = $this->unidades_model->get_cantidad_fraccion($key, $old_cantidad_min + $value);
+
+            $this->db->where('io', 2);
+            $this->db->where('operacion', 1);
+            $this->db->where('ref_id', $venta_id);
+            $referencias = $this->db->get('kardex')->row();
+
+            if (!isset($referencias->ref_val))
+                $referencias->ref_val == "";
+
+            $costo = 0;
+            if ($afectacion_impuesto[$key] == '1') {
+                if ($venta->tipo_impuesto == 1) { //incluye impuesto
+                    $costo = $precio[$key] / (($impuesto_porciento[$key] / 100) + 1);
+                } else { //agrega impuesto
+                    $costo = $precio[$key];
+                }
+            } else {
+                $costo = $precio[$key];
+            }
+
+            if ($venta->moneda_tasa > 0) {
+                $costo = $costo * $venta->moneda_tasa;
+            }
+
+            if ($old_cantidad != NULL) {
+                $this->db->where('id_producto', $key);
+                $this->db->where('id_local', $venta->local_id);
+                $this->db->update('producto_almacen', array(
+                    'cantidad' => $result['cantidad'],
+                    'fraccion' => $result['fraccion']
+                ));
+            } else {
+                $this->db->insert('producto_almacen', array(
+                    'id_producto' => $key,
+                    'id_local' => $venta->local_id,
+                    'cantidad' => $result['cantidad'],
+                    'fraccion' => $result['fraccion']
+                ));
+            }
+
+
+        }
+
+        $venta_status = $venta->venta_estado;
+
+        $this->db->where('venta_id', $venta_id);
+        $this->db->update('venta', array(
+            'venta_status' => 'ANULADO'
+        ));
+
+        //Al anular, la cantidad devuelta queda igual a la cantidad
+        $this->db->query("UPDATE detalle_venta SET cantidad_devuelta = cantidad WHERE id_venta =" . $venta_id);
 
         return $venta_id;
     }

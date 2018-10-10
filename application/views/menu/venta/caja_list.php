@@ -146,18 +146,33 @@
                             </select>
                         </div>
                     </div>
-
+                    <br>
                     <div class="row">
-                        <div class="col-md-4 col-md-offset-1">
-                            <label>Serie</label>
-                            <input type="text" id="documento_serie" class="form-control">
-                        </div>
-                        <div class="col-md-5">
-                            <label>Numero</label>
-                            <input type="text" id="documento_numero" class="form-control">
+                        <div class="col-md-9 col-md-offset-1">
+                            <?php
+                            $motivos = array(
+                                '01' => 'Anulaci&oacute;n de la operaci&oacute;n',
+                                '02' => 'Anulaci&oacute;n por error en el RUC',
+                                '03' => 'Correcci&oacute;n por error en la descripci&oacute;n',
+                                '04' => 'Descuento global',
+                                '05' => 'Descuento por item',
+                                '06' => 'Devoluci&oacute;n total',
+                                '07' => 'Devoluci&oacute;n por item',
+                                '08' => 'Bonificaci&oacute;n',
+                                '09' => 'Disminuci&oacute;n en el valor'
+                            );
+                            ?>
+                            <label>Motivo</label>
+                            <select id="motivo" class="form-control">
+                                <option value=""></option>
+                                <?php foreach ($motivos as $key => $val): ?>
+                                    <option value="<?= $key ?>"><?= $val ?></option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
                     </div>
                 </div>
+
 
                 <div class="modal-footer">
                     <button id="confirm_venta_button" type="button" class="btn btn-primary">
@@ -171,8 +186,10 @@
 
                 </div>
             </div>
+
             <!-- /.modal-content -->
         </div>
+
 </div>
 
 
