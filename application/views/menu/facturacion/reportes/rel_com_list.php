@@ -27,10 +27,13 @@
                 <th>Fec. Venta</th>
                 <th>Fec. Fact.</th>
                 <th>Documento</th>
-                <th>Tipo Doc. Mod.</th>
-                <th>Nro. Doc. Mod.</th>
-                <th>Nro. Doc. Fact. Elec.</th>
+                <th ><span data-toggle="tooltip" data-placement="top" title="Tipo Documento que Modifica">Doc. Mod.</span></th>
+                <th ><span data-toggle="tooltip" data-placement="top" title="Numero de Documento que Modifica">Nro. Doc.</span></th>
+                <th><span data-toggle="tooltip" data-placement="top" title="Numero de Documento de Facturacion Electronica">Doc.</span></th>
                 <th>Nro. de Venta</th>
+                <th>SubTotal</th>
+                <th>Impuesto</th>
+                <th>Total</th>
                 <th># Doc. Cliente</th>
                 <th>Nom. Cliente</th>
                 <th>Estado</th>
@@ -40,29 +43,76 @@
             <?php foreach ($lists as $list): ?>
                 <tr class="info" style="font-weight: bold;">
                     <td><?= $list->venta_id ?></td>
-                    <td><?= date('m/d/Y', strtotime($list->Fec_Venta)) ?></td>
-                    <td><?= date('m/d/Y', strtotime($list->FecFacturacionElectr)) ?></td>
-                    <td style="white-space: normal;"><?= $list->documento ?></td>
+                    <td><?= date('d/m/Y', strtotime($list->Fec_Venta)) ?></td>
+                    <td><?= date('d/m/Y', strtotime($list->FecFacturacionElectr)) ?></td>
+                    <td><?= $list->documento ?></td>
                     <td><?= $list->documento_mod_tipo ?></td>
                     <td><?= $list->documento_mod_numero ?></td>                
-                    <td style="text-align: right; white-space: nowrap;"><?= $list->documento_numero ?></td>
+                    <td><?= $list->documento_numero ?></td>
                     <td><?= $list->numero ?></td>
-                    <td style="text-align: right; white-space: nowrap;"><?= $list->cliente_identificacion ?></td>
-                    <td style="text-align: right; white-space: nowrap;"><?= $list->cliente_nombre ?></td>
-                    <td style="text-align: right; white-space: nowrap;"><?= $list->Estado ?></td>
+                    <td><?= $list->subtotal ?></td>
+                    <td><?= $list->impuesto ?></td>
+                    <td><?= $list->total ?></td>
+                    <td><?= $list->cliente_identificacion ?></td>
+                    <td><?= $list->cliente_nombre ?></td>
+                    <td>
+                        <?php
+                            $estado = '';
+                            $estado_class = '';
+                            if ($list->Estado=="NO GENERADO") {
+                                $estado_class = 'label-warning';
+                                $estado = 'NO GENERADO';
+                            } elseif ($list->Estado=="GENERADO") {
+                                $estado_class = 'label-info';
+                                $estado = 'GENERADO';
+                            } elseif ($list->Estado=="ENVIADO") {
+                                $estado_class = 'label-warning';
+                                $estado = 'ENVIADO';
+                            } elseif ($list->Estado=="ACEPTADO") {
+                                $estado_class = 'label-success';
+                                $estado = 'ACEPTADO';
+                            } elseif ($list->Estado=="RECHAZADO") {
+                                $estado_class = 'label-danger';
+                                $estado = 'RECHAZADO';
+                            }
+
+                            ?>
+                            <div title="Descripci&oacute;n del Estado" data-content="<?= $list->nota ?>"
+                                    data-toggle="popover"
+                                    class="label <?= $estado_class ?>"
+                                    data-placement="top"
+                                    style="font-size: 1em; padding: 2px; cursor: pointer; white-space: nowrap;">
+                                <?= $estado ?>
+                            </div>
+                      
+                    </td>
 
                 </tr>
             <?php endforeach; ?>
         </tbody>
     </table>
 </div>
+<div class="row">
+            <div class="col-md-12">
+                <br>
+                <button type="button" id="exportar_excel" title="Exportar Excel" class="btn btn-primary">
+                    <i class="fa fa-file-excel-o fa-fw"></i>
+                </button>
+                <button type="button" id="exportar_pdf" title="Exportar Pdf" class="btn btn-primary">
+                    <i class="fa fa-file-pdf-o fa-fw"></i>
+                </button>
+            </div>
+        </div>
 <script type="text/javascript">
 
 $(document).ready(function () {
+    $('[data-toggle="tooltip"]').tooltip();
+            $('[data-toggle="popover"]').popover({
+                trigger: 'hover'
+            });
         $('#datatable').DataTable( {
         "paging":   false,
-        "searching": false,
-        "info":false
+        "searching": false
     } );
         $('#exportar_excel').on('click', function () {
             exportar_excel();
@@ -88,10 +138,14 @@ $(document).ready(function () {
             'local_id': $('#local_id').val(),
             'fecha': $('#fecha').val(),
             'doc_id': $('#doc_id').val(),
-            'moneda_id': $('#moneda_id').val()
+            'estado_id': $('#estado_id').val()
         }
-
-        var win = window.open('<?= base_url() ?>reporte/creditoFiscal/pdf?data=' + JSON.stringify(data), '_blank')
+        if ($('#bloqueofecha').prop('checked')) {
+                                data.fecha_flag = 1;
+                            } else {
+                                data.fecha_flag = 0;
+                            }
+        var win = window.open('<?= base_url() ?>facturacion/relacion_comprobante/pdf?data=' + JSON.stringify(data), '_blank')
         win.focus()
     }
 
@@ -100,10 +154,14 @@ $(document).ready(function () {
             'local_id': $('#local_id').val(),
             'fecha': $('#fecha').val(),
             'doc_id': $('#doc_id').val(),
-            'moneda_id': $('#moneda_id').val()
+            'estado_id': $('#estado_id').val()
         }
-
-        var win = window.open('<?= base_url() ?>reporte/creditoFiscal/excel?data=' + JSON.stringify(data), '_blank')
+        if ($('#bloqueofecha').prop('checked')) {
+                                data.fecha_flag = 1;
+                            } else {
+                                data.fecha_flag = 0;
+                            }
+        var win = window.open('<?= base_url() ?>facturacion/relacion_comprobante/excel?data=' + JSON.stringify(data), '_blank')
         win.focus()
     }
 </script>

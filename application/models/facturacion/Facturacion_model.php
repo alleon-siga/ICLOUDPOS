@@ -120,6 +120,7 @@ class facturacion_model extends CI_Model {
 	END AS "documento",
 	f.documento_mod_tipo,f.documento_mod_numero,f.documento_mod_motivo,
 	f.documento_numero,v.numero,f.cliente_identificacion,cliente_nombre,
+        f.subtotal,f.impuesto,f.total,f.nota,
 	CASE 1
 		WHEN f.estado = 0 THEN "NO GENERADO"
 		WHEN f.estado = 1 THEN "GENERADO"
@@ -129,19 +130,20 @@ class facturacion_model extends CI_Model {
 	END AS "Estado"', false)
                 ->from('facturacion AS f')
                 ->join('venta AS v', 'f.ref_id = v.venta_id');
-        $this->db->where('f.documento_tipo in (01,03,07)');
+        
         if ($params['local_id'] > 0) {
             $this->db->where('v.local_id', $params['local_id']);
         }
-        if (!empty($params['fecha_ini']) && !empty($params['fecha_fin'])) {
+        if (!empty($params['fecha_ini']) && !empty($params['fecha_fin']) && !empty($params['fecha_flag']==1)) {
             $this->db->where("DATE(v.fecha) >='" . $params['fecha_ini'] . "' AND DATE(v.fecha)<='" . $params['fecha_fin'] . "'");
-        }
-        if (!empty($params['estado_id']>-1)) {
-            $this->db->where('f.estado', $params['estado_id']);
         }
         if (!empty($params['doc_id'] > 0)) {
             $this->db->where('f.documento_tipo', $params['doc_id']);
         }
+        if (!empty($params['estado_id']>-1)) {
+            $this->db->where('f.estado', $params['estado_id']);
+        }
+        
         $this->db->group_by('v.venta_id');
 
         $ventas = $this->db->get()->result();
