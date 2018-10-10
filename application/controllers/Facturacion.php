@@ -464,7 +464,63 @@ class facturacion extends MY_Controller
             }
         }
     }
+    //
+    function relacion_comprobante($action = '')
+    {
 
+        $data['emisor'] = $this->facturacion_model->get_emisor();
+
+        switch ($action) {
+            case 'filter': {
+                $params['local_id'] = $this->input->post('local_id');
+                $date_range = explode(" - ", $this->input->post('fecha'));
+                $params['fecha_ini'] = date('Y-m-d', strtotime(str_replace("/", "-", $date_range[0])));
+                $params['fecha_fin'] = date('Y-m-d', strtotime(str_replace("/", "-", $date_range[1])));
+                $params['doc_id'] = $this->input->post('doc_id');
+                $params['estado_id'] = $this->input->post('estado_id');
+                $data['lists'] = $this->facturacion_model->get_relacion_comprobantes($params);
+                $this->load->view('menu/facturacion/reportes/rel_com_list', $data);
+                break;
+            }
+            case 'pdf': {
+                $params = json_decode($this->input->get('data'));
+                $date_range = explode(' - ', $params->fecha);
+                $data = array();
+
+                $this->load->library('mpdf53/mpdf');
+                $mpdf = new mPDF('utf-8', 'A4', 0, '', 5, 5, 5, 5, 5, 5);
+                $html = $this->load->view('menu/facturacion/reportes/rel_com_list_pdf', $data, true);
+                $mpdf->WriteHTML($html);
+                $mpdf->Output();
+                break;
+            }
+            case 'excel': {
+                $params = json_decode($this->input->get('data'));
+                $date_range = explode(' - ', $params->fecha);
+                $data = array();
+
+                echo $this->load->view('menu/facturacion/reportes/rel_com_list_excel', $data, true);
+                break;
+            }
+            default: {
+                if ($this->session->userdata('esSuper') == 1) {
+                    $data['locales'] = $this->local_model->get_all();
+                } else {
+                    $usu = $this->session->userdata('nUsuCodigo');
+                    $data['locales'] = $this->local_model->get_all_usu($usu);
+                }
+
+
+                $dataCuerpo['cuerpo'] = $this->load->view('menu/facturacion/reportes/rel_com', $data, true);
+                if ($this->input->is_ajax_request()) {
+                    echo $dataCuerpo['cuerpo'];
+                } else {
+                    $this->load->view('menu/template', $dataCuerpo);
+                }
+                break;
+            }
+        }
+    }
     function consultarRuc()
     {
         require_once(APPPATH . 'libraries/RucSunat/RucSunat.php');
