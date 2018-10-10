@@ -8,11 +8,11 @@ echo "<input type='hidden' id='base_url' value='" . base_url() . "'>"
 <?php
 /* Template variables */
 $template = array(
-    'name' => '<?= $info->nombre_empresa ?>',
-    'version' => '<?= $info->version ?>',
-    'author' => '<?= $info->nombre_empresa ?>',
+    'name' => ''.$info->nombre_empresa.'',
+    'version' => ''. $info->version.'',
+    'author' => ''. $info->nombre_empresa .'',
     'robots' => 'noindex, nofollow',
-    'title' => '<?= $info->nombre_empresa ?>',
+    'title' => ''. $info->nombre_empresa .'',
     'description' => 'Cuentas con un negocio u empresas cuyo giro son la venta al por mayor y menor de abarrotes, ferretería, licorería, accesorios entre otros? Entonces solicita tu prueba gratis de un mes, solo escríbenos un correo y nos pondremos en contacto contigo. También si deseas podemos realizar una demostración en vivo del programa sin ningún compromiso. Nuestro programa es compatible con Windows, Android y IOS',
     // true                     enable page preloader
     // false                    disable page preloader

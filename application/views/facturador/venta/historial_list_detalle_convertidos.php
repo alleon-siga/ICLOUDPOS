@@ -104,7 +104,6 @@ foreach ($venta as $v) {
                         </tr>
                     </thead>
                     <tbody id="tablec">
-                        <?php $total_c = 0; ?>
                         <?php foreach ($venta as $detalle): ?>
                             <tr>
                                 <td><?= $detalle->contador ?></td>
@@ -120,10 +119,10 @@ foreach ($venta as $v) {
                                 <td><?= $detalle->fecha ?></td>
                                 <td><?= $detalle->moneda ?></td>
                                 <td><?= $detalle->subtotal ?></td>
-                                <td><?= $detalle->total ?> <?php $total_c += $detalle->total; ?></td>  
+                                <td class="total_co"><?= $detalle->total ?></td>  
                                 <td><button class="btn btn-info btn-xs" onclick="info(<?= $detalle->id_shadow ?>)"><i class="fa fa-search"></i></button>&nbsp;
                                     <button class="btn btn-danger btn-xs eliminarv" id="elishadow" data-idshadow="<?= $detalle->id_shadow ?>"><i class="fa fa-trash"></i></button>&nbsp;
-                                    <button class="btn btn-success btn-xs"><i class="fa fa-check"></i></button></td>
+                                    <button class="btn btn-default btn-xs" data-toggle="tooltip"  title="Sunat" data-original-title="Sunat"><i class="fa fa-mail-forward"></i></button></td>
                             </tr>
                         <?php endforeach; ?>
 
@@ -133,16 +132,16 @@ foreach ($venta as $v) {
             <hr class="hr-margin-5">
             <div class="row">
                 <div class="col-md-2"><label class="control-label">Total (Real):</label></div>
-                <div class="col-md-3"><?= $vtotal ?></div>
+                <div class="col-md-3"><?= $detalle->moneda ?><span id="total_r" > <?= number_format($vtotal, 2) ?></span></div>
                 <div class="col-md-1"></div>
                 <div class="col-md-3"><label class="control-label">Total (Contable):</label>
                 </div>
-                <div class="col-md-3"><?= $total_c ?>
+                <div class="col-md-3"><?= $detalle->moneda ?> <span id='total_c'></span>
                 </div>
             </div>
             <br>
             <div class="row text-center">
-                <div class="col-md-12"><label class="control-label">Total Real - Total Contable =  </label> <?= $vtotal - $total_c ?></div>
+                <div class="col-md-12"><label class="control-label">Total Real - Total Contable =  </label> <?= $detalle->moneda ?> <span id="total_r_c"></span></div>
 
             </div>
         </div>
@@ -160,20 +159,45 @@ foreach ($venta as $v) {
 
 <script type="text/javascript" src="<?= base_url() ?>recursos/js/facturador_historial_list_detalle.js"></script>
 <script type="text/javascript">
+                                    $(document).ready(function () {
+                                        calculartotalcontable();
+                                        calculartotal();
+
+                                    })
+                                    function calculartotalcontable() {
+                                        var totalcontable = 0;
+
+                                        $(".total_co").each(function () {
+                                            totalcontable += parseFloat($(this).html()) || 0;
+                                            $("#total_c").text(totalcontable);
+
+                                        });
+                                    }
+                                    function calculartotal() {
+                                        var totalreal = document.getElementById("total_r").innerHTML;
+                                        var totalcon = document.getElementById("total_c").innerHTML;
+                                        var totalt = 0;
+                                        totalt = parseFloat(totalreal - totalcon);
+                                        $("#total_r_c").text(totalt);
+                                    }
+
                                     $("#my-table").on('click', '.eliminarv', function () {
 
                                         var id = $('#elishadow').attr("data-idshadow");
                                         if ($('#tablec tr').length > 0) {
-                                            var tr = $(this).closest('tr');                                            
+                                            var tr = $(this).closest('tr');
                                             $.ajax({
                                                 url: $('#ruta').val() + 'facturador/venta/remove_ventaconvertida_shadow/',
                                                 type: 'POST',
                                                 data: {'id_shadow': id},
                                                 success: function (data) {
-                                                },                                                
+
+                                                },
                                                 dataType: 'json',
-                                                error:function(res1){
+                                                error: function (res1) {
                                                     tr.remove();
+                                                    calculartotalcontable();
+                                                    calculartotal();
                                                 }
                                             });
                                         } else {
