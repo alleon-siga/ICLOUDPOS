@@ -231,7 +231,7 @@
                                            class='form-control'
                                            name="c_tasa_interes" id="c_tasa_interes"
                                            value="<?= valueOption('TASA_INTERES', 0) ?>"
-                                           onkeydown="return soloDecimal(this, event);">
+                                           onkeydown="return soloDecimal(this, event)">
                                     <div class="input-group-addon">%</div>
                                 </div>
                             </div>
@@ -283,7 +283,7 @@
                                 <input type="text"
                                        class='form-control'
                                        name="c_dia_pago" id="c_dia_pago" value=""
-                                       onkeydown="return soloDecimal(this, event);">
+                                       onkeydown="return soloDecimal(this, event)">
                             </div>
                         </div>
 
@@ -297,7 +297,7 @@
                                 <input type="text"
                                        class='form-control'
                                        name="c_periodo_gracia" id="c_periodo_gracia" value="0"
-                                       onkeydown="return soloDecimal(this, event);">
+                                       onkeydown="return soloDecimal(this, event)">
                             </div>
                         </div>
 
@@ -348,20 +348,20 @@
 
                         <span id="guardar_credito_block">
                     <?php
-                        $boton = json_decode(valueOption("BOTONES_VENTA"));
-                        $arrHtml[0] = '<button class="btn btn-default save_venta_credito" data-imprimir="0" type="button" id="btn_venta_credito"><i class="fa fa-save"></i> Guardar</button>';
-                        $arrHtml[1] = '<button type="button" class="btn btn-default save_venta_credito" data-imprimir="2" id="btn_venta_credito_imprimir_2"><i class="fa fa-print"></i> (F6) Grabar & Imprimir</button>';
-                        $arrHtml[2] = '<button type="button" class="btn btn-default save_venta_credito" data-imprimir="1" id="btn_venta_credito_imprimir"><i class="fa fa-print"></i> Grabar & Detalles</button>';
-                        $arr = array('Guardar', '(F6) Grabar & Imprimir', 'Grabar & Detalles');
-                        foreach ($boton as $clave => $valor) {
-                            if($valor=='1'){
-                                echo $arrHtml[$clave];
-                            }
+                    $boton = json_decode(valueOption("BOTONES_VENTA"));
+                    $arrHtml[0] = '<button class="btn btn-default save_venta_credito" data-imprimir="0" type="button" id="btn_venta_credito"><i class="fa fa-save"></i> Guardar</button>';
+                    $arrHtml[1] = '<button type="button" class="btn btn-default save_venta_credito" data-imprimir="2" id="btn_venta_credito_imprimir_2"><i class="fa fa-print"></i> (F6) Grabar & Imprimir</button>';
+                    $arrHtml[2] = '<button type="button" class="btn btn-default save_venta_credito" data-imprimir="1" id="btn_venta_credito_imprimir"><i class="fa fa-print"></i> Grabar & Detalles</button>';
+                    $arr = array('Guardar', '(F6) Grabar & Imprimir', 'Grabar & Detalles');
+                    foreach ($boton as $clave => $valor) {
+                        if ($valor == '1') {
+                            echo $arrHtml[$clave];
                         }
+                    }
                     ?>
                         </span>
                         <button type="button" class="btn btn-danger"
-                                onclick="$('#dialog_venta_credito').modal('hide'); $('.modal-backdrop').remove();"><i
+                                onclick="$('#dialog_venta_credito').modal('hide') $('.modal-backdrop').remove()"><i
                                     class="fa fa-close"></i> Cancelar
                         </button>
                     </div>
@@ -395,7 +395,7 @@
                                             id="c_precio_contado"
                                             name="c_precio_contado"
                                             readonly
-                                            onkeydown="return soloDecimal(this, event);">
+                                            onkeydown="return soloDecimal(this, event)">
                                 </div>
                             </div>
                         </div>
@@ -414,7 +414,7 @@
                                             value="0.0"
                                             id="c_pago_cuenta"
                                             name="c_pago_cuenta"
-                                            onkeydown="return soloDecimal(this, event);">
+                                            onkeydown="return soloDecimal(this, event)">
                                 </div>
                             </div>
                         </div>
@@ -434,7 +434,7 @@
                                             id="c_deuda_restante"
                                             name="c_deuda_restante"
                                             readonly
-                                            onkeydown="return soloDecimal(this, event);">
+                                            onkeydown="return soloDecimal(this, event)">
                                 </div>
                             </div>
                         </div>
@@ -498,12 +498,12 @@
                                     <input type="hidden" id="pago_cuenta_saved" value="">
                                     <button class="btn btn-primary" style="margin-bottom:5px" type="button"
                                             id="realizarventa_exec"
-                                            onclick="cambiar_contado();">Hacer Venta al Contado
+                                            onclick="cambiar_contado()">Hacer Venta al Contado
                                     </button>
 
                                     <button class="btn btn-danger" style="margin-bottom:5px"
                                             type="button"
-                                            onclick="$('#advertencia').modal('hide');">Cancelar
+                                            onclick="$('#advertencia').modal('hide')">Cancelar
                                     </button>
                                 </div>
                             </div>
@@ -521,379 +521,360 @@
          data-vista="<?php echo validOption("VISTA_CREDITO", 'SIMPLE', 'SIMPLE') ? 'SIMPLE' : 'AVANZADO' ?>"></div>
     <script>
 
-        $(document).ready(function () {
+      $(document).ready(function () {
 
-            $(document).keyup(function (e) {
+        $(document).keyup(function (e) {
 
-
-            });
-
-            $('.save_venta_credito').on('click', function () {
-
-                var saldo_inicial_comp1 = isNaN(parseFloat($("#c_saldo_inicial").val())) ? 0 : parseFloat($("#c_saldo_inicial").val());
-                if ($("#c_venta_estado").val() == 'COMPLETADO' || (saldo_inicial_comp1 == 0 && $("#c_venta_estado").val() == 'CAJA'))
-                    save_venta_credito($(this).attr('data-imprimir'));
-                else {
-                    $("#dialog_venta_credito").modal('hide');
-                    caja_init(formatPrice($("#c_saldo_inicial").val()));
-                }
-
-
-            });
-
-            $('#btn_continuar_credito').on('click', function () {
-                if ($("#c_venta_estado").val() == 'COMPLETADO') {
-                    var tipo_pago = $("#tipo_pago").val();
-
-                    $("#vc_total_pagar").val(formatPrice($("#c_saldo_inicial").val()));
-                    $("#vc_importe").val($("#c_saldo_inicial").val());
-                    $('#contado_tipo_pago').val(tipo_pago);
-                    $("#vc_vuelto").val(0);
-                    $("#vc_num_oper").val('');
-
-                    $("#dialog_venta_contado").modal('show');
-
-                    setTimeout(function () {
-                        $("#vc_forma_pago").val('3').trigger("chosen:updated");
-                        $("#vc_forma_pago").change();
-                    }, 500);
-                }
-                else {
-                    $("#dialog_venta_credito").modal('hide');
-                    caja_init(formatPrice($("#c_saldo_inicial").val()));
-//                    save_venta_credito(0);
-                }
-
-            });
-
-
-            $("#c_saldo_inicial_por").on('keyup', function () {
-                refresh_credito_window(2);
-            });
-
-            $("#c_tasa_interes, #c_numero_cuotas, #c_saldo_inicial_por, #c_dia_pago").on('keyup', function () {
-                refresh_credito_window(1);
-            });
-
-            $('#c_numero_cuotas, #c_rango_min').bind('keyup change click mouseleave', function () {
-                var min = isNaN(parseInt($("#c_rango_min").val())) ? 1 : parseInt($("#c_rango_min").val());
-                $("#c_rango_max").val(parseInt(min + 4));
-                refresh_credito_window(1);
-            });
-
-            $("#c_saldo_inicial").on('keyup', function () {
-                refresh_credito_window(1);
-            });
-
-            $("#c_saldo_inicial_por").on('keydown', function (e) {
-                var tecla = e.key;
-                if (isNaN(parseFloat($(this).val() + tecla)))
-                    return false;
-
-                if (parseFloat($(this).val() + tecla) > 100 || parseFloat($(this).val() + tecla) < 0)
-                    return false;
-            });
-
-            $("#c_saldo_inicial").on('keydown', function (e) {
-                var tecla = e.key;
-                if (isNaN(parseFloat($(this).val() + tecla)))
-                    return false;
-
-                if (parseFloat($(this).val() + tecla) > parseFloat($('#c_precio_contado').val()) || parseFloat($(this).val() + tecla) < 0)
-                    return false;
-
-                return soloDecimal($(this), e);
-
-            });
-
-            $("#c_numero_cuotas, #c_rango_min").on('keydown', function (e) {
-                var tecla = e.key;
-                if (isNaN(parseInt($(this).val() + tecla)))
-                    return false;
-                if (parseInt($(this).val() + tecla) > parseInt($(this).attr('max')) || parseInt($(this).val() + tecla) <= 0)
-                    return false;
-                return soloNumeros(e);
-            });
-
-            $("#c_dia_pago").on('keydown', function (e) {
-                var tecla = e.key;
-                if (isNaN(parseInt($(this).val() + tecla)))
-                    return false;
-                if (parseInt($(this).val() + tecla) <= 0)
-                    return false;
-                return soloNumeros(e);
-            });
-
-            $("#c_pago_periodo").on('change', function () {
-                var pago_periodo = $(this).val();
-
-                $("#c_dia_pago_block").hide();
-                $("#table_rango").hide();
-                switch (pago_periodo) {
-                    case '4': {
-                        var dia = $("#c_fecha_giro").val().split('/');
-                        $("#c_dia_pago_letra").html("D&iacute;as de Pago:");
-                        $("#c_dia_pago").val(dia[0]);
-                        $("#c_dia_pago_block").show();
-                        break;
-                    }
-                    case '5': {
-                        $("#c_dia_pago_letra").html("Periodos de D&iacute;as:");
-                        $("#c_dia_pago").val("1");
-                        $("#c_dia_pago_block").show();
-                        break;
-                    }
-                    case '6': {
-                        $("#table_rango").show();
-                        break;
-                    }
-                }
-
-                refresh_credito_window(1);
-            });
-
-            $("#c_garante").on('change', function () {
-                $("#c_garante_nombre").html($("#c_garante option:selected").attr('data-nombre'));
-            });
         })
-        ;
 
-        function close_modal() {
-            $('#dialog_venta_credito').modal('hide');
-            $(".modal-backdrop").remove();
-        }
+        $('.save_venta_credito').on('click', function () {
 
-        function credito_init(precio_contado, estado) {
-            $("#c_precio_contado").val(precio_contado);
-            $("#c_tasa_interes").val($("#tasa_interes").val());
-            $("#c_saldo_inicial_por").val($("#saldo_porciento").val());
-            $("#c_numero_cuotas").attr('max', $("#max_cuotas").val());
-            $("#c_numero_cuotas").val($("#numero_cuotas").val());
-            $("#c_rango_min").val($("#proyeccion_rango").val());
-            $("#c_venta_estado").val(estado);
+          var saldo_inicial_comp1 = isNaN(parseFloat($('#c_saldo_inicial').val())) ? 0 : parseFloat($('#c_saldo_inicial').val())
+          if ($('#c_venta_estado').val() == 'COMPLETADO' || (saldo_inicial_comp1 == 0 && $('#c_venta_estado').val() == 'CAJA'))
+            save_venta_credito($(this).attr('data-imprimir'))
+          else {
+            $('#dialog_venta_credito').modal('hide')
+            caja_init(formatPrice($('#c_saldo_inicial').val()))
+          }
 
-            //ojo
+        })
+
+        $('#btn_continuar_credito').on('click', function () {
+          if ($('#c_venta_estado').val() == 'COMPLETADO') {
+            var tipo_pago = $('#tipo_pago').val()
+
+            $('#vc_total_pagar').val(formatPrice($('#c_saldo_inicial').val()))
+            $('#vc_importe').val($('#c_saldo_inicial').val())
+            $('#contado_tipo_pago').val(tipo_pago)
+            $('#vc_vuelto').val(0)
+            $('#vc_num_oper').val('')
+
+            $('#dialog_venta_contado').modal('show')
+
             setTimeout(function () {
-                $("#c_pago_periodo").val('4').trigger('chosen:updated');
-                $("#c_pago_periodo").change();
-            }, 500);
+              $('#vc_forma_pago').val('3').trigger('chosen:updated')
+              $('#vc_forma_pago').change()
+            }, 500)
+          }
+          else {
+            $('#dialog_venta_credito').modal('hide')
+            caja_init(formatPrice($('#c_saldo_inicial').val()))
+//                    save_venta_credito(0);
+          }
+
+        })
+
+        $('#c_saldo_inicial_por').on('keyup', function () {
+          refresh_credito_window(2)
+        })
+
+        $('#c_tasa_interes, #c_numero_cuotas, #c_saldo_inicial_por, #c_dia_pago').on('keyup', function () {
+          refresh_credito_window(1)
+        })
+
+        $('#c_numero_cuotas, #c_rango_min').bind('keyup change click mouseleave', function () {
+          var min = isNaN(parseInt($('#c_rango_min').val())) ? 1 : parseInt($('#c_rango_min').val())
+          $('#c_rango_max').val(parseInt(min + 4))
+          refresh_credito_window(1)
+        })
+
+        $('#c_saldo_inicial').on('keyup', function () {
+          refresh_credito_window(1)
+        })
+
+        $('#c_saldo_inicial_por').on('keydown', function (e) {
+          var tecla = e.key
+          if (isNaN(parseFloat($(this).val() + tecla)))
+            return false
+
+          if (parseFloat($(this).val() + tecla) > 100 || parseFloat($(this).val() + tecla) < 0)
+            return false
+        })
+
+        $('#c_saldo_inicial').on('keydown', function (e) {
+          var tecla = e.key
+          if (isNaN(parseFloat($(this).val() + tecla)))
+            return false
+
+          if (parseFloat($(this).val() + tecla) > parseFloat($('#c_precio_contado').val()) || parseFloat($(this).val() + tecla) < 0)
+            return false
+
+          return soloDecimal($(this), e)
+
+        })
+
+        $('#c_numero_cuotas, #c_rango_min').on('keydown', function (e) {
+          var tecla = e.key
+          if (isNaN(parseInt($(this).val() + tecla)))
+            return false
+          if (parseInt($(this).val() + tecla) > parseInt($(this).attr('max')) || parseInt($(this).val() + tecla) <= 0)
+            return false
+          return soloNumeros(e)
+        })
+
+        $('#c_dia_pago').on('keydown', function (e) {
+          var tecla = e.key
+          if (isNaN(parseInt($(this).val() + tecla)))
+            return false
+          if (parseInt($(this).val() + tecla) <= 0)
+            return false
+          return soloNumeros(e)
+        })
+
+        $('#c_pago_periodo').on('change', function () {
+          var pago_periodo = $(this).val()
+
+          $('#c_dia_pago_block').hide()
+          $('#table_rango').hide()
+          switch (pago_periodo) {
+            case '4': {
+              var dia = $('#c_fecha_giro').val().split('/')
+              $('#c_dia_pago_letra').html('D&iacute;as de Pago:')
+              $('#c_dia_pago').val(dia[0])
+              $('#c_dia_pago_block').show()
+              break
+            }
+            case '5': {
+              $('#c_dia_pago_letra').html('Periodos de D&iacute;as:')
+              $('#c_dia_pago').val('1')
+              $('#c_dia_pago_block').show()
+              break
+            }
+            case '6': {
+              $('#table_rango').show()
+              break
+            }
+          }
+
+          refresh_credito_window(1)
+        })
+
+        $('#c_garante').on('change', function () {
+          $('#c_garante_nombre').html($('#c_garante option:selected').attr('data-nombre'))
+        })
+      })
 
 
-            //ojo inicializar garante tambien
+      function close_modal () {
+        $('#dialog_venta_credito').modal('hide')
+        $('.modal-backdrop').remove()
+      }
+
+      function credito_init (precio_contado, estado) {
+        $('#c_precio_contado').val(precio_contado)
+        $('#c_tasa_interes').val($('#tasa_interes').val())
+        $('#c_saldo_inicial_por').val($('#saldo_porciento').val())
+        $('#c_numero_cuotas').attr('max', $('#max_cuotas').val())
+        $('#c_numero_cuotas').val($('#numero_cuotas').val())
+        $('#c_rango_min').val($('#proyeccion_rango').val())
+        $('#c_venta_estado').val(estado)
+
+        //ojo
+        setTimeout(function () {
+          $('#c_pago_periodo').val('4').trigger('chosen:updated')
+          $('#c_pago_periodo').change()
+        }, 500)
+
+        //ojo inicializar garante tambien
+      }
+
+      function refresh_credito_window (trigger) {
+
+        var precio_credito = isNaN(parseFloat($('#c_precio_contado').val())) ? 0 : parseFloat($('#c_precio_contado').val())
+        var precio_contado = parseFloat($('#c_precio_contado').val())
+        var tasa_interes = isNaN(parseFloat($('#c_tasa_interes').val())) ? 0 : parseFloat($('#c_tasa_interes').val())
+
+        if (trigger == 2) {
+
+          var saldo_porciento = isNaN(parseFloat($('#c_saldo_inicial_por').val())) ? 0 : parseFloat($('#c_saldo_inicial_por').val())
+          var saldo_inicial = parseFloat((precio_contado * saldo_porciento) / 100)
+          $('#c_saldo_inicial').val(roundPrice(saldo_inicial, 2))
+        }
+        else {
+          if (trigger == 1 || trigger == undefined) {
+
+            var saldo_inicial = isNaN(parseFloat($('#c_saldo_inicial').val())) ? 0 : parseFloat($('#c_saldo_inicial').val())
+            var saldo_porciento = parseFloat((saldo_inicial * 100) / precio_contado)
+            $('#c_saldo_inicial_por').val(parseFloat(saldo_porciento).toFixed(0))
+          }
         }
 
-        function refresh_credito_window(trigger) {
+        precio_credito = parseFloat((((precio_contado - saldo_inicial) * tasa_interes) / 100) + (precio_contado - saldo_inicial))
+        $('#c_precio_credito').val(roundPrice(precio_credito, 2))
 
-            var precio_credito = isNaN(parseFloat($("#c_precio_contado").val())) ? 0 : parseFloat($("#c_precio_contado").val());
-            var precio_contado = parseFloat($("#c_precio_contado").val());
-            var tasa_interes = isNaN(parseFloat($("#c_tasa_interes").val())) ? 0 : parseFloat($("#c_tasa_interes").val());
+        $('#c_total_deuda').html(roundPrice(parseFloat(precio_credito + saldo_inicial), 2))
+        $('#c_total_saldo').html(roundPrice(precio_credito, 2))
 
+        generar_proyeccion(precio_credito, trigger)
 
-            if (trigger == 2) {
+        if ($('#c_pago_periodo').val() == 6)
+          generar_rangos(parseInt($('#c_numero_cuotas').val()))
 
-                var saldo_porciento = isNaN(parseFloat($("#c_saldo_inicial_por").val())) ? 0 : parseFloat($("#c_saldo_inicial_por").val());
-                var saldo_inicial = parseFloat((precio_contado * saldo_porciento) / 100);
-                $("#c_saldo_inicial").val(formatPrice(saldo_inicial));
-            }
-            else {
-                if (trigger == 1 || trigger == undefined) {
+        generar_cuotas(parseInt($('#c_numero_cuotas').val()), precio_credito)
 
-                    var saldo_inicial = isNaN(parseFloat($("#c_saldo_inicial").val())) ? 0 : parseFloat($("#c_saldo_inicial").val());
-                    var saldo_porciento = parseFloat((saldo_inicial * 100) / precio_contado);
-                    $("#c_saldo_inicial_por").val(parseFloat(saldo_porciento).toFixed(0));
-                }
-            }
+        $('#body_proyeccion_cuotas tr').removeClass('table-selected')
+        $('#body_proyeccion_cuotas tr[data-cuota="' + $('#c_numero_cuotas').val() + '"]').addClass('table-selected')
 
-            precio_credito = parseFloat((((precio_contado - saldo_inicial) * tasa_interes) / 100) + (precio_contado - saldo_inicial));
-            $("#c_precio_credito").val(precio_credito);
+        var estado = $('#venta_estado').val()
 
-            //quiere decir si aplicar redondeo esto esta en ventas/configuracion
-            if($('#redondeo_total').val()=='1'){
-                var c_total_deuda = roundPrice(parseFloat(precio_credito + saldo_inicial), 1, 1);
-                c_total_deuda = parseFloat(c_total_deuda).toFixed(2);
+        var si = isNaN(parseFloat((precio_contado * saldo_porciento) / 100)) ? 0 : parseFloat((precio_contado * saldo_porciento) / 100)
 
-                precio_credito = roundPrice(parseFloat(precio_credito), 1, 1);
-                precio_credito = parseFloat(precio_credito).toFixed(2);
-                $("#c_total_deuda").html(c_total_deuda);
-                $("#c_total_saldo").html(precio_credito);
-            }else{
-                $("#c_total_deuda").html(precio_credito + saldo_inicial);
-                $("#c_total_saldo").html(precio_credito);
-            }
+        if (estado == 'COMPLETADO' || estado == 'CAJA') {
+          if (si > 0) {
+            $('#continuar_venta_block').show()
+            $('#guardar_credito_block').hide()
+          }
+          else {
+            $('#continuar_venta_block').hide()
+            $('#guardar_credito_block').show()
+          }
+        }
 
-            generar_proyeccion(precio_credito, trigger);
+      }
 
-            if ($('#c_pago_periodo').val() == 6)
-                generar_rangos(parseInt($("#c_numero_cuotas").val()));
+      function generar_proyeccion (saldo) {
+        var min = isNaN(parseInt($('#c_rango_min').val())) ? 1 : parseInt($('#c_rango_min').val())
+        var max = $('#c_rango_max').val()
+        var body = $('#body_proyeccion_cuotas')
 
-            generar_cuotas(parseInt($("#c_numero_cuotas").val()), precio_credito);
+        body.html('')
+        for (var i = min; i <= max; i++) {
 
-            $('#body_proyeccion_cuotas tr').removeClass('table-selected');
-            $('#body_proyeccion_cuotas tr[data-cuota="' + $("#c_numero_cuotas").val() + '"]').addClass('table-selected');
+          var template = '<tr class="proyeccion_cuota" data-cuota="' + i + '">'
+          template += '<td style="text-align: center;">' + i + '</td>'
+          template += '<td style="text-align: right;">' + $('.tipo_moneda').first().html() + ' ' + roundPrice(saldo / i, 2) + '</td>'
+          template += '</tr>'
 
-            var estado = $("#venta_estado").val();
+          body.append(template)
+        }
 
-            var si = isNaN(parseFloat((precio_contado * saldo_porciento) / 100)) ? 0 : parseFloat((precio_contado * saldo_porciento) / 100);
+        $('.proyeccion_cuota').on('click', function () {
+          $('#c_numero_cuotas').val($(this).attr('data-cuota'))
+          refresh_credito_window(1)
+        })
 
-            if (estado == 'COMPLETADO' || estado == 'CAJA') {
-                if (si > 0) {
-                    $('#continuar_venta_block').show();
-                    $('#guardar_credito_block').hide();
-                }
-                else {
-                    $('#continuar_venta_block').hide();
-                    $('#guardar_credito_block').show();
-                }
-            }
+      }
 
+      function generar_rangos (numero_cuotas) {
+        var body = $('#body_cuotas_rango')
+
+        if ($('#body_cuotas_rango tr').length > numero_cuotas) {
+          var counter = 0
+          $('#body_cuotas_rango tr').each(function () {
+            if (++counter > numero_cuotas)
+              $(this).remove()
+          })
+        }
+
+        for (var i = 0; i < numero_cuotas; i++) {
+          if ($('#c_rango_' + i).html() == undefined) {
+            var template = '<tr style="background-color: #39B147 !important">'
+            template += '<td style="padding: 0 !important; height: 28px; text-align: center;"><input  id="c_rango_' + i + '" class="c_rango_input" type="text" value="' + (30 * (i + 1)) + '" style="width: 40px;"></td>'
+            template += '</tr>'
+
+            body.append(template)
+          }
 
         }
 
-        function generar_proyeccion(saldo) {
-            var min = isNaN(parseInt($("#c_rango_min").val())) ? 1 : parseInt($("#c_rango_min").val());
-            var max = $("#c_rango_max").val();
-            var body = $("#body_proyeccion_cuotas");
+        $('.c_rango_input').off('focus keyup')
+        $('.c_rango_input').on('focus', function () {
+          $(this).select()
+        })
+        $('.c_rango_input').on('keyup', function () {
+          refresh_credito_window(1)
+        })
+      }
 
-            body.html("");
-            for (var i = min; i <= max; i++) {
+      function generar_cuotas (numero_cuotas, saldo) {
+        $('#last_fecha_giro').val($('#c_fecha_giro').val())
+        var body = $('#body_cuotas')
+        var monto = saldo / numero_cuotas
 
-                var template = '<tr class="proyeccion_cuota" data-cuota="' + i + '">';
-                template += '<td style="text-align: center;">' + i + '</td>';
-                template += '<td style="text-align: right;">' + $('.tipo_moneda').first().html() + ' ' + (saldo / i) + '</td>';
-                template += '</tr>';
+        body.html('')
+        for (var i = 0; i < numero_cuotas; i++) {
 
-                body.append(template);
-            }
+          var template = '<tr>'
+          template += '<td id="c_cuota_letra_' + i + '">' + (i + 1) + ' / ' + numero_cuotas + '</td>'
+          template += '<td style="height: 28px;"><span  id="c_cuota_fecha_' + i + '">' + get_fecha_vencimiento(i, $('#c_pago_periodo').val()) + '</span>'
+          template += '</td>'
+          template += '<td style="text-align: right;">' + $('.tipo_moneda').first().html() + ' <span id="c_cuota_monto_' + i + '">' + roundPrice(monto, 2) + '</span></td>'
+          template += '</tr>'
 
-            $('.proyeccion_cuota').on('click', function () {
-                $("#c_numero_cuotas").val($(this).attr('data-cuota'));
-                refresh_credito_window(1);
-            });
-
+          body.append(template)
         }
 
-        function generar_rangos(numero_cuotas) {
-            var body = $("#body_cuotas_rango");
+      }
 
-            if ($("#body_cuotas_rango tr").length > numero_cuotas) {
-                var counter = 0;
-                $("#body_cuotas_rango tr").each(function () {
-                    if (++counter > numero_cuotas)
-                        $(this).remove();
-                });
+      function get_fecha_vencimiento (index, type) {
+        var fecha = $('#last_fecha_giro').val().split('/')
+        var next = new Date(fecha[2], fecha[1] - 1, fecha[0])
+
+        switch (type) {
+          case '1': {
+
+            next.setDate(next.getDate() + 1)
+            break
+          }
+          case '2': {
+
+            next.setDate(next.getDate() + 2)
+            break
+          }
+          case '3': {
+            next.setDate(next.getDate() + 7)
+            break
+          }
+          case '4': {
+
+            next.setMonth(next.getMonth() + 1)
+            var dia_mes = isNaN(parseInt($('#c_dia_pago').val())) ? 1 : parseInt($('#c_dia_pago').val())
+            next.setDate(dia_mes)
+            break
+          }
+          case '5': {
+            var dia_mes = isNaN(parseInt($('#c_dia_pago').val())) ? 1 : parseInt($('#c_dia_pago').val())
+            next.setDate(next.getDate() + dia_mes)
+            break
+          }
+          case '6': {
+            var fecha_rango = $('#c_fecha_giro').val().split('/')
+            var next_rango = new Date(fecha_rango[2], fecha_rango[1] - 1, fecha_rango[0])
+            var dia_mes = isNaN(parseInt($('#c_dia_pago').val())) ? 1 : parseInt($('#c_rango_' + index).val())
+            next_rango.setDate(next_rango.getDate() + dia_mes)
+            if (next_rango.getDay() == 0) {
+              next_rango.setDate(next_rango.getDate() + 1)
             }
-
-
-            for (var i = 0; i < numero_cuotas; i++) {
-                if ($('#c_rango_' + i).html() == undefined) {
-                    var template = '<tr style="background-color: #39B147 !important">';
-                    template += '<td style="padding: 0 !important; height: 28px; text-align: center;"><input  id="c_rango_' + i + '" class="c_rango_input" type="text" value="' + (30 * (i + 1)) + '" style="width: 40px;"></td>';
-                    template += '</tr>';
-
-                    body.append(template);
-                }
-
-            }
-
-            $('.c_rango_input').off('focus keyup');
-            $('.c_rango_input').on('focus', function () {
-                $(this).select();
-            });
-            $('.c_rango_input').on('keyup', function () {
-                refresh_credito_window(1);
-            });
+            var last_fecha_r = get_numero_dia(next_rango.getDate()) + '/' + get_numero_mes(next_rango.getMonth()) + '/' + next_rango.getFullYear()
+            return last_fecha_r
+          }
         }
 
-        function generar_cuotas(numero_cuotas, saldo) {
-            $('#last_fecha_giro').val($("#c_fecha_giro").val());
-            var body = $("#body_cuotas");
-            var monto = saldo / numero_cuotas;
-
-            body.html("");
-            for (var i = 0; i < numero_cuotas; i++) {
-
-
-                var template = '<tr>';
-                template += '<td id="c_cuota_letra_' + i + '">' + (i + 1) + ' / ' + numero_cuotas + '</td>';
-                template += '<td style="height: 28px;"><span  id="c_cuota_fecha_' + i + '">' + get_fecha_vencimiento(i, $("#c_pago_periodo").val()) + '</span>'
-                template += '</td>';
-                template += '<td style="text-align: right;">' + $('.tipo_moneda').first().html() + ' <span id="c_cuota_monto_' + i + '">' + monto + '</span></td>';
-                template += '</tr>';
-
-                body.append(template);
-            }
-
+        if (next.getDay() == 0) {
+          next.setDate(next.getDate() + 1)
         }
 
-        function get_fecha_vencimiento(index, type) {
-            var fecha = $('#last_fecha_giro').val().split('/');
-            var next = new Date(fecha[2], fecha[1] - 1, fecha[0]);
+        var last_fecha = get_numero_dia(next.getDate()) + '/' + get_numero_mes(next.getMonth()) + '/' + next.getFullYear()
+        $('#last_fecha_giro').val(last_fecha)
 
-            switch (type) {
-                case '1': {
+        return last_fecha
+      }
 
-                    next.setDate(next.getDate() + 1);
-                    break;
-                }
-                case '2': {
+      function prepare_cuotas () {
+        var cuotas = []
+        var numero_coutas = parseInt($('#c_numero_cuotas').val())
 
-                    next.setDate(next.getDate() + 2);
-                    break;
-                }
-                case '3': {
-                    next.setDate(next.getDate() + 7);
-                    break;
-                }
-                case '4': {
+        for (var i = 0; i < numero_coutas; i++) {
+          var cuota = {}
+          cuota.letra = $('#body_cuotas #c_cuota_letra_' + i).html().trim()
+          cuota.fecha = $('#body_cuotas #c_cuota_fecha_' + i).html().trim()
+          cuota.monto = $('#body_cuotas #c_cuota_monto_' + i).html().trim()
 
-                    next.setMonth(next.getMonth() + 1);
-                    var dia_mes = isNaN(parseInt($("#c_dia_pago").val())) ? 1 : parseInt($("#c_dia_pago").val());
-                    next.setDate(dia_mes);
-                    break;
-                }
-                case '5': {
-                    var dia_mes = isNaN(parseInt($("#c_dia_pago").val())) ? 1 : parseInt($("#c_dia_pago").val());
-                    next.setDate(next.getDate() + dia_mes);
-                    break;
-                }
-                case '6': {
-                    var fecha_rango = $('#c_fecha_giro').val().split('/');
-                    var next_rango = new Date(fecha_rango[2], fecha_rango[1] - 1, fecha_rango[0]);
-                    var dia_mes = isNaN(parseInt($("#c_dia_pago").val())) ? 1 : parseInt($("#c_rango_" + index).val());
-                    next_rango.setDate(next_rango.getDate() + dia_mes);
-                    if (next_rango.getDay() == 0) {
-                        next_rango.setDate(next_rango.getDate() + 1);
-                    }
-                    var last_fecha_r = get_numero_dia(next_rango.getDate()) + '/' + get_numero_mes(next_rango.getMonth()) + '/' + next_rango.getFullYear();
-                    return last_fecha_r;
-                }
-            }
-
-            if (next.getDay() == 0) {
-                next.setDate(next.getDate() + 1);
-            }
-
-            var last_fecha = get_numero_dia(next.getDate()) + '/' + get_numero_mes(next.getMonth()) + '/' + next.getFullYear();
-            $('#last_fecha_giro').val(last_fecha);
-
-            return last_fecha;
+          cuotas.push(cuota)
         }
 
-        function prepare_cuotas() {
-            var cuotas = [];
-            var numero_coutas = parseInt($("#c_numero_cuotas").val());
-
-            for (var i = 0; i < numero_coutas; i++) {
-                var cuota = {};
-                cuota.letra = $("#body_cuotas #c_cuota_letra_" + i).html().trim();
-                cuota.fecha = $("#body_cuotas #c_cuota_fecha_" + i).html().trim();
-                cuota.monto = $("#body_cuotas #c_cuota_monto_" + i).html().trim();
-
-                cuotas.push(cuota);
-            }
-
-            return JSON.stringify(cuotas);
-        }
+        return JSON.stringify(cuotas)
+      }
 
 
     </script>

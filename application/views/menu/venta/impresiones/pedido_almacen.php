@@ -1,11 +1,11 @@
 <style>
-    
+
     @media print {
-        html, body
-        {
-            width:100%;
+        html, body {
+            width: 100%;
             margin: 0;
         }
+
         table {
             border: 0px;
             width: 100%;
@@ -63,7 +63,7 @@
             <td style="text-transform: uppercase;">Ubicaci&oacute;n: <?= $venta->local_nombre ?></td>
             <td style="text-transform: uppercase; text-align: right;">
                 Tipo de Pago:
-                <?= $venta->condicion_nombre?>
+                <?= $venta->condicion_nombre ?>
             </td>
         </tr>
     </table>
@@ -81,7 +81,7 @@
         </tr>
         <?php foreach ($venta->detalles as $detalle): ?>
             <tr>
-                <td><?= $detalle->producto_cualidad=="PESABLE"?$detalle->cantidad:number_format($detalle->cantidad,0) . " " . $detalle->unidad_abr ?></td>
+                <td><?= $detalle->producto_cualidad == "PESABLE" ? $detalle->cantidad : number_format($detalle->cantidad, 0) . " " . $detalle->unidad_abr ?></td>
                 <td><?= $detalle->producto_nombre ?></td>
                 <td><?= $detalle->origen ?></td>
                 <td style="text-align: right"><?= $venta->moneda_simbolo . ' ' . $detalle->precio ?></td>
@@ -120,5 +120,5 @@
     </div>
 </div>
 <script>
-    this.print();
+  this.print()
 </script>

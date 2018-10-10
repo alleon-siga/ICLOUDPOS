@@ -151,6 +151,7 @@ class venta_new_model extends CI_Model
 
         return $ventas;
     }
+
     //ls=lista en shadow
     function get_ventas_ls($where = array(), $action = '')
     {
@@ -218,8 +219,8 @@ class venta_new_model extends CI_Model
             ->join('correlativos', 'venta.id_documento=correlativos.id_documento and venta.local_id=correlativos.id_local', 'left')
             ->join('local', 'venta.local_id=local.int_local_id')
             ->join('credito', 'venta.venta_id=credito.id_venta', 'left')
-                ->where('venta.venta_status!="ANULADO"')
-           ->group_by('venta.venta_id');
+            ->where('venta.venta_status!="ANULADO"')
+            ->group_by('venta.venta_id');
 
         if (isset($where['venta_id'])) {
             $this->db->where('venta.venta_id', $where['venta_id']);
@@ -287,6 +288,7 @@ class venta_new_model extends CI_Model
 
         return $ventas;
     }
+
     function get_ventas_totales($where = array(), $action = '')
     {
         $this->db->select('
@@ -396,37 +398,39 @@ class venta_new_model extends CI_Model
         }
         return $venta;
     }
+
     function get_venta_detalle_convertido($venta_id)
     {
-        $query="SELECT doc.des_doc as vdoc,cl.razon_social as vnom ,c.tipo_cliente as vclien,vs.id as id_shadow,v.id_moneda as vmon,v.condicion_pago as vcon,
-                v.serie as vser, v.numero as vnum,
-                v.venta_status as vven,v.fecha as vfecha,cp.nombre_condiciones as vcon, v.tasa_cambio as vtasa,
-                @i := @i + 1 as contador,
-                c.razon_social,v.total as vtotal,
+        $query = "SELECT doc.des_doc AS vdoc,cl.razon_social AS vnom ,c.tipo_cliente AS vclien,vs.id AS id_shadow,v.id_moneda AS vmon,v.condicion_pago AS vcon,
+                v.serie AS vser, v.numero AS vnum,
+                v.venta_status AS vven,v.fecha AS vfecha,cp.nombre_condiciones AS vcon, v.tasa_cambio AS vtasa,
+                @i := @i + 1 AS contador,
+                c.razon_social,v.total AS vtotal,
                 d.abr_doc,
                 vs.fecha,
                 CASE WHEN vs.id_moneda='1029' THEN 'S/.' ELSE
-                CASE WHEN vs.id_moneda='1030' THEN '$' END END as moneda,
+                CASE WHEN vs.id_moneda='1030' THEN '$' END END AS moneda,
                 vs.subtotal,
                 vs.total
-                FROM venta_shadow as vs
-                cross join (select @i := 0) r
-                JOIN documentos as d
+                FROM venta_shadow AS vs
+                CROSS JOIN (SELECT @i := 0) r
+                JOIN documentos AS d
                 ON d.id_doc=vs.id_documento
-                JOIN cliente as c
+                JOIN cliente AS c
                 ON c.id_cliente=vs.id_cliente
-                JOIN venta as v
+                JOIN venta AS v
                 ON v.venta_id=vs.venta_id
-                JOIN documentos as doc
+                JOIN documentos AS doc
                 ON doc.id_doc=v.id_documento
-                JOIN cliente as cl
+                JOIN cliente AS cl
                 ON cl.id_cliente=v.id_cliente
-                JOIN condiciones_pago as cp
+                JOIN condiciones_pago AS cp
                 ON cp.id_condiciones=v.condicion_pago
-                WHERE vs.venta_id='".$venta_id."'";
-        
+                WHERE vs.venta_id='" . $venta_id . "'";
+
         return $this->db->query($query)->result();
     }
+
     function remove_ventaconvertida_shadow($id_shadow)
     {
         $this->db->where('id', $id_shadow);
@@ -434,6 +438,7 @@ class venta_new_model extends CI_Model
         $this->db->affected_rows();
         return $this->db->affected_rows();
     }
+
     function get_venta_traspaso($id)
     {
         $this->db->select('c.serie, v.venta_id, v.fecha, cl.tipo_cliente, cl.razon_social, us.username, cl.identificacion, t.id');
@@ -634,7 +639,6 @@ class venta_new_model extends CI_Model
 
         $this->db->where('venta_id', $venta['venta_id']);
         $this->db->update('venta', $update_venta);
-
 
 
         if ($venta_actual->condicion_pago == 1) {
@@ -856,7 +860,7 @@ class venta_new_model extends CI_Model
                 'movimiento' => 'INGRESO',
                 'operacion' => 'VENTA',
                 'medio_pago' => $venta['vc_forma_pago'],
-                'saldo' => $venta_contado['inicial'],
+                'saldo' => valueOptionDB('REDONDEO_VENTAS', 0) == 1 ? formatPrice($venta_contado['inicial']) : $venta_contado['inicial'],
                 'saldo_old' => $cuenta_old->saldo,
                 'ref_id' => $venta_id,
                 'ref_val' => $venta['vc_num_oper'],

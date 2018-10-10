@@ -1,11 +1,37 @@
 <?php
+
+function formatPrice($price, $min = 10)
+{
+
+    $price = explode('.', number_format($price, 2, '.', ''));
+    $entero = $price[0];
+    $fraccion = $price[1];
+
+    for ($i = 0; $i <= 100; $i = $i + $min) {
+        if ($i < $fraccion && $i + $min > $fraccion) {
+            if (($i + $min - $fraccion) <= ($fraccion - $i))
+                $fraccion = $i + $min;
+            else if (($i + $min - $fraccion) > ($fraccion - $i))
+                $fraccion = $i;
+
+            if ($fraccion == 100) {
+                $fraccion = 0;
+                $entero = $entero + 1;
+            }
+        }
+    }
+
+    return number_format($entero . '.' . $fraccion, 2, '.', '');
+}
+
 function get_moneda_defecto()
 {
     $CI =& get_instance();
     return $CI->db->get_where('moneda', array('id_moneda' => MONEDA_DEFECTO))->row();
 }
 
-function diff_date($ini, $fin){
+function diff_date($ini, $fin)
+{
     // $datetime1 = new DateTime($ini);
     $datetime1 = DateTime::createFromFormat('d/m/Y', $ini);
     $datetime2 = DateTime::createFromFormat('d/m/Y', $fin);
@@ -37,10 +63,10 @@ function get_tipo_doc($cod)
         case 9: {
             return array('code' => $cod, 'value' => 'Gu&iacute;a de Remisi&oacute;n');
         }
-        case -2:{
+        case -2: {
             return array('code' => $cod, 'value' => 'Nota de Venta');
         }
-        case -3:{
+        case -3: {
             return array('code' => $cod, 'value' => 'Control Interno');
         }
         default: {
@@ -485,13 +511,13 @@ function numtoletras($xcifra, $moneda_nombre = 'Soles')
                     break;
                 case 2:
                     if ($xcifra < 1) {
-                        $xcadena = "CERO ".strtoupper($moneda_nombre)." $xdecimales/100 ";
+                        $xcadena = "CERO " . strtoupper($moneda_nombre) . " $xdecimales/100 ";
                     }
                     if ($xcifra >= 1 && $xcifra < 2) {
-                        $xcadena = "UN ".strtoupper($moneda_nombre)." $xdecimales/100  ";
+                        $xcadena = "UN " . strtoupper($moneda_nombre) . " $xdecimales/100  ";
                     }
                     if ($xcifra >= 2) {
-                        $xcadena .= " ".strtoupper($moneda_nombre)." $xdecimales/100  "; //
+                        $xcadena .= " " . strtoupper($moneda_nombre) . " $xdecimales/100  "; //
                     }
                     break;
             } // endswitch ($xz)
@@ -523,7 +549,8 @@ function subfijo($xx)
     return $xsub;
 }
 
-function diccionarioTermino(){
+function diccionarioTermino()
+{
     $CI =& get_instance();
     return $CI->db->get_where('diccionario_termino', array('activo' => '1'))->result();
 }

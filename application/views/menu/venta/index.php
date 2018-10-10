@@ -37,7 +37,7 @@
         <input type="hidden" id="barra_activa" value="<?= $barra_activa->activo ?>">
         <input type="hidden" id="producto_what_codigo" value="<?= getCodigo() ?>">
         <input type="hidden" id="facturacion_electronica" value="<?= valueOptionDB('FACTURACION', 0) ?>">
-        <input type="hidden" id="redondeo_total" value="<?= valueOptionDB('REDONDEO_VENTAS', 1) ?>">
+        <input type="hidden" id="redondeo_total" value="<?= valueOptionDB('REDONDEO_VENTAS', 0) ?>">
         <div class="row">
 
             <!-- SECCION IZQUIERDA -->

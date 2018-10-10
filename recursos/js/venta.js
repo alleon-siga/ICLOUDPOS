@@ -1,6 +1,6 @@
 var ruta = $('#base_url').val()
 var lst_producto = []
-var is_edit = false;
+var is_edit = false
 
 var auto_add = false
 
@@ -329,16 +329,16 @@ $(document).ready(function () {
         prepare_precio_value(producto_id, unidad_minima)
         refresh_right_panel()
         //refresh_totals()
-        $('.precio-input[data-index="' + ($(".precio-input").length - 1) + '"]').first().click()
+        $('.precio-input[data-index="' + ($('.precio-input').length - 1) + '"]').first().click()
 // alert(index);
         $('#loading').hide()
         $('.block_producto_unidades').show()
-        
+
         $('.cantidad-input[data-index="' + (--index) + '"]').first().trigger('focus')
 
         if (auto_add && data.unidades.length == 1 && is_edit == false) {
           $('#add_producto').click()
-          is_edit = false;
+          is_edit = false
         }
       },
       complete: function (data) {
@@ -448,10 +448,10 @@ $(document).ready(function () {
         $('#subtotal_um').html(input.attr('data-unidad_nombre'))
         input.addClass('precio-selected')
       } else {
-        if($('#total_minimo').val()==0){
-          $('#precio_unitario').val(0).toFixed(2);
-        }else{
-          $('#precio_unitario').val(parseFloat(pu.val() / $('#total_minimo').val()).toFixed(4));
+        if ($('#total_minimo').val() == 0) {
+          $('#precio_unitario').val(0).toFixed(2)
+        } else {
+          $('#precio_unitario').val(parseFloat(pu.val() / $('#total_minimo').val()).toFixed(4))
         }
       }
 
@@ -483,10 +483,10 @@ $(document).ready(function () {
       $('#editar_su').click()
       $('#add_producto').trigger('focus')
     } else {
-      if($('#total_minimo').val()==0){
-        $('#precio_unitario').val(0).toFixed(2);
-      }else{
-        $('#precio_unitario').val(parseFloat($('#importe').val() / $('#total_minimo').val()).toFixed(4));
+      if ($('#total_minimo').val() == 0) {
+        $('#precio_unitario').val(0).toFixed(2)
+      } else {
+        $('#precio_unitario').val(parseFloat($('#importe').val() / $('#total_minimo').val()).toFixed(4))
       }
     }
   })
@@ -498,15 +498,15 @@ $(document).ready(function () {
 
     $('#tasa').val(tasa)
     $('.tipo_moneda').html(simbolo)
-    
+
     if ($(this).val() != $('#MONEDA_DEFECTO_ID').val()) {
       $('#block_tasa').show()
       $('#tasa').trigger('focus')
-      $("#importe").val($("#precio_unitario").val());
+      $('#importe').val($('#precio_unitario').val())
     }
     else {
       $('#block_tasa').hide()
-      $("#importe").val($("#precio_unitario").val());
+      $('#importe').val($('#precio_unitario').val())
     }
     $('#moneda_text').html(nombre)
     refresh_right_panel()
@@ -616,6 +616,19 @@ $(document).ready(function () {
   //EVENTOS DEL PANEL INFERIOR
   $('#terminar_venta').click('on', function (e) {
 
+    if ($('#fecha_venta').val() == '') {
+      show_msg('warning', '<h4>Error. </h4><p>Ingrese la fecha de venta.</p>')
+      return false
+    }
+
+    var fecha_actual = new Date().getTime()
+    var fecha = $('#fecha_venta').val().split('/')
+    var fecha_venta = new Date(fecha[2] + '-' + fecha[1] + '-' + fecha[0]).getTime()
+    if(fecha_actual - fecha_venta < 0){
+      show_msg('warning', '<h4>Error. </h4><p>No puede ingresar una fecha mayor a la actual.</p>')
+      return false
+    }
+
     if (lst_producto.length == 0) {
       show_msg('warning', '<h4>Error. </h4><p>Debe agregar al menos un producto para realizar la venta.</p>')
       select_productos(51)
@@ -641,10 +654,10 @@ $(document).ready(function () {
     }
 
     //Validar si es diferente a cliente frecuente, boleta de venta, el total de importe mayor a 700 y que sea un numero valido de dni
-    var dni = $('#cliente_id option:selected').attr('data-identificacion');
-    if( $('#cliente_id').val()>1 && $('#tipo_documento').val() == 3 && parseFloat($('#total_importe').val()) > 700 && (dni=='' || dni.length!=8) ){
-      show_msg('warning', '<h4>Error. </h4><p>El n&uacute;mero de DNI del cliente no es v&aacute;lido</p>');
-      return false;
+    var dni = $('#cliente_id option:selected').attr('data-identificacion')
+    if ($('#cliente_id').val() > 1 && $('#tipo_documento').val() == 3 && parseFloat($('#total_importe').val()) > 700 && (dni == '' || dni.length != 8)) {
+      show_msg('warning', '<h4>Error. </h4><p>El n&uacute;mero de DNI del cliente no es v&aacute;lido</p>')
+      return false
     }
 
     if ($('#tipo_documento').val() == 1 && $('#cliente_id option:selected').attr('data-ruc') != 2) {
@@ -822,12 +835,8 @@ function end_venta () {
     if (tipo_pago == '1') {
       flag = true
 
-      if($('#redondeo_total').val()=='1'){ //quiere decir si aplicar redondeo esto esta en ventas/configuracion
-        var total_importe = roundPrice(parseFloat($('#total_importe').val()), 1, 1);
-        $('#vc_total_pagar').val(parseFloat(total_importe).toFixed(2));
-      }else{
-        $('#vc_total_pagar').val($('#total_importe').val())
-      }
+      var tp = $('#redondeo_total').val() == 1 ? formatPrice($('#total_importe').val()) : $('#total_importe').val()
+      $('#vc_total_pagar').val(tp)
 
       $('#vc_importe').val($('#vc_total_pagar').val())
       $('#vc_vuelto').val(0)
@@ -848,7 +857,7 @@ function end_venta () {
       $('#c_fecha_giro').val($('#fecha_venta').val())
       credito_init($('#total_importe').val(), 'COMPLETADO')
       refresh_credito_window()
-      
+
       $('#dialog_venta_credito').modal('show')
     }
   }
@@ -1057,13 +1066,13 @@ function save_venta_contado (imprimir) {
         $('#loading_save_venta').modal('hide')
         $('.save_venta_contado').removeAttr('disabled')
       } else {
-        if (data.msg){
+        if (data.msg) {
           show_msg('danger', '<h4>Error. </h4><p>' + data.msg + '</p>')
-        }else{
+        } else {
           show_msg('danger', '<h4>Error. </h4><p>Ha ocurrido un error insperado al guardar la venta.</p>')
         }
-        $('#loading_save_venta').modal('hide');
-        $('.save_venta_contado').removeAttr('disabled');
+        $('#loading_save_venta').modal('hide')
+        $('.save_venta_contado').removeAttr('disabled')
       }
     },
     error: function (data) {
@@ -1188,13 +1197,13 @@ function save_venta_credito (imprimir) {
         $('#loading_save_venta').modal('hide')
         $('.save_venta_credito').removeAttr('disabled')
       } else {
-        if(data.msg){
+        if (data.msg) {
           show_msg('danger', '<h4>Error. </h4><p>' + data.msg + '</p>')
-        }else{
+        } else {
           show_msg('danger', '<h4>Error. </h4><p>Ha ocurrido un error insperado al guardar la venta.</p>')
         }
-        $('#loading_save_venta').modal('hide');
-        $('.save_venta_credito').removeAttr('disabled');
+        $('#loading_save_venta').modal('hide')
+        $('.save_venta_credito').removeAttr('disabled')
       }
     },
     error: function (data) {
@@ -1224,7 +1233,7 @@ function save_venta_caja (imprimir) {
 //funcion para agregar los productos de la venta
 function add_producto () {
 
-  is_edit = false;
+  is_edit = false
   var producto_id = $('#producto_id').val()
   var local_id = $('#local_id').val()
   var precio_id = $('#precio_id').val()
@@ -1328,7 +1337,7 @@ function add_producto () {
 //edita un producto en la tabla
 function edit_producto (producto_id) {
 
-  is_edit = true;
+  is_edit = true
   $('#producto_id').val(producto_id).trigger('chosen:updated')
   $('#producto_id').change()
   var producto = {}
@@ -1596,15 +1605,15 @@ function refresh_right_panel () {
     $('.precio-input').each(function () {
       $(this).val(parseFloat($(this).attr('data-value') / tasa).toFixed(3))
     })
-    $("#precio_unitario").val($('.precio-selected').val()/$("#total_minimo").val());
-    $("#importe").val($('.precio-input').val()*$("#total_minimo").val());
+    $('#precio_unitario').val($('.precio-selected').val() / $('#total_minimo').val())
+    $('#importe').val($('.precio-input').val() * $('#total_minimo').val())
   } else {
     $('.precio-input').each(function () {
       $(this).val(parseFloat($(this).attr('data-value')))
     })
-    $("#precio_unitario").val($('.precio-selected').val()/$("#total_minimo").val());
-    $("#importe").val($('.precio-input').val()*$("#total_minimo").val());
-}
+    $('#precio_unitario').val($('.precio-selected').val() / $('#total_minimo').val())
+    $('#importe').val($('.precio-input').val() * $('#total_minimo').val())
+  }
 
   var subtotal = 0, impuesto = 0, total_importe = 0, total_descuento = 0
 
