@@ -323,14 +323,14 @@ $(document).ready(function () {
         $('#total_minimo').val(total)
         set_stock_info(producto_id)
 
-        prepare_precio_value(producto_id, unidad_minima)
 
-        //SUSCRIBOS EVENTOS
         prepare_unidades_events()
+
+        prepare_precio_value(producto_id, unidad_minima)
         prepare_precio_events()
 
-        //refresh_right_panel()
-        //refresh_totals()
+        refresh_totals()
+        refresh_right_panel()
         //$('.precio-input[data-index="' + ($('.precio-input').length - 1) + '"]').first().click()
 
         $('#loading').hide()
@@ -342,6 +342,8 @@ $(document).ready(function () {
           $('#add_producto').click()
           is_edit = false
         }
+
+        console.log(lst_producto)
       },
       complete: function (data) {
       },
@@ -442,23 +444,30 @@ $(document).ready(function () {
       pu.attr('readonly', 'readonly')
       edit_pu.attr('data-estado', '0')
       edit_pu.html('<i class="fa fa-edit"></i>')
-      $('.precio-input').removeClass('precio-selected')
-      var subtotal = pu.val()
-      var flag = false
-      if (subtotal == pu.attr('data-sub')) {
-        flag = true
-        $('#subtotal_um').html(input.attr('data-unidad_nombre'))
-        input.addClass('precio-selected')
-      } else {
-        if ($('#total_minimo').val() == 0) {
-          $('#precio_unitario').val(0).toFixed(2)
-        } else {
-          $('#precio_unitario').val(parseFloat(pu.val() / $('#total_minimo').val()).toFixed(4))
-        }
+
+      if (parseFloat($('#total_minimo').val()) > 0) {
+        $('#precio_unitario').val(parseFloat(roundPrice(pu.val() / $('#total_minimo').val(), 4, 4)))
       }
+      else {
+        $('#precio_unitario').val(0)
+      }
+      refresh_totals()
+
+      var flag = false
+      $('.precio-input').removeClass('precio-selected')
+      $('.precio-input').each(function () {
+        var input = $(this)
+
+        if (input.val() == $('#precio_unitario').val()) {
+          flag = true
+          $('#precio_unitario').attr('data-index', input.attr('data-index'))
+          $('#precio_unitario_um').html(input.attr('data-unidad_nombre'))
+          input.addClass('precio-selected')
+        }
+      })
 
       if (flag == false) {
-        $('#subtotal_um').html('<span style="color: #f39c12;">Personalizado</span>')
+        $('#precio_unitario_um').html('<span style="color: #f39c12;">Personalizado</span>')
       }
     }
   })
@@ -474,7 +483,6 @@ $(document).ready(function () {
   $('#precio_unitario').on('keyup', function (e) {
     if (e.keyCode == tecla_enter) {
       $('#editar_pu').click()
-      $('#add_producto').trigger('focus')
     }
     else
       refresh_totals()
@@ -483,12 +491,11 @@ $(document).ready(function () {
   $('#importe').on('keyup', function (e) {
     if (e.keyCode == tecla_enter) {
       $('#editar_su').click()
-      $('#add_producto').trigger('focus')
     } else {
       if ($('#total_minimo').val() == 0) {
-        $('#precio_unitario').val(0).toFixed(2)
+        $('#precio_unitario').val(0)
       } else {
-        $('#precio_unitario').val(parseFloat($('#importe').val() / $('#total_minimo').val()).toFixed(4))
+        $('#precio_unitario').val(parseFloat(roundPrice($('#importe').val() / $('#total_minimo').val(), 4, 4)))
       }
     }
   })
@@ -504,11 +511,9 @@ $(document).ready(function () {
     if ($(this).val() != $('#MONEDA_DEFECTO_ID').val()) {
       $('#block_tasa').show()
       $('#tasa').trigger('focus')
-      $('#importe').val($('#precio_unitario').val())
     }
     else {
       $('#block_tasa').hide()
-      $('#importe').val($('#precio_unitario').val())
     }
     $('#moneda_text').html(nombre)
     refresh_right_panel()
@@ -626,7 +631,7 @@ $(document).ready(function () {
     var fecha_actual = new Date().getTime()
     var fecha = $('#fecha_venta').val().split('/')
     var fecha_venta = new Date(fecha[2] + '-' + fecha[1] + '-' + fecha[0]).getTime()
-    if(fecha_actual - fecha_venta < 0){
+    if (fecha_actual - fecha_venta < 0) {
       show_msg('warning', '<h4>Error. </h4><p>No puede ingresar una fecha mayor a la actual.</p>')
       return false
     }
@@ -1569,8 +1574,8 @@ function refresh_totals () {
   })
 
   $('#total_minimo').val(data_total)
-  $('#importe').val(parseFloat(importe_total).toFixed(2))
-  $('#importe').attr('data-sub', parseFloat(importe_total).toFixed(2))
+  $('#importe').val(roundPrice(parseFloat(importe_total), 2))
+  $('#importe').attr('data-sub', roundPrice(parseFloat(importe_total), 2))
 }
 
 //function para refrescar el panel derecho
@@ -1605,16 +1610,17 @@ function refresh_right_panel () {
   if ($('#moneda_id option:selected').val() != $('#MONEDA_DEFECTO_ID').val()) {
 
     $('.precio-input').each(function () {
-      $(this).val(parseFloat($(this).attr('data-value') / tasa).toFixed(3))
+      $(this).val(roundPrice(parseFloat($(this).attr('data-value') / tasa), 4, 4))
     })
-    $('#precio_unitario').val($('.precio-selected').val() / $('#total_minimo').val())
-    $('#importe').val($('.precio-input').val() * $('#total_minimo').val())
   } else {
     $('.precio-input').each(function () {
-      $(this).val(parseFloat($(this).attr('data-value')))
+      $(this).val(roundPrice(parseFloat($(this).attr('data-value')), 4, 4))
     })
-    $('#precio_unitario').val($('.precio-selected').val() / $('#total_minimo').val())
-    $('#importe').val($('.precio-input').val() * $('#total_minimo').val())
+  }
+  if ($('#moneda_block_input').css('display') != 'none') {
+    var precio_unitario_minimo = $('.precio-input[data-index="' + ($('.precio-input').length - 1) + '"]').first().val()
+    $('#precio_unitario').val(precio_unitario_minimo)
+    refresh_totals()
   }
 
   var subtotal = 0, impuesto = 0, total_importe = 0, total_descuento = 0
