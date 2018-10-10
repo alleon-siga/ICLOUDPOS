@@ -69,15 +69,21 @@
                     <?php
                         if($venta->documento_id==6){
                     ?>
-                        <a class="btn btn-default btn-sm" data-toggle="tooltip" style="margin-right: 5px;" title="Ver" data-original-title="Ver" href="#" onclick="ver('<?= $venta->venta_id ?>');">
+                        <a class="btn btn-info btn-sm" data-toggle="tooltip" style="margin-right: 5px;" title="Ver" data-original-title="Ver" href="#" onclick="ver('<?= $venta->venta_id ?>');">
                             <i class="fa fa-search"></i>
                         </a>
                     <?php if($venta->venta_estado=='COMPLETADO'){ ?>
-                        <a class="btn btn-primary btn-sm" data-toggle="tooltip" style="margin-right: 5px;" title="Ver" data-original-title="Ver" href="#" onclick="shadow('<?= $venta->venta_id ?>');">
-                            <i class="fa fa-dollar"></i>
+                        <a class="btn btn-icon btn-sm" data-toggle="tooltip" style="margin-right: 5px;background-color: #5d5d5d;color:white;" title="Convertir" data-original-title="Convertir" href="#" onclick="shadow('<?= $venta->venta_id ?>');">
+                            
+                            <i class="fa fa-refresh"></i>
                         </a>
-                    <?php } ?>
-                    <?php
+                       <?php }
+                        if(($venta->convertidos)>0){?>
+                            <a class="btn btn-default btn-sm" data-toggle="tooltip"  title="Sunat" data-original-title="Sunat" href="#">
+                                <i class="fa fa-mail-forward"></i>
+                        </a>
+                      <?php  }
+                    
                         }
                     ?>
                     </td>
