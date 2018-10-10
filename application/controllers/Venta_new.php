@@ -330,10 +330,10 @@ class venta_new extends MY_Controller
         }
 
         $existenciaCosto = $this->producto_costo_unitario_model->check_costo_unitario($validar_detalle);
-        if(!$existenciaCosto){
+        if (!$existenciaCosto) {
             $data['msg'] = "Este producto no tiene precios de ventas o unitarios asignados, por favor verificar en el módulo de productos.";
             $data['success'] = '0';
-        }else{
+        } else {
             $sin_stock = $this->inventario_model->check_stock($validar_detalle);
 
             if (count($sin_stock) == 0) {
@@ -344,11 +344,11 @@ class venta_new extends MY_Controller
                 }
 
                 if ($venta_id) {
-    //                $cot_id = $this->input->post('cot_id');
-    //                if ($cot_id != "-1") {
-    //                    $this->db->where('id', $cot_id);
-    //                    $this->db->update('cotizacion', array('estado' => 'COMPLETADO'));
-    //                }
+                    //                $cot_id = $this->input->post('cot_id');
+                    //                if ($cot_id != "-1") {
+                    //                    $this->db->where('id', $cot_id);
+                    //                    $this->db->update('cotizacion', array('estado' => 'COMPLETADO'));
+                    //                }
                     $data['success'] = '1';
                     $data['venta'] = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
                     if (valueOptionDB('FACTURACION', 0) == 1 && $data['venta']->condicion_pago == 1 && ($data['venta']->id_documento == 1 || $data['venta']->id_documento == 3)) {
@@ -518,13 +518,22 @@ class venta_new extends MY_Controller
         $motivo = $this->input->post('motivo');
 
         $venta = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
+
+        if ($venta->venta_status == 'CAJA') {
+            $this->venta->anular_venta_caja($venta_id, $metodo_pago, $cuenta_id, $motivo);
+            $data['venta'] = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
+            header('Content-Type: application/json');
+            echo json_encode($data);
+            return false;
+        }
+
         if (valueOptionDB('FACTURACION', 0) == 1 && ($venta->id_documento == 1 || $venta->id_documento == 3)) {
             $facturacion = $this->db->order_by('id', 'desc')->get_where('facturacion', array(
                 'documento_tipo' => '0' . $venta->id_documento,
                 'ref_id' => $venta->venta_id
             ))->row();
 
-            if($facturacion != NULL){
+            if ($facturacion != NULL) {
                 if ($facturacion->estado == 3 || $facturacion->estado == 4) {
                     $this->venta->anular_venta($venta_id, $metodo_pago, $cuenta_id, $motivo);
 
@@ -535,8 +544,7 @@ class venta_new extends MY_Controller
                 } else {
                     $data['msg'] = 'No se ha podido anular el documento. Debe informarla a la SUNAT o darle baja en facturacion';
                 }
-            }
-            else{
+            } else {
                 $this->venta->anular_venta($venta_id, $metodo_pago, $cuenta_id, $motivo);
             }
         } else {

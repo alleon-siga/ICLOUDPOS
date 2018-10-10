@@ -520,6 +520,7 @@
               }
 
               function anular (venta_id, venta) {
+
                 $('#confirm_venta_text').attr('data-venta', venta)
                 $('#confirm_venta_text').html('Estas seguro que deseas anular la venta ' + $('#confirm_venta_text').attr('data-venta') + '?')
                 $('#confirm_venta_button').attr('onclick', 'anular_venta("' + venta_id + '");')
