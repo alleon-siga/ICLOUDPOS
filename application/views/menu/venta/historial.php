@@ -2,6 +2,7 @@
 
 <input type="hidden" name="venta_action" id="venta_action" value="<?= $venta_action ?>">
 <input type="hidden" id="facturacion_electronica" value="<?= valueOptionDB('FACTURACION', 0) ?>">
+<input type="hidden" id="redondeo_total" value="<?= valueOptionDB('REDONDEO_VENTAS', 0) ?>">
 <ul class="breadcrumb breadcrumb-top">
     <li>Venta</li>
     <li><a href="">
@@ -141,13 +142,13 @@
             <!-- /.modal-dialog -->
             <script type="text/javascript">
 
-                $(function () {
-                <?php if($venta_action == 'caja'):?>
-                    stop_get_pendientes();
-                <?php endif;?>
+              $(function () {
+                  <?php if($venta_action == 'caja'):?>
+                stop_get_pendientes()
+                  <?php endif;?>
 
-                    //CONFIGURACIONES INICIALES
-                    App.sidebar('close-sidebar');
+                //CONFIGURACIONES INICIALES
+                App.sidebar('close-sidebar')
 
                 $(document).off('keyup')
                 $(document).off('keydown')
@@ -206,72 +207,71 @@
                 })
                   <?php endif;?>
 
-                    $('select').chosen();
+                $('select').chosen()
 
-                    get_ventas();
+                get_ventas()
 
-                    $("#btn_buscar").on("click", function () {
-                        get_ventas();
-                    });
+                $('#btn_buscar').on('click', function () {
+                  get_ventas()
+                })
 
-                    $('#vc_forma_pago').chosen({
-                        search_contains: true
-                    });
-                    $('.chosen-container').css('width', '100%');
+                $('#vc_forma_pago').chosen({
+                  search_contains: true
+                })
+                $('.chosen-container').css('width', '100%')
 
-                });
+              })
 
-                <?php if($venta_action == 'caja'):?>
-                var myVar = setInterval(get_pendientes, 2000);
+              <?php if($venta_action == 'caja'):?>
+              var myVar = setInterval(get_pendientes, 2000)
 
-                function get_pendientes() {
-                    if ($('#venta_action').val() == 'caja') {
-                        var local_id = $("#venta_local").val();
-                        var estado = $("#venta_estado").val();
-                        var moneda_id = $("#moneda_id").val();
+              function get_pendientes () {
+                if ($('#venta_action').val() == 'caja') {
+                  var local_id = $('#venta_local').val()
+                  var estado = $('#venta_estado').val()
+                  var moneda_id = $('#moneda_id').val()
 
+                  $.ajax({
+                    url: '<?= base_url()?>venta_new/get_pendientes',
+                    data: {
+                      'local_id': local_id,
+                      'estado': estado,
+                      'moneda_id': moneda_id
+                    },
+                    type: 'POST',
+                    success: function (data) {
+                      $('#total_caja').val(data)
+                      var caja_r = parseInt(data)
+                      var caja_actual = parseInt($('#tabla_caja > tbody > tr').length)
 
-                        $.ajax({
-                            url: '<?= base_url()?>venta_new/get_pendientes',
-                            data: {
-                                'local_id': local_id,
-                                'estado': estado,
-                                'moneda_id': moneda_id
-                            },
-                            type: 'POST',
-                            success: function (data) {
-                                $('#total_caja').val(data);
-                                var caja_r = parseInt(data);
-                                var caja_actual = parseInt($('#tabla_caja > tbody > tr').length)
+                      if (caja_actual < caja_r) {
+                        $('#caja_class').removeClass('fa-search')
+                        $('#caja_class').addClass('fa-refresh')
+                        $('#total_caja').html(caja_r - caja_actual)
+                      }
+                      else {
+                        $('#caja_class').removeClass('fa-refresh')
+                        $('#caja_class').addClass('fa-search')
+                        $('#total_caja').html('')
+                      }
+                    },
+                    error: function () {
 
-                                if (caja_actual < caja_r) {
-                                    $('#caja_class').removeClass('fa-search');
-                                    $('#caja_class').addClass('fa-refresh');
-                                    $('#total_caja').html(caja_r - caja_actual);
-                                }
-                                else {
-                                    $('#caja_class').removeClass('fa-refresh');
-                                    $('#caja_class').addClass('fa-search');
-                                    $('#total_caja').html('');
-                                }
-                            },
-                            error: function () {
-
-                            }
-                        });
-                    } else {
-                        clearInterval(myVar);
                     }
+                  })
+                } else {
+                  clearInterval(myVar)
                 }
+              }
 
-                function stop_get_pendientes(){
-                    clearInterval(myVar);
-                }
+              function stop_get_pendientes () {
+                clearInterval(myVar)
+              }
 
-                <?php endif;?>
+              <?php endif;?>
 
-                function get_ventas() {
-                    $("#historial_list").html($("#loading").html());
+              function get_ventas () {
+                $('#historial_list').html($('#loading').html())
 
                 var local_id = $('#venta_local').val()
                 var estado = $('#venta_estado').val()
@@ -323,10 +323,10 @@
                 })
               }
 
-                function cobrar(venta_id) {
-                    stop_get_pendientes();
-                    $("#dialog_venta_detalle").html($("#loading").html());
-                    $("#dialog_venta_detalle").modal('show');
+              function cobrar (venta_id) {
+                stop_get_pendientes()
+                $('#dialog_venta_detalle').html($('#loading').html())
+                $('#dialog_venta_detalle').modal('show')
 
                 $.ajax({
                   url: '<?php echo $ruta . 'venta_new/get_venta_cobro/' . $venta_action; ?>',
@@ -338,10 +338,14 @@
 
                   success: function (data) {
                     $('#caja_venta_id').val(venta_id)
-                    if (data.venta.condicion_id == '1')
-                      $('#vc_total_pagar').val(data.venta.total)
-                    else if (data.venta.condicion_id == '2')
+                    if (data.venta.condicion_id == '1') {
+                      var tp = $('#redondeo_total').val() == 1 ? formatPrice(data.venta.total) : data.venta.total
+                      $('#vc_total_pagar').val(tp)
+                    }
+                    else if (data.venta.condicion_id == '2') {
+                      var tp = $('#redondeo_total').val() == 1 ? formatPrice(data.venta.inicial) : data.venta.inicial
                       $('#vc_total_pagar').val(data.venta.inicial)
+                    }
 
                     $('#vc_importe').val($('#vc_total_pagar').val())
                     $('#vc_vuelto').val(0)
@@ -366,14 +370,14 @@
                 return false
               }
 
-                function save_venta_contado(imprimir) {
-                    if (isNaN(parseFloat($('#vc_importe').val()))) {
-                        show_msg('warning', '<h4>Error. </h4><p>El importe tiene que ser numerico.</p>');
-                        setTimeout(function () {
-                            $("#vc_importe").trigger('focus');
-                        }, 500);
-                        return false;
-                    }
+              function save_venta_contado (imprimir) {
+                if (isNaN(parseFloat($('#vc_importe').val()))) {
+                  show_msg('warning', '<h4>Error. </h4><p>El importe tiene que ser numerico.</p>')
+                  setTimeout(function () {
+                    $('#vc_importe').trigger('focus')
+                  }, 500)
+                  return false
+                }
 
                 if ($('#vc_forma_pago').val() == '3' && $('#vc_vuelto').val() < 0) {
                   show_msg('warning', '<h4>Error. </h4><p>El importe no puede ser menor que el total a pagar. Recomendamos una venta al Cr&eacute;dito.</p>')
@@ -452,40 +456,39 @@
                           allow_dismiss: true
                         })
 
-                                    $("#barloadermodal").modal('hide');
+                        $('#barloadermodal').modal('hide')
 
-                                    var url = ruta + 'venta_new/imprimir/' + data.venta.venta_id + '/PEDIDO';
-                                    $("#imprimir_frame_venta").attr('src', url);
+                        var url = ruta + 'venta_new/imprimir/' + data.venta.venta_id + '/PEDIDO'
+                        $('#imprimir_frame_venta').attr('src', url)
 
-                                    get_ventas();
-                                }
-                                else {
-                                    $("#barloadermodal").modal('hide');
-                                    get_ventas();
-                                }
-                            }
-                            else {
-                                $("#barloadermodal").modal('hide');
-                                if (data.msg)
-                                    show_msg('danger', '<h4>Error. </h4><p>' + data.msg + '</p>');
-                                else
-                                    show_msg('danger', '<h4>Error. </h4><p>Ha ocurrido un error insperado al guardar la venta.</p>');
+                        get_ventas()
+                      }
+                      else {
+                        $('#barloadermodal').modal('hide')
+                        get_ventas()
+                      }
+                    }
+                    else {
+                      $('#barloadermodal').modal('hide')
+                      if (data.msg)
+                        show_msg('danger', '<h4>Error. </h4><p>' + data.msg + '</p>')
+                      else
+                        show_msg('danger', '<h4>Error. </h4><p>Ha ocurrido un error insperado al guardar la venta.</p>')
 
-                            }
-                        },
-                        error: function (data) {
-                            $("#barloadermodal").modal('hide');
-                            show_msg('danger', '<h4>Error. </h4><p>Ha ocurrido un error insperado al guardar la venta.</p>');
-                        },
-                        complete: function (data) {
-                            $('.save_venta_contado').removeAttr('disabled');
-                            <?php if($venta_action == 'caja'):?>
-                                myVar = setInterval(get_pendientes, 2000);
-                            <?php endif;?>
-                        }
-                    });
-                }
-
+                    }
+                  },
+                  error: function (data) {
+                    $('#barloadermodal').modal('hide')
+                    show_msg('danger', '<h4>Error. </h4><p>Ha ocurrido un error insperado al guardar la venta.</p>')
+                  },
+                  complete: function (data) {
+                    $('.save_venta_contado').removeAttr('disabled')
+                      <?php if($venta_action == 'caja'):?>
+                    myVar = setInterval(get_pendientes, 2000)
+                      <?php endif;?>
+                  }
+                })
+              }
 
               function previa (venta_id) {
 

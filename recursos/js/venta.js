@@ -323,7 +323,6 @@ $(document).ready(function () {
         $('#total_minimo').val(total)
         set_stock_info(producto_id)
 
-
         prepare_unidades_events()
 
         prepare_precio_value(producto_id, unidad_minima)
@@ -331,7 +330,10 @@ $(document).ready(function () {
 
         refresh_totals()
         refresh_right_panel()
-        //$('.precio-input[data-index="' + ($('.precio-input').length - 1) + '"]').first().click()
+
+        if (get_precio_producto(producto_id) == -1) {
+          $('.precio-input[data-index="' + ($('.precio-input').length - 1) + '"]').first().click()
+        }
 
         $('#loading').hide()
         $('.block_producto_unidades').show()
