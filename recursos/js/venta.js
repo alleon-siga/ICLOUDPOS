@@ -323,14 +323,16 @@ $(document).ready(function () {
         $('#total_minimo').val(total)
         set_stock_info(producto_id)
 
+        prepare_precio_value(producto_id, unidad_minima)
+
         //SUSCRIBOS EVENTOS
         prepare_unidades_events()
         prepare_precio_events()
-        prepare_precio_value(producto_id, unidad_minima)
-        refresh_right_panel()
+
+        //refresh_right_panel()
         //refresh_totals()
-        $('.precio-input[data-index="' + ($('.precio-input').length - 1) + '"]').first().click()
-// alert(index);
+        //$('.precio-input[data-index="' + ($('.precio-input').length - 1) + '"]').first().click()
+
         $('#loading').hide()
         $('.block_producto_unidades').show()
 
@@ -1856,7 +1858,7 @@ function prepare_unidades_events () {
   })
 
   //calculo del total y el importe cuando hay cambios en las cantidades
-  cantidad_input.bind('keyup change click mouseleave', function () {
+  cantidad_input.on('input', function () {
     var item = $(this)
     if (item.val() != item.attr('data-value')) {
       item.attr('data-value', item.val())
