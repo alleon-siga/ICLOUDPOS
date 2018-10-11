@@ -145,7 +145,7 @@ class venta_shadow_model extends CI_Model
 
     function get_venta_detalle($venta_id)
     {
-        $venta = $this->get_ventas(array('venta_id' => $venta_id));
+        $venta = $this->get_ventas(array('id' => $venta_id));
         $venta->cuotas = array();
         if ($venta->condicion_id == 2) {
             $venta->cuotas = $this->db->get_where('credito_cuotas', array('id_venta' => $venta_id))->result();
@@ -259,45 +259,26 @@ class venta_shadow_model extends CI_Model
         return $correlativo->serie . ' - ' . sumCod($correlativo->correlativo, 6);
     }
 
-    function facturar_venta($venta_id, $iddoc = '')
+    function facturar_venta($id_shadow)
     {
-        $venta = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
-        $iddoc = $iddoc == '' ? $venta->id_documento : $iddoc;
+        $venta = $this->db->get_where('venta_shadow', array('id' => $id_shadow))->row();
+        $iddoc = $venta->id_documento;
         $correlativo = $this->correlativos_model->get_correlativo($venta->local_id, $iddoc);
-        $update_venta['fecha_facturacion'] = date('Y-m-d H:i:s');
+        $update_venta['fecha_facturacion'] = $venta->fecha;
         $update_venta['serie'] = $correlativo->serie;
         $update_venta['numero'] = $correlativo->correlativo;
-        if ($iddoc != '')
-            $update_venta['id_documento'] = $iddoc;
+        
+        
         $this->correlativos_model->sumar_correlativo($venta->local_id, $iddoc);
 
-        // Hago la facturacion de comprobantes
-        if ($venta->comprobante_id > 0) {
-            $this->comprobante_model->facturar($venta->venta_id, $venta->comprobante_id);
-        }
-
-        if ($iddoc != 6) { //Si es diferente a la nota de venta
-            //Correlativo para la guia de remision
-            $correlativo = $this->correlativos_model->get_correlativo($venta->local_id, 4);
-            $this->correlativos_model->sumar_correlativo($venta->local_id, 4);
-            $update_venta['nro_guia'] = $correlativo->correlativo;
-        }
-
-        $this->db->where('venta_id', $venta_id);
-        $this->db->update('venta', $update_venta);
+        $this->db->where('id', $id_shadow);
+        $this->db->update('venta_shadow', $update_venta);
 
 
-        $this->db->where('io', 2);
-        $this->db->where('operacion', 1);
-        $this->db->where('ref_id', $venta_id);
-        $this->db->update('kardex', array(
-            'tipo' => $iddoc,
-            'serie' => $update_venta['serie'],
-            'numero' => sumCod($update_venta['numero'], 6)
-        ));
+        //TODO hacer el registro de kardex
 
-        if (valueOptionDB('FACTURACION', 0) == 1 && ($iddoc == 1 || $iddoc == 3)) {
-            $resp = $this->facturacion_model->facturarVenta($venta_id);
+        if (valueOptionDB('FACTURACION', 0) == 1) {
+            $resp = $this->facturacion_model->facturarVenta_shadow($id_shadow);
         }
 
     }
@@ -1059,5 +1040,46 @@ class venta_shadow_model extends CI_Model
 
         $venta->detalles = $result;
         return $venta;
+    }
+    function get_venta_detalle_convertido($venta_id)
+    {
+        $query = "SELECT doc.des_doc AS vdoc,cl.razon_social AS vnom ,c.tipo_cliente AS vclien,vs.id AS id_shadow,v.id_moneda AS vmon,v.condicion_pago AS vcon,
+                v.serie AS vser, v.numero AS vnum,
+                v.venta_status AS vven,v.fecha AS vfecha,cp.nombre_condiciones AS vcon, v.tasa_cambio AS vtasa,
+                @i := @i + 1 AS contador,
+                c.razon_social,v.total AS vtotal,
+                d.abr_doc,
+                vs.fecha,
+		vs.comprobante_id as comprobante_id,
+                vs.id_documento as documento_id,
+                CASE WHEN vs.id_moneda='1029' THEN 'S/.' ELSE
+                CASE WHEN vs.id_moneda='1030' THEN '$' END END AS moneda,
+                vs.subtotal,
+                vs.total
+                FROM venta_shadow AS vs
+                CROSS JOIN (SELECT @i := 0) r
+                JOIN documentos AS d
+                ON d.id_doc=vs.id_documento
+                JOIN cliente AS c
+                ON c.id_cliente=vs.id_cliente
+                JOIN venta AS v
+                ON v.venta_id=vs.venta_id
+                JOIN documentos AS doc
+                ON doc.id_doc=v.id_documento
+                JOIN cliente AS cl
+                ON cl.id_cliente=v.id_cliente
+                JOIN condiciones_pago AS cp
+                ON cp.id_condiciones=v.condicion_pago
+                WHERE vs.venta_id='" . $venta_id . "'";
+
+        return $this->db->query($query)->result();
+    }
+
+    function remove_ventaconvertida_shadow($id_shadow)
+    {
+        $this->db->where('id', $id_shadow);
+        $this->db->delete('venta_shadow');
+        $this->db->affected_rows();
+        return $this->db->affected_rows();
     }
 }

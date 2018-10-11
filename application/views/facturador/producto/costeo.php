@@ -11,8 +11,7 @@
     <div class="span12">
         <div class="block">
             <!-- Progress Bars Wizard Title -->
-            <div class="row">
-                <div id="charm" class="tcharm">
+            <div id="charm" class="tcharm">
                     <div class="tcharm-header">
                         <h3><a href="#" class="fa fa-arrow-right tcharm-close"></a> <span>Filtros Avanzados</span></h3>
                     </div>
@@ -86,6 +85,8 @@
                         </div>
                     </div>
                 </div>
+            <div class="row">
+                
                 <div class="col-md-2">
                     <button type="button" class="btn btn-default form-control" id="btnSave">
                         <i class="fa fa-save"></i> Guardar cambios

@@ -399,45 +399,7 @@ class venta_new_model extends CI_Model
         return $venta;
     }
 
-    function get_venta_detalle_convertido($venta_id)
-    {
-        $query = "SELECT doc.des_doc AS vdoc,cl.razon_social AS vnom ,c.tipo_cliente AS vclien,vs.id AS id_shadow,v.id_moneda AS vmon,v.condicion_pago AS vcon,
-                v.serie AS vser, v.numero AS vnum,
-                v.venta_status AS vven,v.fecha AS vfecha,cp.nombre_condiciones AS vcon, v.tasa_cambio AS vtasa,
-                @i := @i + 1 AS contador,
-                c.razon_social,v.total AS vtotal,
-                d.abr_doc,
-                vs.fecha,
-                CASE WHEN vs.id_moneda='1029' THEN 'S/.' ELSE
-                CASE WHEN vs.id_moneda='1030' THEN '$' END END AS moneda,
-                vs.subtotal,
-                vs.total
-                FROM venta_shadow AS vs
-                CROSS JOIN (SELECT @i := 0) r
-                JOIN documentos AS d
-                ON d.id_doc=vs.id_documento
-                JOIN cliente AS c
-                ON c.id_cliente=vs.id_cliente
-                JOIN venta AS v
-                ON v.venta_id=vs.venta_id
-                JOIN documentos AS doc
-                ON doc.id_doc=v.id_documento
-                JOIN cliente AS cl
-                ON cl.id_cliente=v.id_cliente
-                JOIN condiciones_pago AS cp
-                ON cp.id_condiciones=v.condicion_pago
-                WHERE vs.venta_id='" . $venta_id . "'";
-
-        return $this->db->query($query)->result();
-    }
-
-    function remove_ventaconvertida_shadow($id_shadow)
-    {
-        $this->db->where('id', $id_shadow);
-        $this->db->delete('venta_shadow');
-        $this->db->affected_rows();
-        return $this->db->affected_rows();
-    }
+    
 
     function get_venta_traspaso($id)
     {

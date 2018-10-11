@@ -262,4 +262,20 @@ class venta extends MY_Controller
         $data = $this->producto_costo_unitario_model->getCostoUnitarioVenta($param);
         echo json_encode($data);
     }
+    function facturar_venta()
+    {
+        $id_shadow = $this->input->post('id_shadow');
+        $this->venta_shadow_model->facturar_venta($id_shadow);
+        $data['venta'] = $this->db->get_where('venta_shadow', array('id' => $id_shadow))->row();
+
+        if (valueOptionDB('FACTURACION', 0) == 1 && ($data['venta']->id_documento == 1 || $data['venta']->id_documento == 3)) {
+            $data['facturacion'] = $this->db->get_where('facturacion', array(
+                'documento_tipo' => sumCod($data['venta']->id_documento, 2),
+                'ref_id' => $data['venta']->id
+            ))->row();
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode($data);
+    }
 }

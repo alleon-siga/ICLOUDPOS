@@ -16,22 +16,22 @@
     }
 </style>
 <div class="table-responsive">
-    <table class="table dataTable table-bordered no-footer"  style="overflow:scroll">
+    <table class="table dataTable table-bordered no-footer tableStyle"  style="overflow:scroll">
         <thead>
             <tr>
-                <th>#</th>
-                <th>Fecha Registro</th>
-                <th>Fecha Venta</th>
-                <th># Comprobante</th>
-                <th>Identificaci&oacute;n</th>
-                <th>Cliente</th>
-                <th>Vendedor</th>
-                <th>Condici&oacute;n</th>
-                <th>Estado</th>
-                <th>Tip. Cam.</th>
-                <th>Total</th>
-                <th>Convertido</th>
-                <th>Acciones</th>
+                <th style="white-space: normal;">#</th>
+                <th style="white-space: normal;">Fecha Registro</th>
+                <th style="white-space: normal;">Fecha Venta</th>
+                <th style="white-space: normal;"># Comprobante</th>
+                <th style="white-space: normal;">Identificaci&oacute;n</th>
+                <th style="white-space: normal;">Cliente</th>
+                <th style="white-space: normal;">Vendedor</th>
+                <th style="white-space: normal;">Condici&oacute;n</th>
+                <th style="white-space: normal;">Estado</th>
+                <th style="white-space: normal;">Tip. Cam.</th>
+                <th style="white-space: normal;">Total</th>
+                <th style="white-space: normal;">Convertido</th>
+                <th style="white-space: normal;">Acciones</th>
             </tr>
         </thead>
         <tbody>
@@ -63,8 +63,8 @@
                     <td style="white-space: normal;"><?= $venta->condicion_nombre ?></td>
                     <td style="white-space: normal;"><?= $venta->venta_estado ?></td>
                     <td style="white-space: normal;"><?= $venta->moneda_tasa ?></td>
-                    <td style="text-align: right;"><?= $venta->moneda_simbolo ?> <?= number_format($venta->total, 2) ?></td>
-                    <td style="text-align: center;"><?php if(($venta->convertidos)>0){ echo '<button class="btn btn-info btn-xs" onclick="detalle('.$venta->venta_id.')">S ('.$venta->convertidos.')</buton>';}else{echo '<button class="btn btn-warning btn-xs">N</buton>';}?></td>
+                    <td style="white-space: normal;"><?= $venta->moneda_simbolo ?> <?= number_format($venta->total, 2) ?></td>
+                    <td style="white-space: normal;"><?php if(($venta->convertidos)>0){ echo '<button class="btn btn-info btn-xs" onclick="detalle('.$venta->venta_id.')">S ('.$venta->convertidos.')</buton>';}else{echo '<button class="btn btn-warning btn-xs">N</buton>';}?></td>
                     <td style="text-align: center; white-space: normal;">
                     <?php
                         if($venta->documento_id==6){
