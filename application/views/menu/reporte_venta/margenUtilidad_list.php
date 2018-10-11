@@ -305,7 +305,7 @@
 </div>
 <script type="text/javascript">
   $(document).ready(function () {
-    TablesDatatables.init(0, 'desc')
+    TablesDatatables.init(0, 'asc')
 
     $('#exportar_excel').on('click', function () {
       exportar_excel()
