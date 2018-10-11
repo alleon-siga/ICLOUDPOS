@@ -98,6 +98,11 @@ class Auth extends CI_Controller
 					//App version
 					$version = $this->login_api_model->verificar_version();
 
+					//Emp logo
+					$img_dir = './recursos/img/logo/' . $config['EMPRESA_LOGO'];
+					$image = file_get_contents($img_dir);
+					$emp_logo = base64_encode($image);
+
 					// Json Array
 					$json = array(
 						'status'  => 'success',
@@ -111,7 +116,8 @@ class Auth extends CI_Controller
 						'tarjetas' => $tarjetas,
 						'grupos_cliente' => $grupos_cliente,
 						'opciones' => $opciones,
-						'version' => $version
+						'version' => $version,
+						'logo' => $emp_logo
 					);
 
 					echo json_encode($json);
