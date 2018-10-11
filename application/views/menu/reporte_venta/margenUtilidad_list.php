@@ -323,7 +323,7 @@
       'moneda_id': $('#moneda_id').val()
     }
 
-    var win = window.open('<?= base_url()?>reporte_ventas/utilidadProducto/pdf?data=' + JSON.stringify(data), '_blank')
+    var win = window.open('<?= base_url()?>reporte_ventas/margenUtilidad/pdf?data=' + JSON.stringify(data), '_blank')
     win.focus()
   }
 
@@ -334,7 +334,7 @@
       'moneda_id': $('#moneda_id').val()
     }
 
-    var win = window.open('<?= base_url()?>reporte_ventas/utilidadProducto/excel?data=' + JSON.stringify(data), '_blank')
+    var win = window.open('<?= base_url()?>reporte_ventas/margenUtilidad/excel?data=' + JSON.stringify(data), '_blank')
     win.focus()
   }
 </script>
