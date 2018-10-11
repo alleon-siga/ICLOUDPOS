@@ -343,6 +343,12 @@ $primary_nav = array(
                         'name' => 'Ventas Emitidas',
                         'url' => $ruta . 'facturacion/reporte_venta',
                         'icon' => 'gi gi-parents',
+                        'slug' => 'facturacion_comprobantes'                    
+                    ),
+                    array(
+                        'name' => 'Relacion de Comprobantes',
+                        'url' => $ruta . 'facturacion/relacion_comprobante',
+                        'icon' => 'gi gi-parents',
                         'slug' => 'facturacion_comprobantes'
                     )
                 )
