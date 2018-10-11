@@ -325,7 +325,7 @@ class facturacion extends MY_Controller {
         header('Cache-Control: must-revalidate');
         header('Pragma: public');
         header('Content-Length: ' . filesize('./application/libraries/Facturador/files/xmls/' . $emisor->ruc . '/' . $name));
-        ob_clean();
+//        ob_clean();
         flush();
         readfile('./application/libraries/Facturador/files/xmls/' . $emisor->ruc . '/' . $name) or die('error!');
     }
