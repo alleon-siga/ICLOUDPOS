@@ -40,6 +40,11 @@
             </tr>
         </thead>
         <tbody>
+            <?php
+        $total_subtotal = 0;
+        $total_impuesto = 0;
+        $total_total = 0;
+        ?>
             <?php foreach ($lists as $list): ?>
                 <tr class="info" style="font-weight: bold;">
                     <td><?= $list->venta_id ?></td>
@@ -54,7 +59,12 @@
                     <td><?= $list->impuesto ?></td>
                     <td><?= $list->total ?></td>
                     <td><?= $list->cliente_identificacion ?></td>
-                    <td><?= $list->cliente_nombre ?></td>
+                    <td  style="white-space: normal;"><?= $list->cliente_nombre ?></td>
+                    <?php 
+                    $total_subtotal+=$list->subtotal;
+                    $total_impuesto+=$list->impuesto;
+                    $total_total+=$list->total;
+                    ?>
                     <td>
                         <?php
                             $estado = '';
@@ -90,6 +100,16 @@
                 </tr>
             <?php endforeach; ?>
         </tbody>
+        <tfoot>
+            <tr>
+                <td >Totales:</td>
+                <td colspan="7"></td>
+                <td style="text-align: right; white-space: nowrap;"><?= number_format($total_subtotal,2) ?></td>
+                <td style="text-align: right; white-space: nowrap;"><?= number_format($total_impuesto,2) ?></td>
+                <td style="text-align: right; white-space: nowrap;"><?= number_format($total_total,2) ?></td>
+                <td colspan="3"></td>
+            </tr>
+        </tfoot>
     </table>
 </div>
 <div class="row">
@@ -110,7 +130,8 @@ $(document).ready(function () {
             $('[data-toggle="popover"]').popover({
                 trigger: 'hover'
             });
-        $('#datatable').DataTable( {
+        
+    $('#datatable').removeAttr('width').DataTable( {
         "paging":   false,
         "searching": false
     } );

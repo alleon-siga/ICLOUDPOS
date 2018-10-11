@@ -30,7 +30,10 @@
                            value="<?= date('01/m/Y') ?> - <?= date('d/m/Y') ?>"/>
                 </div>
                 <div class="col-md-1">
-                    <input type="checkbox" name="bloqueofecha" id="bloqueofecha" style="margin-top: 40px;" data-toggle="tooltip" data-placement="top" title="Check Para activar Busqueda por Fecha">
+                    <input type="checkbox" name="bloqueofecha" id="bloqueofecha" checked="checked" 
+                           style="margin-top: 40px;" data-toggle="tooltip" data-placement="top" 
+                           title="Check Para activar Busqueda por Fecha"
+                           onclick="fechabloque()">
                 </div>
                 <div class="col-md-2">
                     <label class="control-label panel-admin-text">Documento</label>
@@ -245,6 +248,8 @@
             <!-- /.modal-dialog -->
             <script type="text/javascript">
                         $(document).ready(function () {
+                            
+
                             $('[data-toggle="tooltip"]').tooltip();
                             $('input[name="fecha"]').daterangepicker({
                                 'locale': {
@@ -293,7 +298,15 @@
                             $('.chosen-container').css('width', '100%')
 
                         })
-
+                        function fechabloque(){
+                            if($('#bloqueofecha').prop('checked')){
+                                document.getElementById('fecha').disabled = false
+                                document.getElementById('fecha').value='<?= date('01/m/Y') ?> - <?= date('d/m/Y') ?>'
+                            }else{
+                                document.getElementById('fecha').disabled = true 
+                                document.getElementById('fecha').value='00/00/0000 - 00/00/0000'
+                            }
+                        }
                         function getReporte() {
                             $('#historial_list').html($('#loading').html())
 

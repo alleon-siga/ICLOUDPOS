@@ -144,7 +144,6 @@ class facturacion_model extends CI_Model {
             $this->db->where('f.estado', $params['estado_id']);
         }
         
-        $this->db->group_by('v.venta_id');
 
         $ventas = $this->db->get()->result();
 
