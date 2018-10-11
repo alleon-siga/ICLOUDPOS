@@ -40,8 +40,8 @@ class reporte_venta_model extends CI_Model
             WHERE
                 comp.id = " . $params['comprobante_id'] . " AND v.local_id = " . $params['local_id'] . "
                     AND v.id_moneda = " . $params['moneda_id'] . "
-                    AND v.fecha_facturacion >= '".$params['fecha_ini']."'
-                    AND v.fecha_facturacion <= '".$params['fecha_fin']."'
+                    AND v.fecha_facturacion >= '" . $params['fecha_ini'] . "'
+                    AND v.fecha_facturacion <= '" . $params['fecha_fin'] . "'
         ";
 
         return $this->db->query($query)->result();
@@ -50,8 +50,8 @@ class reporte_venta_model extends CI_Model
     function getVendedoresComision($params)
     {
         $where_usuario = '';
-        if(!empty($params['usuarios_id'])){
-            $where_usuario = "AND v.id_vendedor = '".$params['usuarios_id']."'";
+        if (!empty($params['usuarios_id'])) {
+            $where_usuario = "AND v.id_vendedor = '" . $params['usuarios_id'] . "'";
         }
         $query = "
                 SELECT
@@ -67,8 +67,8 @@ class reporte_venta_model extends CI_Model
                     v.id_moneda = " . $params['moneda_id'] . " 
                 AND v.local_id = " . $params['local_id'] . "
                 AND v.venta_status = 'COMPLETADO' 
-                AND v.fecha >= '".$params['fecha_ini']."'
-                AND v.fecha <= '".$params['fecha_fin']."'
+                AND v.fecha >= '" . $params['fecha_ini'] . "'
+                AND v.fecha <= '" . $params['fecha_fin'] . "'
                 $where_usuario
                 GROUP BY
                     v.id_vendedor;
@@ -77,16 +77,16 @@ class reporte_venta_model extends CI_Model
         return $this->db->query($query)->result();
     }
 
-    function getMargenUtilidad($params)
+    function getMargenUtilidad1($params)
     {
         $marca_id = $grupo_id = $familia_id = $linea_id = $producto_id = $local_id = '';
-        $local_id .= ($params['local_id']>0)? " AND v.local_id=".$params['local_id'] : "";
-        $marca_id .= ($params['marca_id']>0)? " AND p.producto_marca=".$params['marca_id'] : "";
-        $grupo_id .= ($params['grupo_id']>0)? " AND p.produto_grupo=".$params['grupo_id'] : "";
-        $familia_id .= ($params['familia_id']>0)? " AND p.producto_familia=".$params['familia_id'] : "";
-        $linea_id .= ($params['linea_id']>0)? " AND p.producto_linea=".$params['linea_id'] : "";
-        $producto_id .= ($params['producto_id']!='')? " AND p.producto_id IN(".implode(",", $params['producto_id']).")" : "";
-        $search = $marca_id.$grupo_id.$familia_id.$linea_id.$producto_id.$local_id;
+        $local_id .= ($params['local_id'] > 0) ? " AND v.local_id=" . $params['local_id'] : "";
+        $marca_id .= ($params['marca_id'] > 0) ? " AND p.producto_marca=" . $params['marca_id'] : "";
+        $grupo_id .= ($params['grupo_id'] > 0) ? " AND p.produto_grupo=" . $params['grupo_id'] : "";
+        $familia_id .= ($params['familia_id'] > 0) ? " AND p.producto_familia=" . $params['familia_id'] : "";
+        $linea_id .= ($params['linea_id'] > 0) ? " AND p.producto_linea=" . $params['linea_id'] : "";
+        $producto_id .= ($params['producto_id'] != '') ? " AND p.producto_id IN(" . implode(",", $params['producto_id']) . ")" : "";
+        $search = $marca_id . $grupo_id . $familia_id . $linea_id . $producto_id . $local_id;
 
         $query = "SELECT
                     l.local_nombre,
@@ -276,50 +276,66 @@ class reporte_venta_model extends CI_Model
                 AND v.id_moneda = pcu.moneda_id
             WHERE 
                 v.venta_status='COMPLETADO'
-                AND v.id_moneda = ".$params['moneda_id']."
-                AND v.fecha >= '".$params['fecha_ini']."'
-                AND v.fecha <= '".$params['fecha_fin']."'
+                AND v.id_moneda = " . $params['moneda_id'] . "
+                AND v.fecha >= '" . $params['fecha_ini'] . "'
+                AND v.fecha <= '" . $params['fecha_fin'] . "'
                 $search";
 
         $query .= " GROUP BY p.producto_id";
         return $this->db->query($query)->result();
     }
 
+
     function getUtilidadProducto($params)
     {
         $where = "v.venta_status='COMPLETADO'";
-        if($params['local_id']>0){
-            $where .= " AND v.local_id = ".$params['local_id'];
+        if ($params['local_id'] > 0) {
+            $where .= " AND v.local_id = " . $params['local_id'];
         }
-        if($params['moneda_id']>0){
-            $where .= " AND v.id_moneda = ".$params['moneda_id'];
+        if ($params['moneda_id'] > 0) {
+            $where .= " AND v.id_moneda = " . $params['moneda_id'];
         }
-        if(!empty($params['fecha_ini']) && !empty($params['fecha_fin'])){
-            if(!empty($where)){
+        if (!empty($params['fecha_ini']) && !empty($params['fecha_fin'])) {
+            if (!empty($where)) {
                 $where .= " AND ";
             }
-            $where .= "v.fecha >= '".$params['fecha_ini']."' AND v.fecha <= '".$params['fecha_fin']."'";
+            $where .= "v.fecha >= '" . $params['fecha_ini'] . "' AND v.fecha <= '" . $params['fecha_fin'] . "'";
         }
 
-        $query = "SELECT v.venta_id, DATE_FORMAT(v.fecha, '%d/%m/%Y') AS fecha, p.producto_nombre, u.nombre_unidad, SUM(up.unidades * dv.cantidad) AS cantidad, dv.detalle_costo_promedio, dv.precio, l.local_nombre, dv.detalle_costo_ultimo, dv.impuesto_porciento, v.tipo_impuesto, dv.tipo_impuesto_compra, v.id_moneda
-            FROM detalle_venta dv
-            INNER JOIN venta v ON v.venta_id=dv.id_venta 
-            INNER JOIN producto p ON p.producto_id=dv.id_producto 
-            INNER JOIN `local` l ON v.local_id = l.int_local_id
-            INNER JOIN unidades_has_producto up ON dv.id_producto=up.producto_id 
-            AND dv.unidad_medida=up.id_unidad
-            INNER JOIN unidades_has_producto up2 ON dv.id_producto=up2.producto_id 
-            AND (
-                select id_unidad from unidades_has_producto 
-                where unidades_has_producto.producto_id = dv.id_producto
-                ORDER BY orden DESC LIMIT 1
-            ) = up2.id_unidad 
-            INNER JOIN unidades u ON u.id_unidad=up2.id_unidad
-            INNER JOIN producto_costo_unitario pcu ON  p.producto_id = pcu.producto_id AND v.id_moneda = pcu.moneda_id";
-        if(!empty($where)){
-            $query .= " WHERE ". $where;
+        $query = "SELECT 
+                    v.venta_id, 
+                    p.producto_id,
+                    dv.unidad_medida,
+                    DATE_FORMAT(v.fecha, '%d/%m/%Y') AS fecha, 
+                    p.producto_nombre, 
+                    u.nombre_unidad, 
+                    SUM(up.unidades * (dv.cantidad - dv.cantidad_devuelta)) AS cantidad, 
+                    dv.detalle_costo_promedio, 
+                    dv.precio, 
+                    l.local_nombre, 
+                    dv.detalle_costo_ultimo, 
+                    dv.impuesto_porciento, 
+                    v.tipo_impuesto, 
+                    dv.tipo_impuesto_compra, 
+                    v.id_moneda
+                FROM detalle_venta dv
+                INNER JOIN venta v ON v.venta_id=dv.id_venta 
+                INNER JOIN producto p ON p.producto_id=dv.id_producto 
+                INNER JOIN `local` l ON v.local_id = l.int_local_id
+                INNER JOIN unidades_has_producto up ON dv.id_producto=up.producto_id 
+                AND dv.unidad_medida=up.id_unidad
+                INNER JOIN unidades_has_producto up2 ON dv.id_producto=up2.producto_id 
+                AND (
+                    SELECT id_unidad FROM unidades_has_producto 
+                    WHERE unidades_has_producto.producto_id = dv.id_producto
+                    ORDER BY orden DESC LIMIT 1
+                ) = up2.id_unidad 
+                INNER JOIN unidades u ON u.id_unidad=up2.id_unidad
+                INNER JOIN producto_costo_unitario pcu ON  p.producto_id = pcu.producto_id AND v.id_moneda = pcu.moneda_id";
+        if (!empty($where)) {
+            $query .= " WHERE " . $where;
         }
         $query .= " GROUP BY v.venta_id, dv.id_detalle ORDER BY v.venta_id";
         return $this->db->query($query)->result();
-    }    
+    }
 }
