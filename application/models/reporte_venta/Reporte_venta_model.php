@@ -309,7 +309,7 @@ class reporte_venta_model extends CI_Model
                     DATE_FORMAT(v.fecha, '%d/%m/%Y') AS fecha, 
                     p.producto_nombre, 
                     u.nombre_unidad, 
-                    SUM(up.unidades * (dv.cantidad - dv.cantidad_devuelta)) AS cantidad, 
+                    SUM(up.unidades * (dv.cantidad - IFNULL(dv.cantidad_devuelta, 0))) AS cantidad,
                     dv.detalle_costo_promedio, 
                     dv.precio, 
                     l.local_nombre, 
