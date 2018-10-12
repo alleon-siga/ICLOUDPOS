@@ -376,7 +376,7 @@ class facturacion extends MY_Controller {
             'distrito_id' => $this->input->post('distrito'),
             'ubigeo' => $this->input->post('codigo_ubigeo'),
             'moneda' => $this->input->post('moneda'),
-            'env' => 'BETA',
+            'env' => $this->input->post('env'),
             'user_sol' => $this->input->post('user_sol'),
             'pass_sol' => $this->input->post('pass_sol'),
             'pass_sign' => $this->input->post('pass_sign')

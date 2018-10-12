@@ -122,10 +122,20 @@
             </div>
 
             <div class="form-group">
-                <label class="col-md-4 control-label" for="pass_sign">Contraseña del certificado</label>
+                <label class="col-md-4 control-label" for="pass_sign">Contraseña del Certificado</label>
                 <div class="col-md-8">
                     <input type="text" class="form-control" id="pass_sign" name="pass_sign"
                            value="<?= isset($emisor) ? $emisor->pass_sign : '' ?>">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-md-4 control-label" for="pass_sign">Certificado de Produccion</label>
+                <div class="col-md-8">
+                    <select id="env" name="env" class="form-control">
+                        <option value="PROD" <?= isset($emisor) && $emisor->env == 'PROD' ? 'selected' : '' ?>>SI</option>
+                        <option value="BETA" <?= isset($emisor) && $emisor->env == 'BETA' ? 'selected' : '' ?>>NO</option>
+                    </select>
                 </div>
             </div>
             <br>
