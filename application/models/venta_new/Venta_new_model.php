@@ -1151,7 +1151,8 @@ class venta_new_model extends CI_Model
             $result = $this->traspaso_model->traspasar_productos($traspaso->id_producto, $traspaso->local_id, $traspaso->parent_local, $id_usuario, array(
                 'um_id' => $minima_unidad->um_id,
                 'cantidad' => $traspaso->cantidad,
-                'venta_id' => $next_id->venta_id + 1
+                'venta_id' => $next_id->venta_id + 1,
+                'traspaso_id'=>$idTraspaso
             ));
             //aqui guarda los detalles de traspaso
             $this->db->insert("traspaso_detalle", array(
