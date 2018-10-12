@@ -99,9 +99,14 @@ class Auth extends CI_Controller
 					$version = $this->login_api_model->verificar_version();
 
 					//Emp logo
-					$img_dir = './recursos/img/logo/' . $config['EMPRESA_LOGO'];
-					$image = file_get_contents($img_dir);
-					$emp_logo = base64_encode($image);
+					if (!empty($config['EMPRESA_LOGO'])) {
+						$img_dir = './recursos/img/logo/' . $config['EMPRESA_LOGO'];
+						$image = file_get_contents($img_dir);
+						$emp_logo = base64_encode($image);
+
+					} else {
+						$emp_logo = 'null';
+					}
 
 					// Json Array
 					$json = array(
