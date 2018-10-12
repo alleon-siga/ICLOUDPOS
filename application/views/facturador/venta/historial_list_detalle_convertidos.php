@@ -49,13 +49,7 @@ foreach ($venta as $v) {
                 <div class="col-md-2"><label class="control-label">Moneda:</label>
                 </div>
                 <div class="col-md-3">
-                    <?php
-                    if ($vmon == MONEDA_DEFECTO) {
-                        echo 'Soles';
-                    } else {
-                        echo 'Dolares';
-                    }
-                    ?>
+                    <?= $vmon ?>
                 </div>
             </div>
             <hr class="hr-margin-5">
@@ -94,6 +88,7 @@ foreach ($venta as $v) {
                             <th>Cliente</th>
                             <th>T. Cliente</th>
                             <th>Doc.</th>
+                            <th># Factura</th>
                             <th>Fecha</th>
                             <th>Moneda</th>
                             <th>Subtotal</th>
@@ -116,13 +111,22 @@ foreach ($venta as $v) {
                                     }
                                     ?></td>
                                 <td><?= $detalle->abr_doc ?></td>
+                                <td><?= $detalle->serie_fac > 0 ? $detalle->serie_fac . '-' . $detalle->numero_fac : 'Sin Facturar' ?></td>
                                 <td><?= $detalle->fecha ?></td>
                                 <td><?= $detalle->moneda ?></td>
                                 <td><?= $detalle->subtotal ?></td>
                                 <td class="total_co"><?= $detalle->total ?></td>  
-                                <td><button class="btn btn-info btn-xs" onclick="info(<?= $detalle->id_shadow ?>)"><i class="fa fa-search"></i></button>&nbsp;
-                                    <button class="btn btn-danger btn-xs eliminarv" id="elishadow" data-idshadow="<?= $detalle->id_shadow ?>"><i class="fa fa-trash"></i></button>&nbsp;
-                                    <button class="btn btn-default btn-xs" data-toggle="tooltip"  title="Sunat" data-original-title="Sunat" onclick="generarcomprobante(<?= $detalle->id_shadow ?>,<?= $detalle->documento_id ?>)"><i class="fa fa-mail-forward"></i></button></td>
+                                <td class="text-center"><button class="btn btn-info btn-xs" onclick="info(<?= $detalle->id_shadow ?>)"><i class="fa fa-search"></i></button>&nbsp;
+                                    <?php
+                                    if ($detalle->serie_fac > 0) {
+                                        
+                                    } else {
+                                        ?>
+                                        <button class="btn btn-danger btn-xs eliminarv" onclick="mostrar(<?= $detalle->id_shadow ?>)" ><i class="fa fa-trash"></i></button>&nbsp;
+                                        <button class="btn btn-default btn-xs" data-toggle="tooltip"  title="Sunat" data-original-title="Sunat"  onclick="generarcomprobante(<?= $detalle->id_shadow ?>,<?= $detalle->venta_id ?>)"><i class="fa fa-mail-forward"></i></button>
+                                    <?php }
+                                    ?>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
 
@@ -132,7 +136,7 @@ foreach ($venta as $v) {
             <hr class="hr-margin-5">
             <div class="row">
                 <div class="col-md-2"><label class="control-label">Total (Real):</label></div>
-                <div class="col-md-3"><?= $detalle->moneda ?><span id="total_r" > <?= number_format($vtotal, 2) ?></span></div>
+                <div class="col-md-3"><?= $detalle->moneda ?><span id="total_r" > <?= number_format($vtotal, 2, '.', '') ?></span></div>
                 <div class="col-md-1"></div>
                 <div class="col-md-3"><label class="control-label">Total (Contable):</label>
                 </div>
@@ -149,7 +153,7 @@ foreach ($venta as $v) {
             <div class="row">
                 <div class="text-right">
                     <div class="col-md-12">
-                        <input type="button" class='btn btn-danger' value="Cerrar" data-dismiss="modal">
+                        <a onclick="regresar()" class="btn btn-danger">Cancelar</a>
                     </div>
                 </div>
             </div>
@@ -159,61 +163,70 @@ foreach ($venta as $v) {
 
 <script type="text/javascript" src="<?= base_url() ?>recursos/js/facturador_historial_list_detalle.js"></script>
 <script type="text/javascript">
-                                        $(document).ready(function () {
-                                            calculartotalcontable();
-                                            caltulartotal();
+                            $(document).ready(function () {
+                                calculartotalcontable();
+                                caltulartotal();
+                            })
 
+                            function calculartotalcontable() {
+                                var totalcontable = 0;
+                                $(".total_co").each(function () {
+                                    totalcontable += parseFloat($(this).html()) || 0;
+                                    $("#total_c").text(parseFloat(totalcontable).toFixed(2));
 
+                                });
+                            }
+                            function caltulartotal() {
+                                $("#total_r_c").text(parseFloat(document.getElementById("total_r").innerHTML - document.getElementById("total_c").innerHTML).toFixed(2));
+                            }
+                            function regresar() {
+                                $('#dialog_venta_detalle_convertidos').modal('hide');
+                                $(".modal-backdrop").hide();
+                                get_ventas();
+                            }
 
-                                        })
-                                        function calculartotalcontable() {
-                                            var totalcontable = 0;
-                                            $(".total_co").each(function () {
-                                                totalcontable += parseFloat($(this).html()) || 0;
-                                                $("#total_c").text(parseFloat(totalcontable).toFixed(2));
+                            function eliminar(id, id_venta) {
 
-                                            });
-                                        }
-                                        function caltulartotal() {
-                                            $("#total_r_c").text(parseFloat(document.getElementById("total_r").innerHTML - document.getElementById("total_c").innerHTML).toFixed(2));
-                                        }
-
-                                        $("#my-table").on('click', '.eliminarv', function () {
-
-                                            var id = $('#elishadow').attr("data-idshadow");
-                                            if ($('#tablec tr').length > 0) {
-                                                var tr = $(this).closest('tr');
-                                                $.ajax({
-                                                    url: $('#ruta').val() + 'facturador/venta/remove_ventaconvertida_shadow/',
-                                                    type: 'POST',
-                                                    data: {'id_shadow': id},
-                                                    success: function (data) {
-
-                                                    },
-                                                    dataType: 'json',
-                                                    error: function (res1) {
-                                                        tr.remove();
-                                                        calculartotalcontable();
-                                                        caltulartotal();
-                                                    }
-                                                });
+                                if ($('#my-table #tablec tr').length > 0) {
+                                    var tr = $(this).closest('tr');
+                                    $.ajax({
+                                        url: $('#ruta').val() + 'facturador/venta/remove_ventaconvertida_shadow/',
+                                        type: 'POST',
+                                        data: {'id': id},
+                                        success: function (data) {
+                                            if ($('#my-table #tablec tr').length == 1) {
+                                                $('#remove_ventaconvertida_shadow').modal('hide');
+                                                tr.remove();
+                                                $('#dialog_venta_detalle_convertidos').modal('hide');
+                                                $(".modal-backdrop").hide();
+                                                get_ventas();
                                             } else {
-                                                alert('Error s');
+                                                $('#remove_ventaconvertida_shadow').modal('hide');
+                                                tr.remove();
+                                                calculartotalcontable();
+                                                caltulartotal();
+                                                detalle(id_venta);
                                             }
-                                        });
-                                        function generarcomprobante(id_shadow, iddoc) {
-
-                                            $.ajax({
-                                                url: $('#ruta').val() + 'facturador/venta/facturar_venta/',
-                                                type: 'POST',
-                                                data: {'id_shadow': id_shadow},
-
-                                                success: function (data) {
-                                                    alert(data)
-                                                },
-                                                error: function () {
-                                                    alert('asd')
-                                                }
-                                            });
+                                        },
+                                        error: function (res1) {
+                                            alert("error 2");
                                         }
+                                    });
+                                } 
+                            }
+
+                            function generarcomprobante(id_shadow, venta_id) {
+                                $.ajax({
+                                    url: $('#ruta').val() + 'facturador/venta/facturar_venta/',
+                                    type: 'POST',
+                                    data: {'id_shadow': id_shadow},
+
+                                    success: function (data) {
+                                        detalle(venta_id);
+                                    },
+                                    error: function (resp) {
+                                        alert(resp)
+                                    }
+                                });
+                            }
 </script>

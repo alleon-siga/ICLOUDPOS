@@ -647,10 +647,10 @@ class facturacion_model extends CI_Model {
 
         return $this->crearXml($facturacion_id);
     }
-    function facturarVenta_shadow($venta_id) {
+    function facturarVenta_shadow($id_shadow) {
         $this->load->model('venta_shadow/venta_shadow_model');
-        log_message('debug', 'Facturacion Electronica. Guardando venta ' . $venta_id);
-        $venta = $this->venta_shadow_model->get_venta_detalle($venta_id);
+        log_message('debug', 'Facturacion Electronica. Guardando venta ' . $id_shadow);
+        $venta = $this->venta_shadow_model->get_venta_detalle($id_shadow);
 
         $tipo_doc = '';
         $numero_comprobante = '';
@@ -719,7 +719,7 @@ class facturacion_model extends CI_Model {
             'total' => $venta->total * $cambio_dolar,
             'estado' => 0,
             'nota' => 'No enviado',
-            'ref_id' => $venta->venta_id,
+            'ref_id' => $venta->id,
         ));
 
         $facturacion_id = $this->db->insert_id();

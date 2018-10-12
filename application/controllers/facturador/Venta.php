@@ -46,10 +46,11 @@ class venta extends MY_Controller
         $params['fecha_fin'] = str_replace("/", "-", $date_range[1]);
         $params['moneda_id'] = $this->input->post('moneda_id');
         $params['usuarios_id'] = $this->input->post('usuarios_id');
+        $params['estado_fac'] = $this->input->post('estado_fac');
         $params['id_documento'] = 6;
         $data['moneda'] = $this->db->get_where('moneda', array('id_moneda' => $params['moneda_id']))->row();
-        $data['ventas'] = $this->venta->get_ventas_ls($params, 'venta');
-        $data['venta_totales'] = $this->venta->get_ventas_totales($params, 'venta');
+        $data['ventas'] = $this->venta_shadow_model->get_ventas_ls($params);
+        $data['venta_totales'] = $this->venta_shadow_model->get_ventas_totales($params);
         $this->load->view('facturador/venta/historial_list', $data);
     }
 
@@ -71,21 +72,45 @@ class venta extends MY_Controller
         $data['venta'] = $datos;
         $this->load->view('facturador/venta/historial_list_detalle', $data);
     }
+    function get_venta_detalle_shadow()
+    {
+        $venta_id = $this->input->post('venta_id');
+        $datos = $this->venta->get_venta_detalle($venta_id);
+        $x = 0;
+        foreach($datos->detalles as $dato){
+            $datos->detalles[$x]->cantidad = $this->unidades_model->convert_minimo_by_um($dato->producto_id, $dato->unidad_id, $dato->cantidad);
+            $datos->detalles[$x]->unidad_nombre = $this->unidades_model->get_um_min_by_producto($dato->producto_id);
+            $unidades = $this->unidades_model->get_by('nombre_unidad', $datos->detalles[$x]->unidad_nombre);
+            $datos->detalles[$x]->unidad_id_min = $unidades['id_unidad'];
+            $datos->detalles[$x]->precio = $this->unidades_model->get_maximo_costo($dato->producto_id, $dato->unidad_id, $datos->detalles[$x]->precio);
+            $contable_costo = $this->venta_contable->getCosto($venta_id, $dato->unidad_id);
+            $datos->detalles[$x]->contable_costo = $contable_costo->contable_costo;
+            $x++;
+        }
+        $data['venta'] = $datos;
+        $this->load->view('facturador/venta/historial_list_detalle', $data);
+    }
     function get_venta_detalle_convertido()
     {
         $venta_id = $this->input->post('venta_id');
-        $datos = $this->venta->get_venta_detalle_convertido($venta_id);
+        $datos = $this->venta_shadow_model->get_venta_detalle_convertido($venta_id);
         
         $data['venta'] = $datos;
         $this->load->view('facturador/venta/historial_list_detalle_convertidos', $data);
     }
+    function get_venta_convertido()
+    {
+        $id = $this->input->post('id');
+        $datos = $this->venta_shadow_model->get_venta_convertido($id);        
+        $data['ventacon'] = $datos;
+        $this->load->view('facturador/venta/remove_ventaconvertida_shadow', $data);
+    }
     function remove_ventaconvertida_shadow()
     {
-        $id_shadow = $this->input->post('id_shadow');
-        $datos = $this->venta->remove_ventaconvertida_shadow($id_shadow);
+        $id_shadow = $this->input->post('id');
+        $datos = $this->venta_shadow_model->remove_ventaconvertida_shadow($id_shadow);        
+        return false;
         
-        $data['shadow_v'] = $datos;
-        $this->load->view('facturador/venta/remove_ventaconvertida_shadow', $data);
     }
     /*function editarVentaContable()
     {
@@ -275,7 +300,7 @@ class venta extends MY_Controller
             ))->row();
         }
 
-        header('Content-Type: application/json');
-        echo json_encode($data);
+        //header('Content-Type: application/json');
+        //echo json_encode($data);
     }
 }

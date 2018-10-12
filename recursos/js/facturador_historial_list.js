@@ -38,6 +38,21 @@ function exportar_excel() {
     var win = window.open($('#ruta').val() + 'facturador/venta/historial_excel?data=' + JSON.stringify(data), '_blank');
     win.focus();
 }
+function mostrar(id) {
+    $("#remove_ventaconvertida_shadow").html($("#loading").html());
+    $('#remove_ventaconvertida_shadow').modal('show');
+    $.ajax({
+        url: $('#ruta').val() + 'facturador/venta/get_venta_convertido/',
+        type: 'POST',
+        data: {'id': id},
+        success: function (data) {
+            $('#remove_ventaconvertida_shadow').html(data);
+        },
+        error: function (resp) {
+            alert("resp")
+        }
+    });
+}
 
 function ver(venta_id) {
 
@@ -56,6 +71,35 @@ function ver(venta_id) {
             alert('asd')
         }
     });
+}
+function info(id_shadow) {
+
+    $("#dialog_venta_detalle_sahdow").html($("#loading").html());
+    $("#dialog_venta_detalle_sahdow").modal('show');
+
+    $.ajax({
+        url: $('#ruta').val() + 'facturador/venta/get_venta_detalle_shadow/',
+        type: 'POST',
+        data: {'id_shadow': id_shadow},
+
+        success: function (data) {
+            $("#dialog_venta_detalle_sahdow").html(data);
+        },
+        error: function () {
+            alert('asd')
+        }
+    });
+}
+function calculartotalcontable() {
+    var totalcontable = 0;
+    $(".total_co").each(function () {
+        totalcontable += parseFloat($(this).html()) || 0;
+        $("#total_c").text(parseFloat(totalcontable).toFixed(2));
+
+    });
+}
+function caltulartotal() {
+    $("#total_r_c").text(document.getElementById("total_r").innerHTML - document.getElementById("total_c").innerHTML).toFixed(2);
 }
 function detalle(venta_id) {
 

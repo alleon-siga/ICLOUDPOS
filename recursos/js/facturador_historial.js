@@ -1,7 +1,6 @@
 $(function () {
     //CONFIGURACIONES INICIALES
     App.sidebar('close-sidebar');
-
     $('input[name="daterange"]').daterangepicker({
         "locale": {
             "format": "DD/MM/YYYY",
@@ -55,6 +54,8 @@ function get_ventas() {
     var estado = $("#venta_estado").val();
     var fecha = $('#date_range').val();
     var moneda_id = $("#moneda_id").val();
+    var estado_fac = $("#estado_fac").val();
+    
     var condicion_pago_id = $("#condicion_pago_id").val();
 
     $.ajax({
@@ -64,6 +65,7 @@ function get_ventas() {
             'fecha': fecha,
             'estado': estado,
             'moneda_id': moneda_id,
+            'estado_fac': estado_fac,
             'condicion_pago_id': condicion_pago_id
         },
         type: 'POST',
