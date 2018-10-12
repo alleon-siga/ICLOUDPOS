@@ -17,8 +17,8 @@
                             <select id="venta_local" class="form-control filter-input">
                                 <?php foreach ($locales as $local): ?>
                                     <option <?php if ($this->session->userdata('id_local') == $local['int_local_id']) echo "selected"; ?>
-                                            value="<?= $local['int_local_id']; ?>"> <?= $local['local_nombre'] ?> </option>
-                                <?php endforeach; ?>
+                                        value="<?= $local['int_local_id']; ?>"> <?= $local['local_nombre'] ?> </option>
+                                    <?php endforeach; ?>
                             </select>
                         <?php endif; ?>
                     </div>
@@ -39,12 +39,20 @@
                     </div>
                     <div class="col-md-2">
                         <label class="control-label panel-admin-text">Moneda</label>
-                        <select name="moneda_id" id="moneda_id" class='cho form-control'>
+                        <select name="moneda_id" id="id_fact" class='cho form-control'>
                             <?php foreach ($monedas as $moneda): ?>
                                 <option value="<?= $moneda->id_moneda ?>"
                                         data-simbolo="<?= $moneda->simbolo ?>"
-                                    <?= $moneda->id_moneda == MONEDA_DEFECTO ? 'selected' : '' ?>><?= $moneda->nombre ?></option>
-                            <?php endforeach; ?>
+                                        <?= $moneda->id_moneda == MONEDA_DEFECTO ? 'selected' : '' ?>><?= $moneda->nombre ?></option>
+                                    <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="control-label panel-admin-text">&nbsp;</label>
+                        <select name="estado_fac" id="estado_fac" class='cho form-control'>
+                            <option value="">Todos</option>
+                            <option value="0" selected="">Sin Facturar</option>
+                            <option value="1">Facturado</option>
                         </select>
                     </div>
                     <div class="col-md-2">
@@ -74,3 +82,6 @@
             <script src="<?php echo $ruta; ?>recursos/js/datepicker-range/daterangepicker.js"></script>
             <script src="<?php echo $ruta; ?>recursos/js/Validacion.js"></script>
             <script src="<?php echo $ruta; ?>recursos/js/facturador_historial.js"></script>
+            <script>
+                
+            </script>

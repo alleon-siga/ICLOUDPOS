@@ -39,6 +39,7 @@
     </div>
     <?php } ?>
 </div>
+
 <!-- Load and execute javascript code used only in this page -->
 <script src="<?php echo $ruta; ?>recursos/js/pages/index.js"></script>
 
