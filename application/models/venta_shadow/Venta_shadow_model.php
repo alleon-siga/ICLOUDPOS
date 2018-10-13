@@ -309,7 +309,7 @@ class venta_shadow_model extends CI_Model {
         if (isset($where['estado_fac']) && $where['estado_fac']=="") {
             
         }elseif(!empty($where['estado_fac']==0)){
-            $this->db->where('venta_shadow.serie =""');
+            $this->db->where('venta_shadow.serie', NULL);
         } elseif (!empty($where['estado_fac']==1)) {
             $this->db->where('venta_shadow.serie >"0"');
         }
