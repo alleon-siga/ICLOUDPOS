@@ -510,12 +510,8 @@
                     <div class="col-md-7">
                         <div class="help-key badge label-success" style="display: none;">8</div>
                         <select name="venta_estado" id="venta_estado" class="form-control">
-                            <?php if (validOption("COBRAR_CAJA", '1', '0') == '0'): ?>
                                 <option value="COMPLETADO">COMPLETADO</option>
-                            <?php endif; ?>
-                            <?php if (validOption("COBRAR_CAJA", '1', '0') == '1'): ?>
-                                <option value="CAJA">CAJA</option>
-                            <?php endif; ?>
+                           
                         </select>
                     </div>
                 </div>
