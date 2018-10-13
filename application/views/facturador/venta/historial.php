@@ -39,7 +39,7 @@
                     </div>
                     <div class="col-md-2">
                         <label class="control-label panel-admin-text">Moneda</label>
-                        <select name="moneda_id" id="id_fact" class='cho form-control'>
+                        <select name="moneda_id" id="moneda_id" class='cho form-control'>
                             <?php foreach ($monedas as $moneda): ?>
                                 <option value="<?= $moneda->id_moneda ?>"
                                         data-simbolo="<?= $moneda->simbolo ?>"

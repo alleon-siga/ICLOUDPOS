@@ -106,6 +106,7 @@
     <div class="modal fade" id="dialog_venta_detalle" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true"></div>
     <div class="modal fade" id="dialog_venta_detalle_convertidos" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true"></div>
     <div class="modal fade" id="remove_ventaconvertida_shadow" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true"></div>
+    <div class="modal fade" id="dialog_venta_detalle_sahdow" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true"></div>
     
 </div>
 <script src="<?= $ruta; ?>recursos/js/facturador_historial_list.js"></script>

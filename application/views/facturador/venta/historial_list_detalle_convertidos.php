@@ -116,10 +116,24 @@ foreach ($venta as $v) {
                                 <td><?= $detalle->moneda ?></td>
                                 <td><?= $detalle->subtotal ?></td>
                                 <td class="total_co"><?= $detalle->total ?></td>  
-                                <td class="text-center"><button class="btn btn-info btn-xs" onclick="info(<?= $detalle->id_shadow ?>)"><i class="fa fa-search"></i></button>&nbsp;
+                                <td class="text-center"><button class="btn btn-info btn-xs" onclick="info(<?= $detalle->id_shadow ?>)"><i class="fa fa-search"></i></button>
                                     <?php
                                     if ($detalle->serie_fac > 0) {
-                                        
+                                        ?>
+                                        <a class="btn btn-xs btn-info" data-toggle="tooltip" 
+                                           title="Imprimir PDF (A4)" data-original-title="Imprimir PDF (A4)"
+                                           href="#"
+                                           onclick="imprimir('<?= $detalle->id_factura ?>');">
+                                            <i class="fa fa-file-pdf-o"></i>
+                                        </a>
+
+                                        <a class="btn btn-xs btn-info" data-toggle="tooltip" 
+                                           title="Imprimir Ticket" data-original-title="Imprimir Ticket"
+                                           href="#"
+                                           onclick="imprimir_ticket('<?= $detalle->id_factura ?>');">
+                                            <i class="fa fa-print"></i>
+                                        </a>
+                                        <?php
                                     } else {
                                         ?>
                                         <button class="btn btn-danger btn-xs eliminarv" onclick="mostrar(<?= $detalle->id_shadow ?>)" ><i class="fa fa-trash"></i></button>&nbsp;
@@ -160,7 +174,10 @@ foreach ($venta as $v) {
         </div>
     </div>
 </div>
+<iframe style="display: block;" id="imprimir_frame" src="" frameborder="YES" height="0" width="0"
+            border="0" scrolling=no>
 
+    </iframe>
 <script type="text/javascript" src="<?= base_url() ?>recursos/js/facturador_historial_list_detalle.js"></script>
 <script type="text/javascript">
                             $(document).ready(function () {
@@ -212,7 +229,7 @@ foreach ($venta as $v) {
                                             alert("error 2");
                                         }
                                     });
-                                } 
+                                }
                             }
 
                             function generarcomprobante(id_shadow, venta_id) {
@@ -228,5 +245,22 @@ foreach ($venta as $v) {
                                         alert(resp)
                                     }
                                 });
+                            }
+                            function imprimir_ticket(id_shadow) {
+                                
+                                $.bootstrapGrowl('<p>IMPRIMIENDO PEDIDO</p>', {
+                                    type: 'success',
+                                    delay: 2500,
+                                    allow_dismiss: true
+                                });
+
+                                var url = '<?= base_url('facturacion/imprimir_ticket') ?>/' + id_shadow;
+                                $("#imprimir_frame").attr('src', url);
+                            }
+
+                            function imprimir(id_shadow) {
+
+                                var win = window.open('<?= base_url() ?>facturacion/imprimir/' + id_shadow, '_blank');
+                                win.focus();
                             }
 </script>
