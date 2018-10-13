@@ -199,11 +199,11 @@ class ingresos extends MY_Controller
                     'status' => $status,
                     'facturar' => $this->input->post('facturar'),
                     'tipo_impuesto' => $this->input->post('tipo_impuesto'),
-                    'medio_pago'=>isset($this->input->post('metodo'))?$this->input->post('metodo'):"",
-                    'caja_id_d'=>isset($this->input->post('caja_id_d'))?$this->input->post('caja_id_d'):"",
-                    'banco_id_d'=>isset($this->input->post('banco_id_d'))?$this->input->post('banco_id_d'):"",
-                    'caja_id'=>isset($this->input->post('caja_id'))?$this->input->post('caja_id'):"",
-                    'banco_id'=>isset($this->input->post('banco_id'))?$this->input->post('banco_id'):"",
+                    'medio_pago'=>$this->input->post('metodo', true),
+                    'caja_id_d'=> $this->input->post('caja_id_d', true),
+                    'banco_id_d'=>$this->input->post('banco_id_d', true),
+                    'caja_id'=> $this->input->post('caja_id', true),
+                    'banco_id'=>$this->input->post('banco_id', true),
                     'tipo_tarjeta'=>$this->input->post('tipo_tarjeta'),
                     'num_oper'=>$this->input->post('num_oper')
                 );
