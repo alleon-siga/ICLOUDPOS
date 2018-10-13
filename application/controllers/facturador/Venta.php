@@ -56,7 +56,8 @@ class venta extends MY_Controller
 
     function get_venta_detalle()
     {
-        $venta_id = $this->input->post('venta_id');
+        $venta_id = $this->input->post('venta_id');        
+        
         $datos = $this->venta->get_venta_detalle($venta_id);
         $x = 0;
         foreach($datos->detalles as $dato){
@@ -74,8 +75,8 @@ class venta extends MY_Controller
     }
     function get_venta_detalle_shadow()
     {
-        $venta_id = $this->input->post('venta_id');
-        $datos = $this->venta->get_venta_detalle($venta_id);
+        $id_shadow = $this->input->post('id_shadow');
+        $datos = $this->venta_shadow_model->get_venta_detalle($id_shadow);
         $x = 0;
         foreach($datos->detalles as $dato){
             $datos->detalles[$x]->cantidad = $this->unidades_model->convert_minimo_by_um($dato->producto_id, $dato->unidad_id, $dato->cantidad);
@@ -83,12 +84,12 @@ class venta extends MY_Controller
             $unidades = $this->unidades_model->get_by('nombre_unidad', $datos->detalles[$x]->unidad_nombre);
             $datos->detalles[$x]->unidad_id_min = $unidades['id_unidad'];
             $datos->detalles[$x]->precio = $this->unidades_model->get_maximo_costo($dato->producto_id, $dato->unidad_id, $datos->detalles[$x]->precio);
-            $contable_costo = $this->venta_contable->getCosto($venta_id, $dato->unidad_id);
+            $contable_costo = $this->venta_contable->getCosto($id_shadow, $dato->unidad_id);
             $datos->detalles[$x]->contable_costo = $contable_costo->contable_costo;
             $x++;
         }
-        $data['venta'] = $datos;
-        $this->load->view('facturador/venta/historial_list_detalle', $data);
+        $data['shadowdetalle'] = $datos;
+        $this->load->view('facturador/venta/shadow_facturado_detalle', $data);
     }
     function get_venta_detalle_convertido()
     {
@@ -300,7 +301,7 @@ class venta extends MY_Controller
             ))->row();
         }
 
-        //header('Content-Type: application/json');
-        //echo json_encode($data);
+        header('Content-Type: application/json');
+        echo json_encode($data);
     }
 }

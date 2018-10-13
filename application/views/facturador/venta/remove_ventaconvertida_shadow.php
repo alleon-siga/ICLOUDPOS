@@ -1,6 +1,6 @@
 <div class="modal-dialog" style="width: 40%;">
     <div class="modal-content">
-        <div class="modal-header " style="background-color: red !important;">
+        <div class="modal-header " >
             <h3>Eliminar</h3>
         </div>
         <div class="modal-body">

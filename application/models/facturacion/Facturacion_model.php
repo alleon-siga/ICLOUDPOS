@@ -719,10 +719,13 @@ class facturacion_model extends CI_Model {
             'total' => $venta->total * $cambio_dolar,
             'estado' => 0,
             'nota' => 'No enviado',
-            'ref_id' => $venta->id,
+            'ref_id' => $venta->id_venta,
         ));
 
         $facturacion_id = $this->db->insert_id();
+        
+        $this->db->where("id", $venta->id);
+        $this->db->update("venta_shadow", array("id_factura"=>$facturacion_id));
 
         foreach ($venta->detalles as $d) {
 

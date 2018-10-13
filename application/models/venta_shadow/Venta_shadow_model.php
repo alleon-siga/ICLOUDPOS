@@ -26,6 +26,7 @@ class venta_shadow_model extends CI_Model {
     function get_ventas($where = array()) {
         $this->db->select('
             vs.id as id,
+            vs.id_factura as id_factura,
             vs.venta_id as id_venta,
             vs.local_id as local_id,
             l.local_nombre as local_nombre,
@@ -141,7 +142,6 @@ class venta_shadow_model extends CI_Model {
 
     function get_venta_detalle($id_shadow) {
         $venta = $this->get_ventas(array('id' => $id_shadow));
-
         $venta->detalles = $this->db->select('
             vsd.id as id,
             vsd.id_producto as producto_id,
@@ -232,7 +232,7 @@ class venta_shadow_model extends CI_Model {
             CASE WHEN IsNULL(venta_shadow.venta_id) THEN "NO" END  END as comprobante_shadow ,
 	    CASE WHEN COUNT(venta_shadow.venta_id) > 0 THEN  COUNT(venta_shadow.venta_id) ELSE
 	    CASE WHEN COUNT(venta_shadow.venta_id) = 0 THEN "" END END as convertidos,
-            venta_shadow.serie as vs_serie,
+            venta_shadow.serie as serie,
             (select SUM(detalle_venta.cantidad) from detalle_venta
             where detalle_venta.id_venta=venta.venta_id) as total_bultos
             ', FALSE)
@@ -309,7 +309,7 @@ class venta_shadow_model extends CI_Model {
         if (isset($where['estado_fac']) && $where['estado_fac']=="") {
             
         }elseif(!empty($where['estado_fac']==0)){
-            $this->db->where('venta_shadow.serie', NULL);
+            $this->db->where('venta_shadow.serie',NULL);
         } elseif (!empty($where['estado_fac']==1)) {
             $this->db->where('venta_shadow.serie >"0"');
         }
@@ -393,9 +393,8 @@ class venta_shadow_model extends CI_Model {
 
     function facturar_venta($id) {
         $venta = $this->db->get_where('venta_shadow', array('id' => $id))->row();
-
         $iddoc = $venta->id_documento;
-        $correlativo = $this->correlativos_model->get_correlativo($venta->local_id, $iddoc);
+    $correlativo = $this->correlativos_model->get_correlativo($venta->local_id, number_format($iddoc));
         $update_venta['fecha_facturacion'] = $venta->fecha;
         $update_venta['serie'] = $correlativo->serie;
         $update_venta['numero'] = $correlativo->correlativo;
@@ -1149,7 +1148,7 @@ class venta_shadow_model extends CI_Model {
     }
 
     function get_venta_detalle_convertido($venta_id) {
-        $query = "SELECT doc.des_doc AS vdoc,cl.razon_social AS vnom ,vs.local_id as local_id,
+        $query = "SELECT doc.des_doc AS vdoc, vs.id_factura as id_factura,cl.razon_social AS vnom ,vs.local_id as local_id,
             c.tipo_cliente AS vclien,vs.id AS id_shadow,m.nombre AS vmon,v.condicion_pago AS vcon,
                 v.serie AS vser, v.numero AS vnum,
                 v.venta_status AS vven,v.fecha AS vfecha,cp.nombre_condiciones AS vcon, v.tasa_cambio AS vtasa,

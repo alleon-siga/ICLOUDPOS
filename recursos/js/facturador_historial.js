@@ -57,7 +57,6 @@ function get_ventas() {
     var estado_fac = $("#estado_fac").val();
     
     var condicion_pago_id = $("#condicion_pago_id").val();
-
     $.ajax({
         url: $('#ruta').val() + 'facturador/venta/get_ventas/',
         data: {
