@@ -1,7 +1,9 @@
 <?php if ($emisor == NULL): ?>
     <h4 class="alert alert-danger text-center">Emisor no configurado</h4>
 <?php else: ?>
-
+    <div class="label <?= $emisor->env == 'PROD' ? 'label-success' : 'label-warning' ?>">
+        <?= $emisor->env == 'PROD' ? 'EMISION A SUNAT' : 'EMISION DE PRUEBA' ?>
+    </div>
     <?php if (count($boletas) == 0 && count($facturas) == 0): ?>
         <?php if ($estado == 1): ?>
             <h4 class="alert alert-info text-center">No tienes comprobantes por emitir en el

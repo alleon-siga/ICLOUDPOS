@@ -61,156 +61,270 @@ abstract class Comprobante
         $data = $this->emisor->getData();
 
         $emisor = $this->xml->createElement('cac:AccountingSupplierParty');
-        $emisor->appendChild($this->xml->createElement('cbc:CustomerAssignedAccountID', $data['NRO_DOCUMENTO']));
-        $emisor->appendChild($this->xml->createElement('cbc:AdditionalAccountID', '6'));
 
         $party = $this->xml->createElement('cac:Party');
+
+        $PartyIdentification = $this->xml->createElement('cac:PartyIdentification');
+        $ID = $this->xml->createElement('cbc:ID', $data['NRO_DOCUMENTO']);
+        $ID->setAttribute('schemeID', '6');
+        $ID->setAttribute('schemeName', 'Documento de Identidad');
+        $ID->setAttribute('schemeAgencyName', 'PE:SUNAT');
+        $ID->setAttribute('schemeURI', 'urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06');
+        $PartyIdentification->appendChild($ID);
+        $party->appendChild($PartyIdentification);
+
+
         $nombre_comercial = $this->xml->createElement('cac:PartyName');
         $nombre_comercial->appendChild($this->xml->createElement('cbc:Name'))
             ->appendChild($this->xml->createCDATASection($data['NOMBRE_COMERCIAL']));
-
         $party->appendChild($nombre_comercial);
 
-        $direccion = $this->xml->createElement('cac:PostalAddress');
-        $direccion->appendChild($this->xml->createElement('cbc:ID', $data['UBIGEO']));
-        $direccion->appendChild($this->xml->createElement('cbc:StreetName'))
-            ->appendChild($this->xml->createCDATASection($data['DIRECCION']));
-        $direccion->appendChild($this->xml->createElement('cbc:CitySubdivisionName'))
-            ->appendChild($this->xml->createCDATASection($data['URBANIZACION']));
-        $direccion->appendChild($this->xml->createElement('cbc:CityName'))
+
+        $PartyTaxScheme = $this->xml->createElement('cac:PartyTaxScheme');
+
+        $PartyTaxScheme->appendChild($this->xml->createElement('cbc:RegistrationName'))
+            ->appendChild($this->xml->createCDATASection($data['RAZON_SOCIAL']));
+
+        $CompanyID = $this->xml->createElement('cbc:CompanyID', $data['NRO_DOCUMENTO']);
+        $CompanyID->setAttribute('schemeID', '6');
+        $CompanyID->setAttribute('schemeName', 'SUNAT:Identificador de Documento de Identidad');
+        $CompanyID->setAttribute('schemeAgencyName', 'PE:SUNAT');
+        $CompanyID->setAttribute('schemeURI', 'urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06');
+        $PartyTaxScheme->appendChild($CompanyID);
+
+        $TaxScheme = $this->xml->createElement('cac:TaxScheme');
+        $ID = $this->xml->createElement('cbc:ID', $data['NRO_DOCUMENTO']);
+        $ID->setAttribute('schemeID', '6');
+        $ID->setAttribute('schemeName', 'SUNAT:Identificador de Documento de Identidad');
+        $ID->setAttribute('schemeAgencyName', 'PE:SUNAT');
+        $ID->setAttribute('schemeURI', 'urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06');
+        $TaxScheme->appendChild($ID);
+        $PartyTaxScheme->appendChild($TaxScheme);
+
+        $party->appendChild($PartyTaxScheme);
+
+
+        $PartyLegalEntity = $this->xml->createElement('cac:PartyLegalEntity');
+
+        $PartyLegalEntity->appendChild($this->xml->createElement('cbc:RegistrationName'))
+            ->appendChild($this->xml->createCDATASection($data['RAZON_SOCIAL']));
+
+        $RegistrationAddress = $this->xml->createElement('cac:RegistrationAddress');
+        $ID = $this->xml->createElement('cbc:ID');
+        $ID->setAttribute('schemeName', 'Ubigeos');
+        $ID->setAttribute('schemeAgencyName', 'PE:INEI');
+        $RegistrationAddress->appendChild($ID);
+
+        $AddressTypeCode = $this->xml->createElement('cbc:AddressTypeCode', $data['UBIGEO']);
+        $AddressTypeCode->setAttribute('listAgencyName', 'PE:SUNAT');
+        $AddressTypeCode->setAttribute('listName', 'Establecimientos anexos');
+        $RegistrationAddress->appendChild($AddressTypeCode);
+
+        $RegistrationAddress->appendChild($this->xml->createElement('cbc:CityName'))
             ->appendChild($this->xml->createCDATASection($data['DEPARTAMENTO']));
-        $direccion->appendChild($this->xml->createElement('cbc:CountrySubentity'))
+
+        $RegistrationAddress->appendChild($this->xml->createElement('cbc:CountrySubentity'))
             ->appendChild($this->xml->createCDATASection($data['PROVINCIA']));
-        $direccion->appendChild($this->xml->createElement('cbc:District'))
+
+        $RegistrationAddress->appendChild($this->xml->createElement('cbc:District'))
             ->appendChild($this->xml->createCDATASection($data['DISTRITO']));
 
+        $AddressLine = $this->xml->createElement('cac:AddressLine');
+        $Line = $this->xml->createElement('cbc:Line');
+        $Line->appendChild($this->xml->createCDATASection($data['DIRECCION']));
+        $AddressLine->appendChild($Line);
+        $RegistrationAddress->appendChild($AddressLine);
+
         $pais = $this->xml->createElement('cac:Country');
-        $pais->appendChild($this->xml->createElement('cbc:IdentificationCode', $data['PAIS_CODIGO']));
-        $direccion->appendChild($pais);
+        $IdentificationCode = $this->xml->createElement('cbc:IdentificationCode', $data['PAIS_CODIGO']);
+        $IdentificationCode->setAttribute('listID', 'ISO 3166-1');
+        $IdentificationCode->setAttribute('listAgencyName', 'United Nations Economic Commission for Europe');
+        $IdentificationCode->setAttribute('listName', 'Country');
+        $pais->appendChild($IdentificationCode);
+        $RegistrationAddress->appendChild($pais);
 
-        $party->appendChild($direccion);
+        $PartyLegalEntity->appendChild($RegistrationAddress);
+        $party->appendChild($PartyLegalEntity);
 
-        $razon_social = $this->xml->createElement('cac:PartyLegalEntity');
-        $razon_social->appendChild($this->xml->createElement('cbc:RegistrationName', $data['RAZON_SOCIAL']));
-
-        $party->appendChild($razon_social);
+        $Contact = $this->xml->createElement('cac:Contact');
+        $Name = $this->xml->createElement('cbc:Name');
+        $Name->appendChild($this->xml->createCDATASection('-'));
+        $Contact->appendChild($Name);
+        $party->appendChild($Contact);
 
         $emisor->appendChild($party);
 
         return $emisor;
     }
 
+
     protected function createClienteXml($data)
     {
         $cliente = $this->xml->createElement('cac:AccountingCustomerParty');
-        $cliente->appendChild($this->xml->createElement('cbc:CustomerAssignedAccountID', $data['CLIENTE_NRO_DOCUMENTO']));
-        $cliente->appendChild($this->xml->createElement('cbc:AdditionalAccountID', $data['CLIENTE_TIPO_IDENTIDAD']));
-        $cliente_nombre = $this->xml->createElement('cac:Party');
-        $nombre = $this->xml->createElement('cac:PartyLegalEntity');
-        $nombre->appendChild($this->xml->createElement('cbc:RegistrationName'))
+
+        $party = $this->xml->createElement('cac:Party');
+
+        $PartyIdentification = $this->xml->createElement('cac:PartyIdentification');
+        $ID = $this->xml->createElement('cbc:ID', $data['CLIENTE_NRO_DOCUMENTO']);
+        $ID->setAttribute('schemeID', $data['CLIENTE_TIPO_IDENTIDAD']);
+        $ID->setAttribute('schemeName', 'Documento de Identidad');
+        $ID->setAttribute('schemeAgencyName', 'PE:SUNAT');
+        $ID->setAttribute('schemeURI', 'urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06');
+        $PartyIdentification->appendChild($ID);
+        $party->appendChild($PartyIdentification);
+
+
+        $nombre_comercial = $this->xml->createElement('cac:PartyName');
+        $nombre_comercial->appendChild($this->xml->createElement('cbc:Name'))
             ->appendChild($this->xml->createCDATASection($data['CLIENTE_NOMBRE']));
-        $cliente_nombre->appendChild($nombre);
-        $cliente->appendChild($cliente_nombre);
+        $party->appendChild($nombre_comercial);
+
+
+        $PartyTaxScheme = $this->xml->createElement('cac:PartyTaxScheme');
+
+        $PartyTaxScheme->appendChild($this->xml->createElement('cbc:RegistrationName'))
+            ->appendChild($this->xml->createCDATASection($data['CLIENTE_NOMBRE']));
+
+        $CompanyID = $this->xml->createElement('cbc:CompanyID', $data['CLIENTE_NRO_DOCUMENTO']);
+        $CompanyID->setAttribute('schemeID', $data['CLIENTE_TIPO_IDENTIDAD']);
+        $CompanyID->setAttribute('schemeName', 'SUNAT:Identificador de Documento de Identidad');
+        $CompanyID->setAttribute('schemeAgencyName', 'PE:SUNAT');
+        $CompanyID->setAttribute('schemeURI', 'urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06');
+        $PartyTaxScheme->appendChild($CompanyID);
+
+        $TaxScheme = $this->xml->createElement('cac:TaxScheme');
+        $ID = $this->xml->createElement('cbc:ID', $data['CLIENTE_NRO_DOCUMENTO']);
+        $ID->setAttribute('schemeID', $data['CLIENTE_TIPO_IDENTIDAD']);
+        $ID->setAttribute('schemeName', 'SUNAT:Identificador de Documento de Identidad');
+        $ID->setAttribute('schemeAgencyName', 'PE:SUNAT');
+        $ID->setAttribute('schemeURI', 'urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06');
+        $TaxScheme->appendChild($ID);
+        $PartyTaxScheme->appendChild($TaxScheme);
+
+        $party->appendChild($PartyTaxScheme);
+
+
+        $PartyLegalEntity = $this->xml->createElement('cac:PartyLegalEntity');
+
+        $PartyLegalEntity->appendChild($this->xml->createElement('cbc:RegistrationName'))
+            ->appendChild($this->xml->createCDATASection($data['CLIENTE_NOMBRE']));
+
+        $RegistrationAddress = $this->xml->createElement('cac:RegistrationAddress');
+        $ID = $this->xml->createElement('cbc:ID');
+        $ID->setAttribute('schemeName', 'Ubigeos');
+        $ID->setAttribute('schemeAgencyName', 'PE:INEI');
+        $RegistrationAddress->appendChild($ID);
+
+        $AddressTypeCode = $this->xml->createElement('cbc:AddressTypeCode', '000000');
+        $AddressTypeCode->setAttribute('listAgencyName', 'PE:SUNAT');
+        $AddressTypeCode->setAttribute('listName', 'Establecimientos anexos');
+        $RegistrationAddress->appendChild($AddressTypeCode);
+
+        $RegistrationAddress->appendChild($this->xml->createElement('cbc:CityName'))
+            ->appendChild($this->xml->createCDATASection('-'));
+
+        $RegistrationAddress->appendChild($this->xml->createElement('cbc:CountrySubentity'))
+            ->appendChild($this->xml->createCDATASection('-'));
+
+        $RegistrationAddress->appendChild($this->xml->createElement('cbc:District'))
+            ->appendChild($this->xml->createCDATASection('-'));
+
+        $AddressLine = $this->xml->createElement('cac:AddressLine');
+        $Line = $this->xml->createElement('cbc:Line');
+        $Line->appendChild($this->xml->createCDATASection('-'));
+        $AddressLine->appendChild($Line);
+        $RegistrationAddress->appendChild($AddressLine);
+
+        $pais = $this->xml->createElement('cac:Country');
+        $IdentificationCode = $this->xml->createElement('cbc:IdentificationCode', 'PE');
+        $IdentificationCode->setAttribute('listID', 'ISO 3166-1');
+        $IdentificationCode->setAttribute('listAgencyName', 'United Nations Economic Commission for Europe');
+        $IdentificationCode->setAttribute('listName', 'Country');
+        $pais->appendChild($IdentificationCode);
+        $RegistrationAddress->appendChild($pais);
+
+        $PartyLegalEntity->appendChild($RegistrationAddress);
+        $party->appendChild($PartyLegalEntity);
+
+        $cliente->appendChild($party);
 
         return $cliente;
     }
 
-    protected function ventaValoresUbl($data)
+    /* Catálogo No. 05: Códigos de Tipos de Tributos
+     * codigo - tipo - categoria => descripcion
+     * 1000 - VAT - S => IGV impuesto general a las ventas
+     * 2000 - EXC - S => ISC impuesto selectivo al consumo
+     * 9995 - FRE - G => Exportacion
+     * 9996 - FRE - Z => Gratuito
+     * 9997 - VAT - E => Exonerado
+     * 9998 - FRE - O => Inafecto
+     * 9999 - OTH - S => Otros conceptos de pago
+     *
+     * PARAMS
+     * $total_impuesto - TaxableAmount: Monto base sobre el cual se esta aplicando el impuesto
+     * $base_total - TaxAmount: impuesto aplicado
+     * $moneda: Codigo de la moneda
+     * $id: Codigo de tipos de tributos
+     * $name: descripcion de tipos de tributos
+     * $type_code: tipo de tributos
+     * $category: categoria de tipos de tributos
+     * */
+    protected function createTributoXml($total_impuesto, $base_total, $moneda, $id, $name, $type_code, $category)
     {
-        $ubl_extension = $this->xml->createElement('ext:UBLExtension');
-        $venta_totales = $ubl_extension->appendChild($this->xml->createElement('ext:ExtensionContent'))
-            ->appendChild($this->xml->createElement('sac:AdditionalInformation'));
 
-        //total gravadas
-        $total = $this->xml->createElement('sac:AdditionalMonetaryTotal');
-        $total->appendChild($this->xml->createElement('cbc:ID', '1001'));
-        $total->appendChild($this->xml->createElement('cbc:PayableAmount', $data['TOTAL_GRAVADAS']))
-            ->setAttribute('currencyID', $data['CODIGO_MONEDA']);
-        $venta_totales->appendChild($total);
+        $tributo = $this->xml->createElement('cac:TaxSubtotal');
 
-        //total inafectas
-        $total = $this->xml->createElement('sac:AdditionalMonetaryTotal');
-        $total->appendChild($this->xml->createElement('cbc:ID', '1002'));
-        $total->appendChild($this->xml->createElement('cbc:PayableAmount', $data['TOTAL_INAFECTAS']))
-            ->setAttribute('currencyID', $data['CODIGO_MONEDA']);
-        $venta_totales->appendChild($total);
-
-        //total exoneradas
-        $total = $this->xml->createElement('sac:AdditionalMonetaryTotal');
-        $total->appendChild($this->xml->createElement('cbc:ID', '1003'));
-        $total->appendChild($this->xml->createElement('cbc:PayableAmount', $data['TOTAL_EXONERADAS']))
-            ->setAttribute('currencyID', $data['CODIGO_MONEDA']);
-        $venta_totales->appendChild($total);
-
-        //total gratuitas
-        $total = $this->xml->createElement('sac:AdditionalMonetaryTotal');
-        $total->appendChild($this->xml->createElement('cbc:ID', '1004'));
-        $total->appendChild($this->xml->createElement('cbc:PayableAmount', $data['TOTAL_GRATUITAS']))
-            ->setAttribute('currencyID', $data['CODIGO_MONEDA']);
-        $venta_totales->appendChild($total);
-
-        //total gratuitas
-        if (isset($data['TOTAL_DESCUENTOS'])) {
-            $total = $this->xml->createElement('sac:AdditionalMonetaryTotal');
-            $total->appendChild($this->xml->createElement('cbc:ID', '2005'));
-            $total->appendChild($this->xml->createElement('cbc:PayableAmount', $data['TOTAL_DESCUENTOS']))
-                ->setAttribute('currencyID', $data['CODIGO_MONEDA']);
-            $venta_totales->appendChild($total);
-        }
-
-
-        //Importe de la percepción en moneda nacional. Referencia Pag. 32 "Guia para realizar facturas"
-//        $total = $this->xml->createElement('sac:AdditionalMonetaryTotal');
-//        $total->appendChild($this->xml->createElement('cbc:ID', '2001'));
-//        $total->appendChild($this->xml->createElement('sac:ReferencAmount', '0.00'))
-//            ->setAttribute('currencyID', $data['CODIGO_MONEDA']);
-//        $total->appendChild($this->xml->createElement('cbc:PayableAmount', '0.00'))
-//            ->setAttribute('currencyID', $data['CODIGO_MONEDA']);
-//        $total->appendChild($this->xml->createElement('sac:TotalAmount', '0.00'))
-//            ->setAttribute('currencyID', $data['CODIGO_MONEDA']);
-//        $venta_totales->appendChild($total);
-
-        //Leyenda del total en letras
-        if (isset($data['TOTAL_VENTA_LETRAS']) && $data['TOTAL_VENTA_LETRAS'] != '') {
-            $total = $this->xml->createElement('sac:AdditionalProperty');
-            $total->appendChild($this->xml->createElement('cbc:ID', '1000'));
-            $total->appendChild($this->xml->createElement('cbc:Value', $data['TOTAL_VENTA_LETRAS']));
-            $venta_totales->appendChild($total);
-        }
-
-
-        return $ubl_extension;
-    }
-
-    protected function createTributoXml($total, $moneda, $id, $name, $type_code)
-    {
-        $tributo = $this->xml->createElement('cac:TaxTotal');
-        $tributo->appendChild($this->xml->createElement('cbc:TaxAmount', $total))
+        $tributo->appendChild($this->xml->createElement('cbc:TaxableAmount', $base_total))
             ->setAttribute('currencyID', $moneda);
 
-        $tributo_subtotal = $this->xml->createElement('cac:TaxSubtotal');
-        $tributo_subtotal->appendChild($this->xml->createElement('cbc:TaxAmount', $total))
+        $tributo->appendChild($this->xml->createElement('cbc:TaxAmount', $total_impuesto))
             ->setAttribute('currencyID', $moneda);
 
-        $tributo_categoria = $tributo_subtotal->appendChild($this->xml->createElement('cac:TaxCategory'))
-            ->appendChild($this->xml->createElement('cac:TaxScheme'));
-        $tributo_categoria->appendChild($this->xml->createElement('cbc:ID', $id));
-        $tributo_categoria->appendChild($this->xml->createElement('cbc:Name', $name));
-        $tributo_categoria->appendChild($this->xml->createElement('cbc:TaxTypeCode', $type_code));
-        $tributo->appendChild($tributo_subtotal);
+        $tributo_categoria = $this->xml->createElement('cac:TaxCategory');
+        $ID = $this->xml->createElement('cbc:ID', $category);
+        $ID->setAttribute('schemeID', "UN/ECE 5305");
+        $ID->setAttribute('schemeName', "Tax Category Identifier");
+        $ID->setAttribute('schemeAgencyName', "United Nations Economic Commission for Europe");
+        $tributo_categoria->appendChild($ID);
+
+        $TaxScheme = $this->xml->createElement('cac:TaxScheme');
+        $ID = $this->xml->createElement('cbc:ID', $id);
+        $ID->setAttribute('schemeID', "UN/ECE 5153");
+        $ID->setAttribute('schemeAgencyID', "6");
+        $TaxScheme->appendChild($ID);
+
+        $TaxScheme->appendChild($this->xml->createElement('cbc:Name', $name));
+        $TaxScheme->appendChild($this->xml->createElement('cbc:TaxTypeCode', $type_code));
+        $tributo_categoria->appendChild($TaxScheme);
+
+        $tributo->appendChild($tributo_categoria);
 
         return $tributo;
     }
 
+    /*
+     * LineExtensionAmount: El importe total de la venta sin cosiderar descuentos, impuestos u otros atributos
+     * TaxInclusiveAmount: El importe total de la venta con impuestos incluidos
+     * AllowanceTotalAmount: Total de los descuentos globales
+     * ChargeTotalAmount: Sumatoria de otros cargos
+     * PayableAmount: TaxInclusiveAmount - AllowanceTotalAmount + ChargeTotalAmount
+     * */
     protected function createImporteTotalXml($data)
     {
         $importe_total = $this->xml->createElement('cac:LegalMonetaryTotal');
+        $importe_total->appendChild($this->xml->createElement('cbc:LineExtensionAmount', $data['SUBTOTAL_VENTA']))
+            ->setAttribute('currencyID', $data['CODIGO_MONEDA']);
+        $importe_total->appendChild($this->xml->createElement('cbc:TaxInclusiveAmount', $data['TOTAL_VENTA']))
+            ->setAttribute('currencyID', $data['CODIGO_MONEDA']);
         $importe_total->appendChild($this->xml->createElement('cbc:AllowanceTotalAmount', $data['TOTAL_DESCUENTO_GLOBAL']))
             ->setAttribute('currencyID', $data['CODIGO_MONEDA']);
         $importe_total->appendChild($this->xml->createElement('cbc:ChargeTotalAmount', $data['TOTAL_OTROS_CARGOS']))
             ->setAttribute('currencyID', $data['CODIGO_MONEDA']);
-        $importe_total->appendChild($this->xml->createElement('cbc:PayableAmount', $data['TOTAL_VENTA']))
-            ->setAttribute('currencyID', $data['CODIGO_MONEDA']);
+        $importe_total->appendChild($this->xml->createElement(
+            'cbc:PayableAmount',
+            number_format($data['TOTAL_VENTA'] - $data['TOTAL_DESCUENTO_GLOBAL'] + $data['TOTAL_OTROS_CARGOS'])
+        ))->setAttribute('currencyID', $data['CODIGO_MONEDA']);
 
         return $importe_total;
     }
@@ -224,7 +338,11 @@ abstract class Comprobante
     {
         $remision = $this->xml->createElement('cac:DespatchDocumentReference');
         $remision->appendChild($this->xml->createElement('cbc:ID', $data['GUIA_REMISION_NRO']));
-        $remision->appendChild($this->xml->createElement('cbc:DocumentTypeCode', $data['GUIA_REMISION_CODIGO']));
+        $DocumentTypeCode = $this->xml->createElement('cbc:DocumentTypeCode', $data['GUIA_REMISION_CODIGO']);
+        $DocumentTypeCode->setAttribute('listAgencyName', "PE:SUNAT");
+        $DocumentTypeCode->setAttribute('listName', "SUNAT:Identificador de guia relacionada");
+        $DocumentTypeCode->setAttribute('listURI', "urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo01");
+        $remision->appendChild($DocumentTypeCode);
         return $remision;
     }
 
@@ -238,7 +356,11 @@ abstract class Comprobante
     {
         $doc = $this->xml->createElement('cac:AdditionalDocumentReference');
         $doc->appendChild($this->xml->createElement('cbc:ID', $data['NRO_DOCUMENTO_REF']));
-        $doc->appendChild($this->xml->createElement('cbc:DocumentTypeCode', $data['NRO_DOCUMENTO_REF_CODIGO']));
+        $DocumentTypeCode = $this->xml->createElement('cbc:DocumentTypeCode', $data['NRO_DOCUMENTO_REF_CODIGO']);
+        $DocumentTypeCode->setAttribute('listAgencyName', "PE:SUNAT");
+        $DocumentTypeCode->setAttribute('listName', "SUNAT:Identificador de guia relacionada");
+        $DocumentTypeCode->setAttribute('listURI', "urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo01");
+        $doc->appendChild($DocumentTypeCode);
         return $doc;
     }
 
@@ -256,23 +378,43 @@ abstract class Comprobante
         }
 
         $invoce_line = $this->xml->createElement($root_tag);
-        $invoce_line->appendChild($this->xml->createElement('cbc:ID', $detalle['ID']));
-        $invoce_line->appendChild($this->xml->createElement($quantity_tag, $detalle['CANTIDAD']))
-            ->setAttribute('unitCode', $detalle['UNIDAD_MEDIDA']);
 
+        // Orden correlativo de los items agregados
+        $invoce_line->appendChild($this->xml->createElement('cbc:ID', $detalle['ID']));
+
+        // Cantidad y Unidad de Medida del item. Cuando es serivio o item no cuantificable sera 1
+        // Valor de Códigos de unidades de medida Catálogo N° 03
+        $InvoicedQuantity = $this->xml->createElement($quantity_tag, $detalle['CANTIDAD']);
+        $InvoicedQuantity->setAttribute('unitCode', $detalle['UNIDAD_MEDIDA']);
+        $InvoicedQuantity->setAttribute('unitCodeListID', "UN/ECE rec 20");
+        $InvoicedQuantity->setAttribute('unitCodeListAgencyName', "United Nations Economic Commission for Europe");
+        $invoce_line->appendChild($InvoicedQuantity);
+
+        // Valor de la venta por item. Es la cantidad * el precio_valor. Este importe no incluye los impuestos ni decuentos
         $invoce_line
             ->appendChild($this->xml->createElement(
                 'cbc:LineExtensionAmount',
                 number_format($detalle['PRECIO_VALOR'] * $detalle['CANTIDAD'], 2, '.', ''))
             )->setAttribute('currencyID', $cabecera['CODIGO_MONEDA']);
 
+        /* Precio de venta unitario por item. Incluye impuestos y descuentos por items
+         * PriceTypeCode (Catálogo N° 16)
+         * 01 => Precio unitario (incluye IGV)
+         * 02 => Valor referencial unitario en operaciones no onerosas. Cuando se hacen operaciones o servicios gratuitos
+         * */
         $p = $this->xml->createElement('cac:PricingReference');
         $precio = $p->appendChild($this->xml->createElement('cac:AlternativeConditionPrice'));
         $precio->appendChild($this->xml->createElement('cbc:PriceAmount', $detalle['PRECIO_VENTA']))
             ->setAttribute('currencyID', $cabecera['CODIGO_MONEDA']);
         // (Catálogo No. 16).
-        $precio->appendChild($this->xml->createElement('cbc:PriceTypeCode', $detalle['TIPO_PRECIO']));
+        $PriceTypeCode = $this->xml->createElement('cbc:PriceTypeCode', $detalle['TIPO_PRECIO']);
+        $PriceTypeCode->setAttribute('listName', "Tipo de Precio");
+        $PriceTypeCode->setAttribute('listAgencyName', "PE:SUNAT");
+        $PriceTypeCode->setAttribute('listURI', "urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo16");
+        $precio->appendChild($PriceTypeCode);
         $invoce_line->appendChild($p);
+
+        // TODO descuentos por items
 
         //Tributo IGV
         $tributo = $this->xml->createElement('cac:TaxTotal');
@@ -280,17 +422,39 @@ abstract class Comprobante
             ->setAttribute('currencyID', $cabecera['CODIGO_MONEDA']);
 
         $tributo_subtotal = $this->xml->createElement('cac:TaxSubtotal');
+        $tributo_subtotal->appendChild($this->xml->createElement('cbc:TaxableAmount', number_format($detalle['PRECIO_VALOR'] * $detalle['CANTIDAD'], 2, '.', '')))
+            ->setAttribute('currencyID', $cabecera['CODIGO_MONEDA']);
+
         $tributo_subtotal->appendChild($this->xml->createElement('cbc:TaxAmount', $detalle['DETALLE_TRIBUTO_IGV']))
             ->setAttribute('currencyID', $cabecera['CODIGO_MONEDA']);
 
         $tributo_categoria = $this->xml->createElement('cac:TaxCategory');
+        $ID = $this->xml->createElement('cbc:ID', 'S');
+        $ID->setAttribute('schemeID', 'UN/ECE 5305');
+        $ID->setAttribute('schemeName', 'Tax Category Identifier');
+        $ID->setAttribute('schemeAgencyName', 'United Nations Economic Commission for Europe');
+        $tributo_categoria->appendChild($ID);
+
+        $tributo_categoria->appendChild($this->xml->createElement('cbc:Percent', '18.00'));
+
         // (Catálogo No. 07).
-        $tributo_categoria->appendChild($this->xml->createElement('cbc:TaxExemptionReasonCode', $detalle['TIPO_TRIBUTO_IGV']));
+        $TaxExemptionReasonCode = $this->xml->createElement('cbc:TaxExemptionReasonCode', $detalle['TIPO_TRIBUTO_IGV']);
+        $TaxExemptionReasonCode->setAttribute('listAgencyName', "PE:SUNAT");
+        $TaxExemptionReasonCode->setAttribute('listName', "SUNAT:Codigo de Tipo de Afectación del IGV");
+        $TaxExemptionReasonCode->setAttribute('listURI', "urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo07");
+        $tributo_categoria->appendChild($TaxExemptionReasonCode);
 
         $tax = $this->xml->createElement('cac:TaxScheme');
-        $tax->appendChild($this->xml->createElement('cbc:ID', '1000'));
+        $ID = $this->xml->createElement('cbc:ID', '1000');
+        $ID->setAttribute('schemeID', "UN/ECE 5153");
+        $ID->setAttribute('schemeName', "Tax Scheme Identifier");
+        $ID->setAttribute('schemeAgencyName', "United Nations Economic Commission for Europe");
+        $tax->appendChild($ID);
+
         $tax->appendChild($this->xml->createElement('cbc:Name', 'IGV'));
+
         $tax->appendChild($this->xml->createElement('cbc:TaxTypeCode', 'VAT'));
+
         $tributo_categoria->appendChild($tax);
         $tributo_subtotal->appendChild($tributo_categoria);
 
@@ -298,33 +462,13 @@ abstract class Comprobante
 
         $invoce_line->appendChild($tributo);
 
+        // TODO tributo ISC
 
-        //Tributo ISC
-        if (isset($detalle['DETALLE_TRIBUTO_ISC'])) {
-            $tributo = $this->xml->createElement('cac:TaxTotal');
-            $tributo->appendChild($this->xml->createElement('cbc:TaxAmount', $detalle['DETALLE_TRIBUTO_ISC']))
-                ->setAttribute('currencyID', $cabecera['CODIGO_MONEDA']);
-
-            $tributo_subtotal = $this->xml->createElement('cac:TaxSubtotal');
-            $tributo_subtotal->appendChild($this->xml->createElement('cbc:TaxAmount', $detalle['DETALLE_TRIBUTO_ISC']))
-                ->setAttribute('currencyID', $cabecera['CODIGO_MONEDA']);
-
-            $tributo_categoria = $this->xml->createElement('cac:TaxCategory');
-            // (Catálogo No. 08).
-            $tributo_categoria->appendChild($this->xml->createElement('cbc:TierRange', '02'));
-
-            $tax = $this->xml->createElement('cac:TaxScheme');
-            $tax->appendChild($this->xml->createElement('cbc:ID', '2000'));
-            $tax->appendChild($this->xml->createElement('cbc:Name', 'ISC'));
-            $tax->appendChild($this->xml->createElement('cbc:TaxTypeCode', 'EXC'));
-            $tributo_categoria->appendChild($tax);
-            $tributo_subtotal->appendChild($tributo_categoria);
-
-            $tributo->appendChild($tributo_subtotal);
-
-            $invoce_line->appendChild($tributo);
-        }
-
+        /*
+         * Description: Descripcion del item
+         * ID: Codigo del producto
+         * ItemClassificationCode: (CATALOGO No. 25)
+         * */
         $descripcion = $this->xml->createElement('cac:Item');
         $descripcion->appendChild($this->xml->createElement('cbc:Description'))
             ->appendChild($this->xml->createCDATASection($detalle['DESCRIPCION']));
@@ -335,8 +479,12 @@ abstract class Comprobante
             $descripcion->appendChild($codigo);
         }
 
+        // TODO Codigo de productos de SUNAT (ItemClassificationCode)
+        // TODO Propiedades adicionales del item (AdditionalItemProperty)
+
         $invoce_line->appendChild($descripcion);
 
+        // Valor unitario por item. Este importe no incluye los impuestos ni decuentos
         $precio = $this->xml->createElement('cac:Price');
         $precio->appendChild($this->xml->createElement('cbc:PriceAmount', $detalle['PRECIO_VALOR']))
             ->setAttribute('currencyID', $cabecera['CODIGO_MONEDA']);
@@ -344,4 +492,6 @@ abstract class Comprobante
 
         return $invoce_line;
     }
+
+
 }

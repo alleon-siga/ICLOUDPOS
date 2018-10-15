@@ -3,9 +3,11 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-class facturacion extends MY_Controller {
+class facturacion extends MY_Controller
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         if ($this->login_model->verify_session()) {
             $this->load->model('facturacion/facturacion_model');
@@ -15,234 +17,240 @@ class facturacion extends MY_Controller {
         }
     }
 
-    function test() {
+    function test()
+    {
 //        var_dump($this->facturacion_model->enviarBaja(1));
 
         echo 'sdsd';
         var_dump($this->facturacion_model->getEstado('1', array(
-                    'codigo' => 'RA',
-                    'FECHA_EMISION' => '2018-09-20',
-                    'CORRELATIVO' => '1'
+            'codigo' => 'RA',
+            'FECHA_EMISION' => '2018-09-20',
+            'CORRELATIVO' => '1'
         )));
     }
 
-    function enviar($action = '') {
+    function enviar($action = '')
+    {
         switch ($action) {
             case 'filter': {
-                    $data['local_id'] = $this->input->post('local_id');
-                    $data['estado'] = $this->input->post('estado');
+                $data['local_id'] = $this->input->post('local_id');
+                $data['estado'] = $this->input->post('estado');
 
-                    $data['fecha'] = str_replace('/', '-', $this->input->post('fecha'));
+                $data['fecha'] = str_replace('/', '-', $this->input->post('fecha'));
 
 
-                    $data['tipo_documento'] = '01';
-                    $data['facturas'] = $this->facturacion_model->get_comprobantes_generados($data);
-                    $data['tipo_documento'] = '03';
-                    $data['boletas'] = $this->facturacion_model->get_comprobantes_generados($data);
+                $data['tipo_documento'] = '01';
+                $data['facturas'] = $this->facturacion_model->get_comprobantes_generados($data);
+                $data['tipo_documento'] = '03';
+                $data['boletas'] = $this->facturacion_model->get_comprobantes_generados($data);
 
-                    $data['resumenes_pendientes'] = $this->db->get_where('facturacion_resumen', array(
-                                'estado' => 2
-                            ))->result();
+                $data['resumenes_pendientes'] = $this->db->get_where('facturacion_resumen', array(
+                    'estado' => 2
+                ))->result();
 
-                    $resumen = $this->db->order_by('id', 'desc')->get_where('facturacion_resumen', array(
-                                'fecha' => date('Y-m-d')
-                            ))->row();
+                $resumen = $this->db->order_by('id', 'desc')->get_where('facturacion_resumen', array(
+                    'fecha' => date('Y-m-d')
+                ))->row();
 
-                    if ($resumen != NULL) {
-                        $data['resumen_numero'] = 'RC-' . date('Ymd') . '-' . ($resumen->correlativo + 1);
-                    } else {
-                        $data['resumen_numero'] = 'RC-' . date('Ymd') . '-' . 1;
-                    }
-
-                    $data['emisor'] = $this->facturacion_model->get_emisor();
-                    echo $this->load->view('menu/facturacion/enviar_list', $data, true);
-                    break;
+                if ($resumen != NULL) {
+                    $data['resumen_numero'] = 'RC-' . date('Ymd') . '-' . ($resumen->correlativo + 1);
+                } else {
+                    $data['resumen_numero'] = 'RC-' . date('Ymd') . '-' . 1;
                 }
+
+                $data['emisor'] = $this->facturacion_model->get_emisor();
+                echo $this->load->view('menu/facturacion/enviar_list', $data, true);
+                break;
+            }
             default: {
-                    if ($this->session->userdata('esSuper') == 1) {
-                        $data['locales'] = $this->local_model->get_all();
-                    } else {
-                        $usu = $this->session->userdata('nUsuCodigo');
-                        $data['locales'] = $this->local_model->get_all_usu($usu);
-                    }
-
-                    $data['monedas'] = $this->db->get_where('moneda', array('status_moneda' => 1))->result();
-
-
-                    $dataCuerpo['cuerpo'] = $this->load->view('menu/facturacion/enviar', $data, true);
-                    if ($this->input->is_ajax_request()) {
-                        echo $dataCuerpo['cuerpo'];
-                    } else {
-                        $this->load->view('menu/template', $dataCuerpo);
-                    }
+                if ($this->session->userdata('esSuper') == 1) {
+                    $data['locales'] = $this->local_model->get_all();
+                } else {
+                    $usu = $this->session->userdata('nUsuCodigo');
+                    $data['locales'] = $this->local_model->get_all_usu($usu);
                 }
+
+                $data['monedas'] = $this->db->get_where('moneda', array('status_moneda' => 1))->result();
+
+
+                $dataCuerpo['cuerpo'] = $this->load->view('menu/facturacion/enviar', $data, true);
+                if ($this->input->is_ajax_request()) {
+                    echo $dataCuerpo['cuerpo'];
+                } else {
+                    $this->load->view('menu/template', $dataCuerpo);
+                }
+            }
         }
     }
 
-    function emision($action = '') {
+    function emision($action = '')
+    {
         switch ($action) {
             case 'filter': {
-                    $data['local_id'] = $this->input->post('local_id');
-                    $data['estado'] = $this->input->post('estado');
+                $data['local_id'] = $this->input->post('local_id');
+                $data['estado'] = $this->input->post('estado');
 
-                    $date_range = explode(" - ", $this->input->post('fecha'));
-                    $data['fecha_ini'] = str_replace("/", "-", $date_range[0]);
-                    $data['fecha_fin'] = str_replace("/", "-", $date_range[1]);
+                $date_range = explode(" - ", $this->input->post('fecha'));
+                $data['fecha_ini'] = str_replace("/", "-", $date_range[0]);
+                $data['fecha_fin'] = str_replace("/", "-", $date_range[1]);
 
 
-                    $data['facturaciones'] = $this->facturacion_model->get_facturacion($data);
-                    $data['emisor'] = $this->facturacion_model->get_emisor();
-                    echo $this->load->view('menu/facturacion/facturacion_list', $data, true);
-                    break;
-                }
+                $data['facturaciones'] = $this->facturacion_model->get_facturacion($data);
+                $data['emisor'] = $this->facturacion_model->get_emisor();
+                echo $this->load->view('menu/facturacion/facturacion_list', $data, true);
+                break;
+            }
             default: {
-                    if ($this->session->userdata('esSuper') == 1) {
-                        $data['locales'] = $this->local_model->get_all();
-                    } else {
-                        $usu = $this->session->userdata('nUsuCodigo');
-                        $data['locales'] = $this->local_model->get_all_usu($usu);
-                    }
-
-                    $data['monedas'] = $this->db->get_where('moneda', array('status_moneda' => 1))->result();
-
-
-                    $dataCuerpo['cuerpo'] = $this->load->view('menu/facturacion/index', $data, true);
-                    if ($this->input->is_ajax_request()) {
-                        echo $dataCuerpo['cuerpo'];
-                    } else {
-                        $this->load->view('menu/template', $dataCuerpo);
-                    }
+                if ($this->session->userdata('esSuper') == 1) {
+                    $data['locales'] = $this->local_model->get_all();
+                } else {
+                    $usu = $this->session->userdata('nUsuCodigo');
+                    $data['locales'] = $this->local_model->get_all_usu($usu);
                 }
+                $data['emisor'] = $this->facturacion_model->get_emisor();
+                $data['monedas'] = $this->db->get_where('moneda', array('status_moneda' => 1))->result();
+
+
+                $dataCuerpo['cuerpo'] = $this->load->view('menu/facturacion/index', $data, true);
+                if ($this->input->is_ajax_request()) {
+                    echo $dataCuerpo['cuerpo'];
+                } else {
+                    $this->load->view('menu/template', $dataCuerpo);
+                }
+            }
         }
     }
 
-    function notas($action = '') {
+    function notas($action = '')
+    {
         switch ($action) {
             case 'filter': {
-                    $data['local_id'] = $this->input->post('local_id');
+                $data['local_id'] = $this->input->post('local_id');
 
-                    $date_range = explode(" - ", $this->input->post('fecha'));
-                    $data['fecha_ini'] = str_replace("/", "-", $date_range[0]);
-                    $data['fecha_fin'] = str_replace("/", "-", $date_range[1]);
+                $date_range = explode(" - ", $this->input->post('fecha'));
+                $data['fecha_ini'] = str_replace("/", "-", $date_range[0]);
+                $data['fecha_fin'] = str_replace("/", "-", $date_range[1]);
 
 
-                    $data['ventas'] = $this->db->select('v.*, c.razon_social, m.simbolo')->from('venta AS v')
-                                    ->join('cliente AS c', 'c.id_cliente = v.id_cliente')
-                                    ->join('moneda AS m', 'm.id_moneda = v.id_moneda')
-                                    ->where('v.fecha >=', date('Y-m-d H:i:s', strtotime($data['fecha_ini'] . " 00:00:00")))
-                                    ->where('v.fecha <=', date('Y-m-d H:i:s', strtotime($data['fecha_fin'] . " 23:59:59")))
-                                    ->where('v.local_id', $data['local_id'])
-                                    ->where('v.id_documento = 6')
-                                    ->where('v.numero != ', NULL)
-                                    ->where('v.nota_facturada', 0)
-                                    ->where("v.venta_status = 'COMPLETADO'")
-                                    ->get()->result();
+                $data['ventas'] = $this->db->select('v.*, c.razon_social, m.simbolo')->from('venta AS v')
+                    ->join('cliente AS c', 'c.id_cliente = v.id_cliente')
+                    ->join('moneda AS m', 'm.id_moneda = v.id_moneda')
+                    ->where('v.fecha >=', date('Y-m-d H:i:s', strtotime($data['fecha_ini'] . " 00:00:00")))
+                    ->where('v.fecha <=', date('Y-m-d H:i:s', strtotime($data['fecha_fin'] . " 23:59:59")))
+                    ->where('v.local_id', $data['local_id'])
+                    ->where('v.id_documento = 6')
+                    ->where('v.numero != ', NULL)
+                    ->where('v.nota_facturada', 0)
+                    ->where("v.venta_status = 'COMPLETADO'")
+                    ->get()->result();
 
-                    echo $this->load->view('menu/facturacion/notas_list', $data, true);
-                    break;
-                }
+                echo $this->load->view('menu/facturacion/notas_list', $data, true);
+                break;
+            }
             case 'declarar': {
-                    $data['venta'] = $this->db->get_where('venta', array('venta_id' => $this->input->post('venta_id')))->row();
+                $data['venta'] = $this->db->get_where('venta', array('venta_id' => $this->input->post('venta_id')))->row();
 
-                    echo $this->load->view('menu/facturacion/notas_declarar', $data, true);
-                    break;
-                }
+                echo $this->load->view('menu/facturacion/notas_declarar', $data, true);
+                break;
+            }
             case 'crear_comprobante': {
 
-                    $venta_id = $this->input->post('venta_id');
-                    $tipo_documento = $this->input->post('tipo_documento');
-                    $descuento = $this->input->post('descuento');
-                    $fecha_facturacion = date('Y-m-d H:i:s', strtotime(
-                                    str_replace('/', '-', $this->input->post('fecha_facturacion')))
-                    );
+                $venta_id = $this->input->post('venta_id');
+                $tipo_documento = $this->input->post('tipo_documento');
+                $descuento = $this->input->post('descuento');
+                $fecha_facturacion = date('Y-m-d H:i:s', strtotime(
+                        str_replace('/', '-', $this->input->post('fecha_facturacion')))
+                );
 
-                    $resp = $this->facturacion_model->convertirNotaPedido($venta_id, $tipo_documento, $fecha_facturacion, $descuento);
+                $resp = $this->facturacion_model->convertirNotaPedido($venta_id, $tipo_documento, $fecha_facturacion, $descuento);
 
-                    if ($tipo_documento == '03' || $tipo_documento == '01') {
-                        $data['facturacion'] = $this->db->get_where('facturacion', array(
-                                    'documento_tipo' => $tipo_documento,
-                                    'ref_id' => $venta_id
-                                ))->row();
-                    } else {
-                        $boletas_multiples = $this->db->get_where('facturacion', array(
-                                    'documento_tipo' => '03',
-                                    'ref_id' => $venta_id
-                                ))->result();
+                if ($tipo_documento == '03' || $tipo_documento == '01') {
+                    $data['facturacion'] = $this->db->get_where('facturacion', array(
+                        'documento_tipo' => $tipo_documento,
+                        'ref_id' => $venta_id
+                    ))->row();
+                } else {
+                    $boletas_multiples = $this->db->get_where('facturacion', array(
+                        'documento_tipo' => '03',
+                        'ref_id' => $venta_id
+                    ))->result();
 
-                        if (count($boletas_multiples) > 0) {
-                            if ($boletas_multiples[0]->estado == 1) {
-                                $data['bm_msg'] = array(
-                                    'estado' => 1,
-                                    'nota' => 'Las boletas ' . $boletas_multiples[0]->documento_numero .
+                    if (count($boletas_multiples) > 0) {
+                        if ($boletas_multiples[0]->estado == 1) {
+                            $data['bm_msg'] = array(
+                                'estado' => 1,
+                                'nota' => 'Las boletas ' . $boletas_multiples[0]->documento_numero .
                                     ' hasta la ' . $boletas_multiples[count($boletas_multiples) - 1]->documento_numero .
                                     ' fueron generadas correctamente'
-                                );
-                            } else {
-                                $data['bm_msg'] = array(
-                                    'estado' => 0,
-                                    'nota' => 'Ha occurido un error al generar picado de boletas multiples'
-                                );
-                            }
+                            );
                         } else {
                             $data['bm_msg'] = array(
                                 'estado' => 0,
-                                'nota' => 'No se crearon boletas a partir de la nota de venta ' . $venta_id
+                                'nota' => 'Ha occurido un error al generar picado de boletas multiples'
                             );
                         }
+                    } else {
+                        $data['bm_msg'] = array(
+                            'estado' => 0,
+                            'nota' => 'No se crearon boletas a partir de la nota de venta ' . $venta_id
+                        );
                     }
-
-                    header('Content-Type: application/json');
-                    echo json_encode($data);
-
-                    break;
                 }
+
+                header('Content-Type: application/json');
+                echo json_encode($data);
+
+                break;
+            }
             default: {
-                    if ($this->session->userdata('esSuper') == 1) {
-                        $data['locales'] = $this->local_model->get_all();
-                    } else {
-                        $usu = $this->session->userdata('nUsuCodigo');
-                        $data['locales'] = $this->local_model->get_all_usu($usu);
-                    }
-
-                    $data['monedas'] = $this->db->get_where('moneda', array('status_moneda' => 1))->result();
-
-
-                    $dataCuerpo['cuerpo'] = $this->load->view('menu/facturacion/notas', $data, true);
-                    if ($this->input->is_ajax_request()) {
-                        echo $dataCuerpo['cuerpo'];
-                    } else {
-                        $this->load->view('menu/template', $dataCuerpo);
-                    }
+                if ($this->session->userdata('esSuper') == 1) {
+                    $data['locales'] = $this->local_model->get_all();
+                } else {
+                    $usu = $this->session->userdata('nUsuCodigo');
+                    $data['locales'] = $this->local_model->get_all_usu($usu);
                 }
+
+                $data['monedas'] = $this->db->get_where('moneda', array('status_moneda' => 1))->result();
+
+
+                $dataCuerpo['cuerpo'] = $this->load->view('menu/facturacion/notas', $data, true);
+                if ($this->input->is_ajax_request()) {
+                    echo $dataCuerpo['cuerpo'];
+                } else {
+                    $this->load->view('menu/template', $dataCuerpo);
+                }
+            }
         }
     }
 
-    function get_facturacion_detalle($action = '') {
+    function get_facturacion_detalle($action = '')
+    {
         switch ($action) {
             case 'boleta': {
-                    $id = $this->input->post('id');
-                    $data['resumen'] = $this->db->get_where('facturacion_resumen', array('id' => $id))->row();
-                    $data['emisor'] = $this->facturacion_model->get_emisor();
-                    $data['boletas'] = $this->db
-                            ->join('facturacion_resumen_comprobantes AS frc', 'frc.comprobante_id = facturacion.id')
-                            ->get_where('facturacion', array('frc.resumen_id' => $id))
-                            ->result();
+                $id = $this->input->post('id');
+                $data['resumen'] = $this->db->get_where('facturacion_resumen', array('id' => $id))->row();
+                $data['emisor'] = $this->facturacion_model->get_emisor();
+                $data['boletas'] = $this->db
+                    ->join('facturacion_resumen_comprobantes AS frc', 'frc.comprobante_id = facturacion.id')
+                    ->get_where('facturacion', array('frc.resumen_id' => $id))
+                    ->result();
 
-                    echo $this->load->view('menu/facturacion/facturacion_boleta_detalle', $data, TRUE);
-                    break;
-                }
+                echo $this->load->view('menu/facturacion/facturacion_boleta_detalle', $data, TRUE);
+                break;
+            }
             default: {
 
-                    $id = $this->input->post('id');
-                    $data['facturacion'] = $this->facturacion_model->get_facturacion(array('id' => $id));
-                    $data['emisor'] = $this->facturacion_model->get_emisor();
+                $id = $this->input->post('id');
+                $data['facturacion'] = $this->facturacion_model->get_facturacion(array('id' => $id));
+                $data['emisor'] = $this->facturacion_model->get_emisor();
 
-                    echo $this->load->view('menu/facturacion/facturacion_list_detalle', $data, TRUE);
-                }
+                echo $this->load->view('menu/facturacion/facturacion_list_detalle', $data, TRUE);
+            }
         }
     }
 
-    function generar_comprobante() {
+    function generar_comprobante()
+    {
         $id = $this->input->post('id');
 
         $resp = $this->facturacion_model->crearXml($id);
@@ -252,7 +260,8 @@ class facturacion extends MY_Controller {
         echo json_encode($data);
     }
 
-    function get_comprobantes() {
+    function get_comprobantes()
+    {
         $data['fecha'] = str_replace('/', '-', $this->input->post('fecha'));
         $data['local_id'] = $this->input->post('local_id');
         $data['estado'] = $this->input->post('estado');
@@ -271,7 +280,8 @@ class facturacion extends MY_Controller {
         echo json_encode($data);
     }
 
-    function emitir_comprobante() {
+    function emitir_comprobante()
+    {
         $id = $this->input->post('id');
 
         $resp = $this->facturacion_model->emitirXml($id);
@@ -281,7 +291,8 @@ class facturacion extends MY_Controller {
         echo json_encode($data);
     }
 
-    function emitir_resumen() {
+    function emitir_resumen()
+    {
         $data['fecha'] = str_replace('/', '-', $this->input->post('fecha'));
         $data['local_id'] = $this->input->post('local_id');
         $data['estado'] = $this->input->post('estado');
@@ -292,7 +303,8 @@ class facturacion extends MY_Controller {
         echo json_encode($data);
     }
 
-    function actualizar_resumen() {
+    function actualizar_resumen()
+    {
         $id = $this->input->post('id');
 
         $response = $this->facturacion_model->getEstadoResumen($id);
@@ -302,7 +314,8 @@ class facturacion extends MY_Controller {
         echo json_encode($data);
     }
 
-    function reemitir_comprobante() {
+    function reemitir_comprobante()
+    {
         $id = $this->input->post('id');
 
         $resp = $this->facturacion_model->crearXml($id);
@@ -313,7 +326,8 @@ class facturacion extends MY_Controller {
         echo json_encode($data);
     }
 
-    function descargar_xml($id) {
+    function descargar_xml($id)
+    {
         $emisor = $this->db->get('facturacion_emisor')->row();
         $f = $this->db->get_where('facturacion', array('id' => $id))->row();
         $name = $emisor->ruc . '-' . $f->documento_tipo . '-' . $f->documento_numero . '.XML';
@@ -330,14 +344,16 @@ class facturacion extends MY_Controller {
         readfile('./application/libraries/Facturador/files/xmls/' . $emisor->ruc . '/' . $name) or die('error!');
     }
 
-    function imprimir_ticket($id) {
+    function imprimir_ticket($id)
+    {
 
         $data['facturacion'] = $this->facturacion_model->get_facturacion(array('id' => $id));
         $data['emisor'] = $this->facturacion_model->get_emisor();
         $this->load->view('menu/facturacion/impresion_ticket', $data);
     }
 
-    function imprimir($id) {
+    function imprimir($id)
+    {
         $data['facturacion'] = $this->facturacion_model->get_facturacion(array('id' => $id));
         $data['emisor'] = $this->facturacion_model->get_emisor();
 
@@ -351,7 +367,8 @@ class facturacion extends MY_Controller {
         $mpdf->Output();
     }
 
-    function emisor() {
+    function emisor()
+    {
         $data['emisor'] = $this->db->get('facturacion_emisor')->row();
         $data['departamentos'] = $this->db->get('estados')->result();
         $data['provincias'] = $this->db->get('ciudades')->result();
@@ -365,7 +382,8 @@ class facturacion extends MY_Controller {
         }
     }
 
-    function save_emisor() {
+    function save_emisor()
+    {
         $params = array(
             'ruc' => $this->input->post('ruc'),
             'razon_social' => $this->input->post('razon_social'),
@@ -386,153 +404,156 @@ class facturacion extends MY_Controller {
 
         $pfx = $this->upload_image($params['ruc']);
         if ($pfx == 1) {
-            
+
         }
 
         echo $params['ruc'];
     }
 
-    function reporte_venta($action = '') {
+    function reporte_venta($action = '')
+    {
 
         $data['emisor'] = $this->facturacion_model->get_emisor();
 
         switch ($action) {
             case 'filter': {
-                    $params['local_id'] = $this->input->post('local_id');
-                    $date_range = explode(" - ", $this->input->post('fecha'));
-                    $params['fecha_ini'] = date('Y-m-d', strtotime(str_replace("/", "-", $date_range[0])));
-                    $params['fecha_fin'] = date('Y-m-d', strtotime(str_replace("/", "-", $date_range[1])));
-                    $params['doc_id'] = $this->input->post('doc_id');
-                    $data['lists'] = $this->facturacion_model->get_ventas_emitidas($params);
-                    $data['emisor'] = $this->facturacion_model->get_emisor();
-                    $this->load->view('menu/facturacion/reportes/venta_list', $data);
-                    break;
-                }
+                $params['local_id'] = $this->input->post('local_id');
+                $date_range = explode(" - ", $this->input->post('fecha'));
+                $params['fecha_ini'] = date('Y-m-d', strtotime(str_replace("/", "-", $date_range[0])));
+                $params['fecha_fin'] = date('Y-m-d', strtotime(str_replace("/", "-", $date_range[1])));
+                $params['doc_id'] = $this->input->post('doc_id');
+                $data['lists'] = $this->facturacion_model->get_ventas_emitidas($params);
+                $data['emisor'] = $this->facturacion_model->get_emisor();
+                $this->load->view('menu/facturacion/reportes/venta_list', $data);
+                break;
+            }
             case 'pdf': {
-                    $params = json_decode($this->input->get('data'));
-                    $date_range = explode(' - ', $params->fecha);
-                    $data = array();
+                $params = json_decode($this->input->get('data'));
+                $date_range = explode(' - ', $params->fecha);
+                $data = array();
 
-                    $this->load->library('mpdf53/mpdf');
-                    $mpdf = new mPDF('utf-8', 'A4', 0, '', 5, 5, 5, 5, 5, 5);
-                    $html = $this->load->view('menu/facturacion/reportes/venta_list_pdf', $data, true);
-                    $mpdf->WriteHTML($html);
-                    $mpdf->Output();
-                    break;
-                }
+                $this->load->library('mpdf53/mpdf');
+                $mpdf = new mPDF('utf-8', 'A4', 0, '', 5, 5, 5, 5, 5, 5);
+                $html = $this->load->view('menu/facturacion/reportes/venta_list_pdf', $data, true);
+                $mpdf->WriteHTML($html);
+                $mpdf->Output();
+                break;
+            }
             case 'excel': {
-                    $params = json_decode($this->input->get('data'));
-                    $date_range = explode(' - ', $params->fecha);
-                    $data = array();
+                $params = json_decode($this->input->get('data'));
+                $date_range = explode(' - ', $params->fecha);
+                $data = array();
 
-                    echo $this->load->view('menu/facturacion/reportes/venta_list_excel', $data, true);
-                    break;
-                }
+                echo $this->load->view('menu/facturacion/reportes/venta_list_excel', $data, true);
+                break;
+            }
             default: {
-                    if ($this->session->userdata('esSuper') == 1) {
-                        $data['locales'] = $this->local_model->get_all();
-                    } else {
-                        $usu = $this->session->userdata('nUsuCodigo');
-                        $data['locales'] = $this->local_model->get_all_usu($usu);
-                    }
-
-
-                    $dataCuerpo['cuerpo'] = $this->load->view('menu/facturacion/reportes/venta', $data, true);
-                    if ($this->input->is_ajax_request()) {
-                        echo $dataCuerpo['cuerpo'];
-                    } else {
-                        $this->load->view('menu/template', $dataCuerpo);
-                    }
-                    break;
+                if ($this->session->userdata('esSuper') == 1) {
+                    $data['locales'] = $this->local_model->get_all();
+                } else {
+                    $usu = $this->session->userdata('nUsuCodigo');
+                    $data['locales'] = $this->local_model->get_all_usu($usu);
                 }
+
+
+                $dataCuerpo['cuerpo'] = $this->load->view('menu/facturacion/reportes/venta', $data, true);
+                if ($this->input->is_ajax_request()) {
+                    echo $dataCuerpo['cuerpo'];
+                } else {
+                    $this->load->view('menu/template', $dataCuerpo);
+                }
+                break;
+            }
         }
     }
 
     //
-    function relacion_comprobante($action = '') {
+    function relacion_comprobante($action = '')
+    {
 
         $data['emisor'] = $this->facturacion_model->get_emisor();
 
         switch ($action) {
             case 'filter': {
-                    $params['local_id'] = $this->input->post('local_id');
-                    $params['fecha_flag'] = $this->input->post('fecha_flag');
-                    $date_range = explode(" - ", $this->input->post('fecha'));
-                    $params['fecha_ini'] = date('Y-m-d', strtotime(str_replace("/", "-", $date_range[0])));
-                    $params['fecha_fin'] = date('Y-m-d', strtotime(str_replace("/", "-", $date_range[1])));
-                    $params['doc_id'] = $this->input->post('doc_id');
-                    $params['estado_id'] = $this->input->post('estado_id');
-                    $data['lists'] = $this->facturacion_model->get_relacion_comprobantes($params);
-                    $this->load->view('menu/facturacion/reportes/rel_com_list', $data);
-                    break;
-                }
+                $params['local_id'] = $this->input->post('local_id');
+                $params['fecha_flag'] = $this->input->post('fecha_flag');
+                $date_range = explode(" - ", $this->input->post('fecha'));
+                $params['fecha_ini'] = date('Y-m-d', strtotime(str_replace("/", "-", $date_range[0])));
+                $params['fecha_fin'] = date('Y-m-d', strtotime(str_replace("/", "-", $date_range[1])));
+                $params['doc_id'] = $this->input->post('doc_id');
+                $params['estado_id'] = $this->input->post('estado_id');
+                $data['lists'] = $this->facturacion_model->get_relacion_comprobantes($params);
+                $this->load->view('menu/facturacion/reportes/rel_com_list', $data);
+                break;
+            }
             case 'pdf': {
-                    $params = json_decode($this->input->get('data'));
-                    $date_range = explode(' - ', $params->fecha);
-                    $data = array(
-                        'local_id'=>$params->local_id,
-                        'doc_id' => $params->doc_id,
-                        'estado_id' => $params->estado_id,
-                        'fecha_flag' => $params->fecha_flag,
-                        'fecha_ini' => date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0]))),
-                        'fecha_fin' => date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])))
-                    );
-                    $data['lists'] = $this->facturacion_model->get_relacion_comprobantes($data);
-                    $local = $this->db->get_where('local', array('int_local_id' => $data['local_id']))->row();
-                    $data['local_nombre'] = !empty($local->local_nombre) ? $local->local_nombre : 'TODOS';
-                    $data['local_direccion'] = !empty($local->direccion) ? $local->direccion : 'TODOS';
-                    $data['fecha_ini'] = $data['fecha_ini'];
-                    $data['fecha_fin'] = $data['fecha_fin'];
-                    $data['fecha_flag'] = $data['fecha_flag'];
-                    $this->load->library('mpdf53/mpdf');
-                    $mpdf = new mPDF('utf-8', 'A4', 0, '', 5, 5, 5, 5, 5, 5);
-                    $html = $this->load->view('menu/facturacion/reportes/rel_com_list_pdf', $data, true);
-                    $mpdf->WriteHTML($html);
-                    $mpdf->Output();
-                    break;
-                }
+                $params = json_decode($this->input->get('data'));
+                $date_range = explode(' - ', $params->fecha);
+                $data = array(
+                    'local_id' => $params->local_id,
+                    'doc_id' => $params->doc_id,
+                    'estado_id' => $params->estado_id,
+                    'fecha_flag' => $params->fecha_flag,
+                    'fecha_ini' => date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0]))),
+                    'fecha_fin' => date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])))
+                );
+                $data['lists'] = $this->facturacion_model->get_relacion_comprobantes($data);
+                $local = $this->db->get_where('local', array('int_local_id' => $data['local_id']))->row();
+                $data['local_nombre'] = !empty($local->local_nombre) ? $local->local_nombre : 'TODOS';
+                $data['local_direccion'] = !empty($local->direccion) ? $local->direccion : 'TODOS';
+                $data['fecha_ini'] = $data['fecha_ini'];
+                $data['fecha_fin'] = $data['fecha_fin'];
+                $data['fecha_flag'] = $data['fecha_flag'];
+                $this->load->library('mpdf53/mpdf');
+                $mpdf = new mPDF('utf-8', 'A4', 0, '', 5, 5, 5, 5, 5, 5);
+                $html = $this->load->view('menu/facturacion/reportes/rel_com_list_pdf', $data, true);
+                $mpdf->WriteHTML($html);
+                $mpdf->Output();
+                break;
+            }
             case 'excel': {
-                    $params = json_decode($this->input->get('data'));
-                    $date_range = explode(' - ', $params->fecha);
-                    $data = array(
-                         'local_id'=>$params->local_id,
-                        'doc_id' => $params->doc_id,
-                        'estado_id' => $params->estado_id,                        
-                        'fecha_flag' => $params->fecha_flag,
-                        'fecha_ini' => date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0]))),
-                        'fecha_fin' => date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])))
-                    );
-                    $data['lists'] = $this->facturacion_model->get_relacion_comprobantes($data);
-                    $local = $this->db->get_where('local', array('int_local_id' => $data['local_id']))->row();
-                    $data['local_nombre'] = !empty($local->local_nombre) ? $local->local_nombre : 'TODOS';
-                    $data['local_direccion'] = !empty($local->direccion) ? $local->direccion : 'TODOS';
-                    $data['fecha_ini'] = $data['fecha_ini'];
-                    $data['fecha_fin'] = $data['fecha_fin'];                    
-                    $data['fecha_flag'] = $data['fecha_flag'];
-                    echo $this->load->view('menu/facturacion/reportes/rel_com_list_excel', $data, true);
-                    break;
-                }
+                $params = json_decode($this->input->get('data'));
+                $date_range = explode(' - ', $params->fecha);
+                $data = array(
+                    'local_id' => $params->local_id,
+                    'doc_id' => $params->doc_id,
+                    'estado_id' => $params->estado_id,
+                    'fecha_flag' => $params->fecha_flag,
+                    'fecha_ini' => date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0]))),
+                    'fecha_fin' => date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])))
+                );
+                $data['lists'] = $this->facturacion_model->get_relacion_comprobantes($data);
+                $local = $this->db->get_where('local', array('int_local_id' => $data['local_id']))->row();
+                $data['local_nombre'] = !empty($local->local_nombre) ? $local->local_nombre : 'TODOS';
+                $data['local_direccion'] = !empty($local->direccion) ? $local->direccion : 'TODOS';
+                $data['fecha_ini'] = $data['fecha_ini'];
+                $data['fecha_fin'] = $data['fecha_fin'];
+                $data['fecha_flag'] = $data['fecha_flag'];
+                echo $this->load->view('menu/facturacion/reportes/rel_com_list_excel', $data, true);
+                break;
+            }
             default: {
-                    if ($this->session->userdata('esSuper') == 1) {
-                        $data['locales'] = $this->local_model->get_all();
-                    } else {
-                        $usu = $this->session->userdata('nUsuCodigo');
-                        $data['locales'] = $this->local_model->get_all_usu($usu);
-                    }
-
-
-                    $dataCuerpo['cuerpo'] = $this->load->view('menu/facturacion/reportes/rel_com', $data, true);
-                    if ($this->input->is_ajax_request()) {
-                        echo $dataCuerpo['cuerpo'];
-                    } else {
-                        $this->load->view('menu/template', $dataCuerpo);
-                    }
-                    break;
+                if ($this->session->userdata('esSuper') == 1) {
+                    $data['locales'] = $this->local_model->get_all();
+                } else {
+                    $usu = $this->session->userdata('nUsuCodigo');
+                    $data['locales'] = $this->local_model->get_all_usu($usu);
                 }
+
+
+                $dataCuerpo['cuerpo'] = $this->load->view('menu/facturacion/reportes/rel_com', $data, true);
+                if ($this->input->is_ajax_request()) {
+                    echo $dataCuerpo['cuerpo'];
+                } else {
+                    $this->load->view('menu/template', $dataCuerpo);
+                }
+                break;
+            }
         }
     }
 
-    function consultarRuc() {
+    function consultarRuc()
+    {
         require_once(APPPATH . 'libraries/RucSunat/RucSunat.php');
         $ruc = $this->input->post('ruc');
         $sunat = new RucSunat();
@@ -547,7 +568,8 @@ class facturacion extends MY_Controller {
         }
     }
 
-    function upload_image($ruc) {
+    function upload_image($ruc)
+    {
         if (isset($_FILES['certificado']) && $_FILES['certificado']['size'] != 0) {
             $extension = "pfx";
             $dir = './application/libraries/Facturador/files/certificates/';
@@ -567,7 +589,7 @@ class facturacion extends MY_Controller {
             if (!$this->upload->do_upload('certificado')) {
                 echo $this->upload->display_errors();
             } else {
-                
+
             }
 
             return $ruc . '.' . $extension;
