@@ -84,8 +84,7 @@ class venta extends MY_Controller
             $unidades = $this->unidades_model->get_by('nombre_unidad', $datos->detalles[$x]->unidad_nombre);
             $datos->detalles[$x]->unidad_id_min = $unidades['id_unidad'];
             $datos->detalles[$x]->precio = $this->unidades_model->get_maximo_costo($dato->producto_id, $dato->unidad_id, $datos->detalles[$x]->precio);
-            $contable_costo = $this->venta_contable->getCosto($id_shadow, $dato->unidad_id);
-            $datos->detalles[$x]->contable_costo = $contable_costo->contable_costo;
+           
             $x++;
         }
         $data['shadowdetalle'] = $datos;
@@ -98,6 +97,14 @@ class venta extends MY_Controller
         
         $data['venta'] = $datos;
         $this->load->view('facturador/venta/historial_list_detalle_convertidos', $data);
+    }
+    function get_ventas_shadow()
+    {
+        $venta_id = $this->input->post('venta_id');
+        $datos = $this->venta_shadow_model->get_ventas_shadow($venta_id);
+        
+        $data['ventas'] = $datos;
+        $this->load->view('facturador/venta/sunat_shadow_masivo', $data);
     }
     function get_venta_convertido()
     {

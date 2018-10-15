@@ -79,9 +79,9 @@
                                         <i class="fa fa-refresh"></i>
                                     </a>
                                 <?php }
-                                if (($venta->convertidos) > 0) {
+                                if ($venta->id_factura=='') {
                                     ?>
-                                    <a class="btn btn-default btn-sm" data-toggle="tooltip"  title="Sunat" data-original-title="Sunat" href="#">
+                                    <a class="btn btn-default btn-sm" data-toggle="tooltip" onclick="sendsunat(<?= $venta->venta_id ?>)" title="Sunat" data-original-title="Sunat" href="#">
                                         <i class="fa fa-mail-forward"></i>
                                     </a>
                         <?php
@@ -107,6 +107,7 @@
     <div class="modal fade" id="dialog_venta_detalle_convertidos" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true"></div>
     <div class="modal fade" id="remove_ventaconvertida_shadow" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true"></div>
     <div class="modal fade" id="dialog_venta_detalle_sahdow" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true"></div>
+    <div class="modal fade" id="dialog_sunat_shadow_masivo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true"></div>
     
 </div>
 <script src="<?= $ruta; ?>recursos/js/facturador_historial_list.js"></script>

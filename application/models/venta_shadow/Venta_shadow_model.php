@@ -215,11 +215,6 @@ class venta_shadow_model extends CI_Model {
             venta.inicial as inicial,
             venta.total_impuesto as impuesto,
             venta.subtotal as subtotal,
-            credito.dec_credito_montodebito as credito_pagado,
-            credito.dec_credito_montocuota as credito_pendiente,
-            credito.var_credito_estado as credito_estado,
-            credito.tasa_interes as tasa_interes,
-            credito.periodo_gracia as periodo_gracia,
             venta.serie as serie,
             venta.numero as numero,
             venta.fecha_facturacion as fecha_facturacion,
@@ -233,6 +228,8 @@ class venta_shadow_model extends CI_Model {
 	    CASE WHEN COUNT(venta_shadow.venta_id) > 0 THEN  COUNT(venta_shadow.venta_id) ELSE
 	    CASE WHEN COUNT(venta_shadow.venta_id) = 0 THEN "" END END as convertidos,
             venta_shadow.serie as serie,
+            venta_shadow.id as id_shadow,
+            venta_shadow.id_factura as id_factura,
             (select SUM(detalle_venta.cantidad) from detalle_venta
             where detalle_venta.id_venta=venta.venta_id) as total_bultos
             ', FALSE)
@@ -245,7 +242,6 @@ class venta_shadow_model extends CI_Model {
                 ->join('venta_shadow', 'venta.venta_id=venta_shadow.venta_id', 'left')
                 ->join('correlativos', 'venta.id_documento=correlativos.id_documento and venta.local_id=correlativos.id_local', 'left')
                 ->join('local', 'venta.local_id=local.int_local_id')
-                ->join('credito', 'venta.venta_id=credito.id_venta', 'left')
                 ->where('venta.venta_status!="ANULADO"')
                 ->group_by('venta.venta_id');
 
@@ -309,9 +305,9 @@ class venta_shadow_model extends CI_Model {
         if (isset($where['estado_fac']) && $where['estado_fac']=="") {
             
         }elseif(!empty($where['estado_fac']==0)){
-            $this->db->where('venta_shadow.serie',NULL);
+            $this->db->where('venta_shadow.id_factura',NULL);
         } elseif (!empty($where['estado_fac']==1)) {
-            $this->db->where('venta_shadow.serie >"0"');
+            $this->db->where('venta_shadow.id_factura >"0"');
         }
         if (isset($where['id_documento']) && !empty($where['id_documento'])) {
             $this->db->where('venta.id_documento', $where['id_documento']);
@@ -344,7 +340,13 @@ class venta_shadow_model extends CI_Model {
         $this->db->where('d.local_origen', $local_origen);
         return $this->db->get()->result();
     }
-
+    function get_ventas_shadow($id) {
+        $this->db->select('*');
+        $this->db->from('venta_shadow');
+        $this->db->where('venta_shadow.id_factura', NULL);
+        $this->db->where('venta_shadow.venta_id', $id);
+        return $this->db->get()->result();
+    }
     function get_traspaso_local($id) {
         $this->db->select('local_origen');
         $this->db->distinct();
