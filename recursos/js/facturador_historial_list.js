@@ -53,13 +53,13 @@ function mostrar(id) {
         }
     });
 }
-function sendsunat(id) {
+function sendsunat(venta_id) {
     $("#dialog_sunat_shadow_masivo").html($("#loading").html());
     $('#dialog_sunat_shadow_masivo').modal('show');
     $.ajax({
         url: $('#ruta').val() + 'facturador/venta/get_ventas_shadow/',
         type: 'POST',
-        data: {'id': id},
+        data: {'id': venta_id},
         success: function (data) {
             $('#dialog_sunat_shadow_masivo').html(data);
         },

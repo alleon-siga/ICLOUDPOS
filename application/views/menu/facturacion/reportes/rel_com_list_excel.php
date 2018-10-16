@@ -15,6 +15,7 @@ header("Expires: 0");
     <thead>
             <tr>
                 <th># Venta</th>
+                <th>Local</th>
                 <th>Fec. Venta</th>
                 <th>Fec. Fact.</th>
                 <th>Documento</th>
@@ -39,6 +40,7 @@ header("Expires: 0");
             <?php foreach ($lists as $list): ?>
                 <tr class="info" style="font-weight: bold;">
                     <td><?= $list->venta_id ?></td>
+                    <td><?= $list->local_nombre ?></td>
                     <td><?= date('d/m/Y', strtotime($list->Fec_Venta)) ?></td>
                     <td><?= date('d/m/Y', strtotime($list->FecFacturacionElectr)) ?></td>
                     <td><?= $list->documento ?></td>

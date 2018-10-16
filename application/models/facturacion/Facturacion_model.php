@@ -112,7 +112,7 @@ class facturacion_model extends CI_Model {
     }
 
     function get_relacion_comprobantes($params) {
-        $this->db->select('f.fecha as "FecFacturacionElectr", v.fecha as "Fec_Venta", v.venta_id,	
+        $this->db->select('f.fecha as "FecFacturacionElectr", v.fecha as "Fec_Venta", l.local_nombre as "local_nombre", v.venta_id,	
 	CASE 1 
 		WHEN f.documento_tipo = "01" THEN "FACTURA" 
 		WHEN f.documento_tipo = "03" THEN "BOLETA" 
@@ -129,8 +129,8 @@ class facturacion_model extends CI_Model {
 		WHEN f.estado = 4 THEN "RECHAZADO" 
 	END AS "Estado"', false)
                 ->from('facturacion AS f')
-                ->join('venta AS v', 'f.ref_id = v.venta_id');
-        
+                ->join('venta AS v', 'f.ref_id = v.venta_id')
+                ->join('local AS l', 'v.local_id = l.int_local_id','left');
         if ($params['local_id'] > 0) {
             $this->db->where('v.local_id', $params['local_id']);
         }

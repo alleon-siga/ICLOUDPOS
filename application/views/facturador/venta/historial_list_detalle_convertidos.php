@@ -13,7 +13,7 @@ foreach ($venta as $v) {
     $vclien = $v->vclien;
 }
 ?>
-<div class="modal-dialog" style="width: 60%">
+<div class="modal-dialog" style="width: 80%">
     <div class="modal-content">
         <div class="modal-header">
             <h3>Detalles de la Venta Convertido</h3>

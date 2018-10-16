@@ -10,7 +10,7 @@
     }
 </style>
 <input type="hidden" id="venta_id" value="<?= $shadowdetalle->id ?>">
-<div class="modal-dialog" style="width: 60%">
+<div class="modal-dialog" style="width: 70%">
     <div class="modal-content">
         <div class="modal-header">
             <h3>Detalles de la Venta</h3>

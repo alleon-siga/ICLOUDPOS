@@ -380,7 +380,7 @@ if ($this->session->userdata('tema')) {
                                 </a>
                                 <ul>
                                     <li>
-                                        <a href="<?= $ruta ?>facturador/producto/costeo" class="menulink"><i class="gi gi-barcode sidebar-nav-icon"></i>Costeo</a>
+                                        <a href="<?= $ruta ?>facturador/producto/costeo" class="menulink"><i class="gi gi-money sidebar-nav-icon"></i>Costeo</a>
                                     </li>
                                 </ul>
                             </li>
@@ -390,7 +390,7 @@ if ($this->session->userdata('tema')) {
                                 </a>
                                 <ul>
                                     <li>
-                                        <a href="<?= $ruta ?>facturador/venta/historial" class="menulink"><i class="gi gi-barcode sidebar-nav-icon"></i>Registro de Ventas</a>
+                                        <a href="<?= $ruta ?>facturador/venta/historial" class="menulink"><i class="gi gi-money sidebar-nav-icon"></i>Registro de Ventas</a>
                                     </li>
                                 </ul>
                             </li>

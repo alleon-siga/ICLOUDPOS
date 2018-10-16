@@ -212,7 +212,6 @@ class venta_shadow_model extends CI_Model {
             moneda.nombre as moneda_nombre,
             moneda.simbolo as moneda_simbolo,
             venta.total as total,
-            venta.inicial as inicial,
             venta.total_impuesto as impuesto,
             venta.subtotal as subtotal,
             venta.serie as serie,

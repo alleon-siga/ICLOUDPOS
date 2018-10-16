@@ -100,7 +100,7 @@ class venta extends MY_Controller
     }
     function get_ventas_shadow()
     {
-        $venta_id = $this->input->post('venta_id');
+        $venta_id = $this->input->post('id');
         $datos = $this->venta_shadow_model->get_ventas_shadow($venta_id);
         
         $data['ventas'] = $datos;

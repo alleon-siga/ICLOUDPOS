@@ -10,9 +10,8 @@
             <div class="row">
                 <div class="text-right">
                     <div class="col-md-12">
-                        <input type="button" class='btn btn-success'  value="Si">
-                        
-                        <input type="button" class='btn btn-danger' value="Cerrar" >
+                        <input type="button" class='btn btn-success' onclick="facturar()"  value="SI">
+                        <input type="button" class='btn btn-danger' onclick="cerrarmodal()" value="Cerrar" >
                     </div>
                 </div>
 
@@ -21,9 +20,34 @@
     </div>
 </div>
 <script>
-    function cerrarmodal(id_venta) {
-        $('#remove_ventaconvertida_shadow').modal('hide');
-        detalle(id_venta);
+    function cerrarmodal() {
+        $('#dialog_sunat_shadow_masivo').modal('hide');
+        $(".modal-backdrop").hide();
+        get_ventas();
     }
     
+    var ventash = [];
+<?php foreach ($ventas as $vs): ?>
+    ventash.push({
+        id :<?= $vs->id ?>
+        });
+<?php endforeach; ?>
+    function facturar() {
+        for (var i = 0; i < ventash.length; i++) {
+            $.ajax({
+            url: $('#ruta').val() + 'facturador/venta/facturar_venta/',
+            type: 'POST',
+            data: {'id_shadow': ventash[i].id},
+
+            success: function (data) {
+                $('#dialog_sunat_shadow_masivo').modal('hide');
+                $(".modal-backdrop").hide();
+                get_ventas();
+            },
+            error: function (resp) {
+                alert(resp)
+            }
+        });
+        }
+    }
 </script>

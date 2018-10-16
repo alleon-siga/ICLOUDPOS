@@ -54,7 +54,7 @@
                             }
                             ?>
                         </td>
-                        <td style="white-space: normal;"><?= $venta->ruc ?></td>
+                        <td style="white-space: normal;"><?= $venta->ruc?></td>
                         <td style="white-space: normal;"><?= $venta->cliente_nombre ?></td>
                         <td style="white-space: normal;"><?= $venta->vendedor_nombre ?></td>
                         <td style="white-space: normal;"><?= $venta->condicion_nombre ?></td>
@@ -73,13 +73,13 @@
                                 <a class="btn btn-info btn-sm" data-toggle="tooltip" style="margin-right: 5px;" title="Ver" data-original-title="Ver" href="#" onclick="ver('<?= $venta->venta_id ?>');">
                                     <i class="fa fa-search"></i>
                                 </a>
-                                <?php if ($venta->venta_estado == 'COMPLETADO') { ?>
+                                <?php if ($venta->venta_estado == 'COMPLETADO' && $venta->id_factura=='') { ?>
                                     <a class="btn btn-icon btn-sm" data-toggle="tooltip" style="margin-right: 5px;background-color: #5d5d5d;color:white;" title="Convertir" data-original-title="Convertir" href="#" onclick="shadow('<?= $venta->venta_id ?>');">
 
                                         <i class="fa fa-refresh"></i>
                                     </a>
                                 <?php }
-                                if ($venta->id_factura=='') {
+                                if ($venta->id_factura=='' && ($venta->convertidos) > 0) {
                                     ?>
                                     <a class="btn btn-default btn-sm" data-toggle="tooltip" onclick="sendsunat(<?= $venta->venta_id ?>)" title="Sunat" data-original-title="Sunat" href="#">
                                         <i class="fa fa-mail-forward"></i>
