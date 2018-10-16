@@ -4,7 +4,11 @@
     <?php $ruta = base_url(); ?>
     <?php $md = get_moneda_defecto() ?>
     <div class="row">
-        <div class="col-md-10"></div>
+        <div class="col-md-10">
+            <div class="label <?= $emisor->env == 'PROD' ? 'label-success' : 'label-warning' ?>">
+                <?= $emisor->env == 'PROD' ? 'EMISION A SUNAT' : 'EMISION DE PRUEBA' ?>
+            </div>
+        </div>
         <div class="col-md-2">
             <?php
             $total = 0;
@@ -90,7 +94,7 @@
                                 <a class="btn btn-sm btn-warning" data-toggle="tooltip" style="margin-right: 5px;"
                                    title="Actualizar estado" data-original-title="Actualizar estado"
                                    href="#"
-                                   onclick="generarComprobante('<?= $f->id ?>');">
+                                   onclick="generarComprobante('<?= $f->id ?>')">
                                     <i class="fa fa-refresh"></i>
                                 </a>
                             <?php endif; ?>
@@ -99,7 +103,7 @@
                                 <a class="btn btn-sm btn-info" data-toggle="tooltip" style="margin-right: 5px;"
                                    title="Descargar comprobante XML" data-original-title="Descargar comprobante XML"
                                    href="#"
-                                   onclick="descargar('<?= $f->id ?>');">
+                                   onclick="descargar('<?= $f->id ?>')">
                                     <i class="fa fa-download"></i>
                                 </a>
                             <?php endif; ?>
@@ -114,7 +118,7 @@
                             <a class="btn btn-sm btn-primary" data-toggle="tooltip" style="margin-right: 5px;"
                                title="Ver Detalles" data-original-title="Ver Detalles"
                                href="#"
-                               onclick="ver('<?= $f->id ?>');">
+                               onclick="ver('<?= $f->id ?>')">
                                 <i class="fa fa-list"></i>
                             </a>
 
@@ -122,14 +126,14 @@
                                 <a class="btn btn-sm btn-primary" data-toggle="tooltip" style="margin-right: 5px;"
                                    title="Imprimir PDF (A4)" data-original-title="Imprimir PDF (A4)"
                                    href="#"
-                                   onclick="imprimir('<?= $f->id ?>');">
+                                   onclick="imprimir('<?= $f->id ?>')">
                                     <i class="fa fa-file-pdf-o"></i>
                                 </a>
 
                                 <a class="btn btn-sm btn-primary" data-toggle="tooltip" style="margin-right: 5px;"
                                    title="Imprimir Ticket" data-original-title="Imprimir Ticket"
                                    href="#"
-                                   onclick="imprimir_ticket('<?= $f->id ?>');">
+                                   onclick="imprimir_ticket('<?= $f->id ?>')">
                                     <i class="fa fa-print"></i>
                                 </a>
                             <?php endif; ?>
@@ -170,152 +174,149 @@
 
 
     <script type="text/javascript">
-        $(function () {
+      $(function () {
 
-            $('[data-toggle="tooltip"]').tooltip();
-            $('[data-toggle="popover"]').popover({
-                trigger: 'hover'
-            });
+        $('[data-toggle="tooltip"]').tooltip()
+        $('[data-toggle="popover"]').popover({
+          trigger: 'hover'
+        })
 
-            $('#exportar_excel').on('click', function (e) {
-                e.preventDefault();
-                exportar_excel();
-            });
+        $('#exportar_excel').on('click', function (e) {
+          e.preventDefault()
+          exportar_excel()
+        })
 
-            $("#exportar_pdf").on('click', function (e) {
-                e.preventDefault();
-                exportar_pdf();
-            });
+        $('#exportar_pdf').on('click', function (e) {
+          e.preventDefault()
+          exportar_pdf()
+        })
 
-            TablesDatatables.init(2);
+        TablesDatatables.init(2)
 
-        });
+      })
 
-        //        function exportar_pdf() {
-        //
-        //            var data = {
-        //                'local_id': $("#local_id").val(),
-        //                'esatdo': $("#estado").val(),
-        //                'fecha': $("#date_range").val(),
-        //                'moneda_id': $("#moneda_id").val(),
-        //            };
-        //
-        //            var win = window.open('<?//= base_url()?>//facturacion/historial_pdf?data=' + JSON.stringify(data), '_blank');
-        //            win.focus();
-        //        }
-        //
-        //        function exportar_excel() {
-        //            var data = {
-        //                'local_id': $("#local_id").val(),
-        //                'esatdo': $("#estado").val(),
-        //                'fecha': $("#date_range").val(),
-        //                'moneda_id': $("#moneda_id").val(),
-        //            };
-        //
-        //            var win = window.open('<?//= base_url()?>//facturacion/historial_excel?data=' + JSON.stringify(data), '_blank');
-        //            win.focus();
-        //        }
+      //        function exportar_pdf() {
+      //
+      //            var data = {
+      //                'local_id': $("#local_id").val(),
+      //                'esatdo': $("#estado").val(),
+      //                'fecha': $("#date_range").val(),
+      //                'moneda_id': $("#moneda_id").val(),
+      //            };
+      //
+      //            var win = window.open('<?//= base_url()?>//facturacion/historial_pdf?data=' + JSON.stringify(data), '_blank');
+      //            win.focus();
+      //        }
+      //
+      //        function exportar_excel() {
+      //            var data = {
+      //                'local_id': $("#local_id").val(),
+      //                'esatdo': $("#estado").val(),
+      //                'fecha': $("#date_range").val(),
+      //                'moneda_id': $("#moneda_id").val(),
+      //            };
+      //
+      //            var win = window.open('<?//= base_url()?>//facturacion/historial_excel?data=' + JSON.stringify(data), '_blank');
+      //            win.focus();
+      //        }
 
-        function descargar(id) {
+      function descargar (id) {
 
-            var win = window.open('<?= base_url()?>facturacion/descargar_xml/' + id, '_blank');
-            win.focus();
-        }
+        var win = window.open('<?= base_url()?>facturacion/descargar_xml/' + id, '_blank')
+        win.focus()
+      }
 
-        function ver(id) {
+      function ver (id) {
 
-            $("#dialog_venta_detalle").html($("#loading").html());
-            $("#dialog_venta_detalle").modal('show');
+        $('#dialog_venta_detalle').html($('#loading').html())
+        $('#dialog_venta_detalle').modal('show')
 
-            $.ajax({
-                url: '<?php echo $ruta . 'facturacion/get_facturacion_detalle'; ?>',
-                type: 'POST',
-                data: {'id': id},
+        $.ajax({
+          url: '<?php echo $ruta . 'facturacion/get_facturacion_detalle'; ?>',
+          type: 'POST',
+          data: {'id': id},
 
-                success: function (data) {
-                    $("#dialog_venta_detalle").html(data);
-                },
-                error: function () {
-                    alert('Error inesperado')
-                }
-            });
-        }
+          success: function (data) {
+            $('#dialog_venta_detalle').html(data)
+          },
+          error: function () {
+            alert('Error inesperado')
+          }
+        })
+      }
 
+      function generarComprobante (id) {
 
-        function generarComprobante(id) {
+        $('#barloadermodal').modal('show')
 
-            $("#barloadermodal").modal('show');
+        $.ajax({
+          url: '<?php echo $ruta . 'facturacion/generar_comprobante'; ?>',
+          type: 'POST',
+          data: {'id': id},
 
-            $.ajax({
-                url: '<?php echo $ruta . 'facturacion/generar_comprobante'; ?>',
-                type: 'POST',
-                data: {'id': id},
+          success: function (data) {
 
-                success: function (data) {
+            if (data.facturacion.estado == 1) {
+              show_msg('success', '<h4>Facturacion Electronica:</h4> ' + data.facturacion.nota)
+            }
+            else {
+              show_msg('danger', '<h4>Facturacion Electronica:</h4> ' + data.facturacion.nota)
+            }
 
-                    if (data.facturacion.estado == 1) {
-                        show_msg('success', '<h4>Facturacion Electronica:</h4> ' + data.facturacion.nota);
-                    }
-                    else {
-                        show_msg('danger', '<h4>Facturacion Electronica:</h4> ' + data.facturacion.nota);
-                    }
+            $('#barloadermodal').modal('hide')
+            get_facturacion()
+          },
+          error: function () {
+            alert('Error inesperado')
+            $('#barloadermodal').modal('hide')
+          }
+        })
+      }
 
-                    $("#barloadermodal").modal('hide');
-                    get_facturacion();
-                },
-                error: function () {
-                    alert('Error inesperado')
-                    $("#barloadermodal").modal('hide');
-                }
-            });
-        }
+      function reemitir (id) {
 
+        $('#barloadermodal').modal('show')
 
+        $.ajax({
+          url: '<?php echo $ruta . 'facturacion/reemitir_comprobante'; ?>',
+          type: 'POST',
+          data: {'id': id},
 
-        function reemitir(id) {
+          success: function (data) {
 
-            $("#barloadermodal").modal('show');
+            if (data.facturacion.estado == 3) {
+              show_msg('success', '<h4>Facturacion Electronica:</h4> ' + data.facturacion.nota)
+            }
+            else {
+              show_msg('danger', '<h4>Facturacion Electronica:</h4> ' + data.facturacion.nota)
+            }
 
-            $.ajax({
-                url: '<?php echo $ruta . 'facturacion/reemitir_comprobante'; ?>',
-                type: 'POST',
-                data: {'id': id},
+            $('#barloadermodal').modal('hide')
+            get_facturacion()
+          },
+          error: function () {
+            alert('Error inesperado')
+            $('#barloadermodal').modal('hide')
+          }
+        })
+      }
 
-                success: function (data) {
+      function imprimir_ticket (id) {
+        $.bootstrapGrowl('<p>IMPRIMIENDO PEDIDO</p>', {
+          type: 'success',
+          delay: 2500,
+          allow_dismiss: true
+        })
 
-                    if (data.facturacion.estado == 3) {
-                        show_msg('success', '<h4>Facturacion Electronica:</h4> ' + data.facturacion.nota);
-                    }
-                    else {
-                        show_msg('danger', '<h4>Facturacion Electronica:</h4> ' + data.facturacion.nota);
-                    }
+        var url = '<?=base_url('facturacion/imprimir_ticket')?>/' + id
+        $('#imprimir_frame').attr('src', url)
+      }
 
-                    $("#barloadermodal").modal('hide');
-                    get_facturacion();
-                },
-                error: function () {
-                    alert('Error inesperado');
-                    $("#barloadermodal").modal('hide');
-                }
-            });
-        }
+      function imprimir (id) {
 
-        function imprimir_ticket(id) {
-            $.bootstrapGrowl('<p>IMPRIMIENDO PEDIDO</p>', {
-                type: 'success',
-                delay: 2500,
-                allow_dismiss: true
-            });
-
-            var url = '<?=base_url('facturacion/imprimir_ticket')?>/' + id;
-            $("#imprimir_frame").attr('src', url);
-        }
-
-        function imprimir(id) {
-
-            var win = window.open('<?= base_url()?>facturacion/imprimir/' + id, '_blank');
-            win.focus();
-        }
+        var win = window.open('<?= base_url()?>facturacion/imprimir/' + id, '_blank')
+        win.focus()
+      }
 
     </script>
 <?php endif; ?>

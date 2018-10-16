@@ -414,6 +414,7 @@ class facturacion_model extends CI_Model {
             'TOTAL_TRIBUTO_OTROS' => '0.00',
             'TOTAL_DESCUENTO_GLOBAL' => '0.00',
             'TOTAL_OTROS_CARGOS' => '0.00',
+            'SUBTOTAL_VENTA' => $comprobante->subtotal,
             'TOTAL_VENTA' => $comprobante->total,
             'TOTAL_VENTA_LETRAS' => Numeroletra::convertir($comprobante->total)
         );
@@ -497,6 +498,7 @@ class facturacion_model extends CI_Model {
                 'TOTAL_TRIBUTO_OTROS' => '0.00',
                 'TOTAL_DESCUENTO_GLOBAL' => '0.00',
                 'TOTAL_OTROS_CARGOS' => '0.00',
+                'SUBTOTAL_VENTA' => $comprobante->total,
                 'TOTAL_VENTA' => $comprobante->total
             );
         }
