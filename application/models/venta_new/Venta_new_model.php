@@ -152,7 +152,6 @@ class venta_new_model extends CI_Model
         return $ventas;
     }
 
-    
 
     function get_ventas_totales($where = array(), $action = '')
     {
@@ -236,7 +235,7 @@ class venta_new_model extends CI_Model
             detalle_venta.precio as precio,
             detalle_venta.precio_venta as precio_venta,
             detalle_venta.cantidad as cantidad,
-            detalle_venta.cantidad_devuelta as cantidad_devuelta,
+            IFNULL(detalle_venta.cantidad_devuelta, 0) as cantidad_devuelta,
             detalle_venta.unidad_medida as unidad_id,
             unidades.nombre_unidad as unidad_nombre,
             unidades.abreviatura as unidad_abr,
@@ -264,7 +263,6 @@ class venta_new_model extends CI_Model
         return $venta;
     }
 
-    
 
     function get_venta_traspaso($id)
     {
@@ -340,16 +338,19 @@ class venta_new_model extends CI_Model
         return $correlativo->serie . ' - ' . sumCod($correlativo->correlativo, 6);
     }
 
-    function facturar_venta($venta_id, $iddoc = '')
+    // Este metodo sera el encargado unicamente de crear serie y numero de las venta asi como registrar su registro de kardex
+    // 2018-10-16 Antonio Martin
+    function facturar_venta($venta_id, $iddoc = FALSE, $id_usuario = FALSE)
     {
-        $venta = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
-        $iddoc = $iddoc == '' ? $venta->id_documento : $iddoc;
+        $venta = $this->get_venta_detalle($venta_id);
+
+        $iddoc = $iddoc === FALSE ? $venta->documento_id : $iddoc;
+
         $correlativo = $this->correlativos_model->get_correlativo($venta->local_id, $iddoc);
         $update_venta['fecha_facturacion'] = date('Y-m-d H:i:s');
         $update_venta['serie'] = $correlativo->serie;
         $update_venta['numero'] = $correlativo->correlativo;
-        if ($iddoc != '')
-            $update_venta['id_documento'] = $iddoc;
+        $update_venta['id_documento'] = $iddoc;
         $this->correlativos_model->sumar_correlativo($venta->local_id, $iddoc);
 
         // Hago la facturacion de comprobantes
@@ -357,8 +358,9 @@ class venta_new_model extends CI_Model
             $this->comprobante_model->facturar($venta->venta_id, $venta->comprobante_id);
         }
 
-        if ($iddoc != 6) { //Si es diferente a la nota de venta
-            //Correlativo para la guia de remision
+        //Si es diferente a la nota de venta  creo el correlativo para la guia de remision
+        if ($iddoc != 6) {
+
             $correlativo = $this->correlativos_model->get_correlativo($venta->local_id, 4);
             $this->correlativos_model->sumar_correlativo($venta->local_id, 4);
             $update_venta['nro_guia'] = $correlativo->correlativo;
@@ -367,51 +369,92 @@ class venta_new_model extends CI_Model
         $this->db->where('venta_id', $venta_id);
         $this->db->update('venta', $update_venta);
 
+        if ($iddoc == 1 || $iddoc == 3) {
 
-        $this->db->where('io', 2);
-        $this->db->where('operacion', 1);
-        $this->db->where('ref_id', $venta_id);
-        $this->db->update('kardex', array(
-            'tipo' => $iddoc,
-            'serie' => $update_venta['serie'],
-            'numero' => sumCod($update_venta['numero'], 8)
-        ));
+            $cantidades = array();
+            foreach ($venta->detalles as $detalle) {
+                if (!isset($cantidades[$detalle->producto_id])) {
 
-        if (valueOptionDB('FACTURACION', 0) == 1 && ($iddoc == 1 || $iddoc == 3)) {
-            $resp = $this->facturacion_model->facturarVenta($venta_id);
+                    $precio_min = $this->unidades_model->get_maximo_costo($detalle->producto_id, $detalle->unidad_id, $detalle->precio);
+                    $costo = $precio_min;
+                    if ($detalle->afectacion_impuesto == 1 && $venta->tipo_impuesto == 1) {
+                        $costo = $costo / ((100 + $detalle->impuesto_porciento) / 100);
+                    }
+
+                    if ($venta->moneda_id != MONEDA_DEFECTO) {
+                        $costo = $costo * $venta->moneda_tasa;
+                    }
+
+                    $cantidades[$detalle->producto_id] = array(
+                        'cantidad' => 0,
+                        'costo' => $costo,
+                    );
+                }
+
+                $cantidades[$detalle->producto_id]['cantidad'] += $this->unidades_model->convert_minimo_by_um(
+                    $detalle->producto_id,
+                    $detalle->unidad_id,
+                    $detalle->cantidad
+                );
+            }
+
+            foreach ($cantidades as $key => $value) {
+
+                $values = array(
+                    'local_id' => $venta->local_id,
+                    'producto_id' => $key,
+                    'cantidad' => $value['cantidad'],
+                    'io' => 2,
+                    'tipo' => $iddoc,
+                    'operacion' => 1,
+                    'serie' => $update_venta['serie'],
+                    'numero' => sumCod($update_venta['numero'], 8),
+                    'ref_id' => $venta->venta_id,
+                    'usuario_id' => $id_usuario === FALSE ? $this->session->userdata('nUsuCodigo') : $id_usuario,
+                    'costo' => $value['costo'],
+                    'moneda_id' => $venta->moneda_id
+                );
+                $this->kardex_model->set_kardex($values);
+            }
+
+            if (valueOptionDB('FACTURACION', 0) == 1) {
+                $resp = $this->facturacion_model->facturarVenta($venta_id);
+            }
         }
-
     }
 
+    // Registra en caja y factura una venta creada y que se encuentra en estado de CAJA (2018-10-17) Antonio Martin
     function save_venta_caja($venta)
     {
 
+        // Valido que existe una cuenta disponible para depositar el dinero de la venta
         $venta_actual = $this->db->get_where('venta', array('venta_id' => $venta['venta_id']))->row();
-
-        $moneda_id = $venta_actual->id_moneda;
-
         if ($venta['tipo_pago'] == 4 || $venta['tipo_pago'] == 8 || $venta['tipo_pago'] == 9 || $venta['tipo_pago'] == 7) {
             $banco = $this->db->get_where('banco', array('banco_id' => $venta['banco_id']))->row();
             $cuenta_id = $banco->cuenta_id;
         } else {
             $cuenta_id = $this->cajas_model->get_cuenta_id(array(
-                'moneda_id' => $moneda_id,
+                'moneda_id' => $venta_actual->id_moneda,
                 'local_id' => $venta_actual->local_id));
         }
 
         if ($cuenta_id == NULL) {
-            $this->error = 'No existe una cuenta para este local';
-            return false;
+            $this->error = 'No existe una cuenta de caja para este local';
+            return FALSE;
         }
 
         $cuenta_old = $this->cajas_model->get_cuenta($cuenta_id);
 
+        $this->db->trans_begin();
+
+        // Guardo el saldo de la venta en caja
+        // Si la venta es al credito recupero el pago inicial
         $venta_total = $venta_actual->total;
-        if ($venta_actual->condicion_pago == 2)
+        if ($venta_actual->condicion_pago == 2) {
             $venta_total = $venta_actual->inicial;
+        }
 
         $this->cajas_model->update_saldo($cuenta_id, $venta_total);
-
         $this->cajas_mov_model->save_mov(array(
             'caja_desglose_id' => $cuenta_id,
             'usuario_id' => $venta['id_usuario'],
@@ -427,6 +470,7 @@ class venta_new_model extends CI_Model
 
 
         //guardo la relacion del modo de pago
+        // TODO verificar si esto podria eliminarse ya que no se usa para nada
         if ($venta_actual->condicion_pago == 1 || ($venta_actual->condicion_pago == 2 && $venta_actual->inicial > 0)) {
 
             if ($venta['tipo_pago'] != 7) {
@@ -446,48 +490,37 @@ class venta_new_model extends CI_Model
             }
         }
 
+        // Actualizo la venta a COMPLETADO y el monto pagado
         $update_venta = array(
             'pagado' => $venta['importe'],
             'vuelto' => $venta['vuelto'],
             'venta_status' => 'COMPLETADO'
         );
-
-        if ($venta_actual->condicion_pago == 1) {
-            $correlativo = $this->correlativos_model->get_correlativo($venta_actual->local_id, $venta_actual->id_documento);
-            $update_venta['fecha_facturacion'] = $venta_actual->fecha;
-            $update_venta['serie'] = $correlativo->serie;
-            $update_venta['numero'] = $correlativo->correlativo;
-            $this->correlativos_model->sumar_correlativo($venta_actual->local_id, $venta_actual->id_documento);
-
-            // Hago la facturacion de comprobantes
-            if ($venta_actual->comprobante_id > 0)
-                $this->comprobante_model->facturar($venta_actual->venta_id, $venta_actual->comprobante_id);
-        }
-
-        $this->db->where('venta_id', $venta['venta_id']);
+        $this->db->where('venta_id', $venta_actual->venta_id);
         $this->db->update('venta', $update_venta);
 
-
+        // Facturo la venta la cual genera el serie y numero
+        // En caso de ser un documento fiscal genera el kardex y su correlativo de guia
+        // Si usa facturacion electronica tambien generar el comprobante electronico
         if ($venta_actual->condicion_pago == 1) {
-
-            $this->db->where('io', 2);
-            $this->db->where('operacion', 1);
-            $this->db->where('ref_id', $venta['venta_id']);
-            $this->db->update('kardex', array(
-                'serie' => $update_venta['serie'],
-                'numero' => sumCod($update_venta['numero'], 8)
-            ));
-
-            if (valueOptionDB('FACTURACION', 0) == 1 && ($venta_actual->id_documento == 1 || $venta_actual->id_documento == 3)) {
-                $resp = $this->facturacion_model->facturarVenta($venta['venta_id']);
-            }
+            $this->facturar_venta($venta_actual->venta_id);
         }
 
-        return true;
+        $this->db->trans_complete();
+        if ($this->db->trans_status() === FALSE) {
+            $this->db->trans_rollback();
+            return FALSE;
+        }
+
+        $this->db->trans_commit();
+        return $venta_actual->venta_id;
     }
 
+    // Guarda una venta al contado y la factura en caso de ser completada (2018-10-17) Antonio Martin
     function save_venta_contado($venta, $productos, $traspasos = array())
     {
+
+        // Valido que existe una cuenta disponible para depositar el dinero de la venta
         if ($venta['venta_status'] != 'CAJA') {
             if ($venta['vc_forma_pago'] == 4 || $venta['vc_forma_pago'] == 8 || $venta['vc_forma_pago'] == 9 || $venta['vc_forma_pago'] == 7) {
                 $banco = $this->db->get_where('banco', array('banco_id' => $venta['vc_banco_id']))->row();
@@ -499,11 +532,14 @@ class venta_new_model extends CI_Model
             }
 
             if ($cuenta_id == NULL) {
-                $this->error = 'No existe una cuenta para este local';
-                return false;
+                $this->error = 'No existe una cuenta de caja para este local';
+                return FALSE;
             }
         }
 
+        $this->db->trans_begin();
+
+        // Si se agregan productos de otros locales se realizan los traspasos para el local de la venta
         if (sizeof($traspasos) > 0) {
             $this->save_traspasos($traspasos, $venta['id_usuario'], $venta['condicion_pago']);
         }
@@ -535,34 +571,17 @@ class venta_new_model extends CI_Model
 
         if ($venta['venta_status'] == 'CAJA') {
             $venta_contado['total'] = $venta['total_importe'];
-        } else {
-            $correlativo = $this->correlativos_model->get_correlativo($venta['local_id'], $venta['id_documento']);
-            $venta_contado['fecha_facturacion'] = date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $venta['fecha_venta']) . date(" H:i:s")));
-            $venta_contado['serie'] = $correlativo->serie;
-            $venta_contado['numero'] = $correlativo->correlativo;
-
-            $this->correlativos_model->sumar_correlativo($venta['local_id'], $venta['id_documento']);
-            if ($venta['id_documento'] != 6) { //Si es diferente a la nota de venta
-                //Correlativo para la guia de remision
-                $correlativo = $this->correlativos_model->get_correlativo($venta['local_id'], 4);
-                $this->correlativos_model->sumar_correlativo($venta['local_id'], 4);
-                $venta_contado['nro_guia'] = $correlativo->correlativo;
-            }
         }
 
         //inserto la venta
         $this->db->insert('venta', $venta_contado);
         $venta_id = $this->db->insert_id();
 
+        // Guardo el saldo de la venta en caja
         if ($venta['venta_status'] != 'CAJA') {
-            // Hago la facturacion de comprobantes
-            if (validOption('COMPROBANTE', 1))
-                $this->comprobante_model->facturar($venta_id, $venta['comprobante_id']);
 
             $cuenta_old = $this->cajas_model->get_cuenta($cuenta_id);
-
             $this->cajas_model->update_saldo($cuenta_id, $venta_contado['total']);
-
             $this->cajas_mov_model->save_mov(array(
                 'caja_desglose_id' => $cuenta_id,
                 'usuario_id' => $venta['id_usuario'],
@@ -570,19 +589,23 @@ class venta_new_model extends CI_Model
                 'movimiento' => 'INGRESO',
                 'operacion' => 'VENTA',
                 'medio_pago' => $venta['vc_forma_pago'],
-                'saldo' => $venta_contado['total'],
+                'saldo' => valueOptionDB('REDONDEO_VENTAS', 0) == 1 ? formatPrice($venta_contado['total']) : $venta_contado['total'],
                 'saldo_old' => $cuenta_old->saldo,
                 'ref_id' => $venta_id,
                 'ref_val' => $venta['vc_num_oper']
             ));
         }
 
+        //El correlativo de nota de pedido siempre se actualiza al crear una venta
         $this->correlativos_model->update_nota_pedido($venta['local_id'], $venta_id);
 
-        $this->save_producto_detalles($venta_id, $venta['id_documento'], $venta['local_id'], $productos, $venta['id_usuario']);
+        // Guardo los detalles de la venta
+        $this->save_producto_detalles($venta_id, $productos);
 
+
+        //guardo la relacion del modo de pago
+        // TODO verificar si esto podria eliminarse ya que no se usa para nada
         if ($venta['venta_status'] == 'COMPLETADO') {
-            //guardo la relacion del modo de pago
             if ($venta['vc_forma_pago'] != 7) {
                 $contado = array(
                     'id_venta' => $venta_id,
@@ -600,23 +623,31 @@ class venta_new_model extends CI_Model
             }
         }
 
+        // Recalculo los totales de la venta por seguridad
         $this->recalc_totales($venta_id);
 
-        if (valueOptionDB('FACTURACION', 0) == 1 && ($venta['id_documento'] == 1 || $venta['id_documento'] == 3)) {
-            if ($venta['venta_status'] != 'CAJA') {
-                $resp = $this->facturacion_model->facturarVenta($venta_id);
-            }
-        } elseif (valueOptionDB('FACTURACION', 0) == 1) {
-            log_message('debug', 'Facturacion electronica. Documento erroneo. Doc: ' . $venta['id_documento']);
+        // Facturo la venta la cual genera el serie y numero
+        // En caso de ser un documento fiscal genera el kardex y su correlativo de guia
+        // Si usa facturacion electronica tambien generar el comprobante electronico
+        if ($venta['venta_status'] == 'COMPLETADO') {
+            $this->facturar_venta($venta_id);
         }
 
+        $this->db->trans_complete();
+        if ($this->db->trans_status() === FALSE) {
+            $this->db->trans_rollback();
+            return FALSE;
+        }
+
+        $this->db->trans_commit();
         return $venta_id;
 
     }
 
+    // Guarda una venta al credito y el registro de su deudas y cuotas (2018-10-17) Antonio Martin
     function save_venta_credito($venta, $productos, $traspasos = array(), $cuotas)
     {
-
+        // Valido que existe una cuenta disponible para depositar el dinero de la venta
         if ($venta['venta_status'] != 'CAJA' && $venta['c_inicial'] > 0) {
             if ($venta['vc_forma_pago'] == 4 || $venta['vc_forma_pago'] == 8 || $venta['vc_forma_pago'] == 9 || $venta['vc_forma_pago'] == 7) {
                 $banco = $this->db->get_where('banco', array('banco_id' => $venta['vc_banco_id']))->row();
@@ -628,18 +659,24 @@ class venta_new_model extends CI_Model
             }
 
             if ($cuenta_id == NULL) {
-                $this->error = 'No existe una cuenta para este local';
-                return false;
+                $this->error = 'No existe una cuenta de caja para este local';
+                return FALSE;
             }
         }
 
+        $this->db->trans_begin();
+
+        // Si se agregan productos de otros locales se realizan los traspasos para el local de la venta
         if (sizeof($traspasos) > 0) {
             $this->save_traspasos($traspasos, $venta['id_usuario'], $venta['condicion_pago']);
         }
 
-        if ($venta['venta_status'] == 'CAJA' && $venta['c_inicial'] == 0)
+        // Si la venta al credito no tiene saldo para cobrar en caja automaticamente esta sera completada
+        if ($venta['venta_status'] == 'CAJA' && $venta['c_inicial'] == 0) {
             $venta['venta_status'] = 'COMPLETADO';
+        }
 
+        // TODO revisar el efecto que tiene el calculo de impuesto y subtotal cuando es credito y luego se recalcula los totales
         $imp = (100 + IMPUESTO) / 100;
         $venta['subtotal'] = ($venta['c_precio_credito'] + $venta['c_inicial']) / $imp;
         $venta['impuesto'] = ($venta['c_precio_credito'] + $venta['c_inicial']) - $venta['subtotal'];
@@ -673,13 +710,11 @@ class venta_new_model extends CI_Model
         $this->db->insert('venta', $venta_contado);
         $venta_id = $this->db->insert_id();
 
+        // Guardo el saldo de la venta en caja
         if ($venta['venta_status'] != 'CAJA' && $venta_contado['inicial'] > 0) {
 
-
             $cuenta_old = $this->cajas_model->get_cuenta($cuenta_id);
-
             $this->cajas_model->update_saldo($cuenta_id, $venta_contado['inicial']);
-
             $this->cajas_mov_model->save_mov(array(
                 'caja_desglose_id' => $cuenta_id,
                 'usuario_id' => $venta['id_usuario'],
@@ -694,11 +729,13 @@ class venta_new_model extends CI_Model
             ));
         }
 
-
+        //El correlativo de nota de pedido siempre se actualiza al crear una venta
         $this->correlativos_model->update_nota_pedido($venta['local_id'], $venta_id);
 
-        $this->save_producto_detalles($venta_id, $venta['id_documento'], $venta['local_id'], $productos, $venta['id_usuario']);
+        // Guardo los detalles de la venta
+        $this->save_producto_detalles($venta_id, $productos);
 
+        // Guardo el registro del credito para la constancia de la deuda
         $this->db->insert('credito', array(
             'id_venta' => $venta_id,
             'int_credito_nrocuota' => $venta['c_numero_cuotas'],
@@ -711,6 +748,7 @@ class venta_new_model extends CI_Model
             'tasa_interes' => $venta['c_tasa_interes']
         ));
 
+        // Guardo las cuotas configuradas del credito
         foreach ($cuotas as $cuota) {
             $this->db->insert('credito_cuotas', array(
                 'id_venta' => $venta_id,
@@ -723,6 +761,8 @@ class venta_new_model extends CI_Model
             ));
         }
 
+        //guardo la relacion del modo de pago
+        // TODO verificar si esto podria eliminarse ya que no se usa para nada
         if ($venta['venta_status'] == 'COMPLETADO' && $venta_contado['inicial'] > 0) {
             //guardo la relacion del modo de pago
             if ($venta['vc_forma_pago'] != 7) {
@@ -742,67 +782,35 @@ class venta_new_model extends CI_Model
             }
         }
 
+        // Recalculo los totales de la venta por seguridad
         $this->recalc_totales($venta_id);
 
+        /* NOTA
+         * La venta cuando es al credito no se facturar al momento de guardarla.
+         * Puede ser facturada desde el registro de ventas o al pagar la totalidad de la deuda
+         * */
+
+        $this->db->trans_complete();
+        if ($this->db->trans_status() === FALSE) {
+            $this->db->trans_rollback();
+            return FALSE;
+        }
+
+        $this->db->trans_commit();
         return $venta_id;
 
     }
 
-    function cerrar_venta($venta_id, $correlativos = array())
+    // Metodo para guardar los detalles de la venta y actualizar el invetario (2016-10-16) Antonio Martin
+    private function save_producto_detalles($venta_id, $productos)
     {
-        $venta = $this->get_ventas(array('venta_id' => $venta_id));
-        $corr = $this->correlativos_model->get_correlativo($venta->local_id, $venta->documento_id);
-        $next_correlativo = 1;
-        $referencias = "";
-        $doc = 'FA';
-        if ($venta->documento_id == 3)
-            $doc = "BO";
-        $count = 0;
-        foreach ($correlativos as $correlativo) {
-            $this->db->insert('venta_documento', array(
-                'venta_id' => $venta_id,
-                'numero_documento' => $correlativo
-            ));
-            $next_correlativo = $correlativo;
-
-            $referencias .= $doc . " " . $corr->serie . "-" . sumCod($correlativo, 6);
-            if (++$count != count($correlativos))
-                $referencias .= ", ";
-        }
-        $this->correlativos_model->update_correlativo($venta->local_id, $venta->documento_id, array(
-            'correlativo' => ++$next_correlativo
-        ));
-
-        $this->db->where('venta_id', $venta_id);
-        $this->db->update('venta', array(
-            'factura_impresa' => '2',
-            'venta_status' => 'CERRADA'
-        ));
-
-        $this->db->where('io', 2);
-        $this->db->where('operacion', 1);
-        $this->db->where('ref_id', $venta_id);
-        $this->db->update('kardex', array(
-            'serie' => $corr->serie,
-            'numero' => sumCod($correlativo, 6),
-            'ref_val' => $referencias
-        ));
-    }
-
-    private
-    function save_producto_detalles($venta_id, $doc_id, $local_id, $productos, $id_usuario)
-    {
-        //Preparo los detalles de la venta para insertarlo y sus historicos
+        //Preparo los detalles de la venta para insertarlo
         $venta = $this->get_ventas(array('venta_id' => $venta_id));
         $cantidades = array();
         $venta_detalle = array();
-        $venta_contable_detalle = array();
-        $precio = array(); //precio unitario de venta
-        $ArrfectImp = array(); //Afectacion de impuesto
-        $impPorciento = array(); //Impuesto porciento
         foreach ($productos as $producto) {
 
-            //preparo los datos para el historico
+            //Agrupo las cantidades del producto en unidad minima para realizar las actualizaciones de invetario
             if (!isset($cantidades[$producto->id_producto]))
                 $cantidades[$producto->id_producto] = 0;
 
@@ -842,34 +850,17 @@ class venta_new_model extends CI_Model
                 'cantidad_devuelta' => 0
             );
             array_push($venta_detalle, $producto_detalle);
-
-            if (validOption('ACTIVAR_SHADOW', 1) && $doc_id != 6) {
-                //preparo el detalle de la venta contable cuando el shadow stock esta activo
-                $producto_detalle = array(
-                    'venta_id' => $venta_id,
-                    'producto_id' => $producto->id_producto,
-                    'unidad_id' => $producto->unidad_medida,
-                    'precio' => $producto->precio,
-                    'cantidad' => $producto->cantidad
-                );
-                array_push($venta_contable_detalle, $producto_detalle);
-            }
-            $precio[$producto->id_producto] = $this->unidades_model->get_maximo_costo($producto->id_producto, $producto->unidad_medida, $producto->precio);
-            $ArrfectImp[$producto->id_producto] = $prod->producto_afectacion_impuesto;
-            $impPorciento[$producto->id_producto] = $p->porcentaje_impuesto;
         }
 
         //inserto los detalles de la venta
         $this->db->insert_batch('detalle_venta', $venta_detalle);
 
-        if (validOption('ACTIVAR_SHADOW', 1) && $doc_id != 6)
-            $this->db->insert_batch('venta_contable_detalle', $venta_contable_detalle);
 
-
+        // Actualizo el inventario con las cantidades vendidas
         foreach ($cantidades as $key => $value) {
 
             $old_cantidad = $this->db->get_where('producto_almacen', array(
-                "id_local" => $local_id,
+                "id_local" => $venta->local_id,
                 "id_producto" => $key
             ))->row();
 
@@ -878,62 +869,11 @@ class venta_new_model extends CI_Model
 
             $result = $this->unidades_model->get_cantidad_fraccion($key, $old_cantidad_min - $value);
 
-            //CREAR EL HISTORICO DE LA VENTA *************************************
-            /*$this->historico_model->set_historico(array(
-                'producto_id' => $key,
-                'local_id' => $local_id,
-                'usuario_id' => $this->session->userdata('nUsuCodigo'),
-                'cantidad' => $value,
-                'cantidad_actual' => $this->unidades_model->convert_minimo_um($key, $result['cantidad'], $result['fraccion']),
-                'tipo_movimiento' => "VENTA",
-                'tipo_operacion' => 'SALIDA',
-                'referencia_valor' => 'Se realizo una Venta',
-                'referencia_id' => $venta_id
-            ));*/
 
-            $tipo = 0;
-            if ($venta->documento_id == 1)
-                $tipo = 1;
-            if ($venta->documento_id == 3)
-                $tipo = 3;
-            if ($venta->documento_id == 6)
-                $tipo = -2;
-
-            $costo = 0;
-            if ($ArrfectImp[$key] == '1') {
-                if ($venta->tipo_impuesto == 1) { //incluye impuesto
-                    $costo = $precio[$key] / (($impPorciento[$key] / 100) + 1);
-                } else { //agrega impuesto
-                    $costo = $precio[$key];
-                }
-            } else {
-                $costo = $precio[$key];
-            }
-
-            if ($venta->moneda_tasa > 0) {
-                $costo = $costo * $venta->moneda_tasa;
-            }
-
-            $values = array(
-                'local_id' => $local_id,
-                'producto_id' => $key,
-                'cantidad' => $value,
-                'io' => 2,
-                'tipo' => $tipo,
-                'operacion' => 1,
-                'serie' => $venta->serie != null ? $venta->serie : '-',
-                'numero' => $venta->numero != null ? sumCod($venta->numero, 8) : '-',
-                'ref_id' => $venta->venta_id,
-                'usuario_id' => $id_usuario,
-                'costo' => $costo,
-                'moneda_id' => $venta->moneda_id
-            );
-            $this->kardex_model->set_kardex($values);
-
+            //Actualizo el invetario
             if ($old_cantidad != NULL) {
-                //Actualizo el almacen
                 $this->db->where(array(
-                    'id_local' => $local_id,
+                    'id_local' => $venta->local_id,
                     'id_producto' => $key
                 ));
                 $this->db->update('producto_almacen', array(
@@ -943,7 +883,7 @@ class venta_new_model extends CI_Model
             } else {
                 $this->db->insert('producto_almacen', array(
                     'id_producto' => $key,
-                    'id_local' => $local_id,
+                    'id_local' => $venta->local_id,
                     'cantidad' => $result['cantidad'],
                     'fraccion' => $result['fraccion']
                 ));
@@ -951,13 +891,20 @@ class venta_new_model extends CI_Model
         }
     }
 
-    private
-    function save_traspasos($traspasos, $id_usuario, $condicion_pago)
+    // Hago los traspasos de los productos de diferentes locales de la venta (2018-10-17) Antonio Martin
+    private function save_traspasos($traspasos, $id_usuario, $condicion_pago)
     {
-        $next_id = $this->db->select_max('venta_id')->get('venta')->row();
+        // Recupero el proximo id de la venta para guardar la referencia
+        $auto_increment = $this->db->query("
+            SELECT `AUTO_INCREMENT` AS next_id
+            FROM  INFORMATION_SCHEMA.TABLES
+            WHERE TABLE_SCHEMA = '" . $this->db->database . "'
+            AND   TABLE_NAME   = 'venta'
+        ")->row();
+
         //Guardo en tabla traspaso
         $values = array(
-            'ref_id' => $next_id->venta_id + 1,
+            'ref_id' => $auto_increment->next_id,
             'usuario_id' => $id_usuario,
             'local_destino' => $traspasos[0]->parent_local,
             'fecha' => date('Y-m-d H:i:s'),
@@ -965,7 +912,8 @@ class venta_new_model extends CI_Model
         );
         $this->db->insert('traspaso', $values);
         $idTraspaso = $this->db->insert_id();
-        //Hago los traspasos en caso de haber
+
+        //Hago los traspasos al local que se realizara la venta
         foreach ($traspasos as $traspaso) {
             $orden_max = $this->db->select_max('orden', 'orden')
                 ->where('producto_id', $traspaso->id_producto)->get('unidades_has_producto')->row();
@@ -978,10 +926,11 @@ class venta_new_model extends CI_Model
             $result = $this->traspaso_model->traspasar_productos($traspaso->id_producto, $traspaso->local_id, $traspaso->parent_local, $id_usuario, array(
                 'um_id' => $minima_unidad->um_id,
                 'cantidad' => $traspaso->cantidad,
-                'venta_id' => $next_id->venta_id + 1,
-                'traspaso_id'=>$idTraspaso
+                'venta_id' => $auto_increment->next_id,
+                'traspaso_id' => $idTraspaso
             ));
-            //aqui guarda los detalles de traspaso
+
+            //guardo los detalles del traspaso
             $this->db->insert("traspaso_detalle", array(
                 'traspaso_id' => $idTraspaso,
                 'local_origen' => $traspaso->local_id,
@@ -990,117 +939,39 @@ class venta_new_model extends CI_Model
         }
     }
 
-    public
-    function get_next_id()
+    // Devuelve el proximo id al generar por la tabla venta
+    public function get_next_id()
     {
         $next_id = $this->db->select_max('venta_id')->get('venta')->row();
         return sumCod($next_id->venta_id + 1, 8);
     }
 
+    // Anulo una venta ya facturada (2018-10-16) Antonio Martin
     public function anular_venta($venta_id, $metodo_pago, $cuenta_id, $motivo, $id_usuario = false)
     {
         $venta = $this->get_venta_detalle($venta_id);
 
-        $correlativo = $this->correlativos_model->get_correlativo($venta->local_id, 2);
-        $serie = $correlativo->serie;
-        $numero = $correlativo->correlativo;
+        if ($venta->venta_estado != 'COMPLETADO')
+            return FALSE;
 
-        $cantidades = array();
-        $afectacion_impuesto = array();
-        $precio = array();
-        $impuesto_porciento = array();
+        $this->db->trans_begin();
 
-        if ($venta->documento_id == 1 || $venta->documento_id == 3) {
-            if (valueOptionDB('FACTURACION', 0) == 1) {
-                $facturacion = $this->db->order_by('id', 'desc')->get_where('facturacion', array(
-                    'documento_tipo' => '0' . $venta->documento_id,
-                    'ref_id' => $venta->venta_id
-                ))->row();
-
-                if ($facturacion != NULL) {
-                    if ($facturacion->estado == 3) {
-                        if ($venta->documento_id == 1) {
-                            $correlativo = $this->correlativos_model->get_correlativo($venta->local_id, 9);
-                            $serie = $correlativo->serie;
-                            $numero = $correlativo->correlativo;
-                        } elseif ($venta->documento_id == 3) {
-                            $correlativo = $this->correlativos_model->get_correlativo($venta->local_id, 8);
-                            $serie = $correlativo->serie;
-                            $numero = $correlativo->correlativo;
-                        }
-                    }
-                }
-            }
-        }
-
+        // Devuelvo las cantidades al inventario
         foreach ($venta->detalles as $detalle) {
 
-            if (!isset($cantidades[$detalle->producto_id]))
-                $cantidades[$detalle->producto_id] = 0;
-
-
-            $cantidades[$detalle->producto_id] += $this->unidades_model->convert_minimo_by_um(
-                $detalle->producto_id,
-                $detalle->unidad_id,
-                $detalle->cantidad
-            );
-            $afectacion_impuesto[$detalle->producto_id] = $detalle->afectacion_impuesto;
-            $precio[$detalle->producto_id] = $this->unidades_model->get_maximo_costo($detalle->producto_id, $detalle->unidad_id, $detalle->precio);
-            $impuesto_porciento[$detalle->producto_id] = $detalle->impuesto_porciento;
-        }
-        foreach ($cantidades as $key => $value) {
-
             $old_cantidad = $this->db->get_where('producto_almacen', array(
-                'id_producto' => $key,
+                'id_producto' => $detalle->producto_id,
                 'id_local' => $venta->local_id
             ))->row();
 
-            $old_cantidad_min = $old_cantidad != NULL ? $this->unidades_model->convert_minimo_um($key, $old_cantidad->cantidad, $old_cantidad->fraccion) : 0;
+            $old_cantidad_min = $old_cantidad != NULL ? $this->unidades_model->convert_minimo_um($detalle->producto_id, $old_cantidad->cantidad, $old_cantidad->fraccion) : 0;
+            $cantidad_min = $this->unidades_model->convert_minimo_by_um($detalle->producto_id, $detalle->unidad_id, $detalle->cantidad);
 
-            $result = $this->unidades_model->get_cantidad_fraccion($key, $old_cantidad_min + $value);
+            $result = $this->unidades_model->get_cantidad_fraccion($detalle->producto_id, $old_cantidad_min + $cantidad_min);
 
-            $this->db->where('io', 2);
-            $this->db->where('operacion', 1);
-            $this->db->where('ref_id', $venta_id);
-            $referencias = $this->db->get('kardex')->row();
-
-            if (!isset($referencias->ref_val))
-                $referencias->ref_val == "";
-
-            $costo = 0;
-            if ($afectacion_impuesto[$key] == '1') {
-                if ($venta->tipo_impuesto == 1) { //incluye impuesto
-                    $costo = $precio[$key] / (($impuesto_porciento[$key] / 100) + 1);
-                } else { //agrega impuesto
-                    $costo = $precio[$key];
-                }
-            } else {
-                $costo = $precio[$key];
-            }
-
-            if ($venta->moneda_tasa > 0) {
-                $costo = $costo * $venta->moneda_tasa;
-            }
-
-            $values = array(
-                'local_id' => $venta->local_id,
-                'producto_id' => $key,
-                'cantidad' => $value * -1,
-                'io' => 2,
-                'tipo' => 7,
-                'operacion' => 5,
-                'serie' => $serie,
-                'numero' => $numero,
-                'ref_id' => $venta->venta_id,
-                'ref_val' => $referencias->ref_val,
-                'usuario_id' => $id_usuario == false ? $this->session->userdata('nUsuCodigo') : $id_usuario,
-                'costo' => $costo,
-                'moneda_id' => $venta->moneda_id
-            );
-            $this->kardex_model->set_kardex($values);
-
+            // Actualizo el inventario
             if ($old_cantidad != NULL) {
-                $this->db->where('id_producto', $key);
+                $this->db->where('id_producto', $detalle->producto_id);
                 $this->db->where('id_local', $venta->local_id);
                 $this->db->update('producto_almacen', array(
                     'cantidad' => $result['cantidad'],
@@ -1108,148 +979,140 @@ class venta_new_model extends CI_Model
                 ));
             } else {
                 $this->db->insert('producto_almacen', array(
-                    'id_producto' => $key,
+                    'id_producto' => $detalle->producto_id,
                     'id_local' => $venta->local_id,
                     'cantidad' => $result['cantidad'],
                     'fraccion' => $result['fraccion']
                 ));
             }
 
+            $this->db->where('id_detalle', $detalle->detalle_id);
+            $this->db->update('detalle_venta', array('cantidad_devuelta' => $detalle->cantidad));
 
         }
 
-        $venta_status = $venta->venta_estado;
-
         $this->db->where('venta_id', $venta_id);
         $this->db->update('venta', array(
-            'venta_status' => 'ANULADO'
+            'venta_status' => 'ANULADO',
+            'motivo' => $motivo
         ));
 
-        //Al anular, la cantidad devuelta queda igual a la cantidad
-        $this->db->query("UPDATE detalle_venta SET cantidad_devuelta = cantidad WHERE id_venta =" . $venta_id);
-
-        $venta = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
-
+        //Devuelvo el monto pagado de la venta
         $total = $venta->total;
-        if ($venta->condicion_pago == 2) {
-            $total = $venta->inicial > 0 ? $venta->inicial : 0;
 
+        // En caso de ser venta al credito el total del saldo a devolver es la inicial mas el monto pagado
+        if ($venta->condicion_id == 2) {
+            $total = $venta->inicial > 0 ? $venta->inicial : 0;
             $cobranzas = $this->db->select_sum('credito_cuotas_abono.monto_abono', 'total')
                 ->from('credito_cuotas_abono')
                 ->join('credito_cuotas', 'credito_cuotas.id_credito_cuota = credito_cuotas_abono.credito_cuota_id')
                 ->where('credito_cuotas.id_venta', $venta->venta_id)
                 ->get()->row();
-
             $total += $cobranzas->total;
         }
 
+        $caja_desglose = array(
+            'monto' => $total,
+            'tipo' => 'VENTA_ANULADA',
+            'IO' => 2,
+            'ref_id' => $venta_id,
+            'moneda_id' => $venta->moneda_id,
+            'local_id' => $venta->local_id,
+            'id_usuario' => $id_usuario == false ? $this->session->userdata('nUsuCodigo') : $id_usuario,
+            'ref_val' => $metodo_pago
+        );
 
-        if ($total > 0 && $venta_status != 'CAJA') {
-            $caja_desglose = array(
-                'monto' => $total,
-                'tipo' => 'VENTA_ANULADA',
-                'IO' => 2,
-                'ref_id' => $venta_id,
-                'moneda_id' => $venta->id_moneda,
-                'local_id' => $venta->local_id,
-                'id_usuario' => $id_usuario == false ? $this->session->userdata('nUsuCodigo') : $id_usuario,
-                'ref_val' => $metodo_pago
-            );
+        $caja_desglose['cuenta_id'] = $cuenta_id;
+        $this->cajas_model->save_pendiente($caja_desglose);
 
-            $caja_desglose['cuenta_id'] = $cuenta_id;
+        //Guardo registro en el Kardex
+        if ($venta->documento_id == 1 || $venta->documento_id == 3) {
 
-            $this->cajas_model->save_pendiente($caja_desglose);
-        }
+            $cantidades = array();
+            foreach ($venta->detalles as $detalle) {
+                if (!isset($cantidades[$detalle->producto_id])) {
 
-        $updated_correlativo = false;
-        if (valueOptionDB('FACTURACION', 0) == 1 && ($venta->id_documento == 1 || $venta->id_documento == 3) && $venta->numero != null) {
-            $facturacion = $this->db->get_where('facturacion', array(
-                'ref_id' => $venta_id,
-                'documento_tipo' => sumCod($venta->id_documento, 2)
-            ))->row();
-
-            if ($facturacion != null) {
-                if ($facturacion->estado == 3) {
-                    $resp = $this->facturacion_model->anularVenta($venta_id, $serie . '-' . $numero, $motivo);
-                    $updated_correlativo = true;
-                    if ($venta->id_documento == 1) {
-                        $this->correlativos_model->sumar_correlativo($venta->local_id, 9);
-                    } elseif ($venta->id_documento == 1) {
-                        $this->correlativos_model->sumar_correlativo($venta->local_id, 8);
+                    // Dependiendo del tipo de impuesto en la venta calculo el costo para guardar en el kardex
+                    $precio_min = $this->unidades_model->get_maximo_costo($detalle->producto_id, $detalle->unidad_id, $detalle->precio);
+                    $costo = $precio_min;
+                    if ($detalle->afectacion_impuesto == 1 && $venta->tipo_impuesto == 1) {
+                        $costo = $costo / ((100 + $detalle->impuesto_porciento) / 100);
                     }
+
+                    if ($venta->moneda_id != MONEDA_DEFECTO) {
+                        $costo = $costo * $venta->moneda_tasa;
+                    }
+
+                    $cantidades[$detalle->producto_id] = array(
+                        'cantidad' => 0,
+                        'costo' => $costo,
+                    );
                 }
+
+                $cantidades[$detalle->producto_id]['cantidad'] += $this->unidades_model->convert_minimo_by_um(
+                    $detalle->producto_id,
+                    $detalle->unidad_id,
+                    $detalle->cantidad
+                );
             }
+
+            foreach ($cantidades as $key => $value) {
+
+                $values = array(
+                    'local_id' => $venta->local_id,
+                    'producto_id' => $key,
+                    'cantidad' => $value['cantidad'] * -1,
+                    'io' => 2,
+                    'tipo' => $venta->documento_id,
+                    'operacion' => 1,
+                    'serie' => $venta->serie,
+                    'numero' => sumCod($venta->numero, 8),
+                    'ref_id' => $venta->venta_id,
+                    'ref_val' => "ANULADO",
+                    'usuario_id' => $id_usuario === FALSE ? $this->session->userdata('nUsuCodigo') : $id_usuario,
+                    'costo' => $value['costo'],
+                    'moneda_id' => $venta->moneda_id
+                );
+                $this->kardex_model->set_kardex($values);
+            }
+
         }
 
-        if ($updated_correlativo == false) {
-            $this->correlativos_model->sumar_correlativo($venta->local_id, 2);
+        $this->db->trans_complete();
+        if ($this->db->trans_status() === FALSE) {
+            $this->db->trans_rollback();
+            return FALSE;
         }
 
-
+        $this->db->trans_commit();
         return $venta_id;
     }
 
-    public function anular_venta_caja($venta_id, $metodo_pago, $cuenta_id, $motivo, $id_usuario = false)
+    // Metodo para anular una venta en caja (2018-10-16) Antonio Martin
+    public function anular_venta_caja($venta_id, $motivo)
     {
         $venta = $this->get_venta_detalle($venta_id);
 
-        $cantidades = array();
-        $afectacion_impuesto = array();
-        $precio = array();
-        $impuesto_porciento = array();
+        if ($venta->venta_estado != 'CAJA')
+            return FALSE;
 
+        $this->db->trans_begin();
 
+        // Devuelvo las cantidades al inventario
         foreach ($venta->detalles as $detalle) {
 
-            if (!isset($cantidades[$detalle->producto_id]))
-                $cantidades[$detalle->producto_id] = 0;
-
-
-            $cantidades[$detalle->producto_id] += $this->unidades_model->convert_minimo_by_um(
-                $detalle->producto_id,
-                $detalle->unidad_id,
-                $detalle->cantidad
-            );
-            $afectacion_impuesto[$detalle->producto_id] = $detalle->afectacion_impuesto;
-            $precio[$detalle->producto_id] = $this->unidades_model->get_maximo_costo($detalle->producto_id, $detalle->unidad_id, $detalle->precio);
-            $impuesto_porciento[$detalle->producto_id] = $detalle->impuesto_porciento;
-        }
-        foreach ($cantidades as $key => $value) {
-
             $old_cantidad = $this->db->get_where('producto_almacen', array(
-                'id_producto' => $key,
+                'id_producto' => $detalle->producto_id,
                 'id_local' => $venta->local_id
             ))->row();
 
-            $old_cantidad_min = $old_cantidad != NULL ? $this->unidades_model->convert_minimo_um($key, $old_cantidad->cantidad, $old_cantidad->fraccion) : 0;
+            $old_cantidad_min = $old_cantidad != NULL ? $this->unidades_model->convert_minimo_um($detalle->producto_id, $old_cantidad->cantidad, $old_cantidad->fraccion) : 0;
+            $cantidad_min = $this->unidades_model->convert_minimo_by_um($detalle->producto_id, $detalle->unidad_id, $detalle->cantidad);
 
-            $result = $this->unidades_model->get_cantidad_fraccion($key, $old_cantidad_min + $value);
-
-            $this->db->where('io', 2);
-            $this->db->where('operacion', 1);
-            $this->db->where('ref_id', $venta_id);
-            $referencias = $this->db->get('kardex')->row();
-
-            if (!isset($referencias->ref_val))
-                $referencias->ref_val == "";
-
-            $costo = 0;
-            if ($afectacion_impuesto[$key] == '1') {
-                if ($venta->tipo_impuesto == 1) { //incluye impuesto
-                    $costo = $precio[$key] / (($impuesto_porciento[$key] / 100) + 1);
-                } else { //agrega impuesto
-                    $costo = $precio[$key];
-                }
-            } else {
-                $costo = $precio[$key];
-            }
-
-            if ($venta->moneda_tasa > 0) {
-                $costo = $costo * $venta->moneda_tasa;
-            }
+            $result = $this->unidades_model->get_cantidad_fraccion($detalle->producto_id, $old_cantidad_min + $cantidad_min);
 
             if ($old_cantidad != NULL) {
-                $this->db->where('id_producto', $key);
+                $this->db->where('id_producto', $detalle->producto_id);
                 $this->db->where('id_local', $venta->local_id);
                 $this->db->update('producto_almacen', array(
                     'cantidad' => $result['cantidad'],
@@ -1257,75 +1120,35 @@ class venta_new_model extends CI_Model
                 ));
             } else {
                 $this->db->insert('producto_almacen', array(
-                    'id_producto' => $key,
+                    'id_producto' => $detalle->producto_id,
                     'id_local' => $venta->local_id,
                     'cantidad' => $result['cantidad'],
                     'fraccion' => $result['fraccion']
                 ));
             }
 
+            $this->db->where('id_detalle', $detalle->detalle_id);
+            $this->db->update('detalle_venta', array('cantidad_devuelta' => $detalle->cantidad));
 
         }
 
-        $venta_status = $venta->venta_estado;
-
         $this->db->where('venta_id', $venta_id);
         $this->db->update('venta', array(
-            'venta_status' => 'ANULADO'
+            'venta_status' => 'ANULADO',
+            'motivo' => $motivo
         ));
 
-        //Al anular, la cantidad devuelta queda igual a la cantidad
-        $this->db->query("UPDATE detalle_venta SET cantidad_devuelta = cantidad WHERE id_venta =" . $venta_id);
+        $this->db->trans_complete();
+        if ($this->db->trans_status() === FALSE) {
+            $this->db->trans_rollback();
+            return FALSE;
+        }
 
+        $this->db->trans_commit();
         return $venta_id;
     }
 
-    private function recalc_totales($venta_id)
-    {
-        $venta = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
-        $detalles = $this->db->get_where('detalle_venta', array('id_venta' => $venta_id))->result();
-
-        $impuesto = 0;
-        $subtotal = 0;
-        $total = 0;
-        foreach ($detalles as $d) {
-            $total += ($d->cantidad - $d->cantidad_devuelta) * $d->precio;
-        }
-
-
-        if ($venta->tipo_impuesto == 1) {
-            foreach ($detalles as $d) {
-                if ($d->afectacion_impuesto == OP_GRAVABLE) {
-                    $factor = (100 + $d->impuesto_porciento) / 100;
-                    $impuesto += (($d->cantidad - $d->cantidad_devuelta) * $d->precio) - ((($d->cantidad - $d->cantidad_devuelta) * $d->precio) / $factor);
-                }
-            }
-            $subtotal = $total - $impuesto;
-        } elseif ($venta->tipo_impuesto == 2) {
-            $subtotal = $total;
-            foreach ($detalles as $d) {
-                if ($d->afectacion_impuesto == OP_GRAVABLE) {
-                    $factor = (100 + $d->impuesto_porciento) / 100;
-                    $impuesto += ((($d->cantidad - $d->cantidad_devuelta) * $d->precio) * $factor) - (($d->cantidad - $d->cantidad_devuelta) * $d->precio);
-                }
-            }
-            $total = $subtotal + $impuesto;
-        } else {
-            $subtotal = $total;
-        }
-
-        $this->db->where('venta_id', $venta_id);
-        $this->db->update('venta', array(
-            'total' => $total,
-            'subtotal' => $subtotal,
-            'total_impuesto' => $impuesto,
-        ));
-
-        return $total;
-    }
-
-    public
-    function devolver_venta($venta_id, $total_importe, $devoluciones, $serie, $numero, $metodo_pago, $cuenta_id, $motivo, $id_usuario = false)
+    public function devolver_venta($venta_id, $total_importe, $devoluciones, $serie, $numero, $metodo_pago, $cuenta_id, $motivo, $id_usuario = false)
     {
         $venta = $this->get_venta_detalle($venta_id);
 
@@ -1493,8 +1316,51 @@ class venta_new_model extends CI_Model
         }
     }
 
-    public
-    function imprimir_pedido($data)
+    private function recalc_totales($venta_id)
+    {
+        $venta = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
+        $detalles = $this->db->get_where('detalle_venta', array('id_venta' => $venta_id))->result();
+
+        $impuesto = 0;
+        $subtotal = 0;
+        $total = 0;
+        foreach ($detalles as $d) {
+            $total += ($d->cantidad - $d->cantidad_devuelta) * $d->precio;
+        }
+
+
+        if ($venta->tipo_impuesto == 1) {
+            foreach ($detalles as $d) {
+                if ($d->afectacion_impuesto == OP_GRAVABLE) {
+                    $factor = (100 + $d->impuesto_porciento) / 100;
+                    $impuesto += (($d->cantidad - $d->cantidad_devuelta) * $d->precio) - ((($d->cantidad - $d->cantidad_devuelta) * $d->precio) / $factor);
+                }
+            }
+            $subtotal = $total - $impuesto;
+        } elseif ($venta->tipo_impuesto == 2) {
+            $subtotal = $total;
+            foreach ($detalles as $d) {
+                if ($d->afectacion_impuesto == OP_GRAVABLE) {
+                    $factor = (100 + $d->impuesto_porciento) / 100;
+                    $impuesto += ((($d->cantidad - $d->cantidad_devuelta) * $d->precio) * $factor) - (($d->cantidad - $d->cantidad_devuelta) * $d->precio);
+                }
+            }
+            $total = $subtotal + $impuesto;
+        } else {
+            $subtotal = $total;
+        }
+
+        $this->db->where('venta_id', $venta_id);
+        $this->db->update('venta', array(
+            'total' => $total,
+            'subtotal' => $subtotal,
+            'total_impuesto' => $impuesto,
+        ));
+
+        return $total;
+    }
+
+    public function imprimir_pedido($data)
     {
         $this->load->library('mpdf53/mpdf');
 
@@ -1511,8 +1377,7 @@ class venta_new_model extends CI_Model
         $mpdf->Output($nombre_archivo, 'I');
     }
 
-    public
-    function imprimir_boleta($data)
+    public function imprimir_boleta($data)
     {
         $this->load->library('mpdf53/mpdf');
 
@@ -1535,8 +1400,7 @@ class venta_new_model extends CI_Model
         $mpdf->Output($nombre_archivo, 'I');
     }
 
-    public
-    function imprimir_factura($data)
+    public function imprimir_factura($data)
     {
         $this->load->library('mpdf53/mpdf');
 

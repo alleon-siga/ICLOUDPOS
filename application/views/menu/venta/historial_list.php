@@ -2,14 +2,6 @@
 <?php $md = get_moneda_defecto() ?>
 <div class="row">
     <div class="col-md-10"></div>
-    <!--        <div class="col-md-2">-->
-    <!--            <label>Subtotal: --><? //= $moneda->moneda ?><!-- <span id="subtotal">-->
-    <? //=number_format($venta_totales->subtotal, 2)?><!--</span></label>-->
-    <!--        </div>-->
-    <!--        <div class="col-md-2">-->
-    <!--            <label>IGV: --><? //= $moneda->simbolo ?><!-- <span id="impuesto">-->
-    <? //=number_format($venta_totales->impuesto, 2)?><!--</span></label>-->
-    <!--        </div>-->
     <div class="col-md-2">
         <label>Total: <?= $moneda->simbolo ?> <span
                     id="total"><?= number_format($venta_totales->total, 2) ?></span></label>
@@ -18,20 +10,20 @@
 <div class="table-responsive">
     <table class='table table-striped dataTable tableStyle'>
         <thead>
-            <tr>
-                <th width="5%"># Venta</th>
-                <th width="5%">Fecha Registro</th>
-                <th width="5%">Fecha Venta</th>
-                <th width="5%"># Comprobante</th>
-                <th width="10%">Identificaci&oacute;n</th>
-                <th width="20%">Cliente</th>
-                <th width="10%">Vendedor</th>
-                <th width="5%">Condici&oacute;n</th>
-                <th width="5%">Estado</th>
-                <th width="5%">Tip. Cam.</th>
-                <th width="5%">Total <?= $venta_action == 'caja' ? 'a Pagar' : '' ?></th>
-                <th width="20%">Acciones</th>
-            </tr>
+        <tr>
+            <th width="5%"># Venta</th>
+            <th width="5%">Fecha Registro</th>
+            <th width="5%">Fecha Venta</th>
+            <th width="5%"># Comprobante</th>
+            <th width="10%">Identificaci&oacute;n</th>
+            <th width="20%">Cliente</th>
+            <th width="10%">Vendedor</th>
+            <th width="5%">Condici&oacute;n</th>
+            <th width="5%">Estado</th>
+            <th width="5%">Tip. Cam.</th>
+            <th width="5%">Total <?= $venta_action == 'caja' ? 'a Pagar' : '' ?></th>
+            <th width="20%">Acciones</th>
+        </tr>
         </thead>
         <tbody>
         <?php if (count($ventas) > 0): ?>
@@ -69,11 +61,11 @@
                     <td style="white-space: normal;"><?= $venta->venta_estado ?></td>
                     <td style="white-space: normal;"><?= $venta->moneda_tasa ?></td>
                     <td style="text-align: right;"><?= $venta->moneda_simbolo ?> <?= number_format($venta->total, 2) ?></td>
-                    <td style="text-align: center; white-space: normal;">
+                    <td style="text-align: center; white-space: nowrap;">
                         <a class="btn btn-default" data-toggle="tooltip" style="margin-right: 5px;"
                            title="Ver" data-original-title="Ver"
                            href="#"
-                           onclick="ver('<?= $venta->venta_id ?>');">
+                           onclick="ver('<?= $venta->venta_id ?>')">
                             <i class="fa fa-search"></i>
                         </a>
 
@@ -82,7 +74,7 @@
                             <a class="btn btn-warning" data-toggle="tooltip" style="margin-right: 5px;"
                                title="Facturar" data-original-title="Facturar"
                                href="#"
-                               onclick="facturar('<?= $venta->venta_id ?>');">
+                               onclick="facturar('<?= $venta->venta_id ?>')">
                                 <i class="fa fa-file-text"></i>
                             </a>
                         <?php endif; ?>
@@ -92,7 +84,7 @@
                             <a class="btn btn-primary" data-toggle="tooltip" style="margin-right: 5px;"
                                title="Ver" data-original-title="Ver"
                                href="#"
-                               onclick="previa('<?= $venta->venta_id ?>');">
+                               onclick="previa('<?= $venta->venta_id ?>')">
                                 <i class="fa fa-print"></i>
                             </a>
                             <?php //endif; ?>
@@ -101,34 +93,26 @@
                                 <a class="btn btn-warning" data-toggle="tooltip" style="margin-right: 5px;"
                                    title="Cerrar Venta" data-original-title="Cerrar Venta"
                                    href="#"
-                                   onclick="cerrar_venta('<?= $venta->venta_id ?>');">
+                                   onclick="cerrar_venta('<?= $venta->venta_id ?>')">
                                     <i class="fa fa-unlock"></i>
                                 </a>
                             <?php endif; ?>
                         <?php endif; ?>
 
                         <?php if ($venta_action == 'anular'): ?>
-                            <?php if ($venta->condicion_id == '1'): ?>
-                                <a class="btn btn-danger" data-toggle="tooltip" style="margin-right: 5px;"
-                                   title="Devolver Venta" data-original-title="Devolver Venta"
-                                   href="#"
-                                   onclick="alert('Las devoluciones parciales no estan disponible por el momento.');">
-                                    <i class="fa fa-arrow-circle-left"></i>
-                                </a>
-                            <?php endif; ?>
-
                             <a class="btn btn-danger" data-toggle="tooltip"
                                title="Anular Venta" data-original-title="Anular Venta"
                                href="#"
-                               onclick="anular('<?= $venta->venta_id ?>', '<?= sumCod($venta->venta_id, 6) ?>');">
+                               onclick="anularModal(<?= $venta->venta_id ?>)">
                                 <i class="fa fa-remove"></i>
                             </a>
-                        <?php endif; ?>
+                        <?php else: ?>
                         <a class="btn btn-sm btn-warning" data-toggle="tooltip" style="margin-right: 5px;"
                            title="Exportar" data-original-title="Exportar"
                            href="#"
-                           onclick="enviar_correo('<?= $venta->venta_id ?>', '<?= $venta->tipo_cliente ?>');">
-                           <i class="fa fa-envelope" aria-hidden="true"></i>
+                           onclick="enviar_correo('<?= $venta->venta_id ?>', '<?= $venta->tipo_cliente ?>')">
+                            <i class="fa fa-envelope" aria-hidden="true"></i>
+                        <?php endif; ?>
                         </a>
                     </td>
                 </tr>
@@ -204,214 +188,171 @@
     </div>
 </div>
 
-<div class="modal fade" id="dialog_venta_confirm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+<div class="modal fade" id="dialog_anular" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
      aria-hidden="true">
 
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Confirmaci&oacute;n</h4>
-            </div>
-
-            <div class="modal-body ">
-                <h5 id="confirm_venta_text">Estas Seguro?</h5>
-
-                <div class="row">
-                    <div class="col-md-4 col-md-offset-1">
-                        <label>Metodos Pago</label>
-                        <select id="metodo_pago" class="form-control">
-                            <?php foreach ($metodos_pago as $mp): ?>
-                                <option value="<?= $mp->id_metodo ?>"><?= $mp->nombre_metodo ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div class="col-md-5">
-                        <label>Cuenta de Caja</label>
-                        <select id="cuenta_id" class="form-control">
-                            <?php foreach ($cuentas as $cuenta): ?>
-                                <option value="<?= $cuenta->id ?>"><?= $cuenta->descripcion ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                </div>
-                <br>
-                <div class="row">
-                    <div class="col-md-9 col-md-offset-1">
-                        <?php
-                        $motivos = array(
-                            '01' => 'Anulaci&oacute;n de la operaci&oacute;n',
-                            '02' => 'Anulaci&oacute;n por error en el RUC',
-                            '03' => 'Correcci&oacute;n por error en la descripci&oacute;n',
-                            '04' => 'Descuento global',
-                            '05' => 'Descuento por item',
-                            '06' => 'Devoluci&oacute;n total',
-                            '07' => 'Devoluci&oacute;n por item',
-                            '08' => 'Bonificaci&oacute;n',
-                            '09' => 'Disminuci&oacute;n en el valor'
-                        );
-                        ?>
-                        <label>Motivo</label>
-                        <select id="motivo" class="form-control">
-                            <option value=""></option>
-                            <?php foreach ($motivos as $key => $val): ?>
-                                <option value="<?= $key ?>"><?= $val ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <div class="modal-footer">
-                <button id="confirm_venta_button" type="button" class="btn btn-primary">
-                    Aceptar
-                </button>
-
-                <button type="button" class="btn btn-danger"
-                        onclick="$('#dialog_venta_confirm').modal('hide');">
-                    Cancelar
-                </button>
-
-            </div>
-        </div>
-        <!-- /.modal-content -->
-    </div>
 </div>
-<div class="modal fade" id="correoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static"></div>
+
+<div class="modal fade" id="correoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+     data-backdrop="static"></div>
 <script type="text/javascript">
-    $(function () {
-        $('.imprimir').on('click', function () {
-            var input = $('.btn_venta_imprimir');
-            var nombre = $(this).attr('data-nombre');
+  $(function () {
+    $('.imprimir').on('click', function () {
+      var input = $('.btn_venta_imprimir')
+      var nombre = $(this).attr('data-nombre')
 
-            input.html('<i class="fa fa-print"></i> IMPRIMIENDO...');
-            input.attr('disabled', 'disabled');
+      input.html('<i class="fa fa-print"></i> IMPRIMIENDO...')
+      input.attr('disabled', 'disabled')
 
-            var data = {
-                'venta_id' : $('#hd_venta_id').val(),
-                'serie' : $('#hd_serie').val(),
-                'numero' : $('#hd_credito').val()
-            }
+      var data = {
+        'venta_id': $('#hd_venta_id').val(),
+        'serie': $('#hd_serie').val(),
+        'numero': $('#hd_credito').val()
+      }
 
-            $.ajax({
-                url: '<?= base_url()?>impresion/get_nota_credito',
-                data: data,
-                type: 'POST',
-                success: function (data) {
-                    $.ajax({
-                        url: '<?= valueOptionDB('HOST_IMPRESION', 'http://localhost:8080') ?>',
-                        method: 'POST',
-                        data: {
-                            documento: nombre,
-                            dataset: data
-                        },
-                        success: function (data) {
-                            show_msg('success', 'La nota de credito se esta imprimiendo');
-                        },
-                        error: function (data) {
-                            alert('Error de impresion')
-                        },
-                        complete: function (data) {
-                            input.removeAttr('disabled');
-                            input.html('<i class="fa fa-print"></i> Nota de credito');
-                        }
-
-                    })
-                }
-            })
-        });
-
-        $('#exportar_excel').on('click', function (e) {
-            e.preventDefault();
-            exportar_excel();
-        });
-
-        $("#exportar_pdf").on('click', function (e) {
-            e.preventDefault();
-            exportar_pdf();
-        });
-
-        TablesDatatables.init(1);
-
-    });
-
-    function exportar_pdf() {
-
-        var data = {
-            'local_id': $("#venta_local").val(),
-            'esatdo': $("#venta_estado").val(),
-            'fecha': $("#date_range").val(),
-            'moneda_id': $("#moneda_id").val(),
-            'condicion_pago_id': $("#condicion_pago_id").val()
-        };
-
-        var win = window.open('<?= base_url()?>venta_new/historial_pdf?data=' + JSON.stringify(data), '_blank');
-        win.focus();
-    }
-
-    function exportar_excel() {
-        var data = {
-            'local_id': $("#venta_local").val(),
-            'esatdo': $("#venta_estado").val(),
-            'fecha': $("#date_range").val(),
-            'moneda_id': $("#moneda_id").val(),
-            'condicion_pago_id': $("#condicion_pago_id").val()
-        };
-
-        var win = window.open('<?= base_url()?>venta_new/historial_excel?data=' + JSON.stringify(data), '_blank');
-        win.focus();
-    }
-
-    function ver(venta_id) {
-
-        $("#dialog_venta_detalle").html($("#loading").html());
-        $("#dialog_venta_detalle").modal('show');
-
-        $.ajax({
-            url: '<?php echo $ruta . 'venta_new/get_venta_detalle/' . $venta_action; ?>',
-            type: 'POST',
-            data: {'venta_id': venta_id},
-
-            success: function (data) {
-                $("#dialog_venta_detalle").html(data);
+      $.ajax({
+        url: '<?= base_url()?>impresion/get_nota_credito',
+        data: data,
+        type: 'POST',
+        success: function (data) {
+          $.ajax({
+            url: '<?= valueOptionDB('HOST_IMPRESION', 'http://localhost:8080') ?>',
+            method: 'POST',
+            data: {
+              documento: nombre,
+              dataset: data
             },
-            error: function () {
-                alert('asd')
-            }
-        });
-    }
-
-    function ver_nc(venta_id, serie, numero) {
-        $("#dialog_venta_detalle").modal('hide');
-        $("#nc_modal").modal('show');
-        $('#hd_venta_id').attr('value', venta_id);
-        $('#hd_serie').attr('value', serie);
-        $('#hd_credito').attr('value', numero);
-        $("#nc_modal_body").html($("#loading").html());
-        $.ajax({
-            url: '<?php echo $ruta ?>venta/get_nota_credito/',
-            type: 'POST',
-            data: {'venta_id': venta_id, 'serie': serie, 'numero': numero},
             success: function (data) {
-                $("#nc_modal_body").html(data);
+              show_msg('success', 'La nota de credito se esta imprimiendo')
             },
-            error: function () {
-                alert('ups')
+            error: function (data) {
+              alert('Error de impresion')
+            },
+            complete: function (data) {
+              input.removeAttr('disabled')
+              input.html('<i class="fa fa-print"></i> Nota de credito')
             }
-        });
+
+          })
+        }
+      })
+    })
+
+    $('#exportar_excel').on('click', function (e) {
+      e.preventDefault()
+      exportar_excel()
+    })
+
+    $('#exportar_pdf').on('click', function (e) {
+      e.preventDefault()
+      exportar_pdf()
+    })
+
+    TablesDatatables.init(1)
+
+  })
+
+  function anularModal (id) {
+
+    $('#barloadermodal').modal('show')
+    $.ajax({
+      url: 'venta_new/anular_modal',
+      method: 'POST',
+      data: {
+        venta_id: id,
+        local_id: $('#venta_local').val(),
+        moneda_id: $('#moneda_id').val()
+      },
+      success: function (data) {
+        $('#barloadermodal').modal('hide')
+        $('#dialog_anular').html(data)
+        $('#dialog_anular').modal('show')
+      },
+      error: function () {
+        show_msg('danger', 'Ha ocurrido un error inesperado')
+      }
+
+    })
+  }
+
+  function exportar_pdf () {
+
+    var data = {
+      'local_id': $('#venta_local').val(),
+      'esatdo': $('#venta_estado').val(),
+      'fecha': $('#date_range').val(),
+      'moneda_id': $('#moneda_id').val(),
+      'condicion_pago_id': $('#condicion_pago_id').val()
     }
 
-    function enviar_correo(idVenta, tipo_cliente){
-        $("#correoModal").html($("#loading").html());
-        $("#correoModal").load('<?php echo $ruta ?>' + 'venta/modalEnviarVenta/' + idVenta + '/' + tipo_cliente);
-        $('#correoModal').modal('show');
+    var win = window.open('<?= base_url()?>venta_new/historial_pdf?data=' + JSON.stringify(data), '_blank')
+    win.focus()
+  }
+
+  function exportar_excel () {
+    var data = {
+      'local_id': $('#venta_local').val(),
+      'esatdo': $('#venta_estado').val(),
+      'fecha': $('#date_range').val(),
+      'moneda_id': $('#moneda_id').val(),
+      'condicion_pago_id': $('#condicion_pago_id').val()
     }
 
-    function cerrarNotaCredito(){
-        $('#nc_modal').modal('hide');
-        $('#dialog_venta_detalle').modal('show');
-    }
+    var win = window.open('<?= base_url()?>venta_new/historial_excel?data=' + JSON.stringify(data), '_blank')
+    win.focus()
+  }
 
-    function cerrarDetalle() {
-      $('#dialog_venta_detalle').modal('hide');
-    }
+  function ver (venta_id) {
+
+    $('#dialog_venta_detalle').html($('#loading').html())
+    $('#dialog_venta_detalle').modal('show')
+
+    $.ajax({
+      url: '<?php echo $ruta . 'venta_new/get_venta_detalle/' . $venta_action; ?>',
+      type: 'POST',
+      data: {'venta_id': venta_id},
+
+      success: function (data) {
+        $('#dialog_venta_detalle').html(data)
+      },
+      error: function () {
+        alert('asd')
+      }
+    })
+  }
+
+  function ver_nc (venta_id, serie, numero) {
+    $('#dialog_venta_detalle').modal('hide')
+    $('#nc_modal').modal('show')
+    $('#hd_venta_id').attr('value', venta_id)
+    $('#hd_serie').attr('value', serie)
+    $('#hd_credito').attr('value', numero)
+    $('#nc_modal_body').html($('#loading').html())
+    $.ajax({
+      url: '<?php echo $ruta ?>venta/get_nota_credito/',
+      type: 'POST',
+      data: {'venta_id': venta_id, 'serie': serie, 'numero': numero},
+      success: function (data) {
+        $('#nc_modal_body').html(data)
+      },
+      error: function () {
+        alert('ups')
+      }
+    })
+  }
+
+  function enviar_correo (idVenta, tipo_cliente) {
+    $('#correoModal').html($('#loading').html())
+    $('#correoModal').load('<?php echo $ruta ?>' + 'venta/modalEnviarVenta/' + idVenta + '/' + tipo_cliente)
+    $('#correoModal').modal('show')
+  }
+
+  function cerrarNotaCredito () {
+    $('#nc_modal').modal('hide')
+    $('#dialog_venta_detalle').modal('show')
+  }
+
+  function cerrarDetalle () {
+    $('#dialog_venta_detalle').modal('hide')
+  }
 </script>

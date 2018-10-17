@@ -323,7 +323,7 @@ abstract class Comprobante
             ->setAttribute('currencyID', $data['CODIGO_MONEDA']);
         $importe_total->appendChild($this->xml->createElement(
             'cbc:PayableAmount',
-            number_format($data['TOTAL_VENTA'] - $data['TOTAL_DESCUENTO_GLOBAL'] + $data['TOTAL_OTROS_CARGOS'])
+            number_format($data['TOTAL_VENTA'] - $data['TOTAL_DESCUENTO_GLOBAL'] + $data['TOTAL_OTROS_CARGOS'], 2, '.', '')
         ))->setAttribute('currencyID', $data['CODIGO_MONEDA']);
 
         return $importe_total;

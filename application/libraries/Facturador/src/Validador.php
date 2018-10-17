@@ -65,6 +65,9 @@ class Validador
         if (isset($cabecera['TOTAL_OTROS_CARGOS']))
             $cabecera['TOTAL_OTROS_CARGOS'] = number_format($cabecera['TOTAL_OTROS_CARGOS'], 2, '.', '');
 
+        if (isset($cabecera['SUBTOTAL_VENTA']))
+            $cabecera['SUBTOTAL_VENTA'] = number_format($cabecera['SUBTOTAL_VENTA'], 2, '.', '');
+
         if (isset($cabecera['TOTAL_VENTA']))
             $cabecera['TOTAL_VENTA'] = number_format($cabecera['TOTAL_VENTA'], 2, '.', '');
 

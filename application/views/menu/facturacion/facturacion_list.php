@@ -30,6 +30,7 @@
                 <th>Numero</th>
                 <th style="width: 35%;">Cliente</th>
                 <th>Estado</th>
+                <th>Condicion</th>
                 <th>Total</th>
                 <th>Acciones</th>
                 <th>Impresi&oacute;n</th>
@@ -88,6 +89,29 @@
                                 <?= $estado ?>
                             </div>
                         </td>
+                        <td>
+
+                            <?php
+                            $estado = '';
+                            $estado_class = '';
+                            if ($f->estado_comprobante == 1) {
+                                $estado_class = 'label-success';
+                                $estado = 'NUEVO';
+                            } elseif ($f->estado_comprobante == 2) {
+                                $estado_class = 'label-warning';
+                                $estado = 'MODIFICADO';
+                            } elseif ($f->estado_comprobante == 3) {
+                                $estado_class = 'label-danger';
+                                $estado = 'ANULADO';
+                            }
+                            ?>
+
+                            <div
+                                    class="label <?= $estado_class ?>"
+                                    style="font-size: 1em; padding: 2px; white-space: nowrap;">
+                                <?= $estado ?>
+                            </div>
+                        </td>
                         <td style="text-align: right;"><?= $emisor->moneda_simbolo ?> <?= number_format($f->total, 2) ?></td>
                         <td style="text-align: center;">
                             <?php if ($f->estado == 0): ?>
@@ -122,7 +146,7 @@
                                 <i class="fa fa-list"></i>
                             </a>
 
-                            <?php if ($f->estado != 0): ?>
+                            <?php if ($f->estado != 0 && $f->estado != 4): ?>
                                 <a class="btn btn-sm btn-primary" data-toggle="tooltip" style="margin-right: 5px;"
                                    title="Imprimir PDF (A4)" data-original-title="Imprimir PDF (A4)"
                                    href="#"

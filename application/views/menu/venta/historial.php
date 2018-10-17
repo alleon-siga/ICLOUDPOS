@@ -6,7 +6,7 @@
 <ul class="breadcrumb breadcrumb-top">
     <li>Venta</li>
     <li><a href="">
-            <?= $venta_action == 'anular' ? 'Anular & Devolver Venta' : '' ?>
+            <?= $venta_action == 'anular' ? 'Anular & Generar Notas de Creditos' : '' ?>
             <?= $venta_action == 'caja' ? 'Ventas por Cobrar' : '' ?>
             <?= $venta_action == '' ? 'Historial de Ventas' : '' ?>
         </a></li>
@@ -71,16 +71,12 @@
                                 class="form-control filter-input" name="venta_estado">
                             <option value="">TODOS</option>
                             <option value="COMPLETADO">COMPLETADO</option>
-                            <?php if (validOption('ACTIVAR_SHADOW', 1) || validOption('ACTIVAR_FACTURACION_VENTA', 1)): ?>
-                                <option value="CERRADA">CERRADA</option>
-                            <?php endif; ?>
                             <?php if ($venta_action == 'caja'): ?>
                                 <option selected value="CAJA">CAJA</option>
                             <?php endif; ?>
                             <?php if ($venta_action != 'anular'): ?>
                                 <option value="ANULADO">ANULADO</option>
                             <?php endif; ?>
-                            <!--<option value="DEVUELTO">DEVUELTO</option>-->
                         </select>
 
                     </div>
@@ -505,109 +501,4 @@
                   }
                 })
               }
-
-              function cerrar_venta (venta_id) {
-
-                $('#dialog_venta_cerrar').html($('#loading').html())
-                $('#dialog_venta_cerrar').modal('show')
-
-                $.ajax({
-                  url: '<?php echo $ruta . 'venta_new/cerrar_venta'; ?>',
-                  type: 'POST',
-                  data: {'venta_id': venta_id},
-
-                  success: function (data) {
-                    $('#dialog_venta_cerrar').html(data)
-                  }
-                })
-              }
-
-              function anular (venta_id, venta) {
-
-                $('#confirm_venta_text').attr('data-venta', venta)
-                $('#confirm_venta_text').html('Estas seguro que deseas anular la venta ' + $('#confirm_venta_text').attr('data-venta') + '?')
-                $('#confirm_venta_button').attr('onclick', 'anular_venta("' + venta_id + '");')
-
-                $('#dialog_venta_confirm').modal('show')
-
-              }
-
-              function anular_venta (venta_id) {
-
-                if ($('#motivo').val() == '') {
-                  show_msg('warning', 'El motivo es requerido')
-                  return false
-                }
-
-                $('#confirm_venta_text').html($('#loading').html())
-
-                $.ajax({
-                  url: '<?php echo $ruta . 'venta_new/anular_venta'; ?>',
-                  type: 'POST',
-                  headers: {
-                    Accept: 'application/json'
-                  },
-                  data: {
-                    'venta_id': venta_id,
-                    'metodo_pago': $('#metodo_pago').val(),
-                    'cuenta_id': $('#cuenta_id').val(),
-                    'motivo': $('#motivo').val()
-                  },
-
-                  success: function (data) {
-                    $('#dialog_venta_confirm').modal('hide')
-                    $('.modal-backdrop').remove()
-                    if (data.msg == undefined) {
-                      $.bootstrapGrowl('<h4>Correcto.</h4> <p>Venta anulada con exito.</p>', {
-                        type: 'success',
-                        delay: 5000,
-                        allow_dismiss: true
-                      })
-                    }
-                    else {
-                      show_msg('warning', '<h4>Error.</h4> <p>' + data.msg + '</p>')
-                    }
-
-                    if ($('#facturacion_electronica').val() == 1 && (data.venta.id_documento == 1 || data.venta.id_documento == 3)) {
-                      if (data.facturacion != undefined) {
-                        if (data.facturacion.estado == 1) {
-                          show_msg('success', '<h4>Facturacion Electronica:</h4> ' + data.facturacion.nota)
-                        }
-                        else {
-                          show_msg('danger', '<h4>Facturacion Electronica:</h4> ' + data.facturacion.nota)
-                        }
-                      }
-
-                    }
-
-                    get_ventas()
-                  },
-                  error: function () {
-                    $('#confirm_venta_text').html('Estas seguro que deseas anular la venta ' + $('#confirm_venta_text').attr('data-venta') + '?')
-                    $.bootstrapGrowl('<h4>Error.</h4> <p>Ha ocurrido un error en la operaci&oacute;n</p>', {
-                      type: 'danger',
-                      delay: 5000,
-                      allow_dismiss: true
-                    })
-                  }
-                })
-              }
-
-              function devolver (venta_id) {
-
-                $('#dialog_venta_detalle').html($('#loading').html())
-                $('#dialog_venta_detalle').modal('show')
-
-                $.ajax({
-                  url: '<?php echo $ruta . 'venta_new/devolver_detalle'; ?>',
-                  type: 'POST',
-                  data: {'venta_id': venta_id},
-
-                  success: function (data) {
-                    $('#dialog_venta_detalle').html(data)
-                  }
-                })
-              }
-
-
             </script>

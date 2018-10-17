@@ -1012,7 +1012,7 @@ function save_venta_contado (imprimir) {
     success: function (data) {
 
       if (data.success == '1') {
-        show_msg('success', '<h4>Correcto. </h4><p>La venta numero ' + data.venta.venta_id + ' se ha guardado con exito.</p>')
+        show_msg('success', data.msg)
 
         if ($('#facturacion_electronica').val() == 1 && data.venta.venta_status == 'COMPLETADO' && (data.venta.id_documento == 1 || data.venta.id_documento == 3)) {
           if (data.facturacion.estado == 1) {
@@ -1070,26 +1070,26 @@ function save_venta_contado (imprimir) {
           })
         }
       }
-      else if (data.success == '3') {
-        show_msg('danger', '<h4>Error. </h4><p>Stock insuficiente.</p>')
+      else if (data.success == 3) {
+        show_msg('warning', data.msg)
         $('#loading_save_venta').modal('hide')
         $('.save_venta_contado').removeAttr('disabled')
       } else {
         if (data.msg) {
-          show_msg('danger', '<h4>Error. </h4><p>' + data.msg + '</p>')
+          show_msg('warning', data.msg)
         } else {
-          show_msg('danger', '<h4>Error. </h4><p>Ha ocurrido un error insperado al guardar la venta.</p>')
+          show_msg('danger', 'Ha ocurrido un error insperado')
         }
         $('#loading_save_venta').modal('hide')
         $('.save_venta_contado').removeAttr('disabled')
       }
     },
-    error: function (data) {
-
+    error: function () {
+      $('#loading_save_venta').modal('hide')
+      show_msg('danger', 'Ha ocurrido un error insperado')
     },
-    complete: function (data) {
+    complete: function () {
       $('.save_venta_contado').removeAttr('disabled')
-
     }
   })
 }
@@ -1150,8 +1150,8 @@ function save_venta_credito (imprimir) {
     data: form + '&detalles_productos=' + detalles_productos + '&traspasos=' + traspasos + '&cuotas=' + cuotas,
     success: function (data) {
 
-      if (data.success == '1') {
-        show_msg('success', '<h4>Correcto. </h4><p>La venta numero ' + data.venta.venta_id + ' se ha guardado con exito.</p>')
+      if (data.success == 1) {
+        show_msg('success', data.msg)
         if (imprimir == '1') {
           $('#dialog_venta_imprimir').html('')
 
@@ -1201,25 +1201,23 @@ function save_venta_credito (imprimir) {
           })
         }
       }
-      else if (data.success == '3') {
-        show_msg('danger', '<h4>Error. </h4><p>Stock insuficiente.</p>')
+      else if (data.success == 3) {
+        show_msg('warning', data.msg)
         $('#loading_save_venta').modal('hide')
         $('.save_venta_credito').removeAttr('disabled')
       } else {
         if (data.msg) {
-          show_msg('danger', '<h4>Error. </h4><p>' + data.msg + '</p>')
+          show_msg('warning', data.msg)
         } else {
-          show_msg('danger', '<h4>Error. </h4><p>Ha ocurrido un error insperado al guardar la venta.</p>')
+          show_msg('danger', 'Ha ocurrido un error insperado')
         }
         $('#loading_save_venta').modal('hide')
         $('.save_venta_credito').removeAttr('disabled')
       }
     },
-    error: function (data) {
-
-    },
-    complete: function (data) {
-
+    error: function () {
+      $('#loading_save_venta').modal('hide')
+      show_msg('danger', 'Ha ocurrido un error insperado')
     }
   })
 }
