@@ -1610,11 +1610,11 @@ function refresh_right_panel () {
   if ($('#moneda_id option:selected').val() != $('#MONEDA_DEFECTO_ID').val()) {
 
     $('.precio-input').each(function () {
-      $(this).val(roundPrice(parseFloat($(this).attr('data-value') / tasa), 4, 4))
+      $(this).val(roundPrice(parseFloat($(this).attr('data-value') / tasa), 2, 2))
     })
   } else {
     $('.precio-input').each(function () {
-      $(this).val(roundPrice(parseFloat($(this).attr('data-value')), 4, 4))
+      $(this).val(roundPrice(parseFloat($(this).attr('data-value')), 2, 2))
     })
   }
   if ($('#moneda_block_input').css('display') != 'none') {
