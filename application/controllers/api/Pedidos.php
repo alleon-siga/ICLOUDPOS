@@ -209,7 +209,9 @@ class Pedidos extends REST_Controller
             if ($venta_id) {
                 $data['success'] = '1';
 
-                if ($venta['venta_status'] == 'COMPLETADO' && $venta['fact_elect'] == '1' && $venta['id_documento'] != '6') {
+                if ($venta['venta_status'] == 'COMPLETADO' && $venta['fact_elect'] == '1' &&
+                    $venta['condicion_pago'] == '1' && $venta['id_documento'] != '6') {
+
                     $fact = $this->db->get_where('facturacion', array('ref_id' => $venta_id))->row();
                     $data['doc_nro'] = $fact->documento_numero;
                     $data['hash'] = $fact->hash_cpe;
