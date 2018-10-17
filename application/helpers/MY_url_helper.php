@@ -165,6 +165,15 @@ function validOption($config_value, $value, $default = 'NO')
     return $CI->session->userdata($config_value) == $value ? true : false;
 }
 
+function validOptionDB($config_value, $value, $default = 'NO')
+{
+    $CI =& get_instance();
+    $CI->load->model('opciones/opciones_model');
+    $config = $CI->opciones_model->get_opcion($config_value);
+    $config = isset($config[0]['config_value']) ? $config[0]['config_value'] : $default;
+    return $config == $value ? true : false;
+}
+
 function valueOption($config_value, $default = 'NO')
 {
     $CI =& get_instance();

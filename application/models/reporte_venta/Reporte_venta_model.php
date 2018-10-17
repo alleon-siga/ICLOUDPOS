@@ -311,7 +311,7 @@ class reporte_venta_model extends CI_Model
                     u.nombre_unidad, 
                     SUM(up.unidades * (dv.cantidad - IFNULL(dv.cantidad_devuelta, 0))) AS cantidad,
                     dv.detalle_costo_promedio, 
-                    dv.precio, 
+                    dv.precio / up.unidades as precio, 
                     l.local_nombre, 
                     dv.detalle_costo_ultimo, 
                     dv.impuesto_porciento, 

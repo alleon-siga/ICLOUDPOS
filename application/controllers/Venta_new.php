@@ -29,8 +29,7 @@ class venta_new extends MY_Controller
         } else {
             redirect(base_url(), 'refresh');
         }
-        if (validOption('ACTIVAR_SHADOW', 1))
-            $this->load->model('shadow/shadow_model');
+
     }
 
     function historial($action = "")
@@ -72,7 +71,6 @@ class venta_new extends MY_Controller
         $fecha_fin = str_replace("/", "-", $date_range[1]);
 
         $data['metodos_pago'] = $this->db->get_where('metodos_pago', array('status_metodo' => 1))->result();
-
         $data['cuentas'] = $this->db->select('caja_desglose.*')
             ->from('caja_desglose')
             ->join('caja', 'caja.id = caja_desglose.caja_id')
@@ -177,7 +175,6 @@ class venta_new extends MY_Controller
         echo json_encode($data);
     }
 
-
     function get_venta_previa()
     {
         $venta_id = $this->input->post('venta_id');
@@ -233,7 +230,6 @@ class venta_new extends MY_Controller
 
         $local_id = $local == "" || $local == '-' ? $this->session->userdata('id_local') : $local;
 
-
         $data['cotizacion'] = $cot_id != FALSE ? $this->cotizar_model->prepare_cotizacion($cot_id) : NULL;
 
         $data['locales'] = $this->local_model->get_local_by_user($this->session->userdata('nUsuCodigo'));
@@ -273,8 +269,12 @@ class venta_new extends MY_Controller
         }
     }
 
+    // Guardo la venta (2018-10-17) Antonio Martin
     function save_venta()
     {
+        header('Content-Type: application/json');
+
+        // Obtengo los parametros enviados
         $venta['local_id'] = $this->input->post('local_venta_id');
         $venta['id_documento'] = $this->input->post('tipo_documento');
         $venta['id_cliente'] = $this->input->post('cliente_id');
@@ -318,6 +318,23 @@ class venta_new extends MY_Controller
         $traspasos = json_decode($this->input->post('traspasos', true));
         $cuotas = json_decode($this->input->post('cuotas', true));
 
+        // Valido que los parametros esten correctos
+        // TODO hacer las validaciones de parametros restantes
+        if ($venta['condicion_pago'] != 1 && $venta['condicion_pago'] != 2) {
+            $data['success'] = 0;
+            $data['msg'] = "El tipo de pago no es valido.";
+            echo json_encode($data);
+            return false;
+        }
+
+        if (count($detalles_productos) == 0) {
+            $data['success'] = 0;
+            $data['msg'] = "Debe crear al menos un producto para poder realizar la venta";
+            echo json_encode($data);
+            return false;
+        }
+
+        // Hago validaciones de logica del negocio para evitar conflictos
         $validar_detalle = array();
         foreach ($detalles_productos as $d) {
             $validar_detalle[] = array(
@@ -329,58 +346,102 @@ class venta_new extends MY_Controller
             );
         }
 
-        $existenciaCosto = $this->producto_costo_unitario_model->check_costo_unitario($validar_detalle);
-        if (!$existenciaCosto) {
-            $data['msg'] = "Este producto no tiene precios de ventas o unitarios asignados, por favor verificar en el módulo de productos.";
-            $data['success'] = '0';
+        // Valido que el producto tenga costo unitario
+        if (!$this->producto_costo_unitario_model->check_costo_unitario($validar_detalle)) {
+            $data['success'] = 0;
+            $data['msg'] = "Este producto no tiene costo unitario asignado. Verificar en el módulo de productos.";
+            echo json_encode($data);
+            return false;
+        }
+
+        // Valido que los productos tengan stock suficientes para realizar la venta
+        $sin_stock = $this->inventario_model->check_stock($validar_detalle);
+        if (count($sin_stock) > 0) {
+            $data['success'] = 3;
+            $data['msg'] = "Hay productos que no tienen stock suficientes para realizar la venta.";
+            $data['sin_stock'] = json_encode($sin_stock);
+            echo json_encode($data);
+            return false;
+        }
+
+        // Dependiendo de la condicion de pago hay dos metodos para guardar la venta
+        if ($venta['condicion_pago'] == 1) {
+            // Guardo la venta al contado
+            $venta_id = $this->venta->save_venta_contado($venta, $detalles_productos, $traspasos);
+        } elseif ($venta['condicion_pago'] == 2) {
+            // Guardo la venta al credito
+            $venta_id = $this->venta->save_venta_credito($venta, $detalles_productos, $traspasos, $cuotas);
+        }
+
+        if ($venta_id !== FALSE) {
+            $data['success'] = 1;
+            $data['msg'] = 'La venta ' . $venta_id . ' se ha guardado correctamente';
+
+            $data['venta'] = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
+
+            // En caso de tener la facturacion electronica activa recupero comprobante generado
+            if (valueOptionDB('FACTURACION', 0) == 1 && $data['venta']->condicion_pago == 1 && ($data['venta']->id_documento == 1 || $data['venta']->id_documento == 3)) {
+                $data['facturacion'] = $this->db->get_where('facturacion', array(
+                    'documento_tipo' => sumCod($data['venta']->id_documento, 2),
+                    'ref_id' => $data['venta']->venta_id
+                ))->row();
+            }
         } else {
-            $sin_stock = $this->inventario_model->check_stock($validar_detalle);
-
-            if (count($sin_stock) == 0) {
-                if ($venta['condicion_pago'] == '1') {
-                    $venta_id = $this->venta->save_venta_contado($venta, $detalles_productos, $traspasos);
-                } elseif ($venta['condicion_pago'] == '2') {
-                    $venta_id = $this->venta->save_venta_credito($venta, $detalles_productos, $traspasos, $cuotas);
-                }
-
-                if ($venta_id) {
-                    //                $cot_id = $this->input->post('cot_id');
-                    //                if ($cot_id != "-1") {
-                    //                    $this->db->where('id', $cot_id);
-                    //                    $this->db->update('cotizacion', array('estado' => 'COMPLETADO'));
-                    //                }
-                    $data['success'] = '1';
-                    $data['venta'] = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
-                    if (valueOptionDB('FACTURACION', 0) == 1 && $data['venta']->condicion_pago == 1 && ($data['venta']->id_documento == 1 || $data['venta']->id_documento == 3)) {
-                        $data['facturacion'] = $this->db->get_where('facturacion', array(
-                            'documento_tipo' => sumCod($data['venta']->id_documento, 2),
-                            'ref_id' => $data['venta']->venta_id
-                        ))->row();
-                    }
-                } else {
-                    if (isset($this->venta->error))
-                        $data['msg'] = $this->venta->error;
-                    $data['success'] = '0';
-                }
-
-            } else {
-                $data['success'] = "3";
-                $data['sin_stock'] = json_encode($sin_stock);
+            $data['success'] = 0;
+            $data['msg'] = "Error de base de datos al intentar guardar la venta";
+            if (isset($this->venta->error)) {
+                $data['msg'] = $this->venta->error;
             }
         }
+
         echo json_encode($data);
     }
 
-    function save_venta_contable()
+    // Registro en caja y facturo una venta con estado CAJA (2018-10-17) Antonio Martin
+    function save_venta_caja()
     {
-        if (validOption('ACTIVAR_SHADOW', 1)) {
-            $venta_id = $this->input->post('venta_id', true);
-            $detalles_productos = json_decode($this->input->post('detalles_productos', true));
-            $this->shadow_model->save_venta_contable($venta_id, $detalles_productos);
+        header('Content-Type: application/json');
 
-            $data['success'] = '1';
-            echo json_encode($data);
+        // Obtengo los parametros enviados
+        $venta['venta_id'] = $this->input->post('venta_id');
+        $venta['id_usuario'] = $this->session->userdata('nUsuCodigo');
+        $venta['tipo_pago'] = $this->input->post('tipo_pago');
+        $venta['importe'] = $this->input->post('importe');
+        $venta['vuelto'] = $this->input->post('vuelto');
+        $venta['tarjeta'] = $this->input->post('tarjeta');
+        $venta['num_oper'] = $this->input->post('num_oper');
+        $venta['banco_id'] = $this->input->post('banco');
+
+        // Valido que los parametros esten correctos
+        // TODO validar los parametros
+
+        // Registro los datos necesarios para completar el proceso de venta
+        $result = $this->venta->save_venta_caja($venta);
+
+        if ($result !== FALSE) {
+            $data['success'] = 1;
+            $data['msg'] = '';
+
+            $data['venta'] = $this->db->get_where('venta', array('venta_id' => $venta['venta_id']))->row();
+
+            // En caso de tener la facturacion electronica activa recupero comprobante generado
+            if (valueOptionDB('FACTURACION', 0) == 1 && $data['venta']->condicion_pago == 1 && ($data['venta']->id_documento == 1 || $data['venta']->id_documento == 3)) {
+                $data['facturacion'] = $this->db->get_where('facturacion', array(
+                    'documento_tipo' => sumCod($data['venta']->id_documento, 2),
+                    'ref_id' => $data['venta']->venta_id
+                ))->row();
+            }
+
+        } else {
+            $data['success'] = 0;
+            $data['msg'] = "Error de base de datos al intentar guardar la venta";
+            if (isset($this->venta->error)) {
+                $data['msg'] = $this->venta->error;
+            }
         }
+
+        echo json_encode($data);
+
     }
 
     function set_stock()
@@ -473,88 +534,94 @@ class venta_new extends MY_Controller
         echo json_encode($data);
     }
 
-    function get_contable_detalle()
-    {
-        if (validOption('ACTIVAR_SHADOW', 1)) {
-            $venta_id = $this->input->post('venta_id');
-            $data['venta'] = $this->shadow_model->get_venta_contable_detalle($venta_id);
-            $data['productos'] = $this->producto_model->get_productos_list();
-            $this->load->view('menu/venta/dialog_contable_detalle', $data);
-        }
-    }
-
-    function cerrar_venta()
+    // Anulacion de ventas (2018-10-16) Antonio Martin
+    function anular_modal()
     {
         $venta_id = $this->input->post('venta_id');
+        $local_id = $this->input->post('local_id');
+        $moneda_id = $this->input->post('moneda_id');
+
         $data['venta'] = $this->venta->get_venta_detalle($venta_id);
+        $data['metodos_pago'] = $this->db->get_where('metodos_pago', array('status_metodo' => 1))->result();
 
-        $data['correlativo'] = $this->correlativos_model->get_correlativo($data['venta']->local_id, $data['venta']->documento_id);
+        $data['cuentas'] = $this->db->select('caja_desglose.*')
+            ->from('caja_desglose')
+            ->join('caja', 'caja.id = caja_desglose.caja_id')
+            ->where('caja.local_id', $local_id)
+            ->where('caja.moneda_id', $moneda_id)
+            ->where('caja_desglose.estado', 1)
+            ->get()->result();
 
-        $data['dialog_detalle'] = $this->load->view('menu/venta/historial_list_detalle', $data, true);
-        $this->load->view('menu/venta/dialog_venta_cerrar', $data);
+        echo $this->load->view('menu/venta/anular_modal', $data, TRUE);
     }
 
-    function cerrar_venta_save()
-    {
-        $venta_id = $this->input->post('venta_id');
-        $correlativo_inicial = $this->input->post('correlativo_inicial');
-        $cantidad_correlativo = $this->input->post('cantidad_correlativo');
-
-        $correlativos = array();
-        for ($i = 0; $i < $cantidad_correlativo; $i++)
-            $correlativos[$i] = $correlativo_inicial++;
-
-        $this->venta->cerrar_venta($venta_id, $correlativos);
-
-        $data['success'] = '1';
-        echo json_encode($data);
-    }
-
+    // Anulacion de ventas (2018-10-16) Antonio Martin
     function anular_venta()
     {
+        header('Content-Type: application/json');
+
+        // Obtengo los parametros enviados
         $venta_id = $this->input->post('venta_id');
         $metodo_pago = $this->input->post('metodo_pago');
         $cuenta_id = $this->input->post('cuenta_id');
         $motivo = $this->input->post('motivo');
 
-        $venta = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
+        // Valido que los parametros esten correctos
+        $venta_id = $venta_id != "" && is_numeric($venta_id) ? $venta_id : false;
+        $metodo_pago = $metodo_pago != "" && is_numeric($metodo_pago) ? $metodo_pago : false;
+        $cuenta_id = $cuenta_id != "" && is_numeric($cuenta_id) ? $cuenta_id : false;
+        $motivo = $motivo != "" ? $motivo : false;
 
-        if ($venta->venta_status == 'CAJA') {
-            $this->venta->anular_venta_caja($venta_id, $metodo_pago, $cuenta_id, $motivo);
-            $data['venta'] = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
-            header('Content-Type: application/json');
+        if ($venta_id == false || $metodo_pago == false || $metodo_pago == false || $motivo == false) {
+            $data['success'] = 0;
+            $data['msg'] = "Los parametros enviados no son correctos";
             echo json_encode($data);
             return false;
         }
 
-        if (valueOptionDB('FACTURACION', 0) == 1 && ($venta->id_documento == 1 || $venta->id_documento == 3)) {
-            $facturacion = $this->db->order_by('id', 'desc')->get_where('facturacion', array(
-                'documento_tipo' => '0' . $venta->id_documento,
-                'ref_id' => $venta->venta_id
-            ))->row();
+        // Comienzo con el proceso de anulacion
+        $venta = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
 
-            if ($facturacion != NULL) {
-                if ($facturacion->estado == 3 || $facturacion->estado == 4) {
-                    $this->venta->anular_venta($venta_id, $metodo_pago, $cuenta_id, $motivo);
-
-                    $data['facturacion'] = $this->db->order_by('id', 'desc')->get_where('facturacion', array(
-                        'documento_tipo' => '07',
-                        'ref_id' => $venta_id
-                    ))->row();
-                } else {
-                    $data['msg'] = 'No se ha podido anular el documento. Debe informarla a la SUNAT o darle baja en facturacion';
-                }
-            } else {
-                $this->venta->anular_venta($venta_id, $metodo_pago, $cuenta_id, $motivo);
-            }
-        } else {
-            $this->venta->anular_venta($venta_id, $metodo_pago, $cuenta_id, $motivo);
+        // Hago validaciones de logica del negocio para evitar conflictos
+        if ($venta->venta_status == 'ANULADO') {
+            $data['success'] = 0;
+            $data['msg'] = "Esta venta ya fue anulada anteriormente.";
+            log_message('error', 'Se intento anular una venta anulada');
+            echo json_encode($data);
+            return false;
         }
 
-        $data['venta'] = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
+        //Dependiendo del estado de la venta realizo la anulacion correspondiente
+        if ($venta->venta_status == 'CAJA') {
+            $result = $this->venta->anular_venta_caja($venta_id, $motivo);
+            if ($result !== FALSE) {
+                $data['success'] = 1;
+                $data['msg'] = "La anulacion se ha hecho correctamente.";
+            } else {
+                $data['success'] = 0;
+                $data['msg'] = "Error de base de datos al inentar anular la venta.";
+            }
+            echo json_encode($data);
+            return false;
+        }
 
+        if ($venta->venta_status == 'COMPLETADO') {
+            $result = $this->venta->anular_venta($venta_id, $metodo_pago, $cuenta_id, $motivo);
+            if ($result !== FALSE) {
+                $data['success'] = 1;
+                $data['msg'] = "La anulacion se ha hecho correctamente.";
+            } else {
+                $data['success'] = 0;
+                $data['msg'] = "Error de base de datos al inentar anular la venta.";
+            }
+            echo json_encode($data);
+            return false;
+        }
 
-        header('Content-Type: application/json');
+        // Llegado a este punto quiere decir que no se cumplio con los parametros requeridos para realizar la anulacion
+        $data['success'] = 0;
+        $data['msg'] = "Ha ocurrido un error inesperado al anular la venta.";
+        log_message('error', 'La anulacion no cumplio con los parametros requeridos para realizar la anulacion');
         echo json_encode($data);
     }
 
@@ -565,42 +632,6 @@ class venta_new extends MY_Controller
 
         header('Content-Type: application/json');
         echo json_encode($data);
-    }
-
-    function save_venta_caja()
-    {
-
-        $venta['venta_id'] = $this->input->post('venta_id');
-        $venta['id_usuario'] = $this->session->userdata('nUsuCodigo');
-        $venta['tipo_pago'] = $this->input->post('tipo_pago');
-        $venta['importe'] = $this->input->post('importe');
-        $venta['vuelto'] = $this->input->post('vuelto');
-        $venta['tarjeta'] = $this->input->post('tarjeta');
-        $venta['num_oper'] = $this->input->post('num_oper');
-        $venta['banco_id'] = $this->input->post('banco');
-
-
-        $result = $this->venta->save_venta_caja($venta);
-
-        if ($result) {
-            $data['success'] = '1';
-            $data['venta'] = $this->db->get_where('venta', array('venta_id' => $venta['venta_id']))->row();
-            if (valueOptionDB('FACTURACION', 0) == 1 && $data['venta']->condicion_pago == 1 && ($data['venta']->id_documento == 1 || $data['venta']->id_documento == 3)) {
-                $data['facturacion'] = $this->db->get_where('facturacion', array(
-                    'documento_tipo' => sumCod($data['venta']->id_documento, 2),
-                    'ref_id' => $data['venta']->venta_id
-                ))->row();
-            }
-
-        } else {
-            if (isset($this->venta->error))
-                $data['msg'] = $this->venta->error;
-            $data['success'] = '0';
-        }
-
-
-        echo json_encode($data);
-
     }
 
     function devolver_detalle()

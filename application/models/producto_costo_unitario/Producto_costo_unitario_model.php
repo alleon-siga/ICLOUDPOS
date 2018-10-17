@@ -211,7 +211,7 @@ class producto_costo_unitario_model extends CI_Model
         $datos = $query->result();
 
         $arr = array();
-        foreach($datos as $dato){
+        foreach ($datos as $dato) {
             $arr['costo'][$dato->moneda_id] = $dato->costo;
             $arr['tipo_cambio'] = $dato->tipo_cambio;
             $arr['contable_costo'][$dato->moneda_id] = $dato->contable_costo;
@@ -232,7 +232,7 @@ class producto_costo_unitario_model extends CI_Model
         $query = $this->db->get();
         $datos = $query->result();
         $arr = array();
-        foreach($datos as $dato){
+        foreach ($datos as $dato) {
             $arr['contable_costo'][$dato->producto_id] = $dato->contable_costo;
             $arr['porcentaje_utilidad'][$dato->producto_id] = $dato->porcentaje_utilidad;
         }
@@ -247,10 +247,11 @@ class producto_costo_unitario_model extends CI_Model
             $this->db->where('producto_id', $data['producto_id']);
             $this->db->where('moneda_id', $data['moneda_id']);
             $row = $this->db->get()->row();
-            if($row->num<1){
-                return false;
+            if ($row->num < 1) {
+                log_message('error', 'Producto '.$data['producto_id']. ' no tiene costo unitario configurado');
+                return FALSE;
             }
         }
-        return true;
+        return TRUE;
     }
 }

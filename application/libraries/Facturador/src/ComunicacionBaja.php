@@ -41,7 +41,6 @@ class ComunicacionBaja
         $firma->appendChild($xml->createElement('ext:ExtensionContent'));
         $root->appendChild($firma);
         $ubl_extension->appendChild($firma);
-
         $root->appendChild($ubl_extension);
 
         //Version del UBL
