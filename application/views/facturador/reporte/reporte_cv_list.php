@@ -15,21 +15,8 @@
     .negativo{
         color: red;
     }
-    .thvacio{
-        background-color: transparent !important;
-        border-color: transparent !important;
-        border:0px !important; 
-    }
-    table tr th{
-        background-color: #2d2d2d !important;
-        color: white !important;
-    }
     table tr th, table tr td{
         border: 1px solid !important; 
-    }
-    table tr:hover {
-        color: #000 !important;
-        font-weight: bold !important;
     }
     [data-toggle="tooltip"]{
         cursor: pointer;
@@ -80,35 +67,35 @@ foreach ($lists as $ingreso):
     <table class="table">
         <thead>
             <tr style="border-color: transparent !important;">
-                <th colspan="8" class="thvacio"></th>
-                <th colspan="3">Compras</th>
-                <th colspan="4">Ventas</th>
-                <th class="thvacio"></th>
-                <th class="thvacio"></th>
+                <th colspan="8" class="thvacio thblack"></th>
+                <th colspan="3" class="thblack">Compras</th>
+                <th colspan="4" class="thblack">Ventas</th>
+                <th class="thvacio thblack"></th>
+                <th class="thvacio thblack"></th>
             </tr>
             <tr>
-                <th class="thvacio"></th>
-                <th>Fecha</th>
-                <th>Ruc / Dni</th>
-                <th>Nombre</th>
-                <th class="CellWithComment">Cli / Pro  <span class="CellComment">Cliente / Proveedor</span></th>
-                <th class="CellWithComment">E / S  <span class="CellComment">Entradas / Salidas</span></th>
-                <th>Tipo Doc.</th>
-                <th>Nro Doc.</th>
-                <th class="CellWithComment">NC <span class="CellComment">Nota de Compra</span></th>
-                <th class="CellWithComment">BO <span class="CellComment">Boleta</span></th>
-                <th class="CellWithComment">FA <span class="CellComment">Factura</span></th>
-                <th class="CellWithComment">NV <span class="CellComment">Nota de Venta</span></th>
-                <th class="CellWithComment">BO <span class="CellComment">Boleta</span></th>
-                <th class="CellWithComment">FA <span class="CellComment">Factura</span></th>
-                <th class="CellWithComment">GR <span class="CellComment">Guia de Remision</span></th>
-                <th>Costo Total</th>
-                <th>Existencia</th>
+                <th class="thvacio thblack"></th>
+                <th class="thblack">Fecha</th>
+                <th class="thblack">Ruc / Dni</th>
+                <th class="thblack">Nombre</th>
+                <th class="CellWithComment thblack">Cli / Pro  <span class="CellComment">Cliente / Proveedor</span></th>
+                <th class="CellWithComment thblack">E / S  <span class="CellComment">Entradas / Salidas</span></th>
+                <th class="thblack">Tipo Doc.</th>
+                <th class="thblack">Nro Doc.</th>
+                <th class="CellWithComment thblack">NC <span class="CellComment">Nota de Compra</span></th>
+                <th class="CellWithComment thblack">BO <span class="CellComment">Boleta</span></th>
+                <th class="CellWithComment thblack">FA <span class="CellComment">Factura</span></th>
+                <th class="CellWithComment thblack">NV <span class="CellComment">Nota de Venta</span></th>
+                <th class="CellWithComment thblack">BO <span class="CellComment">Boleta</span></th>
+                <th class="CellWithComment thblack">FA <span class="CellComment">Factura</span></th>
+                <th class="CellWithComment thblack">GR <span class="CellComment">Guia de Remision</span></th>
+                <th class="thblack">Costo Total</th>
+                <th class="thblack">Existencia</th>
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <th>Contable</th>
+            <tr class="trblack">
+                <th class="thblack">Contable</th>
                 <td >05-09-2018</td>
                 <td>354535453</td>
                 <td>Alfonso</td>
@@ -126,8 +113,8 @@ foreach ($lists as $ingreso):
                 <td >300.00</td>
                 <td >-3.00</td>
             </tr>
-            <tr>
-                <th>Contable</th>
+            <tr class="trblack">
+                <th class="thblack">Contable</th>
                 <td >05-09-2018</td>
                 <td>354535453</td>
                 <td>Alfonso</td>
@@ -145,8 +132,8 @@ foreach ($lists as $ingreso):
                 <td >300.00</td>
                 <td >-3.00</td>
             </tr>
-            <tr>
-                <th>Contable</th>
+            <tr class="trblack">
+                <th class="thblack">Contable</th>
                 <td >05-09-2018</td>
                 <td>354535453</td>
                 <td>Alfonso</td>
@@ -174,35 +161,35 @@ foreach ($lists as $ingreso):
     <table class="table" >
         <thead>
             <tr>
-                <th colspan="8" class="thvacio"></th>
-                <th colspan="3">Compras</th>
-                <th colspan="4">Ventas</th>
-                <th class="thvacio"></th>
-                <th class="thvacio"></th>
+                <th colspan="8" class="thvacio thblack"></th>
+                <th colspan="3" class="thblack">Compras</th>
+                <th colspan="4" class="thblack">Ventas</th>
+                <th class="thvacio thblack"></th>
+                <th class="thvacio thblack"></th>
             </tr>
             <tr>
-                <th class="thvacio"></th>
-                <th>Fecha</th>
-                <th>Ruc / Dni</th>
-                <th>Nombre</th>
-                <th class="CellWithComment">Cli / Pro  <span class="CellComment">Cliente / Proveedor</span></th>
-                <th class="CellWithComment">E / S  <span class="CellComment">Entradas / Salidas</span></th>
-                <th>Tipo Doc.</th>
-                <th>Nro Doc.</th>
-                <th class="CellWithComment">NC <span class="CellComment">Nota de Compra</span></th>
-                <th class="CellWithComment">BO <span class="CellComment">Boleta</span></th>
-                <th class="CellWithComment">FA <span class="CellComment">Factura</span></th>
-                <th class="CellWithComment">NV <span class="CellComment">Nota de Venta</span></th>
-                <th class="CellWithComment">BO <span class="CellComment">Boleta</span></th>
-                <th class="CellWithComment">FA <span class="CellComment">Factura</span></th>
-                <th class="CellWithComment">GR <span class="CellComment">Guia de Remision</span></th>
-                <th>Costo Total</th>
-                <th>Existencia</th>
+                <th class="thvacio thblack"></th>
+                <th class="thblack">Fecha</th>
+                <th class="thblack">Ruc / Dni</th>
+                <th class="thblack">Nombre</th>
+                <th class="CellWithComment thblack">Cli / Pro  <span class="CellComment">Cliente / Proveedor</span></th>
+                <th class="CellWithComment thblack">E / S  <span class="CellComment">Entradas / Salidas</span></th>
+                <th class="thblack">Tipo Doc.</th>
+                <th class="thblack">Nro Doc.</th>
+                <th class="CellWithComment thblack ">NC <span class="CellComment">Nota de Compra</span></th>
+                <th class="CellWithComment thblack">BO <span class="CellComment">Boleta</span></th>
+                <th class="CellWithComment thblack">FA <span class="CellComment">Factura</span></th>
+                <th class="CellWithComment thblack">NV <span class="CellComment">Nota de Venta</span></th>
+                <th class="CellWithComment thblack">BO <span class="CellComment">Boleta</span></th>
+                <th class="CellWithComment thblack">FA <span class="CellComment">Factura</span></th>
+                <th class="CellWithComment thblack">GR <span class="CellComment">Guia de Remision</span></th>
+                <th class="thblack">Costo Total</th>
+                <th class="thblack">Existencia</th>
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <th>Reales</th>
+            <tr class="trblack">
+                <th class="thblack">Reales</th>
                 <td >05-09-2018</td>
                 <td>354535453</td>
                 <td>Alfonso</td>
@@ -220,8 +207,8 @@ foreach ($lists as $ingreso):
                 <td >300.00</td>
                 <td >-3.00</td>
             </tr>
-            <tr>
-                <th>Reales</th>
+            <tr class="trblack">
+                <th class="thblack">Reales</th>
                 <td >05-09-2018</td>
                 <td>354535453</td>
                 <td>Alfonso</td>
@@ -239,8 +226,8 @@ foreach ($lists as $ingreso):
                 <td >300.00</td>
                 <td >-3.00</td>
             </tr>
-            <tr>
-                <th>Reales</th>
+            <tr class="trblack">
+                <th class="thblack">Reales</th>
                 <td >05-09-2018</td>
                 <td>354535453</td>
                 <td>Alfonso</td>
@@ -268,35 +255,35 @@ foreach ($lists as $ingreso):
     <table class="table" >
         <thead>
             <tr>
-                <th colspan="5">Resume Comparativo de Compra/Venta para el producto <?= $ingreso->producto_nombre ?></th>
+                <th colspan="5" class="thblack">Resume Comparativo de Compra/Venta para el producto <?= $ingreso->producto_nombre ?></th>
             </tr>
             <tr>
-                <th colspan="2">Tipo Doc</th>
-                <th>Compras</th>
-                <th>Ventas</th>
-                <th>Totales</th>
+                <th colspan="2" class="thblack">Tipo Doc</th>
+                <th class="thblack">Compras</th>
+                <th class="thblack">Ventas</th>
+                <th class="thblack">Totales</th>
             </tr>
         </thead>
         <tbody>
-            <tr>
+            <tr class="trblack">
                 <td  colspan="2">Notas de Compras-Ventas</td>
                 <td>0.00</td>
                 <td>2.00</td>
                 <td>-2.00</td>
             </tr>
-            <tr>
+            <tr class="trblack">
                 <td  colspan="2">Boletas</td>
                 <td>0.00</td>
                 <td>2.00</td>
                 <td>-2.00</td>
             </tr>
-            <tr>
+            <tr class="trblack">
                 <td  colspan="2">Facturas</td>
                 <td>0.00</td>
                 <td>2.00</td>
                 <td>-2.00</td>
             </tr>
-            <tr>
+            <tr class="trblack">
                 <td  colspan="2">Guias de Remision</td>
                 <td>0.00</td>
                 <td>2.00</td>

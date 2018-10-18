@@ -1,18 +1,6 @@
 <?php $ruta = base_url(); ?>
 <?php $md = get_moneda_defecto() ?>
-<style>
-    table tr th{
-        background-color: #2d2d2d !important;
-        color: white !important;
-    }
-    table tr th, table tr td{
-        border: 1px solid !important; 
-    }
-    table tr:hover {
-        color: #000 !important;
-        font-weight: bold !important;
-    }
-</style>
+
 <div class="table-responsive">
     <table class="table dataTable table-bordered no-footer tableStyle" id="tabla">
         <thead>
@@ -33,19 +21,20 @@
                 </td>
                 <td style="border-style: hidden;" colspan="2"></td>
             </tr>
-            <tr>
-                <th width="10%">Codigo</th>
-                <th width="30%">Producto</th>
-                <th width="10%">Marca</th>
-                <th width="10%">Unidad</th>
-                <th width="5%">Costo <br>Real S/</th>
-                <th width="5%">Costo <br>Contable S/</th>
-                <th width="5%">Costo <br>Real $</th>
-                <th width="5%">Costo <br>Contable $</th>
-                <th width="5%">Tipo <br>Cambio</th>
-                <th width="5%">% Precio</th>
-                <th width="5%">Precio <br>Comp. S/</th>
-                <th width="5%">Precio <br>Comp. $</th>
+            <tr class="thblack">
+                <th width="10%" class="thblack">Codigo</th>
+                <th width="30%" class="thblack">Producto</th>
+                <th width="10%" class="thblack">Marca</th>
+                <th width="10%" class="thblack">Unidad</th>
+                <th width="5%" class="thblack">Precio <br>Unitario S/</th>
+                <th width="5%" class="thblack">Costo <br>Real S/</th>
+                <th width="5%" class="thblack">Costo <br>Contable S/</th>
+                <th width="5%" class="thblack">Costo <br>Real $</th>
+                <th width="5%" class="thblack">Costo <br>Contable $</th>
+                <th width="5%" class="thblack">Tipo <br>Cambio</th>
+                <th width="5%" class="thblack">% Precio</th>
+                <th width="5%" class="thblack">Precio <br>Comp. S/</th>
+                <th width="5%" class="thblack">Precio <br>Comp. $</th>
             </tr>
         </thead>
         <tbody>
@@ -66,7 +55,7 @@
                 $color = "red";
             }
     ?>
-            <tr>
+            <tr class="trblack">
                 <td style="white-space: normal;">
                     <input name="txtIdProducto" type="hidden" value="<?= $list->producto_id ?>">
                     <?php echo getCodigoValue(sumCod($list->producto_id), $list->producto_codigo_interno) ?>
@@ -74,6 +63,7 @@
                 <td style="white-space: normal;"><?= $list->producto_nombre ?></td>
                 <td style="white-space: normal;"><?= $list->nombre_marca ?></td>
                 <td style="white-space: normal; color: <?= $color ?>"><?= $list->nombre_unidad ?></td>
+                <td style="white-space: normal; color: <?= $color ?>"><?= number_format($list->precio_unitario,2) ?></td>
                 <td style="text-align: right; white-space: normal;"><?= number_format($list->costo_mn, 2) ?></td>
                 <td style="text-align: right; white-space: normal;">
                     <input class="form-control" name="txtCostoContMn" type="number" value="<?= number_format($contable_costo_mn, 2) ?>" style="width: 80px;">

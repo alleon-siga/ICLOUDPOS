@@ -17,18 +17,18 @@
     <table class='table dataTable table-bordered no-footer tableStyle' style="overflow:scroll">
         <thead>
             <tr>
-                <th>Cod</th>
-                <th>Producto</th>
-                <th>Marca</th>
-                <th>UM</th>
-                <th>Costo Real S/</th>
-                <th>Costo Contable S/</th>
-                <th>Costo Real $</th>
-                <th>Costo Contable $</th>
-                <th>Tipo de Cambio</th>
-                <th>% Precio</th>
-                <th>Precio Comp S/</th>                
-                <th>Precio Comp $</th>
+                <th class="thblack">Cod</th>
+                <th class="thblack">Producto</th>
+                <th class="thblack">Marca</th>
+                <th class="thblack">UM</th>
+                <th class="thblack">Costo Real S/</th>
+                <th class="thblack">Costo Contable S/</th>
+                <th class="thblack">Costo Real $</th>
+                <th class="thblack">Costo Contable $</th>
+                <th class="thblack">Tipo de Cambio</th>
+                <th class="thblack">% Precio</th>
+                <th class="thblack">Precio Comp S/</th>                
+                <th class="thblack">Precio Comp $</th>
             </tr>
         </thead>
         <tbody>

@@ -61,10 +61,17 @@
             <div class="row">
                 <div class="text-right">
                     <div class="col-md-12">
-                        <input type="button" class='btn btn-danger' value="Cerrar" data-dismiss="modal">
+                        <input type="button" class='btn btn-danger' value="Cerrar" onclick="cerrarmodal()">
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+<script>
+    //Funcion cerrar modal mas busqueda de los traslados (18-10-2018) Carlos Camargo
+function cerrarmodal(){
+    $('#verModal').modal('hide');
+    buscar();
+}
+</script>

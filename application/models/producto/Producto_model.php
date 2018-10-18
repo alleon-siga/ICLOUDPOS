@@ -1164,7 +1164,7 @@ class producto_model extends CI_Model
 
     function getCosteo($params)
     {
-        $this->db->select('p.producto_id, p.producto_codigo_interno, p.producto_nombre, m.nombre_marca');
+        $this->db->select('p.producto_id, p.producto_codigo_interno,p.producto_costo_unitario, p.producto_nombre, m.nombre_marca');
         $this->db->from('producto p');
         $this->db->join('marcas m', 'm.id_marca = p.producto_marca', 'left');
         if($params['marca_id'] > 0){
@@ -1188,14 +1188,17 @@ class producto_model extends CI_Model
 
         $x=0;
         foreach($datos as $dato){
-            $datos[$x]->nombre_unidad = $this->unidades_model->get_um_min_by_producto($dato->producto_id);
-            $costo = $this->producto_costo_unitario_model->getProductoCostoUnitario($dato->producto_id);
+            $datos[$x]->nombre_unidad=$this->unidades_model->get_um_min_by_producto($dato->producto_id);
+            $costo = $this->producto_costo_unitario_model->getProductoCostoUnitario($dato->producto_id);   
             $datos[$x]->costo_mn = (isset($costo['costo']['1029']))? $costo['costo']['1029'] : 0.00;
             $datos[$x]->costo_me = (isset($costo['costo']['1030']))? $costo['costo']['1030'] : 0.00;
             $datos[$x]->tipo_cambio = (isset($costo['tipo_cambio']))? $costo['tipo_cambio'] : 0.00;
             $datos[$x]->contable_costo_mn = (isset($costo['contable_costo']['1029']))? $costo['contable_costo']['1029'] : 0.00;
             $datos[$x]->contable_costo_me = (isset($costo['contable_costo']['1030']))? $costo['contable_costo']['1030'] : 0.00;
             $datos[$x]->porcentaje_utilidad = (isset($costo['porcentaje_utilidad']))? $costo['porcentaje_utilidad'] : 0.00;
+            //Agregar precio segun su unidad Carlos Camargo (18-10-2018)
+            $preciounitario['query'] = $this->unidades_has_precio_model->get_un_h_precio($dato->producto_id, $datos[$x]->nombre_unidad);
+            $datos[$x]->precio_unitario=$preciounitario['query']->precio;
             $x++;
         }
         return $datos;

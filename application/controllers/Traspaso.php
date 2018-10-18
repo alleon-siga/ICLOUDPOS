@@ -1,14 +1,15 @@
-<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 
-class traspaso extends MY_Controller
-{
+if (!defined('BASEPATH'))
+    exit('No direct script access allowed');
+
+class traspaso extends MY_Controller {
 
     private $columnas = array();
 
-    function __construct()
-    {
+    function __construct() {
         parent::__construct();
-        if ($this->login_model->verify_session()) {        
+        if ($this->login_model->verify_session()) {
             $this->load->model('traspaso/traspaso_model');
             $this->load->model('columnas/columnas_model');
             $this->load->model('producto/producto_model');
@@ -29,16 +30,14 @@ class traspaso extends MY_Controller
             $this->load->model('unidades_has_precio/unidades_has_precio_model');
             $this->load->library('Pdf');
             $this->load->library('phpExcel/PHPExcel.php');
-        }else{
+        } else {
             redirect(base_url(), 'refresh');
         }
 
         $this->columnas = $this->columnas_model->get_by('tabla', 'producto');
     }
 
-
-    function form()
-    {
+    function form() {
         $data = array();
         if ($this->session->userdata('esSuper') == 1) {
             $data['locales'] = $this->local_model->get_all();
@@ -58,8 +57,7 @@ class traspaso extends MY_Controller
         echo $this->load->view('menu/traspaso/form', $data, true);
     }
 
-    function productos_porlocal_almacen()
-    {
+    function productos_porlocal_almacen() {
         $data = array();
         $this->input->post('local');
         $where = array(
@@ -68,15 +66,14 @@ class traspaso extends MY_Controller
         );
 
         $data['productos'] = $this->producto_model->get_stock_normal($where);
-        for($i = 0; $i < count($data['productos']);$i++){
+        for ($i = 0; $i < count($data['productos']); $i++) {
             $data['productos'][$i]['producto_nombre'] = getCodigoValue(sumCod($data['productos'][$i]['producto_id']), $data['productos'][$i]['producto_codigo_interno']) . ' - ' . $data['productos'][$i]['producto_nombre'];
         }
 
         echo json_encode($data);
     }
 
-    function form_buscar()
-    {
+    function form_buscar() {
         $data = array();
 
         $where = array(
@@ -102,8 +99,7 @@ class traspaso extends MY_Controller
     }
 
     //Creo la consulta para asignarle las unidades y la fraccion a los productos
-    function _getUnidades($productos)
-    {
+    function _getUnidades($productos) {
         $temp = $productos;
 
         $select = 'unidades.nombre_unidad, unidades_has_producto.*';
@@ -116,7 +112,8 @@ class traspaso extends MY_Controller
             $where = array('unidades_has_producto.producto_id' => $temp[$i]['producto_id']);
             $buscar = $this->unidades_model->traer_by($select, $from, $join, $campos_join, $where, false, $order, "RESULT_ARRAY");
             if (isset($temp[$i]['fraccion']))
-                if ($temp[$i]['fraccion'] == "") $temp[$i]['fraccion'] = "0";
+                if ($temp[$i]['fraccion'] == "")
+                    $temp[$i]['fraccion'] = "0";
             if (!empty($buscar)) {
                 if ($buscar[0]['orden'] > 1) {
 
@@ -130,8 +127,7 @@ class traspaso extends MY_Controller
         return $temp;
     }
 
-    function index($local = "")
-    {
+    function index($local = "") {
 
         if ($this->session->flashdata('success') != FALSE) {
             $data ['success'] = $this->session->flashdata('success');
@@ -152,11 +148,9 @@ class traspaso extends MY_Controller
             echo $dataCuerpo['cuerpo'];
         else
             $this->load->view('menu/template', $dataCuerpo);
-
     }
 
-    function lst_reg_traspasos()
-    {
+    function lst_reg_traspasos() {
         if ($this->input->is_ajax_request()) {
 
             $this->load->model('kardex/kardex_model');
@@ -180,14 +174,12 @@ class traspaso extends MY_Controller
         }
     }
 
-    function getbylocal()
-    {
+    function getbylocal() {
         $local = $this->input->post('local');
         $this->index($local);
     }
 
-    function traspasar_productos()
-    {
+    function traspasar_productos() {
 
         $productos = json_decode($this->input->post('lst_producto', true));
 
@@ -196,32 +188,29 @@ class traspaso extends MY_Controller
         $motivo = $this->input->post('motivo', true);
 
         $fecha_traspaso = date('Y-m-d H:i:s', strtotime($fecha_traspaso . " " . date('H:i:s')));
-        $traspasar = $this->traspaso_model->traspasar_productos_traspaso($productos, $local_destino, $fecha_traspaso, $motivo);
+        //Paso por Json el resultado (18-10-2018) Carlos Camargo
+        $json['idTraslado'] = $this->traspaso_model->traspasar_productos_traspaso($productos, $local_destino, $fecha_traspaso, $motivo);
 
-        if (true) {
-            $json['success'] = 'Se ha realizado el traspaso de almacenes exitosamente';
-        } else {
-            $json['error'] = 'error para el traspaso de productos de almacen';
-        }
+        $json['success'] = 'Se ha realizado el traspaso de almacenes exitosamente';
+
 
         echo json_encode($json);
     }
 
-    function imprimir($id, $local_origen)
-    {
+    function imprimir($id, $local_origen) {
         $data['datos'] = $this->traspaso_model->get_traspaso($id);
         //foreach ($data['datos'] as $valor) {
-            //$data_origen = $this->traspaso_model->get_traspaso_local($valor->id);
-            //foreach ($data_origen as $idLocal) {
-                $data['detalles'] = $this->traspaso_model->get_traspaso_detalle($data['datos']->id, $local_origen);
-            //}
+        //$data_origen = $this->traspaso_model->get_traspaso_local($valor->id);
+        //foreach ($data_origen as $idLocal) {
+        $data['detalles'] = $this->traspaso_model->get_traspaso_detalle($data['datos']->id, $local_origen);
+        //}
         //}
         $this->load->view('menu/traspaso/imprimir', $data);
     }
 
-    function verDetalle($id)
-    {
+    function verDetalle($id) {
         $data['data'] = $this->traspaso_model->traspasar_detalle($id);
         $this->load->view('menu/traspaso/verDetalle', $data);
     }
+
 }
