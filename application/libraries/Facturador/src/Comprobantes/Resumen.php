@@ -142,11 +142,11 @@ class Resumen extends Comprobante
 
             //TRIBUTOS
             if (isset($detalle['TOTAL_TRIBUTO_IGV']))
-                $doc_line->appendChild($this->createTributoXml($detalle['TOTAL_TRIBUTO_IGV'], $detalle['CODIGO_MONEDA'], '1000', 'IGV', 'VAT'));
+                $doc_line->appendChild($this->TributoXml($detalle['TOTAL_TRIBUTO_IGV'], $detalle['CODIGO_MONEDA'], '1000', 'IGV', 'VAT'));
             if (isset($detalle['TOTAL_TRIBUTO_ISC']))
-                $doc_line->appendChild($this->createTributoXml($detalle['TOTAL_TRIBUTO_ISC'], $detalle['CODIGO_MONEDA'], '2000', 'ISC', 'EXC'));
+                $doc_line->appendChild($this->TributoXml($detalle['TOTAL_TRIBUTO_ISC'], $detalle['CODIGO_MONEDA'], '2000', 'ISC', 'EXC'));
             if (isset($detalle['TOTAL_TRIBUTO_OTROS']))
-                $doc_line->appendChild($this->createTributoXml($detalle['TOTAL_TRIBUTO_OTROS'], $detalle['CODIGO_MONEDA'], '9999', 'OTROS', 'OTH'));
+                $doc_line->appendChild($this->TributoXml($detalle['TOTAL_TRIBUTO_OTROS'], $detalle['CODIGO_MONEDA'], '9999', 'OTROS', 'OTH'));
 
 
             $root->appendChild($doc_line);
@@ -159,7 +159,7 @@ class Resumen extends Comprobante
     }
 
     // sobrescribiendo los metodos ya que los que estan en el core son 2.1
-    protected function createClienteXml($data)
+    public function createClienteXml($data)
     {
         $cliente = $this->xml->createElement('cac:AccountingCustomerParty');
         $cliente->appendChild($this->xml->createElement('cbc:CustomerAssignedAccountID', $data['CLIENTE_NRO_DOCUMENTO']));
@@ -175,7 +175,7 @@ class Resumen extends Comprobante
     }
 
     // sobrescribiendo los metodos ya que los que estan en el core son 2.1
-    protected function createEmisorXml()
+    public function createEmisorXml()
     {
         $data = $this->emisor->getData();
 
@@ -220,7 +220,7 @@ class Resumen extends Comprobante
     }
 
     // sobrescribiendo los metodos ya que los que estan en el core son 2.1
-    public function createTributoXml($total, $moneda, $id, $name, $type_code)
+    public function TributoXml($total, $moneda, $id, $name, $type_code)
     {
         $tributo = $this->xml->createElement('cac:TaxTotal');
         $tributo->appendChild($this->xml->createElement('cbc:TaxAmount', $total))
