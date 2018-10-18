@@ -158,6 +158,88 @@ class Resumen extends Comprobante
 
     }
 
+    // sobrescribiendo los metodos ya que los que estan en el core son 2.1
+    protected function createClienteXml($data)
+    {
+        $cliente = $this->xml->createElement('cac:AccountingCustomerParty');
+        $cliente->appendChild($this->xml->createElement('cbc:CustomerAssignedAccountID', $data['CLIENTE_NRO_DOCUMENTO']));
+        $cliente->appendChild($this->xml->createElement('cbc:AdditionalAccountID', $data['CLIENTE_TIPO_IDENTIDAD']));
+        $cliente_nombre = $this->xml->createElement('cac:Party');
+        $nombre = $this->xml->createElement('cac:PartyLegalEntity');
+        $nombre->appendChild($this->xml->createElement('cbc:RegistrationName'))
+            ->appendChild($this->xml->createCDATASection($data['CLIENTE_NOMBRE']));
+        $cliente_nombre->appendChild($nombre);
+        $cliente->appendChild($cliente_nombre);
+
+        return $cliente;
+    }
+
+    // sobrescribiendo los metodos ya que los que estan en el core son 2.1
+    protected function createEmisorXml()
+    {
+        $data = $this->emisor->getData();
+
+        $emisor = $this->xml->createElement('cac:AccountingSupplierParty');
+        $emisor->appendChild($this->xml->createElement('cbc:CustomerAssignedAccountID', $data['NRO_DOCUMENTO']));
+        $emisor->appendChild($this->xml->createElement('cbc:AdditionalAccountID', '6'));
+
+        $party = $this->xml->createElement('cac:Party');
+        $nombre_comercial = $this->xml->createElement('cac:PartyName');
+        $nombre_comercial->appendChild($this->xml->createElement('cbc:Name'))
+            ->appendChild($this->xml->createCDATASection($data['NOMBRE_COMERCIAL']));
+
+        $party->appendChild($nombre_comercial);
+
+        $direccion = $this->xml->createElement('cac:PostalAddress');
+        $direccion->appendChild($this->xml->createElement('cbc:ID', $data['UBIGEO']));
+        $direccion->appendChild($this->xml->createElement('cbc:StreetName'))
+            ->appendChild($this->xml->createCDATASection($data['DIRECCION']));
+        $direccion->appendChild($this->xml->createElement('cbc:CitySubdivisionName'))
+            ->appendChild($this->xml->createCDATASection($data['URBANIZACION']));
+        $direccion->appendChild($this->xml->createElement('cbc:CityName'))
+            ->appendChild($this->xml->createCDATASection($data['DEPARTAMENTO']));
+        $direccion->appendChild($this->xml->createElement('cbc:CountrySubentity'))
+            ->appendChild($this->xml->createCDATASection($data['PROVINCIA']));
+        $direccion->appendChild($this->xml->createElement('cbc:District'))
+            ->appendChild($this->xml->createCDATASection($data['DISTRITO']));
+
+        $pais = $this->xml->createElement('cac:Country');
+        $pais->appendChild($this->xml->createElement('cbc:IdentificationCode', $data['PAIS_CODIGO']));
+        $direccion->appendChild($pais);
+
+        $party->appendChild($direccion);
+
+        $razon_social = $this->xml->createElement('cac:PartyLegalEntity');
+        $razon_social->appendChild($this->xml->createElement('cbc:RegistrationName', $data['RAZON_SOCIAL']));
+
+        $party->appendChild($razon_social);
+
+        $emisor->appendChild($party);
+
+        return $emisor;
+    }
+
+    // sobrescribiendo los metodos ya que los que estan en el core son 2.1
+    public function createTributoXml($total, $moneda, $id, $name, $type_code)
+    {
+        $tributo = $this->xml->createElement('cac:TaxTotal');
+        $tributo->appendChild($this->xml->createElement('cbc:TaxAmount', $total))
+            ->setAttribute('currencyID', $moneda);
+
+        $tributo_subtotal = $this->xml->createElement('cac:TaxSubtotal');
+        $tributo_subtotal->appendChild($this->xml->createElement('cbc:TaxAmount', $total))
+            ->setAttribute('currencyID', $moneda);
+
+        $tributo_categoria = $tributo_subtotal->appendChild($this->xml->createElement('cac:TaxCategory'))
+            ->appendChild($this->xml->createElement('cac:TaxScheme'));
+        $tributo_categoria->appendChild($this->xml->createElement('cbc:ID', $id));
+        $tributo_categoria->appendChild($this->xml->createElement('cbc:Name', $name));
+        $tributo_categoria->appendChild($this->xml->createElement('cbc:TaxTypeCode', $type_code));
+        $tributo->appendChild($tributo_subtotal);
+
+        return $tributo;
+    }
+
     public function send($file)
     {
 
