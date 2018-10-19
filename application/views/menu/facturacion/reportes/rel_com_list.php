@@ -133,10 +133,26 @@ $(document).ready(function () {
                 trigger: 'hover'
             });
         
-    $('#datatable').removeAttr('width').DataTable( {
-        "paging":   false,
-        "searching": false
-    } );
+    $("#datatable").dataTable({
+            'paging': false,
+            'searching': true,
+            'language': {
+                'emptyTable': 'No se encontraron registros',
+                'info': 'Mostrando _START_ a _END_ de _TOTAL_ resultados',
+                'infoEmpty': 'Mostrando 0 a 0 de 0 resultados',
+                'infoFiltered': '(filtrado de _MAX_ total resultados)',
+                'infoPostFix': '',
+                'thousands': ',',
+                'lengthMenu': 'Mostrar _MENU_ resultados',
+                'loadingRecords': 'Cargando...',
+                'processing': 'Procesando...',
+                'search': "Buscar:",
+                'zeroRecords': 'No se encontraron resultados'}
+        });
+        $('.dataTables_filter').find('input[type="search"]').each(function () {
+            $('input[type="search"]').attr("placeholder", "Buscar");
+            $('input[type="search"]').addClass('form-control');
+        });
         $('#exportar_excel').on('click', function () {
             exportar_excel();
         });

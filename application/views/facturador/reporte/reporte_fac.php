@@ -12,16 +12,14 @@
             <!-- Progress Bars Wizard Title -->
             <div class="row">
                 <div class="col-md-2">
-                    <?php if (isset($locales)): ?>
-                        <label class="control-label panel-admin-text">Ubicación</label>
-                        <select id="local_id" class="ctrl form-control">
-                            <option value="0">TODOS</option>
-                            <?php foreach ($locales as $local): ?>
-                                <option <?php if ($this->session->userdata('id_local') == $local['int_local_id']) echo "selected"; ?>
-                                    value="<?= $local['int_local_id']; ?>"> <?= $local['local_nombre'] ?> </option>
-                                <?php endforeach; ?>
-                        </select>
-                    <?php endif; ?>
+                    <label class="control-label panel-admin-text">Ubicación</label>
+                    <select id="local_id" class="ctrl form-control">
+                        <option value="0">TODOS</option>
+                        <?php foreach ($locales as $local): ?>
+                            <option <?php if ($this->session->userdata('id_local') == $local['int_local_id']) echo "selected"; ?>
+                                value="<?= $local['int_local_id']; ?>"> <?= $local['local_nombre'] ?> </option>
+                            <?php endforeach; ?>
+                    </select>
                 </div>
                 <div class="col-md-2">
                     <label class="control-label panel-admin-text">Fecha de Venta</label>
@@ -56,16 +54,29 @@
                         <option value="4">RECHAZADO</option>
                     </select>
                 </div>
-                <div class="col-md-1">
-                    <div style="padding-top: 30px;"></div>
-                    <button id="btn_buscar" class="btn btn-default">
-                        <i class="fa fa-search"></i> Buscar
-                    </button>
-                </div>
-                <div class="col-md-2 text-right">
+                
+                <div class="col-md-2">
                     <label class="control-label panel-admin-text" style="color: #fff;">.</label><br>
                     <button type="button" class="btn btn-info" onclick="$('#leyenda_modal').modal('show')">
-                        <i class="fa fa-info"></i> Leyenda
+                        <i class="fa fa-info"></i>
+                        leyenda
+                    </button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    <label class="control-label panel-admin-text">Tipo Venta</label>
+                    <select name="tpven" id="tpven" class='ctrl form-control'>
+                        <option value="-1" selected="">TODOS</option>
+                        <option value="0">SHADOW</option>
+                        <option value="1">SIN SHADOW</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <div style="padding-top: 30px;"></div>
+                    <button id="btn_buscar" class="btn btn-default">
+                        <i class="fa fa-search"></i>
+                        Buscar
                     </button>
                 </div>
             </div>
@@ -247,7 +258,7 @@
             <!-- /.modal-dialog -->
             <script type="text/javascript">
                         $(document).ready(function () {
-                            
+
 
                             $('[data-toggle="tooltip"]').tooltip();
                             $('input[name="fecha"]').daterangepicker({
@@ -297,44 +308,45 @@
                             $('.chosen-container').css('width', '100%')
 
                         })
-                        function fechabloque(){
-                            if($('#bloqueofecha').prop('checked')){
-                                document.getElementById('fecha').disabled = false
-                                document.getElementById('fecha').value='<?= date('01/m/Y') ?> - <?= date('d/m/Y') ?>'
-                            }else{
-                                document.getElementById('fecha').disabled = true 
-                                document.getElementById('fecha').value='00/00/0000 - 00/00/0000'
-                            }
-                        }
-                        function getReporte() {
-                            $('#historial_list').html($('#loading').html())
-
-                            var data = {
-                                'local_id': $('#local_id').val(),
-                                'fecha': $('#fecha').val(),
-                                'doc_id': $('#doc_id').val(),
-                                'estado_id': $('#estado_id').val()
-                            }
+                        function fechabloque() {
                             if ($('#bloqueofecha').prop('checked')) {
-                                data.fecha_flag = 1;
-                            } else {
-                                data.fecha_flag = 0;
-                            }
-                            $.ajax({
-                                url: '<?= base_url() ?>facturador/reporte/relacion_comprobante/filter',
-                                data: data,
-                                type: 'POST',
-                                success: function (data) {
-                                    $('#historial_list').html(data)
-                                },
-                                error: function () {
-                                    $.bootstrapGrowl('<h4>Error.</h4> <p>Ha ocurrido un error en la operaci&oacute;n</p>', {
-                                        type: 'danger',
-                                        delay: 5000,
-                                        allow_dismiss: true
-                                    })
-                                    $('#historial_list').html('')
-                                }
-                            })
-                        }
+                                document.getElementById('fecha').disabled = false
+                                document.getElementById('fecha').value = '<?= date('01/m/Y') ?> - <?= date('d/m/Y') ?>'
+                                        } else {
+                                            document.getElementById('fecha').disabled = true
+                                            document.getElementById('fecha').value = '00/00/0000 - 00/00/0000'
+                                        }
+                                    }
+                                    function getReporte() {
+                                        $('#historial_list').html($('#loading').html())
+
+                                        var data = {
+                                            'tipo_ven': $("#tpven").val(),
+                                            'local_id': $('#local_id').val(),
+                                            'fecha': $('#fecha').val(),
+                                            'doc_id': $('#doc_id').val(),
+                                            'estado_id': $('#estado_id').val()
+                                        }
+                                        if ($('#bloqueofecha').prop('checked')) {
+                                            data.fecha_flag = 1;
+                                        } else {
+                                            data.fecha_flag = 0;
+                                        }
+                                        $.ajax({
+                                            url: '<?= base_url() ?>facturador/reporte/relacion_comprobante/filter',
+                                            data: data,
+                                            type: 'POST',
+                                            success: function (data) {
+                                                $('#historial_list').html(data)
+                                            },
+                                            error: function () {
+                                                $.bootstrapGrowl('<h4>Error.</h4> <p>Ha ocurrido un error en la operaci&oacute;n</p>', {
+                                                    type: 'danger',
+                                                    delay: 5000,
+                                                    allow_dismiss: true
+                                                })
+                                                $('#historial_list').html('')
+                                            }
+                                        })
+                                    }
             </script>

@@ -404,26 +404,20 @@ if ($this->session->userdata('tema')) {
                                         <a href="<?= $ruta ?>facturador/reporte/reporte" class="menulink"><i class="gi gi-barcode sidebar-nav-icon"></i>Reporte</a>
                                     </li>
                                     <li>
-                                        <a href="<?= $ruta ?>facturador/reporte/reporte_fac_rc" class="menulink"><i class="gi gi-barcode sidebar-nav-icon"></i>Fac. Rel. Comprobantes.</a>
+                                        <a href="<?= $ruta ?>facturador/reporte/relacion_comprobante" class="menulink"><i class="gi gi-barcode sidebar-nav-icon"></i>Fac. Rel. Comprobantes.</a>
                                     </li>
                                     <li>
                                         <a href="<?= $ruta ?>facturador/reporte/reporte_cg" class="menulink"><i class="gi gi-barcode sidebar-nav-icon"></i>Costeo General</a>
                                     </li>
-                                    <li>
+<!--                                    <li>
                                         <a href="<?= $ruta ?>facturador/reporte/reporte_cv" class="menulink"><i class="gi gi-barcode sidebar-nav-icon"></i>Compras vs Ventas</a>
                                     </li>
                                     <li>
                                         <a href="<?= $ruta ?>facturador/reporte/reporte_vd" class="menulink"><i class="gi gi-barcode sidebar-nav-icon"></i>Ventas x Documentos</a>
                                     </li>
                                     <li>
-                                        <a href="<?= $ruta ?>facturador/reporte/reporte_vdd" class="menulink"><i class="gi gi-barcode sidebar-nav-icon"></i>Ventas x Doc. Detalle</a>
-                                    </li>
-                                    <li>
-                                        <a href="<?= $ruta ?>facturador/reporte/reporte_vpr" class="menulink"><i class="gi gi-barcode sidebar-nav-icon"></i>Ventas x Pro. Resumen</a>
-                                    </li>
-                                    <li>
-                                        <a href="<?= $ruta ?>facturador/reporte/reporte_vpd" class="menulink"><i class="gi gi-barcode sidebar-nav-icon"></i>Ventas x Pro. Detalle</a>
-                                    </li>
+                                        <a href="<?= $ruta ?>facturador/reporte/reporte_vp" class="menulink"><i class="gi gi-barcode sidebar-nav-icon"></i>Ventas x Productos</a>
+                                    </li>-->
                                 </ul>
                             </li>
                             <li>

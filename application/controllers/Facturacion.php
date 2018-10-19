@@ -471,7 +471,6 @@ class facturacion extends MY_Controller
     function relacion_comprobante($action = '')
     {
 
-        $data['emisor'] = $this->facturacion_model->get_emisor();
 
         switch ($action) {
             case 'filter': {

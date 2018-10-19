@@ -2,7 +2,7 @@
 <?php $md = get_moneda_defecto() ?>
 
 <div class="table-responsive">
-    <table class="table dataTable table-bordered no-footer tableStyle" id="tabla">
+    <table id="tabla" class="table  dataTable table-bordered tableStyle" style="overflow:scroll">
         <thead>
             <tr>
                 <td style="border-style: hidden;" colspan="5"></td>
@@ -99,3 +99,8 @@
     </div>
 </div>
 <script type="text/javascript" src="<?= $ruta ?>recursos/js/costeo_list.js"></script>
+<script>
+$('#tabla').removeAttr('width').DataTable({
+            "paging": false
+        });
+</script>
