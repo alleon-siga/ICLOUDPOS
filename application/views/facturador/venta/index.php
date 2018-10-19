@@ -704,6 +704,8 @@
                                     precio_comp: <?= $detalle->precio_comp ?>,
                                     contable_costo: <?= $detalle->contable_costo ?>,
                                     real_costo: <?= $detalle->real_costo ?>,
+                                    //subtotal por item
+                                    subtotal: <?= $detalle->importe ?>,
                                     unidades: []
                                 };
         <?php foreach ($detalle->unidades as $unidad): ?>
@@ -754,13 +756,15 @@
                                         prod.afectacion_impuesto,
                                         prod.precio_comp,
                                         prod.contable_costo,
-                                        prod.real_costo
+                                        prod.real_costo,
+                                        //se agrega el subtotal carlos camargo
+                                        prod.subtotal
                                         );
                             }
 
 <?php endif; ?>
                     });
-                    function add_producto_from_venta(producto_id, producto_nombre, precio, precio_venta, um_min, um_min_abr, total_min, unidades, impuesto, afectacion_impuesto, precio_comp, contable_costo, real_costo) {
+                    function add_producto_from_venta(producto_id, producto_nombre, precio, precio_venta, um_min, um_min_abr, total_min, unidades, impuesto, afectacion_impuesto, precio_comp, contable_costo, real_costo,subtotal) {
 
                         var local_id = $("#local_id").val();
                         var precio_id = $("#precio_id").val();
@@ -806,12 +810,12 @@
                         for (var local_index in producto.total_local)
                             producto.total_minimo += parseFloat(producto.total_local[local_index]);
 
-                        producto.subtotal = parseFloat(producto.total_minimo * producto.precio_descuento);
+                        producto.subtotal = parseFloat(subtotal);//parseFloat(producto.total_minimo * producto.precio_descuento);
                         producto.precio_comp = parseFloat(precio_comp);
                         producto.contable_costo = parseFloat(contable_costo);
                         producto.real_costo = parseFloat(real_costo);
                         producto.precio_unitario_bk = parseFloat(precio_venta);
-                        producto.subtotal_bk = parseFloat(producto.total_minimo * producto.precio_descuento);
+                        producto.subtotal_bk =  parseFloat(producto.total_minimo * producto.precio_descuento);
                         lst_producto.push(producto);
                         update_view(get_active_view());
                         refresh_right_panel();

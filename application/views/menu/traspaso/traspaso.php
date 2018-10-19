@@ -49,10 +49,12 @@
                                 $i = 0;
                                 foreach ($locales as $local) {
                                     ?>
-                                    <option value="<?= $local['int_local_id'] ?>" <?php if ($i == 0) {
+                                    <option value="<?= $local['int_local_id'] ?>" <?php
+                                    if ($i == 0) {
                                         echo "selected";
                                         $i++;
-                                    } ?> >
+                                    }
+                                    ?> >
                                         <?= $local['local_nombre'] ?></option>
                                 <?php } ?>
                             </select>
@@ -188,184 +190,193 @@
         <!-- /.modal-content -->
     </div>
 </div>
-
+<!-- Modal de ver detalle e imprimir traslado (18-10-2018) Carlos Camargo -->
+<div class="modal fade" id="verModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
+<iframe style="display: block;" id="imprimir_frame" src="" frameborder="YES" height="0" width="0" border="0" scrolling="no"></iframe>
 
 <script src="<?php echo $ruta; ?>recursos/js/Validacion.js"></script>
 <script type="text/javascript">
-    //CONFIGURACIONES INICIALES
-    App.sidebar('close-sidebar');
-    
-    var local1 = "";
+                    //CONFIGURACIONES INICIALES
+                    App.sidebar('close-sidebar');
 
-    /*esta variable es para colocarla cuando se cancele el reiniciar el formulario de traspaso*/
-    var local_anterior = ""
-    var local_actual = ""
-    var primer_cambio_local = false;
-    function guardar() {
-        if (lst_producto.length > 0) {
-            $("#btn_confirmar").attr('disabled', 'disabled');
-            var prods = [];
-            for(var i = 0; i< lst_producto.length;i++){
-                prods.push({
-                    local_id: lst_producto[i].local_id,
-                    index: lst_producto[i].index,
-                    producto_id: lst_producto[i].producto_id,
-                    cantidad: lst_producto[i].cantidad,
-                    fraccion: lst_producto[i].fraccion,
-                });
-            }
-            var miJSON = JSON.stringify(prods);
+                    var local1 = "";
 
-            $.ajax({
-                url: '<?= $ruta?>traspaso/traspasar_productos',
-                data: '&lst_producto=' + miJSON + '&local_destino=' + $("#localform2").val() + '&fecha_traspaso=' + $("#fecha_traspaso").val()+'&motivo=' + $('#motivo').val(),
-                type: 'post',
-                dataType: "json",
-                success: function (data) {
-                    var growlType = 'success';
+                    /*esta variable es para colocarla cuando se cancele el reiniciar el formulario de traspaso*/
+                    var local_anterior = ""
+                    var local_actual = ""
+                    var primer_cambio_local = false;
+                    function guardar() {
+                        if (lst_producto.length > 0) {
+                            $("#btn_confirmar").attr('disabled', 'disabled');
+                            var prods = [];
+                            for (var i = 0; i < lst_producto.length; i++) {
+                                prods.push({
+                                    local_id: lst_producto[i].local_id,
+                                    index: lst_producto[i].index,
+                                    producto_id: lst_producto[i].producto_id,
+                                    cantidad: lst_producto[i].cantidad,
+                                    fraccion: lst_producto[i].fraccion,
+                                });
+                            }
+                            var miJSON = JSON.stringify(prods);
 
-                    $.bootstrapGrowl('<h4>Se ha procesado exitosamente</h4>', {
-                        type: growlType,
-                        delay: 1500,
-                        allow_dismiss: true
-                    });
-                    $('#traspasomodal').modal('hide');
+                            $.ajax({
+                                url: '<?= $ruta ?>traspaso/traspasar_productos',
+                                data: '&lst_producto=' + miJSON + '&local_destino=' + $("#localform2").val() + '&fecha_traspaso=' + $("#fecha_traspaso").val() + '&motivo=' + $('#motivo').val(),
+                                type: 'post',
+                                dataType: "json",
+                                success: function (data) {
+                                    var growlType = 'success';
 
-                    $("#btn_confirmar").removeAttr('disabled');
-                    buscar();
-                },
-                error: function (data) {
-                    var growlType = 'warning';
+                                    $.bootstrapGrowl('<h4>Se ha procesado exitosamente</h4>', {
+                                        type: growlType,
+                                        delay: 1500,
+                                        allow_dismiss: true
+                                    });
+                                    $('#traspasomodal').modal('hide');
 
-                    $.bootstrapGrowl('<h4>Error: Asegurase de realizar un ingreso previamente sobre el local destino</h4>', {
-                        type: growlType,
-                        delay: 1500,
-                        allow_dismiss: true
-                    });
-                    $('#traspasomodal').modal('hide');
-                    $("#btn_confirmar").removeAttr('disabled');
-                }
-            });
-        }
+                                    $("#btn_confirmar").removeAttr('disabled');
 
-    }
-    function cerrartransferir_advertencia() {
+                                   // buscar();
+                                   //Llamo al model detalle para imprimir mi comprobante del traslado (18/10/2018) Carlos Camargo
+                                   $("#verModal").html($("#loading").html());
+                                    $("#verModal").load('<?= $ruta ?>traspaso/verDetalle/' + data.idTraslado);
+                                    $('#verModal').modal('show');
 
-        local_anterior = local_actual;
-        //local_actual=$("#localform1").val();
-        $("#localform1").val(local_anterior);
-        $("#localform1").trigger("chosen:updated");
-        $('#advertencia').modal('hide');
-    }
+                                    
+                                },
+                                error: function (data) {
+                                    var growlType = 'warning';
 
+                                    $.bootstrapGrowl('<h4>Error: Asegurase de realizar un ingreso previamente sobre el local destino</h4>', {
+                                        type: growlType,
+                                        delay: 1500,
+                                        allow_dismiss: true
+                                    });
+                                    $('#traspasomodal').modal('hide');
+                                    $("#btn_confirmar").removeAttr('disabled');
+                                }
+                            });
+                        }
 
-    function traspasarProducto() {
-        $("#cargando_modal").modal({
-            show: true
-        });
+                    }
+                    function cerrartransferir_advertencia() {
 
-
-        $("#traspasomodal").load('<?= $ruta ?>traspaso/form', function () {
-            setTimeout(function(){
-                $("#cargando_modal").modal('hide');
-                $('#traspasomodal').modal('show');
-                primer_cambio_local = false;
-                local_anterior = $("#localform1").val();
-                local_actual = $("#localform1").val();
-            }, 5);
-
-        });
-    }
-
-    function mostrar_advertencia() {
-
-        $('#advertencia').modal('show');
-
-    }
+                        local_anterior = local_actual;
+                        //local_actual=$("#localform1").val();
+                        $("#localform1").val(local_anterior);
+                        $("#localform1").trigger("chosen:updated");
+                        $('#advertencia').modal('hide');
+                    }
 
 
-    function productos_porlocal_almacen() {
-        $("#loading").show();
-        $.ajax({
-            type: 'POST',
-            data: {'local': $('#localform1').val()},
-            dataType: 'json',
-            url: '<?php echo base_url();?>' + 'traspaso/productos_porlocal_almacen',
-            success: function (data) {
-
-                var productos = data.productos;
-                var html = '<option  value="" selected>Seleccione el Producto</option>'
-
-                for (var i = 0; i < productos.length; i++) {
-                    html += '<option value="' + productos[i]["producto_id"] + '"> ' + productos[i]["producto_nombre"] + ' </option>'
-                }
-
-                $("#select_prodc").html('')
-                $("#select_prodc").html(html)
-                $("#select_prodc").trigger("chosen:updated");
-                getSecondLocal();
+                    function traspasarProducto() {
+                        $("#cargando_modal").modal({
+                            show: true
+                        });
 
 
-                $("#loading").hide();
-            },
-            error: function () {
-                $("#loading").hide();
+                        $("#traspasomodal").load('<?= $ruta ?>traspaso/form', function () {
+                            setTimeout(function () {
+                                $("#cargando_modal").modal('hide');
+                                $('#traspasomodal').modal('show');
+                                primer_cambio_local = false;
+                                local_anterior = $("#localform1").val();
+                                local_actual = $("#localform1").val();
+                            }, 5);
 
-            }
-        });
+                        });
+                    }
+
+                    function mostrar_advertencia() {
+
+                        $('#advertencia').modal('show');
+
+                    }
 
 
-    }
+                    function productos_porlocal_almacen() {
+                        $("#loading").show();
+                        $.ajax({
+                            type: 'POST',
+                            data: {'local': $('#localform1').val()},
+                            dataType: 'json',
+                            url: '<?php echo base_url(); ?>' + 'traspaso/productos_porlocal_almacen',
+                            success: function (data) {
 
-    function getSecondLocal() {
-        local1 = $("#localform1");
-        $("#localform2").html(local1.html());
-        $("#localform2 option[value='" + local1.val() + "']").remove();
-        $("#localform2").trigger("chosen:updated");
-        $("#cargando_modal").modal('hide');
-    }
+                                var productos = data.productos;
+                                var html = '<option  value="" selected>Seleccione el Producto</option>'
+
+                                for (var i = 0; i < productos.length; i++) {
+                                    html += '<option value="' + productos[i]["producto_id"] + '"> ' + productos[i]["producto_nombre"] + ' </option>'
+                                }
+
+                                $("#select_prodc").html('')
+                                $("#select_prodc").html(html)
+                                $("#select_prodc").trigger("chosen:updated");
+                                getSecondLocal();
 
 
-    function buscar() {
-        $('#cargando_modal').modal('show')
-        document.getElementById('fecha1').value = $("#fecha").val();
-        document.getElementById('fecha2').value = $("#fecha").val();
-        document.getElementById('producto1').value = $("#productos_traspaso").val();
-        document.getElementById('producto2').value = $("#productos_traspaso").val();
-        document.getElementById('local1').value = $("#locales").val();
-        document.getElementById('local2').value = $("#locales").val();
-        document.getElementById('tipo_mov1').value = $("#tipo_mov").val();
-        document.getElementById('tipo_mov2').value = $("#tipo_mov").val();
+                                $("#loading").hide();
+                            },
+                            error: function () {
+                                $("#loading").hide();
 
-        $.ajax({
-            type: 'POST',
-            data: $('#frmBuscar').serialize(),
-            url: '<?php echo base_url();?>' + 'traspaso/lst_reg_traspasos',
-            success: function (data) {
+                            }
+                        });
 
-                $("#lstTabla").html(data);
 
-            },
-            error: function () {
-                $('#cargando_modal').modal('hide')
+                    }
 
-            }
-        });
+                    function getSecondLocal() {
+                        local1 = $("#localform1");
+                        $("#localform2").html(local1.html());
+                        $("#localform2 option[value='" + local1.val() + "']").remove();
+                        $("#localform2").trigger("chosen:updated");
+                        $("#cargando_modal").modal('hide');
+                    }
 
-    }
 
-    function generar_reporte_excel() {
-        document.getElementById("frmExcel").submit();
-    }
+                    function buscar() {
+                        $('#cargando_modal').modal('show')
+                        document.getElementById('fecha1').value = $("#fecha").val();
+                        document.getElementById('fecha2').value = $("#fecha").val();
+                        document.getElementById('producto1').value = $("#productos_traspaso").val();
+                        document.getElementById('producto2').value = $("#productos_traspaso").val();
+                        document.getElementById('local1').value = $("#locales").val();
+                        document.getElementById('local2').value = $("#locales").val();
+                        document.getElementById('tipo_mov1').value = $("#tipo_mov").val();
+                        document.getElementById('tipo_mov2').value = $("#tipo_mov").val();
 
-    function generar_reporte_pdf() {
-        document.getElementById("frmPDF").submit();
-    }
+                        $.ajax({
+                            type: 'POST',
+                            data: $('#frmBuscar').serialize(),
+                            url: '<?php echo base_url(); ?>' + 'traspaso/lst_reg_traspasos',
+                            success: function (data) {
 
-    function confirmarcerrar() {
-        $("#confirmarcerrar").modal('hide');
-        $("#traspasomodal").modal('hide');
-    }
+                                $("#lstTabla").html(data);
+
+                            },
+                            error: function () {
+                                $('#cargando_modal').modal('hide')
+
+                            }
+                        });
+
+                    }
+
+                    function generar_reporte_excel() {
+                        document.getElementById("frmExcel").submit();
+                    }
+
+                    function generar_reporte_pdf() {
+                        document.getElementById("frmPDF").submit();
+                    }
+
+                    function confirmarcerrar() {
+                        $("#confirmarcerrar").modal('hide');
+                        $("#traspasomodal").modal('hide');
+                    }
 
 </script>
 <script src="<?php echo $ruta; ?>recursos/js/datepicker-range/moment.min.js"></script>
@@ -374,81 +385,81 @@
 <script src="<?php echo $ruta ?>recursos/js/pages/tablesDatatables.js"></script>
 
 <script>
-    $(function () {
-        $('input[name="fecha"]').daterangepicker({
-            "locale": {
-                "format": "DD/MM/YYYY",
-                "separator": " - ",
-                "applyLabel": "Aplicar",
-                "cancelLabel": "Cancelar",
-                "fromLabel": "De",
-                "toLabel": "A",
-                "customRangeLabel": "Personalizado",
-                "daysOfWeek": [
-                    "Do",
-                    "Lu",
-                    "Ma",
-                    "Mi",
-                    "Ju",
-                    "Vi",
-                    "Sa"
-                ],
-                "monthNames": [
-                    "Enero",
-                    "Febrero",
-                    "Marzo",
-                    "Abril",
-                    "Mayo",
-                    "Junio",
-                    "Julio",
-                    "Agosto",
-                    "Septiembre",
-                    "Octubre",
-                    "Noviembre",
-                    "Diciembre"
-                ],
-                "firstDay": 1
-            }
-        });
+                    $(function () {
+                        $('input[name="fecha"]').daterangepicker({
+                            "locale": {
+                                "format": "DD/MM/YYYY",
+                                "separator": " - ",
+                                "applyLabel": "Aplicar",
+                                "cancelLabel": "Cancelar",
+                                "fromLabel": "De",
+                                "toLabel": "A",
+                                "customRangeLabel": "Personalizado",
+                                "daysOfWeek": [
+                                    "Do",
+                                    "Lu",
+                                    "Ma",
+                                    "Mi",
+                                    "Ju",
+                                    "Vi",
+                                    "Sa"
+                                ],
+                                "monthNames": [
+                                    "Enero",
+                                    "Febrero",
+                                    "Marzo",
+                                    "Abril",
+                                    "Mayo",
+                                    "Junio",
+                                    "Julio",
+                                    "Agosto",
+                                    "Septiembre",
+                                    "Octubre",
+                                    "Noviembre",
+                                    "Diciembre"
+                                ],
+                                "firstDay": 1
+                            }
+                        });
 
-        TablesDatatables.init();
+                        TablesDatatables.init();
 
-        $('select').chosen();
-        $("#traspasomodal").on('hidden.bs.modal', function () {
-            $('#traspasomodal').html('')
-        });
+                        $('select').chosen();
+                        $("#traspasomodal").on('hidden.bs.modal', function () {
+                            $('#traspasomodal').html('')
+                        });
 
-        $("#pp_excel").hide();
-        $("#pp_pdf").hide();
+                        $("#pp_excel").hide();
+                        $("#pp_pdf").hide();
 
-        $("#btnBuscar").on('click', function () {
-            buscar();
+                        $("#btnBuscar").on('click', function () {
+                            buscar();
 
-        });
-        buscar();
-
-
-        /*
-         NO DESOMENTAR ESTO
-         $('body').keydown(function (e) {
-         console.log(e.keyCode );
-
-         if (e.keyCode == 27) {
-         e.preventDefault();
+                        });
+                        buscar();
 
 
-         if($("#productomodal").is(':visible'))
-         {
-         $("#confirmarcerrar").modal('show');
-         }
+                        /*
+                         NO DESOMENTAR ESTO
+                         $('body').keydown(function (e) {
+                         console.log(e.keyCode );
+                         
+                         if (e.keyCode == 27) {
+                         e.preventDefault();
+                         
+                         
+                         if($("#productomodal").is(':visible'))
+                         {
+                         $("#confirmarcerrar").modal('show');
+                         }
+                         
+                         }
+                         });*/
+                    });
 
-         }
-         });*/
-    });
-
-    function hide_modal_cerrar() {
-        $("#confirmarcerrar").modal('hide');
-    }
+                    function hide_modal_cerrar() {
+                        $("#confirmarcerrar").modal('hide');
+                    }
 
 
 </script>

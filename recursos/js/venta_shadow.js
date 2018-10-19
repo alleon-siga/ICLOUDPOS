@@ -904,6 +904,7 @@ function prepare_detalles_productos() {
                 producto.detalle_importe = producto.cantidad * producto.precio;
                 producto.contable_costo = lst_producto[i].contable_costo;
                 producto.real_costo = lst_producto[i].real_costo;
+                producto.importe = lst_producto[i].importe;
                 if ($('#aplicarCosteo').prop('checked') === true) {
                     producto.aplishadow = 1;
                 } else {

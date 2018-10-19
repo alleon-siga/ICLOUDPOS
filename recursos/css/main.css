@@ -23,23 +23,36 @@
 =================================================================
 */
 
+table tr.trblack:hover {
+    color: #000 !important;
+    font-weight: bold !important;
+}
+table tr th.thblack{
+    background-color: #2d2d2d !important;
+    color: white !important;
+}
+.thvacio{
+    background-color: transparent !important;
+    border-color: transparent !important;
+    border:0px !important; 
+}
 table th
 {
-	background-color:#00000 !important;
-	color:#fff !important;
-	font-family: "Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif !important;
-    
+    background-color:#00000 !important;
+    color:#fff !important;
+    font-family: "Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif !important;
+
 }
 table tbody td div a
 {
-	text-align:center !important;
+    text-align:center !important;
 }
 
 
 /*Daniel Contreras */
 #selectproductos_chosen
 {
-	width:100% !important;
+    width:100% !important;
 }
 
 .table thead > tr > th, .table thead > tr > td, .table tfoot > tr > th, .table tfoot > tr > td {
@@ -48,51 +61,51 @@ table tbody td div a
 }
 
 .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
-    
+
     padding: 5px !important;
-    
+
 }
 
 table th
 {
-	font-size: 13px !important;
-	text-align:center;
+    font-size: 13px !important;
+    text-align:center;
 }
 
 table td a
 {
-	text-align:center;
+    text-align:center;
 }
 
 #productostable .dataTables_scrollHeadInner
 {
-	width:98% !important;
+    width:98% !important;
 }
 
 .dataTables_scrollBody table
 {
-	width:99.7% !important;
+    width:99.7% !important;
 }
 
 .dataTables_scrollBody table thead
 {
-	visibility:hidden;
+    visibility:hidden;
 }
 
 table tr
 {
-	font-size:12.5px !important;
-	
+    font-size:12.5px !important;
+
 }
 
- table tr td
- {
- 	vertical-align:middle !important;
- }
- 
- 
+table tr td
+{
+    vertical-align:middle !important;
+}
+
+
 .dataTables_wrapper > div{
-	padding: 10px !important;
+    padding: 10px !important;
 }
 
 /* Include Open Sans font from Google Web Fonts */
@@ -1641,10 +1654,10 @@ a[data-toggle="lightbox-image"]:hover img {
 }
 
 .chart-pie-label {
-     font-size: 12px;
-     text-align: center;
-     padding: 8px 12px;
-     color: #ffffff;
+    font-size: 12px;
+    text-align: center;
+    padding: 8px 12px;
+    color: #ffffff;
 }
 
 .mini-chart-tooltip {
@@ -3979,13 +3992,13 @@ only screen and (min-device-pixel-ratio: 1.5) {
 .nav-tabs {
     margin-bottom: 15px;
 }
- 
+
 #horizontal-menu-collapse.nav >li i {  font-size: 56px;
-    float: right;
-    margin: 2px 0 0 10px;
-    color: #eaedf1;
-    margin: 0 0 0 10px;
-    line-height: 64px;}
+                                       float: right;
+                                       margin: 2px 0 0 10px;
+                                       color: #eaedf1;
+                                       margin: 0 0 0 10px;
+                                       line-height: 64px;}
 
 .table-responsive {
     width: 100%;

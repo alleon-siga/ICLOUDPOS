@@ -1608,10 +1608,9 @@ class venta_new_model extends CI_Model
             unidades.nombre_unidad as unidad_nombre,
             unidades.abreviatura as unidad_abr,
             SUM(dv.precio * dv.cantidad) as importe,
+            dv.detalle_importe as dimporte,
             dv.impuesto_porciento as impuesto,
             IFNULL(dv.afectacion_impuesto, 0) as afectacion_impuesto,
-            dv.precio_venta as precio_venta,
-
             dv.precio_venta as precio_venta,
             pcu.contable_costo as contable_costo,
             pcu.porcentaje_utilidad as porcentaje_utilidad,
@@ -1661,6 +1660,8 @@ class venta_new_model extends CI_Model
 
             $result[$detalle->producto_id]->contable_costo = $detalle->contable_costo;
             $result[$detalle->producto_id]->real_costo = $detalle->real_costo;
+            //llamo a detalle_importe as dimporte carlos camargo
+            $result[$detalle->producto_id]->importe = $detalle->dimporte;
             $result[$detalle->producto_id]->precio_comp = (($detalle->porcentaje_utilidad / 100) * $detalle->contable_costo) + $detalle->contable_costo;
 
         }

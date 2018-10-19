@@ -89,7 +89,6 @@ $primary_nav = array(
                 'icon' => 'fa fa-tasks',
                 'slug' => 'traspaso'
             ),
-
             array(
                 'name' => 'Entradas & Salidas',
                 'url' => $ruta . 'ajuste',

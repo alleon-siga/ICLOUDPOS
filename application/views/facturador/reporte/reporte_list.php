@@ -17,14 +17,14 @@
     <table class='table dataTable table-bordered no-footer tableStyle' style="overflow:scroll">
         <thead>
             <tr>
-                <th>Precio Venta</th>
-                <th>Costo Compra</th>
-                <th>Cantidad Vendida</th>
-                <th>Total PV</th>
-                <th>Total CC</th>
-                <th>Precio Venta</th>
-                <th>Costo Compra</th>
-                <th>Cantidad Vendida</th>
+                <th class="thblack">Precio Venta</th>
+                <th class="thblack">Costo Compra</th>
+                <th class="thblack">Cantidad Vendida</th>
+                <th class="thblack">Total PV</th>
+                <th class="thblack">Total CC</th>
+                <th class="thblack">Precio Venta</th>
+                <th class="thblack">Costo Compra</th>
+                <th class="thblack">Cantidad Vendida</th>
             </tr>
         </thead>
         <tbody>

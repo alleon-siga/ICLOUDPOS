@@ -31,7 +31,7 @@ class traspaso_model extends CI_Model
         );
         $this->db->insert('traspaso', $values);
         $idTraslado = $this->db->insert_id();
-
+        
         for ($i = 0; $i < count($productos); $i++) {
 
             $old_cantidad_1 = $this->db->get_where('producto_almacen', array(
@@ -128,7 +128,11 @@ class traspaso_model extends CI_Model
                 'local_origen' => $productos[$i]->local_id
             );
             $this->db->insert('traspaso_detalle', $values);
+            
         }
+        
+        //Devuelvo el Id del Traspaso generado (18-10-2018) Carlos Camargo
+        return $idTraslado;
     }
 
 
