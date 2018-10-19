@@ -34,30 +34,23 @@ foreach ($lists as $ingreso):
     <table class="table">
         <thead>
             <tr style="border-color: transparent !important;">
-                <th colspan="8" class="thvacio thblack"></th>
-                <th colspan="3" class="thblack">Compras</th>
-                <th colspan="4" class="thblack">Ventas</th>
+                <th colspan="2" class="thvacio thblack"></th>
+                <th colspan="3" class="thblack">Cant. x Tipo de Doc. </th>
                 <th class="thvacio thblack"></th>
+                <th colspan="3" class="thvacio thblack">Montos x Documentos</th>
                 <th class="thvacio thblack"></th>
             </tr>
             <tr>
-                <th class="thvacio thblack"></th>
-                <th class="thblack">Fecha</th>
-                <th class="thblack">Ruc / Dni</th>
-                <th class="thblack">Nombre</th>
-                <th class="CellWithComment thblack">Cli / Pro  <span class="CellComment">Cliente / Proveedor</span></th>
-                <th class="CellWithComment thblack">E / S  <span class="CellComment">Entradas / Salidas</span></th>
-                <th class="thblack">Tipo Doc.</th>
-                <th class="thblack">Nro Doc.</th>
-                <th class="CellWithComment thblack">NC <span class="CellComment">Nota de Compra</span></th>
-                <th class="CellWithComment thblack">BO <span class="CellComment">Boleta</span></th>
-                <th class="CellWithComment thblack">FA <span class="CellComment">Factura</span></th>
-                <th class="CellWithComment thblack">NV <span class="CellComment">Nota de Venta</span></th>
-                <th class="CellWithComment thblack">BO <span class="CellComment">Boleta</span></th>
-                <th class="CellWithComment thblack">FA <span class="CellComment">Factura</span></th>
-                <th class="CellWithComment thblack">GR <span class="CellComment">Guia de Remision</span></th>
-                <th class="thblack">Costo Total</th>
-                <th class="thblack">Existencia</th>
+                <th class="thblack">RUC / DNI</th>
+                <th class="thblack">Cliente</th>
+                <th class="CellWithComment thblack">NC  <span class="CellComment">Nota de Compra</span></th>
+                <th class="CellWithComment thblack">BO  <span class="CellComment">Boleta</span></th>
+                <th class="CellWithComment thblack">Fa <span class="CellComment">Factura</span></th>
+                <th class="thblack">Cantidad Total</th>
+                <th class="CellWithComment thblack">NC  <span class="CellComment">Nota de Compra</span></th>
+                <th class="CellWithComment thblack">BO  <span class="CellComment">Boleta</span></th>
+                <th class="CellWithComment thblack">Fa <span class="CellComment">Factura</span></th>
+                <th class="thblack">Total</th>
             </tr>
         </thead>
         <tbody>
