@@ -22,7 +22,7 @@
                 <td style="border-style: hidden;" colspan="2"></td>
             </tr>
             <tr class="thblack">
-                <th width="10%" class="thblack">Codigo</th>
+                <th width="2%" class="thblack">Cod.</th>
                 <th width="30%" class="thblack">Producto</th>
                 <th width="10%" class="thblack">Marca</th>
                 <th width="10%" class="thblack">Unidad</th>

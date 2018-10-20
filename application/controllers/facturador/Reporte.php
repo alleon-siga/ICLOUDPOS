@@ -332,8 +332,9 @@ class Reporte extends MY_Controller {
     function reporte_vd($action = '') {
         switch ($action) {
             case 'filter': {
-                    $params['moneda_id'] = $this->input->post('moneda_id');
                     $params['local_id'] = $this->input->post('local_id');
+                    $params['moneda_id'] = $this->input->post('moneda_id');
+                    $params['estado_cr_id'] = $this->input->post('estado_cr_id');                    
                     $params['marca_id'] = $this->input->post('marca_id');
                     $params['grupo_id'] = $this->input->post('grupo_id');
                     $params['familia_id'] = $this->input->post('familia_id');
@@ -372,7 +373,7 @@ class Reporte extends MY_Controller {
                     $data['fecha_fin'] = $input['fecha_fin'];
                     $this->load->library('mpdf53/mpdf');
                     $mpdf = new mPDF('utf-8', 'A4-L', 0, '', 5, 5, 5, 5, 5, 5);
-                    $html = $this->load->view('facturador/reporte/reporte_vd_list_pdf', $data, true);
+                    $html = $this->load->view('facturador/reporte/reporte_vd_pdf', $data, true);
                     $mpdf->WriteHTML($html);
                     $mpdf->Output();
                     break;
@@ -396,7 +397,7 @@ class Reporte extends MY_Controller {
                     $local = $this->db->get_where('local', array('int_local_id' => $input['local_id']))->row();
                     $data['local_nombre'] = !empty($local->local_nombre) ? $local->local_nombre : 'TODOS';
                     $data['local_direccion'] = !empty($local->direccion) ? $local->direccion : 'TODOS';
-                    echo $this->load->view('facturador/reporte/reporte_vd_list_excel', $data, true);
+                    echo $this->load->view('facturador/reporte/reporte_vd_excel', $data, true);
                     break;
                 }
             default: {
