@@ -416,7 +416,7 @@ if ($this->session->userdata('tema')) {
                                             <a href="<?= $ruta ?>facturador/reporte/reporte_cv" class="menulink"><i class="gi gi-barcode sidebar-nav-icon"></i>Compras vs Ventas</a>
                                         </li>                                 
                                         <li>
-                                            <a href="<?= $ruta ?>facturador/reporte/reporte_vd" class="menulink"><i class="gi gi-barcode sidebar-nav-icon"></i>Ventas x Documentos</a>
+                                            <a href="<?= $ruta ?>facturador/reporte/reporte_vp" class="menulink"><i class="gi gi-barcode sidebar-nav-icon"></i>Ventas x Producto</a>
                                         </li>
                                         <!--<li>
                                             <a href="<?= $ruta ?>facturador/reporte/reporte_vp" class="menulink"><i class="gi gi-barcode sidebar-nav-icon"></i>Ventas x Productos</a>

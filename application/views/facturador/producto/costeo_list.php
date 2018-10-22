@@ -5,7 +5,7 @@
     <table id="tabla" class="table  dataTable table-bordered tableStyle" style="overflow:scroll">
         <thead>
             <tr>
-                <td style="border-style: hidden;" colspan="5"></td>
+                <td style="border-style: hidden;" colspan="6"></td>
                 <td style="border-style: hidden;" align="center">
                     <input class="form-control" type="number" value="" id="txtAllCostoContMn" name="" style="width: 80px;">
                 </td>

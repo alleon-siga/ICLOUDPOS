@@ -271,7 +271,6 @@ class venta extends MY_Controller
         }
 
         $sin_stock = $this->inventario_model->check_stock($validar_detalle);
-
         if (count($sin_stock) == 0 || count($sin_stock) != 0) {
             if ($venta['condicion_pago'] == '1') {
                 $id_venta_shadow = $this->venta_shadow_model->save_venta_contado($venta, $detalles_productos);

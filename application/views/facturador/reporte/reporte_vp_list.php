@@ -54,17 +54,17 @@
             <tr class="trblack">
                 <td ><?= $ingreso->codigo_producto ?></td>
                 <td ><?= $ingreso->nombre_producto ?></td>
-                <td ><?= $ingreso->marca_producto!=""?$ingreso->marca_producto:"SIN MARCA" ?></td>
-                <td ><?= $ingreso->ven_nv!=0?number_format($ingreso->ven_nv,0):number_format(0,0)?></td>
+                <td ><?= $ingreso->marca_producto != "" ? $ingreso->marca_producto : "SIN MARCA" ?></td>
+                <td ><?= $ingreso->ven_nv != 0 ? number_format($ingreso->ven_nv, 0) : number_format(0, 0) ?></td>
                 <td ><?= $ingreso->ven_bol ?></td>
-                <td ><?=  $ingreso->ven_fac ?></td>
+                <td ><?= $ingreso->ven_fac ?></td>
                 <td ><?= $ingreso->ven_total ?> </td>
-                <td ><?= $ingreso->ven_nv_t!=0?number_format($ingreso->ven_nv_t,2):number_format(0,2) ?></td>
-                <td > <?= $ingreso->ven_bol_t!=0?number_format($ingreso->ven_bol_t,2):number_format($ingreso->ven_bol_t,2) ?></td>
-                <td ><?= $ingreso->ven_fac_t!=0?number_format($ingreso->ven_fac_t,2):number_format($ingreso->ven_fac_t,2) ?></td>
-                <td ><?= $ingreso->ven_tot_t!=0?number_format($ingreso->ven_tot_t,2):number_format($ingreso->ven_tot_t,2) ?></td>   
+                <td ><?= $ingreso->ven_nv_t != 0 ? number_format($ingreso->ven_nv_t, 2) : number_format(0, 2) ?></td>
+                <td > <?= $ingreso->ven_bol_t != 0 ? number_format($ingreso->ven_bol_t, 2) : number_format($ingreso->ven_bol_t, 2) ?></td>
+                <td ><?= $ingreso->ven_fac_t != 0 ? number_format($ingreso->ven_fac_t, 2) : number_format($ingreso->ven_fac_t, 2) ?></td>
+                <td ><?= $ingreso->ven_tot_t != 0 ? number_format($ingreso->ven_tot_t, 2) : number_format($ingreso->ven_tot_t, 2) ?></td>   
             </tr>
-            <?php endforeach; ?>
+        <?php endforeach; ?>
     </tbody>
 
 </table>
@@ -95,7 +95,10 @@
         $('.nav-tabs a[href="#grafico"]').on('shown.bs.tab', function (event) {
             var data = {
                 'local_id': $("#local_id").val(),
+                'estado_cr_id': $("#estado_cr_id").val(),
+                'moneda_id': $("#moneda_id").val(),
                 'fecha': $("#fecha").val(),
+                'tipo_reporte': $("#tipo_reporte").val(),
                 'producto_id': $("#producto_id").val(),
                 'grupo_id': $("#grupo_id").val(),
                 'marca_id': $("#marca_id").val(),
@@ -108,8 +111,9 @@
     function exportar_pdf() {
         var data = {
             'local_id': $("#local_id").val(),
+            'estado_cr_id': $("#estado_cr_id").val(),
             'fecha': $("#fecha").val(),
-            'moneda_id': $("#moneda_id").val(),
+            'tipo_reporte': $("#tipo_reporte").val(),
             'producto_id': $("#producto_id").val(),
             'grupo_id': $("#grupo_id").val(),
             'marca_id': $("#marca_id").val(),
@@ -117,15 +121,17 @@
             'familia_id': $("#familia_id").val()
         };
 
-        var win = window.open('<?= base_url() ?>reporte_ventas/margenUtilidad/pdf?data=' + JSON.stringify(data), '_blank');
+        var win = window.open('<?= base_url() ?>facturador/reporte/reporte_vp/pdf?data=' + JSON.stringify(data), '_blank');
         win.focus();
     }
 
     function exportar_excel() {
         var data = {
             'local_id': $("#local_id").val(),
-            'fecha': $("#fecha").val(),
+            'estado_cr_id': $("#estado_cr_id").val(),
             'moneda_id': $("#moneda_id").val(),
+            'fecha': $("#fecha").val(),
+            'tipo_reporte': $("#tipo_reporte").val(),
             'producto_id': $("#producto_id").val(),
             'grupo_id': $("#grupo_id").val(),
             'marca_id': $("#marca_id").val(),
@@ -133,7 +139,7 @@
             'familia_id': $("#familia_id").val()
         };
 
-        var win = window.open('<?= base_url() ?>reporte_ventas/margenUtilidad/excel?data=' + JSON.stringify(data), '_blank');
+        var win = window.open('<?= base_url() ?>facturador/reporte/reporte_vp/excel?data=' + JSON.stringify(data), '_blank');
         win.focus();
     }
 </script>

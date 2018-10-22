@@ -118,7 +118,7 @@ foreach ($venta as $v) {
                                 <td class="total_co"><?= $detalle->total ?></td>  
                                 <td class="text-center"><button class="btn btn-info btn-xs" onclick="info(<?= $detalle->id_shadow ?>)"><i class="fa fa-search"></i></button>
                                     <?php
-                                    if ($detalle->serie_fac > 0) {
+                                    if ($detalle->id_factura > 0) {
                                         ?>
                                         <a class="btn btn-xs btn-info" data-toggle="tooltip" 
                                            title="Imprimir PDF (A4)" data-original-title="Imprimir PDF (A4)"
@@ -137,8 +137,13 @@ foreach ($venta as $v) {
                                     } else {
                                         ?>
                                         <button class="btn btn-danger btn-xs eliminarv" onclick="mostrar(<?= $detalle->id_shadow ?>)" ><i class="fa fa-trash"></i></button>&nbsp;
-                                        <button class="btn btn-default btn-xs" data-toggle="tooltip"  title="Sunat" data-original-title="Sunat"  onclick="generarcomprobante(<?= $detalle->id_shadow ?>,<?= $detalle->venta_id ?>)"><i class="fa fa-mail-forward"></i></button>
-                                    <?php }
+                                        <?php
+                                        if (valueOptionDB('FACTURACION', 0) == 1) {
+                                            ?>
+                                            <button class="btn btn-default btn-xs" data-toggle="tooltip"  title="Sunat" data-original-title="Sunat"  onclick="generarcomprobante(<?= $detalle->id_shadow ?>,<?= $detalle->venta_id ?>)"><i class="fa fa-mail-forward"></i></button>
+                                            <?php
+                                        }
+                                    }
                                     ?>
                                 </td>
                             </tr>
@@ -175,9 +180,9 @@ foreach ($venta as $v) {
     </div>
 </div>
 <iframe style="display: block;" id="imprimir_frame" src="" frameborder="YES" height="0" width="0"
-            border="0" scrolling=no>
+        border="0" scrolling=no>
 
-    </iframe>
+</iframe>
 <script type="text/javascript" src="<?= base_url() ?>recursos/js/facturador_historial_list_detalle.js"></script>
 <script type="text/javascript">
                             $(document).ready(function () {
@@ -247,7 +252,7 @@ foreach ($venta as $v) {
                                 });
                             }
                             function imprimir_ticket(id_shadow) {
-                                
+
                                 $.bootstrapGrowl('<p>IMPRIMIENDO PEDIDO</p>', {
                                     type: 'success',
                                     delay: 2500,

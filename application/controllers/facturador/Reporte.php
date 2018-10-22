@@ -329,7 +329,108 @@ class Reporte extends MY_Controller {
     }
 
     //Obtener el reporte de ventas por documentos (19-10-2018) Carlos Camargo
-    function reporte_vd($action = '') {
+    function reporte_vp($action = '') {
+        switch ($action) {
+            case 'filter': {
+                    $params['local_id'] = $this->input->post('local_id');
+                    $params['estado_cr_id'] = $this->input->post('estado_cr_id');                    
+                    $params['marca_id'] = $this->input->post('marca_id');
+                    $params['grupo_id'] = $this->input->post('grupo_id');
+                    $params['familia_id'] = $this->input->post('familia_id');
+                    $params['linea_id'] = $this->input->post('linea_id');
+                    $params['producto_id'] = $this->input->post('producto_id');
+                    if (!empty($this->input->post('fecha'))) {
+                        $date_range = explode(" - ", $this->input->post('fecha'));
+                        $params['fecha_ini'] = date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0])));
+                        $params['fecha_fin'] = date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])));
+                    }
+                    
+                    $data['lists'] = $this->reporte_shadow_model->getReporte_vp($params);
+
+                    $this->load->view('facturador/reporte/reporte_vp_list', $data);
+                    break;
+                }
+            case 'pdf': {
+                    $params = json_decode($this->input->get('data'));
+                    if (!empty($params->fecha)) {
+                        $date_range = explode(" - ", $params->fecha);
+                        $params->fecha_ini = date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0])));
+                        $params->fecha_fin = date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])));
+                    }
+                    $input = array(
+                        'local_id' => $params->local_id,
+                        'estado_cr_id' => $params->estado_cr_id,
+                        'marca_id' => $params->marca_id,
+                        'grupo_id' => $params->grupo_id,
+                        'familia_id' => $params->familia_id,
+                        'linea_id' => $params->linea_id,
+                        'producto_id' => $params->producto_id,
+                        'fecha_ini' => $params->fecha_ini,
+                        'fecha_fin' => $params->fecha_fin
+                       
+                    );
+                    $data['lists'] = $this->reporte_shadow_model->getReporte_vp($input);
+                    $local = $this->db->get_where('local', array('int_local_id' => $input['local_id']))->row();
+                    $data['local_nombre'] = !empty($local->local_nombre) ? $local->local_nombre : 'TODOS';
+                    $data['local_direccion'] = !empty($local->direccion) ? $local->direccion : 'TODOS';
+                    $data['fecha_ini'] = $input['fecha_ini'];
+                    $data['fecha_fin'] = $input['fecha_fin'];
+                    $this->load->library('mpdf53/mpdf');
+                    $mpdf = new mPDF('utf-8', 'A4', 0, '', 5, 5, 5, 5, 5, 5);
+                    $html = $this->load->view('facturador/reporte/reporte_vp_pdf', $data, true);
+                    $mpdf->WriteHTML($html);
+                    $mpdf->Output();
+                    break;
+                }
+            case 'excel': {
+                    $params = json_decode($this->input->get('data'));
+                    if (!empty($params->fecha)) {
+                        $date_range = explode(" - ", $params->fecha);
+                        $params->fecha_ini = date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0])));
+                        $params->fecha_fin = date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])));
+                    }
+                    $input = array(
+                        'local_id' => $params->local_id,
+                        'estado_cr_id' => $params->estado_cr_id,
+                        'marca_id' => $params->marca_id,
+                        'grupo_id' => $params->grupo_id,
+                        'familia_id' => $params->familia_id,
+                        'linea_id' => $params->linea_id,
+                        'producto_id' => $params->producto_id,
+                        'fecha_ini' => $params->fecha_ini,
+                        'fecha_fin' => $params->fecha_fin
+                    );
+                    $data['lists'] = $this->reporte_shadow_model->getReporte_vp($input);
+
+                    $local = $this->db->get_where('local', array('int_local_id' => $input['local_id']))->row();
+                    $data['local_nombre'] = !empty($local->local_nombre) ? $local->local_nombre : 'TODOS';
+                    $data['local_direccion'] = !empty($local->direccion) ? $local->direccion : 'TODOS';
+                    $data['fecha_ini'] = $input['fecha_ini'];
+                    $data['fecha_fin'] = $input['fecha_fin'];
+                    echo $this->load->view('facturador/reporte/reporte_vp_excel', $data, true);
+                    break;
+                }
+            default: {
+                    $data['locales'] = $this->local_model->get_all();
+                    $data['marcas'] = $this->db->get_where('marcas', array('estatus_marca' => 1))->result();
+                    $data['grupos'] = $this->db->get_where('grupos', array('estatus_grupo' => 1))->result();
+                    $data['familias'] = $this->db->get_where('familia', array('estatus_familia' => 1))->result();
+                    $data['lineas'] = $this->db->get_where('lineas', array('estatus_linea' => 1))->result();
+                    $data["productos"] = $this->producto_model->get_productos_list();
+                    $data['monedas'] = $this->db->get_where('moneda', array('status_moneda' => 1))->result();
+                    $data['barra_activa'] = $this->db->get_where('columnas', array('id_columna' => 36))->row();
+                    $dataCuerpo['cuerpo'] = $this->load->view('facturador/reporte/reporte_vp', $data, true);
+                    if ($this->input->is_ajax_request()) {
+                        echo $dataCuerpo['cuerpo'];
+                    } else {
+                        $this->load->view('facturador/template', $dataCuerpo);
+                    }
+                    break;
+                }
+        }
+    }
+    //Obtener el reporte de ventas por documentos (22-10-2018) Carlos Camargo
+    function reporte_vpr($action = '') {
         switch ($action) {
             case 'filter': {
                     $params['local_id'] = $this->input->post('local_id');
@@ -345,9 +446,9 @@ class Reporte extends MY_Controller {
                         $params['fecha_ini'] = date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0])));
                         $params['fecha_fin'] = date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])));
                     }
-                    $data['lists'] = $this->reporte_shadow_model->getReporte_vd($params);
+                    $data['lists'] = $this->reporte_shadow_model->getReporte_vpr($params);
 
-                    $this->load->view('facturador/reporte/reporte_vd_list', $data);
+                    $this->load->view('facturador/reporte/reporte_vpr_list', $data);
                     break;
                 }
             case 'pdf': {
@@ -364,7 +465,7 @@ class Reporte extends MY_Controller {
                         'fecha_ini' => date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0]))),
                         'fecha_fin' => date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])))
                     );
-                    $data['lists'] = $this->reporte_shadow_model->getReporte_vd($input);
+                    $data['lists'] = $this->reporte_shadow_model->getReporte_vpr($input);
 
                     $local = $this->db->get_where('local', array('int_local_id' => $input['local_id']))->row();
                     $data['local_nombre'] = !empty($local->local_nombre) ? $local->local_nombre : 'TODOS';
@@ -373,7 +474,7 @@ class Reporte extends MY_Controller {
                     $data['fecha_fin'] = $input['fecha_fin'];
                     $this->load->library('mpdf53/mpdf');
                     $mpdf = new mPDF('utf-8', 'A4-L', 0, '', 5, 5, 5, 5, 5, 5);
-                    $html = $this->load->view('facturador/reporte/reporte_vd_pdf', $data, true);
+                    $html = $this->load->view('facturador/reporte/reporte_vpr_pdf', $data, true);
                     $mpdf->WriteHTML($html);
                     $mpdf->Output();
                     break;
@@ -392,12 +493,12 @@ class Reporte extends MY_Controller {
                         'fecha_ini' => date('Y-m-d 00:00:00', strtotime(str_replace("/", "-", $date_range[0]))),
                         'fecha_fin' => date('Y-m-d 23:59:59', strtotime(str_replace("/", "-", $date_range[1])))
                     );
-                    $data['lists'] = $this->reporte_shadow_model->getReporte_vd($input);
+                    $data['lists'] = $this->reporte_shadow_model->getReporte_vpr($input);
 
                     $local = $this->db->get_where('local', array('int_local_id' => $input['local_id']))->row();
                     $data['local_nombre'] = !empty($local->local_nombre) ? $local->local_nombre : 'TODOS';
                     $data['local_direccion'] = !empty($local->direccion) ? $local->direccion : 'TODOS';
-                    echo $this->load->view('facturador/reporte/reporte_vd_excel', $data, true);
+                    echo $this->load->view('facturador/reporte/reporte_vpr_excel', $data, true);
                     break;
                 }
             default: {
@@ -409,7 +510,7 @@ class Reporte extends MY_Controller {
                     $data["productos"] = $this->producto_model->get_productos_list();
                     $data['monedas'] = $this->db->get_where('moneda', array('status_moneda' => 1))->result();
                     $data['barra_activa'] = $this->db->get_where('columnas', array('id_columna' => 36))->row();
-                    $dataCuerpo['cuerpo'] = $this->load->view('facturador/reporte/reporte_vd', $data, true);
+                    $dataCuerpo['cuerpo'] = $this->load->view('facturador/reporte/reporte_vp', $data, true);
                     if ($this->input->is_ajax_request()) {
                         echo $dataCuerpo['cuerpo'];
                     } else {
@@ -419,5 +520,4 @@ class Reporte extends MY_Controller {
                 }
         }
     }
-
 }

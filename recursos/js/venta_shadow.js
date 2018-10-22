@@ -897,14 +897,15 @@ function prepare_detalles_productos() {
             if (cantidades[unidad] !== 0) {
                 var producto = {};
                 producto.id_producto = lst_producto[i].producto_id;
-                producto.precio = precios[unidad] * lst_producto[i].precio_descuento;
-                producto.precio_venta = precios[unidad] * lst_producto[i].precio_unitario;
+//                producto.precio = precios[unidad] * lst_producto[i].precio;
+//                producto.precio_venta = precios[unidad] * lst_producto[i].precio_unitario;
+                producto.precio = lst_producto[i].precio_unitario;
+                producto.precio_venta =  lst_producto[i].precio_unitario;
                 producto.unidad_medida = unidad;
                 producto.cantidad = cantidades[unidad];
                 producto.detalle_importe = producto.cantidad * producto.precio;
                 producto.contable_costo = lst_producto[i].contable_costo;
                 producto.real_costo = lst_producto[i].real_costo;
-                producto.importe = lst_producto[i].importe;
                 if ($('#aplicarCosteo').prop('checked') === true) {
                     producto.aplishadow = 1;
                 } else {

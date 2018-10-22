@@ -67,8 +67,8 @@
                             <label class="control-label">Tipo de Reporte:</label>
                             <select id="tipo_reporte" name="tipo_reporte" class="form-control">
                                 <option value="-1" selected="">Seleccione...</option>
-                                <option value="0">Detalle</option>
-<!--                                <option value="1">Resumen</option>-->
+                                <option value="0">Detalle </option>
+                                <option value="1">Resumen </option>
                             </select>
                         </div>
                         <div class="row">
@@ -249,9 +249,8 @@
                             getReporte_cv();
                         } else if ($("#tipo_reporte").val() > 0) {
                             if ($("#producto_id").val() > 0) {
-
                                 $("#titulo_repor").text(": Resumen.");
-                                getReporte_cv();
+                                getReporte_cvr();
                             } else {
                                 $.bootstrapGrowl('<h4>Precaución.</h4> <p>Debe Seleccionar un producto</p>', {
                                     type: 'warning',
@@ -266,20 +265,64 @@
                     });
                     $('.chosen-container').css('width', '100%');
                     $("#btn_filter_reset").on('click', function () {
-                        $('#marca_id').val('0').trigger('chosen:updated');
-                        $('#grupo_id').val('0').trigger('chosen:updated');
-                        $('#familia_id').val('0').trigger('chosen:updated');
-                        $('#linea_id').val('0').trigger('chosen:updated');
-                        $("#tipo_reporte").val('-1').trigger('chosen:updated');
-                        $('#producto_id').multipleSelect('uncheckAll');
-                        $("#charm").tcharm('hide');
-                        getReporte_cv();
-                        filtro();
+                        if ($("#tipo_reporte").val() > 0) {
+                            $('#marca_id').val('0').trigger('chosen:updated');
+                            $('#grupo_id').val('0').trigger('chosen:updated');
+                            $('#familia_id').val('0').trigger('chosen:updated');
+                            $('#linea_id').val('0').trigger('chosen:updated');
+                            $("#tipo_reporte").val('-1').trigger('chosen:updated');
+                            $('#producto_id').multipleSelect('uncheckAll');
+                            $("#charm").tcharm('hide');
+                            getReporte_cvr();
+                            filtro();
+                        } else if ($("#tipo_reporte").val() == 0 || $("#tipo_reporte").val() == -1) {
+                            $('#marca_id').val('0').trigger('chosen:updated');
+                            $('#grupo_id').val('0').trigger('chosen:updated');
+                            $('#familia_id').val('0').trigger('chosen:updated');
+                            $('#linea_id').val('0').trigger('chosen:updated');
+                            $("#tipo_reporte").val('-1').trigger('chosen:updated');
+                            $('#producto_id').multipleSelect('uncheckAll');
+                            $("#charm").tcharm('hide');
+                            getReporte_cv();
+                            filtro();
+                        }
                     });
                     $('#tipo_reporte,#marca_id, #grupo_id, #familia_id, #linea_id').on('change', function () {
                         filtro();
                     });
                 });
+                function getReporte_cvr() {
+                    $("#historial_cv_list").html($("#loading").html());
+                    var data = {
+                        'local_id': $("#local_id").val(),
+                        'estado_cr_id': $("#estado_cr_id").val(),
+                        'moneda_id': $("#moneda_id").val(),
+                        'fecha': $("#fecha").val(),
+                        'tipo_reporte': $("#tipo_reporte").val(),
+                        'producto_id': $("#producto_id").val(),
+                        'grupo_id': $("#grupo_id").val(),
+                        'marca_id': $("#marca_id").val(),
+                        'linea_id': $("#linea_id").val(),
+                        'familia_id': $("#familia_id").val()
+                    };
+                    $.ajax({
+                        url: '<?= base_url() ?>facturador/reporte/reporte_vpr/filter',
+                        data: data,
+                        type: 'POST',
+                        success: function (data) {
+                            $("#historial_cv_list").html(data);
+                        },
+                        error: function () {
+                            $.bootstrapGrowl('<h4>Error.</h4> <p>Ha ocurrido un error en la operaci&oacute;n</p>', {
+                                type: 'danger',
+                                delay: 5000,
+                                allow_dismiss: true
+                            });
+                            $("#historial_cv_list").html('');
+                        }
+                    });
+                    $("#charm").tcharm('hide');
+                }
                 function getReporte_cv() {
                     $("#historial_cv_list").html($("#loading").html());
                     var data = {
@@ -295,7 +338,7 @@
                         'familia_id': $("#familia_id").val()
                     };
                     $.ajax({
-                        url: '<?= base_url() ?>facturador/reporte/reporte_vd/filter',
+                        url: '<?= base_url() ?>facturador/reporte/reporte_vp/filter',
                         data: data,
                         type: 'POST',
                         success: function (data) {

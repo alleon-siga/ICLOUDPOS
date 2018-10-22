@@ -815,7 +815,7 @@
                         producto.contable_costo = parseFloat(contable_costo);
                         producto.real_costo = parseFloat(real_costo);
                         producto.precio_unitario_bk = parseFloat(precio_venta);
-                        producto.subtotal_bk =  parseFloat(producto.total_minimo * producto.precio_descuento);
+                        producto.subtotal_bk =  parseFloat(subtotal);//parseFloat(producto.total_minimo * producto.precio_descuento);
                         lst_producto.push(producto);
                         update_view(get_active_view());
                         refresh_right_panel();
