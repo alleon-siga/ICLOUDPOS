@@ -41,7 +41,7 @@ class venta_new extends MY_Controller {
         $data['venta_action'] = $action;
         $data['monedas'] = $this->db->get_where('moneda', array('status_moneda' => 1))->result();
         $data['condiciones_pagos'] = $this->db->get_where('condiciones_pago', array('status_condiciones' => 1))->result();
-        
+
         $data['dialog_venta_contado'] = $this->load->view('menu/venta/dialog_venta_contado', array(
             'tarjetas' => $this->db->get('tarjeta_pago')->result(),
             'metodos' => $this->metodos_pago_model->get_all(),
@@ -126,11 +126,9 @@ class venta_new extends MY_Controller {
         $data['venta_action'] = $action;
         $data['detalle'] = 'venta';
 
-        $data['kardex'] = $this->db->select('serie, numero, fecha, nombre')
-                        ->from('kardex')
-                        ->join('usuario', 'kardex.usuario_id = usuario.nUsuCodigo')
-                        ->where(array('ref_id' => $venta_id, 'io' => 2, 'tipo' => 7, 'operacion' => 5))
-                        ->get()->row();
+        $data['notas_credito'] = $this->db
+            ->join('usuario', 'usuario.nUsuCodigo = notas_credito.usuario_id')
+            ->get_where('notas_credito', array('venta_id' => $venta_id))->result();
 
         $this->load->view('menu/venta/historial_list_detalle', $data);
     }
@@ -149,24 +147,8 @@ class venta_new extends MY_Controller {
         echo $num;
     }
 
-    function facturar_venta() {
-        $venta_id = $this->input->post('venta_id');
-        $iddoc = $this->input->post('iddoc');
-        $this->venta->facturar_venta($venta_id, $iddoc);
-        $data['venta'] = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
-
-        if (valueOptionDB('FACTURACION', 0) == 1 && ($data['venta']->id_documento == 1 || $data['venta']->id_documento == 3)) {
-            $data['facturacion'] = $this->db->get_where('facturacion', array(
-                        'documento_tipo' => sumCod($data['venta']->id_documento, 2),
-                        'ref_id' => $data['venta']->venta_id
-                    ))->row();
-        }
-
-        header('Content-Type: application/json');
-        echo json_encode($data);
-    }
-
-    function get_venta_previa() {
+    function get_venta_previa()
+    {
         $venta_id = $this->input->post('venta_id');
         $data['venta'] = $this->venta->get_venta_detalle($venta_id);
         $data['facturacion_venta'] = null;
@@ -202,7 +184,30 @@ class venta_new extends MY_Controller {
         $this->load->view('menu/venta/dialog_venta_previa', $data);
     }
 
-    function refresh_productos() {
+    public function get_nota_credito()
+    {
+        $nc_id = $this->input->post('nc_id');
+
+        $nc = $this->db
+            ->join('usuario', 'usuario.nUsuCodigo = notas_credito.usuario_id')
+            ->get_where('notas_credito', array('id' => $nc_id))->row();
+        $nc->detalles = $this->db->select("
+            nc_d.cantidad, nc_d.precio, p.producto_nombre, p.producto_id, p.producto_codigo_interno, u.nombre_unidad as um
+            ")
+            ->from('notas_credito_detalle as nc_d')
+            ->join('detalle_venta as dv', 'dv.id_detalle = nc_d.detalle_id')
+            ->join('producto as p', 'p.producto_id = dv.id_producto')
+            ->join('unidades as u', 'u.id_unidad = dv.unidad_medida')
+            ->where('notas_credito_id', $nc->id)
+            ->get()->result();
+
+        $data['venta'] = $this->venta->get_ventas(array('venta_id' => $nc->venta_id));
+        $data['notas_credito'] = $nc;
+        $this->load->view('menu/venta/vista_nota_credito', $data);
+    }
+
+    function refresh_productos()
+    {
         $data['productos'] = $this->producto_model->get_productos_list();
         header('Content-Type: application/json');
         echo json_encode($data);
@@ -255,6 +260,66 @@ class venta_new extends MY_Controller {
         } else {
             $this->load->view('menu/template', $dataCuerpo);
         }
+    }
+
+    // Facturo una venta al credito ya sea manual o cuando pague la totalidad de las cuotas (2018-10-19) Antonio Martin
+    function facturar_venta()
+    {
+        header('Content-Type: application/json');
+
+        // Obtengo los parametros enviados
+        $venta_id = $this->input->post('venta_id');
+        $iddoc = $this->input->post('iddoc');
+
+        // Valido que los parametros esten correctos
+        $venta_id = $venta_id != "" && is_numeric($venta_id) ? $venta_id : false;
+        $iddoc = $iddoc != "" && is_numeric($iddoc) && ($iddoc == 1 || $iddoc == 3 || $iddoc == 6) ? $iddoc : false;
+
+        if ($venta_id == false || $iddoc == false) {
+            $data['success'] = 0;
+            $data['msg'] = "Los parametros enviados no son correctos";
+            echo json_encode($data);
+            return false;
+        }
+
+        // Comienzo el proceso de facturacion de la venta
+        $data['venta'] = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
+
+        // Hago validaciones de logica del negocio para evitar conflictos
+        if ($data['venta']->venta_status != 'COMPLETADO' || $data['venta']->serie != NULL || $data['venta']->numero != NULL) {
+            $data['success'] = 0;
+            $data['msg'] = "Esta venta ha sido facturada anteriormente.";
+            echo json_encode($data);
+            return false;
+        }
+
+        $this->db->trans_begin();
+
+        $this->venta->facturar_venta($venta_id, $iddoc);
+
+        $this->db->trans_complete();
+        if ($this->db->trans_status() === FALSE) {
+            $this->db->trans_rollback();
+            $data['success'] = 0;
+            $data['msg'] = "Error de base de datos al inentar anular la venta.";
+            echo json_encode($data);
+            return false;
+        }
+
+        $this->db->trans_commit();
+
+        $data['venta'] = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
+
+        if (valueOptionDB('FACTURACION', 0) == 1 && ($data['venta']->id_documento == 1 || $data['venta']->id_documento == 3)) {
+            $data['facturacion'] = $this->db->get_where('facturacion', array(
+                'documento_tipo' => sumCod($data['venta']->id_documento, 2),
+                'ref_id' => $data['venta']->venta_id
+            ))->row();
+        }
+
+        $data['success'] = 1;
+        $data['msg'] = "La venta ha sido facturada correctamente.";
+        echo json_encode($data);
     }
 
     // Guardo la venta (2018-10-17) Antonio Martin
@@ -427,96 +492,24 @@ class venta_new extends MY_Controller {
         echo json_encode($data);
     }
 
-    function set_stock() {
-        $stock_minimo = $this->input->post('stock_minimo');
-        $stock_total_minimo = $this->input->post('stock_total_minimo');
-        $producto_id = $this->input->post('producto_id');
-        $local_id = $this->input->post('local_id');
-
-        $old_cantidad = $this->db->get_where('producto_almacen', array('id_producto' => $producto_id, 'id_local' => $local_id))->row();
-        $old_cantidad_min = $old_cantidad != NULL ? $this->unidades_model->convert_minimo_um($producto_id, $old_cantidad->cantidad, $old_cantidad->fraccion) : 0;
-        $data['stock_actual'] = $this->unidades_model->get_cantidad_fraccion($producto_id, $old_cantidad_min - $stock_minimo);
-
-        $locales = $this->local_model->get_local_by_user($this->session->userdata('nUsuCodigo'));
-        $all_cantidad_min = 0;
-        foreach ($locales as $local) {
-            $cantidad = $this->db->get_where('producto_almacen', array('id_producto' => $producto_id, 'id_local' => $local->local_id))->row();
-            $temp = $cantidad != NULL ? $this->unidades_model->convert_minimo_um($producto_id, $cantidad->cantidad, $cantidad->fraccion) : 0;
-            $all_cantidad_min += $temp;
-        }
-
-        $data['stock_total'] = $this->unidades_model->get_cantidad_fraccion($producto_id, $all_cantidad_min - $stock_total_minimo);
-
-        $data['stock_minimo'] = $old_cantidad_min;
-        $data['stock_total_minimo'] = $all_cantidad_min;
-
-        $data['stock_minimo_left'] = $old_cantidad_min - $stock_minimo;
-        $data['stock_total_minimo_left'] = $all_cantidad_min - $stock_total_minimo;
-
-        if (validOption('ACTIVAR_SHADOW', 1)) {
-            $data['shadow'] = $this->shadow_model->get_stock($producto_id);
-        }
-
-
-        header('Content-Type: application/json');
-        echo json_encode($data);
-    }
-
-    function set_stock_desglose() {
-        $locales = $this->local_model->get_local_by_user($this->session->userdata('nUsuCodigo'));
-        $producto_id = $this->input->post('producto_id');
-
-
-        foreach ($locales as $local) {
-            $old_cantidad = $this->db->get_where('producto_almacen', array('id_producto' => $producto_id, 'id_local' => $local->local_id))->row();
-            $old_cantidad_min = $old_cantidad != NULL ? $this->unidades_model->convert_minimo_um($producto_id, $old_cantidad->cantidad, $old_cantidad->fraccion) : 0;
-            $data['locales'][] = $local->local_nombre;
-            $data['stock_desgloses'][] = $this->unidades_model->get_cantidad_fraccion($producto_id, $old_cantidad_min);
-        }
-
-        header('Content-Type: application/json');
-        echo json_encode($data);
-    }
-
-    function get_productos_unidades($moneda_id = '') {
-        $producto_id = $this->input->post('producto_id');
-        $precio_id = $this->input->post('precio_id');
-
-        $data['unidades'] = $this->unidades_model->get_unidades_precios($producto_id, $precio_id);
-
-        $data['moneda'] = $this->unidades_model->get_moneda_default($producto_id);
-
-        if (validOption('ACTIVAR_SHADOW', 1)) {
-            if ($moneda_id != '')
-                $data['precio_contable'] = $this->shadow_model->get_precio_contable($producto_id, $moneda_id);
-        }
-
-        header('Content-Type: application/json');
-        echo json_encode($data);
-    }
-
-    function get_productos_precios() {
-        $producto_id = $this->input->post('producto_id');
-        $precio_id = $this->input->post('precio_id');
-
-        $data['unidades'] = $this->unidades_model->get_unidades_precios($producto_id, $precio_id);
-
-        header('Content-Type: application/json');
-        echo json_encode($data);
-    }
-
-    function update_cliente() {
-        $data['clientes'] = $data["clientes"] = $this->cliente_model->get_all();
-
-        header('Content-Type: application/json');
-        echo json_encode($data);
-    }
-
-    // Anulacion de ventas (2018-10-16) Antonio Martin
-    function anular_modal() {
+    // Anulacion de ventas, Muestro el modal para anular la venta (2018-10-16) Antonio Martin
+    function anular_modal()
+    {
+        // Obtengo los parametros enviados
         $venta_id = $this->input->post('venta_id');
         $local_id = $this->input->post('local_id');
         $moneda_id = $this->input->post('moneda_id');
+
+        // Valido que los parametros esten correctos
+        $venta_id = $venta_id != "" && is_numeric($venta_id) ? $venta_id : false;
+        $local_id = $local_id != "" && is_numeric($local_id) ? $local_id : false;
+        $moneda_id = $moneda_id != "" && is_numeric($moneda_id) ? $moneda_id : false;
+
+        if ($venta_id == false || $local_id == false || $moneda_id == false) {
+            $data['error'] = 'Los parametros enviados no estan correctos';
+            echo $this->load->view('errors/html/error_404_modal', $data, TRUE);
+            return false;
+        }
 
         $data['venta'] = $this->venta->get_venta_detalle($venta_id);
         $data['metodos_pago'] = $this->db->get_where('metodos_pago', array('status_metodo' => 1))->result();
@@ -529,11 +522,19 @@ class venta_new extends MY_Controller {
                         ->where('caja_desglose.estado', 1)
                         ->get()->result();
 
+        // Verifico si hay cuentas validas
+        if (count($data['cuentas']) == 0) {
+            $data['error'] = 'No se ha podido obtener una cuenta valida.';
+            echo $this->load->view('errors/html/error_404_modal', $data, TRUE);
+            return false;
+        }
+
         echo $this->load->view('menu/venta/anular_modal', $data, TRUE);
     }
 
-    // Anulacion de ventas (2018-10-16) Antonio Martin
-    function anular_venta() {
+    // Anulacion de ventas, ejecuto el proceso de anular una venta (2018-10-16) Antonio Martin
+    function anular_venta()
+    {
         header('Content-Type: application/json');
 
         // Obtengo los parametros enviados
@@ -601,39 +602,273 @@ class venta_new extends MY_Controller {
         echo json_encode($data);
     }
 
-    function get_venta_cobro() {
+    // Crear nota de credito a una venta, Muestro el modal para la nota de credito de la venta (2018-10-16) Antonio Martin
+    function credito_modal()
+    {
+        // Obtengo los parametros enviados
         $venta_id = $this->input->post('venta_id');
+        $local_id = $this->input->post('local_id');
+        $moneda_id = $this->input->post('moneda_id');
+
+
+        // Valido que los parametros esten correctos
+        $venta_id = $venta_id != "" && is_numeric($venta_id) ? $venta_id : false;
+        $local_id = $local_id != "" && is_numeric($local_id) ? $local_id : false;
+        $moneda_id = $moneda_id != "" && is_numeric($moneda_id) ? $moneda_id : false;
+
+        if ($venta_id == false || $local_id == false || $moneda_id == false) {
+            $data['error'] = 'Los parametros enviados no estan correctos';
+            echo $this->load->view('errors/html/error_404_modal', $data, TRUE);
+            return false;
+        }
+
         $data['venta'] = $this->venta->get_venta_detalle($venta_id);
+
+        // Solo pueden crearse notas de credito de boletas o facturas
+        if ($data['venta']->documento_id != 1 && $data['venta']->documento_id != 3) {
+            $data['error'] = 'Solo pueden crearse notas de creditos a documentos fiscales';
+            echo $this->load->view('errors/html/error_404_modal', $data, TRUE);
+            return false;
+        }
+
+        $data['metodos_pago'] = $this->db->get_where('metodos_pago', array('status_metodo' => 1))->result();
+
+        if (valueOptionDB('FACTURACION', 0) == 1) {
+            if ($data['venta']->documento_id == 1) {
+                $correlativo = $this->correlativos_model->get_correlativo($data['venta']->local_id, 9);
+            }
+            if ($data['venta']->documento_id == 3) {
+                $correlativo = $this->correlativos_model->get_correlativo($data['venta']->local_id, 8);
+            }
+        } else {
+            $correlativo = $this->correlativos_model->get_correlativo($data['venta']->local_id, 2);
+        }
+
+        if (isset($correlativo)) {
+            $data['nota_credito_numero'] = $correlativo->serie . '-' . sumCod($correlativo->correlativo, 8);
+        } else {
+            $data['error'] = 'No se ha podido obtener el siguiente correlativo de la nota de credito';
+            echo $this->load->view('errors/html/error_404_modal', $data, TRUE);
+            return false;
+        }
+
+        $data['cuentas'] = $this->db->select('caja_desglose.*')
+            ->from('caja_desglose')
+            ->join('caja', 'caja.id = caja_desglose.caja_id')
+            ->where('caja.local_id', $local_id)
+            ->where('caja.moneda_id', $moneda_id)
+            ->where('caja_desglose.estado', 1)
+            ->get()->result();
+
+        // Verifico si hay cuentas validas
+        if (count($data['cuentas']) == 0) {
+            $data['error'] = 'No se ha podido obtener una cuenta valida.';
+            echo $this->load->view('errors/html/error_404_modal', $data, TRUE);
+            return false;
+        }
+
+        echo $this->load->view('menu/venta/credito_modal', $data, TRUE);
+    }
+
+    // Crear nota de credito a una venta, Muestro el modal para la nota de credito de la venta (2018-10-16) Antonio Martin
+    function nota_credito_venta()
+    {
+        header('Content-Type: application/json');
+
+        // Obtengo los parametros enviados
+        $venta_id = $this->input->post('venta_id');
+        $metodo_pago = $this->input->post('metodo_pago');
+        $cuenta_id = $this->input->post('cuenta_id');
+        $motivo = $this->input->post('motivo');
+        $nc_detalles = json_decode($this->input->post('nc_detalles'));
+
+        // Valido que los parametros esten correctos
+        $venta_id = $venta_id != "" && is_numeric($venta_id) ? $venta_id : false;
+        $metodo_pago = $metodo_pago != "" && is_numeric($metodo_pago) ? $metodo_pago : false;
+        $cuenta_id = $cuenta_id != "" && is_numeric($cuenta_id) ? $cuenta_id : false;
+        $motivo = $motivo != "" ? $motivo : false;
+
+
+        if ($venta_id == false || $metodo_pago == false || $metodo_pago == false || $motivo == false) {
+            $data['success'] = 0;
+            $data['msg'] = "Los parametros enviados no son correctos";
+            echo json_encode($data);
+            return false;
+        }
+
+
+        // valido que las cantidades enviadas a anular esten correctas
+        $total_detalle_devuelto = 0;
+        foreach ($nc_detalles as $d) {
+            $total_detalle_devuelto += $d->cantidad;
+
+            $detalle = $this->db->get_where('detalle_venta', array('id_detalle' => $d->detalle_id))->row();
+            if ($detalle == null || $d->cantidad == "" || !is_numeric($d->cantidad) || $d->cantidad <= 0) {
+                $data['success'] = 0;
+                $data['msg'] = "Los parametros enviados en el detalles de los productos no son correctos";
+                echo json_encode($data);
+                return false;
+            }
+
+            $cantidad_devuelta = $detalle->cantidad_devuelta == null ? 0 : $detalle->cantidad_devuelta;
+            if ($d->cantidad > ($detalle->cantidad - $cantidad_devuelta)) {
+                $data['success'] = 0;
+                $data['msg'] = "No puede devolver una cantidad mayor a la venta original";
+                echo json_encode($data);
+                return false;
+            }
+        }
+
+        // valido que la venta cumpla con las condiciones requeridas
+        $venta = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
+
+        // Validar que la venta este en estado completada
+        if ($venta->venta_status != 'COMPLETADO') {
+            $data['success'] = 0;
+            $data['msg'] = "Solo pueden crearse notas de credito de una venta con un estado completado";
+            echo json_encode($data);
+            return false;
+        }
+
+        // validar que sea un documento fiscal
+        if ($venta->id_documento != 1 && $venta->id_documento != 3) {
+            $data['success'] = 0;
+            $data['msg'] = "Solo pueden crearse notas de creditos a documentos fiscales";
+            echo json_encode($data);
+            return false;
+        }
+
+        // Validar que la venta sea facturada
+        if ($venta->numero == null) {
+            $data['success'] = 0;
+            $data['msg'] = "Solo pueden hacerse notas de credito a ventas facturadas";
+            echo json_encode($data);
+            return false;
+        }
+
+        if ($venta->condicion_pago == 2) {
+
+            $detalle_venta = $this->db->select_sum('cantidad', 'total_cantidad')
+                ->from('detalle_venta')
+                ->where('id_venta', $venta->venta_id)
+                ->get()->row();
+
+            if ($detalle_venta->total_cantidad != $total_detalle_devuelto) {
+                $data['success'] = 0;
+                $data['msg'] = "Solo pueden hacerse devoluciones totales para las ventas al credito.";
+                echo json_encode($data);
+                return false;
+            }
+        }
+
+        // Creo la nota de credito
+        $result = $this->venta->crear_nota_credito($venta_id, $metodo_pago, $cuenta_id, $motivo, $nc_detalles);
+        if ($result !== FALSE) {
+            $data['success'] = 1;
+            $data['msg'] = "La nota de credito " . $result->serie . "-" . $result->numero . " se ha hecho correctamente.";
+        } else {
+            $data['success'] = 0;
+            $data['msg'] = "Error de base de datos al inentar crear la nota de credito.";
+        }
+
+        echo json_encode($data);
+        return false;
+    }
+
+    function set_stock()
+    {
+        $stock_minimo = $this->input->post('stock_minimo');
+        $stock_total_minimo = $this->input->post('stock_total_minimo');
+        $producto_id = $this->input->post('producto_id');
+        $local_id = $this->input->post('local_id');
+
+        $old_cantidad = $this->db->get_where('producto_almacen', array('id_producto' => $producto_id, 'id_local' => $local_id))->row();
+        $old_cantidad_min = $old_cantidad != NULL ? $this->unidades_model->convert_minimo_um($producto_id, $old_cantidad->cantidad, $old_cantidad->fraccion) : 0;
+        $data['stock_actual'] = $this->unidades_model->get_cantidad_fraccion($producto_id, $old_cantidad_min - $stock_minimo);
+
+        $locales = $this->local_model->get_local_by_user($this->session->userdata('nUsuCodigo'));
+        $all_cantidad_min = 0;
+        foreach ($locales as $local) {
+            $cantidad = $this->db->get_where('producto_almacen', array('id_producto' => $producto_id, 'id_local' => $local->local_id))->row();
+            $temp = $cantidad != NULL ? $this->unidades_model->convert_minimo_um($producto_id, $cantidad->cantidad, $cantidad->fraccion) : 0;
+            $all_cantidad_min += $temp;
+        }
+
+        $data['stock_total'] = $this->unidades_model->get_cantidad_fraccion($producto_id, $all_cantidad_min - $stock_total_minimo);
+
+        $data['stock_minimo'] = $old_cantidad_min;
+        $data['stock_total_minimo'] = $all_cantidad_min;
+
+        $data['stock_minimo_left'] = $old_cantidad_min - $stock_minimo;
+        $data['stock_total_minimo_left'] = $all_cantidad_min - $stock_total_minimo;
+
+        if (validOption('ACTIVAR_SHADOW', 1)) {
+            $data['shadow'] = $this->shadow_model->get_stock($producto_id);
+        }
+
 
         header('Content-Type: application/json');
         echo json_encode($data);
     }
 
-    function devolver_detalle() {
-        $venta_id = $this->input->post('venta_id');
-        $data['venta'] = $this->venta->get_venta_detalle($venta_id);
-        $data['detalle'] = 'devolver';
-        $this->load->view('menu/venta/historial_list_detalle', $data);
+    function set_stock_desglose()
+    {
+        $locales = $this->local_model->get_local_by_user($this->session->userdata('nUsuCodigo'));
+        $producto_id = $this->input->post('producto_id');
+
+
+        foreach ($locales as $local) {
+            $old_cantidad = $this->db->get_where('producto_almacen', array('id_producto' => $producto_id, 'id_local' => $local->local_id))->row();
+            $old_cantidad_min = $old_cantidad != NULL ? $this->unidades_model->convert_minimo_um($producto_id, $old_cantidad->cantidad, $old_cantidad->fraccion) : 0;
+            $data['locales'][] = $local->local_nombre;
+            $data['stock_desgloses'][] = $this->unidades_model->get_cantidad_fraccion($producto_id, $old_cantidad_min);
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode($data);
     }
 
-    function devolver_venta() {
-        $venta_id = $this->input->post('venta_id');
-        $total_importe = $this->input->post('total_importe');
-        $devoluciones = json_decode($this->input->post('devoluciones'));
-        $numero = $this->input->post('numero');
-        $serie = $this->input->post('serie');
-        $metodo_pago = $this->input->post('metodo_pago');
-        $cuenta_id = $this->input->post('cuenta_id');
-        $motivo = $this->input->post('motivo');
-        $this->venta->devolver_venta($venta_id, $total_importe, $devoluciones, $serie, $numero, $metodo_pago, $cuenta_id, $motivo);
+    function get_productos_unidades($moneda_id = '')
+    {
+        $producto_id = $this->input->post('producto_id');
+        $precio_id = $this->input->post('precio_id');
 
-        $data['venta'] = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
-        if (valueOptionDB('FACTURACION', 0) == 1 && ($data['venta']->id_documento == 1 || $data['venta']->id_documento == 3)) {
-            $data['facturacion'] = $this->db->order_by('id', 'desc')->get_where('facturacion', array(
-                        'documento_tipo' => '07',
-                        'ref_id' => $data['venta']->venta_id
-                    ))->row();
+        $data['unidades'] = $this->unidades_model->get_unidades_precios($producto_id, $precio_id);
+
+        $data['moneda'] = $this->unidades_model->get_moneda_default($producto_id);
+
+        if (validOption('ACTIVAR_SHADOW', 1)) {
+            if ($moneda_id != '')
+                $data['precio_contable'] = $this->shadow_model->get_precio_contable($producto_id, $moneda_id);
         }
+
+        header('Content-Type: application/json');
+        echo json_encode($data);
+    }
+
+    function get_productos_precios()
+    {
+        $producto_id = $this->input->post('producto_id');
+        $precio_id = $this->input->post('precio_id');
+
+        $data['unidades'] = $this->unidades_model->get_unidades_precios($producto_id, $precio_id);
+
+        header('Content-Type: application/json');
+        echo json_encode($data);
+    }
+
+    function update_cliente()
+    {
+        $data['clientes'] = $data["clientes"] = $this->cliente_model->get_all();
+
+        header('Content-Type: application/json');
+        echo json_encode($data);
+    }
+
+    function get_venta_cobro()
+    {
+        $venta_id = $this->input->post('venta_id');
+        $data['venta'] = $this->venta->get_venta_detalle($venta_id);
 
         header('Content-Type: application/json');
         echo json_encode($data);

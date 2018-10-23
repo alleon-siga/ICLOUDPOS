@@ -37,7 +37,6 @@ class venta_new_model extends CI_Model
             venta.id_documento as documento_id,
             documentos.des_doc as documento_nombre,
             documentos.abr_doc as documento_abr,
-            correlativos.serie as serie_documento,
             venta.factura_impresa as factura_impresa,
             venta.id_cliente as cliente_id,
             cliente.razon_social as cliente_nombre,
@@ -80,7 +79,6 @@ class venta_new_model extends CI_Model
             ->join('cliente', 'venta.id_cliente=cliente.id_cliente')
             ->join('usuario', 'venta.id_vendedor=usuario.nUsuCodigo')
             ->join('moneda', 'venta.id_moneda=moneda.id_moneda')
-            ->join('correlativos', 'venta.id_documento=correlativos.id_documento and venta.local_id=correlativos.id_local', 'left')
             ->join('local', 'venta.local_id=local.int_local_id')
             ->join('credito', 'venta.venta_id=credito.id_venta', 'left')
             ->order_by('venta.fecha', 'desc');
@@ -151,7 +149,6 @@ class venta_new_model extends CI_Model
 
         return $ventas;
     }
-
 
     function get_ventas_totales($where = array(), $action = '')
     {
@@ -262,7 +259,6 @@ class venta_new_model extends CI_Model
         }
         return $venta;
     }
-
 
     function get_venta_traspaso($id)
     {
@@ -946,6 +942,239 @@ class venta_new_model extends CI_Model
         return sumCod($next_id->venta_id + 1, 8);
     }
 
+    // creo una nota de credito para una venta ya facturada (2018-10-23) Antonio Martin
+    public function crear_nota_credito($venta_id, $metodo_pago, $cuenta_id, $motivo, $nc_detalles, $id_usuario = false)
+    {
+        $venta = $this->get_venta_detalle($venta_id);
+
+        if ($venta->venta_estado != 'COMPLETADO')
+            return FALSE;
+
+        $this->db->trans_begin();
+
+        // Recupero los correlativos dependiendo del tipo de documento
+        $correlativo = null;
+        if (valueOptionDB('FACTURACION', 0) == 1) {
+            if ($venta->documento_id == 1) {
+                $correlativo = $this->correlativos_model->get_correlativo($venta->local_id, 9);
+                $this->correlativos_model->sumar_correlativo($venta->local_id, 9);
+            }
+            if ($venta->documento_id == 3) {
+                $correlativo = $this->correlativos_model->get_correlativo($venta->local_id, 8);
+                $this->correlativos_model->sumar_correlativo($venta->local_id, 8);
+            }
+        } else {
+            $correlativo = $this->correlativos_model->get_correlativo($venta->local_id, 2);
+            $this->correlativos_model->sumar_correlativo($venta->local_id, 2);
+        }
+
+        if ($correlativo == null) {
+            return FALSE;
+        }
+
+
+        // Creo el registro de la nota de credito
+        $this->db->insert('notas_credito', array(
+            'venta_id' => $venta->venta_id,
+            'usuario_id' => $id_usuario == false ? $this->session->userdata('nUsuCodigo') : $id_usuario,
+            'fecha' => date('Y-m-d H:i:s'),
+            'serie' => $correlativo->serie,
+            'numero' => sumCod($correlativo->correlativo, 8),
+            'motivo_codigo' => $motivo
+        ));
+
+        $nota_credito_id = $this->db->insert_id();
+
+        // Guardo el total de importe que se espera devolver de caja
+        $total_importe = 0;
+
+        // Devuelvo las cantidades al inventario
+        foreach ($nc_detalles as $detalle) {
+
+            // Recupero el registro del detalle de la venta
+            $detalle_venta = $this->db->get_where('detalle_venta', array('id_detalle' => $detalle->detalle_id))->row();
+            $cantidad_devuelta = $detalle_venta->cantidad_devuelta == null ? 0 : $detalle_venta->cantidad_devuelta;
+
+            // Guardo el detalle de la nota de credito
+            $this->db->insert('notas_credito_detalle', array(
+                'notas_credito_id' => $nota_credito_id,
+                'detalle_id' => $detalle->detalle_id,
+                'cantidad' => $detalle->cantidad,
+                'precio' => $detalle_venta->precio,
+            ));
+
+            $total_importe += $detalle->cantidad * $detalle_venta->precio;
+
+            $old_cantidad = $this->db->get_where('producto_almacen', array(
+                'id_producto' => $detalle_venta->id_producto,
+                'id_local' => $venta->local_id
+            ))->row();
+
+            $old_cantidad_min = $old_cantidad != NULL ? $this->unidades_model->convert_minimo_um($detalle_venta->id_producto, $old_cantidad->cantidad, $old_cantidad->fraccion) : 0;
+            $cantidad_min = $this->unidades_model->convert_minimo_by_um($detalle_venta->id_producto, $detalle_venta->unidad_medida, $detalle->cantidad);
+
+            $result = $this->unidades_model->get_cantidad_fraccion($detalle_venta->id_producto, $old_cantidad_min + $cantidad_min);
+
+            // Actualizo el inventario
+            if ($old_cantidad != NULL) {
+                $this->db->where('id_producto', $detalle_venta->id_producto);
+                $this->db->where('id_local', $venta->local_id);
+                $this->db->update('producto_almacen', array(
+                    'cantidad' => $result['cantidad'],
+                    'fraccion' => $result['fraccion']
+                ));
+            } else {
+                $this->db->insert('producto_almacen', array(
+                    'id_producto' => $detalle_venta->id_producto,
+                    'id_local' => $venta->local_id,
+                    'cantidad' => $result['cantidad'],
+                    'fraccion' => $result['fraccion']
+                ));
+            }
+
+            // Sumo la cantidad de la nota de credito al registro de devolucion de la tabla detalle_venta
+            $this->db->where('id_detalle', $detalle->detalle_id);
+            $this->db->update('detalle_venta', array('cantidad_devuelta' => $detalle->cantidad + $cantidad_devuelta));
+
+        }
+
+        // Consulto las cantidades que restan de la venta original. Si no queda ninguna cantidad el estado de la venta sera ANULADO
+        $detalles_venta = $this->db->get_where('detalle_venta', array('id_venta' => $venta->venta_id))->result();
+        $cantidades_restantes = 0;
+        foreach ($detalles_venta as $detalle) {
+            $cantidad_devuelta = $detalle->cantidad_devuelta == null ? 0 : $detalle->cantidad_devuelta;
+            $cantidades_restantes += $detalle->cantidad - $cantidad_devuelta;
+        }
+
+        $this->db->where('venta_id', $venta_id);
+        if ($cantidades_restantes == 0 || $venta->condicion_id == 2) {
+            $this->db->update('venta', array(
+                'venta_status' => 'ANULADO',
+                'motivo' => 'NOTA_CREDITO'
+            ));
+        } else {
+            $this->db->update('venta', array(
+                'motivo' => 'NOTA_CREDITO'
+            ));
+        }
+
+
+        //Devuelvo el monto pagado de la venta
+        $total = $total_importe;
+
+        // NOTA: EN LAS VENTAS AL CREDITO SOLO SE PODRAN HACER DEVOLUCIONES TOTALES
+        // En caso de ser venta al credito el total del saldo a devolver es la inicial mas el monto pagado
+        if ($venta->condicion_id == 2) {
+            $total = $venta->inicial > 0 ? $venta->inicial : 0;
+            $cobranzas = $this->db->select_sum('credito_cuotas_abono.monto_abono', 'total')
+                ->from('credito_cuotas_abono')
+                ->join('credito_cuotas', 'credito_cuotas.id_credito_cuota = credito_cuotas_abono.credito_cuota_id')
+                ->where('credito_cuotas.id_venta', $venta->venta_id)
+                ->get()->row();
+            $total += $cobranzas->total;
+        }
+
+        if ($total > 0) {
+            $caja_desglose = array(
+                'monto' => $total,
+                'tipo' => 'NOTA_CREDITO',
+                'IO' => 2,
+                'ref_id' => $venta_id,
+                'moneda_id' => $venta->moneda_id,
+                'local_id' => $venta->local_id,
+                'id_usuario' => $id_usuario == false ? $this->session->userdata('nUsuCodigo') : $id_usuario,
+                'ref_val' => $metodo_pago
+            );
+
+            $caja_desglose['cuenta_id'] = $cuenta_id;
+            $this->cajas_model->save_pendiente($caja_desglose);
+        }
+
+
+        //Guardo registro en el Kardex
+        if ($venta->documento_id == 1 || $venta->documento_id == 3) {
+            $nc = $this->db->get_where('notas_credito', array('id' => $nota_credito_id))->row();
+
+            $cantidades = array();
+            foreach ($nc_detalles as $detalle) {
+                // Recupero el registro del detalle de la venta
+                $detalle_venta = $this->db->get_where('detalle_venta', array('id_detalle' => $detalle->detalle_id))->row();
+
+                if (!isset($cantidades[$detalle_venta->id_producto])) {
+
+                    // Dependiendo del tipo de impuesto en la venta calculo el costo para guardar en el kardex
+                    $precio_min = $this->unidades_model->get_maximo_costo($detalle_venta->id_producto, $detalle_venta->unidad_medida, $detalle_venta->precio);
+                    $costo = $precio_min;
+                    if ($detalle_venta->afectacion_impuesto == 1 && $venta->tipo_impuesto == 1) {
+                        $costo = $costo / ((100 + $detalle_venta->impuesto_porciento) / 100);
+                    }
+
+                    if ($venta->moneda_id != MONEDA_DEFECTO) {
+                        $costo = $costo * $venta->moneda_tasa;
+                    }
+
+                    $cantidades[$detalle_venta->id_producto] = array(
+                        'cantidad' => 0,
+                        'costo' => $costo,
+                    );
+                }
+
+                $cantidades[$detalle_venta->id_producto]['cantidad'] += $this->unidades_model->convert_minimo_by_um(
+                    $detalle_venta->id_producto,
+                    $detalle_venta->unidad_medida,
+                    $detalle->cantidad
+                );
+            }
+
+            $motivos = array(
+                '01' => 'Anulacion de la operacion',
+                '02' => 'Anulacion por error en el RUC',
+                '03' => 'Correccion por error en la descripcion',
+                '04' => 'Descuento global',
+                '05' => 'Descuento por item',
+                '06' => 'Devolucion total',
+                '07' => 'Devolucion por item',
+                '08' => 'Bonificacion',
+                '09' => 'Disminucion en el valor'
+            );
+
+            $ref = 'BO ';
+            if ($venta->documento_id == 1)
+                $ref = 'FA ';
+            $ref .= $venta->serie . '-' . sumCod($venta->numero, 8);
+
+            foreach ($cantidades as $key => $value) {
+
+                $values = array(
+                    'local_id' => $venta->local_id,
+                    'producto_id' => $key,
+                    'cantidad' => $value['cantidad'] * -1,
+                    'io' => 2,
+                    'tipo' => 7,
+                    'operacion' => 5,
+                    'serie' => $nc->serie,
+                    'numero' => sumCod($nc->numero, 8),
+                    'ref_id' => $nc->id,
+                    'ref_val' => $motivos[$motivo] . ' (' . $ref . ')',
+                    'usuario_id' => $id_usuario === FALSE ? $this->session->userdata('nUsuCodigo') : $id_usuario,
+                    'costo' => $value['costo'],
+                    'moneda_id' => $venta->moneda_id
+                );
+                $this->kardex_model->set_kardex($values);
+            }
+
+        }
+
+        $this->db->trans_complete();
+        if ($this->db->trans_status() === FALSE) {
+            $this->db->trans_rollback();
+            return FALSE;
+        }
+
+        $this->db->trans_commit();
+        return $nc;
+    }
+
     // Anulo una venta ya facturada (2018-10-16) Antonio Martin
     public function anular_venta($venta_id, $metodo_pago, $cuenta_id, $motivo, $id_usuario = false)
     {
@@ -1011,22 +1240,25 @@ class venta_new_model extends CI_Model
             $total += $cobranzas->total;
         }
 
-        $caja_desglose = array(
-            'monto' => $total,
-            'tipo' => 'VENTA_ANULADA',
-            'IO' => 2,
-            'ref_id' => $venta_id,
-            'moneda_id' => $venta->moneda_id,
-            'local_id' => $venta->local_id,
-            'id_usuario' => $id_usuario == false ? $this->session->userdata('nUsuCodigo') : $id_usuario,
-            'ref_val' => $metodo_pago
-        );
+        if ($total > 0) {
+            $caja_desglose = array(
+                'monto' => $total,
+                'tipo' => 'VENTA_ANULADA',
+                'IO' => 2,
+                'ref_id' => $venta_id,
+                'moneda_id' => $venta->moneda_id,
+                'local_id' => $venta->local_id,
+                'id_usuario' => $id_usuario == false ? $this->session->userdata('nUsuCodigo') : $id_usuario,
+                'ref_val' => $metodo_pago
+            );
 
-        $caja_desglose['cuenta_id'] = $cuenta_id;
-        $this->cajas_model->save_pendiente($caja_desglose);
+            $caja_desglose['cuenta_id'] = $cuenta_id;
+            $this->cajas_model->save_pendiente($caja_desglose);
+        }
+
 
         //Guardo registro en el Kardex
-        if ($venta->documento_id == 1 || $venta->documento_id == 3) {
+        if (($venta->documento_id == 1 || $venta->documento_id == 3) && $venta->numero != null) {
 
             $cantidades = array();
             foreach ($venta->detalles as $detalle) {
@@ -1146,174 +1378,6 @@ class venta_new_model extends CI_Model
 
         $this->db->trans_commit();
         return $venta_id;
-    }
-
-    public function devolver_venta($venta_id, $total_importe, $devoluciones, $serie, $numero, $metodo_pago, $cuenta_id, $motivo, $id_usuario = false)
-    {
-        $venta = $this->get_venta_detalle($venta_id);
-
-        $cantidades = array();
-        $afectacion_impuesto = array();
-        $precio = array();
-        $impuesto_porciento = array();
-        foreach ($devoluciones as $detalle) {
-
-            if (!isset($cantidades[$detalle->producto_id]))
-                $cantidades[$detalle->producto_id] = 0;
-
-            $cantidades[$detalle->producto_id] += $this->unidades_model->convert_minimo_by_um(
-                $detalle->producto_id,
-                $detalle->unidad_id,
-                $detalle->devolver
-            );
-            $precio[$detalle->producto_id] = $this->unidades_model->get_maximo_costo($detalle->producto_id, $detalle->unidad_id, $detalle->precio);
-            $detalle_temp = $this->db->get_where('detalle_venta', array('id_detalle' => $detalle->detalle_id))->row();
-            $detalle->impuesto_porciento = $detalle_temp->impuesto_porciento;
-            $impuesto_porciento[$detalle->producto_id] = $detalle->impuesto_porciento;
-            $afectacion_impuesto[$detalle->producto_id] = $detalle_temp->afectacion_impuesto;
-
-            $this->db->where('id_detalle', $detalle->detalle_id);
-            $this->db->select('cantidad_devuelta');
-            $this->db->from('detalle_venta');
-            $cantidadD = $this->db->get()->row();
-
-            $this->db->where('id_detalle', $detalle->detalle_id);
-            $this->db->update('detalle_venta', array(
-                'cantidad_devuelta' => $cantidadD->cantidad_devuelta + $detalle->devolver,
-                'detalle_importe' => $detalle->new_importe
-            ));
-            //Guardando en tabla venta_devolucion
-            /*$this->db->insert('venta_devolucion', array(
-                'id_venta' => $venta_id,
-                'id_producto' => $detalle->producto_id,
-                'precio' => $detalle->precio,
-                'cantidad' => $detalle->devolver,
-                'unidad_medida' => $detalle->unidad_id,
-                'detalle_importe' => $detalle->devolver * $detalle->precio,
-                'serie' => $serie,
-                'numero' => $numero
-            ));*/
-        }
-
-        foreach ($cantidades as $key => $value) {
-
-            $old_cantidad = $this->db->get_where('producto_almacen', array(
-                'id_producto' => $key,
-                'id_local' => $venta->local_id
-            ))->row();
-
-            $old_cantidad_min = $old_cantidad != NULL ? $this->unidades_model->convert_minimo_um($key, $old_cantidad->cantidad, $old_cantidad->fraccion) : 0;
-
-            $result = $this->unidades_model->get_cantidad_fraccion($key, $old_cantidad_min + $value);
-
-            /*$this->historico_model->set_historico(array(
-                'producto_id' => $key,
-                'local_id' => $venta->local_id,
-                'cantidad' => $value,
-                'cantidad_actual' => $this->unidades_model->convert_minimo_um($key, $result['cantidad'], $result['fraccion']),
-                'tipo_movimiento' => "DEVOLUCION",
-                'tipo_operacion' => 'ENTRADA',
-                'referencia_valor' => 'Devolucion de Ventas',
-                'referencia_id' => $venta_id
-            ));*/
-
-            $this->db->where('io', 2);
-            $this->db->where('operacion', 1);
-            $this->db->where('ref_id', $venta_id);
-            $referencias = $this->db->get('kardex')->row();
-
-            if (!isset($referencias->ref_val))
-                $referencias->ref_val == "";
-
-            $costo = 0;
-            if ($afectacion_impuesto[$key] == '1') {
-                if ($venta->tipo_impuesto == 1) { //incluye impuesto
-                    $costo = $precio[$key] / (($impuesto_porciento[$key] / 100) + 1);
-                } else { //agrega impuesto
-                    $costo = $precio[$key];
-                }
-            } else {
-                $costo = $precio[$key];
-            }
-
-            if ($venta->moneda_tasa > 0) {
-                $costo = $costo * $venta->moneda_tasa;
-            }
-
-            $values = array(
-                'local_id' => $venta->local_id,
-                'producto_id' => $key,
-                'cantidad' => $value * -1,
-                'io' => 2,
-                'tipo' => 7,
-                'operacion' => 5,
-                'serie' => $serie,
-                'numero' => $numero,
-                'ref_id' => $venta->venta_id,
-                'ref_val' => $referencias->ref_val,
-                'usuario_id' => $id_usuario == false ? $this->session->userdata('nUsuCodigo') : $id_usuario,
-                'costo' => $costo,
-                'moneda_id' => $venta->moneda_id
-            );
-            $this->kardex_model->set_kardex($values);
-
-            if ($old_cantidad != NULL) {
-                $this->db->where('id_producto', $key);
-                $this->db->where('id_local', $venta->local_id);
-                $this->db->update('producto_almacen', array(
-                    'cantidad' => $result['cantidad'],
-                    'fraccion' => $result['fraccion']
-                ));
-            } else {
-                $this->db->insert('producto_almacen', array(
-                    'id_producto' => $key,
-                    'id_local' => $venta->local_id,
-                    'cantidad' => $result['cantidad'],
-                    'fraccion' => $result['fraccion']
-                ));
-            }
-        }
-
-        $this->cajas_model->save_pendiente(array(
-            'monto' => $venta->total - $this->recalc_totales($venta->venta_id),
-            'tipo' => 'VENTA_DEVUELTA',
-            'cuenta_id' => $cuenta_id,
-            'IO' => 2,
-            'ref_id' => $venta_id,
-            'moneda_id' => $venta->moneda_id,
-            'local_id' => $venta->local_id,
-            'ref_val' => $metodo_pago,
-            'id_usuario' => $id_usuario == false ? $this->session->userdata('nUsuCodigo') : $id_usuario
-        ));
-
-        if (valueOptionDB('FACTURACION', 0) == 1 && ($venta->documento_id == 1 || $venta->documento_id == 3) && $venta->numero != null) {
-            $facturacion = $this->db->get_where('facturacion', array(
-                'ref_id' => $venta_id,
-                'documento_tipo' => sumCod($venta->documento_id, 2)
-            ))->row();
-
-            if ($facturacion != null) {
-                if ($facturacion->estado == 3 || $facturacion->estado == 2) {
-                    $resp = $this->facturacion_model->devolverVenta($venta_id, $devoluciones, $serie . '-' . $numero, $motivo);
-                } else {
-                    $this->db->where('id', $facturacion->id);
-                    $this->db->delete('facturacion');
-                }
-            }
-
-
-        }
-
-        $venta = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
-        header('Content-Type: application/json');
-
-        if ($venta->id_documento == '1') {
-            $this->correlativos_model->sumar_correlativo($venta->local_id, 9);
-        } elseif ($venta->id_documento == '3') {
-            $this->correlativos_model->sumar_correlativo($venta->local_id, 8);
-        } elseif ($venta->id_documento == '6') {
-            $this->correlativos_model->sumar_correlativo($venta->local_id, 2);
-        }
     }
 
     private function recalc_totales($venta_id)
