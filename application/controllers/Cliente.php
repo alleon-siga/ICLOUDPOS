@@ -1,10 +1,11 @@
-<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 
-class cliente extends MY_Controller
-{
+if (!defined('BASEPATH'))
+    exit('No direct script access allowed');
 
-    function __construct()
-    {
+class cliente extends MY_Controller {
+
+    function __construct() {
         parent::__construct();
         if ($this->login_model->verify_session()) {
             $this->load->model('cliente/cliente_model');
@@ -20,16 +21,12 @@ class cliente extends MY_Controller
             $this->load->model('precio/precios_model');
             $this->load->library('Pdf');
             $this->load->library('phpExcel/PHPExcel.php');
-        }else{
+        } else {
             redirect(base_url(), 'refresh');
         }
     }
 
-
-
-
-    function index()
-    {
+    function index() {
 
         if ($this->session->flashdata('success') != FALSE) {
             $data ['success'] = $this->session->flashdata('success');
@@ -45,14 +42,12 @@ class cliente extends MY_Controller
 
         if ($this->input->is_ajax_request()) {
             echo $dataCuerpo['cuerpo'];
-        }else{
+        } else {
             $this->load->view('menu/template', $dataCuerpo);
         }
     }
 
-
-    function get_all_ajax()
-    {
+    function get_all_ajax() {
 
         if ($this->session->flashdata('success') != FALSE) {
             $data ['success'] = $this->session->flashdata('success');
@@ -66,19 +61,16 @@ class cliente extends MY_Controller
         header('Content-Type: application/json');
 
         echo json_encode($data);
-
     }
 
-
-    function form($id = FALSE)
-    {
+    function form($id = FALSE) {
 
         $data = array();
         $data['grupos'] = $this->clientes_grupos_model->get_all();
         $data['distritos'] = $this->distrito_model->get_all();
         $data['ciudades'] = $this->ciudad_model->get_all();
         $data['estados'] = $this->estado_model->get_all();
-        $data['precios']=$this->precios_model->get_precios();
+        $data['precios'] = $this->precios_model->get_precios();
         $data['operacion'] = TRUE;
 
         //$data['vendedores'] = $this->usuario_model->select_all_user();
@@ -86,13 +78,12 @@ class cliente extends MY_Controller
         empty($data['images']);
 
         if ($id != FALSE) {
-            if($id == '-1'){
+            if ($id == '-1') {
                 $data['new_from_venta'] = '1';
-            }
-            else{
+            } else {
                 $data['cliente'] = $this->cliente_model->get_by('cliente.id_cliente', $id);
                 $data['images'] = $this->get_fotos($id);
-                if($data['cliente']['ruc'] == '1')
+                if ($data['cliente']['ruc'] == '1')
                     $data['operacion'] = $this->cliente_model->check_operaciones($id);
             }
         }
@@ -101,59 +92,56 @@ class cliente extends MY_Controller
         $this->load->view('menu/cliente/form', $data);
     }
 
-    /*este metodo borra todas las imagenes en una carpeta*/
-    function borrartodaimagen($cliente,$arreglo){
+    /* este metodo borra todas las imagenes en una carpeta */
 
-        for($i=0;$i<count($arreglo);$i++){
-            $dir = './clientes/' . $cliente . '/'.$arreglo[$i];
+    function borrartodaimagen($cliente, $arreglo) {
+
+        for ($i = 0; $i < count($arreglo); $i++) {
+            $dir = './clientes/' . $cliente . '/' . $arreglo[$i];
             unlink($dir);
         }
     }
 
-    function get_fotos($id)
-    {
+    function get_fotos($id) {
         $result = array();
         $dir = './clientes/' . $id . '/';
-        if (!is_dir($dir)) return array();
+        if (!is_dir($dir))
+            return array();
         $temp = scandir($dir);
-        foreach($temp as $img){
-            if(is_file($dir.$img))
+        foreach ($temp as $img) {
+            if (is_file($dir . $img))
                 $result[] = $img;
         }
 
         natsort($result);
         return $result;
-
     }
 
-    function validar_ruc()
-    {
-        $ruc=$this->input->post('ruc');
-       /// var_dump($ruc);
-        $buscar=sizeof($this->cliente_model->get_by('identificacion', $ruc));
-        $json['valor']=$buscar;
-        echo json_encode($json);
-    }
-
-    function validar_razon_social()
-    {
-        $ruc=$this->input->post('razon_social');
+    function validar_ruc() {
+        $ruc = $this->input->post('ruc');
         /// var_dump($ruc);
-        $buscar=sizeof($this->cliente_model->get_by('razon_social', $ruc));
-        $json['valor']=$buscar;
+        $buscar = sizeof($this->cliente_model->get_by('identificacion', $ruc));
+        $json['valor'] = $buscar;
         echo json_encode($json);
     }
 
-    function guardar()
-    {
+    function validar_razon_social() {
+        $ruc = $this->input->post('razon_social');
+        /// var_dump($ruc);
+        $buscar = sizeof($this->cliente_model->get_by('razon_social', $ruc));
+        $json['valor'] = $buscar;
+        echo json_encode($json);
+    }
+
+    function guardar() {
         $this->load->library('upload');
 
         $id = $this->input->post('idClientes');
 
         $cliente = array(
             'tipo_cliente' => $this->input->post('tipo_cliente'),
-            'razon_social' => $this->input->post('razon_social_j')!=""?$this->input->post('razon_social_j') : trim($this->input->post('nombres').' '.$this->input->post('apellido_paterno').' '.$this->input->post('apellido_materno')),
-            'identificacion' => $this->input->post('ruc_j')!=""?$this->input->post('ruc_j'): null,
+            'razon_social' => $this->input->post('razon_social_j') != "" ? $this->input->post('razon_social_j') : trim($this->input->post('nombres') . ' ' . $this->input->post('apellido_paterno') . ' ' . $this->input->post('apellido_materno')),
+            'identificacion' => $this->input->post('ruc_j') != "" ? $this->input->post('ruc_j') : null,
             'ruc' => $this->input->post('tipo_iden'),
             'nombres' => $this->input->post('nombres'),
             'apellido_paterno' => $this->input->post('apellido_paterno'),
@@ -162,50 +150,50 @@ class cliente extends MY_Controller
             'email' => $this->input->post('correo'),
             'telefono1' => $this->input->post('telefono'),
             'genero' => $this->input->post('genero'),
-            'direccion' => $this->input->post('direccion_j')?$this->input->post('direccion_j'):null,
-            'distrito' => $this->input->post('distrito_id')!=""?$this->input->post('distrito_id'): null,
-            'provincia' => $this->input->post('estado_id')!=""?$this->input->post('estado_id'): null,
-            'ciudad' => $this->input->post('ciudad_id')!=""?$this->input->post('ciudad_id'): null,
-            'cliente_status' => $this->input->post('estatus_j')?$this->input->post('estatus_j'):null,
-            'grupo_id' => $this->input->post('grupo_id_juridico')!=""?$this->input->post('grupo_id_juridico'): null,
-            'agente_retension' => $this->input->post('retencion')?$this->input->post('retencion'):0,
-            'agente_retension_valor' =>$this->input->post('retencion_value')==0? null: $this->input->post('retencion_value'),
-            'linea_credito' => $this->input->post('lineaC_j')?$this->input->post('lineaC_j'):null,
-            'nota' => $this->input->post('tienda')?$this->input->post('tienda'):null
+            'direccion' => $this->input->post('direccion_j') ? $this->input->post('direccion_j') : null,
+            'distrito' => $this->input->post('distrito_id') != "" ? $this->input->post('distrito_id') : null,
+            'provincia' => $this->input->post('estado_id') != "" ? $this->input->post('estado_id') : null,
+            'ciudad' => $this->input->post('ciudad_id') != "" ? $this->input->post('ciudad_id') : null,
+            'cliente_status' => $this->input->post('estatus_j') ? $this->input->post('estatus_j') : null,
+            'grupo_id' => $this->input->post('grupo_id_juridico') != "" ? $this->input->post('grupo_id_juridico') : null,
+            'agente_retension' => $this->input->post('retencion') ? $this->input->post('retencion') : 0,
+            'agente_retension_valor' => $this->input->post('retencion_value') == 0 ? null : $this->input->post('retencion_value'),
+            'linea_credito' => $this->input->post('lineaC_j') ? $this->input->post('lineaC_j') : null,
+            'nota' => $this->input->post('tienda') ? $this->input->post('tienda') : null
         );
 
-            if (empty($id)) {
-                $resultado = $this->cliente_model->insertar($cliente);
+        if (empty($id)) {
+            $resultado = $this->cliente_model->insertar($cliente);
 
-                if($resultado!=CEDULA_EXISTE and $resultado!=false ){
+            if ($resultado != CEDULA_EXISTE and $resultado != false) {
                 $id = $resultado;
 
                 $padre = $this->input->post('padre');
                 $this->cliente_campo_valor_model->insertar($padre, $id);
-                }
-            } else {
-                $cliente['id_cliente'] = $id;
-                $resultado = $this->cliente_model->update($cliente);
-
-                if($resultado==true){
-                    $where=array(
-                        'campo_cliente'=>$id
-                    );
-                    $this->cliente_campo_valor_model->eliminar_valor_cliente($where);
-
-                    $padre = $this->input->post('padre');
-                    $this->cliente_campo_valor_model->insertar($padre, $id);
-                }
             }
+        } else {
+            $cliente['id_cliente'] = $id;
+            $resultado = $this->cliente_model->update($cliente);
+
+            if ($resultado == true) {
+                $where = array(
+                    'campo_cliente' => $id
+                );
+                $this->cliente_campo_valor_model->eliminar_valor_cliente($where);
+
+                $padre = $this->input->post('padre');
+                $this->cliente_campo_valor_model->insertar($padre, $id);
+            }
+        }
 
 
         if ($resultado != FALSE) {
-            /*esta carga la foto de la persona natural */
-            if($cliente['tipo_cliente']==0){
+            /* esta carga la foto de la persona natural */
+            if ($cliente['tipo_cliente'] == 0) {
 
 
                 if (!empty($_FILES) and $_FILES['userfile']['size'][0] != '0') {
-                    /*borro la imagen actual, ya que solo se permitira ingresar una imagen*/
+                    /* borro la imagen actual, ya que solo se permitira ingresar una imagen */
                     $this->borrartodaimagen($id, $this->get_fotos($id));
 
                     $files = $_FILES;
@@ -255,17 +243,16 @@ class cliente extends MY_Controller
                             $this->upload->do_upload();
                             $contador++;
                         } else {
-
+                            
                         }
                     }
                 }
+            } else {
 
-            }else{
-
-                /*esta carga la imagen de persona juridica la empresa.*/
+                /* esta carga la imagen de persona juridica la empresa. */
                 if (!empty($_FILES) and $_FILES['userfile_je']['size'][0] != '0') {
 
-                    /*borro la imagen actual, ya que solo se permitira ingresar una imagen*/
+                    /* borro la imagen actual, ya que solo se permitira ingresar una imagen */
                     $this->borrartodaimagen($id, $this->get_fotos($id));
 
                     $files = $_FILES;
@@ -317,21 +304,19 @@ class cliente extends MY_Controller
                             $this->upload->do_upload();
                             $contador++;
                         } else {
-
+                            
                         }
                     }
                 }
-
             }
 
-            if($resultado===CEDULA_EXISTE){
+            if ($resultado === CEDULA_EXISTE) {
 
-                $json['error']= CEDULA_EXISTE;
-            }else{
-                $json['success']='Solicitud Procesada con exito';
-                $json['cliente']=$resultado;
+                $json['error'] = CEDULA_EXISTE;
+            } else {
+                $json['success'] = 'Solicitud Procesada con exito';
+                $json['cliente'] = $resultado;
             }
-
         } else {
             $json['error'] = 'Ha ocurrido un error al procesar la solicitud';
         }
@@ -339,11 +324,9 @@ class cliente extends MY_Controller
 
 
         echo json_encode($json);
-
     }
 
-    function set_upload_options($id,$contador,$extension)
-    {
+    function set_upload_options($id, $contador, $extension) {
 
         // upload an image options
         $this->load->helper('path');
@@ -366,24 +349,23 @@ class cliente extends MY_Controller
         return $config;
     }
 
-    /*este metodo borra una imagen especifica*/
-    function eliminarimg(){
+    /* este metodo borra una imagen especifica */
+
+    function eliminarimg() {
         $cliente = $this->input->post('id');
         $nombre = $this->input->post('nombre');
-        $dir = './clientes/' . $cliente . '/'.$nombre;
+        $dir = './clientes/' . $cliente . '/' . $nombre;
         $borrar = unlink($dir);
 
-        if($borrar!=false){
-            $json['success']="Se ha eliminado exitosamente";
-        }else{
-            $json['error']="Ha ocurrido un error al eliminar la imagen";
+        if ($borrar != false) {
+            $json['success'] = "Se ha eliminado exitosamente";
+        } else {
+            $json['error'] = "Ha ocurrido un error al eliminar la imagen";
         }
         echo json_encode($json);
     }
 
-
-    function eliminar()
-    {
+    function eliminar() {
         $id = $this->input->post('id');
         $nombre = $this->input->post('nombre');
         // $identificacion = $this->input->post('identificacion');
@@ -392,18 +374,14 @@ class cliente extends MY_Controller
             'id_cliente' => $id,
             'razon_social' => $nombre . time(),
             //  'identificacion' => $identificacion,
-
             'cliente_status' => 0
-
         );
 
         $data['resultado'] = $this->cliente_model->updateD($cliente);
 
         if ($data['resultado'] != FALSE) {
 
-            $json['success']= 'Se ha eliminado exitosamente';
-
-
+            $json['success'] = 'Se ha eliminado exitosamente';
         } else {
 
             $json['error'] = 'Ha ocurrido un error al eliminar el Cliente';
@@ -412,8 +390,7 @@ class cliente extends MY_Controller
         echo json_encode($json);
     }
 
-    function pdf()
-    {
+    function pdf() {
 
         $clientes = $this->cliente_model->get_all();
 
@@ -432,7 +409,6 @@ class cliente extends MY_Controller
         $pdf->setFooterData($tc = array(0, 64, 0), $lc = array(0, 64, 128));
 
 // datos por defecto de cabecera, se pueden modificar en el archivo tcpdf_config.php de libraries/config
-
 // se pueden modificar en el archivo tcpdf_config.php de libraries/config
         $pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
 
@@ -443,7 +419,6 @@ class cliente extends MY_Controller
 
 // se pueden modificar en el archivo tcpdf_config.php de libraries/config
         //  $pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
-
 //relación utilizada para ajustar la conversión de los píxeles
         $pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
 
@@ -453,7 +428,6 @@ class cliente extends MY_Controller
         $pdf->setFontSubsetting(true);
 
 // Establecer el tipo de letra
-
 //Si tienes que imprimir carácteres ASCII estándar, puede utilizar las fuentes básicas como
 // Helvetica para reducir el tamaño del archivo.
         $pdf->SetFont('helvetica', '', 14, '', true);
@@ -466,9 +440,7 @@ class cliente extends MY_Controller
 
         $textoheader = "";
         $pdf->writeHTMLCell(
-            $w = 0, $h = 0, $x = '60', $y = '',
-            $textoheader, $border = 0, $ln = 1, $fill = 0,
-            $reseth = true, $align = 'C', $autopadding = true);
+                $w = 0, $h = 0, $x = '60', $y = '', $textoheader, $border = 0, $ln = 1, $fill = 0, $reseth = true, $align = 'C', $autopadding = true);
 
 //fijar efecto de sombra en el texto
 //        $pdf->setTextShadow(array('enabled' => true, 'depth_w' => 0.2, 'depth_h' => 0.2, 'color' => array(196, 196, 196), 'opacity' => 1, 'blend_mode' => 'Normal'));
@@ -498,25 +470,22 @@ class cliente extends MY_Controller
         $html .= "</tr>";
         foreach ($clientes as $familia) {
             $html .= "<tr><td>" . $familia['id_cliente'] . "</td>";
-            if($familia['tipo_cliente']==1){
+            if ($familia['tipo_cliente'] == 1) {
                 $html .= "<td>" . $familia['razon_social'] . "</td>";
-            }else{
-                $html .= "<td>" . $familia['nombres']." ".$familia['apellido_paterno'] ." ".$familia['apellido_materno'] . "</td>";
-
+            } else {
+                $html .= "<td>" . $familia['nombres'] . " " . $familia['apellido_paterno'] . " " . $familia['apellido_materno'] . "</td>";
             }
 
-            if($familia['tipo_cliente']==1){
+            if ($familia['tipo_cliente'] == 1) {
                 $html .= "<td>" . $familia['ruc'] . "</td>";
-            }else{
-                $html .= "<td>" . $familia['dni']. "</td>";
-
+            } else {
+                $html .= "<td>" . $familia['dni'] . "</td>";
             }
             $html .= "<td>" . $familia['nombre_grupos_cliente'] . "</td>";
             $html .= "<td>" . $familia['direccion'] . "</td>";
             $html .= "<td>" . $familia['telefono1'] . "</td>";
             $html .= "<td>" . $familia['email'] . "</td>";
             $html .= "</tr>";
-
         }
         $html .= "</table>";
 // Imprimimos el texto con writeHTMLCell()
@@ -527,12 +496,9 @@ class cliente extends MY_Controller
 // Este método tiene varias opciones, consulte la documentación para más información.
         $nombre_archivo = utf8_decode("ListaFClientes.pdf");
         $pdf->Output($nombre_archivo, 'D');
-
-
     }
 
-    function excel()
-    {
+    function excel() {
 
 
 
@@ -540,13 +506,13 @@ class cliente extends MY_Controller
 
         // configuramos las propiedades del documento
         $this->phpexcel->getProperties()
-            //->setCreator("Arkos Noem Arenom")
-            //->setLastModifiedBy("Arkos Noem Arenom")
-            ->setTitle("Reporte de Clientes")
-            ->setSubject("Reporte de Clientes")
-            ->setDescription("Reporte de Clientes")
-            ->setKeywords("Reporte de Clientes")
-            ->setCategory("Reporte de Clientes");
+                //->setCreator("Arkos Noem Arenom")
+                //->setLastModifiedBy("Arkos Noem Arenom")
+                ->setTitle("Reporte de Clientes")
+                ->setSubject("Reporte de Clientes")
+                ->setDescription("Reporte de Clientes")
+                ->setKeywords("Reporte de Clientes")
+                ->setCategory("Reporte de Clientes");
 
 
         $columna_pdf[0] = "ID";
@@ -561,7 +527,7 @@ class cliente extends MY_Controller
         $col = 0;
         for ($i = 0; $i < count($columna_pdf); $i++) {
             $this->phpexcel->setActiveSheetIndex(0)
-                ->setCellValueByColumnAndRow($i, 1, $columna_pdf[$i]);
+                    ->setCellValueByColumnAndRow($i, 1, $columna_pdf[$i]);
         }
 
         $row = 2;
@@ -570,41 +536,40 @@ class cliente extends MY_Controller
             $col = 0;
 
             $this->phpexcel->setActiveSheetIndex(0)
-                ->setCellValueByColumnAndRow($col, $row, $cliente['id_cliente']);
+                    ->setCellValueByColumnAndRow($col, $row, $cliente['id_cliente']);
             $col++;
 
-             if($cliente['tipo_cliente']==1){
+            if ($cliente['tipo_cliente'] == 1) {
                 $this->phpexcel->setActiveSheetIndex(0)
-                ->setCellValueByColumnAndRow($col, $row, $cliente['razon_social']);
+                        ->setCellValueByColumnAndRow($col, $row, $cliente['razon_social']);
                 $col++;
-            }else{
-                $nombre_apellido = $cliente['nombres']." ".$cliente['apellido_paterno']." ".$cliente['apellido_paterno'];
+            } else {
+                $nombre_apellido = $cliente['nombres'] . " " . $cliente['apellido_paterno'] . " " . $cliente['apellido_paterno'];
                 $this->phpexcel->setActiveSheetIndex(0)
-                ->setCellValueByColumnAndRow($col, $row, $nombre_apellido);
+                        ->setCellValueByColumnAndRow($col, $row, $nombre_apellido);
                 $col++;
-
             }
 
-            if($cliente['tipo_cliente']==1){
+            if ($cliente['tipo_cliente'] == 1) {
                 $this->phpexcel->setActiveSheetIndex(0)
-                ->setCellValueByColumnAndRow($col, $row, $cliente['ruc']);
+                        ->setCellValueByColumnAndRow($col, $row, $cliente['ruc']);
                 $col++;
-            }else{
+            } else {
                 $this->phpexcel->setActiveSheetIndex(0)
-                ->setCellValueByColumnAndRow($col, $row, $cliente['dni']);
+                        ->setCellValueByColumnAndRow($col, $row, $cliente['dni']);
                 $col++;
             }
             $this->phpexcel->setActiveSheetIndex(0)
-                ->setCellValueByColumnAndRow($col, $row, $cliente['nombre_grupos_cliente']);
+                    ->setCellValueByColumnAndRow($col, $row, $cliente['nombre_grupos_cliente']);
             $col++;
             $this->phpexcel->setActiveSheetIndex(0)
-                ->setCellValueByColumnAndRow($col, $row, $cliente['direccion']);
+                    ->setCellValueByColumnAndRow($col, $row, $cliente['direccion']);
             $col++;
             $this->phpexcel->setActiveSheetIndex(0)
-                ->setCellValueByColumnAndRow($col, $row, $cliente['telefono1']);
+                    ->setCellValueByColumnAndRow($col, $row, $cliente['telefono1']);
             $col++;
             $this->phpexcel->setActiveSheetIndex(0)
-                ->setCellValueByColumnAndRow($col, $row, $cliente['email']);
+                    ->setCellValueByColumnAndRow($col, $row, $cliente['email']);
             $col++;
 
             $row++;
@@ -615,8 +580,6 @@ class cliente extends MY_Controller
 
 
         // configuramos el documento para que la hoja
-
-
         // de trabajo número 0 sera la primera en mostrarse
         // al abrir el documento
         $this->phpexcel->setActiveSheetIndex(0);
@@ -629,74 +592,72 @@ class cliente extends MY_Controller
 
         $objWriter = PHPExcel_IOFactory::createWriter($this->phpexcel, 'Excel2007');
         $objWriter->save('php://output');
-
     }
 
-    public function getDatosFromAPI_Reniec(){
+    public function getDatosFromAPI_Reniec() {
         error_reporting(0);
         ini_set('display_errors', 0);
-        $dni=$_POST['DNI'];
-        require_once(APPPATH.'libraries/reniec/autoload.php');
+        $dni = $_POST['DNI'];
+        require_once(APPPATH . 'libraries/reniec/autoload.php');
         $cliente = new \Reniec\Reniec();
-        $result = $cliente->search( $dni, true );
+        $result = $cliente->search($dni, true);
         $resultArray = json_decode($result, TRUE);
-        if ($resultArray['success']==1) {
+        if ($resultArray['success'] == 1) {
             print_r(json_encode($resultArray['result']));
-        }else{
+        } else {
             echo "false";
         }
     }
 
-    public function getDatosFromAPI_Sunac(){
+    public function getDatosFromAPI_Sunac() {
         error_reporting(0);
         ini_set('display_errors', 0);
-        $ruc=$_POST['RUC'];
-        require_once(APPPATH.'libraries/sunat/autoload.php');
-        $cliente = new \Sunat\Sunat(true,true);
-        $result = $cliente->search( $ruc, true );
+        $ruc = $_POST['RUC'];
+        require_once(APPPATH . 'libraries/sunat/autoload.php');
+        $cliente = new \Sunat\Sunat(true, true);
+        $result = $cliente->search($ruc, true);
         $resultArray = json_decode($result, TRUE);
-        if ($resultArray['success']==1) {
+        if ($resultArray['success'] == 1) {
             print_r(json_encode($resultArray['result']));
-        }else{
+        } else {
             echo "false";
         }
     }
 
-    function importar()
-    {
+    function importar() {
         $datos['error'] = false;
 
-        if(!empty($_FILES) && $_FILES['file']['size'] != '0'){
+        if (!empty($_FILES) && $_FILES['file']['size'] != '0') {
             $type = $_FILES['file']['type'];
-            if($type!='application/vnd.ms-excel'){
+            if ($type != 'application/vnd.ms-excel') {
                 $datos['error'] = true;
                 $datos['mensaje'] = "Debe seleccionar un archivo valido, solo se permite archivo con extesion .csv";
             }
-        }else{
+        } else {
             $datos['error'] = true;
             $datos['mensaje'] = "Archivo no encontrado";
         }
 
-        if($datos['error']==false){
+        if ($datos['error'] == false) {
             $ruta_destino = $_FILES['file']['tmp_name'];
             $fila = 1;
             if (($gestor = fopen($ruta_destino, "r")) !== FALSE) {
                 $resumen = '';
                 while (($datos = fgetcsv($gestor, 1000, ";")) !== FALSE) {
-                    if($fila>1){
-                        if(trim($datos[8])=='' && (trim($datos[7])=='' && trim($datos[6])=='')){
+                    if ($fila > 1) {
+                        if (trim($datos[8]) == '' && (trim($datos[7]) == '' && trim($datos[6]) == '')) {
                             $resumen .= "Linea $fila: El dni, ruc o nombre, razon social es obligatorio\r\n";
-                        }else{
+                        } else {
                             $dato = $this->cliente_model->contarCliente('identificacion', $datos[8]);
                             $total = $dato->total;
-                            if($total>0){
+                            if ($total > 0) {
                                 $resumen .= "Linea $fila: El ruc o dni ya existe\r\n";
-                            }else{
-                                $dato = $this->cliente_model->contarCliente('razon_social', utf8_encode($datos[7]).' '.utf8_encode($datos[6])); //apellidos y nombres
+                            } else {
+                                $dato = $this->cliente_model->contarCliente('razon_social', utf8_encode($datos[7]) . ' ' . utf8_encode($datos[6])); //apellidos y nombres
                                 $total = $dato->total;
-                                if($total>0){
+                                if ($total > 0) {
                                     $resumen .= "Linea $fila: El nombre o la razon social ya existe\r\n";
-                                }else{
+                                } else {
                                     $param['direccion'] = $datos[0];
                                     $param['provincia'] = $datos[1];
                                     $param['ciudad'] = $datos[2];
@@ -705,14 +666,14 @@ class cliente extends MY_Controller
                                     $param['grupo_id'] = $datos[5];
                                     $param['nombres'] = $datos[6];
                                     $param['apellido_paterno'] = $datos[7];
-                                    $param['razon_social'] = $datos[7].' '.$datos[6];
+                                    $param['razon_social'] = $datos[7] . ' ' . $datos[6];
                                     $param['identificacion'] = $datos[8];
                                     $param['telefono1'] = $datos[9];
                                     $param['nota'] = $datos[10];
                                     $param['tipo_cliente'] = $datos[11]; //0=persona, 1=empresa
                                     $param['dni'] = $datos[12]; //representante
                                     $param['genero'] = $datos[13];
-                                    $param['ruc'] = ($param['tipo_cliente']=='0')? '1':'2'; //1=persona, 2=empresa
+                                    $param['ruc'] = ($param['tipo_cliente'] == '0') ? '1' : '2'; //1=persona, 2=empresa
                                     $param['agente_retension'] = $datos[14];
                                     $param['agente_retension_valor'] = $datos[15];
                                     $param['linea_credito'] = $datos[16];
@@ -730,11 +691,28 @@ class cliente extends MY_Controller
                 $fp = fopen('./recursos/plantillas_datos/logs.txt', 'w');
                 fwrite($fp, $resumen);
                 fclose($fp);
-            }else{
+            } else {
                 $datos['error'] = true;
                 $datos['mensaje'] = "No se puede abrir el archivo";
             }
         }
         echo json_encode($datos);
     }
+
+    //GET DATOS DNI
+    function getDNI() {
+        require_once(APPPATH . 'libraries/consultadni/consultareniec.php');
+        $dni = $this->input->post('dni');
+        $consulta = file_get_html('http://aplicaciones007.jne.gob.pe/srop_publico/Consulta/Afiliado/GetNombresCiudadano?DNI=' . $dni)->plaintext;
+        $partes = explode("|", $consulta);
+        $datos = array(
+            0 => $dni,
+            1 => $partes[0],
+            2 => $partes[1],
+            3 => $partes[2],
+        );
+
+        echo json_encode($datos);
+    }
+
 }

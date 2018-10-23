@@ -346,7 +346,7 @@
                     $('#vc_importe').val($('#vc_total_pagar').val())
                     $('#vc_vuelto').val(0)
                     $('#vc_num_oper').val('')
-
+                    $(".tipo_moneda").html($('#moneda_id option:selected').attr('data-simbolo'))
                     //le paso el tipo de pago contado pq es un cobro en caja y simplemente lo trata como un importe contado
                     $('#contado_tipo_pago').val('1')
 

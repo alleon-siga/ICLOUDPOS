@@ -16,11 +16,11 @@
     }
 </style>
 <div class="modal-dialog modal-lg">
-<?php 
+    <?php
     $ruta = base_url();
     $nombre_producto = json_decode(valueOption("NOMBRE_PRODUCTO", 2));
     $numero_decimales = valueOption("NUMERO_DECIMALES", 2);
-?>
+    ?>
     <script src="<?= $ruta ?>recursos/js/helpers/excanvas.min.js"></script>
     <script src="<?= $ruta ?>recursos/js/pages/readyInboxCompose.js"></script>
 
@@ -65,14 +65,14 @@
                 <div class="tab-pane active" role="tabpanel" id="lista" role="tabpanel">
                     <?php foreach ($columnas as $columna): ?>
 
-                        <?php if ($columna->nombre_columna == 'producto_id' && isset($producto['producto_id']) and !isset($duplicar)) { ?>
+                        <?php if ($columna->nombre_columna == 'producto_id' && isset($producto['producto_id']) and ! isset($duplicar)) { ?>
                             <div class="form-group">
                                 <div class="col-md-3"><label class="control-label">C&oacute;digo:</label></div>
                                 <div class="col-md-8">
 
                                     <input type="text" name="codigo" id="codigo"
                                            class='form-control' autofocus="autofocus" maxlength="25"
-                                           value="<?php if (isset($producto['producto_id']) and !isset($duplicar)) echo $producto['producto_id'] ?>"
+                                           value="<?php if (isset($producto['producto_id']) and ! isset($duplicar)) echo $producto['producto_id'] ?>"
                                            readonly>
 
                                 </div>
@@ -88,7 +88,7 @@
 
                                 </div>
                                 <div class="col-md-1">
-                                    <input type="checkbox" name="chk" class="desc_chk" id="chk_codigo" <?= ($nombre_producto[5]=='1')? 'checked':''; ?>>
+                                    <input type="checkbox" name="chk" class="desc_chk" id="chk_codigo" <?= ($nombre_producto[5] == '1') ? 'checked' : ''; ?>>
                                 </div>
                             </div>
                         <?php } ?>
@@ -149,9 +149,9 @@
                                         <?php if (count($marcas) > 0): ?>
                                             <?php foreach ($marcas as $marca): ?>
                                                 <option
-                                                        value="<?php echo $marca['id_marca']; ?>" <?php if (isset($producto['producto_marca']) && $producto['producto_marca'] == $marca['id_marca']) echo 'selected' ?> ><?php echo $marca['nombre_marca']; ?></option>
-                                            <?php endforeach; ?>
-                                        <?php endif; ?>
+                                                    value="<?php echo $marca['id_marca']; ?>" <?php if (isset($producto['producto_marca']) && $producto['producto_marca'] == $marca['id_marca']) echo 'selected' ?> ><?php echo $marca['nombre_marca']; ?></option>
+                                                <?php endforeach; ?>
+                                            <?php endif; ?>
                                     </select>
                                 </div>
                                 <div class="col-md-1">
@@ -162,7 +162,7 @@
                                     </a>
                                 </div>
                                 <div class="col-md-1">
-                                    <input type="checkbox" name="chk" class="desc_chk" id="chk_marca" <?= ($nombre_producto[4]=='1')? 'checked':''; ?>>
+                                    <input type="checkbox" name="chk" class="desc_chk" id="chk_marca" <?= ($nombre_producto[4] == '1') ? 'checked' : ''; ?>>
                                 </div>
                             </div>
                         <?php } ?>
@@ -177,9 +177,9 @@
                                         <?php if (count($grupos) > 0): ?>
                                             <?php foreach ($grupos as $grupo): ?>
                                                 <option
-                                                        value="<?php echo $grupo['id_grupo']; ?>" <?php if (isset($producto['produto_grupo']) && $producto['produto_grupo'] == $grupo['id_grupo']) echo 'selected' ?>><?php echo $grupo['nombre_grupo']; ?></option>
-                                            <?php endforeach; ?>
-                                        <?php endif; ?>
+                                                    value="<?php echo $grupo['id_grupo']; ?>" <?php if (isset($producto['produto_grupo']) && $producto['produto_grupo'] == $grupo['id_grupo']) echo 'selected' ?>><?php echo $grupo['nombre_grupo']; ?></option>
+                                                <?php endforeach; ?>
+                                            <?php endif; ?>
                                     </select>
                                 </div>
                                 <div class="col-md-1">
@@ -190,7 +190,7 @@
                                     </a>
                                 </div>
                                 <div class="col-md-1">
-                                    <input type="checkbox" name="chk" class="desc_chk" id="chk_grupo" <?= ($nombre_producto[0]=='1')? 'checked':''; ?>>
+                                    <input type="checkbox" name="chk" class="desc_chk" id="chk_grupo" <?= ($nombre_producto[0] == '1') ? 'checked' : ''; ?>>
                                 </div>
                             </div>
                         <?php } ?>
@@ -205,9 +205,9 @@
                                         <?php if (count($familias) > 0): ?>
                                             <?php foreach ($familias as $familia): ?>
                                                 <option
-                                                        value="<?php echo $familia['id_familia']; ?>" <?php if (isset($producto['producto_familia']) && $producto['producto_familia'] == $familia['id_familia']) echo 'selected' ?>><?php echo $familia['nombre_familia']; ?></option>
-                                            <?php endforeach; ?>
-                                        <?php endif; ?>
+                                                    value="<?php echo $familia['id_familia']; ?>" <?php if (isset($producto['producto_familia']) && $producto['producto_familia'] == $familia['id_familia']) echo 'selected' ?>><?php echo $familia['nombre_familia']; ?></option>
+                                                <?php endforeach; ?>
+                                            <?php endif; ?>
                                     </select>
                                 </div>
                                 <div class="col-md-1">
@@ -218,7 +218,7 @@
                                     </a>
                                 </div>
                                 <div class="col-md-1">
-                                    <input type="checkbox" name="chk" class="desc_chk" id="chk_familia" <?= ($nombre_producto[1]=='1')? 'checked':''; ?>>
+                                    <input type="checkbox" name="chk" class="desc_chk" id="chk_familia" <?= ($nombre_producto[1] == '1') ? 'checked' : ''; ?>>
                                 </div>
                             </div>
                         <?php } ?>
@@ -233,9 +233,9 @@
                                         <?php if (count($lineas) > 0): ?>
                                             <?php foreach ($lineas as $linea): ?>
                                                 <option
-                                                        value="<?php echo $linea['id_linea']; ?>" <?php if (isset($producto['producto_linea']) && $producto['producto_linea'] == $linea['id_linea']) echo 'selected' ?>><?php echo $linea['nombre_linea']; ?></option>
-                                            <?php endforeach; ?>
-                                        <?php endif; ?>
+                                                    value="<?php echo $linea['id_linea']; ?>" <?php if (isset($producto['producto_linea']) && $producto['producto_linea'] == $linea['id_linea']) echo 'selected' ?>><?php echo $linea['nombre_linea']; ?></option>
+                                                <?php endforeach; ?>
+                                            <?php endif; ?>
                                     </select>
                                 </div>
                                 <div class="col-md-1">
@@ -246,7 +246,7 @@
                                     </a>
                                 </div>
                                 <div class="col-md-1">
-                                    <input type="checkbox" name="chk" class="desc_chk" id="chk_linea" <?= ($nombre_producto[2]=='1')? 'checked':''; ?>>
+                                    <input type="checkbox" name="chk" class="desc_chk" id="chk_linea" <?= ($nombre_producto[2] == '1') ? 'checked' : ''; ?>>
                                 </div>
                             </div>
                         <?php } ?>
@@ -264,7 +264,7 @@
                                 </div>
                             </div>
                             <div class="col-md-1">
-                                <input type="checkbox" name="chk" class="desc_chk" id="chk_modelo" <?= ($nombre_producto[3]=='1')? 'checked':''; ?>>
+                                <input type="checkbox" name="chk" class="desc_chk" id="chk_modelo" <?= ($nombre_producto[3] == '1') ? 'checked' : ''; ?>>
                             </div>
                         <?php } ?>
 
@@ -278,9 +278,9 @@
                                         <?php if (count($proveedores) > 0): ?>
                                             <?php foreach ($proveedores as $proveedor): ?>
                                                 <option
-                                                        value="<?php echo $proveedor->id_proveedor; ?>" <?php if (isset($producto['producto_proveedor']) && $producto['producto_proveedor'] == $proveedor->id_proveedor) echo 'selected' ?>><?php echo $proveedor->proveedor_nombre; ?></option>
-                                            <?php endforeach; ?>
-                                        <?php endif; ?>
+                                                    value="<?php echo $proveedor->id_proveedor; ?>" <?php if (isset($producto['producto_proveedor']) && $producto['producto_proveedor'] == $proveedor->id_proveedor) echo 'selected' ?>><?php echo $proveedor->proveedor_nombre; ?></option>
+                                                <?php endforeach; ?>
+                                            <?php endif; ?>
                                     </select>
 
                                 </div>
@@ -308,13 +308,18 @@
                                                name="producto_stockminimo"
                                                id="producto_stockminimo" maxlength="11"
                                                onkeydown="return soloDecimal(this, event);"
-                                               value="<?php if (isset($producto['producto_stockminimo'])) echo $producto['producto_stockminimo']; else echo "0"; ?>">
+                                               value="<?php
+                                               if (isset($producto['producto_stockminimo']))
+                                                   echo $producto['producto_stockminimo'];
+                                               else
+                                                   echo "0";
+                                               ?>">
                                     </div>
                                 </div>
                             </div>
                         <?php } ?>
 
-                        <?php if ($columna->nombre_columna == 'producto_vencimiento' and $columna->activo == 1) { ?>
+    <?php if ($columna->nombre_columna == 'producto_vencimiento' and $columna->activo == 1) { ?>
                             <div class="form-group">
                                 <div class="col-md-3">
                                     <label for="producto_vencimiento" class="control-label">Fecha de
@@ -331,7 +336,7 @@
                             </div>
                         <?php } ?>
 
-                        <?php if ($columna->nombre_columna == 'producto_afectacion_impuesto'): ?>
+    <?php if ($columna->nombre_columna == 'producto_afectacion_impuesto'): ?>
                             <div class="form-group">
                                 <div class="col-md-3">
                                     <label for="afectacion_impuesto" class="control-label">Afectacion del
@@ -343,17 +348,17 @@
                                         <option value="">Seleccione</option>
 
                                         <option value="<?= OP_GRAVABLE ?>"
-                                            <?= isset($producto['producto_afectacion_impuesto']) && $producto['producto_afectacion_impuesto'] == OP_GRAVABLE ? 'selected' : '' ?>>
+        <?= isset($producto['producto_afectacion_impuesto']) && $producto['producto_afectacion_impuesto'] == OP_GRAVABLE ? 'selected' : '' ?>>
                                             GRAVABLE
                                         </option>
 
                                         <option value="<?= OP_EXONERADA ?>"
-                                            <?= isset($producto['producto_afectacion_impuesto']) && $producto['producto_afectacion_impuesto'] == OP_EXONERADA ? 'selected' : '' ?>>
+        <?= isset($producto['producto_afectacion_impuesto']) && $producto['producto_afectacion_impuesto'] == OP_EXONERADA ? 'selected' : '' ?>>
                                             EXONERADA
                                         </option>
 
                                         <option value="<?= OP_INAFECTA ?>"
-                                            <?= isset($producto['producto_afectacion_impuesto']) && $producto['producto_afectacion_impuesto'] == OP_INAFECTA ? 'selected' : '' ?>>
+        <?= isset($producto['producto_afectacion_impuesto']) && $producto['producto_afectacion_impuesto'] == OP_INAFECTA ? 'selected' : '' ?>>
                                             INAFECTA
                                         </option>
                                     </select>
@@ -361,7 +366,8 @@
                             </div>
                         <?php endif; ?>
 
-                        <?php if ($columna->nombre_columna == 'producto_impuesto') {
+                        <?php
+                        if ($columna->nombre_columna == 'producto_impuesto') {
                             $impuesto_ivg = "";
                             if (count($impuestos) > 0):
                                 foreach ($impuestos as $impuesto):
@@ -382,26 +388,26 @@
                                                     class='cho form-control'>
                                                 <option value="">Seleccione</option>
                                                 <?php if (count($impuestos) > 0): ?>
-                                                    <?php foreach ($impuestos as $impuesto): ?>
+            <?php foreach ($impuestos as $impuesto): ?>
                                                         <option
-                                                                value="<?php echo $impuesto['id_impuesto']; ?>"
-                                                                data-impuesto="<?= $impuesto['porcentaje_impuesto'] ?>"
-                                                            <?php if (isset($producto['producto_impuesto']) && $producto['producto_impuesto'] == $impuesto['id_impuesto']) echo 'selected'; ?>>
-                                                            <?php echo $impuesto['nombre_impuesto']; ?>
+                                                            value="<?php echo $impuesto['id_impuesto']; ?>"
+                                                            data-impuesto="<?= $impuesto['porcentaje_impuesto'] ?>"
+                                                                <?php if (isset($producto['producto_impuesto']) && $producto['producto_impuesto'] == $impuesto['id_impuesto']) echo 'selected'; ?>>
+                                                        <?php echo $impuesto['nombre_impuesto']; ?>
                                                         </option>
                                                     <?php endforeach; ?>
-                                                <?php endif; ?>
+        <?php endif; ?>
                                             </select>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="input-group">
                                                 <input
-                                                        type="text"
-                                                        style="text-align: right;"
-                                                        class="form-control"
-                                                        name="valor_importe"
-                                                        id="valor_importe"
-                                                        readonly>
+                                                    type="text"
+                                                    style="text-align: right;"
+                                                    class="form-control"
+                                                    name="valor_importe"
+                                                    id="valor_importe"
+                                                    readonly>
                                                 <div class="input-group-addon tipo_moneda">%</div>
                                             </div>
                                         </div>
@@ -409,7 +415,7 @@
                                 </div>
                             </div>
                         <?php } ?>
-                        <?php if ($columna->nombre_columna == 'producto_largo' and $columna->activo == 1) { ?>
+    <?php if ($columna->nombre_columna == 'producto_largo' and $columna->activo == 1) { ?>
                             <div class="form-group">
                                 <div class="col-md-3">
                                     <label for="impuesto" class="control-label">Largo:</label>
@@ -425,7 +431,7 @@
                                 </div>
                             </div>
                         <?php } ?>
-                        <?php if ($columna->nombre_columna == 'producto_ancho' and $columna->activo == 1) { ?>
+    <?php if ($columna->nombre_columna == 'producto_ancho' and $columna->activo == 1) { ?>
                             <div class="form-group">
                                 <div class="col-md-3">
                                     <label for="impuesto" class="control-label">Ancho:</label>
@@ -441,7 +447,7 @@
                                 </div>
                             </div>
                         <?php } ?>
-                        <?php if ($columna->nombre_columna == 'producto_alto' and $columna->activo == 1) { ?>
+    <?php if ($columna->nombre_columna == 'producto_alto' and $columna->activo == 1) { ?>
                             <div class="form-group">
                                 <div class="col-md-3">
                                     <label for="impuesto" class="control-label">Alto:</label>
@@ -460,7 +466,7 @@
 
                             </div>
                         <?php } ?>
-                        <?php if ($columna->nombre_columna == 'producto_peso' and $columna->activo == 1) { ?>
+    <?php if ($columna->nombre_columna == 'producto_peso' and $columna->activo == 1) { ?>
                             <div class="form-group">
                                 <div class="col-md-3">
                                     <label for="impuesto" class="control-label">Peso:</label>
@@ -477,18 +483,18 @@
                                 </div>
                             </div>
                         <?php } ?>
-                        <?php if ($columna->nombre_columna == 'producto_nota' and $columna->activo == 1) { ?>
+    <?php if ($columna->nombre_columna == 'producto_nota' and $columna->activo == 1) { ?>
                             <div class="form-group">
                                 <div class="col-md-3">
                                     <label for="impuesto" class="control-label">Nota:</label>
                                 </div>
                                 <div class="col-md-8">
-                            <textarea name="producto_nota" id="producto_nota"
-                                      class='cho form-control'><?php if (isset($producto['producto_nota'])) echo $producto['producto_nota'] ?></textarea>
+                                    <textarea name="producto_nota" id="producto_nota"
+                                              class='cho form-control'><?php if (isset($producto['producto_nota'])) echo $producto['producto_nota'] ?></textarea>
                                 </div>
                             </div>
                         <?php } ?>
-                        <?php if ($columna->nombre_columna == 'producto_cualidad') { ?>
+    <?php if ($columna->nombre_columna == 'producto_cualidad') { ?>
                             <div class="form-group">
                                 <div class="col-md-3">
                                     <label for="impuesto" class="control-label">Cualidad:</label>
@@ -498,16 +504,16 @@
                                     <select class="form-control" id="producto_cualidad" name="producto_cualidad">
                                         <option value="">Seleccione</option>
                                         <option
-                                                value="<?= MEDIBLE ?>" <?php echo 'selected'; ?>><?= MEDIBLE ?></option>
+                                            value="<?= MEDIBLE ?>" <?php echo 'selected'; ?>><?= MEDIBLE ?></option>
                                         <option
-                                                value="<?= PESABLE ?>" <?php if (isset($producto['producto_id']) and $producto['producto_cualidad'] == PESABLE) echo 'selected' ?>><?= PESABLE ?></option>
+                                            value="<?= PESABLE ?>" <?php if (isset($producto['producto_id']) and $producto['producto_cualidad'] == PESABLE) echo 'selected' ?>><?= PESABLE ?></option>
 
                                     </select>
                                 </div>
                             </div>
                         <?php } ?>
 
-                        <?php if ($columna->nombre_columna == 'producto_titulo_imagen' and $columna->activo == 1) { ?>
+    <?php if ($columna->nombre_columna == 'producto_titulo_imagen' and $columna->activo == 1) { ?>
                             <div class="form-group ">
 
                                 <div class="col-md-3">
@@ -516,24 +522,28 @@
                                 <div class="col-md-8">
                                     <input type="text" name="titulo_imagen" id="titulo_imagen"
                                            class='cho form-control' placeholder="Titulo"
-                                           value="<?php if (isset($producto['producto_titulo_imagen'])) {
+                                           value="<?php
+                                           if (isset($producto['producto_titulo_imagen'])) {
                                                echo $producto['producto_titulo_imagen'];
-                                           } ?>"/>
+                                           }
+                                           ?>"/>
                                 </div>
                                 <div class="col-md-3">
                                     <label for="" class="control-label">&nbsp;<br></label>
                                 </div>
                                 <div class="col-md-8">
-                                <textarea id="compose-message" name="descripcion_imagen" rows="5"
-                                          class="form-control textarea-editor" placeholder="Su descripcion">
-                                    <?php if (isset($producto['producto_descripcion_img'])) {
-                                        echo $producto['producto_descripcion_img'];
-                                    } ?>
-                                </textarea>
+                                    <textarea id="compose-message" name="descripcion_imagen" rows="5"
+                                              class="form-control textarea-editor" placeholder="Su descripcion">
+                                                  <?php
+                                                  if (isset($producto['producto_descripcion_img'])) {
+                                                      echo $producto['producto_descripcion_img'];
+                                                  }
+                                                  ?>
+                                    </textarea>
                                 </div>
                             </div>
                         <?php } ?>
-                    <?php endforeach ?>
+<?php endforeach ?>
 
 
                     <div class="form-group">
@@ -544,17 +554,22 @@
 
 
                         <div class="col-md-3">
-                            <input type="radio" value=1 name="estado" <?php if (isset($producto['producto_estado'])
-                                and $producto['producto_estado'] == 1
+                            <input type="radio" value=1 name="estado" <?php
+                            if (isset($producto['producto_estado'])
+                                    and $producto['producto_estado'] == 1
                             ) {
                                 echo "checked";
                             } else {
                                 echo "checked";
-                            } ?>> Activo
+                            }
+                            ?>> Activo
 
-                            <input type="radio" value=0 name="estado" <?php if (isset($producto['producto_estado'])
-                                and $producto['producto_estado'] == 0
-                            ) echo "checked"; ?>> Inactivo
+                            <input type="radio" value=0 name="estado" <?php
+                            if (isset($producto['producto_estado'])
+                                    and $producto['producto_estado'] == 0
+                            )
+                                echo "checked";
+                            ?>> Inactivo
                         </div>
                         <div class="col-md-5">
                             <label for="" class="control-label">&nbsp;<br></label>
@@ -568,10 +583,10 @@
 
                 </div>
 
-                <?php $md = get_moneda_defecto() ?>
+<?php $md = get_moneda_defecto() ?>
                 <div class="tab-pane" role="tabpanel" id="precios" role="tabpanel">
 
-                    <?php //if ($this->session->userdata('PRECIO_DE_VENTA') == "MANUAL") { ?>
+<?php //if ($this->session->userdata('PRECIO_DE_VENTA') == "MANUAL") {    ?>
                     <div class="panel" style="margin-bottom: 0px;">
 
                         <div class="row" style="display: <?= valueOption('ACTIVAR_SHADOW') == 1 ? 'block' : 'none'; ?>">
@@ -587,20 +602,22 @@
                             <div class="col-md-2"
                                  style="display: <?php echo count($costos_unitario) == 1 ? 'none' : 'block' ?>">
                                 <select id="cu_moneda_contable" name="cu_moneda_contable" class="form-control">
-                                    <?php foreach ($costos_unitario as $cu): ?>
+<?php foreach ($costos_unitario as $cu): ?>
                                         <option
-                                                data-costo="<?php echo $cu['cu_contable_costo'] ?>"
-                                                data-simbolo="<?php echo $cu['moneda_simbolo'] ?>"
-                                                data-tasa="<?php echo $cu['moneda_tasa'] ?>"
-                                                value="<?php echo $cu['moneda_id'] ?>" <?php echo $cu['cu_contable_activo'] == '1' ? 'selected="selected"' : '' ?>>
-                                            <?php echo $cu['moneda_nombre'] ?>
+                                            data-costo="<?php echo $cu['cu_contable_costo'] ?>"
+                                            data-simbolo="<?php echo $cu['moneda_simbolo'] ?>"
+                                            data-tasa="<?php echo $cu['moneda_tasa'] ?>"
+                                            value="<?php echo $cu['moneda_id'] ?>" <?php echo $cu['cu_contable_activo'] == '1' ? 'selected="selected"' : '' ?>>
+                                        <?php echo $cu['moneda_nombre'] ?>
                                         </option>
-                                        <?php if ($cu['cu_contable_activo'] == '1') {
+                                        <?php
+                                        if ($cu['cu_contable_activo'] == '1') {
                                             $contable_costo = $cu['cu_contable_costo'];
                                             $simbolo = $cu['moneda_simbolo'];
                                             $tasa = $cu['moneda_tasa'];
-                                        } ?>
-                                    <?php endforeach; ?>
+                                        }
+                                        ?>
+<?php endforeach; ?>
                                 </select>
                             </div>
                             <div class="col-md-2">
@@ -610,7 +627,7 @@
                                 <div class="input-prepend input-append">
                                     <div class="input-group">
                                         <div
-                                                class="input-group-addon tipo_tasa_contable"><?php echo isset($simbolo) ? $simbolo : $md->simbolo ?></div>
+                                            class="input-group-addon tipo_tasa_contable"><?php echo isset($simbolo) ? $simbolo : $md->simbolo ?></div>
                                         <input type="number" name="contable_costo" id="contable_costo"
                                                class='cho form-control'
                                                value="<?php echo (isset($contable_costo)) ? number_format($contable_costo, $numero_decimales, '.', '') : '0.00' ?>"/>
@@ -620,7 +637,7 @@
                             </div>
                             <div class="col-md-1">
                                 <label class="panel-admin-text" style="text-align: left;">
-                                    <?php echo isset($um_minimo) ? $um_minimo : '' ?>
+<?php echo isset($um_minimo) ? $um_minimo : '' ?>
                                 </label>
                             </div>
                         </div>
@@ -636,21 +653,22 @@
                             <div class="col-md-2"
                                  style="display: <?php echo count($costos_unitario) == 1 ? 'none' : 'block' ?>">
                                 <select id="cu_moneda" name="cu_moneda" class="form-control">
-                                    <?php foreach ($costos_unitario as $cu): ?>
+<?php foreach ($costos_unitario as $cu): ?>
                                         <option
-                                                data-costo="<?php echo $cu['cu_costo'] ?>"
-                                                data-simbolo="<?php echo $cu['moneda_simbolo'] ?>"
-                                                data-tasa="<?php echo $cu['moneda_tasa'] ?>"
-                                                value="<?php echo $cu['moneda_id'] ?>" <?php echo $cu['cu_activo'] == '1' ? 'selected="selected"' : '' ?>>
-                                            <?php echo $cu['moneda_nombre'] ?>
+                                            data-costo="<?php echo $cu['cu_costo'] ?>"
+                                            data-simbolo="<?php echo $cu['moneda_simbolo'] ?>"
+                                            data-tasa="<?php echo $cu['moneda_tasa'] ?>"
+                                            value="<?php echo $cu['moneda_id'] ?>" <?php echo $cu['cu_activo'] == '1' ? 'selected="selected"' : '' ?>>
+                                        <?php echo $cu['moneda_nombre'] ?>
                                         </option>
-                                        <?php if ($cu['cu_activo'] == '1') {
+                                        <?php
+                                        if ($cu['cu_activo'] == '1') {
                                             $simbolo = $cu['moneda_simbolo'];
                                             $tasa = $cu['moneda_tasa'];
                                             $producto['producto_costo_unitario'] = $cu['cu_costo'];
-                                        } ?>
+                                        }
+                                        ?>
                                     <?php endforeach;
-
                                     ?>
                                 </select>
                             </div>
@@ -670,7 +688,7 @@
                             <div class="col-md-2">
                                 <label class="panel-admin-text" style="text-align: left;">                                 
                                     <a href="#" title="Este costo incluye impuesto"><i class="far fa-question-circle"></i></a>
-                                    <?php echo isset($um_minimo) ? $um_minimo : '' ?>
+<?php echo isset($um_minimo) ? $um_minimo : '' ?>
                                 </label>
                             </div>
 
@@ -679,12 +697,13 @@
 
                     </div>
 
-                    <?php //} ?>
+<?php //}   ?>
 
                     <div class="panel" style="margin-bottom: 0px;">
 
-                        <?php if ($this->session->userdata('PRECIO_DE_VENTA') == "CALCULADO") {
-                            /*aqui va a entrar cuando la opcion de precio de venta sea CALCULADO*/
+                        <?php
+                        if ($this->session->userdata('PRECIO_DE_VENTA') == "CALCULADO") {
+                            /* aqui va a entrar cuando la opcion de precio de venta sea CALCULADO */
 
 
                             $simbolo_cambio_tasa = "";
@@ -724,7 +743,7 @@
                                             <div class="col-md-3 text-right ">
                                                 <div class="input-group">
                                                     <span
-                                                            class="input-group-addon"><? echo $cu['moneda_simbolo'] ?></span>
+                                                        class="input-group-addon"><? echo $cu['moneda_simbolo'] ?></span>
                                                     <input min="0.00" type="number" name="" id="precio_compra<?= $i ?>"
                                                            onchange="calcularpreciocompra(<?= $i ?>)"
                                                            onKeyUp="calcularpreciocompra(<?= $i ?>)"
@@ -738,8 +757,7 @@
                                                 </div>
                                             </div>
 
-                                            <?php
-                                            if ($i == 0) { ?>
+        <?php if ($i == 0) { ?>
 
 
                                                 <div class="col-md-1 text-right">
@@ -757,7 +775,7 @@
                                                 <div class="col-md-2">
                                                     <div class="input-group">
                                                         <span
-                                                                class="input-group-addon"><? echo $moneda_local_simbolo ?></span>
+                                                            class="input-group-addon"><? echo $moneda_local_simbolo ?></span>
                                                         <input type="number" onKeyUp="calculo_inicial()"
                                                                onchange="calculo_inicial()" name="tasa_id" min="0.00"
                                                                id="tasa_id" onkeydown="return soloDecimal(this, event);"
@@ -768,15 +786,13 @@
                                                 </div>
 
 
-                                            <?php } ?>
+        <?php } ?>
 
 
                                             <?php
-
                                             //$producto['producto_costo_unitario'] = "";
                                             if ($cu['cu_activo'] == '1') {
                                                 $producto['producto_costo_unitario'] = $cu['cu_costo'];
-
                                             }
                                             $i++;
                                             ?>
@@ -785,7 +801,7 @@
                                         </div>
                                     </div>
                                     <br>
-                                <?php endforeach; ?>
+    <?php endforeach; ?>
                             </div>
 
 
@@ -858,7 +874,7 @@
                             </div>
                         <?php } ?>
 
-                        <?php //if ($this->session->userdata('PRECIO_DE_VENTA') == "MANUAL" || !isset($producto['producto_nombre'])) { ?>
+<?php //if ($this->session->userdata('PRECIO_DE_VENTA') == "MANUAL" || !isset($producto['producto_nombre'])) {    ?>
                         <div class="row">
                             <div class="col-md-3">
                                 <a class="btn btn-default" onclick="agregarprecio();">
@@ -866,7 +882,7 @@
                                 </a>
                             </div>
                         </div>
-                        <?php //} ?>
+<?php //}   ?>
                         <br>
                         <div class="table-responsive ">
 
@@ -877,130 +893,133 @@
                                 <thead>
                                 <th>Presentación</th>
                                 <th>Cantidad</th>
-                                <?php foreach ($precios as $precio):
-                                    if ($precio['mostrar_precio']):?>
+                                <?php
+                                foreach ($precios as $precio):
+                                    if ($precio['mostrar_precio']):
+                                        ?>
                                         <th><?= $precio['nombre_precio'] ?></th>
                                     <?php endif ?>
-                                <?php endforeach ?>
+<?php endforeach ?>
                                 <th></th>
                                 </thead>
                                 <tbody id="unidadescontainer" class="draggable-tbody">
 
-                                <?php
-                                $countunidad = 0;
-                                if (isset($unidades_producto) and count($unidades_producto)):
+                                    <?php
+                                    $countunidad = 0;
+                                    if (isset($unidades_producto) and count($unidades_producto)):
 
 
-                                    foreach ($unidades_producto as $unidad) { ?>
-                                        <tr id="trunidad<?= $countunidad ?>" class="trdrag">
-                                            <td>
-                                                <select name='medida[<?= $countunidad ?>]'
-                                                        id='medida<?= $countunidad ?>'
-                                                        class='form-control unidad_select'
-                                                        data-row="<?= $countunidad ?>"
-                                                >
-                                                    <?php foreach ($unidades as $unidad2):
-                                                        ?>
-                                                        <option
+                                        foreach ($unidades_producto as $unidad) {
+                                            ?>
+                                            <tr id="trunidad<?= $countunidad ?>" class="trdrag">
+                                                <td>
+                                                    <select name='medida[<?= $countunidad ?>]'
+                                                            id='medida<?= $countunidad ?>'
+                                                            class='form-control unidad_select'
+                                                            data-row="<?= $countunidad ?>"
+                                                            >
+                                                                <?php foreach ($unidades as $unidad2):
+                                                                    ?>
+                                                            <option
                                                                 value='<?= $unidad2['id_unidad'] ?>' <?php if ($unidad2['id_unidad'] == $unidad['id_unidad']) echo 'selected' ?>><?= $unidad2['nombre_unidad'] ?></option>"
 
-                                                    <?php endforeach ?></select>
+        <?php endforeach ?></select>
 
-                                            </td>
-                                            <td><input type="number" class="form-control unidades" required
-                                                       min="1"
-                                                       onkeydown="return soloNumeros(event);"
-                                                       value='<?= $unidad['unidades'] ?>'
-                                                       data-row="<?php echo $countunidad ?>"
-                                                       name="unidad[<?= $countunidad ?>]"
-                                                       id="unidad[<?= $countunidad ?>]"
-                                                >
-                                            </td>
-                                            <?php
-                                            $countproducto = 0;
+                                                </td>
+                                                <td><input type="number" class="form-control unidades" required
+                                                           min="1"
+                                                           onkeydown="return soloNumeros(event);"
+                                                           value='<?= $unidad['unidades'] ?>'
+                                                           data-row="<?php echo $countunidad ?>"
+                                                           name="unidad[<?= $countunidad ?>]"
+                                                           id="unidad[<?= $countunidad ?>]"
+                                                           >
+                                                </td>
+                                                <?php
+                                                $countproducto = 0;
 
-                                            $precio_venta_producto = 0;
+                                                $precio_venta_producto = 0;
 
-                                            foreach ($precios as $precioo) {
+                                                foreach ($precios as $precioo) {
 
-                                                if ($precioo['mostrar_precio']) {
-                                                    $blanco = true;
-                                                    foreach ($precios_producto[$countunidad] as $precio) {
-
-
-                                                        if ($precioo['id_precio'] == 3)
-                                                            $precio_class = 'precio_unitario';
-                                                        elseif ($precioo['id_precio'] == 1)
-                                                            $precio_class = 'precio_venta';
-                                                        else
-                                                            $precio_class = 'precio_descuento';
+                                                    if ($precioo['mostrar_precio']) {
+                                                        $blanco = true;
+                                                        foreach ($precios_producto[$countunidad] as $precio) {
 
 
-                                                        if ($precio['nombre_unidad'] == "UNIDAD" and $precio_class == "precio_venta") {
-                                                            $precio_venta_producto = $precio['precio'];
+                                                            if ($precioo['id_precio'] == 3)
+                                                                $precio_class = 'precio_unitario';
+                                                            elseif ($precioo['id_precio'] == 1)
+                                                                $precio_class = 'precio_venta';
+                                                            else
+                                                                $precio_class = 'precio_descuento';
 
+
+                                                            if ($precio['nombre_unidad'] == "UNIDAD" and $precio_class == "precio_venta") {
+                                                                $precio_venta_producto = $precio['precio'];
+                                                            }
+                                                            if ($precio['id_precio'] == $precioo['id_precio']) {
+                                                                $blanco = false;
+                                                                ?>
+                                                                <td><input type="hidden" value='<?= $precio['id_precio'] ?>'
+                                                                           name='precio_id_<?= $countunidad ?>[<?= $countproducto ?>]'/>
+                                                                    <input id="<?php echo $precio_class . $countunidad ?>"
+                                                                           min="1"
+                                                                           data-row="<?php echo $countunidad ?>"
+                                                                           data-nombre_precio="<?php echo $precio_class ?>"
+                                                                           type="number"
+                                                                           class="form-control <?php echo $precio_class ?>"
+                                                                           required
+                                                                           value="<?= number_format($precio['precio'], $numero_decimales, '.', '') ?>"
+                                                                           name="precio_valor_<?= $countunidad ?>[<?= $countproducto ?>]">
+
+                                                                </td>
+
+                                                                <?php
+                                                            }
                                                         }
-                                                        if ($precio['id_precio'] == $precioo['id_precio']) {
-                                                            $blanco = false;
+                                                        if ($blanco) {
                                                             ?>
-                                                            <td><input type="hidden" value='<?= $precio['id_precio'] ?>'
+                                                            <td><input type="hidden" value='<?= $precioo['id_precio'] ?>'
                                                                        name='precio_id_<?= $countunidad ?>[<?= $countproducto ?>]'/>
                                                                 <input id="<?php echo $precio_class . $countunidad ?>"
-                                                                       min="1"
                                                                        data-row="<?php echo $countunidad ?>"
+                                                                       min="1"
                                                                        data-nombre_precio="<?php echo $precio_class ?>"
                                                                        type="number"
-                                                                       class="form-control <?php echo $precio_class ?>"
+                                                                       class="form-control  <?php echo $precio_class ?>"
                                                                        required
-                                                                       value="<?= number_format($precio['precio'], $numero_decimales, '.', '') ?>"
+                                                                       value='0.00'
                                                                        name="precio_valor_<?= $countunidad ?>[<?= $countproducto ?>]">
 
                                                             </td>
-
-                                                            <?php
-                                                        }
-                                                    }
-                                                    if ($blanco) {
+                                                        <?php }
                                                         ?>
-                                                        <td><input type="hidden" value='<?= $precioo['id_precio'] ?>'
-                                                                   name='precio_id_<?= $countunidad ?>[<?= $countproducto ?>]'/>
-                                                            <input id="<?php echo $precio_class . $countunidad ?>"
-                                                                   data-row="<?php echo $countunidad ?>"
-                                                                   min="1"
-                                                                   data-nombre_precio="<?php echo $precio_class ?>"
-                                                                   type="number"
-                                                                   class="form-control  <?php echo $precio_class ?>"
-                                                                   required
-                                                                   value='0.00'
-                                                                   name="precio_valor_<?= $countunidad ?>[<?= $countproducto ?>]">
-
-                                                        </td>
-                                                    <?php }
-                                                    ?>
 
 
-                                                    <?php
+                                                        <?php
+                                                    }
+                                                    $countproducto++;
                                                 }
-                                                $countproducto++;
+                                                ?>
 
-
-                                            } ?>
-
-                                            <td width='13%'>
-                                                <a href="#" class='btn btn-default'
-                                                   id="eliminar<?= $countunidad ?>"
-                                                   onclick="eliminarunidad(<?= $countunidad ?>);"><i
+                                                <td width='13%'>
+                                                    <a href="#" class='btn btn-default'
+                                                       id="eliminar<?= $countunidad ?>"
+                                                       onclick="eliminarunidad(<?= $countunidad ?>);"><i
                                                             class="fa fa-remove"></i> </a>
-                                                <a class='btn btn-default'
-                                                   data-toggle='tooltip'
-                                                   title='Mover'
-                                                   data-original-title='Mover'
-                                                   href='#'
-                                                   style="cursor: move"><i
+                                                    <a class='btn btn-default'
+                                                       data-toggle='tooltip'
+                                                       title='Mover'
+                                                       data-original-title='Mover'
+                                                       href='#'
+                                                       style="cursor: move"><i
                                                             class='fa fa-arrows-v'></i> </a></td>
-                                        </tr>
-                                        <?php $countunidad++;
-                                    } endif; ?>
+                                            </tr>
+                                            <?php
+                                            $countunidad++;
+                                        } endif;
+                                    ?>
 
                                 </tbody>
                             </table>
@@ -1043,15 +1062,15 @@
                                 <div class="col-md-12">
 
                                     <?php if (isset($producto['producto_id'])): ?>
-                                        <?php $ruta_imagen = "uploads/" . $producto['producto_id'] . "/" ?>
+    <?php $ruta_imagen = "uploads/" . $producto['producto_id'] . "/" ?>
 
 
                                         <div class="row">
                                             <?php
-
                                             if (isset($images) and count($images) > 0) {
                                                 $con_image = 0;
-                                                foreach ($images as $img): ?>
+                                                foreach ($images as $img):
+                                                    ?>
                                                     <div class="col-sm-4"
                                                          style="text-align: center; margin-bottom: 20px;"
                                                          id="div_imagen_producto<?= $con_image ?>">
@@ -1063,11 +1082,11 @@
                                                         </a>
                                                         <br>
                                                         <a href="#"
-                                                           onclick="borrar_img('<?= $producto['producto_id'] ?>','<?= $img ?>','<?= $con_image ?>')"
+                                                           onclick="borrar_img('<?= $producto['producto_id'] ?>', '<?= $img ?>', '<?= $con_image ?>')"
                                                            style="width: 200px; margin: 0;" id="eliminar"
                                                            class="btn btn-danger"><i
 
-                                                                    class="fa fa-trash-o"></i> Eliminar</a>
+                                                                class="fa fa-trash-o"></i> Eliminar</a>
                                                     </div>
 
 
@@ -1075,13 +1094,12 @@
                                                     $con_image++;
 
                                                 endforeach;
-
                                             }
                                             ?>
                                         </div>
 
 
-                                    <?php endif; ?>
+<?php endif; ?>
 
 
                                 </div>
@@ -1100,7 +1118,7 @@
                     <div class="col-md-offset-8 col-md-2">
                         <button class="btn btn-default" type="button" onclick="confirm_save('producto')"
                                 id="btnGuardar"><i
-                                    class="fa fa-save"></i> Guardar
+                                class="fa fa-save"></i> Guardar
                         </button>
                     </div>
                     <div class="col-md-2">
@@ -1111,7 +1129,7 @@
             </div>
 
         </div>
-        <?= form_close() ?>
+<?= form_close() ?>
     </div>
 
 
@@ -1190,41 +1208,41 @@
 
         var nombre_producto = $('#producto_nombre').val()
         var codigo_interno = $('#codigo_interno').val()
-        <?php if ($columna->nombre_columna == 'producto_vencimiento' and $columna->activo == 1): ?>
-        $(".my_datepicker").datepicker({format: 'dd-mm-yyyy'});
-        <?php endif;?>
+<?php if ($columna->nombre_columna == 'producto_vencimiento' and $columna->activo == 1): ?>
+            $(".my_datepicker").datepicker({format: 'dd-mm-yyyy'});
+<?php endif; ?>
 
         $(function () {
-            $('.desc_chk, .cbo_desc').on('click change', function(){
+            $('.desc_chk, .cbo_desc').on('click change', function () {
                 var cadena = new Array();
-                if($('#producto_nombre_unico').val() != ''){
+                if ($('#producto_nombre_unico').val() != '') {
                     cadena[0] = $.trim($('#producto_nombre_unico').val());
                 }
-                $('.desc_chk').each(function(){
-                    if($(this).prop('checked') == true){
+                $('.desc_chk').each(function () {
+                    if ($(this).prop('checked') == true) {
                         var id = $(this).attr('id');
-                        if(id == 'chk_grupo'){
-                            if($('#produto_grupo').val() != ''){
-                                cadena[1]= $.trim($('#produto_grupo option:selected').text());
+                        if (id == 'chk_grupo') {
+                            if ($('#produto_grupo').val() != '') {
+                                cadena[1] = $.trim($('#produto_grupo option:selected').text());
                             }
-                        }else if(id == 'chk_familia'){
-                            if($('#producto_familia').val() != ''){
+                        } else if (id == 'chk_familia') {
+                            if ($('#producto_familia').val() != '') {
                                 cadena[2] = $.trim($('#producto_familia option:selected').text());
                             }
-                        }else if(id == 'chk_linea'){
-                            if($('#producto_linea').val() != ''){
+                        } else if (id == 'chk_linea') {
+                            if ($('#producto_linea').val() != '') {
                                 cadena[3] = $.trim($('#producto_linea option:selected').text());
                             }
-                        }else if(id == 'chk_modelo'){
-                            if($('#producto_modelo').val() != ''){
+                        } else if (id == 'chk_modelo') {
+                            if ($('#producto_modelo').val() != '') {
                                 cadena[4] = $.trim($('#producto_modelo').val());
                             }
-                        }else if(id == 'chk_marca'){
-                            if($('#producto_marca').val() != ''){
+                        } else if (id == 'chk_marca') {
+                            if ($('#producto_marca').val() != '') {
                                 cadena[5] = $.trim($('#producto_marca option:selected').text());
                             }
-                        }else{
-                            if($('#codigo_interno').val() != ''){
+                        } else {
+                            if ($('#codigo_interno').val() != '') {
                                 cadena[6] = $.trim($('#codigo_interno').val());
                             }
                         }
@@ -1232,8 +1250,8 @@
                 });
 
                 var newCadena = new Array();
-                var i=0;
-                cadena.forEach( function(valor, indice, array){
+                var i = 0;
+                cadena.forEach(function (valor, indice, array) {
                     newCadena[i] = valor;
                     i++;
                 });
@@ -1322,10 +1340,10 @@
             guardarproducto(retorno);
 
             /*if (tasa.val() == '0.00' && tasa_contable.val() == '0.00') {
-
+             
              }
              else {
-
+             
              if ($("#tasa_id").val() != undefined) {
              guardarproducto();
              } else {
@@ -1334,7 +1352,7 @@
              $("#tasa_input").val(tasa.val());
              else
              $("#tasa_input").val(tasa_contable.val());
-
+             
              $("#confirm_cu").modal('show');
              }
              }*/
@@ -1539,8 +1557,7 @@
                 //console.log(txt);
                 if (seen[txt]) {
                     repetidas = true;
-                }
-                else {
+                } else {
                     seen[txt] = true;
                 }
             });
@@ -1603,11 +1620,11 @@
              delay: 2500,
              allow_dismiss: true
              });
-
+             
              $(this).prop('disabled', true);
-
+             
              return false;
-
+             
              }*/
 
             var last_precio = $('.precio_unitario').length - 1;
@@ -1658,6 +1675,16 @@
                     } else {
                         $("#barloadermodal").modal('hide');
                         $('#productomodal').modal('show');
+                        if ($('.modal-backdrop').is(':visible')) {
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                        }
+                        $.ajax({
+                            url: ruta + 'producto',
+                            success: function (data) {
+                                $('#page-content').html(data);
+                            }
+                        });
                         var growlType = 'warning';
 
                         $.bootstrapGrowl('<h4>' + data.error + '</h4>', {
@@ -1667,7 +1694,6 @@
                         });
 
                         $(this).prop('disabled', true);
-
 
                         /*$("#errorspan").text(data.error);
                          $("#error").css('display','block');*/
@@ -1707,36 +1733,39 @@
 
 
             $("#unidadescontainer").append("<tr id='trunidad" + unidadcount + "'>" +
-                "<td><select name='medida[" + unidadcount + "]' data-row='" + unidadcount + "' id='medida" + unidadcount + "' class='form-control unidad_select'>" +
-                <?php foreach ($unidades as $unidad):?>
-                "<option value='<?= $unidad['id_unidad']?>' ><?= $unidad['nombre_unidad']?></option>" +
+                    "<td><select name='medida[" + unidadcount + "]' data-row='" + unidadcount + "' id='medida" + unidadcount + "' class='form-control unidad_select'>" +
+<?php foreach ($unidades as $unidad): ?>
+                "<option value='<?= $unidad['id_unidad'] ?>' ><?= $unidad['nombre_unidad'] ?></option>" +
+<?php endforeach ?>"</select></td>" +
+            "<td><input type='number' class='form-control unidades'" +
+                    " data-row='" + unidadcount + "' required name='unidad[" + unidadcount + "]' id='unidad[" + unidadcount + "]'></td>" +
+<?php
+$preciocount = 0;
+foreach ($precios as $precio):
+    if ($precio['mostrar_precio']):
+        ?>
 
-                <?php endforeach ?>"</select></td>" +
-                "<td><input type='number' class='form-control unidades'" +
-                " data-row='" + unidadcount + "' required name='unidad[" + unidadcount + "]' id='unidad[" + unidadcount + "]'></td>" +
+        <?php
+        if ($precio['id_precio'] == 3)
+            $precio_class = 'precio_unitario';
+        elseif ($precio['id_precio'] == 1)
+            $precio_class = 'precio_venta';
+        else
+            $precio_class = 'precio_descuento';
+        ?>
 
+                    "<td><input class='form-control' type='hidden' value='<?= $precio['id_precio'] ?>' name='precio_id_" + unidadcount + "[<?= $preciocount ?>]' id='precio_id" + unidadcount + "'>" +
+                            "<input value='0.00' id='<?php echo $precio_class ?>" + unidadcount + "' class='form-control <?php echo $precio_class ?>' data-row='" + unidadcount + "' data-nombre_precio='<?php echo $precio_class ?>' type='number' required name='precio_valor_" + unidadcount + "[<?= $preciocount ?>]' id='precio_valor" + unidadcount + "'></td>" +
+    <?php endif ?>
 
-                <?php $preciocount = 0;
-                foreach ($precios as $precio):
-                if ($precio['mostrar_precio']):?>
-
-                <?php if ($precio['id_precio'] == 3)
-                    $precio_class = 'precio_unitario';
-                elseif ($precio['id_precio'] == 1)
-                    $precio_class = 'precio_venta';
-                else
-                    $precio_class = 'precio_descuento';?>
-
-                "<td><input class='form-control' type='hidden' value='<?= $precio['id_precio'] ?>' name='precio_id_" + unidadcount + "[<?= $preciocount ?>]' id='precio_id" + unidadcount + "'>" +
-                "<input value='0.00' id='<?php echo $precio_class?>" + unidadcount + "' class='form-control <?php echo $precio_class?>' data-row='" + unidadcount + "' data-nombre_precio='<?php echo $precio_class ?>' type='number' required name='precio_valor_" + unidadcount + "[<?= $preciocount ?>]' id='precio_valor" + unidadcount + "'></td>" +
-                <?php endif?>
-
-                <?php $preciocount++;
-                endforeach ?>
-                "<td width='13%'><a class='btn btn-default' href='#' id='eliminar" + unidadcount + "' onclick='eliminarunidad(" + unidadcount + ");'><i class='fa fa-remove'></i> </a> <a style='cursor: move' class='btn btn-default' href='#' data-toggle='tooltip'" +
-                " title='Mover' data-original-title='Mover' ><i class='fa fa-arrows-v'></i> </a>  </td>" +
-                "</tr>"
-            );
+    <?php
+    $preciocount++;
+endforeach
+?>
+            "<td width='13%'><a class='btn btn-default' href='#' id='eliminar" + unidadcount + "' onclick='eliminarunidad(" + unidadcount + ");'><i class='fa fa-remove'></i> </a> <a style='cursor: move' class='btn btn-default' href='#' data-toggle='tooltip'" +
+                    " title='Mover' data-original-title='Mover' ><i class='fa fa-arrows-v'></i> </a>  </td>" +
+                    "</tr>"
+                    );
 
 //            $('.unidad_select').off('change');
 //            $('.unidad_select').on('change', function () {
@@ -1793,30 +1822,32 @@
                 $("#unidad\\[" + i + "\\]").attr('onchange', 'nuevocostoporunidad(' + i + ')')
                 $("#unidad\\[" + i + "\\]").attr('onKeyUp', 'nuevocostoporunidad(' + i + ')')
 
-                <?php  foreach ($precios as $precioo) {
+<?php
+foreach ($precios as $precioo) {
 
-                if ($precioo['mostrar_precio']) {
+    if ($precioo['mostrar_precio']) {
 
-                if ($precioo['id_precio'] == 3){
-                ?>
-                clase = 'precio_unitario';
-                <?php }elseif ($precioo['id_precio'] == 1){
-                ?>
-                clase = 'precio_venta';
-                <?php }else{
-                ?>
-                clase = 'precio_descuento';
-                <?php } ?>
-                for (var j = 0; j < $("." + clase).length; j++) {
+        if ($precioo['id_precio'] == 3) {
+            ?>
+                            clase = 'precio_unitario';
+        <?php } elseif ($precioo['id_precio'] == 1) {
+            ?>
+                            clase = 'precio_venta';
+        <?php } else {
+            ?>
+                            clase = 'precio_descuento';
+        <?php } ?>
+                        for (var j = 0; j < $("." + clase).length; j++) {
 
-                    var valor = $("#unidad\\[" + i + "\\]").val() * nuevo_precio
-                    $("#" + clase + i).val(Math.round(parseFloat(valor)))
+                            var valor = $("#unidad\\[" + i + "\\]").val() * nuevo_precio
+                            $("#" + clase + i).val(Math.round(parseFloat(valor)))
 
-                }
+                        }
 
-                <?php  }
-                }
-                ?>
+        <?php
+    }
+}
+?>
             }
 
 
@@ -1899,11 +1930,9 @@
 
                 if ($('#trunidad' + count).find('.precio_unitario').length) {
                     $('#trunidad' + count).find('.precio_unitario').attr('id', 'precio_unitario' + count);
-                }
-                else if ($('#trunidad' + count).find('.precio_venta').length) {
+                } else if ($('#trunidad' + count).find('.precio_venta').length) {
                     $('#trunidad' + count).find('.precio_venta').attr('id', 'precio_venta' + count);
-                }
-                else if ($('#trunidad' + count).find('.precio_descuento').length) {
+                } else if ($('#trunidad' + count).find('.precio_descuento').length) {
                     $('#trunidad' + count).find('.precio_descuento').attr('id', 'precio_descuento' + count);
                 }
 
@@ -2067,25 +2096,25 @@
 
                 contador_img++;
                 $("#row1").append('<div class="row"><div class="col-md-6"><div class="input-prepend input-append input-group">' +
-                    '<span class="input-group-addon"><i class="fa fa-folder"></i> </span>' +
-                    '<input type="file" onchange="asignar_imagen(' + contador_img + ')" class="form-control input_imagen" data-count="1" name="userfile[]" accept="image/*" id="input_imagen' + contador_img + '"></div>' +
-                    '</div> <div class="col-md-2"><img id="imgSalida' + contador_img + '" src="" height="100" width="100"></div> </div>');
+                        '<span class="input-group-addon"><i class="fa fa-folder"></i> </span>' +
+                        '<input type="file" onchange="asignar_imagen(' + contador_img + ')" class="form-control input_imagen" data-count="1" name="userfile[]" accept="image/*" id="input_imagen' + contador_img + '"></div>' +
+                        '</div> <div class="col-md-2"><img id="imgSalida' + contador_img + '" src="" height="100" width="100"></div> </div>');
                 e.preventDefault()
             })
 
             /* $("input[type=file]").live('change', function () {
              alert($(this).attr('data-count'))
              if (this.files && this.files[0]) {
-
+             
              asignar_identificador($(this).attr('data-count'))
              var reader = new FileReader();
              reader.onload = fileOnload;
-
+             
              reader.readAsDataURL(this.files[0]);
              }
              });*/
             $("#eliminar").click(function () {
-                <?php $prod_id = isset($producto['producto_id']) ? $producto['producto_id'] : null?>
+<?php $prod_id = isset($producto['producto_id']) ? $producto['producto_id'] : null ?>
                 $.ajax({
                     url: '<?php echo $ruta . 'producto/borrarimagen?id=' . $prod_id; ?>',
                     success: function (data) {
@@ -2105,10 +2134,10 @@
 
 
 
-            <?php   if ($this->session->userdata('PRECIO_DE_VENTA') == "CALCULADO"){ ?>
-            calculo_inicial();
+<?php if ($this->session->userdata('PRECIO_DE_VENTA') == "CALCULADO") { ?>
+                calculo_inicial();
 
-            <?php  }?>
+<?php } ?>
 
         });
 
@@ -2195,8 +2224,7 @@
 
                             /*le asigno el valor del nuevo costo unitario a este campo hidden*/
                             $("#calculado_costo_unitario").val(costounitario)
-                        }
-                        else if (inputseleccionado.attr('data-nombre') == 'Dolares') {
+                        } else if (inputseleccionado.attr('data-nombre') == 'Dolares') {
                             /*si es Dolares, busco el costo unitario actual*/
                             costounitario = $('input[type=number].precio_compra[data-nombre="Soles"]').val()
 

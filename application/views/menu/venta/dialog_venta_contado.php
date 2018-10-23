@@ -29,7 +29,7 @@
                     </div>
                     <div class="col-md-9">
                         <div class="input-prepend input-append input-group">
-                            <label class="input-group-addon"><?= $md->simbolo ?></label>
+                            <label class="input-group-addon" id="simbolo_moneda"><?= $md->simbolo ?></label>
                             <input
                                     type="text"
                                     class='input-square input-small form-control'
@@ -46,7 +46,7 @@
                     </div>
                     <div class="col-md-9">
                         <div class="input-prepend input-append input-group">
-                            <label class="input-group-addon tipo_moneda"><?= $md->simbolo ?></label><input
+                            <label class="input-group-addon tipo_moneda"  id="simbolo_moneda"><?= $md->simbolo ?></label><input
                                     type="number"
                                     class='input-square input-small form-control'
                                     min="0.0"
@@ -70,7 +70,7 @@
                     </div>
                     <div class="col-md-9">
                         <div class="input-prepend input-append input-group">
-                            <label class="input-group-addon tipo_moneda"><?= $md->simbolo ?></label><input
+                            <span class="input-group-addon tipo_moneda"  id="simbolo_moneda" ></span><input
                                     type="number"
                                     tabindex="0"
                                     class='input-square input-small form-control'
@@ -92,7 +92,7 @@
                     </div>
                     <div class="col-md-9">
                         <div class="input-prepend input-append input-group">
-                            <label class="input-group-addon tipo_moneda"><?= $md->simbolo ?></label><input
+                            <label class="input-group-addon tipo_moneda"   id="simbolo_moneda"><?= $md->simbolo ?></label><input
                                     type="text"
                                     class='input-square input-small form-control'
                                     value="0.00"
