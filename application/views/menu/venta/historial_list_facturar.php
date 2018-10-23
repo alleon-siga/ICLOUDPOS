@@ -80,69 +80,70 @@
 
 <script>
 
-    $(function () {
+  $(function () {
 
-        $("#confirm_venta_text").html($("#loading").html());
+    //$('#confirm_venta_text').html($('#loading').html())
 
-        $('#facturar_btn').on('click', function () {
-            if ($("#cboDoc").val() == 1 && $("#tipo_cliente").val() == 0) {
-                show_msg('warning', '<h4>Error. </h4><p>El Cliente no tiene ruc para realizar venta en factura.</p>');
-            } else {
-                $('#barloadermodal').modal('show');
-                $.ajax({
-                    url: '<?php echo base_url() . 'venta_new/facturar_venta'; ?>',
-                    type: 'POST',
-                    dataType: 'json',
-                    data: {
-                        'venta_id': '<?= $venta->venta_id ?>',
-                        'iddoc': $('#cboDoc').val()
-                    },
-                    success: function (data) {
-                        $('#dialog_venta_confirm').modal('hide');
-                        $('#dialog_venta_facturar').modal('hide');
-                        $(".modal-backdrop").remove();
-                        show_msg('success', '<h4>Correcto.</h4> <p>Venta facturada con exito.</p>');
+    $('#facturar_btn').on('click', function () {
 
-                        if ($('#facturacion_electronica').val() == 1 && data.venta.venta_status == 'COMPLETADO' && (data.venta.id_documento == 1 || data.venta.id_documento == 3)) {
-                            if (data.facturacion.estado == 1) {
-                                show_msg('success', '<h4>Facturacion Electronica:</h4> ' + data.facturacion.nota);
-                            }
-                            else {
-                                show_msg('danger', '<h4>Facturacion Electronica:</h4> ' + data.facturacion.nota);
-                            }
-                        }
+      if ($('#cboDoc').val() == 1 && $('#tipo_cliente').val() == 0) {
+        show_msg('warning', '<h4>Error. </h4><p>El Cliente no tiene ruc para realizar venta en factura.</p>')
+        return false
+      }
 
-                        $('#barloadermodal').modal('hide');
-                        get_ventas();
-                    },
-                    error: function () {
-                        alert('Error inesperado');
-                        $('#barloadermodal').modal('hide');
-                    }
-                });
+      $('#barloadermodal').modal('show')
+      $.ajax({
+        url: '<?php echo base_url() . 'venta_new/facturar_venta'; ?>',
+        type: 'POST',
+        dataType: 'json',
+        data: {
+          'venta_id': '<?= $venta->venta_id ?>',
+          'iddoc': $('#cboDoc').val()
+        },
+        success: function (data) {
+
+          if (data.success == 1) {
+            show_msg('success', data.msg)
+
+            if ($('#facturacion_electronica').val() == 1 && data.venta.venta_status == 'COMPLETADO' && (data.venta.id_documento == 1 || data.venta.id_documento == 3)) {
+              if (data.facturacion.estado == 1) {
+                show_msg('success', '<h4>Facturacion Electronica:</h4> ' + data.facturacion.nota)
+              }
+              else {
+                show_msg('danger', '<h4>Facturacion Electronica:</h4> ' + data.facturacion.nota)
+              }
             }
-        })
+          }
+          else {
+            show_msg('warning', data.msg)
+          }
 
-        $('#cboDoc').on('change', function () {
-            $.ajax({
-                url: '<?= base_url() ?>venta_new/getDocumentoNumero',
-                type: 'POST',
-                data: {
-                    'iddoc': $('#cboDoc').val(),
-                    'local_id': '<?= $venta->local_id ?>'
-                },
-                success: function (data) {
-                    $('#docNum').text(data);
-                }
-            });
-        });
-    });
+        },
+        error: function () {
+          show_msg('danger', 'Ha ocurrido un error inesperado')
+        },
+        complete: function () {
+          //$('#dialog_venta_confirm').modal('hide')
+          $('#dialog_venta_facturar').modal('hide')
+          $('#barloadermodal').modal('hide')
+          $('.modal-backdrop').remove()
+          get_ventas()
+        }
+      })
+    })
 
-    function show_msg(type, msg) {
-        $.bootstrapGrowl(msg, {
-            type: type,
-            delay: 5000,
-            allow_dismiss: true
-        });
-    }
+    $('#cboDoc').on('change', function () {
+      $.ajax({
+        url: '<?= base_url() ?>venta_new/getDocumentoNumero',
+        type: 'POST',
+        data: {
+          'iddoc': $('#cboDoc').val(),
+          'local_id': '<?= $venta->local_id ?>'
+        },
+        success: function (data) {
+          $('#docNum').text(data)
+        }
+      })
+    })
+  })
 </script>

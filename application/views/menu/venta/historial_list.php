@@ -69,7 +69,7 @@
                             <i class="fa fa-search"></i>
                         </a>
 
-                        <?php if ($venta->numero == '' && $venta_action != 'comision' && $venta_action != 'anular' && $venta->venta_estado == 'COMPLETADO'): ?>
+                        <?php if ($venta->numero == '' && $venta_action != 'comision' && ($venta_action == 'anular' && $venta->numero == null) && $venta->venta_estado == 'COMPLETADO'): ?>
 
                             <a class="btn btn-warning" data-toggle="tooltip" style="margin-right: 5px;"
                                title="Facturar" data-original-title="Facturar"
@@ -80,29 +80,26 @@
                         <?php endif; ?>
 
                         <?php if ($venta_action != 'anular' && $venta_action != 'caja' && $venta->venta_estado != 'CERRADA' && $venta_action != 'comision'): ?>
-                            <?php //if($venta_action != 'comision'):  ?>
                             <a class="btn btn-primary" data-toggle="tooltip" style="margin-right: 5px;"
                                title="Ver" data-original-title="Ver"
                                href="#"
                                onclick="previa('<?= $venta->venta_id ?>')">
                                 <i class="fa fa-print"></i>
                             </a>
-                            <?php //endif; ?>
-
-                            <?php if ($venta->factura_impresa == 1 && $venta->documento_id != 6 && (validOption('ACTIVAR_SHADOW', 1) || validOption('ACTIVAR_FACTURACION_VENTA', 1))): ?>
-                                <a class="btn btn-warning" data-toggle="tooltip" style="margin-right: 5px;"
-                                   title="Cerrar Venta" data-original-title="Cerrar Venta"
-                                   href="#"
-                                   onclick="cerrar_venta('<?= $venta->venta_id ?>')">
-                                    <i class="fa fa-unlock"></i>
-                                </a>
-                            <?php endif; ?>
                         <?php endif; ?>
 
                         <?php if ($venta_action == 'anular'): ?>
+                            <?php if ($venta->numero != null): ?>
+                                <a class="btn btn-danger" data-toggle="tooltip"
+                                   title="Crear nota de credito" data-original-title="Crear nota de credito"
+                                   href="#" style="margin-right: 5px;"
+                                   onclick="creditoModal(<?= $venta->venta_id ?>)">
+                                    <i class="fa fa-file-text-o"></i>
+                                </a>
+                            <?php endif; ?>
                             <a class="btn btn-danger" data-toggle="tooltip"
                                title="Anular Venta" data-original-title="Anular Venta"
-                               href="#"
+                               href="#" style="margin-right: 5px;"
                                onclick="anularModal(<?= $venta->venta_id ?>)">
                                 <i class="fa fa-remove"></i>
                             </a>
@@ -112,7 +109,7 @@
                            href="#"
                            onclick="enviar_correo('<?= $venta->venta_id ?>', '<?= $venta->tipo_cliente ?>')">
                             <i class="fa fa-envelope" aria-hidden="true"></i>
-                        <?php endif; ?>
+                            <?php endif; ?>
                         </a>
                     </td>
                 </tr>
@@ -163,29 +160,7 @@
      aria-labelledby="myModalLabel"
      aria-hidden="true"
      data-backdrop="static" data-keyboard="false">
-    <div class="modal-dialog" style="width: 60%">
-        <input type="hidden" name="hd_venta_id" id="hd_venta_id" value="">
-        <input type="hidden" name="hd_serie" id="hd_serie" value="">
-        <input type="hidden" name="hd_credito" id="hd_credito" value="">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" onclick="cerrarNotaCredito()" aria-hidden="true">
-                    &times;
-                </button>
-                <h4 class="modal-title">Nota de cr&eacute;dito</h4>
-            </div>
-            <div id="nc_modal_body" class="modal-body">
 
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary btn_venta_imprimir imprimir" type="button" data-nombre="nota_credito">
-                    <i class="fa fa-print"></i> Imprimir
-                </button>
-                <a href="#" class="btn btn-danger" id="cerrar_pago_modal"
-                   onclick="cerrarNotaCredito()">Cerrar</a>
-            </div>
-        </div>
-    </div>
 </div>
 
 <div class="modal fade" id="dialog_anular" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
@@ -197,6 +172,12 @@
      data-backdrop="static"></div>
 <script type="text/javascript">
   $(function () {
+
+    // Script para corregir cuando tienes dos modal, ocultas uno y pierde el scroll
+    $(document).on('hidden.bs.modal', '.modal', function () {
+      $('.modal:visible').length && $(document.body).addClass('modal-open');
+    });
+
     $('.imprimir').on('click', function () {
       var input = $('.btn_venta_imprimir')
       var nombre = $(this).attr('data-nombre')
@@ -256,7 +237,30 @@
 
     $('#barloadermodal').modal('show')
     $.ajax({
-      url: 'venta_new/anular_modal',
+      url: '<?= base_url()?>venta_new/anular_modal',
+      method: 'POST',
+      data: {
+        venta_id: id,
+        local_id: $('#venta_local').val(),
+        moneda_id: $('#moneda_id').val()
+      },
+      success: function (data) {
+        $('#barloadermodal').modal('hide')
+        $('#dialog_anular').html(data)
+        $('#dialog_anular').modal('show')
+      },
+      error: function () {
+        show_msg('danger', 'Ha ocurrido un error inesperado')
+      }
+
+    })
+  }
+
+  function creditoModal (id) {
+
+    $('#barloadermodal').modal('show')
+    $.ajax({
+      url: '<?= base_url()?>venta_new/credito_modal',
       method: 'POST',
       data: {
         venta_id: id,
@@ -321,38 +325,11 @@
     })
   }
 
-  function ver_nc (venta_id, serie, numero) {
-    $('#dialog_venta_detalle').modal('hide')
-    $('#nc_modal').modal('show')
-    $('#hd_venta_id').attr('value', venta_id)
-    $('#hd_serie').attr('value', serie)
-    $('#hd_credito').attr('value', numero)
-    $('#nc_modal_body').html($('#loading').html())
-    $.ajax({
-      url: '<?php echo $ruta ?>venta/get_nota_credito/',
-      type: 'POST',
-      data: {'venta_id': venta_id, 'serie': serie, 'numero': numero},
-      success: function (data) {
-        $('#nc_modal_body').html(data)
-      },
-      error: function () {
-        alert('ups')
-      }
-    })
-  }
+
 
   function enviar_correo (idVenta, tipo_cliente) {
     $('#correoModal').html($('#loading').html())
     $('#correoModal').load('<?php echo $ruta ?>' + 'venta/modalEnviarVenta/' + idVenta + '/' + tipo_cliente)
     $('#correoModal').modal('show')
-  }
-
-  function cerrarNotaCredito () {
-    $('#nc_modal').modal('hide')
-    $('#dialog_venta_detalle').modal('show')
-  }
-
-  function cerrarDetalle () {
-    $('#dialog_venta_detalle').modal('hide')
   }
 </script>

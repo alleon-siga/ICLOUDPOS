@@ -84,7 +84,7 @@
                             <a class="btn btn-danger" data-toggle="tooltip"
                                title="Cancelar Venta" data-original-title="Cancelar Venta"
                                href="#"
-                               onclick="anular('<?= $venta->venta_id ?>', '<?= sumCod($venta->venta_id, 6) ?>');">
+                               onclick="anularModal(<?= $venta->venta_id ?>);">
                                 <i class="fa fa-remove"></i>
                             </a>
                         <?php endif; ?>
@@ -116,79 +116,9 @@
 
     </div>
 
-    <div class="modal fade" id="dialog_venta_confirm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+    <div class="modal fade" id="dialog_anular" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
          aria-hidden="true">
 
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Confirmaci&oacute;n</h4>
-                </div>
-
-                <div class="modal-body ">
-                    <h5 id="confirm_venta_text">Estas Seguro?</h5>
-
-                    <div class="row">
-                        <div class="col-md-4 col-md-offset-1">
-                            <label>Metodos Pago</label>
-                            <select id="metodo_pago" class="form-control">
-                                <?php foreach ($metodos_pago as $mp): ?>
-                                    <option value="<?= $mp->id_metodo ?>"><?= $mp->nombre_metodo ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <div class="col-md-5">
-                            <label>Cuenta de Caja</label>
-                            <select id="cuenta_id" class="form-control">
-                                <?php foreach ($cuentas as $cuenta): ?>
-                                    <option value="<?= $cuenta->id ?>"><?= $cuenta->descripcion ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                        <div class="col-md-9 col-md-offset-1">
-                            <?php
-                            $motivos = array(
-                                '01' => 'Anulaci&oacute;n de la operaci&oacute;n',
-                                '02' => 'Anulaci&oacute;n por error en el RUC',
-                                '03' => 'Correcci&oacute;n por error en la descripci&oacute;n',
-                                '04' => 'Descuento global',
-                                '05' => 'Descuento por item',
-                                '06' => 'Devoluci&oacute;n total',
-                                '07' => 'Devoluci&oacute;n por item',
-                                '08' => 'Bonificaci&oacute;n',
-                                '09' => 'Disminuci&oacute;n en el valor'
-                            );
-                            ?>
-                            <label>Motivo</label>
-                            <select id="motivo" class="form-control">
-                                <option value=""></option>
-                                <?php foreach ($motivos as $key => $val): ?>
-                                    <option value="<?= $key ?>"><?= $val ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-
-                <div class="modal-footer">
-                    <button id="confirm_venta_button" type="button" class="btn btn-primary">
-                        Aceptar
-                    </button>
-
-                    <button type="button" class="btn btn-danger"
-                            onclick="$('#dialog_venta_confirm').modal('hide');">
-                        Cancelar
-                    </button>
-
-                </div>
-            </div>
-
-            <!-- /.modal-content -->
-        </div>
 
 </div>
 
@@ -205,6 +135,29 @@
 
 
     });
+
+    function anularModal (id) {
+
+      $('#barloadermodal').modal('show')
+      $.ajax({
+        url: '<?= base_url()?>venta_new/anular_modal',
+        method: 'POST',
+        data: {
+          venta_id: id,
+          local_id: $('#venta_local').val(),
+          moneda_id: $('#moneda_id').val()
+        },
+        success: function (data) {
+          $('#barloadermodal').modal('hide')
+          $('#dialog_anular').html(data)
+          $('#dialog_anular').modal('show')
+        },
+        error: function () {
+          show_msg('danger', 'Ha ocurrido un error inesperado')
+        }
+
+      })
+    }
 
     function ver(venta_id) {
         stop_get_pendientes();

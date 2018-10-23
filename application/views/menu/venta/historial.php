@@ -302,8 +302,7 @@
 
               function facturar (venta_id) {
 
-                $('#dialog_venta_facturar').html($('#loading').html())
-                $('#dialog_venta_facturar').modal('show')
+                $('#barloadermodal').modal('show')
 
                 $.ajax({
                   url: '<?php echo $ruta . 'venta_new/get_venta_facturar/' . $venta_action; ?>',
@@ -311,10 +310,13 @@
                   data: {'venta_id': venta_id},
 
                   success: function (data) {
+                    $('#barloadermodal').modal('hide')
+
                     $('#dialog_venta_facturar').html(data)
+                    $('#dialog_venta_facturar').modal('show')
                   },
                   error: function () {
-                    alert('Error inesperado')
+                    show_msg('danger', 'Ha ocurrido un error inseperado')
                   }
                 })
               }
