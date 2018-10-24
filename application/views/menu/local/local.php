@@ -28,7 +28,7 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
         <i class="fa fa-plus "> Nuevo Local</i>
     </a>
     <br>
-
+    <!--Se agrego la columna Tipo Local Carlos Camargo 24-10-2018-->
     <div class="table-responsive">
         <table class="table table-striped dataTable table-bordered" id="example">
             <thead>
@@ -37,9 +37,10 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                 <th>ID</th>
                 <th width="10%">Nombre</th>
                 <th width="5%">Estado</th>
-                <th width="20%">Principal</th>
+                <th width="10%">Principal</th>
                 <th width="20%">Localizaci&oacute;n</th>
-                <th width="20%">Direcci&oacute;n</th>
+                <th width="20%">Direcci&oacute;n</th>                
+                <th width="5%">Tipo Local</th>
                 <th width="10%">Telef&oacute;no</th>
                 <th class="desktop" width="15%">Acciones</th>
             </tr>
@@ -57,6 +58,7 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                         <td style="white-space: normal;"><?= $local->principal == 1 ? 'SI' : 'NO' ?></td>
                         <td style="white-space: normal;"><?= $local->distrito_id != null ? $local->pais . ' / ' . $local->estado . ' / ' . $local->ciudad . ' / ' . $local->distrito : 'Sin Localizaci&oacute;n' ?></td>
                         <td style="white-space: normal;"><?= ($local->direccion != null)? $local->direccion : 'Sin Direcci&oacute;n' ?></td>
+                        <td style="white-space: normal;"><?= ($local->tipo != 0)? 'Almacen' : 'Punto de Venta' ?></td>
                         <td style="white-space: normal;"><?= $local->telefono ?></td>
                         <td class="center" style="white-space: normal;">
                             <div class="btn-group acciones_<?= $local->int_local_id ?>">

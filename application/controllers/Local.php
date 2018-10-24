@@ -121,7 +121,8 @@ class local extends MY_Controller
             'principal' => $this->input->post('principal'),
             'distrito_id' => $this->input->post('distrito_id'),
             'direccion' => $this->input->post('direccion'),
-            'telefono' => $this->input->post('telefono'),
+            'telefono' => $this->input->post('telefono'),            
+            'tipo' => $this->input->post('tipo_local'),
         );
 
         if (empty($id)) {
