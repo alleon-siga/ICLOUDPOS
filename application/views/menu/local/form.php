@@ -178,17 +178,19 @@
                 </div>
                 <br>
                 <div class="row">
+                    <div class="col-lg-2">
+                    </div>
                     <div class="col-lg-6 col-xs-12">
                         <div class="form-group col-lg-12">
                             <div class="col-lg-8 text-right">
                                 <label>Punto de Venta</label>
                             </div>
                             <div class="col-lg-4 text-left">
-                                <input type="radio" id="ptventa" name="tipo_local" value="0"  <?= isset($local['tipo']) && $local['tipo'] == '0' ? 'checked' : '' ?>>
+                                <input type="radio" id="ptventa" name="tipo_local" value="0"  <?= isset($local['tipo']) && $local['tipo'] == '0' ? 'checked' : 'checked' ?>>
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-6 col-xs-12">
+                    <div class="col-lg-4 col-xs-12">
                         <div class="form-group col-lg-12">
                             <div class="col-lg-8 text-right">
                                 <label>Almacen</label>
@@ -199,10 +201,7 @@
                         </div>
                     </div> 
                 </div>
-
             </div>
-
-
             <div class="modal-footer">
                 <button type="button" id="" class="btn btn-primary" onclick="grupo.guardar()">Confirmar</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
