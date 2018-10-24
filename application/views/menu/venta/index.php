@@ -86,15 +86,12 @@
                     <div class="col-md-2">
                         <label class="control-label panel-admin-text">Producto:</label>
                     </div>
-                    <!--Se Realiza un Filtro solo Almacen  Carlos Camargo (24-10-2018)-->
                     <div class="col-md-3">
                         <div class="help-key badge label-success" style="display: none;">2</div>
                         <select name="local_id" id="local_id" class='form-control'>
                             <?php foreach ($locales as $local): ?>
-                                <?php if ($local->tipo == 1): ?>
                                     <option <?= $local->local_id == $local->local_defecto ? 'selected="selected"' : '' ?>
                                         value="<?= $local->local_id ?>"><?= $local->local_nombre ?></option>
-                                    <?php endif; ?>
                             <?php endforeach; ?>
                         </select>
                     </div>
