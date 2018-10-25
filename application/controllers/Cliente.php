@@ -159,9 +159,10 @@ class cliente extends MY_Controller {
             'agente_retension' => $this->input->post('retencion') ? $this->input->post('retencion') : 0,
             'agente_retension_valor' => $this->input->post('retencion_value') == 0 ? null : $this->input->post('retencion_value'),
             'linea_credito' => $this->input->post('lineaC_j') ? $this->input->post('lineaC_j') : null,
-            'nota' => $this->input->post('tienda') ? $this->input->post('tienda') : null
+            'nota' => $this->input->post('tienda') ? $this->input->post('tienda') : null,
+            'status_sunat' => $this->input->post('e_sunat')!=""?$this->input->post('e_sunat')=="ACTIVO"?"1":"0":"2"
         );
-
+        
         if (empty($id)) {
             $resultado = $this->cliente_model->insertar($cliente);
 
