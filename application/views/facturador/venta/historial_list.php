@@ -2,6 +2,12 @@
 <?php $md = get_moneda_defecto() ?>
 <div class="row">
     <div class="col-md-10"></div>
+    <input type="hidden" value="<?php if (valueOptionDB('FACTURACION', 0) == 1) {
+    echo '1';
+} else {
+    echo '0';
+} 
+?>" id="ValFacturacion">
 </div>
 <style>
     table thead {
@@ -32,9 +38,9 @@
             </tr>
         </thead>
         <tbody>
-            <?php if (count($ventas) > 0): ?>
+<?php if (count($ventas) > 0): ?>
 
-                <?php foreach ($ventas as $venta): ?>
+                        <?php foreach ($ventas as $venta): ?>
                     <tr <?= $venta->venta_estado == 'ANULADO' ? 'style="color: red;"' : '' ?>>
                         <td style="white-space: normal;"><?= $venta->venta_id ?></td>
                         <td style="white-space: normal;">
@@ -54,37 +60,40 @@
                             }
                             ?>
                         </td>
-                        <td style="white-space: normal;"><?= $venta->ruc?></td>
+                        <td style="white-space: normal;"><?= $venta->ruc ?></td>
                         <td style="white-space: normal;"><?= $venta->cliente_nombre ?></td>
                         <td style="white-space: normal;"><?= $venta->vendedor_nombre ?></td>
                         <td style="white-space: normal;"><?= $venta->condicion_nombre ?></td>
                         <td style="white-space: normal;"><?= $venta->venta_estado ?></td>
                         <td style="white-space: normal;"><?= $venta->moneda_tasa ?></td>
                         <td style="white-space: normal;"><?= $venta->moneda_simbolo ?> <?= number_format($venta->total, 2) ?></td>
-                        <td style="white-space: normal;"><?php if (($venta->convertidos) > 0) {
+                        <td style="white-space: normal;"><?php
+                    if (($venta->convertidos) > 0) {
                         echo '<button class="btn btn-info btn-xs" onclick="detalle(' . $venta->venta_id . ')">S (' . $venta->convertidos . ')</buton>';
                     } else {
                         echo '<button class="btn btn-warning btn-xs">N</buton>';
-                    } ?></td>
+                    }
+                    ?></td>
                         <td style="text-align: center; white-space: normal;">
-        <?php
-        if ($venta->documento_id == 6) {
-            ?>
+                            <?php
+                            if ($venta->documento_id == 6) {
+                                ?>
                                 <a class="btn btn-info btn-sm" data-toggle="tooltip" style="margin-right: 5px;" title="Ver" data-original-title="Ver" href="#" onclick="ver('<?= $venta->venta_id ?>');">
                                     <i class="fa fa-search"></i>
                                 </a>
-                                <?php if ($venta->venta_estado == 'COMPLETADO' && $venta->id_factura=='') { ?>
+                                <?php if ($venta->venta_estado == 'COMPLETADO' && $venta->id_factura == '') { ?>
                                     <a class="btn btn-icon btn-sm" data-toggle="tooltip" style="margin-right: 5px;background-color: #5d5d5d;color:white;" title="Convertir" data-original-title="Convertir" href="#" onclick="shadow('<?= $venta->venta_id ?>');">
 
                                         <i class="fa fa-refresh"></i>
                                     </a>
-                                <?php }
-                                if ($venta->id_factura=='' && ($venta->convertidos) > 0) {
+                                <?php
+                                }
+                                if ($venta->id_factura == '' && ($venta->convertidos) > 0) {
                                     ?>
-                                    <a class="btn btn-default btn-sm" data-toggle="tooltip" onclick="sendsunat(<?= $venta->venta_id ?>)" title="Sunat" data-original-title="Sunat" href="#">
+                                    <a class="btn btn-default btn-sm" data-toggle="tooltip"  onclick="sendsunat(<?= $venta->venta_id ?>)" title="Sunat" data-original-title="Sunat" href="#">
                                         <i class="fa fa-mail-forward"></i>
                                     </a>
-                        <?php
+                            <?php
                         }
                     }
                     ?>
@@ -108,6 +117,6 @@
     <div class="modal fade" id="remove_ventaconvertida_shadow" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true"></div>
     <div class="modal fade" id="dialog_venta_detalle_sahdow" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true"></div>
     <div class="modal fade" id="dialog_sunat_shadow_masivo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true"></div>
-    
+
 </div>
 <script src="<?= $ruta; ?>recursos/js/facturador_historial_list.js"></script>

@@ -158,6 +158,17 @@ class venta extends MY_Controller
             'metodos' => $this->metodos_pago_model->get_by('id_metodo', '3'),
             'bancos' => $this->db->get_where('banco', array('banco_status' => 1))->result()
         ), true);
+        $data['facturacion'] = 'INACTIVA';
+        if (valueOptionDB('FACTURACION', 0) == 1) {
+            $emisor = $this->db->get_where('facturacion_emisor')->row();
+            if ($emisor == NULL) {
+                $data['facturacion'] = 'NO_EMISOR';
+            } elseif ($emisor->env != 'PROD') {
+                $data['facturacion'] = 'BETA';
+            } else {
+                $data['facturacion'] = 'ACTIVA';
+            }
+        }
 
         $dataCuerpo['cuerpo'] = $this->load->view('facturador/venta/index', $data, true);
         if ($this->input->is_ajax_request()) {

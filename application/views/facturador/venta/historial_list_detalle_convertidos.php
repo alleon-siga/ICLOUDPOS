@@ -137,12 +137,9 @@ foreach ($venta as $v) {
                                     } else {
                                         ?>
                                         <button class="btn btn-danger btn-xs eliminarv" onclick="mostrar(<?= $detalle->id_shadow ?>)" ><i class="fa fa-trash"></i></button>&nbsp;
+
+                                        <button class="btn btn-default btn-xs" data-toggle="tooltip"  title="Sunat" data-original-title="Sunat"  onclick="generarcomprobante(<?= $detalle->id_shadow ?>,<?= $detalle->venta_id ?>)"><i class="fa fa-mail-forward"></i></button>
                                         <?php
-                                        if (valueOptionDB('FACTURACION', 0) == 1) {
-                                            ?>
-                                            <button class="btn btn-default btn-xs" data-toggle="tooltip"  title="Sunat" data-original-title="Sunat"  onclick="generarcomprobante(<?= $detalle->id_shadow ?>,<?= $detalle->venta_id ?>)"><i class="fa fa-mail-forward"></i></button>
-                                            <?php
-                                        }
                                     }
                                     ?>
                                 </td>
@@ -238,18 +235,27 @@ foreach ($venta as $v) {
                             }
 
                             function generarcomprobante(id_shadow, venta_id) {
-                                $.ajax({
-                                    url: $('#ruta').val() + 'facturador/venta/facturar_venta/',
-                                    type: 'POST',
-                                    data: {'id_shadow': id_shadow},
+<?php if (valueOptionDB('FACTURACION', 0) == 1) { ?>
+                                    $.ajax({
+                                        url: $('#ruta').val() + 'facturador/venta/facturar_venta/',
+                                        type: 'POST',
+                                        data: {'id_shadow': id_shadow},
 
-                                    success: function (data) {
-                                        detalle(venta_id);
-                                    },
-                                    error: function (resp) {
-                                        alert(resp)
-                                    }
-                                });
+                                        success: function (data) {
+                                            detalle(venta_id);
+                                        },
+                                        error: function (resp) {
+                                            alert(resp)
+                                        }
+                                    });
+<?php } else { ?>
+                                    $.bootstrapGrowl('<p>No Tiene Configurado Facturacion Electronica</p>', {
+                                        type: 'warning',
+                                        delay: 2500,
+                                        allow_dismiss: true
+                                    });
+<?php } ?>
+
                             }
                             function imprimir_ticket(id_shadow) {
 

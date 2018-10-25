@@ -54,19 +54,27 @@ function mostrar(id) {
     });
 }
 function sendsunat(venta_id) {
-    $("#dialog_sunat_shadow_masivo").html($("#loading").html());
-    $('#dialog_sunat_shadow_masivo').modal('show');
-    $.ajax({
-        url: $('#ruta').val() + 'facturador/venta/get_ventas_shadow/',
-        type: 'POST',
-        data: {'id': venta_id},
-        success: function (data) {
-            $('#dialog_sunat_shadow_masivo').html(data);
-        },
-        error: function (resp) {
-            alert("resp")
-        }
-    });
+    if ($("#ValFacturacion").val() == 1) {
+        $("#dialog_sunat_shadow_masivo").html($("#loading").html());
+        $('#dialog_sunat_shadow_masivo').modal('show');
+        $.ajax({
+            url: $('#ruta').val() + 'facturador/venta/get_ventas_shadow/',
+            type: 'POST',
+            data: {'id': venta_id},
+            success: function (data) {
+                $('#dialog_sunat_shadow_masivo').html(data);
+            },
+            error: function (resp) {
+                alert("resp")
+            }
+        });
+    } else {
+        $.bootstrapGrowl('<p>No Tiene Configurado Facturacion Electronica</p>', {
+            type: 'warning',
+            delay: 2500,
+            allow_dismiss: true
+        });
+    }
 }
 function ver(venta_id) {
 

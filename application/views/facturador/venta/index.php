@@ -30,6 +30,18 @@
     <li><a href="">Realizar Venta</a></li>
     <label id="save_venta_load" style="font-size: 12px; float: right; display: none;"
            class="control-label badge label-primary">Guardando la Venta...</label>
+    <li style="float: right">
+        FACTURACION ELECTRONICA:
+        <?php if ($facturacion == 'ACTIVA'): ?>
+            <span style="font-size: 13px;" class="label label-success">ACTIVA | PRODUCCION</span>
+        <?php elseif ($facturacion == 'BETA'): ?>
+            <span style="font-size: 13px;" class="label label-warning">ACTIVA | PRUEBAS</span>
+        <?php elseif ($facturacion == 'NO_EMISOR'): ?>
+            <span style="font-size: 13px;" class="label label-danger">ACTIVA | NO EMISOR</span>
+        <?php else: ?>
+            <span style="font-size: 13px;" class="label label-info">INACTIVA</span>
+        <?php endif; ?>
+    </li>
 </ul>
 <?php $md = get_moneda_defecto() ?>
 <form id="form_venta" method="POST" action="<?= base_url('venta_new/save') ?>">
