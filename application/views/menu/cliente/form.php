@@ -37,7 +37,7 @@
                     <?php $claseE = 'tab-pane fade' ?>
                     <?php $tipoC = '0' ?>
                     <li class="active"><a data-toggle="tab" href="#persona">Persona</a></li>
-                    <li><a data-toggle="tab" href="#empresa">Empresa (RUC)/Persona con Negocio (RUS)</a></li>
+                    <li><a data-toggle="tab" href="#empresa">Empresa (RUC) / Persona con Negocio (RUS)</a></li>
                 <?php } elseif ($cliente['tipo_cliente'] == '0') { //natural ?>
                     <?php $claseP = 'tab-pane fade in active' ?>
                     <?php $claseE = 'tab-pane fade' ?>
@@ -49,7 +49,7 @@
                     <?php $claseE = 'tab-pane fade in active' ?>
                     <?php $tipoC = '1' ?>
                     <li><a data-toggle="tab" href="#persona">Persona</a></li>
-                    <li class="active"><a data-toggle="tab" href="#empresa">Empresa (RUC)/Persona con Negocio (RUS)</a></li>
+                    <li class="active"><a data-toggle="tab" href="#empresa">Empresa (RUC) / Persona con Negocio (RUS)</a></li>
                 <?php } ?>
             </ul>
 
@@ -207,7 +207,7 @@
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label class="control-label panel-admin-text">Estado</label>
+                                <label class="control-label panel-admin-text">Estado en Sistema</label>
                                 <select id="estatus_j" name="estatus_j" required="true" class="chosen form-control">
 
                                     <option value="1" <?php if (isset($cliente['cliente_status']) AND $cliente['tipo_cliente'] == 1 and $cliente['cliente_status'] == 1) echo "selected" ?>>ACTIVO</option>
@@ -470,11 +470,17 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-6">
                                 <label class="control-label panel-admin-text">Representante</label>
                                 <input type="text" name="apellidoPJuridico"
-                                       value="<?php if (isset($cliente['dni'])) echo $cliente['dni']; ?>"
+                                       value="<?php if (isset($cliente['representante_apellido_pat']) && $cliente['representante_apellido_pat']!='') echo $cliente['representante_apellido_pat'].' '.$cliente['representante_apellido_mat'].' '.$cliente['representante_nombre']; ?>"
                                        id="apellidoPJuridico" class="form-control" data-placeholder="Nombre" autocomplete="off"  />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="control-label panel-admin-text">Doc. del Representante</label>
+                                <input type="text" name="DocPJuridico"
+                                       value="<?php if (isset($cliente['representante_dni'])) echo $cliente['representante_dni']; ?>"
+                                       id="DocPJuridico" class="form-control" data-placeholder="Doc. de Identidad" autocomplete="off"  />
                             </div>
                         </div>
                         <div class="row">
@@ -885,6 +891,7 @@
                                     $('#formagregarE input#telefono').val('');
                                     $('#formagregarE input#direccion_j').val('');
                                     $('#formagregarE input#apellidoPJuridico').val('');
+                                    $('#formagregarE input#DocPJuridico').val('');
                                     $('#formagregarE input#e_sunat').val('');
                                     mensaje("warning", "No Existe el RUC/RUS");
                                     $('div.modaloader').removeClass('see');
@@ -899,10 +906,12 @@
                                     var tipo_ruc = Math.floor(RUC / 1000000000);
                                     if (tipo_ruc === 20) {
                                         var Nombre_rep = obj['representantes_legales']['0']['nombre'];
+                                        var Dni_rep = obj['representantes_legales']['0']['numdoc'];
                                         $('#formagregarE input#razon_social_j').val(RazonSocial);
                                         $('#formagregarE input#telefono').val(Telefono);
                                         $('#formagregarE input#direccion_j').val(Direccion);
                                         $('#formagregarE input#apellidoPJuridico').val(Nombre_rep);
+                                        $('#formagregarE input#DocPJuridico').val(Dni_rep);
                                         $('#formagregarE input#e_sunat').val(Estado_sunat);
                                     } else {
                                         $('#formagregarE input#razon_social_j').val(RazonSocial);
@@ -926,6 +935,7 @@
                         $('#formagregarE input#telefono').val('');
                         $('#formagregarE input#direccion_j').val('');
                         $('#formagregarE input#apellidoPJuridico').val('');
+                        $('#formagregarE input#DocPJuridico').val('');
                         $('#formagregarE input#e_sunat').val('');
                     }
                 });
