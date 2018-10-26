@@ -329,16 +329,22 @@ $(document).ready(function () {
                 alert('not')
             }
         });
+    });
 
-        $('#chkCostoContable').on('click', function () {
-            if ($(this).prop('checked') == true) {
-                $('#precio_unitario').val($(this).val());
-                $('#importe').val(parseFloat($('#precio_unitario').val() * $('#total_minimo').val()).toFixed(2));
-            } else {
+    $('#chkCostoContable').on('click', function () {
+        if ($(this).prop('checked') == true) {
+            if ($('#chkCostoContable').val() == 0) {
                 $('#precio_unitario').val($('.precio-selected').val());
                 $('#importe').val(parseFloat($('.precio-selected').val() * $('#total_minimo').val()).toFixed(2));
+                show_msg('warning', '<h4>Advertencia.</h4><p>No Existe Costo Contable, se aplica el otro costo.</p>');
+            } else {
+                $('#precio_unitario').val($(this).val());
+                $('#importe').val(parseFloat($('#precio_unitario').val() * $('#total_minimo').val()).toFixed(2));
             }
-        });
+        } else {
+            $('#precio_unitario').val($('.precio-selected').val());
+            $('#importe').val(parseFloat($('.precio-selected').val() * $('#total_minimo').val()).toFixed(2));
+        }
     });
 
     //Esta funcion esta desabilitda por el momento
@@ -814,15 +820,24 @@ $(document).ready(function () {
                     i = 0;
                     $('#body_productos tr').each(function () {
                         var id_producto = lst_producto[i].producto_id;
+                        var nombre_prod = lst_producto[i].producto_nombre;
                         var cantidad = parseFloat(lst_producto[i].total_minimo);
                         var porcentaje_utilidad = parseFloat(data.porcentaje_utilidad[id_producto] / 100);
                         var contable_costo = parseFloat(data.contable_costo[id_producto]);
                         var precioComp = (porcentaje_utilidad * contable_costo) + contable_costo;
+                        if (contable_costo == 0) {
+                            trPrecioUnitario = parseFloat(lst_producto[i].precio_unitario_bk);
+                            trSubtotal = parseFloat(lst_producto[i].subtotal_bk);
+                            $(this).find('.trPrecioUnitario').text(trPrecioUnitario.toFixed(2));
+                            $(this).find('.trSubtotal').text(trSubtotal.toFixed(2));
+                            show_msg('warning', '<h4>Advertencia.</h4><p>El Producto : "'+nombre_prod+'"  No Cuenta con Costo Contable, Se Aplicara el otro costo.</p>');
+                        } else {
+                            trPrecioUnitario = parseFloat(precioComp);
+                            trSubtotal = parseFloat(cantidad * trPrecioUnitario);
+                            $(this).find('.trPrecioUnitario').text(trPrecioUnitario.toFixed(2));
+                            $(this).find('.trSubtotal').text(trSubtotal.toFixed(2));
+                        }
 
-                        trPrecioUnitario = parseFloat(precioComp);
-                        trSubtotal = parseFloat(cantidad * trPrecioUnitario);
-                        $(this).find('.trPrecioUnitario').text(trPrecioUnitario.toFixed(2));
-                        $(this).find('.trSubtotal').text(trSubtotal.toFixed(2));
 
                         //Actualizando arreglo
                         var index = get_index_producto(id_producto);
@@ -900,7 +915,7 @@ function prepare_detalles_productos() {
 //                producto.precio = precios[unidad] * lst_producto[i].precio;
 //                producto.precio_venta = precios[unidad] * lst_producto[i].precio_unitario;
                 producto.precio = lst_producto[i].precio_unitario;
-                producto.precio_venta =  lst_producto[i].precio_unitario;
+                producto.precio_venta = lst_producto[i].precio_unitario;
                 producto.unidad_medida = unidad;
                 producto.cantidad = cantidades[unidad];
                 producto.detalle_importe = producto.cantidad * producto.precio;
