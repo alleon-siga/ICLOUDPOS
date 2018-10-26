@@ -1308,7 +1308,11 @@ class venta_new_model extends CI_Model
                 $this->kardex_model->set_kardex($values);
             }
 
+            if (valueOptionDB('FACTURACION', 0) == 1) {
+                $this->facturacion_model->anularComprobante($venta_id, $motivo);
+            }
         }
+
 
         $this->db->trans_complete();
         if ($this->db->trans_status() === FALSE) {

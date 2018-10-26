@@ -3,17 +3,20 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-class facturacion_model extends CI_Model {
+class facturacion_model extends CI_Model
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         require_once(APPPATH . 'libraries/Facturador/Facturador.php');
         require APPPATH . 'libraries/Numeroletra.php';
     }
 
-    function get_facturacion($where = array()) {
+    function get_facturacion($where = array())
+    {
         $this->db->select('*')->from('facturacion')
-                ->join('local', 'local.int_local_id = facturacion.local_id');
+            ->join('local', 'local.int_local_id = facturacion.local_id');
 
         if (isset($where['local_id']))
             $this->db->where('facturacion.local_id', $where['local_id']);
@@ -51,7 +54,8 @@ class facturacion_model extends CI_Model {
         return $this->db->get()->result();
     }
 
-    function get_comprobantes_baja($where = array()) {
+    function get_comprobantes_baja($where = array())
+    {
 
         $query = "
             SELECT 
@@ -68,9 +72,10 @@ class facturacion_model extends CI_Model {
         return $this->db->query($query)->result();
     }
 
-    function get_comprobantes_generados($where = array()) {
+    function get_comprobantes_generados($where = array())
+    {
         $this->db->select('*')->from('facturacion')
-                ->join('local', 'local.int_local_id = facturacion.local_id');
+            ->join('local', 'local.int_local_id = facturacion.local_id');
 
         if (isset($where['local_id']))
             $this->db->where('facturacion.local_id', $where['local_id']);
@@ -103,10 +108,11 @@ class facturacion_model extends CI_Model {
         return $this->db->get()->result();
     }
 
-    function get_ventas_emitidas($params) {
+    function get_ventas_emitidas($params)
+    {
         $this->db->select('v.*, f.cliente_nombre')
-                ->from('venta AS v')
-                ->join('facturacion as f', 'v.venta_id = f.ref_id');
+            ->from('venta AS v')
+            ->join('facturacion as f', 'v.venta_id = f.ref_id');
         $this->db->where('estado', 3);
         if ($params['local_id'] > 0) {
             $this->db->where('v.local_id', $params['local_id']);
@@ -129,7 +135,8 @@ class facturacion_model extends CI_Model {
     }
 
     //Se Agrego el campo vfac..identificara de donde viene la venta
-    function get_relacion_comprobantes($params) {
+    function get_relacion_comprobantes($params)
+    {
         $this->db->select('f.fecha as "FecFacturacionElectr", v.fecha as "Fec_Venta", l.local_nombre as "local_nombre", v.venta_id,	
 	CASE 1 
 		WHEN f.documento_tipo = "01" THEN "FACTURA" 
@@ -149,10 +156,10 @@ class facturacion_model extends CI_Model {
 		WHEN f.estado = 4 THEN "RECHAZADO" 
 	END AS "Estado",vs.id,
         IF(f.id = vs.id_factura, "SHADOW", "NORMAL") AS "vfac"', false)
-                ->from('facturacion AS f')
-                ->join('venta AS v', 'f.ref_id = v.venta_id')
-                ->join('local AS l', 'v.local_id = l.int_local_id', 'left')
-                ->join('venta_shadow AS vs', 'vs.id_factura = f.id', 'left');
+            ->from('facturacion AS f')
+            ->join('venta AS v', 'f.ref_id = v.venta_id')
+            ->join('local AS l', 'v.local_id = l.int_local_id', 'left')
+            ->join('venta_shadow AS vs', 'vs.id_factura = f.id', 'left');
         if ($params['local_id'] > 0) {
             $this->db->where('v.local_id', $params['local_id']);
         }
@@ -171,7 +178,7 @@ class facturacion_model extends CI_Model {
         } else if (isset($params['tipo_ven']) && !empty($params['tipo_ven'] == "0")) {
             $this->db->where('f.id=vs.id_factura');
         } else if (isset($params['tipo_ven']) && !empty($params['tipo_ven'] == "-1")) {
-            
+
         }
 
         $ventas = $this->db->get()->result();
@@ -183,12 +190,14 @@ class facturacion_model extends CI_Model {
         return $ventas;
     }
 
-    function save_emisor($data) {
+    function save_emisor($data)
+    {
         $this->db->empty_table('facturacion_emisor');
         $this->db->insert('facturacion_emisor', $data);
     }
 
-    function get_emisor() {
+    function get_emisor()
+    {
         $result = $this->db->get('facturacion_emisor')->row();
         if ($result != NULL) {
             $result->moneda_simbolo = 'S/';
@@ -198,12 +207,13 @@ class facturacion_model extends CI_Model {
         return NULL;
     }
 
-    function getFacturador() {
+    function getFacturador()
+    {
         $emisor = $this->db
-                        ->join('estados', 'estados.estados_id = facturacion_emisor.departamento_id')
-                        ->join('ciudades', 'ciudades.ciudad_id = facturacion_emisor.provincia_id')
-                        ->join('distrito', 'distrito.id = facturacion_emisor.distrito_id')
-                        ->get('facturacion_emisor')->row();
+            ->join('estados', 'estados.estados_id = facturacion_emisor.departamento_id')
+            ->join('ciudades', 'ciudades.ciudad_id = facturacion_emisor.provincia_id')
+            ->join('distrito', 'distrito.id = facturacion_emisor.distrito_id')
+            ->get('facturacion_emisor')->row();
 
         if ($emisor == NULL) {
             return FALSE;
@@ -230,12 +240,14 @@ class facturacion_model extends CI_Model {
         return $facturador;
     }
 
-    function getEstado($ticket, $data) {
+    function getEstado($ticket, $data)
+    {
         $facturador = $this->getFacturador();
         return $facturador->getEstado($ticket, $data);
     }
 
-    function getEstadoResumen($resumen_id) {
+    function getEstadoResumen($resumen_id)
+    {
 
         $facturador = $this->getFacturador();
 
@@ -268,17 +280,17 @@ class facturacion_model extends CI_Model {
                 ));
 
                 $resumen_detalles = $this->db->join('facturacion', 'facturacion.id = facturacion_resumen_comprobantes.comprobante_id')
-                                ->get_where('facturacion_resumen_comprobantes', array(
-                                    'resumen_id' => $resumen_id
-                                ))->result();
+                    ->get_where('facturacion_resumen_comprobantes', array(
+                        'resumen_id' => $resumen_id
+                    ))->result();
 
                 foreach ($resumen_detalles as $detalle) {
                     $this->db->where('id', $detalle->comprobante_id);
                     $this->db->update('facturacion', array(
                         'estado' => $estado,
                         'nota' =>
-                        'El Comprobante numero ' . $detalle->documento_numero .
-                        ', ha sido aceptado por el resumen 
+                            'El Comprobante numero ' . $detalle->documento_numero .
+                            ', ha sido aceptado por el resumen 
                                 RC-' . date('Ymd', strtotime($resumen->fecha)) . '-' . $resumen->correlativo,
                         'hash_cdr' => isset($response['HASH_CDR']) ? $response['HASH_CDR'] : null
                     ));
@@ -291,7 +303,8 @@ class facturacion_model extends CI_Model {
         }
     }
 
-    function getCdr($id) {
+    function getCdr($id)
+    {
         $facturador = $this->getFacturador();
 
         if ($facturador === FALSE) {
@@ -309,12 +322,13 @@ class facturacion_model extends CI_Model {
         $comprobante = $this->db->get_where('facturacion', array('id' => $id))->row();
 
         return $facturador->getEstadoCDR(array(
-                    'TIPO_DOCUMENTO' => $comprobante->documento_tipo,
-                    'NUMERO_DOCUMENTO' => $comprobante->documento_numero,
+            'TIPO_DOCUMENTO' => $comprobante->documento_tipo,
+            'NUMERO_DOCUMENTO' => $comprobante->documento_numero,
         ));
     }
 
-    function get_tipo_cambio() {
+    function get_tipo_cambio()
+    {
         require_once(APPPATH . 'libraries/TipoCambioSunat/TipoCambioSunat.php');
         $tipo_cambio = new TipoCambioSunat();
 
@@ -322,11 +336,13 @@ class facturacion_model extends CI_Model {
         return isset($result[0]) ? $result[0] : null;
     }
 
-    function get_nota_credito_motivo($codigo = false) {
+    function get_nota_credito_motivo($codigo = false)
+    {
         return TIPO_NOTA_CREDITO::get($codigo);
     }
 
-    function emitirXml($id) {
+    function emitirXml($id)
+    {
 
         $facturador = $this->getFacturador();
 
@@ -354,9 +370,9 @@ class facturacion_model extends CI_Model {
         }
 
         $resumen = $this->db->join('facturacion_resumen_comprobantes', 'facturacion_resumen_comprobantes.resumen_id = facturacion_resumen.id')
-                        ->get_where('facturacion_resumen', array(
-                            'facturacion_resumen_comprobantes.comprobante_id' => $pre_fact->id
-                        ))->row();
+            ->get_where('facturacion_resumen', array(
+                'facturacion_resumen_comprobantes.comprobante_id' => $pre_fact->id
+            ))->row();
 
         if ($resumen == null) {
 
@@ -401,8 +417,8 @@ class facturacion_model extends CI_Model {
         }
     }
 
-    function crearXml($id) {
-        log_message('debug', 'Facturacion Electronica. creando comprobante ' . $id);
+    function crearXml($id)
+    {
 
         $facturador = $this->getFacturador();
 
@@ -423,6 +439,7 @@ class facturacion_model extends CI_Model {
 
         $cabecera = array(
             'FECHA_EMISION' => date('Y-m-d', strtotime($comprobante->fecha)),
+            'HORA_EMISION' => date('H:i:s', strtotime($comprobante->fecha)),
             'TIPO_DOCUMENTO' => $comprobante->documento_tipo,
             'NUMERO_DOCUMENTO' => $comprobante->documento_numero,
             'NOTA_NUMERO_DOCUMENTO' => $comprobante->documento_mod_numero,
@@ -458,9 +475,9 @@ class facturacion_model extends CI_Model {
                 'DESCRIPCION' => $d->producto_descripcion,
                 'PRECIO_VALOR' => $d->precio - ($d->impuesto / $d->cantidad),
                 'PRECIO_VENTA' => $d->precio,
-                'TIPO_PRECIO' => '01',
+                'TIPO_PRECIO' => $d->tipo_precio,
                 'DETALLE_TRIBUTO_IGV' => $d->impuesto,
-                'TIPO_TRIBUTO_IGV' => '10',
+                'TIPO_TRIBUTO_IGV' => $d->tipo_tributo,
             );
         }
 
@@ -477,7 +494,8 @@ class facturacion_model extends CI_Model {
         return TRUE;
     }
 
-    function enviarResumenBoletas($data) {
+    function enviarResumenBoletas($data)
+    {
         $data['tipo_documento'] = '03';
         $boletas = $this->get_comprobantes_generados($data);
 
@@ -488,8 +506,8 @@ class facturacion_model extends CI_Model {
         }
 
         $resumen = $this->db->order_by('id', 'desc')->get_where('facturacion_resumen', array(
-                    'fecha' => date('Y-m-d')
-                ))->row();
+            'fecha' => date('Y-m-d')
+        ))->row();
 
         if ($resumen != NULL) {
             $correlativo = ($resumen->correlativo + 1);
@@ -559,7 +577,7 @@ class facturacion_model extends CI_Model {
                 $this->db->update('facturacion', array(
                     'estado' => 2,
                     'nota' => 'El comprobante ha sido enviado con el resumen RC-' . date('Ymd') . '-' .
-                    $correlativo . ' y se encuentra pendiente. Numero de ticket ' . $response['TICKET']
+                        $correlativo . ' y se encuentra pendiente. Numero de ticket ' . $response['TICKET']
                 ));
             }
         }
@@ -567,9 +585,10 @@ class facturacion_model extends CI_Model {
         return $response;
     }
 
-    function facturarVenta($venta_id) {
+    function facturarVenta($venta_id)
+    {
+
         $this->load->model('venta_new/venta_new_model');
-        log_message('debug', 'Facturacion Electronica. Guardando venta ' . $venta_id);
         $venta = $this->venta_new_model->get_venta_detalle($venta_id);
 
         $tipo_doc = '';
@@ -595,7 +614,7 @@ class facturacion_model extends CI_Model {
             if ($cambio != null) {
                 $cambio_dolar = $cambio->venta;
             } else {
-                log_message('error', 'Facturacion error, No se ha podido recuperar el cambio de dolar');
+                log_message('error', 'Facturacion. No se ha podido recuperar el cambio de dolar');
                 return array(
                     'respuesta' => 'error',
                     'msg_validacion' => 'No se ha podido recuperar el cambio de dolar'
@@ -606,38 +625,40 @@ class facturacion_model extends CI_Model {
         $total_gravadas = 0;
         $total_exoneradas = 0;
         $total_inafectas = 0;
+        $total_impuesto = 0;
 
         foreach ($venta->detalles as $d) {
 
             $factor = (100 + $d->impuesto_porciento) / 100;
+            $subtotal = $venta->tipo_impuesto == 1 ? ($d->cantidad * $d->precio / $factor) : ($d->cantidad * $d->precio);
+
+            // Sumo los subtotales dependiendo su tipo de operacion
             if ($d->afectacion_impuesto == OP_GRAVABLE) {
+                $total_gravadas += $subtotal;
+
+                // Calculo el total de los impuestos y normalizo el precio al de venta
                 if ($venta->tipo_impuesto == 1) {
-                    $total_gravadas += $d->cantidad * $d->precio / $factor;
-                } else {
-                    $total_gravadas += $d->cantidad * $d->precio;
+                    $total_impuesto += ($d->cantidad * $d->precio) - (($d->cantidad * $d->precio) / $factor);
+                } elseif ($venta->tipo_impuesto == 2) {
+                    $total_impuesto += (($d->cantidad * $d->precio) * $factor) - ($d->cantidad * $d->precio);
                 }
             }
 
             if ($d->afectacion_impuesto == OP_EXONERADA) {
-                if ($venta->tipo_impuesto == 1) {
-                    $total_exoneradas += $d->cantidad * $d->precio / $factor;
-                } else {
-                    $total_exoneradas += $d->cantidad * $d->precio;
-                }
+                $total_exoneradas += $subtotal;
             }
 
             if ($d->afectacion_impuesto == OP_INAFECTA) {
-                if ($venta->tipo_impuesto == 1) {
-                    $total_inafectas += $d->cantidad * $d->precio / $factor;
-                } else {
-                    $total_inafectas += $d->cantidad * $d->precio;
-                }
+                $total_inafectas += $subtotal;
             }
         }
 
+        $subtotal = $total_gravadas + $total_exoneradas + $total_inafectas;
+
+        // Guardo el comprobante electronico
         $this->db->insert('facturacion', array(
             'local_id' => $venta->local_id,
-            'fecha' => date('Y-m-d', strtotime($venta->fecha_facturacion)),
+            'fecha' => date('Y-m-d H:i:s', strtotime($venta->fecha_facturacion)),
             'documento_tipo' => $tipo_doc,
             'documento_numero' => $numero_comprobante,
             'documento_mod_tipo' => '',
@@ -650,9 +671,9 @@ class facturacion_model extends CI_Model {
             'total_gravadas' => $total_gravadas * $cambio_dolar,
             'total_exoneradas' => $total_exoneradas * $cambio_dolar,
             'total_inafectas' => $total_inafectas * $cambio_dolar,
-            'subtotal' => $venta->subtotal * $cambio_dolar,
-            'impuesto' => $venta->impuesto * $cambio_dolar,
-            'total' => $venta->total * $cambio_dolar,
+            'subtotal' => $subtotal * $cambio_dolar,
+            'impuesto' => $total_impuesto * $cambio_dolar,
+            'total' => ($subtotal + $total_impuesto) * $cambio_dolar,
             'estado' => 0,
             'nota' => 'No enviado',
             'ref_id' => $venta->venta_id,
@@ -662,8 +683,11 @@ class facturacion_model extends CI_Model {
 
         foreach ($venta->detalles as $d) {
 
+            $tipo_tributo = '10';
+            // Calculo el impuesto por producto
             $impuesto = 0;
             if ($d->afectacion_impuesto == OP_GRAVABLE) {
+                $tipo_tributo = '10';
                 $factor = (100 + $d->impuesto_porciento) / 100;
                 if ($venta->tipo_impuesto == 1) {
                     $impuesto = ($d->cantidad * $d->precio) - (($d->cantidad * $d->precio) / $factor);
@@ -673,8 +697,16 @@ class facturacion_model extends CI_Model {
                 }
             }
 
+            if ($d->afectacion_impuesto == OP_EXONERADA) {
+                $tipo_tributo = '20';
+            }
+
+            if ($d->afectacion_impuesto == OP_INAFECTA) {
+                $tipo_tributo = '30';
+            }
+
             //Viene de la configuracion de la venta item VALOR_COMPROBANTE
-            if (valueOption('VALOR_COMPROBANTE', 'NOMBRE') == 'NOMBRE') {
+            if (valueOptionDB('VALOR_COMPROBANTE', 'NOMBRE') == 'NOMBRE') {
                 $producto_descripcion = $d->producto_nombre;
             } else {
                 $producto_descripcion = $d->producto_descripcion;
@@ -690,14 +722,17 @@ class facturacion_model extends CI_Model {
                 'um' => $d->unidad_abr,
                 'cantidad' => $d->cantidad,
                 'precio' => $d->precio * $cambio_dolar,
-                'impuesto' => $impuesto * $cambio_dolar
+                'impuesto' => $impuesto * $cambio_dolar,
+                'tipo_precio' => '01',
+                'tipo_tributo' => $tipo_tributo
             ));
         }
 
         return $this->crearXml($facturacion_id);
     }
 
-    function facturarVenta_shadow($id_shadow) {
+    function facturarVenta_shadow($id_shadow)
+    {
         $this->load->model('venta_shadow/venta_shadow_model');
         log_message('debug', 'Facturacion Electronica. Guardando venta ' . $id_shadow);
         $venta = $this->venta_shadow_model->get_venta_detalle($id_shadow);
@@ -830,7 +865,8 @@ class facturacion_model extends CI_Model {
         return $this->crearXml($facturacion_id);
     }
 
-    function enviarBaja($id) {
+    function enviarBaja($id)
+    {
         $facturador = $this->getFacturador();
 
         if ($facturador === FALSE) {
@@ -839,7 +875,7 @@ class facturacion_model extends CI_Model {
 
         $baja = $this->db->get_where('facturacion_baja', array('id' => $id))->row();
         $baja_detalles = $this->db->join('facturacion', 'facturacion.id = facturacion_baja_comprobantes.comprobante_id')
-                        ->get_where('facturacion_baja_comprobantes', array('baja_id' => $id))->result();
+            ->get_where('facturacion_baja_comprobantes', array('baja_id' => $id))->result();
 
         foreach ($baja_detalles as $detalle) {
             if ($detalle->estado != 3) {
@@ -853,7 +889,7 @@ class facturacion_model extends CI_Model {
         }
 
         $baja_detalles = $this->db->join('facturacion', 'facturacion.id = facturacion_baja_comprobantes.comprobante_id')
-                        ->get_where('facturacion_baja_comprobantes', array('baja_id' => $id))->result();
+            ->get_where('facturacion_baja_comprobantes', array('baja_id' => $id))->result();
 
         if (count($baja_detalles) > 0) {
 
@@ -874,7 +910,10 @@ class facturacion_model extends CI_Model {
                 );
             }
 
-            return $facturador->enviarBaja($cabecera, $detalles);
+            $response = $facturador->enviarBaja($cabecera, $detalles);
+
+            return $response;
+
         } else {
             $this->db->where('id', $id);
             $this->db->delete('facturacion_baja');
@@ -882,65 +921,62 @@ class facturacion_model extends CI_Model {
         }
     }
 
-    function anularComprobante($id, $motivo) {
-        $this->load->model('correlativos/correlativos_model');
+    function anularComprobante($venta_id, $motivo)
+    {
+        $venta = $this->get_where('venta', array('venta_id' => $venta_id))->row();
+        $facturacion = $this->db->get_where('facturacion', array(
+            'documento_tipo' => sumCod($venta->id_documento),
+            'ref_id' => $venta->venta_id
+        ))->row();
 
-        $facturacion = $this->db->get_where('facturacion', array('id' => $id))->row();
-        $facturacion_detalle = $this->db->get_where('facturacion_detalle', array('facturacion_id' => $id))->result();
-
-
-        if ($facturacion->documento_tipo == '03') {
-            $correlativo = $this->correlativos_model->get_correlativo($facturacion->local_id, 8);
-            $numero = 'B' . $correlativo->serie . '-' . $correlativo->correlativo;
-            $this->correlativos_model->sumar_correlativo($facturacion->local_id, 8);
-        }
-        if ($facturacion->documento_tipo == '01') {
-            $correlativo = $this->correlativos_model->get_correlativo($facturacion->local_id, 9);
-            $numero = 'F' . $correlativo->serie . '-' . $correlativo->correlativo;
-            $this->correlativos_model->sumar_correlativo($facturacion->local_id, 9);
+        if ($facturacion->documento_tipo == '03' && $facturacion->estado == 1) {
+            $this->db->where('id', $facturacion->id);
+            $this->db->update('facturacion', array('estado_comprobante' => 3));
         }
 
-        $this->db->insert('facturacion', array(
-            'local_id' => $facturacion->local_id,
-            'fecha' => date('Y-m-d'),
-            'documento_tipo' => TIPO_COMPROBANTE::$NOTA_CREDITO,
-            'documento_numero' => $numero,
-            'documento_mod_tipo' => $facturacion->documento_tipo,
-            'documento_mod_numero' => $facturacion->documento_numero,
-            'documento_mod_motivo' => $motivo,
-            'cliente_tipo' => $facturacion->cliente_tipo,
-            'cliente_identificacion' => $facturacion->cliente_identificacion,
-            'cliente_nombre' => $facturacion->cliente_nombre,
-            'cliente_direccion' => $facturacion->cliente_direccion,
-            'total_gravadas' => $facturacion->total_gravadas,
-            'total_exoneradas' => $facturacion->total_exoneradas,
-            'total_inafectas' => $facturacion->total_inafectas,
-            'subtotal' => $facturacion->subtotal,
-            'impuesto' => $facturacion->impuesto,
-            'total' => $facturacion->total,
-            'estado' => 0,
-            'nota' => 'No enviado',
-            'ref_id' => $facturacion->ref_id,
-        ));
+        if ($facturacion->documento_tipo == '01' && ($facturacion->estado == 1 || $facturacion->estado == 3)) {
+            // Si la factura esta en estado generado la emito para luego hacer su posterior comunicacion de baja
+            if ($facturacion->estado == 1) {
+                if ($this->emitirXml($facturacion->id) !== FALSE) {
 
-        $facturacion_id = $this->db->insert_id();
+                }
+            }
 
-        foreach ($facturacion_detalle as $detalle) {
-            $this->db->insert('facturacion_detalle', array(
-                'facturacion_id' => $facturacion_id,
-                'producto_codigo' => $detalle->producto_codigo,
-                'producto_descripcion' => $detalle->producto_descripcion,
-                'um' => $detalle->um,
-                'cantidad' => $detalle->cantidad,
-                'precio' => $detalle->precio,
-                'impuesto' => $detalle->impuesto
-            ));
+            $facturacion = $this->db->get_where('facturacion', array('id' => $facturacion->id))->row();
+            if ($facturacion->estado == 3) {
+
+                $baja = $this->db->order_by('id', 'desc')->get_where('facturacion_baja', array(
+                    'fecha' => date('Y-m-d')
+                ))->row();
+
+                if ($baja != NULL) {
+                    $correlativo = ($baja->correlativo + 1);
+                } else {
+                    $correlativo = 1;
+                }
+
+                $this->db->insert(array(
+                    'fecha_emision' => date('Y-m-d'),
+                    'correlativo' => $correlativo,
+                    'estado' => 0,
+                    'nota' => 'No enviado'
+                ));
+
+                $baja_id = $this->db->insert_id();
+
+                $this->db->insert('facturacion_baja_comprobantes', array(
+                    'comprobante_id' => $facturacion->id,
+                    'baja_id' => $baja_id,
+                    'motivo' => $motivo
+                ));
+
+                $this->enviarBaja($baja_id);
+            }
         }
-
-        return $this->crearXml($facturacion_id);
     }
 
-    function anularVenta($venta_id, $numero, $motivo) {
+    function anularVenta($venta_id, $numero, $motivo)
+    {
         $this->load->model('venta_new/venta_new_model');
 
         $venta = $this->venta_new_model->get_venta_detalle($venta_id);
@@ -1071,7 +1107,8 @@ class facturacion_model extends CI_Model {
         return $this->crearXml($facturacion_id);
     }
 
-    function devolverVenta($venta_id, $devoluciones, $numero, $motivo) {
+    function devolverVenta($venta_id, $devoluciones, $numero, $motivo)
+    {
         $this->load->model('venta_new/venta_new_model');
 
         $venta = $this->venta_new_model->get_venta_detalle($venta_id);
@@ -1234,7 +1271,8 @@ class facturacion_model extends CI_Model {
         return $this->crearXml($facturacion_id);
     }
 
-    function convertirNotaPedido($venta_id, $tipo_documento, $fecha_facturacion, $descuento) {
+    function convertirNotaPedido($venta_id, $tipo_documento, $fecha_facturacion, $descuento)
+    {
 
         if ($tipo_documento == '99') {
             return $this->crearBoletasMultiples($venta_id, $fecha_facturacion, $descuento);
@@ -1409,7 +1447,8 @@ class facturacion_model extends CI_Model {
         return $this->crearXml($facturacion_id);
     }
 
-    function crearBoletasMultiples($venta_id, $fecha_facturacion, $descuento) {
+    function crearBoletasMultiples($venta_id, $fecha_facturacion, $descuento)
+    {
         $this->load->model('venta_new/venta_new_model');
         $this->load->model('correlativos/correlativos_model');
         $this->load->model('facturacion/picado_model');
@@ -1474,10 +1513,10 @@ class facturacion_model extends CI_Model {
 
                 foreach ($boleta as $boleta_key => $boleta_val) {
                     $detalle_venta = $this->db->get_where('detalle_venta', array(
-                                'id_venta' => $venta->venta_id,
-                                'id_producto' => $boleta[$boleta_key]['id'],
-                                'unidad_medida' => $boleta[$boleta_key]['um_id']
-                            ))->row();
+                        'id_venta' => $venta->venta_id,
+                        'id_producto' => $boleta[$boleta_key]['id'],
+                        'unidad_medida' => $boleta[$boleta_key]['um_id']
+                    ))->row();
 
 
                     if ($descuento > 0) {
@@ -1544,12 +1583,12 @@ class facturacion_model extends CI_Model {
                 foreach ($boleta as $detalle) {
 
                     $detalle_venta = $this->db
-                                    ->join('producto', 'producto.producto_id = detalle_venta.id_producto')
-                                    ->get_where('detalle_venta', array(
-                                        'id_venta' => $venta->venta_id,
-                                        'producto_id' => $detalle['id'],
-                                        'unidad_medida' => $detalle['um_id']
-                                    ))->row();
+                        ->join('producto', 'producto.producto_id = detalle_venta.id_producto')
+                        ->get_where('detalle_venta', array(
+                            'id_venta' => $venta->venta_id,
+                            'producto_id' => $detalle['id'],
+                            'unidad_medida' => $detalle['um_id']
+                        ))->row();
 
 //                    var_dump($detalle_venta);
 //                    return false;

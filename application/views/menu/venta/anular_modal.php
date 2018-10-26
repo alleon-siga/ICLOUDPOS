@@ -89,7 +89,7 @@
 
       $('#barloadermodal').modal('show')
       $.ajax({
-        url: 'venta_new/anular_venta',
+        url: '<?= base_url()?>venta_new/anular_venta',
         method: 'POST',
         data: {
           venta_id: $('#venta_id_anular').val(),
