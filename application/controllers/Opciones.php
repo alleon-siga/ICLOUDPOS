@@ -33,6 +33,7 @@ class opciones extends MY_Controller
             'ACTIVAR_SHADOW',
             'INGRESO_COSTO',
             'INGRESO_UTILIDAD',
+            'POPUP_CAMBIOS',
             'HOST_IMPRESION',
             'EMPRESA_DIRECCION'
         );

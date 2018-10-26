@@ -20,7 +20,7 @@
              style="display:<?php echo isset($error) ? 'block' : 'none' ?>">
             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">X</button>
             <h4><i class="icon fa fa-check"></i> Error</h4>
-            <span id="errorspan"><?php //echo isset($error) ? $error : '' ?></div>
+            <span id="errorspan"><?php //echo isset($error) ? $error : ''  ?></div>
     </div>
 </div>
 <div class="row block">
@@ -145,11 +145,11 @@
         <div class="col-md-8">
             <div class="form-control">
                 <input type="radio" name="CODIGO_DEFAULT" id="" class='' value="INTERNO"
-                    <?php echo validOption("CODIGO_DEFAULT", 'INTERNO', 'INTERNO') ? 'checked' : '' ?>>
+                       <?php echo validOption("CODIGO_DEFAULT", 'INTERNO', 'INTERNO') ? 'checked' : '' ?>>
                 Código Interno
                 &nbsp;&nbsp;&nbsp;
                 <input type="radio" name="CODIGO_DEFAULT" id="" class='' value="AUTO"
-                    <?php echo validOption("CODIGO_DEFAULT", 'AUTO', 'INTERNO') ? 'checked' : '' ?>> Código
+                       <?php echo validOption("CODIGO_DEFAULT", 'AUTO', 'INTERNO') ? 'checked' : '' ?>> Código
                 Autogenerado
             </div>
         </div>
@@ -162,10 +162,10 @@
         <div class="col-md-8">
             <div class="form-control">
                 <input type="radio" name="VALOR_UNICO" id="" class='' value="NOMBRE"
-                    <?php echo validOption("VALOR_UNICO", 'NOMBRE', 'NOMBRE') ? 'checked' : '' ?>> Nombre
+                       <?php echo validOption("VALOR_UNICO", 'NOMBRE', 'NOMBRE') ? 'checked' : '' ?>> Nombre
                 &nbsp;&nbsp;&nbsp;
                 <input type="radio" name="VALOR_UNICO" id="" class='' value="MODELO"
-                    <?php echo validOption("VALOR_UNICO", 'MODELO', 'NOMBRE') ? 'checked' : '' ?>> Modelo
+                       <?php echo validOption("VALOR_UNICO", 'MODELO', 'NOMBRE') ? 'checked' : '' ?>> Modelo
             </div>
         </div>
     </div>
@@ -178,10 +178,10 @@
         <div class="col-md-8">
             <div class="form-control">
                 <input type="radio" name="PRECIO_INGRESO" id="" class='' value="IMPORTE"
-                    <?php echo validOption("PRECIO_INGRESO", 'IMPORTE', 'COSTO') ? 'checked' : '' ?>> SubTotal
+                       <?php echo validOption("PRECIO_INGRESO", 'IMPORTE', 'COSTO') ? 'checked' : '' ?>> SubTotal
                 &nbsp;&nbsp;&nbsp;
                 <input type="radio" name="PRECIO_INGRESO" id="" class='' value="COSTO"
-                    <?php echo validOption("PRECIO_INGRESO", 'COSTO', 'COSTO') ? 'checked' : '' ?>> Costo Unitario
+                       <?php echo validOption("PRECIO_INGRESO", 'COSTO', 'COSTO') ? 'checked' : '' ?>> Costo Unitario
             </div>
         </div>
     </div>
@@ -193,10 +193,10 @@
         <div class="col-md-8">
             <div class="form-control">
                 <input type="radio" name="PRODUCTO_SERIE" id="" class='' value="1"
-                    <?php //echo validOption("PRODUCTO_SERIE", '1') ? 'checked' : '' ?>> Si
+    <?php //echo validOption("PRODUCTO_SERIE", '1') ? 'checked' : '' ?>> Si
                 &nbsp;&nbsp;&nbsp;
                 <input type="radio" name="PRODUCTO_SERIE" id="" class='' value="0"
-                    <?php //echo validOption("PRODUCTO_SERIE", '0') ? 'checked' : '' ?>> No
+    <?php //echo validOption("PRODUCTO_SERIE", '0') ? 'checked' : '' ?>> No
             </div>
         </div>
     </div>-->
@@ -237,15 +237,30 @@
         <div class="col-md-8">
             <div class="form-control">
                 <input type="radio" name="PAGOS_ANTICIPADOS" id="" class='' value="1"
-                    <?php //echo validOption("PAGOS_ANTICIPADOS", '1') ? 'checked' : '' ?>> Si
+    <?php //echo validOption("PAGOS_ANTICIPADOS", '1') ? 'checked' : '' ?>> Si
                 &nbsp;&nbsp;&nbsp;
                 <input type="radio" name="PAGOS_ANTICIPADOS" id="" class='' value="0"
-                    <?php //echo validOption("PAGOS_ANTICIPADOS", '0') ? 'checked' : '' ?>> No
+    <?php //echo validOption("PAGOS_ANTICIPADOS", '0') ? 'checked' : '' ?>> No
             </div>
         </div>
     </div>-->
     <input type="hidden" name="ACTIVAR_FACTURACION_VENTA" value="0">
+    <div class="row form-group">
+        <div class="col-md-4">
+            <label class="control-label panel-admin-text">Ver informe de los cambios realizados en el sistema:</label>
+        </div>
 
+        <div class="col-md-8">
+            <div class="form-control">
+                <input type="radio" name="POPUP_CAMBIOS" id="" class='' value="SI" 
+                       <?php echo validOption("POPUP_CAMBIOS", 'SI', 'NO') ? 'checked' : '' ?>> Si
+                &nbsp;&nbsp;&nbsp;
+                <input type="radio" name="POPUP_CAMBIOS" id="" class='' value="NO" 
+                       <?php echo validOption("POPUP_CAMBIOS", 'NO', 'NO') ? 'checked' : '' ?>> No
+            </div>
+        </div>
+    </div>
+    
     <div class="row form-group">
         <div class="col-md-4">
             <label class="control-label panel-admin-text">Host de impresion cliente:</label>
@@ -268,10 +283,10 @@
         <div class="col-md-8">
             <div class="form-control">
                 <input type="radio" name="ACTIVAR_FACTURACION_VENTA" id="" class='' value="1"
-                    <?php //echo validOption("ACTIVAR_FACTURACION_VENTA", '1') ? 'checked' : '' ?>> Si
+    <?php //echo validOption("ACTIVAR_FACTURACION_VENTA", '1') ? 'checked' : '' ?>> Si
                 &nbsp;&nbsp;&nbsp;
                 <input type="radio" name="ACTIVAR_FACTURACION_VENTA" id="" class='' value="0"
-                    <?php //echo validOption("ACTIVAR_FACTURACION_VENTA", '0') ? 'checked' : '' ?>> No
+    <?php //echo validOption("ACTIVAR_FACTURACION_VENTA", '0') ? 'checked' : '' ?>> No
             </div>
         </div>
     </div>-->
@@ -284,10 +299,10 @@
         <div class="col-md-8">
             <div class="form-control">
                 <input type="radio" name="ACTIVAR_FACTURACION_INGRESO" id="" class='' value="1"
-                    <?php //echo validOption("ACTIVAR_FACTURACION_INGRESO", '1') ? 'checked' : '' ?>> Si
+    <?php //echo validOption("ACTIVAR_FACTURACION_INGRESO", '1') ? 'checked' : '' ?>> Si
                 &nbsp;&nbsp;&nbsp;
                 <input type="radio" name="ACTIVAR_FACTURACION_INGRESO" id="" class='' value="0"
-                    <?php //echo validOption("ACTIVAR_FACTURACION_INGRESO", '0') ? 'checked' : '' ?>> No
+    <?php //echo validOption("ACTIVAR_FACTURACION_INGRESO", '0') ? 'checked' : '' ?>> No
             </div>
         </div>
     </div>-->
@@ -301,10 +316,10 @@
         <div class="col-md-8">
             <div class="form-control">
                 <input type="radio" name="ACTIVAR_SHADOW" id="" class='' value="1"
-                    <?php //echo validOption("ACTIVAR_SHADOW", '1') ? 'checked' : '' ?>> Si
+    <?php //echo validOption("ACTIVAR_SHADOW", '1') ? 'checked' : '' ?>> Si
                 &nbsp;&nbsp;&nbsp;
                 <input type="radio" name="ACTIVAR_SHADOW" id="" class='' value="0"
-                    <?php //echo validOption("ACTIVAR_SHADOW", '0') ? 'checked' : '' ?>> No
+    <?php //echo validOption("ACTIVAR_SHADOW", '0') ? 'checked' : '' ?>> No
             </div>
         </div>
     </div>-->
@@ -333,7 +348,7 @@
     function guardar_form() {
         var formData = new FormData($("#formguardar")[0]);
         $.ajax({
-            url: '<?= base_url()?>opciones/index/save',
+            url: '<?= base_url() ?>opciones/index/save',
             type: "post",
             dataType: "json",
             data: formData,
@@ -345,7 +360,7 @@
 
                 $("#barloadermodal").modal('show');
                 $.ajax({
-                    url: '<?= base_url()?>opciones/index?' + new Date().getTime(),
+                    url: '<?= base_url() ?>opciones/index?' + new Date().getTime(),
                     cache: false,
                     success: function (data) {
                         $("#barloadermodal").modal('hide');
@@ -391,7 +406,7 @@
     var grupo = {
         ajaxgrupo: function () {
             return $.ajax({
-                url: '<?= base_url()?>opciones'
+                url: '<?= base_url() ?>opciones'
 
             })
         },
@@ -403,7 +418,7 @@
             //App.formSubmitAjax($("#formguardar").attr('action'), this.reloadOpciones, null, 'formguardar');
         },
         reloadOpciones: function () {
-            window.location.href = '<?= base_url()?>opciones';
+            window.location.href = '<?= base_url() ?>opciones';
         }
     }
 </script>

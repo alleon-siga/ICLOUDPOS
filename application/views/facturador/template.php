@@ -115,7 +115,15 @@ if ($this->session->userdata('tema')) {
             .nav.navbar-nav-custom > li > a > i {
                 line-height: 40px !important;
             }
-
+            .tipodecambiosunat{
+                height: 80px !important;
+                width: 170px;
+            }
+            .tipodecambiosunat .tps{
+                font-family: sans-serif !important;
+                height: 5px !important;
+                font-weight: bolder !important;
+            }
 
         </style>
 
@@ -532,6 +540,20 @@ if ($this->session->userdata('tema')) {
                                         </g>
                                         </svg>
                                     </a>
+                                </li>
+                                <li class="dropdown">
+                                    <a class="dropdown-toggle" data-toggle="dropdown" onclick="tipocambiosunat()" style="cursor: pointer;width: 200px;">
+                                        <i class="gi gi-refresh"></i> &nbsp;&nbsp; Tipo Cambio Sunat &nbsp;&nbsp;<i class="fa fa-sort-desc" aria-hidden="true"></i>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-custom dropdown-options  dropdown-menu-right">                                            
+                                        <li >
+                                            <div class="text-center tipodecambiosunat">
+                                                <p class="tps">Compra: S/ <span id="comsunat"></span></p>
+                                                <p class="tps">Venta: S/ <span id="vensunat"></span></p>
+                                                <p class="tps">al <span id="fechsunat"></span></p>
+                                            </div>
+                                        </li>
+                                    </ul>
                                 </li>
                                 <li class="dropdown">
                                     <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">
@@ -1257,7 +1279,20 @@ if ($this->session->userdata('tema')) {
 
         }
     }
-
+    function tipocambiosunat() {
+        $.ajax({
+            url: '<?= base_url() ?>monedas/get_tipocambio',
+            dataType: 'json',
+            success: function (data) {
+                console.log(data)
+                if (data.cambio != null) {
+                    $("#comsunat").text(data.cambio.compra);
+                    $("#vensunat").text(data.cambio.venta);
+                    $("#fechsunat").text(data.cambio.fecha);
+                }
+            }
+        })
+    }
     $(document).click(function (e) {
         var target = e.target;
         if ($(target).is('li.alertD>a')) {
