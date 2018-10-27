@@ -324,7 +324,7 @@
 <script>
 
     $(function () {
-        $('#imgSalida0').attr('src', '<?= base_url('recursos/img/logo/' . valueOption("EMPRESA_LOGO", '')) ?>?' + new Date().getTime());
+        $('#imgSalida0').attr('src', '<?= base_url('recursos/img/logo/' . valueOptionDB("EMPRESA_LOGO", 'logo.jpg')) ?>?' + new Date().getTime());
     });
 
     var contador_img = 0
@@ -351,7 +351,7 @@
                         $("#barloadermodal").modal('hide');
                         $(".modal-backdrop").remove();
                         $('#page-content').html(data);
-                        $('#imgSalida0').attr('src', '<?= base_url('recursos/img/logo/' . valueOption("EMPRESA_LOGO", '')) ?>?' + new Date().getTime());
+                        $('#imgSalida0').attr('src', '<?= base_url('recursos/img/logo/' . valueOptionDB("EMPRESA_LOGO", 'logo.jpg')) ?>?' + new Date().getTime());
                         $('#EMPRESA_NOMBRE').focus();
                     }
                 });

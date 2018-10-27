@@ -143,6 +143,11 @@
                 stop_get_pendientes()
                   <?php endif;?>
 
+                // Script para corregir cuando tienes dos modal, ocultas uno y pierde el scroll
+                $(document).on('hidden.bs.modal', '.modal', function () {
+                  $('.modal:visible').length && $(document.body).addClass('modal-open')
+                })
+
                 //CONFIGURACIONES INICIALES
                 App.sidebar('close-sidebar')
 

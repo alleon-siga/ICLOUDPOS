@@ -34,6 +34,7 @@ class venta_new extends MY_Controller
 
     function historial($action = "")
     {
+
         if ($this->session->userdata('esSuper') == 1) {
             $data['locales'] = $this->local_model->get_all();
         } else {
@@ -69,16 +70,6 @@ class venta_new extends MY_Controller
         $date_range = explode(" - ", $this->input->post('fecha'));
         $fecha_ini = str_replace("/", "-", $date_range[0]);
         $fecha_fin = str_replace("/", "-", $date_range[1]);
-
-        $data['metodos_pago'] = $this->db->get_where('metodos_pago', array('status_metodo' => 1))->result();
-        $data['cuentas'] = $this->db->select('caja_desglose.*')
-            ->from('caja_desglose')
-            ->join('caja', 'caja.id = caja_desglose.caja_id')
-            ->where('caja.local_id', $local_id)
-            ->where('caja.moneda_id', $this->input->post('moneda_id'))
-            ->where('caja_desglose.estado', 1)
-            ->get()->result();
-
 
         if ($action != 'caja') {
             $params = array(
@@ -236,11 +227,9 @@ class venta_new extends MY_Controller
             $emisor = $this->db->get_where('facturacion_emisor')->row();
             if ($emisor == NULL) {
                 $data['facturacion'] = 'NO_EMISOR';
-            }
-            elseif($emisor->env != 'PROD') {
+            } elseif ($emisor->env != 'PROD') {
                 $data['facturacion'] = 'BETA';
-            }
-            else {
+            } else {
                 $data['facturacion'] = 'ACTIVA';
             }
         }
@@ -624,7 +613,15 @@ class venta_new extends MY_Controller
         if ($venta->venta_status == 'ANULADO') {
             $data['success'] = 0;
             $data['msg'] = "Esta venta ya fue anulada anteriormente.";
-            log_message('error', 'Se intento anular una venta anulada');
+            echo json_encode($data);
+            return false;
+        }
+
+        // Una venta con notas de credito creada no puede ser anulada
+        $nota_credito = $this->db->get_where('notas_credito', array('venta_id' => $venta_id))->result();
+        if (count($nota_credito) > 0) {
+            $data['success'] = 0;
+            $data['msg'] = "Esta venta tiene notas de credito y no puede ser anulada.";
             echo json_encode($data);
             return false;
         }
@@ -684,6 +681,15 @@ class venta_new extends MY_Controller
         }
 
         $data['venta'] = $this->venta->get_venta_detalle($venta_id);
+
+        $total_pagado = $data['venta']->inicial > 0 ? $data['venta']->inicial : 0;
+        $cobranzas = $this->db->select_sum('credito_cuotas_abono.monto_abono', 'total')
+            ->from('credito_cuotas_abono')
+            ->join('credito_cuotas', 'credito_cuotas.id_credito_cuota = credito_cuotas_abono.credito_cuota_id')
+            ->where('credito_cuotas.id_venta', $data['venta']->venta_id)
+            ->get()->row();
+        $total_pagado += $cobranzas->total;
+        $data['total_pagado'] = $total_pagado;
 
         // Solo pueden crearse notas de credito de boletas o facturas
         if ($data['venta']->documento_id != 1 && $data['venta']->documento_id != 3) {
@@ -809,17 +815,37 @@ class venta_new extends MY_Controller
 
         if ($venta->condicion_pago == 2) {
 
-            $detalle_venta = $this->db->select_sum('cantidad', 'total_cantidad')
-                ->from('detalle_venta')
-                ->where('id_venta', $venta->venta_id)
-                ->get()->row();
+            // Si el motivo de la devolucion es parcial por item valido que no tenga ningun pago efectuado por el cliente
+            if ($motivo == '07') {
+                $total_pagado = $venta->inicial > 0 ? $venta->inicial : 0;
+                $cobranzas = $this->db->select_sum('credito_cuotas_abono.monto_abono', 'total')
+                    ->from('credito_cuotas_abono')
+                    ->join('credito_cuotas', 'credito_cuotas.id_credito_cuota = credito_cuotas_abono.credito_cuota_id')
+                    ->where('credito_cuotas.id_venta', $venta->venta_id)
+                    ->get()->row();
+                $total_pagado += $cobranzas->total;
 
-            if ($detalle_venta->total_cantidad != $total_detalle_devuelto) {
-                $data['success'] = 0;
-                $data['msg'] = "Solo pueden hacerse devoluciones totales para las ventas al credito.";
-                echo json_encode($data);
-                return false;
+                if ($total_pagado > 0) {
+                    $data['success'] = 0;
+                    $data['msg'] = "Esta venta al credito tiene ya pagos efectuados y no puede hacer una devolucion por item.";
+                    echo json_encode($data);
+                    return false;
+                }
+            } else {
+                // Valido que la devolucion sea total
+                $detalle_venta = $this->db->select_sum('cantidad', 'total_cantidad')
+                    ->from('detalle_venta')
+                    ->where('id_venta', $venta->venta_id)
+                    ->get()->row();
+
+                if ($detalle_venta->total_cantidad != $total_detalle_devuelto) {
+                    $data['success'] = 0;
+                    $data['msg'] = "Solo pueden hacerse devoluciones totales para las ventas al credito.";
+                    echo json_encode($data);
+                    return false;
+                }
             }
+
         }
 
         // Creo la nota de credito

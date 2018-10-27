@@ -140,7 +140,7 @@
                     <tr>
                         <td>
                             <img id="emisor_logo" align="middle"
-                                 src="<?= base_url('recursos/img/logo/' . valueOption("EMPRESA_LOGO", 'logo.jpg')) ?>">
+                                 src="<?= base_url('recursos/img/logo/' . valueOptionDB("EMPRESA_LOGO", 'logo.jpg')) ?>">
                         </td>
                         <td>
                             <div id="emisor_direccion"><?= $venta->local_nombre ?></div>
