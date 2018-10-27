@@ -8,10 +8,10 @@
 <?php $md = get_moneda_defecto() ?>
 <div class="row">
     <?php
-        $total_pendiente = 0;
-        foreach ($ventas as $venta){
-            $total_pendiente += $venta->condicion_id == 1 ? $venta->total : $venta->inicial;
-        }
+    $total_pendiente = 0;
+    foreach ($ventas as $venta) {
+        $total_pendiente += $venta->condicion_id == 1 ? $venta->total : $venta->inicial;
+    }
     ?>
     <div class="col-md-9"></div>
     <!--<div class="col-md-2">
@@ -69,7 +69,7 @@
                         <a class="btn btn-default" data-toggle="tooltip" style="margin-right: 5px;"
                            title="Ver" data-original-title="Ver"
                            href="#"
-                           onclick="ver('<?= $venta->venta_id ?>');">
+                           onclick="ver('<?= $venta->venta_id ?>')">
                             <i class="fa fa-search"></i>
                         </a>
 
@@ -77,14 +77,14 @@
                             <a class="btn btn-primary" data-toggle="tooltip" style="margin-right: 5px;"
                                title="Cobrar" data-original-title="Cobrar"
                                href="#"
-                               onclick="cobrar('<?= $venta->venta_id ?>');">
+                               onclick="cobrar('<?= $venta->venta_id ?>')">
                                 <i class="fa fa-money"></i>
                             </a>
 
                             <a class="btn btn-danger" data-toggle="tooltip"
                                title="Cancelar Venta" data-original-title="Cancelar Venta"
                                href="#"
-                               onclick="anularModal(<?= $venta->venta_id ?>);">
+                               onclick="anularModal(<?= $venta->venta_id ?>)">
                                 <i class="fa fa-remove"></i>
                             </a>
                         <?php endif; ?>
@@ -120,71 +120,68 @@
          aria-hidden="true">
 
 
-</div>
+    </div>
 
 
-<script>
-    $(function () {
+    <script>
+      $(function () {
         //CONFIGURACIONES INICIALES
-        App.sidebar('close-sidebar');
-        
-        $("#dialog_venta_imprimir").on('hidden.bs.modal', function () {
-            get_ventas();
-        });
+        App.sidebar('close-sidebar')
 
-
-
-    });
-
-    function anularModal (id) {
-
-      $('#barloadermodal').modal('show')
-      $.ajax({
-        url: '<?= base_url()?>venta_new/anular_modal',
-        method: 'POST',
-        data: {
-          venta_id: id,
-          local_id: $('#venta_local').val(),
-          moneda_id: $('#moneda_id').val()
-        },
-        success: function (data) {
-          $('#barloadermodal').modal('hide')
-          $('#dialog_anular').html(data)
-          $('#dialog_anular').modal('show')
-        },
-        error: function () {
-          show_msg('danger', 'Ha ocurrido un error inesperado')
-        }
+        $('#dialog_venta_imprimir').on('hidden.bs.modal', function () {
+          get_ventas()
+        })
 
       })
-    }
 
-    function ver(venta_id) {
-        stop_get_pendientes();
-        $("#dialog_venta_detalle").html($("#loading").html());
-        $("#dialog_venta_detalle").modal('show');
+      function anularModal (id) {
+
+        $('#barloadermodal').modal('show')
+        $.ajax({
+          url: '<?= base_url()?>venta_new/anular_modal',
+          method: 'POST',
+          data: {
+            venta_id: id,
+            local_id: $('#venta_local').val(),
+            moneda_id: $('#moneda_id').val()
+          },
+          success: function (data) {
+            $('#barloadermodal').modal('hide')
+            $('#dialog_anular').html(data)
+            $('#dialog_anular').modal('show')
+          },
+          error: function () {
+            show_msg('danger', 'Ha ocurrido un error inesperado')
+          }
+
+        })
+      }
+
+      function ver (venta_id) {
+        stop_get_pendientes()
 
         $.ajax({
-            url: '<?php echo $ruta . 'venta_new/get_venta_detalle/' . $venta_action; ?>',
-            type: 'POST',
-            data: {'venta_id': venta_id},
+          url: '<?php echo $ruta . 'venta_new/get_venta_detalle/' . $venta_action; ?>',
+          type: 'POST',
+          data: {'venta_id': venta_id},
 
-            success: function (data) {
-                $("#dialog_venta_detalle").html(data);
-            },
-            error: function () {
-                alert('asd')
-            }
-        });
-    }
+          success: function (data) {
+            $('#dialog_venta_detalle').html(data)
+            $('#dialog_venta_detalle').modal('show')
+          },
+          error: function () {
+            show_msg('error', 'Ha ocurrido un error inesperado')
+          }
+        })
+      }
 
-    function cerrarDetalle(){
-        $('#dialog_venta_detalle').modal('hide');
-        myVar = setInterval(get_pendientes, 2000);
-    }
+      function cerrarDetalle () {
+        $('#dialog_venta_detalle').modal('hide')
+        myVar = setInterval(get_pendientes, 2000)
+      }
 
-    function cerrarDialogVenta(){
-        $('#dialog_venta_contado').modal('hide');
-        myVar = setInterval(get_pendientes, 2000);
-    }
-</script>
+      function cerrarDialogVenta () {
+        $('#dialog_venta_contado').modal('hide')
+        myVar = setInterval(get_pendientes, 2000)
+      }
+    </script>

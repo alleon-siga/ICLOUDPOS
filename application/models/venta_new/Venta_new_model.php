@@ -71,7 +71,9 @@ class venta_new_model extends CI_Model
             cliente.tipo_cliente as tipo_cliente,
             venta.dni_garante as nombre_vd,
             (select SUM(detalle_venta.cantidad) from detalle_venta
-            where detalle_venta.id_venta=venta.venta_id) as total_bultos
+            where detalle_venta.id_venta=venta.venta_id) as total_bultos,
+            (select COUNT(id) from notas_credito
+            where notas_credito.venta_id=venta.venta_id) as total_nota_credito
             ')
             ->from('venta')
             ->join('documentos', 'venta.id_documento=documentos.id_doc')
@@ -1034,7 +1036,9 @@ class venta_new_model extends CI_Model
 
             // Sumo la cantidad de la nota de credito al registro de devolucion de la tabla detalle_venta
             $this->db->where('id_detalle', $detalle->detalle_id);
-            $this->db->update('detalle_venta', array('cantidad_devuelta' => $detalle->cantidad + $cantidad_devuelta));
+            $this->db->update('detalle_venta', array(
+                'cantidad_devuelta' => $detalle->cantidad + $cantidad_devuelta
+            ));
 
         }
 
@@ -1044,10 +1048,16 @@ class venta_new_model extends CI_Model
         foreach ($detalles_venta as $detalle) {
             $cantidad_devuelta = $detalle->cantidad_devuelta == null ? 0 : $detalle->cantidad_devuelta;
             $cantidades_restantes += $detalle->cantidad - $cantidad_devuelta;
+
+            // Actualizo el importe del detalle de las ventas
+            $this->db->where('id_detalle', $detalle->id_detalle);
+            $this->db->update('detalle_venta', array(
+                'detalle_importe' => ($detalle->cantidad - $cantidad_devuelta) * $detalle->precio
+            ));
         }
 
         $this->db->where('venta_id', $venta_id);
-        if ($cantidades_restantes == 0 || $venta->condicion_id == 2) {
+        if ($cantidades_restantes == 0) {
             $this->db->update('venta', array(
                 'venta_status' => 'ANULADO',
                 'motivo' => 'NOTA_CREDITO'
@@ -1056,22 +1066,82 @@ class venta_new_model extends CI_Model
             $this->db->update('venta', array(
                 'motivo' => 'NOTA_CREDITO'
             ));
+
         }
+        $this->recalc_totales($venta_id);
 
 
         //Devuelvo el monto pagado de la venta
         $total = $total_importe;
 
-        // NOTA: EN LAS VENTAS AL CREDITO SOLO SE PODRAN HACER DEVOLUCIONES TOTALES
+        // NOTA:
+        // EN LAS VENTAS AL CREDITO SOLO SE PODRAN HACER DEVOLUCIONES TOTALES
+        // SE PUEDEN HACER DEVOLUCIONES PARCIALES A VENTAS AL CREDITO QUE NO TENGAN COBRANZAS NI INICIAL
         // En caso de ser venta al credito el total del saldo a devolver es la inicial mas el monto pagado
         if ($venta->condicion_id == 2) {
-            $total = $venta->inicial > 0 ? $venta->inicial : 0;
-            $cobranzas = $this->db->select_sum('credito_cuotas_abono.monto_abono', 'total')
-                ->from('credito_cuotas_abono')
-                ->join('credito_cuotas', 'credito_cuotas.id_credito_cuota = credito_cuotas_abono.credito_cuota_id')
-                ->where('credito_cuotas.id_venta', $venta->venta_id)
-                ->get()->row();
-            $total += $cobranzas->total;
+
+            // Si la devolucion es diferente a devolucion por item procedo a devolver todas las cobranzas efectuadas
+            if ($motivo != '07') {
+                $total = $venta->inicial > 0 ? $venta->inicial : 0;
+                $cobranzas = $this->db->select_sum('credito_cuotas_abono.monto_abono', 'total')
+                    ->from('credito_cuotas_abono')
+                    ->join('credito_cuotas', 'credito_cuotas.id_credito_cuota = credito_cuotas_abono.credito_cuota_id')
+                    ->where('credito_cuotas.id_venta', $venta->venta_id)
+                    ->get()->row();
+                $total += $cobranzas->total;
+            } else {
+                // Cuando el motivo es devolucion por item no devuelvo ningun monto en caja y recalculo la deuda eliminando las ultimas cuotas
+                $total = 0;
+                // Actualizo la deuda de la venta
+                $venta_credito = $this->db->get_where('venta', array('venta_id' => $venta->venta_id))->row();
+                $credito = $this->db->get_where('credito', array('id_venta' => $venta->venta_id))->row();
+                $factor = 0;
+                if ($credito->tasa_interes > 0)
+                    $factor = (100 + $credito->tasa_interes) / 100;
+
+                // Calculo la nueva deuda
+                $total_deuda = $venta_credito->total + ($venta_credito->total * $factor);
+
+                // Uso $num_cuotas para hacer el conteo de las nuevas cuotas
+                $num_cuotas = 0;
+                $total_deuda_temp = $total_deuda;
+                $credito_cuotas = $this->db->get_where('credito_cuotas', array(
+                    'id_venta' => $venta_credito->venta_id
+                ))->result();
+
+                foreach ($credito_cuotas as $cuota) {
+
+                    if ($total_deuda_temp < $cuota->monto) {
+                        // Modifico la cuota con el resto de la deuda
+                        if ($total_deuda_temp > 0) {
+                            $this->db->where('id_credito_cuota', $cuota->id_credito_cuota);
+                            $this->db->update('credito_cuotas', array(
+                                'monto' => $total_deuda_temp
+                            ));
+                            $num_cuotas++;
+                        } else {
+                            // Elimino la cuota ya que no cubre el monto para tener esta cuota
+                            $this->db->where('id_credito_cuota', $cuota->id_credito_cuota);
+                            $this->db->delete('credito_cuotas');
+                        }
+
+                    } else {
+                        $num_cuotas++;
+                    }
+                    // Voy descontando la deuda a traves de las cuotas
+                    $total_deuda_temp -= $cuota->monto;
+                }
+
+                // Actualizo la deuda restante en credito
+                $this->db->where('id_venta', $venta_credito->venta_id);
+                $this->db->update('credito', array(
+                    'dec_credito_montocuota' => $total_deuda,
+                    'dec_credito_montodebito' => 0,
+                    'var_credito_estado' => 'PagoPendiente',
+                    'int_credito_nrocuota' => $num_cuotas
+                ));
+            }
+
         }
 
         if ($total > 0) {
@@ -1308,7 +1378,12 @@ class venta_new_model extends CI_Model
                 $this->kardex_model->set_kardex($values);
             }
 
+            //Si esta actvado la facturacion electronico creo la anulacion del comprobante
+//            if (valueOptionDB('FACTURACION', 0) == 1) {
+//                $this->facturacion_model->anularComprobante($venta_id, $motivo);
+//            }
         }
+
 
         $this->db->trans_complete();
         if ($this->db->trans_status() === FALSE) {

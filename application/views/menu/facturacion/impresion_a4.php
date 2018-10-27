@@ -137,7 +137,7 @@
         <div class="col" style="display: table; clear: both;">
             <div>
                 <img id="emisor_logo" align="middle"
-                     src="<?= base_url('recursos/img/logo/' . valueOption("EMPRESA_LOGO", 'logo.jpg')) ?>">
+                     src="<?= base_url('recursos/img/logo/' . valueOptionDB("EMPRESA_LOGO", 'logo.jpg')) ?>">
             </div>
             <div>
                 <div id="emisor_nombre_comercial"><?= valueOption('EMPRESA_NOMBRE', '') ?></div>

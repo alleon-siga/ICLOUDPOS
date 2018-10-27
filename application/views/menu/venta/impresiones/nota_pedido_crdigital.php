@@ -63,7 +63,7 @@
     <div class="row">
         <div class="col" style="width: 40%; font-size: 8px;">
             <img style="height: 95px;" align="middle"
-                 src="<?= base_url('recursos/img/logo/' . valueOption("EMPRESA_LOGO", 'logo.jpg')) ?>">
+                 src="<?= base_url('recursos/img/logo/' . valueOptionDB("EMPRESA_LOGO", 'logo.jpg')) ?>">
             <div style="text-align: center;">Telefono: <?= valueOption('EMPRESA_TELEFONO', '') ?></div>
             <div><?= $venta->local_direccion ?></div>
         </div>
