@@ -14,13 +14,16 @@
             <div class="row">
                 <div class="col-md-2">
                     <?php if (isset($locales)): ?>
+                        <!-- Se agrego Filtro solo Punto de Venta Carlos Camargo 24-10-2018 -->
                         <label class="control-label panel-admin-text">Ubicación</label>
                         <select id="local_id" class="ctrl form-control">
                             <option value="0">TODOS</option>
                             <?php foreach ($locales as $local): ?>
-                                <option <?php if ($this->session->userdata('id_local') == $local['int_local_id']) echo "selected"; ?>
+                                <?php if ($local['tipo'] == 0): ?>
+                                    <option <?php if ($this->session->userdata('id_local') == $local['int_local_id']) echo "selected"; ?>
                                         value="<?= $local['int_local_id']; ?>"> <?= $local['local_nombre'] ?> </option>
-                            <?php endforeach; ?>
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
                         </select>
                     <?php endif; ?>
                 </div>
@@ -66,78 +69,78 @@
             <script src="<?php echo $ruta; ?>recursos/js/Validacion.js"></script>
             <!-- /.modal-dialog -->
             <script type="text/javascript">
-              $(document).ready(function () {
-                $('input[name="fecha"]').daterangepicker({
-                  'locale': {
-                    'format': 'DD/MM/YYYY',
-                    'separator': ' - ',
-                    'applyLabel': 'Aplicar',
-                    'cancelLabel': 'Cancelar',
-                    'fromLabel': 'De',
-                    'toLabel': 'A',
-                    'customRangeLabel': 'Personalizado',
-                    'daysOfWeek': [
-                      'Do',
-                      'Lu',
-                      'Ma',
-                      'Mi',
-                      'Ju',
-                      'Vi',
-                      'Sa'
-                    ],
-                    'monthNames': [
-                      'Enero',
-                      'Febrero',
-                      'Marzo',
-                      'Abril',
-                      'Mayo',
-                      'Junio',
-                      'Julio',
-                      'Agosto',
-                      'Septiembre',
-                      'Octubre',
-                      'Noviembre',
-                      'Diciembre'
-                    ],
-                    'firstDay': 1
-                  }
-                })
-
-                getReporte()
-
-                $('.ctrl').chosen()
-
-                $('#btn_buscar, .btn_buscar').on('click', function () {
-                  getReporte()
-                })
-
-                $('.chosen-container').css('width', '100%')
-              })
-
-              function getReporte () {
-                $('#historial_list').html($('#loading').html())
-
-                var data = {
-                  'local_id': $('#local_id').val(),
-                  'fecha': $('#fecha').val(),
-                  'doc_id': $('#doc_id').val()
-                }
-
-                $.ajax({
-                  url: '<?= base_url()?>facturacion/reporte_venta/filter',
-                  data: data,
-                  type: 'POST',
-                  success: function (data) {
-                    $('#historial_list').html(data)
-                  },
-                  error: function () {
-                    $.bootstrapGrowl('<h4>Error.</h4> <p>Ha ocurrido un error en la operaci&oacute;n</p>', {
-                      type: 'danger',
-                      delay: 5000,
-                      allow_dismiss: true
+                $(document).ready(function () {
+                    $('input[name="fecha"]').daterangepicker({
+                        'locale': {
+                            'format': 'DD/MM/YYYY',
+                            'separator': ' - ',
+                            'applyLabel': 'Aplicar',
+                            'cancelLabel': 'Cancelar',
+                            'fromLabel': 'De',
+                            'toLabel': 'A',
+                            'customRangeLabel': 'Personalizado',
+                            'daysOfWeek': [
+                                'Do',
+                                'Lu',
+                                'Ma',
+                                'Mi',
+                                'Ju',
+                                'Vi',
+                                'Sa'
+                            ],
+                            'monthNames': [
+                                'Enero',
+                                'Febrero',
+                                'Marzo',
+                                'Abril',
+                                'Mayo',
+                                'Junio',
+                                'Julio',
+                                'Agosto',
+                                'Septiembre',
+                                'Octubre',
+                                'Noviembre',
+                                'Diciembre'
+                            ],
+                            'firstDay': 1
+                        }
                     })
-                    $('#historial_list').html('')
-                  }
+
+                    getReporte()
+
+                    $('.ctrl').chosen()
+
+                    $('#btn_buscar, .btn_buscar').on('click', function () {
+                        getReporte()
+                    })
+
+                    $('.chosen-container').css('width', '100%')
                 })
-              }
+
+                function getReporte() {
+                    $('#historial_list').html($('#loading').html())
+
+                    var data = {
+                        'local_id': $('#local_id').val(),
+                        'fecha': $('#fecha').val(),
+                        'doc_id': $('#doc_id').val()
+                    }
+
+                    $.ajax({
+                        url: '<?= base_url() ?>facturacion/reporte_venta/filter',
+                        data: data,
+                        type: 'POST',
+                        success: function (data) {
+                            $('#historial_list').html(data)
+                        },
+                        error: function () {
+                            $.bootstrapGrowl('<h4>Error.</h4> <p>Ha ocurrido un error en la operaci&oacute;n</p>', {
+                                type: 'danger',
+                                delay: 5000,
+                                allow_dismiss: true
+                            })
+                            $('#historial_list').html('')
+                        }
+                    })
+                }
             </script>

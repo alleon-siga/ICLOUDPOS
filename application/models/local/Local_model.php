@@ -35,10 +35,12 @@ class local_model extends CI_Model {
     }
 
     //funcion nueva que trae los locales de un usuario y su local por defecto
+    //Se agrega el campo tipo(local) Carlos Camargo 24-10-2018 
     function get_local_by_user($id) {
         if ($this->session->userdata('esSuper') == '1') {
             return $this->db->select(
                                     'local.int_local_id as local_id, 
+                                    local.tipo as tipo,
             local.local_nombre as local_nombre, 
             local.int_local_id as local_defecto')
                             ->from('local')
@@ -46,6 +48,7 @@ class local_model extends CI_Model {
         } else {
             $this->db->select(
                             'local.int_local_id as local_id, 
+                                    local.tipo as tipo,
             local.local_nombre as local_nombre, 
             usuario.id_local as local_defecto')
                     ->from('usuario_almacen')
@@ -55,9 +58,9 @@ class local_model extends CI_Model {
             return $this->db->where('usuario.nUsuCodigo', $id)->get()->result();
         }
     }
-
+    //Se agrega el campo tipo(local) Carlos Camargo 24-10-2018 
     function get_all_usu($usu) {
-        $query = $this->db->select('`l`.`int_local_id` AS `int_local_id`,`l`.`local_nombre` AS `local_nombre`,`ua`.`usuario_id`  AS `usuario_id`');
+        $query = $this->db->select('`l`.`int_local_id` AS `int_local_id`,`l`.`local_nombre` AS `local_nombre`,`l`.`tipo` AS `tipo`,`ua`.`usuario_id`  AS `usuario_id`');
         $query = $this->db->from('(`local` `l` LEFT JOIN `usuario_almacen` `ua`  ON ((`ua`.`local_id` = `l`.`int_local_id`)))');
         $query = $this->db->where('`l`.`local_status` = 1');
         $query = $this->db->where('usuario_id', $usu);

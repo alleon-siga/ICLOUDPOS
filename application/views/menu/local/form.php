@@ -38,7 +38,7 @@
                                 <?php foreach ($paises as $pais): ?>
                                     <option
                                         value="<?php echo $pais['id_pais'] ?>" <?php if (isset($local['int_local_id']) and $pais['id_pais'] == $spais['id_pais']) echo 'selected' ?>><?= $pais['nombre_pais'] ?></option>
-                                <?php endforeach ?>
+                                    <?php endforeach ?>
                             </select>
                         </div>
                     </div>
@@ -59,8 +59,8 @@
                                     <?php foreach ($estados as $estado): ?>
                                         <option
                                             value="<?php echo $estado['estados_id'] ?>" <?php if (isset($local['int_local_id']) and $estado['estados_id'] == $sestado['estados_id']) echo 'selected' ?>><?= $estado['estados_nombre'] ?></option>
-                                    <?php endforeach ?>
-                                <?php endif ?>
+                                        <?php endforeach ?>
+                                    <?php endif ?>
                             </select>
 
                         </div>
@@ -82,8 +82,8 @@
                                     <?php foreach ($ciudades as $ciudad): ?>
                                         <option
                                             value="<?php echo $ciudad['ciudad_id'] ?>" <?php if (isset($local['int_local_id']) and $ciudad['ciudad_id'] == $sciudad['ciudad_id']) echo 'selected' ?>><?= $ciudad['ciudad_nombre'] ?></option>
-                                    <?php endforeach ?>
-                                <?php endif ?>
+                                        <?php endforeach ?>
+                                    <?php endif ?>
                             </select>
                         </div>
                     </div>
@@ -102,8 +102,8 @@
                                     <?php foreach ($distritos as $distrito): ?>
                                         <option
                                             value="<?php echo $distrito['id'] ?>" <?php if (isset($local['int_local_id']) and $distrito['id'] == $sdistrito['id']) echo 'selected' ?>><?= $distrito['nombre'] ?></option>
-                                    <?php endforeach; ?>
-                                <?php endif; ?>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
                             </select>
                         </div>
                     </div>
@@ -170,17 +170,38 @@
                         </div>
                         <div class="col-md-10">
                             <select name="principal" id="principal" required="true" class="form-control">
-                                <option value="1"  <?= isset($local['principal']) && $local['principal'] == '1' ? 'selected' : ''?>>SI</option>
-                                <option value="0" <?= isset($local['principal']) && $local['principal'] == '0' ? 'selected' : 'selected="selected"'?>>NO</option>
+                                <option value="1"  <?= isset($local['principal']) && $local['principal'] == '1' ? 'selected' : '' ?>>SI</option>
+                                <option value="0" <?= isset($local['principal']) && $local['principal'] == '0' ? 'selected' : '' ?>>NO</option>
                             </select>
                         </div>
                     </div>
                 </div>
-
-
+                <br>
+                <div class="row">
+                    <div class="col-lg-2">
+                    </div>
+                    <div class="col-lg-6 col-xs-12">
+                        <div class="form-group col-lg-12">
+                            <div class="col-lg-8 text-right">
+                                <label>Punto de Venta</label>
+                            </div>
+                            <div class="col-lg-4 text-left">
+                                <input type="radio" id="ptventa" name="tipo_local" value="0"  <?= isset($local['tipo']) && $local['tipo'] == '0' ? 'checked' : 'checked' ?>>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-xs-12">
+                        <div class="form-group col-lg-12">
+                            <div class="col-lg-8 text-right">
+                                <label>Almacen</label>
+                            </div>
+                            <div class="col-lg-4 text-left">
+                                <input type="radio"  id="almacen" name="tipo_local" value="1"  <?= isset($local['tipo']) && $local['tipo'] == '1' ? 'checked' : '' ?>>
+                            </div>
+                        </div>
+                    </div> 
+                </div>
             </div>
-
-
             <div class="modal-footer">
                 <button type="button" id="" class="btn btn-primary" onclick="grupo.guardar()">Confirmar</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
