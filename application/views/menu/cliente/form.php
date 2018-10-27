@@ -37,7 +37,7 @@
                     <?php $claseE = 'tab-pane fade' ?>
                     <?php $tipoC = '0' ?>
                     <li class="active"><a data-toggle="tab" href="#persona">Persona</a></li>
-                    <li><a data-toggle="tab" href="#empresa">Empresa</a></li>
+                    <li><a data-toggle="tab" href="#empresa">Empresa (RUC) / Persona con Negocio (RUS)</a></li>
                 <?php } elseif ($cliente['tipo_cliente'] == '0') { //natural ?>
                     <?php $claseP = 'tab-pane fade in active' ?>
                     <?php $claseE = 'tab-pane fade' ?>
@@ -49,7 +49,7 @@
                     <?php $claseE = 'tab-pane fade in active' ?>
                     <?php $tipoC = '1' ?>
                     <li><a data-toggle="tab" href="#persona">Persona</a></li>
-                    <li class="active"><a data-toggle="tab" href="#empresa">Empresa</a></li>
+                    <li class="active"><a data-toggle="tab" href="#empresa">Empresa (RUC) / Persona con Negocio (RUS)</a></li>
                 <?php } ?>
             </ul>
 
@@ -202,12 +202,12 @@
                                         }
                                         ?>
                                         <option value="<?php echo $grupo['id_grupos_cliente'] ?>" <?php if (isset($cliente['grupo_id']) and $cliente['grupo_id'] == $grupo['id_grupos_cliente'] || $x == 1) echo 'selected' ?>><?= $grupo['nombre_grupos_cliente'] ?></option>
-    <?php $x++; ?>
-<?php endforeach ?>
+                                        <?php $x++; ?>
+                                    <?php endforeach ?>
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label class="control-label panel-admin-text">Estado</label>
+                                <label class="control-label panel-admin-text">Estado en Sistema</label>
                                 <select id="estatus_j" name="estatus_j" required="true" class="chosen form-control">
 
                                     <option value="1" <?php if (isset($cliente['cliente_status']) AND $cliente['tipo_cliente'] == 1 and $cliente['cliente_status'] == 1) echo "selected" ?>>ACTIVO</option>
@@ -241,7 +241,7 @@
                                             }
                                             ?>
                                             <option value="<?php echo $estado['estados_id'] ?>" <?php if (isset($cliente['provincia']) and $estado['estados_id'] == $cliente['provincia']) echo 'selected' ?>><?= $estado['estados_nombre'] ?></option>
-<?php endforeach ?>
+                                        <?php endforeach ?>
                                     </select>
                                 </div>
                                 <div class="col-md-4">
@@ -250,10 +250,10 @@
                                         <option value="">Seleccione</option>
                                         <?php //if (isset($cliente['id_cliente'])):  ?>
                                         <?php foreach ($ciudades as $ciudad): ?>
-    <?php //$cliente['ciudad'] = '2';   ?>
+                                            <?php //$cliente['ciudad'] = '2';   ?>
                                             <option value="<?php echo $ciudad['ciudad_id'] ?>" <?php if (isset($cliente['ciudad']) and $ciudad['ciudad_id'] == $cliente['ciudad']) echo 'selected' ?>><?= $ciudad['ciudad_nombre'] ?></option>
-<?php endforeach ?>
-<?php //endif   ?>
+                                        <?php endforeach ?>
+                                        <?php //endif   ?>
                                     </select>
                                 </div>
                                 <div class="col-md-4">
@@ -261,10 +261,10 @@
                                     <select name="distrito_id" id="distrito_id" required="true" class="chosen form-control">
                                         <option value="">Seleccione</option>
                                         <?php if (isset($cliente['id_cliente'])): ?>
-    <?php foreach ($distritos as $distrito): ?>
+                                            <?php foreach ($distritos as $distrito): ?>
                                                 <option value="<?php echo $distrito['id'] ?>" <?php if (isset($cliente['distrito']) and $distrito['id'] == $cliente['distrito']) echo 'selected' ?>><?= $distrito['nombre'] ?></option>
-    <?php endforeach; ?>
-<?php endif; ?>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
                                     </select>
                                 </div>
                             </div>
@@ -274,9 +274,9 @@
                                     <label class="control-label panel-admin-text">Genero</label>
                                     <select id="genero" name="genero" class="form-control">
                                         <option value=""></option>
-<?php if (!isset($cliente['genero'])) { ?>
-    <?php $cliente['genero'] = '1'; ?>
-<?php } ?>
+                                        <?php if (!isset($cliente['genero'])) { ?>
+                                            <?php $cliente['genero'] = '1'; ?>
+                                        <?php } ?>
                                         <option value="1" <?= (isset($cliente['genero']) && $cliente['genero'] == '1' ? 'selected' : '') ?>>Masculino</option>
                                         <option value="2" <?= (isset($cliente['genero']) && $cliente['genero'] == '2' ? 'selected' : '') ?>>Femenino</option>
                                     </select>
@@ -288,27 +288,27 @@
                                     if (!(isset($cliente['agente_retension_valor']) AND $cliente['tipo_cliente'] == 1)) {
                                         echo "readonly";
                                     }
-?>  
+                                    ?>  
                                            class="form-control"  autocomplete="on"
                                            id="retencion_value" name="retencion_value" 
                                            value="<?php
                                            if (isset($cliente['agente_retension_valor']) AND $cliente['tipo_cliente'] == 1) {
                                                echo $cliente['agente_retension_valor'];
                                            }
-?>" autocomplete="off" />
+                                           ?>" autocomplete="off" />
                                 </div>
                                 <div class="col-md-4">
                                     <input type="checkbox" name="credito" id="credito" value="1" 
-<?= isset($cliente['linea_credito']) && $cliente['linea_credito'] != NULL ? 'checked' : '' ?>>
+                                           <?= isset($cliente['linea_credito']) && $cliente['linea_credito'] != NULL ? 'checked' : '' ?>>
                                     <label class="control-label panel-admin-text" style="cursor: pointer;" for="lineaC_j">L&iacute;nea de Cr&eacute;dito</label>
                                     <input type="number"
                                            value="<?php if (isset($cliente['linea_credito'])) echo $cliente['linea_credito']; ?>"
                                            id="lineaC_j" name="lineaC_j" class="form-control"
-<?php
-if (!(isset($cliente['linea_credito']) AND $cliente['linea_credito'] != NULL)) {
-    echo "readonly";
-}
-?> autocomplete="off" />
+                                           <?php
+                                           if (!(isset($cliente['linea_credito']) AND $cliente['linea_credito'] != NULL)) {
+                                               echo "readonly";
+                                           }
+                                           ?> autocomplete="off" />
                                 </div>
                             </div>
                             <!--<div class="row">
@@ -334,12 +334,12 @@ if (!(isset($cliente['linea_credito']) AND $cliente['linea_credito'] != NULL)) {
                                     <div class="col-md-4">
                                         <select  class="form-control" id="opcionDuplicarJ">
                                             <option value="0">Seleccione</option>
-<?php
-foreach ($clientes_tipo_padre as $row) {
+                                            <?php
+                                            foreach ($clientes_tipo_padre as $row) {
 
-    echo "<option value=" . $row['tipo_campo_padre_id'] . ">" . $row['tipo_campo_padre_nombre'] . "</option>";
-}
-?>
+                                                echo "<option value=" . $row['tipo_campo_padre_id'] . ">" . $row['tipo_campo_padre_nombre'] . "</option>";
+                                            }
+                                            ?>
                                         </select>
                                     </div>
                                     <div class="col-md-4">
@@ -354,24 +354,26 @@ foreach ($clientes_tipo_padre as $row) {
                                 </div>
                             </div>
                             <!--Lat.: <input type="text" id="latitud2" required readonly
-                                         value="<?php if (isset($cliente['latitud']))
-    echo $cliente['latitud'];
-else
-    echo '0';
-?>"/>
+                                         value="<?php
+                            if (isset($cliente['latitud']))
+                                echo $cliente['latitud'];
+                            else
+                                echo '0';
+                            ?>"/>
                             Long.: <input type="text" id="longitud2" required readonly
-                                          value="<?php if (isset($cliente['longitud']))
-    echo $cliente['longitud'];
-else
-    echo '0';
-?>"/>-->
+                                          value="<?php
+                            if (isset($cliente['longitud']))
+                                echo $cliente['longitud'];
+                            else
+                                echo '0';
+                            ?>"/>-->
                             <script>
                                 // $('.selectpicker').selectpicker();
                             </script>
                         </div>                                  
                     </form>
                 </div>
-<?php //}elseif($cliente['tipo_cliente']=='1' || empty($cliente['tipo_cliente'])){ //empresa  ?>
+                <?php //}elseif($cliente['tipo_cliente']=='1' || empty($cliente['tipo_cliente'])){ //empresa   ?>
                 <div id="empresa" class="<?= $claseE ?>">
                     <input type="hidden" id="new_from_venta" value="<?= isset($new_from_venta) ? $new_from_venta : 0 ?>">
                     <form name="formagregarE" onsubmit="return validarFrm(this)" action="<?= base_url() ?>cliente/guardar" method="post" id="formagregarE"
@@ -396,19 +398,19 @@ else
                                                data-count="0" name="userfile_je[]" accept="image/*"
                                                id="input_imagen_je0">
 
-    <?php
-}
-if (isset($cliente['id_cliente']) and ! empty($images)):
-    ?>
+                                        <?php
+                                    }
+                                    if (isset($cliente['id_cliente']) and ! empty($images)):
+                                        ?>
 
 
-    <?php $ruta_imagen = "clientes/" . $cliente['id_cliente'] . "/" ?>
+                                        <?php $ruta_imagen = "clientes/" . $cliente['id_cliente'] . "/" ?>
 
 
-    <?php
-    $con_image = 0;
-    foreach ($images as $img):
-        ?>
+                                        <?php
+                                        $con_image = 0;
+                                        foreach ($images as $img):
+                                            ?>
                                             <div  style="text-align: center; margin-bottom: 20px;"
                                                   id="div_imagen_producto_je<?= $con_image ?>">
 
@@ -426,11 +428,11 @@ if (isset($cliente['id_cliente']) and ! empty($images)):
                                             </div>
 
 
-        <?php
-        $con_image++;
-    endforeach;
-    ?>
-<?php endif; ?>
+                                            <?php
+                                            $con_image++;
+                                        endforeach;
+                                        ?>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
@@ -450,9 +452,9 @@ if (isset($cliente['id_cliente']) and ! empty($images)):
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-<?php if ($operacion == FALSE): ?>
+                                <?php if ($operacion == FALSE): ?>
                                     <h5><?= (isset($cliente['tipo_cliente']) && $cliente['tipo_cliente'] == 1) ? 'Jur&iacute;dico' : 'Natural' ?></h5>
-<?php endif; ?>
+                                <?php endif; ?>
                             </div>
                         </div>
                         <div class="row">
@@ -468,11 +470,17 @@ if (isset($cliente['id_cliente']) and ! empty($images)):
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-6">
                                 <label class="control-label panel-admin-text">Representante</label>
                                 <input type="text" name="apellidoPJuridico"
-                                       value="<?php if (isset($cliente['dni'])) echo $cliente['dni']; ?>"
+                                       value="<?php if (isset($cliente['representante_apellido_pat']) && $cliente['representante_apellido_pat']!='') echo $cliente['representante_apellido_pat'].' '.$cliente['representante_apellido_mat'].' '.$cliente['representante_nombre']; ?>"
                                        id="apellidoPJuridico" class="form-control" data-placeholder="Nombre" autocomplete="off"  />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="control-label panel-admin-text">Doc. del Representante</label>
+                                <input type="text" name="DocPJuridico"
+                                       value="<?php if (isset($cliente['representante_dni'])) echo $cliente['representante_dni']; ?>"
+                                       id="DocPJuridico" class="form-control" data-placeholder="Doc. de Identidad" autocomplete="off"  />
                             </div>
                         </div>
                         <div class="row">
@@ -490,20 +498,20 @@ if (isset($cliente['id_cliente']) and ! empty($images)):
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label class="control-label panel-admin-text">Grupo</label>
                                 <select  id="grupo_id_juridicoE" name="grupo_id_juridico" required="true" class="chosen form-control">
                                     <option value="">Seleccione</option>
-<?php $x = 1; ?>
-<?php foreach ($grupos as $grupo): ?>
+                                    <?php $x = 1; ?>
+                                    <?php foreach ($grupos as $grupo): ?>
                                         <option
                                             value="<?php echo $grupo['id_grupos_cliente'] ?>" <?php if ((isset($cliente['grupo_id']) and $cliente['grupo_id'] == $grupo['id_grupos_cliente']) || $x == 1) echo 'selected' ?>><?= $grupo['nombre_grupos_cliente'] ?></option>
-    <?php $x++; ?>
-<?php endforeach ?>
+                                            <?php $x++; ?>
+                                        <?php endforeach ?>
                                 </select>
                             </div>
-                            <div class="col-md-6">
-                                <label class="control-label panel-admin-text">Estado</label>
+                            <div class="col-md-4">
+                                <label class="control-label panel-admin-text">Estado en Sistema</label>
                                 <select id="estatus_j" name="estatus_j" required="true" class="chosen form-control">
 
                                     <option value="1" <?php if (isset($cliente['cliente_status']) AND $cliente['tipo_cliente'] == 1 and $cliente['cliente_status'] == 1) echo "selected" ?>>ACTIVO</option>
@@ -511,15 +519,21 @@ if (isset($cliente['id_cliente']) and ! empty($images)):
 
                                 </select> 
                             </div>
+
+                            <div class="col-md-4">
+                                <label class="control-label panel-admin-text">Estado Sunat</label>
+                                <input type="hidden" name="e_sunat"  value="<?php if (isset($cliente['status_sunat'])){ if($cliente['status_sunat'] == 1){echo "ACTIVO";}else if($cliente['status_sunat'] == 0){echo "BAJA";}else{echo "";}} else{ echo "";} ?>" id="e_sunat" class="form-control" data-placeholder="Esatdo Sunat"  autocomplete="off" />
+                                <input type="text" name="estado_sun"  value="<?php if (isset($cliente['status_sunat'])){ if($cliente['status_sunat'] == 1){echo "ACTIVO";}else if($cliente['status_sunat'] == 0){echo "BAJA";}else{echo "";}} else{ echo "";} ?>" id="e_sunat" class="form-control" disabled="" data-placeholder="Esatdo Sunat"  autocomplete="off" />
+                            </div>
                         </div>
                         <!--<div class="row">-
                         <div class="col-md-2">
                             <label class="control-label panel-admin-text">Tipo de Cliente</label>
                                 <select id="tipo_cliente" name="tipo_cliente" class="form-control" 
                                     style="display: <?= $operacion == TRUE ? 'block' : 'none' ?>;">
-<?php if (!isset($cliente['tipo_cliente'])): ?>
-                                                <option value="">Seleccione</option>
-<?php endif; ?>
+                        <?php if (!isset($cliente['tipo_cliente'])): ?>
+                                                            <option value="">Seleccione</option>
+                        <?php endif; ?>
                                     <option value="0" <?= (isset($cliente['tipo_cliente']) && $cliente['tipo_cliente'] == 0) ? 'selected' : '' ?>>
                                         Natural
                                     </option>
@@ -528,7 +542,7 @@ if (isset($cliente['id_cliente']) and ! empty($images)):
                                     </option>
                                 </select>
                         <?php if ($operacion == FALSE): ?>
-                                        <h5><?= (isset($cliente['tipo_cliente']) && $cliente['tipo_cliente'] == 1) ? 'Jur&iacute;dico' : 'Natural' ?></h5>
+                                                    <h5><?= (isset($cliente['tipo_cliente']) && $cliente['tipo_cliente'] == 1) ? 'Jur&iacute;dico' : 'Natural' ?></h5>
                         <?php endif; ?>
                         </div>-->
                         <!--<div class="col-md-4">
@@ -541,19 +555,19 @@ if (isset($cliente['id_cliente']) and ! empty($images)):
                         <label class="control-label panel-admin-text">Identificaci&oacute;n</label>
                         <select id="tipo_iden" name="tipo_iden" class="form-control">
                             
-<?php if (isset($cliente['tipo_cliente'])): ?>
-    <?php if ($cliente['tipo_cliente'] == 0): ?>
-                                                    <option value="2" <?= isset($cliente['ruc']) && $cliente['ruc'] == 2 ? 'selected' : '' ?>>RUC</option>
-        <?php if ($operacion == TRUE): ?>
-                                                                <option value="1" <?= isset($cliente['ruc']) && $cliente['ruc'] == 1 ? 'selected' : '' ?>>DNI</option>
-        <?php endif; ?>
-    <?php endif; ?>
-    <?php if ($cliente['tipo_cliente'] == 1): ?>
-                                                    <option value="2">RUC</option>
-    <?php endif; ?>
-<?php else: ?>
-                                        <option value="">Seleccione</option>
-<?php endif; ?>
+                        <?php if (isset($cliente['tipo_cliente'])): ?>
+                            <?php if ($cliente['tipo_cliente'] == 0): ?>
+                                                                            <option value="2" <?= isset($cliente['ruc']) && $cliente['ruc'] == 2 ? 'selected' : '' ?>>RUC</option>
+                                <?php if ($operacion == TRUE): ?>
+                                                                                                    <option value="1" <?= isset($cliente['ruc']) && $cliente['ruc'] == 1 ? 'selected' : '' ?>>DNI</option>
+                                <?php endif; ?>
+                            <?php endif; ?>
+                            <?php if ($cliente['tipo_cliente'] == 1): ?>
+                                                                            <option value="2">RUC</option>
+                            <?php endif; ?>
+                        <?php else: ?>
+                                                    <option value="">Seleccione</option>
+                        <?php endif; ?>
                         </select>
                         </div>
 
@@ -616,26 +630,26 @@ if (isset($cliente['id_cliente']) and ! empty($images)):
                                         <?php foreach ($estados as $estado): ?>
                                             <option
                                                 value="<?php echo $estado['estados_id'] ?>" <?php if (isset($cliente['provincia']) and $estado['estados_id'] == $cliente['provincia']) echo 'selected' ?>><?= $estado['estados_nombre'] ?></option>
-<?php endforeach ?>
+                                            <?php endforeach ?>
 
                                     </select>
                                 </div>
                                 <div class="col-md-4">
                                     <label class="control-label panel-admin-text">Provincia</label>
-<?php
-/* echo "<pre>";
-  echo print_r($ciudades);
-  echo "</pre>"; */
-?>
+                                    <?php
+                                    /* echo "<pre>";
+                                      echo print_r($ciudades);
+                                      echo "</pre>"; */
+                                    ?>
                                     <select name="ciudad_id" id="ciudad_id" required="true" class="chosen form-control"
                                             onchange="region.actualizarbarrio();">
                                         <option value="">Seleccione</option>
-                                            <?php if (isset($cliente['id_cliente'])): ?>
-                                                <?php foreach ($ciudades as $ciudad): ?>
+                                        <?php if (isset($cliente['id_cliente'])): ?>
+                                            <?php foreach ($ciudades as $ciudad): ?>
                                                 <option
                                                     value="<?php echo $ciudad['ciudad_id'] ?>" <?php if (isset($cliente['ciudad']) and $ciudad['ciudad_id'] == $cliente['ciudad']) echo 'selected' ?>><?= $ciudad['ciudad_nombre'] ?></option>
-    <?php endforeach ?>
-<?php endif ?>
+                                                <?php endforeach ?>
+                                            <?php endif ?>
                                     </select>
                                 </div>
                                 <div class="col-md-4">
@@ -646,8 +660,8 @@ if (isset($cliente['id_cliente']) and ! empty($images)):
                                             <?php foreach ($distritos as $distrito): ?>
                                                 <option
                                                     value="<?php echo $distrito['id'] ?>" <?php if (isset($cliente['distrito']) and $distrito['id'] == $cliente['distrito']) echo 'selected' ?>><?= $distrito['nombre'] ?></option>
-    <?php endforeach; ?>
-<?php endif; ?>
+                                                <?php endforeach; ?>
+                                            <?php endif; ?>
                                     </select>
                                 </div>
                             </div>
@@ -657,23 +671,23 @@ if (isset($cliente['id_cliente']) and ! empty($images)):
                                     <label class="control-label panel-admin-text">Genero</label>
                                     <select id="genero" name="genero" class="form-control">
                                         <option value=""></option>
-<?php if (!isset($cliente['genero'])) { ?>
-                                               <?php $cliente['genero'] = '1'; ?>
-                                           <?php } ?>
+                                        <?php if (!isset($cliente['genero'])) { ?>
+                                            <?php $cliente['genero'] = '1'; ?>
+                                        <?php } ?>
                                         <option value="1" <?= (isset($cliente['genero']) && $cliente['genero'] == '1' ? 'selected' : '') ?>>Masculino</option>
                                         <option value="2" <?= (isset($cliente['genero']) && $cliente['genero'] == '2' ? 'selected' : '') ?>>Femenino</option>
                                     </select>
                                 </div>
                                 <div class="col-md-4">
                                     <input type="checkbox" name="retencion" id="retencion" value="1" 
-<?= isset($cliente['agente_retension']) && $cliente['agente_retension'] == 1 ? 'checked' : '' ?>>
+                                           <?= isset($cliente['agente_retension']) && $cliente['agente_retension'] == 1 ? 'checked' : '' ?>>
                                     <label class="control-label panel-admin-text" style="cursor: pointer;" for="retencion">Retenci&oacute;n?</label> 
 
                                     <input type="number" <?php
-                                           if (!(isset($cliente['agente_retension_valor']) AND $cliente['tipo_cliente'] == 1)) {
-                                               echo "readonly";
-                                           }
-                                           ?>  
+                                    if (!(isset($cliente['agente_retension_valor']) AND $cliente['tipo_cliente'] == 1)) {
+                                        echo "readonly";
+                                    }
+                                    ?>  
                                            class="form-control"  autocomplete="on"
                                            id="retencion_value" name="retencion_value" 
                                            value="<?php
@@ -684,16 +698,16 @@ if (isset($cliente['id_cliente']) and ! empty($images)):
                                 </div>
                                 <div class="col-md-4">
                                     <input type="checkbox" name="credito" id="credito" value="1" 
-<?= isset($cliente['linea_credito']) && $cliente['linea_credito'] != NULL ? 'checked' : '' ?>>
+                                           <?= isset($cliente['linea_credito']) && $cliente['linea_credito'] != NULL ? 'checked' : '' ?>>
                                     <label class="control-label panel-admin-text" style="cursor: pointer;" for="lineaC_j">L&iacute;nea de Cr&eacute;dito</label>
                                     <input type="number"
                                            value="<?php if (isset($cliente['linea_credito'])) echo $cliente['linea_credito']; ?>"
                                            id="lineaC_j" name="lineaC_j" class="form-control"
-<?php
-if (!(isset($cliente['linea_credito']) AND $cliente['linea_credito'] != NULL)) {
-    echo "readonly";
-}
-?> autocomplete="off" />
+                                           <?php
+                                           if (!(isset($cliente['linea_credito']) AND $cliente['linea_credito'] != NULL)) {
+                                               echo "readonly";
+                                           }
+                                           ?> autocomplete="off" />
                                 </div>
                             </div>
                             <!--<div class="row">
@@ -720,12 +734,12 @@ if (!(isset($cliente['linea_credito']) AND $cliente['linea_credito'] != NULL)) {
                                     <div class="col-md-4">
                                         <select  class="form-control" id="opcionDuplicarJ">
                                             <option value="0">Seleccione</option>
-<?php
-foreach ($clientes_tipo_padre as $row) {
+                                            <?php
+                                            foreach ($clientes_tipo_padre as $row) {
 
-    echo "<option value=" . $row['tipo_campo_padre_id'] . ">" . $row['tipo_campo_padre_nombre'] . "</option>";
-}
-?>
+                                                echo "<option value=" . $row['tipo_campo_padre_id'] . ">" . $row['tipo_campo_padre_nombre'] . "</option>";
+                                            }
+                                            ?>
                                         </select>
                                     </div>
                                     <div class="col-md-4">
@@ -740,24 +754,26 @@ foreach ($clientes_tipo_padre as $row) {
                                 </div>
                             </div>
                             <!--Lat.: <input type="text" id="latitud2" required readonly
-                                         value="<?php if (isset($cliente['latitud']))
-    echo $cliente['latitud'];
-else
-    echo '0';
-?>"/>
+                                         value="<?php
+                            if (isset($cliente['latitud']))
+                                echo $cliente['latitud'];
+                            else
+                                echo '0';
+                            ?>"/>
                             Long.: <input type="text" id="longitud2" required readonly
-                                          value="<?php if (isset($cliente['longitud']))
-    echo $cliente['longitud'];
-else
-    echo '0';
-?>"/>-->
+                                          value="<?php
+                            if (isset($cliente['longitud']))
+                                echo $cliente['longitud'];
+                            else
+                                echo '0';
+                            ?>"/>-->
                             <script>
                                 // $('.selectpicker').selectpicker();
                             </script>   
                         </div>                                 
                     </form>
                 </div>
-<?php //}   ?>
+                <?php //}    ?>
             </div>
         </div>
         <div class="modal-footer">
@@ -874,21 +890,42 @@ else
                                     $('#formagregarE input#razon_social_j').val('');
                                     $('#formagregarE input#telefono').val('');
                                     $('#formagregarE input#direccion_j').val('');
+                                    $('#formagregarE input#apellidoPJuridico').val('');
+                                    $('#formagregarE input#DocPJuridico').val('');
+                                    $('#formagregarE input#e_sunat').val('');
+                                    mensaje("warning", "No Existe el RUC/RUS");
+                                    $('div.modaloader').removeClass('see');
                                 } else {
                                     input.removeClass('errorAPI');
                                     var obj = $.parseJSON(data);
+                                    var RUC = obj['RUC'];
                                     var RazonSocial = obj['RazonSocial'];
                                     var Telefono = obj['Telefono'];
                                     var Direccion = obj['Direccion'];
-                                    $('#formagregarE input#razon_social_j').val(RazonSocial);
-                                    $('#formagregarE input#telefono').val(Telefono);
-                                    $('#formagregarE input#direccion_j').val(Direccion);
+                                    var Estado_sunat = obj['Estado'];
+                                    var tipo_ruc = Math.floor(RUC / 1000000000);
+                                    if (tipo_ruc === 20) {
+                                        var Nombre_rep = obj['representantes_legales']['0']['nombre'];
+                                        var Dni_rep = obj['representantes_legales']['0']['numdoc'];
+                                        $('#formagregarE input#razon_social_j').val(RazonSocial);
+                                        $('#formagregarE input#telefono').val(Telefono);
+                                        $('#formagregarE input#direccion_j').val(Direccion);
+                                        $('#formagregarE input#apellidoPJuridico').val(Nombre_rep);
+                                        $('#formagregarE input#DocPJuridico').val(Dni_rep);
+                                        $('#formagregarE input#e_sunat').val(Estado_sunat);
+                                    } else {
+                                        $('#formagregarE input#razon_social_j').val(RazonSocial);
+                                        $('#formagregarE input#telefono').val(Telefono);
+                                        $('#formagregarE input#direccion_j').val(Direccion);
+                                        $('#formagregarE input#e_sunat').val(Estado_sunat);
+                                        $('#formagregarE input#apellidoPJuridico').val(RazonSocial);
+                                    }
+                                    $('div.modaloader').removeClass('see');
                                 }
-                                $('div.modaloader').removeClass('see');
+
                             },
                             error: function (data) {
                                 console.log('Error Ajax Peticion');
-                                console.log(data);
                                 $('div.modaloader').removeClass('see');
                             }
                         });
@@ -897,6 +934,9 @@ else
                         $('#formagregarE input#razon_social_j').val('');
                         $('#formagregarE input#telefono').val('');
                         $('#formagregarE input#direccion_j').val('');
+                        $('#formagregarE input#apellidoPJuridico').val('');
+                        $('#formagregarE input#DocPJuridico').val('');
+                        $('#formagregarE input#e_sunat').val('');
                     }
                 });
                 region.actualizardistritos();
