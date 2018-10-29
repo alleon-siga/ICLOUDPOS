@@ -501,7 +501,7 @@ class venta_new_model extends CI_Model
         // En caso de ser un documento fiscal genera el kardex y su correlativo de guia
         // Si usa facturacion electronica tambien generar el comprobante electronico
         if ($venta_actual->condicion_pago == 1) {
-            $this->facturar_venta($venta_actual->venta_id);
+            $this->facturar_venta($venta_actual->venta_id, FALSE, $venta['id_usuario']);
         }
 
         $this->db->trans_complete();
@@ -628,7 +628,7 @@ class venta_new_model extends CI_Model
         // En caso de ser un documento fiscal genera el kardex y su correlativo de guia
         // Si usa facturacion electronica tambien generar el comprobante electronico
         if ($venta['venta_status'] == 'COMPLETADO') {
-            $this->facturar_venta($venta_id);
+            $this->facturar_venta($venta_id, FALSE, $venta['id_usuario']);
         }
 
         $this->db->trans_complete();
