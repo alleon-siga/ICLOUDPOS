@@ -441,12 +441,12 @@ class venta_new extends MY_Controller
             }
 
             // TODO hacer aqui la validacion de que si esta inactivo en SUNAT no pueda crearse factura
-//            if ($cliente->estado_sunat != 1) {
-//                $data['success'] = 0;
-//                $data['msg'] = "El cliente no esta activo en SUNAT para realizar ventas";
-//                echo json_encode($data);
-//                return false;
-//            }
+            if ($cliente->status_sunat != 1) {
+                $data['success'] = 0;
+                $data['msg'] = "El cliente no esta activo en SUNAT para realizar ventas";
+                echo json_encode($data);
+                return false;
+            }
         }
 
         // EL cliente frecuento no puede hacer ventas al credito

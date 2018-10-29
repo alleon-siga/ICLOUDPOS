@@ -60,7 +60,6 @@
         <tr>
             <td style="text-transform: uppercase;">
                 Venta Nro:
-                <?= $venta->serie_documento != null ? $venta->serie_documento . ' - ' : '' ?>
                 <?= sumCod($venta->venta_id, 6) ?>
             </td>
         </tr>

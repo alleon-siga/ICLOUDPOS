@@ -530,7 +530,7 @@ class facturacion_model extends CI_Model
                 'NUMERO_DOCUMENTO' => $comprobante->documento_numero,
                 'NOTA_NUMERO_DOCUMENTO' => $comprobante->documento_mod_numero,
                 'NOTA_TIPO_DOCUMENTO' => $comprobante->documento_mod_tipo,
-                'ESTADO_ITEM' => '1',
+                'ESTADO_ITEM' => $comprobante->estado_comprobante,
                 'CLIENTE_NRO_DOCUMENTO' => $comprobante->cliente_identificacion,
                 'CLIENTE_TIPO_IDENTIDAD' => $comprobante->cliente_tipo,
                 'CLIENTE_NOMBRE' => $comprobante->cliente_nombre,
@@ -894,9 +894,9 @@ class facturacion_model extends CI_Model
         if (count($baja_detalles) > 0) {
 
             $cabecera = array(
-                'FECHA_EMISION' => $baja->fecha_emision,
+                'FECHA_EMISION' => date('Y-m-d', strtotime($baja->fecha_emision)),
                 'NUMERO_DOCUMENTO' => $baja->correlativo,
-                'FECHA_REFERENCIA' => $baja_detalles[0]->fecha
+                'FECHA_REFERENCIA' => date('Y-m-d', strtotime($baja_detalles[0]->fecha))
             );
 
             $detalles = array();
@@ -923,16 +923,20 @@ class facturacion_model extends CI_Model
 
     function anularComprobante($venta_id, $motivo)
     {
-        $venta = $this->get_where('venta', array('venta_id' => $venta_id))->row();
+        $venta = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
         $facturacion = $this->db->get_where('facturacion', array(
-            'documento_tipo' => sumCod($venta->id_documento),
+            'documento_tipo' => sumCod($venta->id_documento, 2),
             'ref_id' => $venta->venta_id
         ))->row();
 
+        // Si es una boleta no enviada le cambio el estado del comprobante para mandar una anulacion
         if ($facturacion->documento_tipo == '03' && $facturacion->estado == 1) {
             $this->db->where('id', $facturacion->id);
             $this->db->update('facturacion', array('estado_comprobante' => 3));
+
+            return TRUE;
         }
+
 
         if ($facturacion->documento_tipo == '01' && ($facturacion->estado == 1 || $facturacion->estado == 3)) {
             // Si la factura esta en estado generado la emito para luego hacer su posterior comunicacion de baja
@@ -946,7 +950,7 @@ class facturacion_model extends CI_Model
             if ($facturacion->estado == 3) {
 
                 $baja = $this->db->order_by('id', 'desc')->get_where('facturacion_baja', array(
-                    'fecha' => date('Y-m-d')
+                    'fecha_emision' => date('Y-m-d')
                 ))->row();
 
                 if ($baja != NULL) {
@@ -955,7 +959,7 @@ class facturacion_model extends CI_Model
                     $correlativo = 1;
                 }
 
-                $this->db->insert(array(
+                $this->db->insert('facturacion_baja', array(
                     'fecha_emision' => date('Y-m-d'),
                     'correlativo' => $correlativo,
                     'estado' => 0,
@@ -970,7 +974,28 @@ class facturacion_model extends CI_Model
                     'motivo' => $motivo
                 ));
 
-                $this->enviarBaja($baja_id);
+                $response = $this->enviarBaja($baja_id);
+
+                if ($response !== FALSE) {
+                    $this->db->where('id', $baja_id);
+                    $this->db->update('facturacion_baja', array(
+                        'nota' => $response['MENSAJE'],
+                        'sunat_codigo' => $response['CODIGO'],
+                        'hash_cpe' => $response['HASH_CPE'],
+                        'hash_cdr' => null,
+                        'ticket' => $response['TICKET'],
+                        'estado' => 2
+                    ));
+
+                    $this->db->where('id', $facturacion->id);
+                    $this->db->update('facturacion', array('estado_comprobante' => 3));
+                } else {
+                    return FALSE;
+                }
+
+                return TRUE;
+            } else {
+                return FALSE;
             }
         }
     }

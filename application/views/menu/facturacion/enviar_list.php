@@ -49,6 +49,7 @@
                                 <th>Documento</th>
                                 <th>Numero</th>
                                 <th>Estado</th>
+                                <th>Condicion</th>
                                 <th>Total</th>
                                 <th>Acciones</th>
                             </tr>
@@ -99,6 +100,29 @@
                                                 <?= $estado ?>
                                             </div>
                                         </td>
+                                        <td>
+
+                                            <?php
+                                            $estado = '';
+                                            $estado_class = '';
+                                            if ($f->estado_comprobante == 1) {
+                                                $estado_class = 'label-success';
+                                                $estado = 'NUEVO';
+                                            } elseif ($f->estado_comprobante == 2) {
+                                                $estado_class = 'label-warning';
+                                                $estado = 'MODIFICADO';
+                                            } elseif ($f->estado_comprobante == 3) {
+                                                $estado_class = 'label-danger';
+                                                $estado = 'ANULADO';
+                                            }
+                                            ?>
+
+                                            <div
+                                                    class="label <?= $estado_class ?>"
+                                                    style="font-size: 1em; padding: 2px; white-space: nowrap;">
+                                                <?= $estado ?>
+                                            </div>
+                                        </td>
                                         <td style="text-align: right;"><?= $emisor->moneda_simbolo ?> <?= number_format($f->total, 2) ?></td>
                                         <td>
                                             <a class="btn btn-sm btn-primary" data-toggle="tooltip"
@@ -137,7 +161,7 @@
                                 <?php foreach ($resumenes_pendientes as $f): ?>
                                     <tr>
                                         <td><?= $f->id ?></td>
-                                        <td><?= date('m/d/Y', strtotime($f->fecha)) ?></td>
+                                        <td><?= date('d/m/Y', strtotime($f->fecha)) ?></td>
                                         <td>RESUMEN</td>
                                         <td><?= 'RC-' . date('Ymd', strtotime($f->fecha)) . '-' . $f->correlativo ?></td>
                                         <td style="white-space: nowrap;">
