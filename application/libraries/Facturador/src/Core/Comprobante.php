@@ -428,14 +428,37 @@ abstract class Comprobante
         $tributo_subtotal->appendChild($this->xml->createElement('cbc:TaxAmount', $detalle['DETALLE_TRIBUTO_IGV']))
             ->setAttribute('currencyID', $cabecera['CODIGO_MONEDA']);
 
+        // Referencia de impuesto de item gravado
+        $tt_id = '1000';
+        $tt_name = 'IGV';
+        $tt_type_code = 'VAT';
+        $tt_category = 'S';
+        $tt_percent = '18.00';
+
+        // Exonerado
+        if($detalle['TIPO_TRIBUTO_IGV'] == '20'){
+            $tt_id = '9997';
+            $tt_name = 'EXONERADO';
+            $tt_type_code = 'VAT';
+            $tt_category = 'E';
+        }
+
+        // Inafecto
+        if($detalle['TIPO_TRIBUTO_IGV'] == '30'){
+            $tt_id = '9998';
+            $tt_name = 'INAFECTO';
+            $tt_type_code = 'FRE';
+            $tt_category = 'O';
+        }
+
         $tributo_categoria = $this->xml->createElement('cac:TaxCategory');
-        $ID = $this->xml->createElement('cbc:ID', 'S');
+        $ID = $this->xml->createElement('cbc:ID', $tt_category);
         $ID->setAttribute('schemeID', 'UN/ECE 5305');
         $ID->setAttribute('schemeName', 'Tax Category Identifier');
         $ID->setAttribute('schemeAgencyName', 'United Nations Economic Commission for Europe');
         $tributo_categoria->appendChild($ID);
 
-        $tributo_categoria->appendChild($this->xml->createElement('cbc:Percent', '18.00'));
+        $tributo_categoria->appendChild($this->xml->createElement('cbc:Percent', $tt_percent));
 
         // (Catálogo No. 07).
         $TaxExemptionReasonCode = $this->xml->createElement('cbc:TaxExemptionReasonCode', $detalle['TIPO_TRIBUTO_IGV']);
@@ -445,15 +468,15 @@ abstract class Comprobante
         $tributo_categoria->appendChild($TaxExemptionReasonCode);
 
         $tax = $this->xml->createElement('cac:TaxScheme');
-        $ID = $this->xml->createElement('cbc:ID', '1000');
+        $ID = $this->xml->createElement('cbc:ID', $tt_id);
         $ID->setAttribute('schemeID', "UN/ECE 5153");
         $ID->setAttribute('schemeName', "Tax Scheme Identifier");
         $ID->setAttribute('schemeAgencyName', "United Nations Economic Commission for Europe");
         $tax->appendChild($ID);
 
-        $tax->appendChild($this->xml->createElement('cbc:Name', 'IGV'));
+        $tax->appendChild($this->xml->createElement('cbc:Name', $tt_name));
 
-        $tax->appendChild($this->xml->createElement('cbc:TaxTypeCode', 'VAT'));
+        $tax->appendChild($this->xml->createElement('cbc:TaxTypeCode', $tt_type_code));
 
         $tributo_categoria->appendChild($tax);
         $tributo_subtotal->appendChild($tributo_categoria);

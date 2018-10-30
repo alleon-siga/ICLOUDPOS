@@ -4,7 +4,7 @@
             <h4 class="modal-title">Crear nota de credito</h4>
         </div>
 
-        <div class="modal-body ">
+        <div class="modal-body">
 
             <input type="hidden" id="venta_id_anular" value="<?= $venta->venta_id ?>">
             <div class="row">
@@ -42,7 +42,7 @@
                     <select id="motivo" class="form-control">
                         <option></option>
                         <?php foreach ($motivos as $key => $val): ?>
-                            <?php if ($venta->condicion_id == 2 && $key == '07') continue; ?>
+                            <?php if ($venta->condicion_id == 2 && $key == '07' && $total_pagado > 0) continue; ?>
                             <option value="<?= $key ?>"><?= $val ?></option>
                         <?php endforeach; ?>
                     </select>
@@ -176,6 +176,9 @@
                         <?php endforeach; ?>
                         </tbody>
                     </table>
+                    <?php if($venta->condicion_id == 2):?>
+                    <h5 class="text-warning">Nota: Las ventas al credito solo aceptan devoluciones por item si no ha pagado ningun monto ya sea inicial o cobranza.</h5>
+                    <?php endif;?>
                 </div>
             </div>
         </div>
@@ -199,7 +202,6 @@
 
     $('#motivo').trigger('change')
     $('#motivo').trigger('click')
-
 
     $('#table_nc input.cantidad_input').on('input', function () {
       var row_id = $(this).attr('data-row')
@@ -311,7 +313,7 @@
 
       $('#barloadermodal').modal('show')
       $.ajax({
-        url: 'venta_new/nota_credito_venta',
+        url: '<?= base_url()?>venta_new/nota_credito_venta',
         method: 'POST',
         data: {
           venta_id: $('#venta_id_anular').val(),

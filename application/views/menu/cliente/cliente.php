@@ -28,11 +28,11 @@
             <tr>
                 <th style="text-align: center">ID</th>
                 <th style="text-align: center">Tipo</th>
-                <th width="10%" style="text-align: center"><?= $term[0]->valor.' / '.$term[1]->valor ?></th>
+                <th width="11%" style="text-align: center"><?= $term[0]->valor.' / '.$term[1]->valor ?></th>
                 <th width="20%" style="text-align: center">Raz&oacute;n Social o Nombre</th>
-                <th width="40%" style="text-align: center">Direccion</th>
+                <th width="35%" style="text-align: center">Direccion</th>
                 <th width="10%" style="text-align: center">Teléfono</th>
-                <th width="10%" style="text-align: center">correo</th>
+                <th width="14%" style="text-align: center">correo</th>
                 <th width="10%" class="desktop">Acciones</th>
             </tr>
             </thead>
@@ -60,7 +60,7 @@
                                 </a>
                                 <?php if($cliente['razon_social']!='Cliente Frecuente') {
                                     ?>
-                                    <a class="btn btn-default" data-toggle="tooltip"
+                                    <a class="btn btn-danger" data-toggle="tooltip"
                                        title="Eliminar" data-original-title="fa fa-comment-o"
                                        onclick="borrar(<?= $cliente['id_cliente'] ?>,'<?= $cliente['razon_social'] ?>')";
                                         >

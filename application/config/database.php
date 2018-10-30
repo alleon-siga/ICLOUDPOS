@@ -51,10 +51,10 @@ $query_builder = TRUE;
 
 $db['default'] = array(
     'dsn' => '',
-    'hostname' => 'localhost',
-    'username' => 'root',
-    'password' => 'nexus1108',
-    'database' => DATABASE_HOST != false ? DATABASE_HOST : 'icloudpos_shadow',
+    'hostname' => '192.168.1.4',
+    'username' => 'user',
+    'password' => 'password',
+    'database' => DATABASE_HOST != false ? DATABASE_HOST : 'icloudpos_req43',
     'dbdriver' => 'mysqli',
     'dbprefix' => '',
     'pconnect' => FALSE,

@@ -53,8 +53,6 @@
 									  		<td><?php echo $v->cFormapago;?></td>
 									  		<td class='actions_big'>
 												<div class="btn-group">
-													<a href="#" class='btn btn-default tip' title="Ver Venta"><img src="<?php echo $ruta;?>recursos/img/icons/fugue/magnifier.png" alt=""> Ver</a>
-													<a href="#" class='btn btn-default tip' title="Imprimir"><img src="<?php echo $ruta;?>recursos/img/icons/fugue/printer.png" alt=""> Imprimir</a>
 												</div>
 											</td>
 										</tr>

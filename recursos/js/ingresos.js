@@ -237,11 +237,6 @@ $(document).ready(function () {
     $("#monedas").change(function (e) {
         updateMonedas();
     });
-    if ($("#caja_id").val() == '' || $("#caja_id_d").val() == '' || $("#banco_id").val() == '' || $("#banco_id_d").val() == '') {
-        document.getElementById('guardarPago_pagospendiente').disabled = true;
-    } else {
-        document.getElementById('guardarPago_pagospendiente').disabled = false;
-    }
     function updateMonedas() {
 
         /*esto lo hago para saber si voy a bloquear el select de productos o no*/
@@ -636,7 +631,42 @@ function validar_ingreso() {
 
     if ($("#pago").val() == 'CONTADO') {
         $("#total_cuota").val($('#totApagar').val());
-        $("#pago_modal").modal('show');
+        //Se Obtienen las cajas, bancos, tarjetas y metodos de pago Carlos Camargo (29-10-2018)
+        var moneda_id = $("#monedas").val();
+        $.ajax({
+            type: 'POST',
+            data: {moneda_id: moneda_id},
+            url: ruta + 'ingresos/get_cajas_bancos',
+            dataType: 'json',
+            success: function (data) {
+                $('#caja_id').chosen('destroy');
+                $('#metodo').chosen('destroy');
+                $('#banco_id').chosen('destroy');
+                $('#tipo_tarjeta').chosen('destroy');
+                var caja_select = $('#caja_id');
+                var metodo_select = $('#metodo');
+                var banco_select = $('#banco_id');
+                var tarjeta_select = $('#tipo_tarjeta');
+                caja_select.html('<option value="">Seleccione</option>');
+                metodo_select.html('<option value="">Seleccione</option>');
+                for (var i = 0; i < data.metodo_pago.length; i++) {
+                    metodo_select.append('<option data-tipo_metodo="' + data.metodo_pago[i].tipo_metodo + '" value="' + data.metodo_pago[i].id_metodo + '" >' + data.metodo_pago[i].nombre_metodo + '</option>');
+                }
+                for (var j = 0; j < data.bancos.length; j++) {
+                    banco_select.append('<option data-cuenta_c="' + data.bancos[j].cuenta_id + '" value="' + data.bancos[j].banco_id + '" >' + data.bancos[j].banco_nombre + ' | ' + data.bancos[j].local_nombre + '</option>');
+                }
+                for (var y = 0; y < data.cajas.length; y++) {
+                    caja_select.append('<option data-moneda="' + data.cajas[y].moneda_id + '" value="' + data.cajas[y].cuenta_id + '" >' + data.cajas[y].descripcion + ' | ' + data.cajas[y].local_nombre + '</option>');
+                }
+                for (var z = 0; z < data.tarjetas.length; z++) {
+                    tarjeta_select.append('<option  value="' + data.tarjetas[z].id + '" >' + data.tarjetas[z].nombre + '</option>');
+                }
+
+                $("#pago_modal").modal('show');
+
+            }
+        });
+
     } else {
         credito_init($("#totApagar").val(), 'COMPLETADO');
         refresh_credito_window();
@@ -742,11 +772,29 @@ function guardaringreso() {
     // console.log($('#frmCompra').serialize());
     // return false;
     /*esta funcion carga el modal que indica que esta procesando, y ejecuta la funcion de guardar*/
-    $("#botonconfirmar_save").addClass('disabled');
-    $("#btn_compra_credito").addClass('disabled');
-    $("#barloadermodal").modal('show');
+    if ($("#metodo").val() != "") {
+        if ($("#caja_id").val() != "" || $("#banco_id").val() != "") {
+            $("#botonconfirmar_save").addClass('disabled');
+            $("#btn_compra_credito").addClass('disabled');
+            $("#barloadermodal").modal('show');
 
-    accionGuardar();
+            accionGuardar();
+        }else{
+            $.bootstrapGrowl('<h5>Debe seleccionar una cuenta</h5>', {
+            type: 'warning',
+            delay: 5000,
+            allow_dismiss: true
+        });
+        }
+
+    } else {
+        $.bootstrapGrowl('<h4>Debe seleccionar un Metodo de Pago</h4>', {
+            type: 'warning',
+            delay: 5000,
+            allow_dismiss: true
+        });
+    }
+
 }
 
 

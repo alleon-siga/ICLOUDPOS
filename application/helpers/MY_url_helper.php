@@ -69,6 +69,9 @@ function get_tipo_doc($cod)
         case -3: {
             return array('code' => $cod, 'value' => 'Control Interno');
         }
+        case 6: {
+            return array('code' => $cod, 'value' => 'Nota de Venta');
+        }
         default: {
             return array('code' => 0, 'value' => 'Otros');
         }

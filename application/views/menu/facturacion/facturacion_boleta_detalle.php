@@ -68,6 +68,7 @@
                             <th>Documento</th>
                             <th>Numero</th>
                             <th>Estado</th>
+                            <th>Condicion</th>
                             <th>Descuento</th>
                             <th>Total</th>
                         </tr>
@@ -110,6 +111,29 @@
                                     <div
                                             class="label <?= $estado_class ?>"
                                             style="font-size: 1em; padding: 2px; cursor: pointer; white-space: nowrap;">
+                                        <?= $estado ?>
+                                    </div>
+                                </td>
+                                <td>
+
+                                    <?php
+                                    $estado = '';
+                                    $estado_class = '';
+                                    if ($boleta->estado_comprobante == 1) {
+                                        $estado_class = 'label-success';
+                                        $estado = 'NUEVO';
+                                    } elseif ($boleta->estado_comprobante == 2) {
+                                        $estado_class = 'label-warning';
+                                        $estado = 'MODIFICADO';
+                                    } elseif ($boleta->estado_comprobante == 3) {
+                                        $estado_class = 'label-danger';
+                                        $estado = 'ANULADO';
+                                    }
+                                    ?>
+
+                                    <div
+                                            class="label <?= $estado_class ?>"
+                                            style="font-size: 1em; padding: 2px; white-space: nowrap;">
                                         <?= $estado ?>
                                     </div>
                                 </td>

@@ -137,7 +137,14 @@ class cliente extends MY_Controller {
         $this->load->library('upload');
 
         $id = $this->input->post('idClientes');
-
+        $representante_legal =  $this->input->post('apellidoPJuridico')!=""?$this->input->post('apellidoPJuridico'):null;
+        if($representante_legal!=null){
+            $rl = explode(" ", $representante_legal,3);
+        }else{
+            $rl[0]="";
+            $rl[1]="";
+            $rl[2]="";
+        }
         $cliente = array(
             'tipo_cliente' => $this->input->post('tipo_cliente'),
             'razon_social' => $this->input->post('razon_social_j') != "" ? $this->input->post('razon_social_j') : trim($this->input->post('nombres') . ' ' . $this->input->post('apellido_paterno') . ' ' . $this->input->post('apellido_materno')),
@@ -146,7 +153,7 @@ class cliente extends MY_Controller {
             'nombres' => $this->input->post('nombres'),
             'apellido_paterno' => $this->input->post('apellido_paterno'),
             'apellido_materno' => $this->input->post('apellido_materno'),
-            'dni' => $this->input->post('apellidoPJuridico'),
+            'dni' => "0",
             'email' => $this->input->post('correo'),
             'telefono1' => $this->input->post('telefono'),
             'genero' => $this->input->post('genero'),
@@ -154,12 +161,17 @@ class cliente extends MY_Controller {
             'distrito' => $this->input->post('distrito_id') != "" ? $this->input->post('distrito_id') : null,
             'provincia' => $this->input->post('estado_id') != "" ? $this->input->post('estado_id') : null,
             'ciudad' => $this->input->post('ciudad_id') != "" ? $this->input->post('ciudad_id') : null,
-            'cliente_status' => $this->input->post('estatus_j') ? $this->input->post('estatus_j') : null,
+            'cliente_status' => $this->input->post('estatus_j')!="" ? $this->input->post('estatus_j') : null,
+            'status_sunat' => $this->input->post('e_sunat') != "" ? $this->input->post('e_sunat') == "ACTIVO" ? "1" : "0" : "2",
+            'representante_apellido_pat' =>$rl[0] !="" ? $rl[0] : null, 
+            'representante_apellido_mat' => $rl[1] !="" ? $rl[1] : null,
+            'representante_nombre' => $rl[2] !="" ? $rl[2] : null,
+            'representante_dni' => $this->input->post('DocPJuridico') ? $this->input->post('DocPJuridico') : null,
             'grupo_id' => $this->input->post('grupo_id_juridico') != "" ? $this->input->post('grupo_id_juridico') : null,
             'agente_retension' => $this->input->post('retencion') ? $this->input->post('retencion') : 0,
             'agente_retension_valor' => $this->input->post('retencion_value') == 0 ? null : $this->input->post('retencion_value'),
             'linea_credito' => $this->input->post('lineaC_j') ? $this->input->post('lineaC_j') : null,
-            'nota' => $this->input->post('tienda') ? $this->input->post('tienda') : null
+            'nota' => $this->input->post('tienda') ? $this->input->post('tienda') : null  
         );
 
         if (empty($id)) {

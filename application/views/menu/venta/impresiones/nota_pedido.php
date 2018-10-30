@@ -30,23 +30,33 @@
 </style>
 <div>
     <table style="border: 0px;" cellpadding="0" cellspacing="0">
+        <?php if(valueOption('EMPRESA_NOMBRE')!="" ){?>
         <tr>
             <td style="text-transform: uppercase; text-align: center;"><?= valueOption('EMPRESA_NOMBRE', '') ?></td>
         </tr>
+        <?php }?>
+        <?php if($identificacion->config_value!=""){?>
         <tr>
             <td style="text-transform: uppercase;"><?= $term[1]->valor ?>: <?= $identificacion->config_value ?></td>
         </tr>
+        <?php }?>
+        <?php if($venta->local_nombre!=""){?>
         <tr>
             <td style="text-transform: uppercase;">Ubicaci&oacute;n: <?= $venta->local_nombre ?></td>
         </tr>
+        <?php }?>
+        <?php if($venta->local_direccion!=""){?>
         <tr>
             <td style="text-transform: uppercase; text-align: left;">
                 Direcci&oacute;n: <?= $venta->local_direccion ?></td>
         </tr>
+        <?php } ?>
+        <?php if(valueOption('EMPRESA_TELEFONO')!="" && valueOption('EMPRESA_TELEFONO')!="NO"){?>
         <tr>
             <td style="text-transform: uppercase; text-align: left;">
                 T&eacute;lefono: <?= valueOption('EMPRESA_TELEFONO') ?></td>
         </tr>
+        <?php } ?>
     </table>
     <hr>
     <table style="border: 0px;" cellpadding="0" cellspacing="0">
@@ -60,7 +70,6 @@
         <tr>
             <td style="text-transform: uppercase;">
                 Venta Nro:
-                <?= $venta->serie_documento != null ? $venta->serie_documento . ' - ' : '' ?>
                 <?= sumCod($venta->venta_id, 6) ?>
             </td>
         </tr>
@@ -80,7 +89,7 @@
         </tr>
         <tr>
             <td style="text-transform: uppercase;">
-                Tipo de Pago:
+                Condicion de Pago:
                 <?= $venta->condicion_nombre ?>
             </td>
         </tr>
@@ -96,7 +105,17 @@
             </tr>
         <?php endif; ?>
     </table>
-
+    <?php 
+    if($venta->venta_estado=="ANULADO"){
+        ?>
+    <center>
+    <span>___________________________________________________</span>
+    <span>TICKET ANULADO</span>
+    <span>¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯</span>
+    </center>
+        <?php
+    }
+    ?>
 
     <table cellpadding="0" cellspacing="0">
         <tbody>
@@ -121,7 +140,7 @@
             </tr>
             <tr>
                 <td><?= $detalle->producto_cualidad == "PESABLE" ? $detalle->cantidad : number_format($detalle->cantidad, 0) . "  " . $detalle->unidad_abr ?></td>
-                <td style="text-align: right"><?= $venta->moneda_simbolo . ' ' . $detalle->precio ?></td>
+                <td style="text-align: right"><?= $venta->moneda_simbolo . ' ' .  number_format($detalle->precio,2) ?></td>
                 <td style="text-align: right"><?= $venta->moneda_simbolo . ' ' . number_format($detalle->importe, 2) ?></td>
             </tr>
         <?php endforeach; ?>
