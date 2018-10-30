@@ -853,487 +853,485 @@ class venta_new extends MY_Controller
         if ($result !== FALSE) {
             $data['success'] = 1;
             $data['msg'] = "La nota de credito " . $result->serie . "-" . $result->numero . " se ha hecho correctamente.";
-        } else {
-            $data['success'] = 0;
-            $data['msg'] = "Error de base de datos al inentar crear la nota de credito.";
         }
 
-        echo json_encode($data);
-        return false;
+else {
+    $data['success'] = 0;
+    $data['msg'] = "Error de base de datos al inentar crear la nota de credito.";
+}
+
+echo json_encode($data);
+return false;
+}
+
+function set_stock()
+{
+    $stock_minimo = $this->input->post('stock_minimo');
+    $stock_total_minimo = $this->input->post('stock_total_minimo');
+    $producto_id = $this->input->post('producto_id');
+    $local_id = $this->input->post('local_id');
+
+    $old_cantidad = $this->db->get_where('producto_almacen', array('id_producto' => $producto_id, 'id_local' => $local_id))->row();
+    $old_cantidad_min = $old_cantidad != NULL ? $this->unidades_model->convert_minimo_um($producto_id, $old_cantidad->cantidad, $old_cantidad->fraccion) : 0;
+    $data['stock_actual'] = $this->unidades_model->get_cantidad_fraccion($producto_id, $old_cantidad_min - $stock_minimo);
+
+    $locales = $this->local_model->get_local_by_user($this->session->userdata('nUsuCodigo'));
+    $all_cantidad_min = 0;
+    foreach ($locales as $local) {
+        $cantidad = $this->db->get_where('producto_almacen', array('id_producto' => $producto_id, 'id_local' => $local->local_id))->row();
+        $temp = $cantidad != NULL ? $this->unidades_model->convert_minimo_um($producto_id, $cantidad->cantidad, $cantidad->fraccion) : 0;
+        $all_cantidad_min += $temp;
     }
 
-    function set_stock()
-    {
-        $stock_minimo = $this->input->post('stock_minimo');
-        $stock_total_minimo = $this->input->post('stock_total_minimo');
-        $producto_id = $this->input->post('producto_id');
-        $local_id = $this->input->post('local_id');
+    $data['stock_total'] = $this->unidades_model->get_cantidad_fraccion($producto_id, $all_cantidad_min - $stock_total_minimo);
 
-        $old_cantidad = $this->db->get_where('producto_almacen', array('id_producto' => $producto_id, 'id_local' => $local_id))->row();
+    $data['stock_minimo'] = $old_cantidad_min;
+    $data['stock_total_minimo'] = $all_cantidad_min;
+
+    $data['stock_minimo_left'] = $old_cantidad_min - $stock_minimo;
+    $data['stock_total_minimo_left'] = $all_cantidad_min - $stock_total_minimo;
+
+
+    header('Content-Type: application/json');
+    echo json_encode($data);
+}
+
+function set_stock_desglose()
+{
+    $locales = $this->local_model->get_local_by_user($this->session->userdata('nUsuCodigo'));
+    $producto_id = $this->input->post('producto_id');
+
+
+    foreach ($locales as $local) {
+        $old_cantidad = $this->db->get_where('producto_almacen', array('id_producto' => $producto_id, 'id_local' => $local->local_id))->row();
         $old_cantidad_min = $old_cantidad != NULL ? $this->unidades_model->convert_minimo_um($producto_id, $old_cantidad->cantidad, $old_cantidad->fraccion) : 0;
-        $data['stock_actual'] = $this->unidades_model->get_cantidad_fraccion($producto_id, $old_cantidad_min - $stock_minimo);
-
-        $locales = $this->local_model->get_local_by_user($this->session->userdata('nUsuCodigo'));
-        $all_cantidad_min = 0;
-        foreach ($locales as $local) {
-            $cantidad = $this->db->get_where('producto_almacen', array('id_producto' => $producto_id, 'id_local' => $local->local_id))->row();
-            $temp = $cantidad != NULL ? $this->unidades_model->convert_minimo_um($producto_id, $cantidad->cantidad, $cantidad->fraccion) : 0;
-            $all_cantidad_min += $temp;
-        }
-
-        $data['stock_total'] = $this->unidades_model->get_cantidad_fraccion($producto_id, $all_cantidad_min - $stock_total_minimo);
-
-        $data['stock_minimo'] = $old_cantidad_min;
-        $data['stock_total_minimo'] = $all_cantidad_min;
-
-        $data['stock_minimo_left'] = $old_cantidad_min - $stock_minimo;
-        $data['stock_total_minimo_left'] = $all_cantidad_min - $stock_total_minimo;
-
-        if (validOption('ACTIVAR_SHADOW', 1)) {
-            $data['shadow'] = $this->shadow_model->get_stock($producto_id);
-        }
-
-
-        header('Content-Type: application/json');
-        echo json_encode($data);
+        $data['locales'][] = $local->local_nombre;
+        $data['stock_desgloses'][] = $this->unidades_model->get_cantidad_fraccion($producto_id, $old_cantidad_min);
     }
 
-    function set_stock_desglose()
-    {
-        $locales = $this->local_model->get_local_by_user($this->session->userdata('nUsuCodigo'));
-        $producto_id = $this->input->post('producto_id');
+    header('Content-Type: application/json');
+    echo json_encode($data);
+}
 
+function get_productos_unidades($moneda_id = '')
+{
+    $producto_id = $this->input->post('producto_id');
+    $precio_id = $this->input->post('precio_id');
 
-        foreach ($locales as $local) {
-            $old_cantidad = $this->db->get_where('producto_almacen', array('id_producto' => $producto_id, 'id_local' => $local->local_id))->row();
-            $old_cantidad_min = $old_cantidad != NULL ? $this->unidades_model->convert_minimo_um($producto_id, $old_cantidad->cantidad, $old_cantidad->fraccion) : 0;
-            $data['locales'][] = $local->local_nombre;
-            $data['stock_desgloses'][] = $this->unidades_model->get_cantidad_fraccion($producto_id, $old_cantidad_min);
-        }
+    $data['unidades'] = $this->unidades_model->get_unidades_precios($producto_id, $precio_id);
 
-        header('Content-Type: application/json');
-        echo json_encode($data);
+    $data['moneda'] = $this->unidades_model->get_moneda_default($producto_id);
+
+    if (validOption('ACTIVAR_SHADOW', 1)) {
+        if ($moneda_id != '')
+            $data['precio_contable'] = $this->shadow_model->get_precio_contable($producto_id, $moneda_id);
     }
 
-    function get_productos_unidades($moneda_id = '')
-    {
-        $producto_id = $this->input->post('producto_id');
-        $precio_id = $this->input->post('precio_id');
+    header('Content-Type: application/json');
+    echo json_encode($data);
+}
 
-        $data['unidades'] = $this->unidades_model->get_unidades_precios($producto_id, $precio_id);
+function get_productos_precios()
+{
+    $producto_id = $this->input->post('producto_id');
+    $precio_id = $this->input->post('precio_id');
 
-        $data['moneda'] = $this->unidades_model->get_moneda_default($producto_id);
+    $data['unidades'] = $this->unidades_model->get_unidades_precios($producto_id, $precio_id);
 
-        if (validOption('ACTIVAR_SHADOW', 1)) {
-            if ($moneda_id != '')
-                $data['precio_contable'] = $this->shadow_model->get_precio_contable($producto_id, $moneda_id);
-        }
+    header('Content-Type: application/json');
+    echo json_encode($data);
+}
 
-        header('Content-Type: application/json');
-        echo json_encode($data);
-    }
+function update_cliente()
+{
+    $data['clientes'] = $data["clientes"] = $this->cliente_model->get_all();
 
-    function get_productos_precios()
-    {
-        $producto_id = $this->input->post('producto_id');
-        $precio_id = $this->input->post('precio_id');
+    header('Content-Type: application/json');
+    echo json_encode($data);
+}
 
-        $data['unidades'] = $this->unidades_model->get_unidades_precios($producto_id, $precio_id);
+function get_venta_cobro()
+{
+    $venta_id = $this->input->post('venta_id');
+    $data['venta'] = $this->venta->get_venta_detalle($venta_id);
 
-        header('Content-Type: application/json');
-        echo json_encode($data);
-    }
+    header('Content-Type: application/json');
+    echo json_encode($data);
+}
 
-    function update_cliente()
-    {
-        $data['clientes'] = $data["clientes"] = $this->cliente_model->get_all();
+function opciones($action = 'get')
+{
+    $this->load->model('opciones/opciones_model');
+    $keys = array(
+        'CREDITO_INICIAL',
+        'CREDITO_TASA',
+        'CREDITO_CUOTAS',
+        'VISTA_CREDITO',
+        'COSTO_AUMENTO',
+        'COBRAR_CAJA',
+        'COTIZACION_INFORMACION',
+        'COTIZACION_CONDICION',
+        'COTIZACION_PIE_PAGINA',
+        'COMPROBANTE',
+        'DOCUMENTO_DEFECTO',
+        'BOTONES_VENTA',
+        'NOMBRE_PRODUCTO',
+        'COTIZACION_COLOR_FORMATO',
+        'EMBALAJE_IMPRESION',
+        'NUMERO_DECIMALES',
+        'REDONDEO_VENTAS'
+    );
 
-        header('Content-Type: application/json');
-        echo json_encode($data);
-    }
+    if ($action == 'get') {
+        $data['configuraciones'] = $this->opciones_model->get_opciones($keys);
+        $data['documentos'] = $this->documentos_model->get_documentosBy("ventas = '1'");
+        $dataCuerpo['cuerpo'] = $this->load->view('menu/venta/opciones', $data, true);
 
-    function get_venta_cobro()
-    {
-        $venta_id = $this->input->post('venta_id');
-        $data['venta'] = $this->venta->get_venta_detalle($venta_id);
-
-        header('Content-Type: application/json');
-        echo json_encode($data);
-    }
-
-    function opciones($action = 'get')
-    {
-        $this->load->model('opciones/opciones_model');
-        $keys = array(
-            'CREDITO_INICIAL',
-            'CREDITO_TASA',
-            'CREDITO_CUOTAS',
-            'VISTA_CREDITO',
-            'COSTO_AUMENTO',
-            'COBRAR_CAJA',
-            'COTIZACION_INFORMACION',
-            'COTIZACION_CONDICION',
-            'COTIZACION_PIE_PAGINA',
-            'COMPROBANTE',
-            'DOCUMENTO_DEFECTO',
-            'BOTONES_VENTA',
-            'NOMBRE_PRODUCTO',
-            'COTIZACION_COLOR_FORMATO',
-            'EMBALAJE_IMPRESION',
-            'NUMERO_DECIMALES',
-            'REDONDEO_VENTAS'
-        );
-
-        if ($action == 'get') {
-            $data['configuraciones'] = $this->opciones_model->get_opciones($keys);
-            $data['documentos'] = $this->documentos_model->get_documentosBy("ventas = '1'");
-            $dataCuerpo['cuerpo'] = $this->load->view('menu/venta/opciones', $data, true);
-
-            if ($this->input->is_ajax_request()) {
-                echo $dataCuerpo['cuerpo'];
-            } else {
-                $this->load->view('menu/template', $dataCuerpo);
-            }
-        } elseif ($action == 'save') {
-
-            $configuraciones = array();
-            foreach ($keys as $key) {
-                if (is_array($this->input->post($key))) {
-                    $config_value = json_encode($this->input->post($key));
-                } else {
-                    $config_value = $this->input->post($key);
-                }
-                $configuraciones[] = array(
-                    'config_key' => $key,
-                    'config_value' => $config_value
-                );
-            }
-
-            $result = $this->opciones_model->guardar_configuracion($configuraciones);
-            $configuraciones = $this->opciones_model->get_opciones($keys);
-
-            if (count($configuraciones) > 0) {
-                foreach ($configuraciones as $configuracion) {
-                    $data[$configuracion['config_key']] = $configuracion['config_value'];
-                }
-                $this->session->set_userdata($data);
-            }
-
-            if ($result)
-                $json['success'] = 'Las configuraciones se han guardado exitosamente';
-            else
-                $json['error'] = 'Ha ocurido un error al guardar las configuraciones';
-
-            echo json_encode($json);
-        }
-    }
-
-    function ofertas($action = 'get')
-    {
-        $this->load->model('opciones/opciones_model');
-        $keys = array(
-            'FECHA_VENTA_PROMO',
-            'VENTA_PROMO'
-        );
-
-        if ($action == 'get') {
-            $data['configuraciones'] = $this->opciones_model->get_opciones($keys);
-            $dataCuerpo['cuerpo'] = $this->load->view('menu/venta/ofertas', $data, true);
-
-            if ($this->input->is_ajax_request()) {
-                echo $dataCuerpo['cuerpo'];
-            } else {
-                $this->load->view('menu/template', $dataCuerpo);
-            }
-        } elseif ($action == 'save') {
-
-            $configuraciones = array();
-            foreach ($keys as $key) {
-                $configuraciones[] = array(
-                    'config_key' => $key,
-                    'config_value' => urldecode($this->input->post($key, false))
-                );
-            }
-
-
-            $result = $this->opciones_model->guardar_configuracion($configuraciones);
-            $configuraciones = $this->opciones_model->get_opciones($keys);
-
-            if (count($configuraciones) > 0) {
-                foreach ($configuraciones as $configuracion) {
-                    $data[$configuracion['config_key']] = $configuracion['config_value'];
-                }
-                $this->session->set_userdata($data);
-            }
-
-            if ($result)
-                $json['success'] = 'Las configuraciones se han guardado exitosamente';
-            else
-                $json['error'] = 'Ha ocurido un error al guardar las configuraciones';
-
-            echo json_encode($json);
-        }
-    }
-
-    function historial_pdf()
-    {
-        $params = json_decode($this->input->get('data'));
-
-        $date_range = explode(" - ", $params->fecha);
-        $fecha_ini = str_replace("/", "-", $date_range[0]);
-        $fecha_fin = str_replace("/", "-", $date_range[1]);
-
-
-        $condition = array(
-            'local_id' => $params->local_id,
-            'condicion_id' => $params->condicion_pago_id,
-            'fecha_ini' => $fecha_ini,
-            'fecha_fin' => $fecha_fin,
-            'moneda_id' => $params->moneda_id
-        );
-        $data = $condition;
-
-        $local = $this->db->get_where('local', array('int_local_id' => $condition['local_id']))->row();
-        $data['local_nombre'] = $local->local_nombre;
-        $data['moneda'] = $this->db->get_where('moneda', array('id_moneda' => $condition['moneda_id']))->row();
-        $data['ventas'] = $this->venta->get_ventas($condition);
-
-        $data['venta_totales'] = $this->venta->get_ventas_totales($condition);
-        $this->load->library('mpdf53/mpdf');
-        $mpdf = new mPDF('utf-8', 'A4', 0, '', 5, 5, 5, 5, 5, 5);
-        $html = $this->load->view('menu/venta/historial_list_pdf', $data, true);
-        $mpdf->WriteHTML($html);
-        $mpdf->Output();
-    }
-
-    function imprimir($venta_id, $tipo_impresion)
-    {
-        $venta_temp = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
-        $moneda = $this->db->get_where('moneda', array('id_moneda' => $venta_temp->id_moneda))->row();
-        if ($tipo_impresion == 'PEDIDO') {
-            $data['venta'] = $this->venta->get_venta_detalle($venta_id);
-            $data['identificacion'] = $this->db->get_where('configuraciones', array('config_key' => 'EMPRESA_IDENTIFICACION'))->row();
-            $total = $data['venta']->total;
-            $data['totalLetras'] = numtoletras($total, $moneda->nombre);
-            $this->load->view('menu/venta/impresiones/nota_pedido', $data);
-        } elseif ($tipo_impresion == 'ALMACEN') {
-            $pedido = $this->venta->get_venta_detalle($venta_id);
-            $detalles = array();
-            foreach ($pedido->detalles as $venta) {
-                $detalles[] = $venta;
-                $venta->origen = $pedido->local_nombre;
-
-                $kardexs = $this->db->get_where('kardex', array(
-                    'ref_id' => $pedido->venta_id,
-                    'io' => 1,
-                    'tipo' => -1,
-                    'operacion' => 11,
-                    'producto_id' => $venta->producto_id,
-                    'unidad_id' => $venta->unidad_id
-                ))->result();
-
-
-                foreach ($kardexs as $kardex) {
-                    $venta->cantidad -= $kardex->cantidad;
-                    $venta_temp = clone $venta;
-                    $venta_temp->cantidad = $kardex->cantidad;
-                    $venta_temp->origen = $kardex->ref_val;
-                    $venta_temp->importe = number_format($venta_temp->cantidad * $venta_temp->precio, 2);
-                    $detalles[] = $venta_temp;
-                }
-
-                $venta->importe = number_format($venta->cantidad * $venta->precio, 2);
-            }
-
-            $pedido->detalles = $detalles;
-            $data['venta'] = $pedido;
-            $total = $data['venta']->total;
-            $data['totalLetras'] = numtoletras($total, $moneda->nombre);
-            $this->load->view('menu/venta/impresiones/pedido_almacen', $data);
-            //$this->venta->imprimir_pedido($data);
-        } elseif ($tipo_impresion == 'DOCUMENTO' || $tipo_impresion == 'SC') {
-            $data['venta'] = $this->venta->get_venta_detalle($venta_id);
-            if ($tipo_impresion == 'SC')
-                $data['venta'] = $this->shadow_model->get_venta_contable_detalle($venta_id);
-            $total = $data['venta']->total;
-            $data['totalLetras'] = numtoletras($total, $moneda->nombre);
-            $this->db->where('venta_id', $venta_id);
-            $this->db->update('venta', array('factura_impresa' => '1'));
-
-            if ($data['venta']->documento_id == 1) {
-                //$this->load->view('menu/venta/impresiones/factura', $data);
-                $this->venta->imprimir_factura($data);
-            } elseif ($data['venta']->documento_id == 3) {
-                //$this->load->view('menu/venta/impresiones/boleta', $data);
-                $this->venta->imprimir_boleta($data);
-            }
-        } elseif ($tipo_impresion == 'TRASPASO') {
-            $id_traspaso = $this->db->get_where('traspaso', array('ref_id' => $venta_id))->row();
-            $data_origen = $this->venta->get_traspaso_local($id_traspaso->id);
-
-            $x = 0;
-            foreach ($data_origen as $idLocal) {
-                $data['datos'][$x]['head'] = $this->venta->get_venta_traspaso($id_traspaso->id);
-                $data['datos'][$x]['detalles'] = $this->venta->get_venta_detalle_traspaso($id_traspaso->id, $idLocal->local_origen);
-                $x++;
-            }
-            $this->load->view('menu/venta/impresiones/traspaso', $data);
-        } elseif ($tipo_impresion == 'A4') {
-            $data['venta'] = $this->venta->get_venta_detalle($venta_id);
-            $data['identificacion'] = $this->db->get_where('configuraciones', array('config_key' => 'EMPRESA_IDENTIFICACION'))->row();
-            $total = $data['venta']->total;
-            $data['totalLetras'] = numtoletras($total, $moneda->nombre);
-
-            $this->load->library('mpdf53/mpdf');
-            $mpdf = new mPDF('utf-8', 'A4', 0, '', 5, 5, 5, 5, 5, 5);
-            if (SERVER_NAME == SERVER_CRDIGITAL) {
-                $html = $this->load->view('menu/venta/impresiones/nota_pedido_crdigital', $data, true);
-            } else {
-                $html = $this->load->view('menu/venta/impresiones/nota_pedido_a4', $data, true);
-            }
-            $mpdf->WriteHTML($html);
-            $mpdf->Output();
-        }
-    }
-
-    function imprimir_html()
-    {
-
-        $venta_id = $this->input->post('venta_id');
-        $tipo_impresion = $this->input->post('tipo_impresion');
-
-        $data['venta'] = $this->venta->get_venta_detalle($venta_id);
-
-        if ($tipo_impresion == 'PEDIDO') {
-            $documento = 'boleta';
-
-            $this->load->view('menu/venta/impresiones/' . $documento, $data);
-        }
-    }
-
-    function historial_excel()
-    {
-
-        $params = json_decode($this->input->get('data'));
-
-        $date_range = explode(" - ", $params->fecha);
-        $fecha_ini = str_replace("/", "-", $date_range[0]);
-        $fecha_fin = str_replace("/", "-", $date_range[1]);
-
-
-        $condition = array(
-            'local_id' => $params->local_id,
-            'condicion_id' => (isset($params->condicion_pago_id)) ? $params->condicion_pago_id : '',
-            'fecha_ini' => $fecha_ini,
-            'fecha_fin' => $fecha_fin,
-            'moneda_id' => $params->moneda_id
-        );
-        $data = $condition;
-
-        $local = $this->db->get_where('local', array('int_local_id' => $condition['local_id']))->row();
-        $data['local_nombre'] = $local->local_nombre;
-        $data['moneda'] = $this->db->get_where('moneda', array('id_moneda' => $condition['moneda_id']))->row();
-        $data['ventas'] = $this->venta->get_ventas($condition);
-
-        $data['venta_totales'] = $this->venta->get_ventas_totales($condition);
-
-        echo $this->load->view('menu/venta/historial_list_excel', $data, true);
-    }
-
-    function recarga()
-    {
-        $data['locales'] = $this->local_model->get_local_by_user($this->session->userdata('nUsuCodigo'));
-        $data["clientes"] = $this->cliente_model->get_all();
-        $data['operadore'] = $this->diccionario_termino_model->get_all_operador();
-        $data['poblados'] = $this->clientes_grupos_model->get_all();
-        $data['monedas'] = $this->monedas_model->get_monedas_activas();
-        $data['condPagos'] = $this->condiciones_pago_model->get_all();
-        $data["documentos"] = $this->db->get_where('documentos', array('ventas' => 1))->result();
-        $dataCuerpo['cuerpo'] = $this->load->view('menu/venta/recarga', $data, true);
         if ($this->input->is_ajax_request()) {
             echo $dataCuerpo['cuerpo'];
         } else {
             $this->load->view('menu/template', $dataCuerpo);
         }
-    }
+    } elseif ($action == 'save') {
 
-    function save_recarga()
-    {
-        $venta['local_id'] = $this->input->post('local_venta_id');
-        $venta['id_cliente'] = $this->input->post('cliente_id');
-        $venta['rec_ope'] = $this->input->post('operador_id');
-        $venta['fecha_venta'] = $this->input->post('fecha_venta');
-        $venta['id_moneda'] = $this->input->post('moneda_id');
-        $venta['total_importe'] = $this->input->post('total_importe');
-        $venta['condicion_pago'] = $this->input->post('tipo_pago');
-        $venta['rec_nro'] = $this->input->post('nro_recarga');
-        $venta['cod_tran'] = $this->input->post('cod_tran');
-        $venta['id_usuario'] = $this->session->userdata('nUsuCodigo');
-        $venta['vc_importe'] = $this->input->post('vc_importe2');
-        $venta['vc_vuelto'] = $this->input->post('vc_vuelto2');
-        $venta['rec_pob'] = $this->input->post('poblado_id');
-        $venta['nota'] = $this->input->post('tienda');
-        $venta['vc_forma_pago'] = $this->input->post('vc_forma_pago2');
-        $venta['vc_banco_id'] = $this->input->post('vc_banco_id2');
-        $venta['vc_num_oper'] = $this->input->post('vc_num_oper2');
-        $venta['telefono1'] = $this->input->post('nro_recarga');
-        $venta['venta_status'] = 'COMPLETADO';
-        $venta['id_documento'] = $this->input->post('cboDocumento');
-        $venta_id = false;
-        if ($venta['condicion_pago'] == 2 && $venta['id_cliente'] == 1) {
-            $this->venta->error = 'El Cliente frecuente no tiene credito.';
-        } else {
-            $venta_id = $this->venta->save_recarga($venta);
-        }
-
-        if ($venta_id) {
-            $data['success'] = '1';
-            $data['venta'] = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
-        } else {
-            if (isset($this->venta->error)) {
-                $data['msg'] = $this->venta->error;
+        $configuraciones = array();
+        foreach ($keys as $key) {
+            if (is_array($this->input->post($key))) {
+                $config_value = json_encode($this->input->post($key));
+            } else {
+                $config_value = $this->input->post($key);
             }
-            $data['success'] = '0';
+            $configuraciones[] = array(
+                'config_key' => $key,
+                'config_value' => $config_value
+            );
         }
-        echo json_encode($data);
+
+        $result = $this->opciones_model->guardar_configuracion($configuraciones);
+        $configuraciones = $this->opciones_model->get_opciones($keys);
+
+        if (count($configuraciones) > 0) {
+            foreach ($configuraciones as $configuracion) {
+                $data[$configuracion['config_key']] = $configuracion['config_value'];
+            }
+            $this->session->set_userdata($data);
+        }
+
+        if ($result)
+            $json['success'] = 'Las configuraciones se han guardado exitosamente';
+        else
+            $json['error'] = 'Ha ocurido un error al guardar las configuraciones';
+
+        echo json_encode($json);
+    }
+}
+
+function ofertas($action = 'get')
+{
+    $this->load->model('opciones/opciones_model');
+    $keys = array(
+        'FECHA_VENTA_PROMO',
+        'VENTA_PROMO'
+    );
+
+    if ($action == 'get') {
+        $data['configuraciones'] = $this->opciones_model->get_opciones($keys);
+        $dataCuerpo['cuerpo'] = $this->load->view('menu/venta/ofertas', $data, true);
+
+        if ($this->input->is_ajax_request()) {
+            echo $dataCuerpo['cuerpo'];
+        } else {
+            $this->load->view('menu/template', $dataCuerpo);
+        }
+    } elseif ($action == 'save') {
+
+        $configuraciones = array();
+        foreach ($keys as $key) {
+            $configuraciones[] = array(
+                'config_key' => $key,
+                'config_value' => urldecode($this->input->post($key, false))
+            );
+        }
+
+
+        $result = $this->opciones_model->guardar_configuracion($configuraciones);
+        $configuraciones = $this->opciones_model->get_opciones($keys);
+
+        if (count($configuraciones) > 0) {
+            foreach ($configuraciones as $configuracion) {
+                $data[$configuracion['config_key']] = $configuracion['config_value'];
+            }
+            $this->session->set_userdata($data);
+        }
+
+        if ($result)
+            $json['success'] = 'Las configuraciones se han guardado exitosamente';
+        else
+            $json['error'] = 'Ha ocurido un error al guardar las configuraciones';
+
+        echo json_encode($json);
+    }
+}
+
+function historial_pdf()
+{
+    $params = json_decode($this->input->get('data'));
+
+    $date_range = explode(" - ", $params->fecha);
+    $fecha_ini = str_replace("/", "-", $date_range[0]);
+    $fecha_fin = str_replace("/", "-", $date_range[1]);
+
+
+    $condition = array(
+        'local_id' => $params->local_id,
+        'condicion_id' => $params->condicion_pago_id,
+        'fecha_ini' => $fecha_ini,
+        'fecha_fin' => $fecha_fin,
+        'moneda_id' => $params->moneda_id
+    );
+    $data = $condition;
+
+    $local = $this->db->get_where('local', array('int_local_id' => $condition['local_id']))->row();
+    $data['local_nombre'] = $local->local_nombre;
+    $data['moneda'] = $this->db->get_where('moneda', array('id_moneda' => $condition['moneda_id']))->row();
+    $data['ventas'] = $this->venta->get_ventas($condition);
+
+    $data['venta_totales'] = $this->venta->get_ventas_totales($condition);
+    $this->load->library('mpdf53/mpdf');
+    $mpdf = new mPDF('utf-8', 'A4', 0, '', 5, 5, 5, 5, 5, 5);
+    $html = $this->load->view('menu/venta/historial_list_pdf', $data, true);
+    $mpdf->WriteHTML($html);
+    $mpdf->Output();
+}
+
+function imprimir($venta_id, $tipo_impresion)
+{
+    $venta_temp = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
+    $moneda = $this->db->get_where('moneda', array('id_moneda' => $venta_temp->id_moneda))->row();
+    if ($tipo_impresion == 'PEDIDO') {
+        $data['venta'] = $this->venta->get_venta_detalle($venta_id);
+        $data['identificacion'] = $this->db->get_where('configuraciones', array('config_key' => 'EMPRESA_IDENTIFICACION'))->row();
+        $total = $data['venta']->total;
+        $data['totalLetras'] = numtoletras($total, $moneda->nombre);
+        $this->load->view('menu/venta/impresiones/nota_pedido', $data);
+    } elseif ($tipo_impresion == 'ALMACEN') {
+        $pedido = $this->venta->get_venta_detalle($venta_id);
+        $detalles = array();
+        foreach ($pedido->detalles as $venta) {
+            $detalles[] = $venta;
+            $venta->origen = $pedido->local_nombre;
+
+            $kardexs = $this->db->get_where('kardex', array(
+                'ref_id' => $pedido->venta_id,
+                'io' => 1,
+                'tipo' => -1,
+                'operacion' => 11,
+                'producto_id' => $venta->producto_id,
+                'unidad_id' => $venta->unidad_id
+            ))->result();
+
+
+            foreach ($kardexs as $kardex) {
+                $venta->cantidad -= $kardex->cantidad;
+                $venta_temp = clone $venta;
+                $venta_temp->cantidad = $kardex->cantidad;
+                $venta_temp->origen = $kardex->ref_val;
+                $venta_temp->importe = number_format($venta_temp->cantidad * $venta_temp->precio, 2);
+                $detalles[] = $venta_temp;
+            }
+
+            $venta->importe = number_format($venta->cantidad * $venta->precio, 2);
+        }
+
+        $pedido->detalles = $detalles;
+        $data['venta'] = $pedido;
+        $total = $data['venta']->total;
+        $data['totalLetras'] = numtoletras($total, $moneda->nombre);
+        $this->load->view('menu/venta/impresiones/pedido_almacen', $data);
+        //$this->venta->imprimir_pedido($data);
+    } elseif ($tipo_impresion == 'DOCUMENTO' || $tipo_impresion == 'SC') {
+        $data['venta'] = $this->venta->get_venta_detalle($venta_id);
+        if ($tipo_impresion == 'SC')
+            $data['venta'] = $this->shadow_model->get_venta_contable_detalle($venta_id);
+        $total = $data['venta']->total;
+        $data['totalLetras'] = numtoletras($total, $moneda->nombre);
+        $this->db->where('venta_id', $venta_id);
+        $this->db->update('venta', array('factura_impresa' => '1'));
+
+        if ($data['venta']->documento_id == 1) {
+            //$this->load->view('menu/venta/impresiones/factura', $data);
+            $this->venta->imprimir_factura($data);
+        } elseif ($data['venta']->documento_id == 3) {
+            //$this->load->view('menu/venta/impresiones/boleta', $data);
+            $this->venta->imprimir_boleta($data);
+        }
+    } elseif ($tipo_impresion == 'TRASPASO') {
+        $id_traspaso = $this->db->get_where('traspaso', array('ref_id' => $venta_id))->row();
+        $data_origen = $this->venta->get_traspaso_local($id_traspaso->id);
+
+        $x = 0;
+        foreach ($data_origen as $idLocal) {
+            $data['datos'][$x]['head'] = $this->venta->get_venta_traspaso($id_traspaso->id);
+            $data['datos'][$x]['detalles'] = $this->venta->get_venta_detalle_traspaso($id_traspaso->id, $idLocal->local_origen);
+            $x++;
+        }
+        $this->load->view('menu/venta/impresiones/traspaso', $data);
+    } elseif ($tipo_impresion == 'A4') {
+        $data['venta'] = $this->venta->get_venta_detalle($venta_id);
+        $data['identificacion'] = $this->db->get_where('configuraciones', array('config_key' => 'EMPRESA_IDENTIFICACION'))->row();
+        $total = $data['venta']->total;
+        $data['totalLetras'] = numtoletras($total, $moneda->nombre);
+
+        $this->load->library('mpdf53/mpdf');
+        $mpdf = new mPDF('utf-8', 'A4', 0, '', 5, 5, 5, 5, 5, 5);
+        if (SERVER_NAME == SERVER_CRDIGITAL) {
+            $html = $this->load->view('menu/venta/impresiones/nota_pedido_crdigital', $data, true);
+        } else {
+            $html = $this->load->view('menu/venta/impresiones/nota_pedido_a4', $data, true);
+        }
+        $mpdf->WriteHTML($html);
+        $mpdf->Output();
+    }
+}
+
+function imprimir_html()
+{
+
+    $venta_id = $this->input->post('venta_id');
+    $tipo_impresion = $this->input->post('tipo_impresion');
+
+    $data['venta'] = $this->venta->get_venta_detalle($venta_id);
+
+    if ($tipo_impresion == 'PEDIDO') {
+        $documento = 'boleta';
+
+        $this->load->view('menu/venta/impresiones/' . $documento, $data);
+    }
+}
+
+function historial_excel()
+{
+
+    $params = json_decode($this->input->get('data'));
+
+    $date_range = explode(" - ", $params->fecha);
+    $fecha_ini = str_replace("/", "-", $date_range[0]);
+    $fecha_fin = str_replace("/", "-", $date_range[1]);
+
+
+    $condition = array(
+        'local_id' => $params->local_id,
+        'condicion_id' => (isset($params->condicion_pago_id)) ? $params->condicion_pago_id : '',
+        'fecha_ini' => $fecha_ini,
+        'fecha_fin' => $fecha_fin,
+        'moneda_id' => $params->moneda_id
+    );
+    $data = $condition;
+
+    $local = $this->db->get_where('local', array('int_local_id' => $condition['local_id']))->row();
+    $data['local_nombre'] = $local->local_nombre;
+    $data['moneda'] = $this->db->get_where('moneda', array('id_moneda' => $condition['moneda_id']))->row();
+    $data['ventas'] = $this->venta->get_ventas($condition);
+
+    $data['venta_totales'] = $this->venta->get_ventas_totales($condition);
+
+    echo $this->load->view('menu/venta/historial_list_excel', $data, true);
+}
+
+function recarga()
+{
+    $data['locales'] = $this->local_model->get_local_by_user($this->session->userdata('nUsuCodigo'));
+    $data["clientes"] = $this->cliente_model->get_all();
+    $data['operadore'] = $this->diccionario_termino_model->get_all_operador();
+    $data['poblados'] = $this->clientes_grupos_model->get_all();
+    $data['monedas'] = $this->monedas_model->get_monedas_activas();
+    $data['condPagos'] = $this->condiciones_pago_model->get_all();
+    $data["documentos"] = $this->db->get_where('documentos', array('ventas' => 1))->result();
+    $dataCuerpo['cuerpo'] = $this->load->view('menu/venta/recarga', $data, true);
+    if ($this->input->is_ajax_request()) {
+        echo $dataCuerpo['cuerpo'];
+    } else {
+        $this->load->view('menu/template', $dataCuerpo);
+    }
+}
+
+function save_recarga()
+{
+    $venta['local_id'] = $this->input->post('local_venta_id');
+    $venta['id_cliente'] = $this->input->post('cliente_id');
+    $venta['rec_ope'] = $this->input->post('operador_id');
+    $venta['fecha_venta'] = $this->input->post('fecha_venta');
+    $venta['id_moneda'] = $this->input->post('moneda_id');
+    $venta['total_importe'] = $this->input->post('total_importe');
+    $venta['condicion_pago'] = $this->input->post('tipo_pago');
+    $venta['rec_nro'] = $this->input->post('nro_recarga');
+    $venta['cod_tran'] = $this->input->post('cod_tran');
+    $venta['id_usuario'] = $this->session->userdata('nUsuCodigo');
+    $venta['vc_importe'] = $this->input->post('vc_importe2');
+    $venta['vc_vuelto'] = $this->input->post('vc_vuelto2');
+    $venta['rec_pob'] = $this->input->post('poblado_id');
+    $venta['nota'] = $this->input->post('tienda');
+    $venta['vc_forma_pago'] = $this->input->post('vc_forma_pago2');
+    $venta['vc_banco_id'] = $this->input->post('vc_banco_id2');
+    $venta['vc_num_oper'] = $this->input->post('vc_num_oper2');
+    $venta['telefono1'] = $this->input->post('nro_recarga');
+    $venta['venta_status'] = 'COMPLETADO';
+    $venta['id_documento'] = $this->input->post('cboDocumento');
+    $venta_id = false;
+    if ($venta['condicion_pago'] == 2 && $venta['id_cliente'] == 1) {
+        $this->venta->error = 'El Cliente frecuente no tiene credito.';
+    } else {
+        $venta_id = $this->venta->save_recarga($venta);
     }
 
-    function dialog_venta_contado()
-    {
-        $this->load->view('menu/venta/dialog_venta_contado', array(
-            'tarjetas' => $this->db->get('tarjeta_pago')->result(),
-            'metodos' => $this->metodos_pago_model->get_all(),
-            'bancos' => $this->banco_model->get_all_in_object()
-        ));
+    if ($venta_id) {
+        $data['success'] = '1';
+        $data['venta'] = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
+    } else {
+        if (isset($this->venta->error)) {
+            $data['msg'] = $this->venta->error;
+        }
+        $data['success'] = '0';
     }
+    echo json_encode($data);
+}
 
-    function getCliente()
-    {
-        $id = $this->input->post('id');
-        $datos = $this->cliente_model->get_by('id_cliente', $id);
-        echo json_encode($datos);
-    }
+function dialog_venta_contado()
+{
+    $this->load->view('menu/venta/dialog_venta_contado', array(
+        'tarjetas' => $this->db->get('tarjeta_pago')->result(),
+        'metodos' => $this->metodos_pago_model->get_all(),
+        'bancos' => $this->banco_model->get_all_in_object()
+    ));
+}
 
-    function ultimasVentas()
-    {
-        $venta['id_producto'] = $this->input->post('id_producto');
-        $venta['id_cliente'] = $this->input->post('id_cliente');
-        $data = $this->venta->ultimasVentas($venta);
-        echo json_encode($data);
-    }
+function getCliente()
+{
+    $id = $this->input->post('id');
+    $datos = $this->cliente_model->get_by('id_cliente', $id);
+    echo json_encode($datos);
+}
 
-    function ultimasCompras()
-    {
-        $venta['id_producto'] = $this->input->post('id_producto');
-        $data = $this->venta->ultimasCompras($venta);
-        echo json_encode($data);
-    }
+function ultimasVentas()
+{
+    $venta['id_producto'] = $this->input->post('id_producto');
+    $venta['id_cliente'] = $this->input->post('id_cliente');
+    $data = $this->venta->ultimasVentas($venta);
+    echo json_encode($data);
+}
 
-    function verificarAnulacion($id_venta)
-    {
-        $dato = $this->venta->verificarAnulacion($id_venta);
-        $data['num_reg'] = $dato->numReg;
-        echo json_encode($data);
-    }
+function ultimasCompras()
+{
+    $venta['id_producto'] = $this->input->post('id_producto');
+    $data = $this->venta->ultimasCompras($venta);
+    echo json_encode($data);
+}
+
+function verificarAnulacion($id_venta)
+{
+    $dato = $this->venta->verificarAnulacion($id_venta);
+    $data['num_reg'] = $dato->numReg;
+    echo json_encode($data);
+}
 
 }
