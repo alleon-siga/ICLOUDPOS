@@ -110,12 +110,12 @@
         <?php endif; ?>
     </table>
 <?php 
-    if($venta->venta_estado=="ANULADO"){
+    if($facturacion->estado_comprobante==3){
         ?>
     <center>
-    <span>___________________________________________________</span>
-    <span>TICKET ANULADO</span>
-    <span>¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯</span>
+    <span style="text-align:center;">___________________________________________________</span><br>
+    <span style="text-align:center;">TICKET ANULADO</span><br>
+    <span style="text-align:center;">¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯</span>
     </center>
         <?php
     }
