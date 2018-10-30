@@ -52,7 +52,6 @@
 
     #emisor_razon_social {
         font-size: 11px;
-        text-decoration: underline;
     }
 
     #emisor_telefono, #emisor_correo {
@@ -143,11 +142,9 @@
                                  src="<?= base_url('recursos/img/logo/' . valueOptionDB("EMPRESA_LOGO", 'logo.jpg')) ?>">
                         </td>
                         <td>
-                            <div id="emisor_direccion"><?= $venta->local_nombre ?></div>
-                            <div id="emisor_nombre_comercial"><?= $venta->local_direccion ?></div>
-                            <div id="emisor_nombre_comercial"><?= $term[1]->valor ?>
-                                : <?= $identificacion->config_value ?></div>
-                            <div id="emisor_telefono">T&eacute;lefono: <?= valueOption('EMPRESA_TELEFONO') ?></div>
+                            <div id="emisor_direccion"><?= $venta->local_nombre!=""?$venta->local_nombre:"" ?></div>
+                            <div id="emisor_nombre_comercial"><?= valueOption('EMPRESA_IDENTIFICACION', '')!=""? $term[1]->valor.': '.valueOption('EMPRESA_IDENTIFICACION', ''):"" ?></div>
+                            <div id="emisor_telefono"> <?= valueOption('EMPRESA_TELEFONO')!="" && valueOption('EMPRESA_TELEFONO')!="NO"?'T&eacute;lefono:'.valueOption('EMPRESA_TELEFONO'):'' ?></div>
                         </td>
                     </tr>
                 </table>
@@ -157,7 +154,7 @@
         </div>
         <div class="col">
             <div style="border: 1px solid #000; padding-bottom: 15px; font-weight: bold;">
-                <div id="emisor_ruc"><?= valueOption('EMPRESA_NOMBRE', '') ?></div>
+                <div id="emisor_ruc"><?= valueOption('EMPRESA_NOMBRE')!=""?valueOption('EMPRESA_NOMBRE'):"" ?></div>
                 <div id="tipo_dcumento">NOTA DE VENTA</div>
                 <div id="numero_documento">
                     Venta Nro:
@@ -182,9 +179,9 @@
                 <td><?= $venta->vendedor_nombre ?></td>
             </tr>
             <tr>
-                <th>Vendedor:</th>
-                <td><?= $venta->vendedor_nombre ?></td>
-                <th>Tipo de Pago:</th>
+                <th>Direccion:</th>
+                <td><?= $venta->direccion_cliente ?></td>
+                <th width="17%">Condicion de Pago:</th>
                 <td><?= $venta->condicion_nombre ?></td>
             </tr>
             <?php if ($venta->comprobante_id > 0): ?>
@@ -201,10 +198,11 @@
         <table id="producto_detalles" cellspacing="0" cellpadding="0" style="position:absolute !important; z-index: 1;">
         <thead>
             <tr>
+                <th style="border-top: #ccc 1px solid;">Codigo</th>
                 <th style="border-top: #ccc 1px solid;">Cantidad</th>
-                <th style="border-top: #ccc 1px solid;">Descripci&oacute;n</th>
                 <th style="border-top: #ccc 1px solid;">UM</th>
-                <th style="border-top: #ccc 1px solid;">Precio</th>
+                <th style="border-top: #ccc 1px solid;">Descripci&oacute;n</th>                
+                <th style="border-top: #ccc 1px solid;">P.U</th>
                 <th style="border-top: #ccc 1px solid;">Subtotal</th>
             </tr>
         </thead>
@@ -219,10 +217,11 @@
                 }
                 ?>
                 <tr class="td-data">
+                    <td style="background-color: <?= $color ?>"><?= $detalle->producto_codigo_interno!=""?$detalle->producto_codigo_interno:$detalle->producto_id ?></td>
                     <td style="background-color: <?= $color ?>"><?= $detalle->producto_cualidad == "PESABLE" ? $detalle->cantidad : number_format($detalle->cantidad, 0) ?></td>
-                    <td style="background-color: <?= $color ?>; width: 50%;"><?= $detalle->producto_nombre ?></td>
                     <td style="background-color: <?= $color ?>"><?= $detalle->unidad_abr ?></td>
-                    <td style="background-color: <?= $color ?>; white-space: nowrap; text-align: right;"><?= $venta->moneda_simbolo . ' ' . $detalle->precio ?></td>
+                    <td style="background-color: <?= $color ?>; width: 50%;"><?= $detalle->producto_nombre ?></td>
+                    <td style="background-color: <?= $color ?>; white-space: nowrap; text-align: right;"><?= $venta->moneda_simbolo . ' ' . number_format($detalle->precio,2) ?></td>
                     <td style="background-color: <?= $color ?>; white-space: nowrap; text-align: right;">
                         <?= $venta->moneda_simbolo . ' ' . number_format($detalle->importe, 2) ?>
                     </td>

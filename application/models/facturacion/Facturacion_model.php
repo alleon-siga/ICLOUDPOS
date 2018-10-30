@@ -15,9 +15,10 @@ class facturacion_model extends CI_Model
 
     function get_facturacion($where = array())
     {
-        $this->db->select('*')->from('facturacion')
-            ->join('local', 'local.int_local_id = facturacion.local_id');
-
+        $this->db->select('*,usuario.username')->from('facturacion')
+            ->join('local', 'local.int_local_id = facturacion.local_id')
+            ->join('venta', 'venta.venta_id = facturacion.ref_id')
+            ->join('usuario', 'usuario.nUsuCodigo = venta.id_vendedor');
         if (isset($where['local_id']))
             $this->db->where('facturacion.local_id', $where['local_id']);
 

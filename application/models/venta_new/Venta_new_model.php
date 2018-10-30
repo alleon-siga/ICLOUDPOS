@@ -69,6 +69,7 @@ class venta_new_model extends CI_Model
             venta.dni_garante as nombre_caja,
             venta.tipo_impuesto as tipo_impuesto,
             cliente.tipo_cliente as tipo_cliente,
+            cliente.direccion as direccion_cliente,
             venta.dni_garante as nombre_vd,
             (select SUM(detalle_venta.cantidad) from detalle_venta
             where detalle_venta.id_venta=venta.venta_id) as total_bultos,

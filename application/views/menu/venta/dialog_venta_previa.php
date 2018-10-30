@@ -20,15 +20,15 @@
             <div class="row">
                 <div class="col-md-3" style="margin: 0; text-align: left;">
                     <?php if (valueOption('FACTURACION', '0') == 1 && $facturacion_venta != null): ?>
-                        <h4>Facturaci&oacute;n Electr&oacute;nica:</h4>
-                        <button class="btn btn-xs btn-primary" onclick="imprimir_fe(<?= $facturacion_venta->id ?>)"
-                                type="button"><i class="fa fa-file-pdf-o"></i> PDF
+                        <h4>Comprobante Electronico:</h4>
+                        <button class="btn btn-xs btn-warning" onclick="imprimir_fe(<?= $facturacion_venta->id ?>)"
+                                type="button" ><i class="fa fa-file-pdf-o"></i> A4
                         </button>
 
-                        <button class="btn btn-xs btn-primary"
+                        <button class="btn btn-xs btn-warning"
                                 onclick="imprimir_ticket_fe(<?= $facturacion_venta->id ?>)"
                                 type="button"
-                                id="fe_imprimir_pdf"><i class="fa fa-print"></i> COMPROBANTE
+                                id="fe_imprimir_pdf"><i class="fa fa-print"></i> Ticket 
                         </button>
                     <?php endif; ?>
                     <?php if (validOption('ACTIVAR_SHADOW', 1) && $venta->documento_id != 6): ?>
@@ -63,12 +63,12 @@
                     <button class="btn btn-primary btn_venta_imprimir"
                             type="button" data-nombre="A4"
                             id="btn_venta_imprimir_1"><i
-                                class="fa fa-print"></i> A4
+                                class="fa fa fa-file-pdf-o"></i> A4 NV
                     </button>
                     <button class="btn btn-primary btn_venta_imprimir"
                             type="button" data-nombre="PEDIDO"
                             id="btn_venta_imprimir_1"><i
-                                class="fa fa-print"></i> (F6) Pedido
+                                class="fa fa-print"></i> (F6) Ticket NV
                     </button>
                     <button class="btn btn-primary btn_venta_imprimir_almacen imprimir"
                             type="button" data-nombre="guia"

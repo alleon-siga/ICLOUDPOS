@@ -11,33 +11,39 @@
         clear: both;
     }
 
-    #header .col {
+    #header .col-caja {
         margin: 0;
-        padding: 0;
-        width: 50%;
+        padding-left: 40%;
+        width: 30%;
         float: left;
         position: relative;
     }
-
+    #header .col {
+        margin: 0;
+        padding: 0;
+        width: 30%;
+        float: left;
+        position: relative;
+    }
     #emisor_logo {
         height: 95px;
     }
 
     #emisor_ruc {
         padding-top: 20px;
-        font-size: 22px;
+        font-size: 18px;
         text-align: center;
     }
 
     #tipo_dcumento {
         padding-top: 20px;
-        font-size: 18px;
+        font-size: 15px;
         text-align: center;
     }
 
     #numero_documento {
         padding-top: 10px;
-        font-size: 18px;
+        font-size: 15px;
         text-align: center;
     }
 
@@ -51,7 +57,6 @@
 
     #emisor_razon_social {
         font-size: 11px;
-        text-decoration: underline;
     }
 
     #emisor_telefono, #emisor_correo {
@@ -140,12 +145,13 @@
                      src="<?= base_url('recursos/img/logo/' . valueOptionDB("EMPRESA_LOGO", 'logo.jpg')) ?>">
             </div>
             <div>
-                <div id="emisor_nombre_comercial"><?= valueOption('EMPRESA_NOMBRE', '') ?></div>
-                <div id="emisor_direccion"><?= $facturacion->direccion ?></div>
-                <div id="emisor_telefono"><?= valueOption('EMPRESA_TELEFONO', '') ?></div>
+                <div id="emisor_nombre_comercial"><?= $emisor->nombre_comercial!="-" && $emisor->nombre_comercial!=""?$emisor->nombre_comercial:"" ?></div>
+                <div id="emisor_razon_social"><?= $emisor->razon_social!="-" && $emisor->razon_social!=""?$emisor->razon_social:"" ?></div>
+                <div id="emisor_direccion"><?= $emisor->direccion!="-" && $emisor->direccion!=""?$emisor->direccion:"" ?></div>
+                <div id="emisor_telefono"><?= valueOption('EMPRESA_TELEFONO', '')!="-" && valueOption('EMPRESA_TELEFONO', '')!=""?valueOption('EMPRESA_TELEFONO', ''):""  ?></div>
             </div>
         </div>
-        <div class="col">
+        <div class="col-caja">
             <div style="border: 1px solid #000; padding-bottom: 15px; font-weight: bold;">
                 <div id="emisor_ruc">
                     R.U.C. <?= $emisor->ruc ?>
@@ -197,6 +203,12 @@
                     <td><?= $emisor->motivo_nota ?></td>
                 </tr>
 <?php endif; ?>
+                <tr>
+                <th>Vendedor:</th>
+                <td><?= $facturacion->username ?></td>
+<!--                <th>Forma de Pago:</th>
+                <td><?= $emisor->moneda_letra ?></td>-->
+            </tr>
         </table>
     </div>
 
@@ -205,9 +217,9 @@
             <tr>
                 <th>C&oacute;digo</th>
                 <th>Cantidad</th>
-                <th>Descripci&oacute;n</th>
                 <th>UM</th>
-                <th style="white-space: nowrap;">Precio</th>
+                <th>Descripci&oacute;n</th>                
+                <th style="white-space: nowrap;">P.U.</th>
                 <th>Importe</th>
             </tr>
         </thead>
@@ -216,8 +228,8 @@
                 <tr class="td-data">
                     <td><?= $detalle->producto_codigo ?></td>
                     <td><?= number_format($detalle->cantidad, 3) ?></td>
-                    <td style="width: 50%;"><?= $detalle->producto_descripcion ?></td>
                     <td><?= $detalle->um ?></td>
+                    <td style="width: 50%;"><?= $detalle->producto_descripcion ?></td>
                     <td style="white-space: nowrap; text-align: right;"><?= $emisor->moneda_simbolo ?> <?= number_format($detalle->precio, 2) ?></td>
                     <td style="white-space: nowrap; text-align: right;"><?= $emisor->moneda_simbolo ?> <?= number_format($detalle->precio * $detalle->cantidad, 2) ?></td>
                 </tr>
