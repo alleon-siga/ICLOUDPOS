@@ -59,7 +59,12 @@
                 url: "<?php echo $ruta;?>" + "inicio/validar_login",
                 success: function (msj) {
                     if (msj == 'ok') {
-                        window.location.href = "<?php echo $ruta;?>" + "principal/";
+//                        if($("#popup").val()=="SI"){
+//                            window.location.href = "<?php // echo $ruta;?>" + "principal/";
+//                        }else{
+                            window.location.href = "<?php echo $ruta;?>" + "principal/";
+//                        }
+                        
                     } else {
                         $("#msg").html('<div class="alert alert-warning alert-dismissible fade in" role="alert"> <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button><strong>Usuario o clave incorrecta, por favor vuelva a intentar</strong></div>')
                         $("#msg").delay("slow").fadeIn().delay(2000).fadeOut();
@@ -196,6 +201,7 @@
     </style>
 </head>
 <body class='login_'>
+<!--    <input type="hidden" id="popup" name="popup" value="<?=  valueOption("POPUP_CAMBIOS", 'SI') ?>">-->
     <div class="container-full">
         <div class="row">
             <div class="col-xs-12 col-md-6 col-lg-4 full-height darkness">

@@ -27,7 +27,7 @@
         </tr>
         <tr>
             <td width="50%" style="text-align: left;" rowspan="5" valign="middle">
-                <img height="120" src="<?= base_url('recursos/img/logo/' . valueOption("EMPRESA_LOGO", '')) ?>">
+                <img height="120" src="<?= base_url('recursos/img/logo/' . valueOptionDB("EMPRESA_LOGO", 'logo.jpg')) ?>">
             </td>
             <td width="50%" style="font-size: 12px; text-align: right; vertical-align: middle; color:red; font-weight: bold;">
                 <br><?= date('d/m/Y') ?>

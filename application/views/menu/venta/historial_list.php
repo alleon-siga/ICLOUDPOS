@@ -65,7 +65,7 @@
                         <a class="btn btn-default" data-toggle="tooltip" style="margin-right: 5px;"
                            title="Ver" data-original-title="Ver"
                            href="#"
-                           onclick="ver('<?= $venta->venta_id ?>')">
+                           onclick="ver(<?= $venta->venta_id ?>)">
                             <i class="fa fa-search"></i>
                         </a>
 
@@ -79,7 +79,7 @@
                             </a>
                         <?php endif; ?>
 
-                        <?php if ($venta_action != 'anular' && $venta_action != 'caja' && $venta->venta_estado != 'CERRADA' && $venta_action != 'comision'): ?>
+                        <?php if ($venta_action != 'anular' && $venta_action != 'caja' && $venta_action != 'comision'): ?>
                             <a class="btn btn-primary" data-toggle="tooltip" style="margin-right: 5px;"
                                title="Ver" data-original-title="Ver"
                                href="#"
@@ -89,7 +89,7 @@
                         <?php endif; ?>
 
                         <?php if ($venta_action == 'anular'): ?>
-                            <?php if ($venta->numero != null): ?>
+                            <?php if ($venta->numero != NULL && $venta->documento_id != 6): ?>
                                 <a class="btn btn-danger" data-toggle="tooltip"
                                    title="Crear nota de credito" data-original-title="Crear nota de credito"
                                    href="#" style="margin-right: 5px;"
@@ -97,12 +97,14 @@
                                     <i class="fa fa-file-text-o"></i>
                                 </a>
                             <?php endif; ?>
-                            <a class="btn btn-danger" data-toggle="tooltip"
-                               title="Anular Venta" data-original-title="Anular Venta"
-                               href="#" style="margin-right: 5px;"
-                               onclick="anularModal(<?= $venta->venta_id ?>)">
-                                <i class="fa fa-remove"></i>
-                            </a>
+                            <?php if ($venta->total_nota_credito == 0): ?>
+                                <a class="btn btn-danger" data-toggle="tooltip"
+                                   title="Anular Venta" data-original-title="Anular Venta"
+                                   href="#" style="margin-right: 5px;"
+                                   onclick="anularModal(<?= $venta->venta_id ?>)">
+                                    <i class="fa fa-remove"></i>
+                                </a>
+                            <?php endif; ?>
                         <?php else: ?>
                         <a class="btn btn-sm btn-warning" data-toggle="tooltip" style="margin-right: 5px;"
                            title="Exportar" data-original-title="Exportar"
@@ -156,7 +158,7 @@
 
     </div>
 </div>
-<div class="modal fade" id="nc_modal" tabindex="-1" role="dialog" style="z-index: 999999;"
+<div class="modal fade" id="nc_modal" tabindex="-1" role="dialog"
      aria-labelledby="myModalLabel"
      aria-hidden="true"
      data-backdrop="static" data-keyboard="false">
@@ -172,11 +174,6 @@
      data-backdrop="static"></div>
 <script type="text/javascript">
   $(function () {
-
-    // Script para corregir cuando tienes dos modal, ocultas uno y pierde el scroll
-    $(document).on('hidden.bs.modal', '.modal', function () {
-      $('.modal:visible').length && $(document.body).addClass('modal-open');
-    });
 
     $('.imprimir').on('click', function () {
       var input = $('.btn_venta_imprimir')
@@ -308,24 +305,21 @@
 
   function ver (venta_id) {
 
-    $('#dialog_venta_detalle').html($('#loading').html())
-    $('#dialog_venta_detalle').modal('show')
-
+    $('#barloadermodal').modal('show')
     $.ajax({
       url: '<?php echo $ruta . 'venta_new/get_venta_detalle/' . $venta_action; ?>',
       type: 'POST',
       data: {'venta_id': venta_id},
-
       success: function (data) {
+        $('#barloadermodal').modal('hide')
         $('#dialog_venta_detalle').html(data)
+        $('#dialog_venta_detalle').modal('show')
       },
       error: function () {
-        alert('asd')
+        show_msg('error', 'Ha ocurrido un error inesperado')
       }
     })
   }
-
-
 
   function enviar_correo (idVenta, tipo_cliente) {
     $('#correoModal').html($('#loading').html())

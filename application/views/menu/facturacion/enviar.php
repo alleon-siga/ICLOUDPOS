@@ -14,11 +14,14 @@
                 <div class="form-group">
                     <div class="col-md-3">
                         <?php if (isset($locales)): ?>
+                        <!-- Se agrego Filtro solo Punto de Venta Carlos Camargo 24-10-2018 -->
                             <label class="control-label panel-admin-text">Ubicaci&oacute;n</label>
                             <select id="local_id" class="form-control filter-input">
                                 <?php foreach ($locales as $local): ?>
+                                <?php if($local['tipo']==0):?>
                                     <option <?php if ($this->session->userdata('id_local') == $local['int_local_id']) echo "selected"; ?>
-                                            value="<?= $local['int_local_id']; ?>"> <?= $local['local_nombre'] ?> </option>
+                                            value="<?= $local['int_local_id']; ?>"> <?= $local['local_nombre']?> </option>
+                                    <?php endif;?>
                                 <?php endforeach; ?>
                             </select>
                         <?php endif; ?>

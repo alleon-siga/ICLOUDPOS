@@ -42,8 +42,13 @@
             <!-- END Top Stats -->
         </div>
     </div>
-    <!-- For best results use an image with a resolution of 2560x248 pixels (You can also use a blurred image with ratio 10:1 - eg: 1000x100 pixels - it will adjust and look great!) -->
-    <!--<img src="<?php //echo $ruta; ?>recursos/img/placeholders/headers/dashboard_header.jpg" alt="header image" class="animation-pulseSlow">-->
+    <?php
+        if(isset($_GET["popup"])){
+            echo"<script>alert('hola');</script>";
+        }else{
+
+        }
+    ?>
 </div>
 <!-- END Dashboard Header -->
 <?php if($this->usuarios_grupos_model->user_has_perm($this->session->userdata('nUsuCodigo'), 'reporteVentas') || $this->usuarios_grupos_model->user_has_perm($this->session->userdata('nUsuCodigo'), 'reporteCompras')) { ?>
@@ -267,10 +272,10 @@ $(function(){
             var arrMes = ['Dic', 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Set', 'Oct', 'Nov'];
             for(var i = 0; i < data_estadistica['venta'].length; i++){
                 if(data_estadistica['venta'][i]['2'].length>0){
-                    let fechaYhora = data_estadistica['venta'][i]['2'].split(' ');
-                    let arrFecha = fechaYhora[0].split('-');
-                    let fecha = new Date(arrFecha[0],arrFecha[1],arrFecha[2]);
-                    let mes = fecha.getMonth();
+                    var fechaYhora = data_estadistica['venta'][i]['2'].split(' ');
+                    var arrFecha = fechaYhora[0].split('-');
+                    var fecha = new Date(arrFecha[0],arrFecha[1],arrFecha[2]);
+                    var mes = fecha.getMonth();
 
                     options.xAxis.categories.push(arrFecha[2] + ' ' + arrMes[mes]);
                     options.series[0].data.push(parseInt(data_estadistica['venta'][i]['1']));
@@ -326,11 +331,11 @@ $(function(){
             //var arrDia = ['Dom','Lun','Mar','Mie','Jue','Vie','Sab'];
             var arrMes = ['Dic', 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Set', 'Oct', 'Nov'];
             for(var i = 0; i < data_estadistica['ingresos'].length; i++){
-                let fechaYhora = data_estadistica['ingresos'][i]['fecha_emision'].split(' ');
-                let arrFecha = fechaYhora[0].split('-');
-                let fecha = new Date(arrFecha[0],arrFecha[1],arrFecha[2]);
+                var fechaYhora = data_estadistica['ingresos'][i]['fecha_emision'].split(' ');
+                var arrFecha = fechaYhora[0].split('-');
+                var fecha = new Date(arrFecha[0],arrFecha[1],arrFecha[2]);
                 //let dia = fecha.getDay(); 
-                let mes = fecha.getMonth();
+                var mes = fecha.getMonth();
 
                 //options.xAxis.categories.push(arrDia[dia] + ' ' + arrFecha[2] + ' ' + arrMes[mes]);
                 options.xAxis.categories.push(arrFecha[2] + ' ' + arrMes[mes]);

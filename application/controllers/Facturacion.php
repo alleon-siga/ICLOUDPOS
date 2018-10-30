@@ -19,7 +19,8 @@ class facturacion extends MY_Controller
 
     protected static function fecha($fecha)
     {
-        return preg_match('/^(2[0-9]{3})(-)(0[1-9]|1[0-2])(-)([0-2][0-9]|3[0-1])$/', $fecha) == 0 ? false : true;
+        log_message('error', 'this is an error');
+        //return preg_match('/^(2[0-9]{3})(-)(0[1-9]|1[0-2])(-)([0-2][0-9]|3[0-1])$/', $fecha) == 0 ? false : true;
     }
 
     function test()

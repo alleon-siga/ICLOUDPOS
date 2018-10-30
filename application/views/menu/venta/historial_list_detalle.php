@@ -109,7 +109,7 @@ $ruta = base_url();
 
                         <div class="row">
                             <div class="col-md-2"><label class="control-label">Estado:</label></div>
-                            <div class="col-md-3"><?= $venta->venta_estado ?></div>
+                            <div class="col-md-3" <?=$venta->venta_estado=="ANULADO"?'style="color:red !important;"':''?>><?= $venta->venta_estado ?></div>
 
                             <div class="col-md-1"></div>
 
@@ -249,7 +249,7 @@ $ruta = base_url();
 
                         <div class="row">
                             <div class="col-md-2"><label class="control-label">Estado:</label></div>
-                            <div class="col-md-3"><?= $venta->venta_estado ?></div>
+                            <div class="col-md-3"  <?=$venta->venta_estado=="ANULADO"?'style="color:red !important;"':''?> ><?= $venta->venta_estado?></div>
 
                             <div class="col-md-1"></div>
 
@@ -301,7 +301,7 @@ $ruta = base_url();
                 <br>
                 <div class="row">
                     <div class="col-md-8">
-                        <?php if (count($notas_credito) > 0): ?>
+                        <?php if (isset($notas_credito) && count($notas_credito) > 0): ?>
                             <h4>Anulaciones</h4>
                             <?php foreach ($notas_credito as $nc): ?>
                                 <h5>

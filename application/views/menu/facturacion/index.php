@@ -15,12 +15,15 @@
                 <div class="form-group">
                     <div class="col-md-3">
                         <?php if (isset($locales)): ?>
+                            <!-- Se agrego Filtro solo Punto de Venta Carlos Camargo 24-10-2018 -->
                             <label class="control-label panel-admin-text">Ubicaci&oacute;n</label>
                             <select id="local_id" class="form-control filter-input">
                                 <?php foreach ($locales as $local): ?>
-                                    <option <?php if ($this->session->userdata('id_local') == $local['int_local_id']) echo "selected"; ?>
+                                    <?php if ($local['tipo'] == 0): ?>
+                                        <option <?php if ($this->session->userdata('id_local') == $local['int_local_id']) echo "selected"; ?>
                                             value="<?= $local['int_local_id']; ?>"> <?= $local['local_nombre'] ?> </option>
-                                <?php endforeach; ?>
+                                        <?php endif; ?>
+                                    <?php endforeach; ?>
                             </select>
                         <?php endif; ?>
 
@@ -99,9 +102,9 @@
                                 <tr>
                                     <td>
                                         <div
-                                                class="label label-warning"
-                                                data-placement="top"
-                                                style="font-size: 1em; padding: 2px; cursor: pointer; white-space: nowrap;">
+                                            class="label label-warning"
+                                            data-placement="top"
+                                            style="font-size: 1em; padding: 2px; cursor: pointer; white-space: nowrap;">
                                             NO GENERADO
                                         </div>
                                     </td>
@@ -124,9 +127,9 @@
                                 <tr>
                                     <td>
                                         <div
-                                                class="label label-primary"
-                                                data-placement="top"
-                                                style="font-size: 1em; padding: 2px; cursor: pointer; white-space: nowrap;">
+                                            class="label label-primary"
+                                            data-placement="top"
+                                            style="font-size: 1em; padding: 2px; cursor: pointer; white-space: nowrap;">
                                             GENERADO
                                         </div>
                                     </td>
@@ -151,9 +154,9 @@
                                 <tr>
                                     <td>
                                         <div
-                                                class="label label-warning"
-                                                data-placement="top"
-                                                style="font-size: 1em; padding: 2px; cursor: pointer; white-space: nowrap;">
+                                            class="label label-warning"
+                                            data-placement="top"
+                                            style="font-size: 1em; padding: 2px; cursor: pointer; white-space: nowrap;">
                                             ENVIADO
                                         </div>
                                     </td>
@@ -179,9 +182,9 @@
                                 <tr>
                                     <td>
                                         <div
-                                                class="label label-success"
-                                                data-placement="top"
-                                                style="font-size: 1em; padding: 2px; cursor: pointer; white-space: nowrap;">
+                                            class="label label-success"
+                                            data-placement="top"
+                                            style="font-size: 1em; padding: 2px; cursor: pointer; white-space: nowrap;">
                                             ACEPTADO
                                         </div>
                                     </td>
@@ -201,9 +204,9 @@
                                 <tr>
                                     <td>
                                         <div
-                                                class="label label-danger"
-                                                data-placement="top"
-                                                style="font-size: 1em; padding: 2px; cursor: pointer; white-space: nowrap;">
+                                            class="label label-danger"
+                                            data-placement="top"
+                                            style="font-size: 1em; padding: 2px; cursor: pointer; white-space: nowrap;">
                                             RECHAZADO
                                         </div>
                                     </td>
@@ -246,83 +249,83 @@
             <!-- /.modal-dialog -->
             <script type="text/javascript">
 
-                $(function () {
+                            $(function () {
 
-                    $('input[name="daterange"]').daterangepicker({
-                        "locale": {
-                            "format": "DD/MM/YYYY",
-                            "separator": " - ",
-                            "applyLabel": "Aplicar",
-                            "cancelLabel": "Cancelar",
-                            "fromLabel": "De",
-                            "toLabel": "A",
-                            "customRangeLabel": "Personalizado",
-                            "daysOfWeek": [
-                                "Do",
-                                "Lu",
-                                "Ma",
-                                "Mi",
-                                "Ju",
-                                "Vi",
-                                "Sa"
-                            ],
-                            "monthNames": [
-                                "Enero",
-                                "Febrero",
-                                "Marzo",
-                                "Abril",
-                                "Mayo",
-                                "Junio",
-                                "Julio",
-                                "Agosto",
-                                "Septiembre",
-                                "Octubre",
-                                "Noviembre",
-                                "Diciembre"
-                            ],
-                            "firstDay": 1
-                        }
-                    });
+                                $('input[name="daterange"]').daterangepicker({
+                                    "locale": {
+                                        "format": "DD/MM/YYYY",
+                                        "separator": " - ",
+                                        "applyLabel": "Aplicar",
+                                        "cancelLabel": "Cancelar",
+                                        "fromLabel": "De",
+                                        "toLabel": "A",
+                                        "customRangeLabel": "Personalizado",
+                                        "daysOfWeek": [
+                                            "Do",
+                                            "Lu",
+                                            "Ma",
+                                            "Mi",
+                                            "Ju",
+                                            "Vi",
+                                            "Sa"
+                                        ],
+                                        "monthNames": [
+                                            "Enero",
+                                            "Febrero",
+                                            "Marzo",
+                                            "Abril",
+                                            "Mayo",
+                                            "Junio",
+                                            "Julio",
+                                            "Agosto",
+                                            "Septiembre",
+                                            "Octubre",
+                                            "Noviembre",
+                                            "Diciembre"
+                                        ],
+                                        "firstDay": 1
+                                    }
+                                });
 
 
-                    $('select').chosen();
+                                $('select').chosen();
 
-                    get_facturacion();
+                                get_facturacion();
 
-                    $("#btn_buscar").on("click", function () {
-                        get_facturacion();
-                    });
+                                $("#btn_buscar").on("click", function () {
+                                    get_facturacion();
+                                });
 
-                });
-
-                function get_facturacion() {
-                    $("#facturacion_list").html($("#loading").html());
-
-                    var local_id = $("#local_id").val();
-                    var estado = $("#estado").val();
-                    var fecha = $('#date_range').val();
-                    $.ajax({
-                        url: '<?= base_url()?>facturacion/emision/filter',
-                        data: {
-                            'local_id': local_id,
-                            'fecha': fecha,
-                            'estado': estado
-                        },
-                        type: 'POST',
-                        success: function (data) {
-                            $("#facturacion_list").html(data);
-                        },
-                        error: function () {
-                            $.bootstrapGrowl('<h4>Error.</h4> <p>Ha ocurrido un error en la operaci&oacute;n</p>', {
-                                type: 'danger',
-                                delay: 5000,
-                                allow_dismiss: true
                             });
-                            $("#facturacion_list").html('');
-                        }
-                    });
 
-                }
+                            function get_facturacion() {
+                                $("#facturacion_list").html($("#loading").html());
+
+                                var local_id = $("#local_id").val();
+                                var estado = $("#estado").val();
+                                var fecha = $('#date_range').val();
+                                $.ajax({
+                                    url: '<?= base_url() ?>facturacion/emision/filter',
+                                    data: {
+                                        'local_id': local_id,
+                                        'fecha': fecha,
+                                        'estado': estado
+                                    },
+                                    type: 'POST',
+                                    success: function (data) {
+                                        $("#facturacion_list").html(data);
+                                    },
+                                    error: function () {
+                                        $.bootstrapGrowl('<h4>Error.</h4> <p>Ha ocurrido un error en la operaci&oacute;n</p>', {
+                                            type: 'danger',
+                                            delay: 5000,
+                                            allow_dismiss: true
+                                        });
+                                        $("#facturacion_list").html('');
+                                    }
+                                });
+
+                            }
 
 
             </script>

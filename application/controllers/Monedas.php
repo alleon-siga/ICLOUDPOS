@@ -1,24 +1,24 @@
-<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 
-class monedas extends MY_Controller
-{
+if (!defined('BASEPATH'))
+    exit('No direct script access allowed');
+
+class monedas extends MY_Controller {
 
     private $monedas = array();
 
-    function __construct()
-    {
+    function __construct() {
         parent::__construct();
         if ($this->login_model->verify_session()) {
             $this->load->model('monedas/monedas_model');
-            $this->load->model('cajas/cajas_model');
-        }else{
+            $this->load->model('cajas/cajas_model');            
+            $this->load->model('facturacion/facturacion_model');
+        } else {
             redirect(base_url(), 'refresh');
         }
-
     }
 
-    function form($id = FALSE)
-    {
+    function form($id = FALSE) {
 
         $data = array();
         if ($id != FALSE) {
@@ -28,8 +28,7 @@ class monedas extends MY_Controller
         $this->load->view('menu/monedas/form', $data);
     }
 
-    function guardar()
-    {
+    function guardar() {
 
         $id = $this->input->post('id');
 
@@ -46,7 +45,7 @@ class monedas extends MY_Controller
             $resultado = $this->monedas_model->insertar($monedas);
         } else {
             $monedas['id_moneda'] = $id;
-            if($id == MONEDA_DEFECTO){
+            if ($id == MONEDA_DEFECTO) {
                 $monedas['ope_tasa'] = '/';
                 $monedas['status_moneda'] = '1';
             }
@@ -65,12 +64,9 @@ class monedas extends MY_Controller
         }
         $this->cajas_model->sync_cajas();
         echo json_encode($json);
-
     }
 
-
-    function eliminar()
-    {
+    function eliminar() {
         $id = $this->input->post('id');
 
         $moneda = array(
@@ -83,8 +79,6 @@ class monedas extends MY_Controller
         if ($data['resultado'] != FALSE) {
 
             $json['success'] = 'Se ha eliminado exitosamente';
-
-
         } else {
 
             $json['error'] = 'Ha ocurrido un error al eliminar esta moneda';
@@ -93,9 +87,7 @@ class monedas extends MY_Controller
         echo json_encode($json);
     }
 
-
-    function index()
-    {
+    function index() {
 
         if ($this->session->flashdata('success') != FALSE) {
             $data ['success'] = $this->session->flashdata('success');
@@ -114,6 +106,15 @@ class monedas extends MY_Controller
         } else {
             $this->load->view('menu/template', $dataCuerpo);
         }
+    }
+
+    //Se Obtiene el tipo de Cambio de Sunat (Carlos Camargo 26-10-2018)
+    function get_tipocambio() {
+        header('Content-Type: application/json');
+
+        $data['cambio'] = $this->facturacion_model->get_tipo_cambio();
+//        $data['cambio'] = null;
+        echo json_encode($data);
     }
 
 }

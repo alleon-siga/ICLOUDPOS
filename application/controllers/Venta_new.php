@@ -3,9 +3,11 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-class venta_new extends MY_Controller {
+class venta_new extends MY_Controller
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         if ($this->login_model->verify_session()) {
             $this->load->model('venta_new/venta_new_model', 'venta');
@@ -30,7 +32,9 @@ class venta_new extends MY_Controller {
         }
     }
 
-    function historial($action = "") {
+    function historial($action = "")
+    {
+
         if ($this->session->userdata('esSuper') == 1) {
             $data['locales'] = $this->local_model->get_all();
         } else {
@@ -46,7 +50,7 @@ class venta_new extends MY_Controller {
             'tarjetas' => $this->db->get('tarjeta_pago')->result(),
             'metodos' => $this->metodos_pago_model->get_all(),
             'bancos' => $this->banco_model->get_all_in_object()
-                ), true);
+        ), true);
 
 
         $dataCuerpo['cuerpo'] = $this->load->view('menu/venta/historial', $data, true);
@@ -57,7 +61,8 @@ class venta_new extends MY_Controller {
         }
     }
 
-    function get_ventas($action = "") {
+    function get_ventas($action = "")
+    {
         $local_id = $this->input->post('local_id');
         $estado = $this->input->post('estado');
         $condicion_pago_id = $this->input->post('condicion_pago_id');
@@ -65,16 +70,6 @@ class venta_new extends MY_Controller {
         $date_range = explode(" - ", $this->input->post('fecha'));
         $fecha_ini = str_replace("/", "-", $date_range[0]);
         $fecha_fin = str_replace("/", "-", $date_range[1]);
-
-        $data['metodos_pago'] = $this->db->get_where('metodos_pago', array('status_metodo' => 1))->result();
-        $data['cuentas'] = $this->db->select('caja_desglose.*')
-                        ->from('caja_desglose')
-                        ->join('caja', 'caja.id = caja_desglose.caja_id')
-                        ->where('caja.local_id', $local_id)
-                        ->where('caja.moneda_id', $this->input->post('moneda_id'))
-                        ->where('caja_desglose.estado', 1)
-                        ->get()->result();
-
 
         if ($action != 'caja') {
             $params = array(
@@ -106,7 +101,8 @@ class venta_new extends MY_Controller {
             $this->load->view('menu/venta/caja_list', $data);
     }
 
-    function get_pendientes() {
+    function get_pendientes()
+    {
         $local_id = $this->input->post('local_id');
         $estado = $this->input->post('estado');
 
@@ -120,7 +116,8 @@ class venta_new extends MY_Controller {
         echo count($data['ventas']);
     }
 
-    function get_venta_detalle($action = "") {
+    function get_venta_detalle($action = "")
+    {
         $venta_id = $this->input->post('venta_id');
         $data['venta'] = $this->venta->get_venta_detalle($venta_id);
         $data['venta_action'] = $action;
@@ -133,7 +130,8 @@ class venta_new extends MY_Controller {
         $this->load->view('menu/venta/historial_list_detalle', $data);
     }
 
-    function get_venta_facturar($action = "") {
+    function get_venta_facturar($action = "")
+    {
         $venta_id = $this->input->post('venta_id');
         $data['venta'] = $this->venta->get_venta_facturar($venta_id);
         $data['comprobante'] = $this->documentos_model->get_documentosBy('id_doc IN(1,3,6)');
@@ -142,7 +140,8 @@ class venta_new extends MY_Controller {
         $this->load->view('menu/venta/historial_list_facturar', $data);
     }
 
-    function getDocumentoNumero() {
+    function getDocumentoNumero()
+    {
         $num = $this->venta->getDocumentoNumero();
         echo $num;
     }
@@ -162,16 +161,16 @@ class venta_new extends MY_Controller {
 
             if ($tipo_doc != '') {
                 $data['facturacion_venta'] = $this->db->get_where('facturacion', array(
-                            'documento_tipo' => $tipo_doc,
-                            'ref_id' => $data['venta']->venta_id,
-                            'estado' => 1
-                        ))->row();
+                    'documento_tipo' => $tipo_doc,
+                    'ref_id' => $data['venta']->venta_id,
+                    'estado' => 1
+                ))->row();
 
                 $data['facturacion_notas'] = $this->db->get_where('facturacion', array(
-                            'documento_tipo' => '07',
-                            'ref_id' => $data['venta']->venta_id,
-                            'estado' => 1
-                        ))->result();
+                    'documento_tipo' => '07',
+                    'ref_id' => $data['venta']->venta_id,
+                    'estado' => 1
+                ))->result();
             }
         }
 
@@ -210,13 +209,27 @@ class venta_new extends MY_Controller {
         echo json_encode($data);
     }
 
-    function get_productos_json() {
+    function get_productos_json()
+    {
 
         header('Content-Type: application/json');
         echo $this->producto_model->get_productos_auto($this->input->get('term'));
     }
 
-    function index($local = "", $cot_id = FALSE) {
+    function index($local = "", $cot_id = FALSE)
+    {
+
+        $data['facturacion'] = 'INACTIVA';
+        if (valueOptionDB('FACTURACION', 0) == 1) {
+            $emisor = $this->db->get_where('facturacion_emisor')->row();
+            if ($emisor == NULL) {
+                $data['facturacion'] = 'NO_EMISOR';
+            } elseif ($emisor->env != 'PROD') {
+                $data['facturacion'] = 'BETA';
+            } else {
+                $data['facturacion'] = 'ACTIVA';
+            }
+        }
 
         $local_id = $local == "" || $local == '-' ? $this->session->userdata('id_local') : $local;
 
@@ -241,28 +254,16 @@ class venta_new extends MY_Controller {
             'tarjetas' => $this->db->get('tarjeta_pago')->result(),
             'metodos' => $this->metodos_pago_model->get_all(),
             'bancos' => $this->banco_model->get_all_in_object()
-                ), true);
+        ), true);
 
         $data['dialog_venta_credito'] = $this->load->view('menu/venta/dialog_venta_credito', array(
             'garantes' => $this->db->get('garante')->result()
-                ), true);
+        ), true);
 
         $data['dialog_venta_caja'] = $this->load->view('menu/venta/dialog_venta_caja', array(
             'next_id' => $this->venta->get_next_id()
-                ), true);
-        
-        $data['facturacion'] = 'INACTIVA';
-        if (valueOptionDB('FACTURACION', 0) == 1) {
-            $emisor = $this->db->get_where('facturacion_emisor')->row();
-            if ($emisor == NULL) {
-                $data['facturacion'] = 'NO_EMISOR';
-            } elseif ($emisor->env != 'PROD') {
-                $data['facturacion'] = 'BETA';
-            } else {
-                $data['facturacion'] = 'ACTIVA';
-            }
-        }
-        
+        ), true);
+
         $dataCuerpo['cuerpo'] = $this->load->view('menu/venta/index', $data, true);
         if ($this->input->is_ajax_request()) {
             echo $dataCuerpo['cuerpo'];
@@ -331,7 +332,8 @@ class venta_new extends MY_Controller {
     }
 
     // Guardo la venta (2018-10-17) Antonio Martin
-    function save_venta() {
+    function save_venta()
+    {
         header('Content-Type: application/json');
 
         // Obtengo los parametros enviados
@@ -424,6 +426,41 @@ class venta_new extends MY_Controller {
             return false;
         }
 
+        // Si es factura el cliente debe tener un ruc valido
+        $cliente = $this->db->get_where('cliente', array('id_cliente' => $venta['id_cliente']))->row();
+        if ($venta['id_documento'] == 1) {
+            if ($cliente->ruc != 2 || $cliente->id_cliente == 1) {
+                $data['success'] = 0;
+                $data['msg'] = "No se puede crear una factura a clientes que no tengan RUC.";
+                echo json_encode($data);
+                return false;
+            }
+
+            // TODO hacer aqui la validacion de que si esta inactivo en SUNAT no pueda crearse factura
+            if ($cliente->status_sunat != 1) {
+                $data['success'] = 0;
+                $data['msg'] = "El cliente no esta activo en SUNAT para realizar ventas";
+                echo json_encode($data);
+                return false;
+            }
+        }
+
+        // EL cliente frecuento no puede hacer ventas al credito
+        if ($venta['condicion_pago'] == 2 && $cliente->id_cliente == 1) {
+            $data['success'] = 0;
+            $data['msg'] = "El cliente " . $cliente->razon_social . " no puede tener credito";
+            echo json_encode($data);
+            return false;
+        }
+
+        // El cliente frecuente no puede realizar ventas de boletas mayores a 700
+        if ($venta['id_documento'] == 3 && $venta['vc_total_pagar'] > 700 && $cliente->id_cliente == 1) {
+            $data['success'] = 0;
+            $data['msg'] = "El cliente " . $cliente->razon_social . " no puede crear boletas mayor de 700 Soles.";
+            echo json_encode($data);
+            return false;
+        }
+
         // Dependiendo de la condicion de pago hay dos metodos para guardar la venta
         if ($venta['condicion_pago'] == 1) {
             // Guardo la venta al contado
@@ -442,9 +479,9 @@ class venta_new extends MY_Controller {
             // En caso de tener la facturacion electronica activa recupero comprobante generado
             if (valueOptionDB('FACTURACION', 0) == 1 && $data['venta']->condicion_pago == 1 && ($data['venta']->id_documento == 1 || $data['venta']->id_documento == 3)) {
                 $data['facturacion'] = $this->db->get_where('facturacion', array(
-                            'documento_tipo' => sumCod($data['venta']->id_documento, 2),
-                            'ref_id' => $data['venta']->venta_id
-                        ))->row();
+                    'documento_tipo' => sumCod($data['venta']->id_documento, 2),
+                    'ref_id' => $data['venta']->venta_id
+                ))->row();
             }
         } else {
             $data['success'] = 0;
@@ -458,7 +495,8 @@ class venta_new extends MY_Controller {
     }
 
     // Registro en caja y facturo una venta con estado CAJA (2018-10-17) Antonio Martin
-    function save_venta_caja() {
+    function save_venta_caja()
+    {
         header('Content-Type: application/json');
 
         // Obtengo los parametros enviados
@@ -485,9 +523,9 @@ class venta_new extends MY_Controller {
             // En caso de tener la facturacion electronica activa recupero comprobante generado
             if (valueOptionDB('FACTURACION', 0) == 1 && $data['venta']->condicion_pago == 1 && ($data['venta']->id_documento == 1 || $data['venta']->id_documento == 3)) {
                 $data['facturacion'] = $this->db->get_where('facturacion', array(
-                            'documento_tipo' => sumCod($data['venta']->id_documento, 2),
-                            'ref_id' => $data['venta']->venta_id
-                        ))->row();
+                    'documento_tipo' => sumCod($data['venta']->id_documento, 2),
+                    'ref_id' => $data['venta']->venta_id
+                ))->row();
             }
         } else {
             $data['success'] = 0;
@@ -522,12 +560,12 @@ class venta_new extends MY_Controller {
         $data['metodos_pago'] = $this->db->get_where('metodos_pago', array('status_metodo' => 1))->result();
 
         $data['cuentas'] = $this->db->select('caja_desglose.*')
-                        ->from('caja_desglose')
-                        ->join('caja', 'caja.id = caja_desglose.caja_id')
-                        ->where('caja.local_id', $local_id)
-                        ->where('caja.moneda_id', $moneda_id)
-                        ->where('caja_desglose.estado', 1)
-                        ->get()->result();
+            ->from('caja_desglose')
+            ->join('caja', 'caja.id = caja_desglose.caja_id')
+            ->where('caja.local_id', $local_id)
+            ->where('caja.moneda_id', $moneda_id)
+            ->where('caja_desglose.estado', 1)
+            ->get()->result();
 
         // Verifico si hay cuentas validas
         if (count($data['cuentas']) == 0) {
@@ -569,7 +607,15 @@ class venta_new extends MY_Controller {
         if ($venta->venta_status == 'ANULADO') {
             $data['success'] = 0;
             $data['msg'] = "Esta venta ya fue anulada anteriormente.";
-            log_message('error', 'Se intento anular una venta anulada');
+            echo json_encode($data);
+            return false;
+        }
+
+        // Una venta con notas de credito creada no puede ser anulada
+        $nota_credito = $this->db->get_where('notas_credito', array('venta_id' => $venta_id))->result();
+        if (count($nota_credito) > 0) {
+            $data['success'] = 0;
+            $data['msg'] = "Esta venta tiene notas de credito y no puede ser anulada.";
             echo json_encode($data);
             return false;
         }
@@ -628,6 +674,15 @@ class venta_new extends MY_Controller {
         }
 
         $data['venta'] = $this->venta->get_venta_detalle($venta_id);
+
+        $total_pagado = $data['venta']->inicial > 0 ? $data['venta']->inicial : 0;
+        $cobranzas = $this->db->select_sum('credito_cuotas_abono.monto_abono', 'total')
+            ->from('credito_cuotas_abono')
+            ->join('credito_cuotas', 'credito_cuotas.id_credito_cuota = credito_cuotas_abono.credito_cuota_id')
+            ->where('credito_cuotas.id_venta', $data['venta']->venta_id)
+            ->get()->row();
+        $total_pagado += $cobranzas->total;
+        $data['total_pagado'] = $total_pagado;
 
         // Solo pueden crearse notas de credito de boletas o facturas
         if ($data['venta']->documento_id != 1 && $data['venta']->documento_id != 3) {
@@ -752,17 +807,37 @@ class venta_new extends MY_Controller {
 
         if ($venta->condicion_pago == 2) {
 
-            $detalle_venta = $this->db->select_sum('cantidad', 'total_cantidad')
-                            ->from('detalle_venta')
-                            ->where('id_venta', $venta->venta_id)
-                            ->get()->row();
+            // Si el motivo de la devolucion es parcial por item valido que no tenga ningun pago efectuado por el cliente
+            if ($motivo == '07') {
+                $total_pagado = $venta->inicial > 0 ? $venta->inicial : 0;
+                $cobranzas = $this->db->select_sum('credito_cuotas_abono.monto_abono', 'total')
+                    ->from('credito_cuotas_abono')
+                    ->join('credito_cuotas', 'credito_cuotas.id_credito_cuota = credito_cuotas_abono.credito_cuota_id')
+                    ->where('credito_cuotas.id_venta', $venta->venta_id)
+                    ->get()->row();
+                $total_pagado += $cobranzas->total;
 
-            if ($detalle_venta->total_cantidad != $total_detalle_devuelto) {
-                $data['success'] = 0;
-                $data['msg'] = "Solo pueden hacerse devoluciones totales para las ventas al credito.";
-                echo json_encode($data);
-                return false;
+                if ($total_pagado > 0) {
+                    $data['success'] = 0;
+                    $data['msg'] = "Esta venta al credito tiene ya pagos efectuados y no puede hacer una devolucion por item.";
+                    echo json_encode($data);
+                    return false;
+                }
+            } else {
+                // Valido que la devolucion sea total
+                $detalle_venta = $this->db->select_sum('cantidad', 'total_cantidad')
+                    ->from('detalle_venta')
+                    ->where('id_venta', $venta->venta_id)
+                    ->get()->row();
+
+                if ($detalle_venta->total_cantidad != $total_detalle_devuelto) {
+                    $data['success'] = 0;
+                    $data['msg'] = "Solo pueden hacerse devoluciones totales para las ventas al credito.";
+                    echo json_encode($data);
+                    return false;
+                }
             }
+
         }
 
         // Creo la nota de credito
@@ -872,7 +947,8 @@ class venta_new extends MY_Controller {
         echo json_encode($data);
     }
 
-    function opciones($action = 'get') {
+    function opciones($action = 'get')
+    {
         $this->load->model('opciones/opciones_model');
         $keys = array(
             'CREDITO_INICIAL',
@@ -938,7 +1014,8 @@ class venta_new extends MY_Controller {
         }
     }
 
-    function ofertas($action = 'get') {
+    function ofertas($action = 'get')
+    {
         $this->load->model('opciones/opciones_model');
         $keys = array(
             'FECHA_VENTA_PROMO',
@@ -984,7 +1061,8 @@ class venta_new extends MY_Controller {
         }
     }
 
-    function historial_pdf() {
+    function historial_pdf()
+    {
         $params = json_decode($this->input->get('data'));
 
         $date_range = explode(" - ", $params->fecha);
@@ -1014,7 +1092,8 @@ class venta_new extends MY_Controller {
         $mpdf->Output();
     }
 
-    function imprimir($venta_id, $tipo_impresion) {
+    function imprimir($venta_id, $tipo_impresion)
+    {
         $venta_temp = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
         $moneda = $this->db->get_where('moneda', array('id_moneda' => $venta_temp->id_moneda))->row();
         if ($tipo_impresion == 'PEDIDO') {
@@ -1031,13 +1110,13 @@ class venta_new extends MY_Controller {
                 $venta->origen = $pedido->local_nombre;
 
                 $kardexs = $this->db->get_where('kardex', array(
-                            'ref_id' => $pedido->venta_id,
-                            'io' => 1,
-                            'tipo' => -1,
-                            'operacion' => 11,
-                            'producto_id' => $venta->producto_id,
-                            'unidad_id' => $venta->unidad_id
-                        ))->result();
+                    'ref_id' => $pedido->venta_id,
+                    'io' => 1,
+                    'tipo' => -1,
+                    'operacion' => 11,
+                    'producto_id' => $venta->producto_id,
+                    'unidad_id' => $venta->unidad_id
+                ))->result();
 
 
                 foreach ($kardexs as $kardex) {
@@ -1103,7 +1182,8 @@ class venta_new extends MY_Controller {
         }
     }
 
-    function imprimir_html() {
+    function imprimir_html()
+    {
 
         $venta_id = $this->input->post('venta_id');
         $tipo_impresion = $this->input->post('tipo_impresion');
@@ -1117,7 +1197,8 @@ class venta_new extends MY_Controller {
         }
     }
 
-    function historial_excel() {
+    function historial_excel()
+    {
 
         $params = json_decode($this->input->get('data'));
 
@@ -1145,7 +1226,8 @@ class venta_new extends MY_Controller {
         echo $this->load->view('menu/venta/historial_list_excel', $data, true);
     }
 
-    function recarga() {
+    function recarga()
+    {
         $data['locales'] = $this->local_model->get_local_by_user($this->session->userdata('nUsuCodigo'));
         $data["clientes"] = $this->cliente_model->get_all();
         $data['operadore'] = $this->diccionario_termino_model->get_all_operador();
@@ -1161,7 +1243,8 @@ class venta_new extends MY_Controller {
         }
     }
 
-    function save_recarga() {
+    function save_recarga()
+    {
         $venta['local_id'] = $this->input->post('local_venta_id');
         $venta['id_cliente'] = $this->input->post('cliente_id');
         $venta['rec_ope'] = $this->input->post('operador_id');
@@ -1201,7 +1284,8 @@ class venta_new extends MY_Controller {
         echo json_encode($data);
     }
 
-    function dialog_venta_contado() {
+    function dialog_venta_contado()
+    {
         $this->load->view('menu/venta/dialog_venta_contado', array(
             'tarjetas' => $this->db->get('tarjeta_pago')->result(),
             'metodos' => $this->metodos_pago_model->get_all(),
@@ -1209,26 +1293,30 @@ class venta_new extends MY_Controller {
         ));
     }
 
-    function getCliente() {
+    function getCliente()
+    {
         $id = $this->input->post('id');
         $datos = $this->cliente_model->get_by('id_cliente', $id);
         echo json_encode($datos);
     }
 
-    function ultimasVentas() {
+    function ultimasVentas()
+    {
         $venta['id_producto'] = $this->input->post('id_producto');
         $venta['id_cliente'] = $this->input->post('id_cliente');
         $data = $this->venta->ultimasVentas($venta);
         echo json_encode($data);
     }
 
-    function ultimasCompras() {
+    function ultimasCompras()
+    {
         $venta['id_producto'] = $this->input->post('id_producto');
         $data = $this->venta->ultimasCompras($venta);
         echo json_encode($data);
     }
 
-    function verificarAnulacion($id_venta) {
+    function verificarAnulacion($id_venta)
+    {
         $dato = $this->venta->verificarAnulacion($id_venta);
         $data['num_reg'] = $dato->numReg;
         echo json_encode($data);

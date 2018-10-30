@@ -43,7 +43,7 @@
                       <tr>
                         <td align="center" style="color: #888888">
                           <br /><br /><br /><font color="#888888">Enviado por</font><br />
-                          <img height="50" src="<?= base_url('recursos/img/logo/' . valueOption("EMPRESA_LOGO", '')) ?>">
+                          <img height="50" src="<?= base_url('recursos/img/logo/' . valueOption("EMPRESA_LOGO", 'logo.jpg')) ?>">
                           <br />
                         </td>
                       </tr>

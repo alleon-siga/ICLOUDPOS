@@ -1,4 +1,5 @@
 <?php $ruta = base_url(); ?>
+<?php $md = get_moneda_defecto() ?>
 <input id="precio_base" type="hidden" value="<?= valueOption('PRECIO_INGRESO', 'COSTO') ?>">
 <!--<input id="producto_cualidad" type="hidden">-->
 <input id="producto_serie_activo" value="<?php echo getProductoSerie() ?>" type="hidden">
@@ -882,10 +883,17 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
         <!-- /.modal-content -->
     </div>
 </div>
-<div class="modal fade" id="pago_modal" tabindex="-1" role="dialog"
-     aria-labelledby="myModalLabel"
-     aria-hidden="true"
-     data-backdrop="static" data-keyboard="false">
+
+<div class="modal fade" id="loading_save_compra" tabindex="-1" role="dialog" style="top: 50px;"
+     aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false"
+     aria-hidden="true">
+    <div class="row" id="loading">
+        <div class="col-md-12 text-center">
+            <div class="loading-icon"></div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="pago_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"  aria-hidden="true" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog" style="width: 40%">
         <div class="modal-content">
             <div class="modal-header">
@@ -916,17 +924,6 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                         <div class="col-md-7">
                             <select class="form-control" name="metodo" id="metodo" onchange="verificar_banco_cuota()">
                                 <option value="" selected="">Seleccione</option>
-                                <?php
-                                if (count($metodo_pago) > 0) {
-                                    foreach ($metodo_pago as $metodo) {
-                                        ?>
-                                        <option 
-                                            data-tipo_metodo="<?= $metodo['tipo_metodo'] ?>"
-                                            value="<?= $metodo['id_metodo'] ?>"><?= $metodo['nombre_metodo'] ?></option>
-                                            <?php
-                                        }
-                                    }
-                                    ?>
                             </select>
                         </div>
                     </div>
@@ -937,40 +934,6 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                         <div class="col-md-7">
                             <select name="caja_id" id="caja_id" class="form-control">
                                 <option value="">Seleccione</option>
-                                <?php foreach ($cajas as $caja): ?>
-                                    <option class="<?= $caja->cuenta_id ?>"
-                                            value="<?= $caja->cuenta_id ?>" data-moneda="<?= $caja->moneda_id ?>" ><?= $caja->descripcion ?></option>
-                                        <?php endforeach ?>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row caja_block_d"  style="display: none;">
-                        <div class="col-md-5">
-                            <label class="control-label panel-admin-text">Seleccione la Cuenta</label>
-                        </div>
-                        <div class="col-md-7">
-                            <select name="caja_id_d" id="caja_id_d" class="form-control">
-                                <option value="">Seleccione</option>
-                                <?php foreach ($cajad as $ca): ?>
-                                    <option class="<?= $ca->cuenta_id ?>"
-                                            value="<?= $ca->cuenta_id ?>" data-moneda="<?= $ca->moneda_id ?>" ><?= $ca->descripcion ?></option>
-                                        <?php endforeach ?>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row" id="banco_block_d" style="display: none;">
-                        <div class="col-md-5">
-                            <label class="control-label panel-admin-text">Seleccione el Banco</label>
-                        </div>
-                        <div class="col-md-7">
-                            <select name="banco_id_d" id="banco_id_d" class="form-control">
-                                <option value="">Seleccione</option>
-                                <?php foreach (bancosd as $ba): ?>
-                                    <option
-                                        value="<?= $ba['banco_id'] ?>" data-cuenta_c="<?= $ba['cuenta_id'] ?>">
-                                        <?= $ba['banco_nombre'] ?> | <?= $ba['descripcion'] ?>
-                                    </option>
-                                <?php endforeach ?>
                             </select>
                         </div>
                     </div>
@@ -981,12 +944,6 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                         <div class="col-md-7">
                             <select name="banco_id" id="banco_id" class="form-control">
                                 <option value="">Seleccione</option>
-                                <?php foreach ($bancos as $banco): ?>
-                                    <option
-                                        value="<?= $banco['banco_id'] ?>" data-cuenta_c="<?= $banco['cuenta_id'] ?>">
-                                        <?= $banco['banco_nombre'] ?> | <?= $banco['descripcion'] ?>
-                                    </option>
-                                <?php endforeach ?>
                             </select>
                         </div>
                     </div>
@@ -1018,19 +975,10 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                 <br>
             </div>
             <div class="modal-footer">
-                <a href="#" class="btn btn-primary" id="guardarPago_pagospendiente" onclick="guardaringreso()"><i
-                        class=""></i> Pagar Monto</a>
+                <button class="btn btn-primary" id="guardarPago_pagospendiente" onclick="guardaringreso()"><i
+                        class=""></i> Pagar Monto</button>
                 <a href="#" class="btn btn-danger" id="cerrar_pago_modal" onclick="$('#pago_modal').modal('hide');">Salir</a>
             </div>
-        </div>
-    </div>
-</div>
-<div class="modal fade" id="loading_save_compra" tabindex="-1" role="dialog" style="top: 50px;"
-     aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false"
-     aria-hidden="true">
-    <div class="row" id="loading">
-        <div class="col-md-12 text-center">
-            <div class="loading-icon"></div>
         </div>
     </div>
 </div>
@@ -1056,7 +1004,6 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
 <script src="<?php echo $ruta ?>recursos/js/pages/tablesDatatables.js"></script>
 <script>
                     var ruta = '<?php echo $ruta; ?>';
-
                     $(function () {
                         $("select").chosen({width: '100%'});
                         $("#fecEmision").datepicker({format: 'dd-mm-yyyy'});
@@ -1066,6 +1013,8 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                         $("#agregargrupo").load(ruta + 'grupo/form');
                         $("#agregarfamilia").load(ruta + 'familia/form');
                         $("#agregarlinea").load(ruta + 'linea/form');
+                        
+
                     });
 
                     function agregarfamilia() {
@@ -1121,7 +1070,6 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                         $('#cboProveedor').val(id)
                         $("#cboProveedor").trigger('chosen:updated');
                     }
-                    
                     function verificar_banco_cuota() {
 
                         $("#banco_id").val("");
@@ -1140,46 +1088,24 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                         switch (tipo) {
                             case 'CAJA':
                             {
-
-                                if ($("#monedas option:selected").attr('data-simbolo') == "$") {
-                                    $(".caja_block").hide();
-                                    $("#banco_block").hide();                                    
-                                    $("#banco_block_d").hide();
-                                    $(".caja_block_d").show();
-                                    if (metodo == '3') {
-                                        $("#operacion_block").hide();
-                                    }
-                                } else {
-                                    $(".caja_block").show();
-                                    if (metodo == '3') {
-                                        $("#operacion_block").hide();
-                                    }
+                                $(".caja_block").show();
+                                if (metodo == '3') {
+                                    $("#operacion_block").hide();
                                 }
 
                                 break;
                             }
                             case 'BANCO':
                             {
-                                if ($("#monedas option:selected").attr('data-simbolo') == "$") {
-                                    $(".caja_block").hide();
-                                    $("#banco_block").hide();
-                                    $("#banco_block_d").show();
-                                    $("#operacion_block").show();
-                                    if (metodo == '7') {
-                                        $("#tipo_tarjeta_block").show();
-                                    }
-                                } else {
-                                    $(".caja_block_d").hide();
-                                    $("#banco_block").show();
-                                    $("#operacion_block").show();
-                                    if (metodo == '7') {
-                                        $("#tipo_tarjeta_block").show();
-                                        $(".caja_block_d").hide();
-                                    }
+
+                                $("#banco_block").show();
+                                if (metodo == '7') {
+                                    $("#tipo_tarjeta_block").show();
                                 }
 
                                 break;
                             }
                         }
                     }
+
 </script>

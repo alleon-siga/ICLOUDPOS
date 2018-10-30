@@ -70,7 +70,7 @@
                     </div>
                     <div class="col-md-9">
                         <div class="input-prepend input-append input-group">
-                            <span class="input-group-addon tipo_moneda"  id="simbolo_moneda" ></span><input
+                            <label class="input-group-addon tipo_moneda"  id="simbolo_moneda"><?= $md->simbolo ?></label><input
                                     type="number"
                                     tabindex="0"
                                     class='input-square input-small form-control'

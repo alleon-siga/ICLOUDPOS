@@ -444,8 +444,8 @@ class exportar extends MY_Controller
             //COMPRAS AL CONTADO
             $this->db->select_sum('ingreso.total_ingreso', 'total')
                 ->from('ingreso')
-                ->join('caja_pendiente', "caja_pendiente.ref_id = ingreso.id_ingreso AND caja_pendiente.tipo = 'COMPRA'")
-                ->join('caja_movimiento', "caja_movimiento.ref_id = caja_pendiente.id AND caja_movimiento.operacion = 'COMPRA'")
+                ->join('caja_pendiente', "caja_pendiente.ref_id = ingreso.id_ingreso AND caja_pendiente.tipo = 'COMPRA' AND caja_pendiente.estado = 1")
+                ->join('caja_movimiento', "caja_movimiento.ref_id = caja_pendiente.id AND caja_movimiento.operacion = 'COMPRA' ")
                 ->where('ingreso.id_moneda', $mon["id_moneda"])
                 ->where('caja_movimiento.fecha_mov >=', $fecha)
                 ->where('caja_movimiento.fecha_mov <', $fechadespues)
@@ -525,7 +525,7 @@ class exportar extends MY_Controller
             //GASTOS
             $this->db->select_sum('gastos.total', 'total')
                 ->from('gastos')
-                ->join('caja_pendiente', "caja_pendiente.ref_id = gastos.id_gastos AND caja_pendiente.tipo = 'GASTOS'")
+                ->join('caja_pendiente', "caja_pendiente.ref_id = gastos.id_gastos AND caja_pendiente.tipo = 'GASTOS' AND caja_pendiente.estado = 1")
                 ->join('caja_movimiento', "caja_movimiento.ref_id = caja_pendiente.id AND caja_movimiento.operacion = 'GASTOS'")
                 ->where('caja_movimiento.fecha_mov >=', $fecha)
                 ->where('caja_movimiento.fecha_mov <', $fechadespues)
