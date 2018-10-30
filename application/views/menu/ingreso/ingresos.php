@@ -169,29 +169,76 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                                     <?php } else { ?>
 
 
-                                    <?php } ?>
+                                    <?php } ?> 
+                                    <?php if (count($monedas) == 1): ?>
+                                        <script>
+                                            $("#config_moneda").click();
+                                        </script>
+                                    <?php endif; ?>
+                                    <?php if ($costos === 'true'): ?>
+                                        <div class="control-group">
+                                            <div class="control-group">
+                                                <div class="col-md-2">
+                                                    <label for="" class="control-label">Moneda:</label>
+                                                </div>
 
-                                    <div class="control-group">
-                                        <div class="col-md-2">
-                                            <label for="fecEnt" class="control-label">Motivo del Ingreso:</label>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="controls">
-                                                <select name="tipo_ingreso" id="" class='cho form-control'
-                                                        required="true">
-                                                    <option
-                                                        value="<?= COMPRA ?>" <?php
-                                                        if (isset($ingreso->tipo_ingreso) and $ingreso->tipo_ingreso == COMPRA)
-                                                            echo "selected";
-                                                        ?>><?= COMPRA ?></option>
-                                                </select>
+                                                <div class="col-md-2">
+                                                    <div class="controls">
+                                                        <select class="form-control" id="monedas" name="monedas" onchange="seleccion(this.value)">
+                                                            <?php foreach ($monedas as $mon) { ?>
+                                                                <option
+                                                                <?php
+                                                                if (isset($ingreso->id_moneda) and $ingreso->id_moneda == $mon['id_moneda']) {
+                                                                    echo "selected";
+                                                                }
+                                                                ?>
+                                                                    value="<?= $mon['id_moneda'] ?>"
+                                                                    data-tasa="<?php echo $mon['tasa_soles'] ?>"
+                                                                    data-oper="<?php echo $mon['ope_tasa'] ?>"
+                                                                    data-simbolo="<?php echo $mon['simbolo'] ?>"><?= $mon['nombre'] ?></option>
+                                                                <?php } ?>
+                                                        </select>
+                                                    </div>
+                                                </div>
                                             </div>
+
+                                            <div class="control-group">
+                                                <div class="col-md-1">
+                                                    <input type="text" name="tasa_id" id="tasa_id"
+                                                           onkeydown="return soloDecimal4(this, event);"
+                                                           value="<?php
+                                                           if (isset($ingreso->tasa_soles)) {
+                                                               echo $ingreso->tasa_soles;
+                                                           }
+                                                           ?>" class='form-control'>
+
+                                                    <input type="hidden" name="moneda_id" id="moneda_id"
+                                                           value="<?php
+                                                           if (isset($ingreso->id_moneda)) {
+                                                               echo $ingreso->id_moneda;
+                                                           }
+                                                           ?>">
+                                                </div>
+
+                                            </div>
+
+
+                                            <div class="col-md-1">
+                                                <a id="config_moneda" data-action="1" class="btn btn-primary"
+                                                   data-placement="bottom"
+                                                   style="margin-top:-2.2%;cursor: pointer;"><i class="fa fa-check"></i></a>
+                                            </div>
+
+                                            <br><br>
+
                                         </div>
-                                    </div>
+                                        <input type="hidden" name="tipo_ingreso" value="COMPRA">
+                                    <?php endif; ?>
+
                                     <?php
                                     if ($costos === 'true') {
 
-                                        echo "<br><br><br>";
+                                        echo "<br><br>";
                                     }
                                     ?>
 
@@ -321,85 +368,7 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                                 </div>
                             </div>
                         </div>
-                        <!-- END FILA 4 ************************************************************-->
-
-                        <!-- FILA DE LA MONEDA ************************************************************-->
-                        <?php if (count($monedas) == 1): ?>
-                            <script>
-                                $("#config_moneda").click();
-                            </script>
-                        <?php endif; ?>
-                        <?php if ($costos === 'true'): ?>
-                            <div class="section-border"
-                                 style="display: <?php echo count($monedas) == 1 ? 'none' : 'block' ?>">
-                                <span class="section-text-header">Configure primero la moneda a usar para realizar los ingresos</span>
-                                <div class="row">
-                                    <div class="col-md-12">
-
-                                        <div class="col-md-2"></div>
-                                        <div class="control-group">
-                                            <div class="col-md-2 text-right">
-                                                <label for="" class="control-label">Moneda:</label>
-                                            </div>
-
-                                            <div class="col-md-2">
-                                                <div class="controls">
-                                                    <select class="form-control" id="monedas" name="monedas" onchange="seleccion(this.value)">
-                                                        <?php foreach ($monedas as $mon) { ?>
-                                                            <option
-                                                            <?php
-                                                            if (isset($ingreso->id_moneda) and $ingreso->id_moneda == $mon['id_moneda']) {
-                                                                echo "selected";
-                                                            }
-                                                            ?>
-                                                                value="<?= $mon['id_moneda'] ?>"
-                                                                data-tasa="<? echo $mon['tasa_soles'] ?>"
-                                                                data-oper="<? echo $mon['ope_tasa'] ?>"
-                                                                data-simbolo="<? echo $mon['simbolo'] ?>"><?= $mon['nombre'] ?></option>
-                                                            <?php } ?>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="control-group">
-                                            <div class="col-md-1 text-right"><label for=""
-                                                                                    class="control-label">Tasa:</label>
-                                            </div>
-
-                                            <div class="col-md-1">
-                                                <input type="text" name="tasa_id" id="tasa_id"
-                                                       onkeydown="return soloDecimal4(this, event);"
-                                                       value="<?php
-                                                       if (isset($ingreso->tasa_soles)) {
-                                                           echo $ingreso->tasa_soles;
-                                                       }
-                                                       ?>" class='form-control'>
-
-                                                <input type="hidden" name="moneda_id" id="moneda_id"
-                                                       value="<?php
-                                                       if (isset($ingreso->id_moneda)) {
-                                                           echo $ingreso->id_moneda;
-                                                       }
-                                                       ?>">
-                                            </div>
-
-                                        </div>
-
-
-                                        <div class="col-md-2">
-                                            <a id="config_moneda" data-action="1" class="btn btn-primary"
-                                               data-placement="bottom"
-                                               style="margin-top:-2.2%;cursor: pointer;">Confirmar</a>
-                                        </div>
-
-                                        <br><br>
-
-                                    </div>
-                                </div>
-                            </div>
-                        <?php endif; ?>
-                        <!-- END FILA DE LA MONEDA ************************************************************-->
+                        <!-- END FILA 4 ************************************************************-->                    
 
 
                         <!-- FILA DE SELECIONAR EL PRODUCTO ************************************************************-->
@@ -1013,7 +982,7 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                         $("#agregargrupo").load(ruta + 'grupo/form');
                         $("#agregarfamilia").load(ruta + 'familia/form');
                         $("#agregarlinea").load(ruta + 'linea/form');
-                        
+
 
                     });
 

@@ -548,10 +548,7 @@
                     <div class="col-md-7">
                         <select name="tipo_impuesto" id="tipo_impuesto" class="form-control">
                             <option value="1">Incluye impuesto</option>
-                            <option value="2">Agregar impuesto</option>
-                            <?php if ($comprobantes_default->config_value == '6'): ?>
-                                <option value="3">No considerar impuesto</option>
-                            <?php endif; ?>                            
+                            <option value="2">Agregar impuesto</option>                            
                         </select>
                     </div>
                 </div>

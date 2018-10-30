@@ -16,8 +16,10 @@
                             <label class="control-label panel-admin-text">Ubicaci&oacute;n</label>
                             <select id="venta_local" class="form-control filter-input">
                                 <?php foreach ($locales as $local): ?>
-                                    <option <?php if ($this->session->userdata('id_local') == $local['int_local_id']) echo "selected"; ?>
-                                        value="<?= $local['int_local_id']; ?>"> <?= $local['local_nombre'] ?> </option>
+                                    <?php if ($local['tipo'] == 0): ?>
+                                        <option <?php if ($this->session->userdata('id_local') == $local['int_local_id']) echo "selected"; ?>
+                                            value="<?= $local['int_local_id']; ?>"> <?= $local['local_nombre'] ?> </option>
+                                        <?php endif; ?>
                                     <?php endforeach; ?>
                             </select>
                         <?php endif; ?>
@@ -83,5 +85,5 @@
             <script src="<?php echo $ruta; ?>recursos/js/Validacion.js"></script>
             <script src="<?php echo $ruta; ?>recursos/js/facturador_historial.js"></script>
             <script>
-                
+
             </script>

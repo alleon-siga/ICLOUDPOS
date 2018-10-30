@@ -51,12 +51,13 @@ class detalle_ingreso_model extends CI_Model {
     }
 
     function get_by_result($campo, $valor){
-        $this->db->select('*');
+        $this->db->select('*,gastos.total');
         $this->db->from('detalleingreso');
         $this->db->join('ingreso', 'ingreso.id_ingreso=detalleingreso.id_ingreso');
         $this->db->join('producto', 'producto.producto_id=detalleingreso.id_producto');
         $this->db->join('unidades', 'unidades.id_unidad=detalleingreso.unidad_medida');
-        $this->db->join('moneda', 'moneda.id_moneda=ingreso.id_moneda','left');
+        $this->db->join('moneda', 'moneda.id_moneda=ingreso.id_moneda','left');        
+        $this->db->join('gastos', 'gastos.compra_ref_id=detalleingreso.id_ingreso','left');
         $this->db->where($campo,$valor);
         $query=$this->db->get();
         return $query->result();
