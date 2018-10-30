@@ -161,7 +161,6 @@
                 <div id="tipo_dcumento">NOTA DE VENTA</div>
                 <div id="numero_documento">
                     Venta Nro:
-                    <?= $venta->serie_documento != null ? $venta->serie_documento . ' - ' : '' ?>
                     <?= sumCod($venta->venta_id, 6) ?>
                 </div>
             </div>

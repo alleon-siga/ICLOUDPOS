@@ -367,7 +367,7 @@ class venta_new_model extends CI_Model
         $this->db->where('venta_id', $venta_id);
         $this->db->update('venta', $update_venta);
 
-        if ($iddoc == 1 || $iddoc == 3) {
+        if ($iddoc == 1 || $iddoc == 3 || $iddoc == 6) {
 
             $cantidades = array();
             foreach ($venta->detalles as $detalle) {
@@ -415,8 +415,10 @@ class venta_new_model extends CI_Model
                 $this->kardex_model->set_kardex($values);
             }
 
-            if (valueOptionDB('FACTURACION', 0) == 1) {
-                $resp = $this->facturacion_model->facturarVenta($venta_id);
+            if ($iddoc != 6) {
+                if (valueOptionDB('FACTURACION', 0) == 1) {
+                    $resp = $this->facturacion_model->facturarVenta($venta_id);
+                }
             }
         }
     }
@@ -501,7 +503,7 @@ class venta_new_model extends CI_Model
         // En caso de ser un documento fiscal genera el kardex y su correlativo de guia
         // Si usa facturacion electronica tambien generar el comprobante electronico
         if ($venta_actual->condicion_pago == 1) {
-            $this->facturar_venta($venta_actual->venta_id);
+            $this->facturar_venta($venta_actual->venta_id, FALSE, $venta['id_usuario']);
         }
 
         $this->db->trans_complete();
@@ -628,7 +630,7 @@ class venta_new_model extends CI_Model
         // En caso de ser un documento fiscal genera el kardex y su correlativo de guia
         // Si usa facturacion electronica tambien generar el comprobante electronico
         if ($venta['venta_status'] == 'COMPLETADO') {
-            $this->facturar_venta($venta_id);
+            $this->facturar_venta($venta_id, FALSE, $venta['id_usuario']);
         }
 
         $this->db->trans_complete();
@@ -1328,7 +1330,7 @@ class venta_new_model extends CI_Model
 
 
         //Guardo registro en el Kardex
-        if (($venta->documento_id == 1 || $venta->documento_id == 3) && $venta->numero != null) {
+        if (($venta->documento_id == 1 || $venta->documento_id == 3 || $venta->documento_id == 6) && $venta->numero != null) {
 
             $cantidades = array();
             foreach ($venta->detalles as $detalle) {
@@ -1378,10 +1380,12 @@ class venta_new_model extends CI_Model
                 $this->kardex_model->set_kardex($values);
             }
 
-            //Si esta actvado la facturacion electronico creo la anulacion del comprobante
-//            if (valueOptionDB('FACTURACION', 0) == 1) {
-//                $this->facturacion_model->anularComprobante($venta_id, $motivo);
-//            }
+            //Si esta actvado la facturacion electronica creo la anulacion del comprobante
+            if ($venta->documento_id != 6) {
+                if (valueOptionDB('FACTURACION', 0) == 1) {
+                    $this->facturacion_model->anularComprobante($venta_id, $motivo);
+                }
+            }
         }
 
 

@@ -5,7 +5,6 @@
             <tr>
                 <td style="text-transform: uppercase;">
                     Venta Nro:
-                    <?= $venta->serie_documento != null ? $venta->serie_documento . ' - ' : '' ?>
                     <?= sumCod($venta->venta_id, 6) ?> - {PAGENO} FACTURA
                 </td>
                 <td style="text-transform: uppercase; text-align: right;">

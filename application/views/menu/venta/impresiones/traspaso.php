@@ -32,7 +32,8 @@
     <div style="page-break-before: always;">
         <table cellpadding="0" cellspacing="10">
             <tr>
-                <td style="text-transform: uppercase; text-align: center;" colspan="2"><?= valueOption('EMPRESA_NOMBRE', '') ?></td>
+                <td style="text-transform: uppercase; text-align: center;"
+                    colspan="2"><?= valueOption('EMPRESA_NOMBRE', '') ?></td>
             </tr>
             <tr>
                 <td style="text-transform: uppercase;">ALMACEN ORIGEN:</td>
@@ -77,18 +78,21 @@
         <br>
         <table cellpadding="0" cellspacing="0">
             <tbody>
-                <tr>
-                    <td style="border-bottom: 1px solid #000000; border-top: 1px solid #000000;">Producto</td>
-                    <td style="border-bottom: 1px solid #000000; border-top: 1px solid #000000; text-align: right;">Cantidad</td>
-                </tr>
+            <tr>
+                <td style="border-bottom: 1px solid #000000; border-top: 1px solid #000000;">Producto</td>
+                <td style="border-bottom: 1px solid #000000; border-top: 1px solid #000000; text-align: right;">
+                    Cantidad
+                </td>
+            </tr>
             <?php $i = 0; ?>
             <?php foreach ($dato['detalles'] as $d): ?>
                 <tr>
-                    <td colspan="2" style="<?= $i++ != 0 ? 'border-top: 1px dashed #0b0b0b;' : '' ?>"><?= $d->producto_nombre ?></td>
+                    <td colspan="2"
+                        style="<?= $i++ != 0 ? 'border-top: 1px dashed #0b0b0b;' : '' ?>"><?= $d->producto_nombre ?></td>
                 </tr>
                 <tr>
                     <td></td>
-                    <td style="text-align: right"><?= $d->producto_cualidad=="PESABLE"?$d->cantidad:number_format($d->cantidad,0)  . " " . $d->nombre_unidad ?></td>
+                    <td style="text-align: right"><?= $d->producto_cualidad == "PESABLE" ? $d->cantidad : number_format($d->cantidad, 0) . " " . $d->nombre_unidad ?></td>
                 </tr>
             <?php endforeach; ?>
             </tbody>
@@ -99,5 +103,5 @@
     </div>
 <?php endforeach; ?>
 <script>
-    this.print();
+  this.print()
 </script>
