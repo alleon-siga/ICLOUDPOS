@@ -195,7 +195,14 @@
             <?php endif; ?>
         </table>
     </div>
+    <?php
+    if ($venta->venta_estado == "ANULADO") {
+        ?>
+        <img src="recursos/img/anulado.png" style="position:absolute !important;z-index: 0;margin-left: 25%;width: 350px;"> 
 
+        <?php
+    }
+    ?>
     <table id="producto_detalles" cellspacing="0" cellpadding="0">
         <thead>
         <tr>

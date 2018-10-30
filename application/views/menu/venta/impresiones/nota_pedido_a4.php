@@ -153,7 +153,6 @@
                 </table>
             </div>
             <div>
-
             </div>
         </div>
         <div class="col">
@@ -199,43 +198,52 @@
             <?php endif; ?>
         </table>
     </div>
-
-    <table id="producto_detalles" cellspacing="0" cellpadding="0">
+    
+        <table id="producto_detalles" cellspacing="0" cellpadding="0" style="position:absolute !important; z-index: 1;">
         <thead>
-        <tr>
-            <th style="border-top: #ccc 1px solid;">Cantidad</th>
-            <th style="border-top: #ccc 1px solid;">Descripci&oacute;n</th>
-            <th style="border-top: #ccc 1px solid;">UM</th>
-            <th style="border-top: #ccc 1px solid;">Precio</th>
-            <th style="border-top: #ccc 1px solid;">Subtotal</th>
-        </tr>
+            <tr>
+                <th style="border-top: #ccc 1px solid;">Cantidad</th>
+                <th style="border-top: #ccc 1px solid;">Descripci&oacute;n</th>
+                <th style="border-top: #ccc 1px solid;">UM</th>
+                <th style="border-top: #ccc 1px solid;">Precio</th>
+                <th style="border-top: #ccc 1px solid;">Subtotal</th>
+            </tr>
         </thead>
         <tbody>
-        <?php
-        $i = 1;
-        foreach ($venta->detalles as $detalle):
-            if (($i % 2) == 0) {
-                $color = "#fff";
-            } else {
-                $color = "#F3F3F3";
-            }
-            ?>
-            <tr class="td-data">
-                <td style="background-color: <?= $color ?>"><?= $detalle->producto_cualidad == "PESABLE" ? $detalle->cantidad : number_format($detalle->cantidad, 0) ?></td>
-                <td style="background-color: <?= $color ?>; width: 50%;"><?= $detalle->producto_nombre ?></td>
-                <td style="background-color: <?= $color ?>"><?= $detalle->unidad_abr ?></td>
-                <td style="background-color: <?= $color ?>; white-space: nowrap; text-align: right;"><?= $venta->moneda_simbolo . ' ' . $detalle->precio ?></td>
-                <td style="background-color: <?= $color ?>; white-space: nowrap; text-align: right;">
-                    <?= $venta->moneda_simbolo . ' ' . number_format($detalle->importe, 2) ?>
-                </td>
-            </tr>
             <?php
-            $i++;
-        endforeach;
-        ?>
+            $i = 1;
+            foreach ($venta->detalles as $detalle):
+                if (($i % 2) == 0) {
+                    $color = "#fff";
+                } else {
+                    $color = "#F3F3F3";
+                }
+                ?>
+                <tr class="td-data">
+                    <td style="background-color: <?= $color ?>"><?= $detalle->producto_cualidad == "PESABLE" ? $detalle->cantidad : number_format($detalle->cantidad, 0) ?></td>
+                    <td style="background-color: <?= $color ?>; width: 50%;"><?= $detalle->producto_nombre ?></td>
+                    <td style="background-color: <?= $color ?>"><?= $detalle->unidad_abr ?></td>
+                    <td style="background-color: <?= $color ?>; white-space: nowrap; text-align: right;"><?= $venta->moneda_simbolo . ' ' . $detalle->precio ?></td>
+                    <td style="background-color: <?= $color ?>; white-space: nowrap; text-align: right;">
+                        <?= $venta->moneda_simbolo . ' ' . number_format($detalle->importe, 2) ?>
+                    </td>
+                </tr>
+
+                <?php
+                $i++;
+            endforeach;
+            ?>
+
         </tbody>
     </table>
+<?php
+    if ($venta->venta_estado == "ANULADO") {
+        ?>
+        <img src="recursos/img/anulado.png" style="position:absolute !important;z-index: 0;margin-left: 25%;width: 350px;"> 
 
+        <?php
+    }
+    ?>
     <table id="producto_detalles" cellspacing="0" cellpadding="0">
         <tr>
             <td width="70%">
@@ -280,43 +288,43 @@
     <?php if (count($venta->cuotas) > 0): ?>
         <table id="producto_detalles" cellspacing="0" cellpadding="0" width="50%">
             <thead>
-            <tr>
-                <th style="border-top: #ccc 1px solid; text-align: left;">Letra</th>
-                <th style="border-top: #ccc 1px solid; text-align: left;">Vence</th>
-                <th style="border-top: #ccc 1px solid; text-align: left;">Monto</th>
-            </tr>
+                <tr>
+                    <th style="border-top: #ccc 1px solid; text-align: left;">Letra</th>
+                    <th style="border-top: #ccc 1px solid; text-align: left;">Vence</th>
+                    <th style="border-top: #ccc 1px solid; text-align: left;">Monto</th>
+                </tr>
             </thead>
             <tbody>
-            <?php
-            $i = 1;
-            foreach ($venta->cuotas as $cuota):
-                if (($i % 2) == 0) {
-                    $color = "#fff";
-                } else {
-                    $color = "#F3F3F3";
-                }
+                <?php
+                $i = 1;
+                foreach ($venta->cuotas as $cuota):
+                    if (($i % 2) == 0) {
+                        $color = "#fff";
+                    } else {
+                        $color = "#F3F3F3";
+                    }
+                    ?>
+                    <tr>
+                        <td style="background-color: <?= $color ?>"><?= $cuota->nro_letra ?></td>
+                        <td style="background-color: <?= $color ?>"><?= date('d/m/Y', strtotime($cuota->fecha_vencimiento)) ?></td>
+                        <td style="background-color: <?= $color ?>"><?= $venta->moneda_simbolo . ' ' . number_format($cuota->monto, 2) ?></td>
+                    </tr>
+                    <?php
+                    $i++;
+                endforeach;
                 ?>
                 <tr>
-                    <td style="background-color: <?= $color ?>"><?= $cuota->nro_letra ?></td>
-                    <td style="background-color: <?= $color ?>"><?= date('d/m/Y', strtotime($cuota->fecha_vencimiento)) ?></td>
-                    <td style="background-color: <?= $color ?>"><?= $venta->moneda_simbolo . ' ' . number_format($cuota->monto, 2) ?></td>
+                    <td colspan="2">&nbsp;</td>
                 </tr>
-                <?php
-                $i++;
-            endforeach;
-            ?>
-            <tr>
-                <td colspan="2">&nbsp;</td>
-            </tr>
-            <tr>
-                <td colspan="2" align="right">Pago Inicial</td>
-                <?php $inicial = valueOptionDB('REDONDEO_VENTAS', 1) == 1 ? formatPrice($venta->inicial) : $venta->inicial ?>
-                <td><?= $venta->moneda_simbolo . ' ' . $inicial ?></td>
-            </tr>
-            <tr>
-                <td colspan="2" align="right">Deuda Pendiente</td>
-                <td><?= $venta->moneda_simbolo . ' ' . number_format($venta->total - $venta->inicial, 2) ?></td>
-            </tr>
+                <tr>
+                    <td colspan="2" align="right">Pago Inicial</td>
+                    <?php $inicial = valueOptionDB('REDONDEO_VENTAS', 1) == 1 ? formatPrice($venta->inicial) : $venta->inicial ?>
+                    <td><?= $venta->moneda_simbolo . ' ' . $inicial ?></td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="right">Deuda Pendiente</td>
+                    <td><?= $venta->moneda_simbolo . ' ' . number_format($venta->total - $venta->inicial, 2) ?></td>
+                </tr>
             </tbody>
         </table>
     <?php endif; ?>

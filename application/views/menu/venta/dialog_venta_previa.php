@@ -198,7 +198,7 @@
 
                         <div class="row">
                             <div class="col-md-2"><label class="control-label">Estado:</label></div>
-                            <div class="col-md-3"><?= $venta->venta_estado ?></div>
+                            <div class="col-md-3"  <?=$venta->venta_estado=="ANULADO"?'style="color:red !important;"':''?>><?= $venta->venta_estado ?></div>
 
                             <div class="col-md-1"></div>
 

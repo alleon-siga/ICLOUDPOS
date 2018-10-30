@@ -1,11 +1,12 @@
-<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+<?php
+
+if (!defined('BASEPATH'))
+    exit('No direct script access allowed');
 ini_set("memory_limit", "250M");
 
-class ingresos extends MY_Controller
-{
+class ingresos extends MY_Controller {
 
-    function __construct()
-    {
+    function __construct() {
         parent::__construct();
         if ($this->login_model->verify_session()) {
             $this->load->model('cliente/cliente_model', 'cl');
@@ -29,16 +30,12 @@ class ingresos extends MY_Controller
         }
 
         //$this->load->library('mpdf53/mpdf');
-
 //pd producto pv proveedor
         $this->load->library('Pdf');
         $this->load->library('phpExcel/PHPExcel.php');
-
     }
 
-
-    function index($local_id = false)
-    {
+    function index($local_id = false) {
 
         if ($this->session->flashdata('success') != FALSE) {
             $data ['success'] = $this->session->flashdata('success');
@@ -55,7 +52,7 @@ class ingresos extends MY_Controller
             $data['locales'] = $this->local_model->get_all_usu($usu);
         }
 
-        /*esta la voy a usar cuando vaya a editar*/
+        /* esta la voy a usar cuando vaya a editar */
         $idingreso = $this->input->post('idingreso');
 
         $data['costos'] = !empty($_GET['costos']) ? $_GET['costos'] : $_POST['costos'];
@@ -64,18 +61,12 @@ class ingresos extends MY_Controller
         $data["lstProducto"] = $this->producto_model->select_all_producto();
         $data["lstProveedor"] = $this->proveedor_model->select_all_proveedor();
         $data["monedas"] = $this->monedas_model->get_all();
-        $data["metodo_pago"] = $this->metodos_pago_model->get_all();
-        $data["bancos"] = $this->banco_model->get_all();
-        $data["bancosd"] = $this->banco_model->get_all_do();
-        $data["tarjetas"] = $this->tarjeta_api_model->get_all();
-        $data["cajas"] = $this->cajas_model->getCajasSelectsoles();
-        $data["cajad"] = $this->cajas_model->getCajasSelectdolares();
         $data['barra_activa'] = $this->db->get_where('columnas', array('id_columna' => 36))->row();
         $data["documentos"] = $this->db->get_where('documentos', array('compras' => 1))->result();
         $data['dialog_compra_credito'] = $this->load->view('menu/ingreso/dialog_compra_credito', array(), true);
 
 
-        /*declaro facturar en no, para que por defecto sea no, ahora los valores de si o no, vienen por post*/
+        /* declaro facturar en no, para que por defecto sea no, ahora los valores de si o no, vienen por post */
         $data['facturar'] = "NO";
         if ($this->input->post('facturar')) {
             $data['facturar'] = $this->input->post('facturar', true);
@@ -90,8 +81,7 @@ class ingresos extends MY_Controller
             $data["ingreso"] = $this->ingreso_model->get_ingresos_by($condicion);
             $data["ingreso"] = $data["ingreso"][0];
 
-            /*el detalle del ingreso, lo llamo en la siguiente funcion*/
-
+            /* el detalle del ingreso, lo llamo en la siguiente funcion */
         }
 
         $dataCuerpo['cuerpo'] = $this->load->view('menu/ingreso/ingresos', $data, true);
@@ -101,17 +91,26 @@ class ingresos extends MY_Controller
             $this->load->view('menu/template', $dataCuerpo);
         }
     }
+//Se Obtienen la caja segun Moneda Carlos Camargo (29-10-2018)
+    function get_cajas_bancos() {        
+        $moneda_id = $this->input->post('moneda_id');       
+        $datas["metodo_pago"] = $this->metodos_pago_model->get_all();
+        $datas["bancos"] = $this->banco_model->get_all(array('moneda_id' => $moneda_id));
+        $datas["cajas"] = $this->cajas_model->getCajasSelectCaja(array('moneda_id' => $moneda_id));
+        $datas["tarjetas"] = $this->tarjeta_api_model->get_all();
+        header('Content-Type: application/json');
+        echo json_encode($datas);
+    }
 
-    function get_detalle_ingresos()
-    {
+    function get_detalle_ingresos() {
         $idingreso = $this->input->post('idingreso');
 
         $json["detalles"] = $this->ingreso_model->get_detalles_by($idingreso);
 
         $productos = $this->db->select('detalleingreso.id_producto as producto_id')
-            ->from('detalleingreso')
-            ->where('detalleingreso.id_ingreso', $idingreso)
-            ->group_by('detalleingreso.id_producto')->get()->result();
+                        ->from('detalleingreso')
+                        ->where('detalleingreso.id_ingreso', $idingreso)
+                        ->group_by('detalleingreso.id_producto')->get()->result();
 
         $unidad_minima = array();
         foreach ($productos as $prod)
@@ -120,11 +119,9 @@ class ingresos extends MY_Controller
         $json['um_min'] = $unidad_minima;
 
         echo json_encode($json);
-
     }
 
-    function get_unidades_has_producto()
-    {
+    function get_unidades_has_producto() {
 
         $id_producto = $this->input->post('id_producto');
         $id_moneda = $this->input->post('moneda_id');
@@ -135,8 +132,7 @@ class ingresos extends MY_Controller
         echo json_encode($data);
     }
 
-    function get_series($prod_id)
-    {
+    function get_series($prod_id) {
         $this->load->model('producto_serie/producto_serie_model');
         $data['producto_id'] = $prod_id;
         $data['series'] = $this->producto_serie_model->get_by(array('producto_id' => $prod_id));
@@ -144,12 +140,10 @@ class ingresos extends MY_Controller
         echo $this->load->view('menu/ingreso/list_series', $data, TRUE);
     }
 
-
-    function registrar_ingreso()
-    {
+    function registrar_ingreso() {
         if ($this->input->is_ajax_request()) {
 
-            /*la declaro aqui ya que en registro de existencia no se usa*/
+            /* la declaro aqui ya que en registro de existencia no se usa */
             $fecha_emision = null;
             if ($this->input->post('fecEmision', true)) {
                 $this->form_validation->set_rules('fecEmision', 'fecEmision', 'required');
@@ -160,17 +154,17 @@ class ingresos extends MY_Controller
             // $this->form_validation->set_rules('doc_numero', 'doc_numero', 'required');
             //$this->form_validation->set_rules('cboTipDoc', 'cboTipDoc', 'required');
             $this->form_validation->set_rules('cboProveedor', 'cboProveedor', 'required');
-            /*$this->form_validation->set_rules('subTotal', 'subTotal', 'required');
-            $this->form_validation->set_rules('montoigv', 'montoigv', 'required');
-            $this->form_validation->set_rules('totApagar', 'totApagar', 'required');*/
+            /* $this->form_validation->set_rules('subTotal', 'subTotal', 'required');
+              $this->form_validation->set_rules('montoigv', 'montoigv', 'required');
+              $this->form_validation->set_rules('totApagar', 'totApagar', 'required'); */
 
             //echo 'campo:'.$this->input->post('tasa_id', true).':fin';
 
             if ($this->form_validation->run() == false):
                 $json['error'] = 'El nombre del proveedor es requerido.';
             else:
-                /*if (isset($_POST['subTotal']) && $_POST['subTotal'] != "" && isset($_POST['montoigv']) && $_POST['montoigv'] != "" &&
-                    isset($_POST['totApagar']) && $_POST['totApagar'] != "") {*/
+                /* if (isset($_POST['subTotal']) && $_POST['subTotal'] != "" && isset($_POST['montoigv']) && $_POST['montoigv'] != "" &&
+                  isset($_POST['totApagar']) && $_POST['totApagar'] != "") { */
                 $tasa_cambio = explode("_", $this->input->post('monedas', true));
 
                 if ($this->input->post('costos') === 'true') {
@@ -179,7 +173,6 @@ class ingresos extends MY_Controller
                     $status = "PENDIENTE";
                 }
                 $comp_cab_pie = array(
-
                     'fecReg' => date("Y-m-d H:i:s"),
                     'fecEmision' => $fecha_emision,
                     'doc_serie' => $this->input->post('doc_serie', true),
@@ -199,13 +192,13 @@ class ingresos extends MY_Controller
                     'status' => $status,
                     'facturar' => $this->input->post('facturar'),
                     'tipo_impuesto' => $this->input->post('tipo_impuesto'),
-                    'medio_pago'=>$this->input->post('metodo', true),
-                    'caja_id_d'=> $this->input->post('caja_id_d', true),
-                    'banco_id_d'=>$this->input->post('banco_id_d', true),
-                    'caja_id'=> $this->input->post('caja_id', true),
-                    'banco_id'=>$this->input->post('banco_id', true),
-                    'tipo_tarjeta'=>$this->input->post('tipo_tarjeta'),
-                    'num_oper'=>$this->input->post('num_oper')
+                    'medio_pago' => $this->input->post('metodo', true),
+                    'caja_id_d' => $this->input->post('caja_id_d', true),
+                    'banco_id_d' => $this->input->post('banco_id_d', true),
+                    'caja_id' => $this->input->post('caja_id', true),
+                    'banco_id' => $this->input->post('banco_id', true),
+                    'tipo_tarjeta' => $this->input->post('tipo_tarjeta'),
+                    'num_oper' => $this->input->post('num_oper')
                 );
                 $credito['c_inicial'] = $this->input->post('c_saldo_inicial') != '' ? $this->input->post('c_saldo_inicial') : 0;
                 $credito['c_precio_contado'] = $this->input->post('c_precio_contado');
@@ -225,10 +218,8 @@ class ingresos extends MY_Controller
                 if (empty($id)) {
 
                     $rs = $this->ingreso_model->insertar_compra($comp_cab_pie, json_decode($this->input->post('lst_producto', true)), $credito, $cuotas);
-
-
                 } else {
-                    /*si entra aqui es solo para actualizar el ingreso*/
+                    /* si entra aqui es solo para actualizar el ingreso */
 
                     $comp_cab_pie['facturar'] = $this->input->post('facturar', true);
                     $comp_cab_pie['id_ingreso'] = $id;
@@ -249,7 +240,6 @@ class ingresos extends MY_Controller
                         $this->db->where('id_gastos', $g->id);
                         $this->db->update('gastos', array('compra_ref_id' => $rs));
                     }
-
                 } else {
                     if ($this->ingreso_model->error != NULL)
                         $json['error'] = $this->ingreso_model->error;
@@ -258,23 +248,20 @@ class ingresos extends MY_Controller
                 }
 
 
-                /* } else {
-                     $json['error'] = 'Algunos campos son requeridos';
+            /* } else {
+              $json['error'] = 'Algunos campos son requeridos';
 
-                 }*/
+              } */
             endif;
         } else {
 
 
             $json['error'] = 'Ha ocurrido un error al procesar la solicitud';
-
-
         }
         echo json_encode($json);
     }
 
-    function lst_reg_ingreso()
-    {
+    function lst_reg_ingreso() {
         if ($this->input->is_ajax_request()) {
             //$data['lstCompra'] = $this->v->select_compra(date("y-m-d", strtotime($this->input->post('fecIni',true))),date("y-m-d", strtotime($this->input->post('fecFin',true))));
             //$this->load->view('menu/ventas/tbl_listareg_compra',$data);
@@ -284,8 +271,7 @@ class ingresos extends MY_Controller
         }
     }
 
-    function consultar()
-    {
+    function consultar() {
 
         $data['locales'] = $this->local_model->get_all();
         $dataCuerpo['cuerpo'] = $this->load->view('menu/ingreso/consultar_ingreso', $data, true);
@@ -296,8 +282,7 @@ class ingresos extends MY_Controller
         }
     }
 
-    function consultarCompras()
-    {
+    function consultarCompras() {
         $data['locales'] = $this->local_model->get_local_by_user($this->session->userdata('nUsuCodigo'));
         $data['monedas'] = $this->db->get_where('moneda', array('status_moneda' => 1))->result();
         $dataCuerpo['cuerpo'] = $this->load->view('menu/ingreso/compras', $data, true);
@@ -308,218 +293,213 @@ class ingresos extends MY_Controller
         }
     }
 
-    function lista_compra($action = "")
-    {
+    function lista_compra($action = "") {
         switch ($action) {
             case 'filter': {
-                $date_range = explode(" - ", $this->input->post('fecha'));
-                $fecha_ini = str_replace("/", "-", $date_range[0]);
-                $fecha_fin = str_replace("/", "-", $date_range[1]);
+                    $date_range = explode(" - ", $this->input->post('fecha'));
+                    $fecha_ini = str_replace("/", "-", $date_range[0]);
+                    $fecha_fin = str_replace("/", "-", $date_range[1]);
 
-                $params = array(
-                    'local_id' => $this->input->post('local_id'),
-                    'moneda_id' => $this->input->post('moneda_id'),
-                    'fecha_ini' => $fecha_ini,
-                    'fecha_fin' => $fecha_fin,
-                    'tipo_ingreso' => 'COMPRA'
-                );
-                $data['moneda'] = $this->db->get_where('moneda', array('id_moneda' => $params['moneda_id']))->row();
-                $data['ingresos'] = $this->ingreso_model->get_compras($params);
-                $data['ingreso_totales'] = $this->ingreso_model->get_totales_compra($params);
-                $this->load->view('menu/ingreso/lista_compra', $data);
-                break;
-            }
+                    $params = array(
+                        'local_id' => $this->input->post('local_id'),
+                        'moneda_id' => $this->input->post('moneda_id'),
+                        'fecha_ini' => $fecha_ini,
+                        'fecha_fin' => $fecha_fin,
+                        'tipo_ingreso' => 'COMPRA'
+                    );
+                    $data['moneda'] = $this->db->get_where('moneda', array('id_moneda' => $params['moneda_id']))->row();
+                    $data['ingresos'] = $this->ingreso_model->get_compras($params);
+                    $data['ingreso_totales'] = $this->ingreso_model->get_totales_compra($params);
+                    $this->load->view('menu/ingreso/lista_compra', $data);
+                    break;
+                }
             case 'excel': {
-                $params = json_decode($this->input->get('data'));
-                $date_range = explode(' - ', $params->fecha);
-                $input = array(
-                    'local_id' => $params->local_id,
-                    'fecha_ini' => str_replace("/", "-", $date_range[0]),
-                    'fecha_fin' => str_replace("/", "-", $date_range[1]),
-                    'moneda_id' => $params->moneda_id,
-                    'tipo_ingreso' => 'COMPRA'
-                );
-                $data['moneda'] = $this->db->get_where('moneda', array('id_moneda' => $input['moneda_id']))->row();
-                $data['ingresos'] = $this->ingreso_model->get_compras($input);
-                $data['ingreso_totales'] = $this->ingreso_model->get_totales_compra($input);
-                $local = $this->db->get_where('local', array('int_local_id' => $input['local_id']))->row();
-                $data['local_nombre'] = !empty($local->local_nombre) ? $local->local_nombre : 'TODOS';
-                $data['local_direccion'] = !empty($local->direccion) ? $local->direccion : 'TODOS';
-                echo $this->load->view('menu/ingreso/lista_compra_excel', $data, true);
-                break;
-            }
+                    $params = json_decode($this->input->get('data'));
+                    $date_range = explode(' - ', $params->fecha);
+                    $input = array(
+                        'local_id' => $params->local_id,
+                        'fecha_ini' => str_replace("/", "-", $date_range[0]),
+                        'fecha_fin' => str_replace("/", "-", $date_range[1]),
+                        'moneda_id' => $params->moneda_id,
+                        'tipo_ingreso' => 'COMPRA'
+                    );
+                    $data['moneda'] = $this->db->get_where('moneda', array('id_moneda' => $input['moneda_id']))->row();
+                    $data['ingresos'] = $this->ingreso_model->get_compras($input);
+                    $data['ingreso_totales'] = $this->ingreso_model->get_totales_compra($input);
+                    $local = $this->db->get_where('local', array('int_local_id' => $input['local_id']))->row();
+                    $data['local_nombre'] = !empty($local->local_nombre) ? $local->local_nombre : 'TODOS';
+                    $data['local_direccion'] = !empty($local->direccion) ? $local->direccion : 'TODOS';
+                    echo $this->load->view('menu/ingreso/lista_compra_excel', $data, true);
+                    break;
+                }
         }
     }
 
-    function get_gastos($action = '')
-    {
+    function get_gastos($action = '') {
         switch ($action) {
             case 'filter': {
-                $where = array(
-                    'compra_ref_id' => 0,
-                    'status_gastos' => 0
-                );
+                    $where = array(
+                        'compra_ref_id' => 0,
+                        'status_gastos' => 0
+                    );
 
-                $documento_id = $this->input->post('documento_id');
-                if ($documento_id != '')
-                    $where['id_documento'] = $documento_id;
+                    $documento_id = $this->input->post('documento_id');
+                    if ($documento_id != '')
+                        $where['id_documento'] = $documento_id;
 
-                $where['local_id'] = $this->input->post('local_id');
-                $where['id_moneda'] = $this->input->post('moneda_id');
+                    $where['local_id'] = $this->input->post('local_id');
+                    $where['id_moneda'] = $this->input->post('moneda_id');
 
-                $date_range = explode(" - ", $this->input->post('fecha'));
-                $where['fecha >='] = date('Y-m-d H:i:s', strtotime(str_replace("/", "-", $date_range[0]) . ' 00:00:00'));
-                $where['fecha <='] = date('Y-m-d H:i:s', strtotime(str_replace("/", "-", $date_range[1]) . ' 23:59:59'));
+                    $date_range = explode(" - ", $this->input->post('fecha'));
+                    $where['fecha >='] = date('Y-m-d H:i:s', strtotime(str_replace("/", "-", $date_range[0]) . ' 00:00:00'));
+                    $where['fecha <='] = date('Y-m-d H:i:s', strtotime(str_replace("/", "-", $date_range[1]) . ' 23:59:59'));
 
-                $data['gastos'] = $this->db->join('documentos', 'documentos.id_doc = gastos.id_documento')
-                    ->join('usuario', 'usuario.nUsuCodigo = gastos.usuario_id', 'left')
-                    ->join('proveedor', 'proveedor.id_proveedor = gastos.proveedor_id', 'left')
-                    ->get_where('gastos', $where)->result();
+                    $data['gastos'] = $this->db->join('documentos', 'documentos.id_doc = gastos.id_documento')
+                                    ->join('usuario', 'usuario.nUsuCodigo = gastos.usuario_id', 'left')
+                                    ->join('proveedor', 'proveedor.id_proveedor = gastos.proveedor_id', 'left')
+                                    ->get_where('gastos', $where)->result();
 
-                echo $this->load->view('menu/ingreso/gastos_table_list', $data, TRUE);
-                break;
-            }
+                    echo $this->load->view('menu/ingreso/gastos_table_list', $data, TRUE);
+                    break;
+                }
             default: {
-                $where = array(
-                    'compra_ref_id' => 0,
-                    'status_gastos' => 0
-                );
+                    $where = array(
+                        'compra_ref_id' => 0,
+                        'status_gastos' => 0
+                    );
 
-                $where['local_id'] = $this->input->post('local_id');
-                $where['id_moneda'] = $this->input->post('moneda_id');
+                    $where['local_id'] = $this->input->post('local_id');
+                    $where['id_moneda'] = $this->input->post('moneda_id');
 
-                $where['fecha >='] = date('Y-m-01') . ' 00:00:00';
-                $where['fecha <='] = date('Y-m-d') . ' 23:59:59';
+                    $where['fecha >='] = date('Y-m-01') . ' 00:00:00';
+                    $where['fecha <='] = date('Y-m-d') . ' 23:59:59';
 
-                $data['gastos'] = $this->db->join('documentos', 'documentos.id_doc = gastos.id_documento')
-                    ->join('usuario', 'usuario.nUsuCodigo = gastos.usuario_id', 'left')
-                    ->join('proveedor', 'proveedor.id_proveedor = gastos.proveedor_id', 'left')
-                    ->get_where('gastos', $where)->result();
-                $data['table_list'] = $this->load->view('menu/ingreso/gastos_table_list', $data, TRUE);
-                $data["documentos"] = $this->db->get_where('documentos', array('gastos' => 1))->result();
+                    $data['gastos'] = $this->db->join('documentos', 'documentos.id_doc = gastos.id_documento')
+                                    ->join('usuario', 'usuario.nUsuCodigo = gastos.usuario_id', 'left')
+                                    ->join('proveedor', 'proveedor.id_proveedor = gastos.proveedor_id', 'left')
+                                    ->get_where('gastos', $where)->result();
+                    $data['table_list'] = $this->load->view('menu/ingreso/gastos_table_list', $data, TRUE);
+                    $data["documentos"] = $this->db->get_where('documentos', array('gastos' => 1))->result();
 
-                echo $this->load->view('menu/ingreso/gastos_list', $data, TRUE);
-                break;
-            }
+                    echo $this->load->view('menu/ingreso/gastos_list', $data, TRUE);
+                    break;
+                }
         }
     }
 
-
-    function lst_cuentas_porpagar($action = '')
-    {
+    function lst_cuentas_porpagar($action = '') {
         switch ($action) {
             case 'filter': {
-                if (!empty($this->input->post('local_id'))) {
-                    $local_id = $this->input->post('local_id');
-                    $data['local'] = $local_id;
-                } else {
-                    $usu = $this->session->userdata('nUsuCodigo');
-                    $dataLocal = $this->local_model->get_all_usu($usu);
-                    $arr = array();
-                    foreach ($dataLocal as $value) {
-                        $arr[] = $value['int_local_id'];
+                    if (!empty($this->input->post('local_id'))) {
+                        $local_id = $this->input->post('local_id');
+                        $data['local'] = $local_id;
+                    } else {
+                        $usu = $this->session->userdata('nUsuCodigo');
+                        $dataLocal = $this->local_model->get_all_usu($usu);
+                        $arr = array();
+                        foreach ($dataLocal as $value) {
+                            $arr[] = $value['int_local_id'];
+                        }
+                        $local_id = implode(",", $arr);
+                        $data['local'] = 'TODOS';
                     }
-                    $local_id = implode(",", $arr);
-                    $data['local'] = 'TODOS';
-                }
 
-                $params['local_id'] = $local_id;
-                $params['proveedor_id'] = $this->input->post('proveedor');
-                $params['moneda_id'] = $this->input->post('moneda');
-                $params['tipo'] = $this->input->post('tipo');
-                $data["lstproveedor"] = $this->proveedor_model->get_cuentas_pagar($params);
-                $data["ingreso_totales"] = $this->proveedor_model->get_cuentas_pagar_totales($params);
-                if ($this->input->is_ajax_request()) {
-                    $this->load->view('menu/proveedor/tbl_lst_cuentasporpagar', $data);
-                } else {
-                    redirect(base_url() . 'proveedor/', 'refresh');
+                    $params['local_id'] = $local_id;
+                    $params['proveedor_id'] = $this->input->post('proveedor');
+                    $params['moneda_id'] = $this->input->post('moneda');
+                    $params['tipo'] = $this->input->post('tipo');
+                    $data["lstproveedor"] = $this->proveedor_model->get_cuentas_pagar($params);
+                    $data["ingreso_totales"] = $this->proveedor_model->get_cuentas_pagar_totales($params);
+                    if ($this->input->is_ajax_request()) {
+                        $this->load->view('menu/proveedor/tbl_lst_cuentasporpagar', $data);
+                    } else {
+                        redirect(base_url() . 'proveedor/', 'refresh');
+                    }
+                    break;
                 }
-                break;
-            }
             case 'pdf': {
-                $params = json_decode($this->input->get('data'));
+                    $params = json_decode($this->input->get('data'));
 
-                if (!empty($params->local_id)) {
-                    $local_id = $params->local_id;
-                    $data['local'] = $local_id;
-                } else {
-                    $usu = $this->session->userdata('nUsuCodigo');
-                    $dataLocal = $this->local_model->get_all_usu($usu);
-                    $arr = array();
-                    foreach ($dataLocal as $value) {
-                        $arr[] = $value['int_local_id'];
+                    if (!empty($params->local_id)) {
+                        $local_id = $params->local_id;
+                        $data['local'] = $local_id;
+                    } else {
+                        $usu = $this->session->userdata('nUsuCodigo');
+                        $dataLocal = $this->local_model->get_all_usu($usu);
+                        $arr = array();
+                        foreach ($dataLocal as $value) {
+                            $arr[] = $value['int_local_id'];
+                        }
+                        $local_id = implode(",", $arr);
+                        $data['local'] = 'TODOS';
                     }
-                    $local_id = implode(",", $arr);
-                    $data['local'] = 'TODOS';
+
+                    $input = array(
+                        'local_id' => $local_id,
+                        'proveedor_id' => $params->proveedor,
+                        'moneda_id' => $params->moneda,
+                        'tipo' => $params->tipo
+                    );
+
+                    $data['lists'] = $this->proveedor_model->get_cuentas_pagar($input);
+                    $data["ingreso_totales"] = $this->proveedor_model->get_cuentas_pagar_totales($input);
+                    if ($data['local'] != 'TODOS') {
+                        $local = $this->db->get_where('local', array('int_local_id' => $input['local_id']))->row();
+                        $data['local_nombre'] = $local->local_nombre;
+                        $data['local_direccion'] = $local->direccion;
+                    } else {
+                        $data['local_nombre'] = $data['local'];
+                        $data['local_direccion'] = $data['local'];
+                    }
+
+                    $this->load->library('mpdf53/mpdf');
+                    $mpdf = new mPDF('utf-8', 'A4', 0, '', 5, 5, 5, 5, 5, 5);
+                    $html = $this->load->view('menu/proveedor/tbl_lst_cuentasporpagar_pdf', $data, true);
+                    $mpdf->WriteHTML($html);
+                    $mpdf->Output();
+                    break;
                 }
-
-                $input = array(
-                    'local_id' => $local_id,
-                    'proveedor_id' => $params->proveedor,
-                    'moneda_id' => $params->moneda,
-                    'tipo' => $params->tipo
-                );
-
-                $data['lists'] = $this->proveedor_model->get_cuentas_pagar($input);
-                $data["ingreso_totales"] = $this->proveedor_model->get_cuentas_pagar_totales($input);
-                if ($data['local'] != 'TODOS') {
-                    $local = $this->db->get_where('local', array('int_local_id' => $input['local_id']))->row();
-                    $data['local_nombre'] = $local->local_nombre;
-                    $data['local_direccion'] = $local->direccion;
-                } else {
-                    $data['local_nombre'] = $data['local'];
-                    $data['local_direccion'] = $data['local'];
-                }
-
-                $this->load->library('mpdf53/mpdf');
-                $mpdf = new mPDF('utf-8', 'A4', 0, '', 5, 5, 5, 5, 5, 5);
-                $html = $this->load->view('menu/proveedor/tbl_lst_cuentasporpagar_pdf', $data, true);
-                $mpdf->WriteHTML($html);
-                $mpdf->Output();
-                break;
-            }
             case 'excel': {
-                $params = json_decode($this->input->get('data'));
+                    $params = json_decode($this->input->get('data'));
 
-                if (!empty($params->local_id)) {
-                    $local_id = $params->local_id;
-                    $data['local'] = $local_id;
-                } else {
-                    $usu = $this->session->userdata('nUsuCodigo');
-                    $dataLocal = $this->local_model->get_all_usu($usu);
-                    $arr = array();
-                    foreach ($dataLocal as $value) {
-                        $arr[] = $value['int_local_id'];
+                    if (!empty($params->local_id)) {
+                        $local_id = $params->local_id;
+                        $data['local'] = $local_id;
+                    } else {
+                        $usu = $this->session->userdata('nUsuCodigo');
+                        $dataLocal = $this->local_model->get_all_usu($usu);
+                        $arr = array();
+                        foreach ($dataLocal as $value) {
+                            $arr[] = $value['int_local_id'];
+                        }
+                        $local_id = implode(",", $arr);
+                        $data['local'] = 'TODOS';
                     }
-                    $local_id = implode(",", $arr);
-                    $data['local'] = 'TODOS';
-                }
 
-                $input = array(
-                    'local_id' => $local_id,
-                    'proveedor_id' => $params->proveedor,
-                    'moneda_id' => $params->moneda,
-                    'tipo' => $params->tipo
-                );
+                    $input = array(
+                        'local_id' => $local_id,
+                        'proveedor_id' => $params->proveedor,
+                        'moneda_id' => $params->moneda,
+                        'tipo' => $params->tipo
+                    );
 
-                $data['lists'] = $this->proveedor_model->get_cuentas_pagar($input);
-                $data["ingreso_totales"] = $this->proveedor_model->get_cuentas_pagar_totales($input);
-                if ($data['local'] != 'TODOS') {
-                    $local = $this->db->get_where('local', array('int_local_id' => $input['local_id']))->row();
-                    $data['local_nombre'] = $local->local_nombre;
-                    $data['local_direccion'] = $local->direccion;
-                } else {
-                    $data['local_nombre'] = $data['local'];
-                    $data['local_direccion'] = $data['local'];
+                    $data['lists'] = $this->proveedor_model->get_cuentas_pagar($input);
+                    $data["ingreso_totales"] = $this->proveedor_model->get_cuentas_pagar_totales($input);
+                    if ($data['local'] != 'TODOS') {
+                        $local = $this->db->get_where('local', array('int_local_id' => $input['local_id']))->row();
+                        $data['local_nombre'] = $local->local_nombre;
+                        $data['local_direccion'] = $local->direccion;
+                    } else {
+                        $data['local_nombre'] = $data['local'];
+                        $data['local_direccion'] = $data['local'];
+                    }
+                    echo $this->load->view('menu/proveedor/tbl_lst_cuentasporpagar_excel', $data, true);
+                    break;
                 }
-                echo $this->load->view('menu/proveedor/tbl_lst_cuentasporpagar_excel', $data, true);
-                break;
-            }
         }
     }
 
-    public function ver_deuda()
-    {
+    public function ver_deuda() {
         $id_ingreso = $this->input->post('id_ingreso');
         $this->load->model('metodosdepago/metodos_pago_model');
 
@@ -528,40 +508,40 @@ class ingresos extends MY_Controller
             $dataresult['cronogramas'] = $this->ingreso_model->get_cronograma_by_cuotas($id_ingreso);
 
             $dataresult['ingreso'] = $this->db->join('moneda', 'moneda.id_moneda=ingreso.id_moneda')
-                ->join('proveedor', 'proveedor.id_proveedor=ingreso.int_Proveedor_id', 'left')
-                ->join('usuario', 'usuario.nUsuCodigo = ingreso.int_usuario_id', 'left')
-                ->get_where('ingreso', array('id_ingreso' => $id_ingreso))->row();
+                            ->join('proveedor', 'proveedor.id_proveedor=ingreso.int_Proveedor_id', 'left')
+                            ->join('usuario', 'usuario.nUsuCodigo = ingreso.int_usuario_id', 'left')
+                            ->get_where('ingreso', array('id_ingreso' => $id_ingreso))->row();
 
-            if(!empty($dataresult['ingreso']->proveedor_nombre)){
+            if (!empty($dataresult['ingreso']->proveedor_nombre)) {
                 $dataresult['proveedor'] = $this->db->get_where('proveedor', array('id_proveedor' => $dataresult['ingreso']->int_Proveedor_id))->row();
-            }else{
+            } else {
                 $dataresult['proveedor'] = $this->db->get_where('usuario', array('nUsuCodigo' => $dataresult['ingreso']->int_usuario_id))->row();
             }
 
             $dataresult['ingreso_detalles'] = $this->db->join('producto', 'producto.producto_id=detalleingreso.id_producto')
-                ->get_where('detalleingreso', array('id_ingreso' => $id_ingreso))->result();
+                            ->get_where('detalleingreso', array('id_ingreso' => $id_ingreso))->result();
 
             $dataresult['credito'] = $this->db->get_where('ingreso_credito', array('ingreso_id' => $id_ingreso))->row();
 
             $dataresult['pagos_ingreso'] = $this->db->join('ingreso_credito_cuotas', 'ingreso_credito_cuotas.id=pagos_ingreso.pagoingreso_ingreso_id')
-                ->join('metodos_pago', 'metodos_pago.id_metodo=pagos_ingreso.medio_pago_id')
-                ->join('banco', 'banco.banco_id=pagos_ingreso.banco_id', 'left')
-                ->group_by('pagoingreso_id')
-                ->get_where('pagos_ingreso', array('ingreso_credito_cuotas.ingreso_id' => $id_ingreso))->result();
+                            ->join('metodos_pago', 'metodos_pago.id_metodo=pagos_ingreso.medio_pago_id')
+                            ->join('banco', 'banco.banco_id=pagos_ingreso.banco_id', 'left')
+                            ->group_by('pagoingreso_id')
+                            ->get_where('pagos_ingreso', array('ingreso_credito_cuotas.ingreso_id' => $id_ingreso))->result();
 
             $dataresult['metodos'] = $this->metodos_pago_model->get_all();
             $dataresult['bancos'] = $this->db->join('caja_desglose', 'caja_desglose.id = banco.cuenta_id')
-                ->join('caja', 'caja.id = caja_desglose.caja_id')
-                ->join('moneda', 'moneda.id_moneda = caja.moneda_id')
-                ->get_where('banco', array('banco_status' => 1))->result();
+                            ->join('caja', 'caja.id = caja_desglose.caja_id')
+                            ->join('moneda', 'moneda.id_moneda = caja.moneda_id')
+                            ->get_where('banco', array('banco_status' => 1))->result();
             $dataresult['tarjetas'] = $this->db->get('tarjeta_pago')->result();
             $dataresult['cajas'] = $this->db->join('caja_desglose', 'caja_desglose.caja_id=caja.id')
-                ->get_where('caja', array(
-                    'moneda_id' => $dataresult['ingreso']->id_moneda,
-                    'local_id' => $dataresult['ingreso']->local_id,
-                    'retencion' => 0,
-                    'caja_desglose.estado' => 1
-                ))->result();
+                            ->get_where('caja', array(
+                                'moneda_id' => $dataresult['ingreso']->id_moneda,
+                                'local_id' => $dataresult['ingreso']->local_id,
+                                'retencion' => 0,
+                                'caja_desglose.estado' => 1
+                            ))->result();
 
 
             $this->load->view('menu/ingreso/tbl_ingreso_cronograma_pago', $dataresult);
@@ -569,11 +549,10 @@ class ingresos extends MY_Controller
         }
     }
 
-    public function pagoCuotaCredito()
-    {
-        /*este metodo hace su funcion cuando se paga una cuota, bien sea pago anticipado o no*/
+    public function pagoCuotaCredito() {
+        /* este metodo hace su funcion cuando se paga una cuota, bien sea pago anticipado o no */
 
-        /*estos dos, siempre los recibo*/
+        /* estos dos, siempre los recibo */
         $ingreso_id = $this->input->post('ingreso_id');
 
         $metodo_pago = $this->input->post('metodo_pago');
@@ -591,11 +570,9 @@ class ingresos extends MY_Controller
 
         $dataresul['success'] = "El pago se ha realizado satisfactoriamente";
         echo json_encode($dataresul);
-
     }
 
-    function guardarPago()
-    {
+    function guardarPago() {
         if ($this->input->is_ajax_request()) {
 
             $ingreso = $this->db->get_where('ingreso', array('id_ingreso' => $this->input->post('ingreso_id')))->row();
@@ -626,12 +603,10 @@ class ingresos extends MY_Controller
             }
 
             echo json_encode($json);
-
         }
     }
 
-    function guardarPago1()
-    {
+    function guardarPago1() {
         if ($this->input->is_ajax_request()) {
 
             $detalle = json_decode($this->input->post('lst_producto', true));
@@ -669,7 +644,6 @@ class ingresos extends MY_Controller
 
                     $save_historial = false;
                 }
-
             } else {
                 $save_historial = $this->pagos_ingreso_model->guardar($detalle);
             }
@@ -678,19 +652,16 @@ class ingresos extends MY_Controller
             if ($save_historial != false) {
 
                 $json['exito'] = true;
-
             } else {
 
                 $json['exito'] = false;
             }
 
             echo json_encode($json);
-
         }
     }
 
-    function cargar_vistapago_proveedor()
-    {
+    function cargar_vistapago_proveedor() {
         if ($this->input->is_ajax_request()) {
             $detalle = json_decode($this->input->post('lst_producto', true));
 
@@ -737,12 +708,10 @@ class ingresos extends MY_Controller
 
             // var_dump($buscar_restante);
             $this->load->view('menu/proveedor/visualizarIngresoPendiente', $dataresult);
-
         }
     }
 
-    function imprimir_pago_pendiente()
-    {
+    function imprimir_pago_pendiente() {
         if ($this->input->is_ajax_request()) {
 
             $id_historial = $this->input->post('id_historial', true);
@@ -793,12 +762,9 @@ class ingresos extends MY_Controller
 
             $this->load->view('menu/proveedor/visualizarIngresoPendiente', $data);
         }
-
-
     }
 
-    public function vertodoingreso()
-    {
+    public function vertodoingreso() {
         $id_ingreso = $this->input->post('id_ingreso');
 
         if ($id_ingreso != FALSE) {
@@ -806,30 +772,29 @@ class ingresos extends MY_Controller
             $dataresult['cronogramas'] = $this->ingreso_model->get_cronograma_by_cuotas($id_ingreso);
 
             $dataresult['ingreso'] = $this->db->join('moneda', 'moneda.id_moneda=ingreso.id_moneda')
-                ->join('proveedor', 'proveedor.id_proveedor=ingreso.int_Proveedor_id', 'left')
-                ->join('usuario', 'usuario.nUsuCodigo = ingreso.int_usuario_id', 'left')
-                ->join('gastos', 'ingreso.id_gastos = gastos.id_gastos', 'left')
-                ->join('tipos_gasto', 'gastos.tipo_gasto = tipos_gasto.id_tipos_gasto', 'left')
-                ->get_where('ingreso', array('id_ingreso' => $id_ingreso))->row();
+                            ->join('proveedor', 'proveedor.id_proveedor=ingreso.int_Proveedor_id', 'left')
+                            ->join('usuario', 'usuario.nUsuCodigo = ingreso.int_usuario_id', 'left')
+                            ->join('gastos', 'ingreso.id_gastos = gastos.id_gastos', 'left')
+                            ->join('tipos_gasto', 'gastos.tipo_gasto = tipos_gasto.id_tipos_gasto', 'left')
+                            ->get_where('ingreso', array('id_ingreso' => $id_ingreso))->row();
 
             $dataresult['ingreso_detalles'] = $this->db->join('producto', 'producto.producto_id=detalleingreso.id_producto')
-                ->join('unidades', 'unidades.id_unidad = detalleingreso.unidad_medida')
-                ->get_where('detalleingreso', array('id_ingreso' => $id_ingreso))->result();
+                            ->join('unidades', 'unidades.id_unidad = detalleingreso.unidad_medida')
+                            ->get_where('detalleingreso', array('id_ingreso' => $id_ingreso))->result();
 
             $dataresult['credito'] = $this->db->get_where('ingreso_credito', array('ingreso_id' => $id_ingreso))->row();
 
             $dataresult['pagos_ingreso'] = $this->db->join('ingreso_credito_cuotas', 'ingreso_credito_cuotas.id=pagos_ingreso.pagoingreso_ingreso_id')
-                ->join('metodos_pago', 'metodos_pago.id_metodo=pagos_ingreso.medio_pago_id')
-                ->join('banco', 'banco.banco_id=pagos_ingreso.banco_id', 'left')
-                ->group_by('pagoingreso_id')
-                ->get_where('pagos_ingreso', array('ingreso_credito_cuotas.ingreso_id' => $id_ingreso))->result();
+                            ->join('metodos_pago', 'metodos_pago.id_metodo=pagos_ingreso.medio_pago_id')
+                            ->join('banco', 'banco.banco_id=pagos_ingreso.banco_id', 'left')
+                            ->group_by('pagoingreso_id')
+                            ->get_where('pagos_ingreso', array('ingreso_credito_cuotas.ingreso_id' => $id_ingreso))->result();
 
             $this->load->view('menu/ingreso/visualizar_detalle_ingreso', $dataresult);
         }
     }
 
-    public function cambiar_fecha()
-    {
+    public function cambiar_fecha() {
         $data['id'] = $this->input->post('id');
         $data['fecha'] = date('Y-m-d H:i:s', strtotime($this->input->post('fecha') . " " . date('H:i:s')));
 
@@ -837,9 +802,7 @@ class ingresos extends MY_Controller
         $this->db->update('ingreso_credito_cuotas', array('fecha_vencimiento' => $data['fecha']));
     }
 
-
-    function devolucion()
-    {
+    function devolucion() {
         if ($this->session->userdata('esSuper') == 1) {
             $data['locales'] = $this->local_model->get_all();
         } else {
@@ -855,8 +818,7 @@ class ingresos extends MY_Controller
         }
     }
 
-    function anular_ingreso()
-    {
+    function anular_ingreso() {
 
         $resultado = $this->ingreso_model->anular_ingreso();
 
@@ -867,9 +829,7 @@ class ingresos extends MY_Controller
         exit();
     }
 
-
-    function get_ingresos()
-    {
+    function get_ingresos() {
         $condicion = array();
         if ($this->input->post('id_local') != "seleccione") {
             $condicion = array('local_id' => $this->input->post('id_local'));
@@ -895,7 +855,7 @@ class ingresos extends MY_Controller
             $data['anular'] = 1;
         }
 
-        /*este es para los estados de ingresos, el selectde estado ingresos*/
+        /* este es para los estados de ingresos, el selectde estado ingresos */
         if ($this->input->post('status') != "seleccione") {
             $where_in = false;
 
@@ -910,13 +870,13 @@ class ingresos extends MY_Controller
             $data['status'] = $this->input->post('status');
         }
 
-        /*pregunto si el select de estado facturacion es distinto se seleccione (vacio)
-        y distinto de facturacion pendiente, ya que cuando este en facturacionpendiente, siempre va a estar el select de estado ingreso,
-        en estatus completado, por lo tanto va a pasar arriba nada mas*/
+        /* pregunto si el select de estado facturacion es distinto se seleccione (vacio)
+          y distinto de facturacion pendiente, ya que cuando este en facturacionpendiente, siempre va a estar el select de estado ingreso,
+          en estatus completado, por lo tanto va a pasar arriba nada mas */
         $cerrado = false;
         $condicion_facturar = false;
         if ($this->input->post('estado_facturacion') != "seleccione"
-            and $this->input->post('estado_facturacion') != "FACTURACION_PENDIENTE"
+                and $this->input->post('estado_facturacion') != "FACTURACION_PENDIENTE"
         ) {
             $condicion_facturar = true;
             $where_in = false;
@@ -927,7 +887,7 @@ class ingresos extends MY_Controller
             $data['status'] = $this->input->post('status');
         }
 
-        /*si conficionfacturar es igual a true, llamo al metodo que busca en la tabla ingreso_contable*/
+        /* si conficionfacturar es igual a true, llamo al metodo que busca en la tabla ingreso_contable */
         if ($condicion_facturar == true) {
             $data['ingresos'] = $this->ingreso_model->get_ingresocontable_by_estatus($condicion, $where_in);
         } else {
@@ -935,9 +895,9 @@ class ingresos extends MY_Controller
         }
 
 
-        /*si $cerrado==true quiere decir que estado_facturacion es = a completado,
-        por lo tanto debo buscar en la tabla ingresos, los que esten en estatus cerrado, ya que los que estan cerrados en la tabla
-        ingresos_contable ya fueron buscados arriba*/
+        /* si $cerrado==true quiere decir que estado_facturacion es = a completado,
+          por lo tanto debo buscar en la tabla ingresos, los que esten en estatus cerrado, ya que los que estan cerrados en la tabla
+          ingresos_contable ya fueron buscados arriba */
         if ($cerrado == true) {
             $where_in = array("CERRADO");
             $data['ingresos_cerrados_normales'] = $this->ingreso_model->get_ingresos_by_estatus($condicion, $where_in);
@@ -945,11 +905,9 @@ class ingresos extends MY_Controller
 
 
         $this->load->view('menu/ingreso/lista_ingreso', $data);
-
     }
 
-    function get_ingresos_devolucion()
-    {
+    function get_ingresos_devolucion() {
         if ($this->input->post('id_local') != "seleccione") {
             $condicion = array('local_id' => $this->input->post('id_local'));
             $data['local_id'] = $this->input->post('id_local');
@@ -991,8 +949,7 @@ class ingresos extends MY_Controller
         $this->load->view('menu/ingreso/lista_ingreso', $data);
     }
 
-    function form($id = FALSE, $local = false, $ingreso = 'INGRESO')
-    {
+    function form($id = FALSE, $local = false, $ingreso = 'INGRESO') {
 
         $data = array();
         if ($id != FALSE) {
@@ -1011,22 +968,20 @@ class ingresos extends MY_Controller
             $data['kardex'] = null;
             if ($data['ingreso']->ingreso_status == 'ANULADO') {
                 $data['kardex'] = $this->db->get_where('kardex', array(
-                    'ref_id' => $data['ingreso']->id_ingreso,
-                    'io' => 1,
-                    'tipo' => 7,
-                    'operacion' => 6
-                ))->row();
+                            'ref_id' => $data['ingreso']->id_ingreso,
+                            'io' => 1,
+                            'tipo' => 7,
+                            'operacion' => 6
+                        ))->row();
             }
-
         }
 
         $this->load->view('menu/ingreso/form_detalle_ingreso', $data);
     }
 
-    function cerrar_ingreso()
-    {
+    function cerrar_ingreso() {
 
-        /*este metodo coloca en estatus cerrado los ingresos*/
+        /* este metodo coloca en estatus cerrado los ingresos */
         if ($this->input->is_ajax_request()) {
 
             $id_ingreso = $this->input->post('idingreso');
@@ -1038,7 +993,7 @@ class ingresos extends MY_Controller
 
             $tabla = 'ingreso';
 
-            /*ingreso contable viene por post, para saber a cual tabla voy a actualizar si ingreso o ingreso contable*/
+            /* ingreso contable viene por post, para saber a cual tabla voy a actualizar si ingreso o ingreso contable */
             if ($ingreso_contable == 'true') {
                 $tabla = 'ingreso_contable';
             }
@@ -1053,9 +1008,7 @@ class ingresos extends MY_Controller
         }
     }
 
-
-    function pdf()
-    {
+    function pdf() {
 
         $pdf = new Pdf('L', 'mm', 'LETTER', true, 'UTF-8', false, false);
         $pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
@@ -1087,7 +1040,7 @@ class ingresos extends MY_Controller
 
             $condicion['fecha_registro <'] = date('Y-m-d', $fechadespues);
         }
-        /*este es para los estados de ingresos, el selectde estado ingresos*/
+        /* este es para los estados de ingresos, el selectde estado ingresos */
         if ($estatus != "seleccione") {
             $where_in = false;
 
@@ -1098,17 +1051,16 @@ class ingresos extends MY_Controller
             if ($estatus == "COMPLETADO") {
                 $where_in = array("COMPLETADO");
             }
-
         }
 
 
-        /*pregunto si el select de estado facturacion es distinto se seleccione (vacio)
-        y distinto de facturacion pendiente, ya que cuando este en facturacionpendiente, siempre va a estar el select de estado ingreso,
-        en estatus completado, por lo tanto va a pasar arriba nada mas*/
+        /* pregunto si el select de estado facturacion es distinto se seleccione (vacio)
+          y distinto de facturacion pendiente, ya que cuando este en facturacionpendiente, siempre va a estar el select de estado ingreso,
+          en estatus completado, por lo tanto va a pasar arriba nada mas */
         $cerrado = false;
         $condicion_facturar = false;
         if ($estado_facturacion != "seleccione"
-            and $estado_facturacion != "FACTURACION_PENDIENTE" and $estado_facturacion != false
+                and $estado_facturacion != "FACTURACION_PENDIENTE" and $estado_facturacion != false
         ) {
             $condicion_facturar = true;
             $where_in = false;
@@ -1137,27 +1089,23 @@ class ingresos extends MY_Controller
                 $where = array('detalleingreso.id_ingreso' => $detalle, 'local_id' => $local);
                 $group = array('local_id');
                 $data['local_detalle'] = $this->detalle_ingreso_model->get_by($select, $join, $campos_join, $where, $group, false, true);
-
             }
-
-
         } else {
 
 
-            /*si conficionfacturar es igual a true, llamo al metodo que busca en la tabla ingreso_contable*/
+            /* si conficionfacturar es igual a true, llamo al metodo que busca en la tabla ingreso_contable */
             if ($condicion_facturar == true) {
                 $data['ingresos'] = $this->ingreso_model->get_ingresocontable_by_estatus($condicion, $where_in);
             } else {
                 $data['ingresos'] = $this->ingreso_model->get_ingresos_by_estatus($condicion, $where_in);
             }
-            /*si $cerrado==true quiere decir que estado_facturacion es = a completado,
-            por lo tanto debo buscar en la tabla ingresos, los que esten en estatus cerrado, ya que los que estan cerrados en la tabla
-            ingresos_contable ya fueron buscados arriba*/
+            /* si $cerrado==true quiere decir que estado_facturacion es = a completado,
+              por lo tanto debo buscar en la tabla ingresos, los que esten en estatus cerrado, ya que los que estan cerrados en la tabla
+              ingresos_contable ya fueron buscados arriba */
             if ($cerrado == true) {
                 $where_in = array("CERRADO");
                 $data['ingresos_cerrados_normales'] = $this->ingreso_model->get_ingresos_by_estatus($condicion, $where_in);
             }
-
         }
 
         $html = $this->load->view('menu/reportes/pdfReporteIngresos', $data, true);
@@ -1166,12 +1114,9 @@ class ingresos extends MY_Controller
         $pdf->WriteHTML($html);
         $nombre_archivo = utf8_decode("Reporte de Ingresos.pdf");
         $pdf->Output($nombre_archivo, 'D');
-
-
     }
 
-    function excel()
-    {
+    function excel() {
 
         $local = $this->input->post('local');
         $fecha_desde = $this->input->post('fecIni2');
@@ -1188,7 +1133,6 @@ class ingresos extends MY_Controller
         if ($fecha_desde != "") {
             $fecha = date('Y-m-d', strtotime($fecha_desde));
             $condicion['fecha_registro >= '] = $fecha;
-
         }
         if ($fecha_hasta != "") {
 
@@ -1199,7 +1143,7 @@ class ingresos extends MY_Controller
         }
 
 
-        /*este es para los estados de ingresos, el selectde estado ingresos*/
+        /* este es para los estados de ingresos, el selectde estado ingresos */
         if ($estatus != "seleccione") {
             $where_in = false;
 
@@ -1210,17 +1154,16 @@ class ingresos extends MY_Controller
             if ($estatus == "COMPLETADO") {
                 $where_in = array("COMPLETADO");
             }
-
         }
 
 
-        /*pregunto si el select de estado facturacion es distinto se seleccione (vacio)
-        y distinto de facturacion pendiente, ya que cuando este en facturacionpendiente, siempre va a estar el select de estado ingreso,
-        en estatus completado, por lo tanto va a pasar arriba nada mas*/
+        /* pregunto si el select de estado facturacion es distinto se seleccione (vacio)
+          y distinto de facturacion pendiente, ya que cuando este en facturacionpendiente, siempre va a estar el select de estado ingreso,
+          en estatus completado, por lo tanto va a pasar arriba nada mas */
         $cerrado = false;
         $condicion_facturar = false;
         if ($estado_facturacion != "seleccione"
-            and $estado_facturacion != "FACTURACION_PENDIENTE" and $estado_facturacion != false
+                and $estado_facturacion != "FACTURACION_PENDIENTE" and $estado_facturacion != false
         ) {
             $condicion_facturar = true;
             $where_in = false;
@@ -1250,33 +1193,28 @@ class ingresos extends MY_Controller
                 $where = array('detalleingreso.id_ingreso' => $detalle, 'local_id' => $local);
                 $group = array('local_id');
                 $data['local_detalle'] = $this->detalle_ingreso_model->get_by($select, $join, $campos_join, $where, $group, false, true);
-
             }
         } else {
-            /*si conficionfacturar es igual a true, llamo al metodo que busca en la tabla ingreso_contable*/
+            /* si conficionfacturar es igual a true, llamo al metodo que busca en la tabla ingreso_contable */
             if ($condicion_facturar == true) {
                 $data['ingresos'] = $this->ingreso_model->get_ingresocontable_by_estatus($condicion, $where_in);
             } else {
                 $data['ingresos'] = $this->ingreso_model->get_ingresos_by_estatus($condicion, $where_in);
             }
-            /*si $cerrado==true quiere decir que estado_facturacion es = a completado,
-            por lo tanto debo buscar en la tabla ingresos, los que esten en estatus cerrado, ya que los que estan cerrados en la tabla
-            ingresos_contable ya fueron buscados arriba*/
+            /* si $cerrado==true quiere decir que estado_facturacion es = a completado,
+              por lo tanto debo buscar en la tabla ingresos, los que esten en estatus cerrado, ya que los que estan cerrados en la tabla
+              ingresos_contable ya fueron buscados arriba */
             if ($cerrado == true) {
                 $where_in = array("CERRADO");
                 $data['ingresos_cerrados_normales'] = $this->ingreso_model->get_ingresos_by_estatus($condicion, $where_in);
             }
-
         }
 
 
         $this->load->view('menu/reportes/excelReporteIngresos', $data);
-
     }
 
-
-    function toExcel_cuentasPorPagar()
-    {
+    function toExcel_cuentasPorPagar() {
 
 
         if ($this->input->post('proveedor1', true) != '-1') {
@@ -1285,13 +1223,11 @@ class ingresos extends MY_Controller
                 'int_Proveedor_id' => $this->input->post('proveedor1', true)
             );
             $data['proveedor'] = $this->input->post('proveedor1', true);
-
         }
         if ($this->input->post('fecIni1') != "") {
 
             $where['fecha_registro >='] = date('Y-m-d', strtotime($this->input->post('fecIni1')));
             $data['fecIni'] = $this->input->post('fecIni1', true);
-
         }
 
         if ($this->input->post('fecFin1') != "") {
@@ -1339,14 +1275,11 @@ class ingresos extends MY_Controller
 
                 $i++;
             }
-
         }
         $this->load->view('menu/reportes/reporteCuentasPorPagar', $data);
     }
 
-
-    function toPdf_cuentasPorPagar()
-    {
+    function toPdf_cuentasPorPagar() {
 
         $mpdf = new mPDF('utf-8', 'A4-L');
         $mpdf->packTableData = true;
@@ -1356,13 +1289,11 @@ class ingresos extends MY_Controller
                 'int_Proveedor_id' => $this->input->post('proveedor2', true)
             );
             $data['proveedor'] = $this->input->post('proveedor2', true);
-
         }
         if ($this->input->post('fecIni2') != "") {
 
             $where['fecha_registro >='] = date('Y-m-d', strtotime($this->input->post('fecIni2')));
             $data['fecIni'] = $this->input->post('fecIni2', true);
-
         }
 
         if ($this->input->post('fecFin') != "") {
@@ -1410,7 +1341,6 @@ class ingresos extends MY_Controller
 
                 $i++;
             }
-
         }
 
         $html = $this->load->view('menu/reportes/pdfCuentasPorPagar', $data, true);
@@ -1418,9 +1348,7 @@ class ingresos extends MY_Controller
         $mpdf->Output();
     }
 
-
-    function ingreso_detallado()
-    {
+    function ingreso_detallado() {
 
 
         $data['proveedores'] = $this->proveedor_model->get_all();
@@ -1439,9 +1367,7 @@ class ingresos extends MY_Controller
         }
     }
 
-
-    function get_ingresodetallado()
-    {
+    function get_ingresodetallado() {
 
         $data['moneda_local'] = $this->monedas_model->get_moneda_default();
 
@@ -1455,7 +1381,6 @@ class ingresos extends MY_Controller
         if ($this->input->post('id_local') != "TODOS") {
             $condicion = array('local_id' => $this->input->post('id_local'));
             $data['local'] = $this->input->post('id_local');
-
         }
 
         if ($this->input->post('desde') != "") {
@@ -1480,6 +1405,6 @@ class ingresos extends MY_Controller
 
         //var_dump($data['ingresos']);
         $this->load->view('menu/ingreso/lista_ingresodetallado', $data);
-
     }
+
 }

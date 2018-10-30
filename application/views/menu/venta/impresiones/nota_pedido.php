@@ -96,7 +96,17 @@
             </tr>
         <?php endif; ?>
     </table>
-
+    <?php 
+    if($venta->venta_estado=="ANULADO"){
+        ?>
+    <center>
+    <span>___________________________________________________</span>
+    <span>TICKET ANULADO</span>
+    <span>¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯</span>
+    </center>
+        <?php
+    }
+    ?>
 
     <table cellpadding="0" cellspacing="0">
         <tbody>
