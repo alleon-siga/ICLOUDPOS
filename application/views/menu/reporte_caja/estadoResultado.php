@@ -82,6 +82,7 @@
                     $("#historial_list").html($("#loading").html());
 
                     var data = {
+                        'local_id': $("#local_id").val(),
                         'year': $("#year").val(),
                         'mes': $("#mes").val(),
                         'moneda_id': $("#moneda_id").val()

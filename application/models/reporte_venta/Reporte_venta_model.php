@@ -253,7 +253,7 @@ class reporte_venta_model extends CI_Model
                     ) AS costoCompraImp,
                     dv.impuesto_porciento
                 FROM
-                    detalle_venta dv
+                    detalle_venta dv 
                 INNER JOIN venta v ON v.venta_id = dv.id_venta
                 INNER JOIN `local` l ON v.local_id = l.int_local_id
                 INNER JOIN producto p ON p.producto_id = dv.id_producto
@@ -308,6 +308,7 @@ class reporte_venta_model extends CI_Model
                     dv.unidad_medida,
                     DATE_FORMAT(v.fecha, '%d/%m/%Y') AS fecha, 
                     p.producto_nombre, 
+                    p.producto_codigo_interno, 
                     u.nombre_unidad, 
                     SUM(up.unidades * (dv.cantidad - IFNULL(dv.cantidad_devuelta, 0))) AS cantidad,
                     dv.detalle_costo_promedio, 

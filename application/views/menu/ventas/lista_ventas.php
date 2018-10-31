@@ -70,9 +70,9 @@
 
 
 <a target="_blank" href="<?= $ruta?>venta/pdfHistorialVentas/<?php if(isset($local)) echo $local; else echo 0;?>/<?php if(isset($fecha_desde)) echo date("Y-m-d", strtotime($fecha_desde)); else echo 0;?>/<?php if(isset($fecha_hasta)) echo date("Y-m-d", strtotime($fecha_hasta)); else echo 0;?>/<?php if(isset($estatus)) echo $estatus; else echo 0;?>"
-   class="btn  btn-default btn-lg" data-toggle="tooltip" title="Exportar a PDF" data-original-title="fa fa-file-pdf-o"><i class="fa fa-file-pdf-o fa-fw"></i></a>
+   class="btn  btn-danger btn-md" data-toggle="tooltip" title="Exportar a PDF" data-original-title="fa fa-file-pdf-o"><i class="fa fa-file-pdf-o fa-fw"></i></a>
 <a target="_blank" href="<?= $ruta?>venta/excelHistorialVentas/<?php if(isset($local)) echo $local; else echo 0;?>/<?php if(isset($fecha_desde)) echo date("Y-m-d", strtotime($fecha_desde)); else echo 0;?>/<?php if(isset($fecha_hasta)) echo date("Y-m-d", strtotime($fecha_hasta)); else echo 0;?>/<?php if(isset($estatus)) echo $estatus; else echo 0;?>"
-   class="btn btn-default btn-lg" data-toggle="tooltip" title="Exportar a Excel" data-original-title="fa fa-file-excel-o"><i class="fa fa-file-excel-o fa-fw"></i></a>
+   class="btn btn-default btn-md" data-toggle="tooltip" title="Exportar a Excel" data-original-title="fa fa-file-excel-o"><i class="fa fa-file-excel-o fa-fw"></i></a>
 <div class="modal fade" id="mvisualizarVenta" tabindex="-1" role="dialog"
            aria-labelledby="myModalLabel"
            aria-hidden="true">

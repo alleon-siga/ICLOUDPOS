@@ -101,7 +101,7 @@
 
                     <td class="actions" style="white-space: nowrap;">
                         <div class="btn-group">
-                            <a class="btn btn-default" data-toggle="tooltip"
+                            <a class="btn btn-default btn-md" data-toggle="tooltip"
                                title="Ver" data-original-title="Ver"
                                href="#"
                                onclick="ver('<?= $ingreso->id_ingreso ?>','<?= $ingreso->local_id ?>','INGRESO');">
@@ -109,11 +109,11 @@
                             </a>
 
                             <?php if (isset($anular)): ?>
-                                <a class="btn" style="background-color:#e74c3c; color: #ffffff" data-toggle="tooltip"
+                                <a class="btn btn-md" style="background-color:#e74c3c; color: #ffffff" data-toggle="tooltip"
                                    title="Anular" data-original-title="Anular"
                                    href="#"
                                    onclick="mostrar('<?= $ingreso->id_ingreso ?>','<?= $ingreso->local_id ?>');">
-                                    <i class="fa fa-remove"></i>
+                                    <i class="fa fa-trash"></i>
                                 </a>
                             <?php endif; ?>
 
@@ -132,7 +132,7 @@
                             ingreso,
                             cuando el ingreso este en estatus completado, y en facturacion pendiente-->
                             <?php if ((valueOption('ACTIVAR_SHADOW') == 1) && ($ingreso->ingreso_status == "COMPLETADO")): ?>
-                                <a class="btn" data-toggle="tooltip"
+                                <a class="btn btn-md" data-toggle="tooltip"
                                    style="background-color: #1493D1; border-color:#15b3ab; color: #ffffff"
                                    title="Facturar Ingreso" data-original-title="Facturar Ingreso"
                                    href="#" onclick="editaringreso('<?= $ingreso->id_ingreso ?>', 'facturar');">
@@ -143,7 +143,7 @@
 
                             <?php if (valueOption('ACTIVAR_SHADOW') == 1): ?>
                                 <a style="display:none; background-color:#f0ad4e; color: #ffffff"
-                                   class="btn cerrar_ingreso"
+                                   class="btn btn-md cerrar_ingreso"
                                    data-toggle="tooltip"
                                    title="Cerrar Ingreso" data-original-title="Cerrar Ingreso"
                                    href="#" onclick="cerrar_ingreso('<?= $ingreso->id_ingreso ?>');">
@@ -243,7 +243,7 @@
                         <div class="btn-group">
                             <?php
                             $pertenece = "'INGRESONORMAL'";
-                            echo '<a class="btn btn-default" data-toggle="tooltip"
+                            echo '<a class="btn btn-default btn-md" data-toggle="tooltip"
                                             title="Ver" data-original-title="Ver"
                                             href="#" onclick="ver(' . $ingreso->id_ingreso . ',' . $ingreso->local_id . ',' . $pertenece . ');">'; ?>
                             <i class="fa fa-search"></i>
@@ -251,17 +251,17 @@
 
                             <?php
                             if (isset($anular)) {
-                                echo '<a class="btn" style="background-color:#e74c3c; color: #ffffff" data-toggle="tooltip"
+                                echo '<a class="btn btn-md" style="background-color:#e74c3c; color: #ffffff" data-toggle="tooltip"
                                             title="Anular" data-original-title="Anular"
                                             href="#" onclick="mostrar(' . $ingreso->id_ingreso . ',' . $ingreso->local_id . ');">'; ?>
-                                <i class="fa fa-remove"></i>
+                                <i class="fa fa-trash-o"></i>
                                 </a>
                             <?php } ?>
 
 
                             <?php
                             if ($ingreso->ingreso_status == "PENDIENTE") {
-                                echo '<a class="btn btn-primary" data-toggle="tooltip"
+                                echo '<a class="btn btn-primary btn-md" data-toggle="tooltip"
                                 style=""
                                             title="Valorizar Ingreso" data-original-title="Valorizar Ingreso"
                                             href="#" onclick="editaringreso(' . $ingreso->id_ingreso . ');">'; ?>
@@ -278,7 +278,7 @@
                                 and ($ingreso->ingreso_status == "COMPLETADO")
                             ) {
                                 $facturar = "'facturar'";
-                                echo '<a class="btn" data-toggle="tooltip" style="background-color: #1493D1; border-color:#15b3ab; color: #ffffff"
+                                echo '<a class="btn btn-md" data-toggle="tooltip" style="background-color: #1493D1; border-color:#15b3ab; color: #ffffff"
                                             title="Facturar Ingreso" data-original-title="Facturar Ingreso"
                                             href="#" onclick="editaringreso(' . $ingreso->id_ingreso . ',' . $facturar . ');">'; ?>
                                 <i class="fa fa-building-o fa-fw"></i>
@@ -287,7 +287,7 @@
                             <?php }
 
                             if ((valueOption('ACTIVAR_SHADOW') == 1)) {
-                                echo '<a style="display:none; background-color:#f0ad4e; color: #ffffff"  class="btn cerrar_ingreso" data-toggle="tooltip"
+                                echo '<a style="display:none; background-color:#f0ad4e; color: #ffffff"  class="btn btn-md cerrar_ingreso" data-toggle="tooltip"
                                             title="Cerrar Ingreso" data-original-title="Cerrar Ingreso"
                                             href="#" onclick="cerrar_ingreso(' . $ingreso->id_ingreso . ');">'; ?>
                                 <i class="fa fa-unlock"></i>

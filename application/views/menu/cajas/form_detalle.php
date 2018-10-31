@@ -85,11 +85,11 @@
         <div class="modal-footer">
             <div class="row">
                 <div class="col-md-6 text-left">
-                    <button id="exportar_excel" type="button" class="btn btn-default" title="Exportar Excel">
+                    <button id="exportar_excel" type="button" class="btn btn-success btn-md" title="Exportar Excel">
                         <i class="fa fa-file-excel-o"></i>
                     </button>
 
-                    <button id="exportar_pdf" type="button" class="btn btn-default" title="Exportar Pdf">
+                    <button id="exportar_pdf" type="button" class="btn btn-danger btn-md" title="Exportar Pdf">
                         <i class="fa fa-file-pdf-o"></i>
                     </button>
                 </div>

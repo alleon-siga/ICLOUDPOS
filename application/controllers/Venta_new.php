@@ -45,7 +45,7 @@ class venta_new extends MY_Controller
         $data['venta_action'] = $action;
         $data['monedas'] = $this->db->get_where('moneda', array('status_moneda' => 1))->result();
         $data['condiciones_pagos'] = $this->db->get_where('condiciones_pago', array('status_condiciones' => 1))->result();
-
+        $data['documentos']=$this->documentos_model->get_documentos();
         $data['dialog_venta_contado'] = $this->load->view('menu/venta/dialog_venta_contado', array(
             'tarjetas' => $this->db->get('tarjeta_pago')->result(),
             'metodos' => $this->metodos_pago_model->get_all(),
@@ -64,6 +64,7 @@ class venta_new extends MY_Controller
     function get_ventas($action = "")
     {
         $local_id = $this->input->post('local_id');
+        $docuemnto_id = $this->input->post('documento_id');
         $estado = $this->input->post('estado');
         $condicion_pago_id = $this->input->post('condicion_pago_id');
 
@@ -73,6 +74,7 @@ class venta_new extends MY_Controller
 
         if ($action != 'caja') {
             $params = array(
+                'id_documento'=>$docuemnto_id,
                 'local_id' => $local_id,
                 'estado' => $estado,
                 'condicion_id' => $condicion_pago_id,
@@ -81,6 +83,7 @@ class venta_new extends MY_Controller
             );
         } else {
             $params = array(
+                'id_documento'=>$docuemnto_id,
                 'local_id' => $local_id,
                 'estado' => $estado
             );
@@ -90,7 +93,7 @@ class venta_new extends MY_Controller
         $params['usuarios_id'] = $this->input->post('usuarios_id');
         $data['moneda'] = $this->db->get_where('moneda', array('id_moneda' => $params['moneda_id']))->row();
         $data['ventas'] = $this->venta->get_ventas($params, $action);
-
+        
 
         $data['venta_totales'] = $this->venta->get_ventas_totales($params, $action);
 
