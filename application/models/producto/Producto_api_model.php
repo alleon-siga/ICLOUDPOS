@@ -36,6 +36,52 @@ class Producto_api_model extends CI_Model
         return $result;
     }
 
+    public function get_productos_auto($str_producto)
+    {
+        $query = "
+            SELECT
+              producto_id,
+              producto_codigo_interno AS codigo,
+              producto_nombre
+            FROM
+              producto
+            JOIN
+              impuestos ON impuestos.id_impuesto = producto.producto_impuesto
+            WHERE
+              producto_estatus = 1 AND
+              producto_estado = 1
+
+        ";
+
+        if ($str_producto != "") {
+            $terms = explode(' ', $str_producto);
+            if (count($terms) > 0) {
+                $query .= " AND ";
+                $n = 1;
+
+                foreach ($terms as $t) {
+                    $query .= "(producto_nombre LIKE '%" . $t . "%' OR producto_codigo_interno LIKE '%" . $t . "%')";
+                    if ($n++ < count($terms))
+                        $query .= " AND ";
+                }
+            }
+        }
+
+        $query .= " GROUP BY producto_id";
+        $productos = $this->db->query($query)->result();
+
+        $data = array();
+        foreach ($productos as $p) {
+            $data[] = array(
+                'producto_id' => $p->producto_id,
+                'codigo' => $p->codigo,
+                'producto_nombre' => $p->producto_nombre
+            );
+        }
+
+        return $data;
+    }
+
     function get_productos_unidprec($id_producto, $id_precio)
     {
         $result = $this->db->select('unidades_has_precio.precio as precio, unidades_has_producto.*, unidades.nombre_unidad, producto.producto_cualidad, unidades.abreviatura as abr, unidades.presentacion')
