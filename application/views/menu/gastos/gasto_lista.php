@@ -79,13 +79,13 @@
 
 <a id="exportar_pdf" target="_blank"
    href="#"
-   class="btn  btn-primary btn-md" data-toggle="tooltip" title="Exportar a Pdf"
+   class="btn  btn-danger btn-md" data-toggle="tooltip" title="Exportar a Pdf"
    data-original-title="fa fa-file-pdf-o"><i class="fa fa-file-pdf-o fa-fw"></i></a>
 
 <a id="exportar_excel" target="_blank"
    href="#"
-   class="btn  btn-primary btn-md" data-toggle="tooltip" title="Exportar a Excel"
-   data-original-title="fa fa-file-excel-o"><i class="fa fa-file-pdf-o fa-fw"></i></a>
+   class="btn  btn-success btn-md" data-toggle="tooltip" title="Exportar a Excel"
+   data-original-title="fa fa-file-excel-o"><i class="fa fa-file-excel-o fa-fw"></i></a>
 <br><br>
 <script>
     $(function () {

@@ -923,9 +923,6 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                         <div class="col-md-7">
                             <select class="form-control" id="tipo_tarjeta" name="tipo_tarjeta">
                                 <option value="">Seleccione</option>
-                                <?php foreach ($tarjetas as $tarjeta) : ?>
-                                    <option value="<?php echo $tarjeta['id'] ?>"><?php echo $tarjeta['nombre'] ?></option>
-                                <?php endforeach; ?>
                             </select>
                         </div>
                     </div>
