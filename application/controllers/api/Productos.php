@@ -58,7 +58,7 @@ class Productos extends REST_Controller
             $productos = $this->producto_api_model->get_productos_fav($str_producto);
 
         } else {
-            $productos = $this->producto_api_model->get_productos_listall($str_producto);
+            $productos = $this->producto_api_model->get_productos_auto($str_producto);
         }
 
         $data['productos'] = array();
