@@ -95,6 +95,29 @@ class Clientes extends REST_Controller
         }
     }
 
+    function reniec_post()
+    {
+        $dni = $this->input->post('dni');
+
+        require_once(APPPATH . 'libraries/consultadni/consultareniec.php');
+        $consulta = file_get_html('http://aplicaciones007.jne.gob.pe/srop_publico/Consulta/Afiliado/GetNombresCiudadano?DNI=' . $dni)->plaintext;
+        $partes = explode("|", $consulta);
+        $datos = array(
+            0 => $dni,
+            1 => $partes[0],
+            2 => $partes[1],
+            3 => $partes[2],
+        );
+
+        if ($datos) {
+            $data['cliente'] = $datos;
+            $this->response($data, 200);
+
+        } else {
+            $this->response(0, 200);
+        }
+    }
+
     // Save
     public function save_post()
     {
