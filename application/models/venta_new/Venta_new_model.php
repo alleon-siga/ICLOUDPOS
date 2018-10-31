@@ -1236,6 +1236,11 @@ class venta_new_model extends CI_Model
                 $this->kardex_model->set_kardex($values);
             }
 
+            // Genero la nota de credito de la facturacion electronica
+            if (valueOptionDB('FACTURACION', 0) == 1) {
+                $this->facturacion_model->notaCreditoVenta($nota_credito_id);
+            }
+
         }
 
         $this->db->trans_complete();
