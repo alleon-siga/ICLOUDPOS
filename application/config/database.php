@@ -54,7 +54,7 @@ $db['default'] = array(
     'hostname' => '192.168.1.4',
     'username' => 'user',
     'password' => 'password',
-    'database' => DATABASE_HOST != false ? DATABASE_HOST : 'icloudpos_req43',
+    'database' => DATABASE_HOST != false ? DATABASE_HOST : 'icloudpos_innovaled',
     'dbdriver' => 'mysqli',
     'dbprefix' => '',
     'pconnect' => FALSE,
