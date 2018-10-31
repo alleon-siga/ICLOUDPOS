@@ -36,6 +36,7 @@
                             <th>Tipo Camb</th>
                             <th>Prec. sin Imp</th>
                             <th>Prec. con Imp</th>
+                            <th>Prec. con Gasto</th>
                             <th>Sub total</th>
                         </tr>
                     </thead>
@@ -84,6 +85,9 @@
                                 </td>                                
                                 <td align="center">
                                     <?= $detalle->simbolo . " " . number_format($precio_co, 2) ?>
+                                </td>
+                                <td align="center">
+                                   <?= $detalle->simbolo . " " . number_format(($detalle->total / $detalle->cantidad) +$precio_co, 2) ?>
                                 </td>
                                 <td align="center">
                                     <?= $detalle->simbolo . " " . number_format($detalle->precio * $detalle->cantidad, 2) ?>

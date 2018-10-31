@@ -174,7 +174,8 @@ $(document).ready(function () {
                 $(this).attr('data-action', "0");
                 $(this).removeClass('btn-primary');
                 $(this).addClass('btn-warning');
-                $(this).html('Cambiar Moneda');
+                $("#config_moneda > i").removeClass('fa-check');                
+                $("#config_moneda > i").addClass('fa-refresh');
             } else {
                 $.bootstrapGrowl('<h4>Debe escribir una tasa válida.</h4>', {
                     type: 'warning',
