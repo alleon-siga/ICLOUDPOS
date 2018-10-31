@@ -137,12 +137,12 @@
                         $id_detalle = 0;
                     } ?>
                     <a href="#" onclick="generar_reporte_excel(<?= $id_detalle ?>,'<?= $ingreso_tipo ?>');"
-                       class='btn btn-default'
+                       class='btn btn-success btn-md'
                        title="Exportar a Excel"><i class="fa fa-file-excel-o"></i> </a>
 
 
                     <a href="#" onclick="generar_reporte_pdf(<?= $id_detalle ?>,'<?= $ingreso_tipo ?>');"
-                       class='btn btn-default'
+                       class='btn btn-danger btn-md'
                        title="Exportar a PDF"><i class="fa fa-file-pdf-o"></i></a>
                 </div>
 

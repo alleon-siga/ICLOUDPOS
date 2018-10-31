@@ -134,7 +134,7 @@
     <div class="row">
         <div class="col-md-12">
             <br>
-            <button type="button" id="exportar_excel" title="Exportar Excel" class="btn btn-primary">
+            <button type="button" id="exportar_excel" title="Exportar Excel" class="btn btn-success btn-md">
                 <i class="fa fa-file-excel-o fa-fw"></i>
             </button>
             <!--<button type="button" id="exportar_pdf" title="Exportar Pdf" class="btn btn-primary">

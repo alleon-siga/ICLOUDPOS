@@ -69,10 +69,10 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
             </tbody>
         </table>
     </div>
-    <button type="button" id="exportar_excel" title="Exportar Excel" class="btn btn-primary">
+    <button type="button" id="exportar_excel" title="Exportar Excel" class="btn btn-success btn-md">
         <i class="fa fa-file-excel-o fa-fw"></i>
     </button>
-    <button type="button" id="exportar_pdf" title="Exportar Pdf" class="btn btn-primary">
+    <button type="button" id="exportar_pdf" title="Exportar Pdf" class="btn btn-danger btn-md">
         <i class="fa fa-file-pdf-o fa-fw"></i>
     </button>
     <br><br>

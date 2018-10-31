@@ -102,7 +102,7 @@
                     <div id="abrir_local_excel"></div>
                 </form>
             </div>
-            <a href="#" onclick="generar_reporte_excel();" class=' btn btn-md btn-primary'
+            <a href="#" onclick="generar_reporte_excel();" class=' btn btn-md btn-success'
                title="Exportar a Excel"><i class="fa fa-file-excel-o"></i></a>
             <div id="pp_pdf">
                 <form name="frmPDF" id="frmPDF" action="<?php echo $ruta; ?>exportar/toPDF_traspaso" target="_blank" method="post">
@@ -113,7 +113,7 @@
                     <div id="abrir_local_pdf"></div>
                 </form>
             </div>
-            <a href="#" onclick="generar_reporte_pdf();" class='btn btn-md btn-primary'
+            <a href="#" onclick="generar_reporte_pdf();" class='btn btn-md btn-danger'
                title="Exportar a PDF"><i class="fa fa-file-pdf-o"></i> </a>
             <br><br>
         </div>

@@ -253,7 +253,7 @@ class reporte_venta_model extends CI_Model
                     ) AS costoCompraImp,
                     dv.impuesto_porciento
                 FROM
-                    detalle_venta dv
+                    detalle_venta dv 
                 INNER JOIN venta v ON v.venta_id = dv.id_venta
                 INNER JOIN `local` l ON v.local_id = l.int_local_id
                 INNER JOIN producto p ON p.producto_id = dv.id_producto

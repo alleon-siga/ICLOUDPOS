@@ -85,7 +85,7 @@
         <div class="modal-footer">
             <div class="row" style="float: left;">
                 <div class="col-md-12">
-                    <a id="exportar_excel" href="#" class="btn btn-default" data-toggle="tooltip"
+                    <a id="exportar_excel" href="#" class="btn btn-default btn-md" data-toggle="tooltip"
                        title="Exportar a Excel" data-original-title="fa fa-file-excel-o">
                         <i class="fa fa-file-excel-o fa-fw"></i>
                     </a>
