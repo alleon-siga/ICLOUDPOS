@@ -15,7 +15,7 @@ class facturacion_model extends CI_Model
 
     function get_facturacion($where = array())
     {
-        $this->db->select('*,usuario.username')->from('facturacion')
+        $this->db->select('facturacion.*, local.*, usuario.username')->from('facturacion')
             ->join('local', 'local.int_local_id = facturacion.local_id')
             ->join('venta', 'venta.venta_id = facturacion.ref_id')
             ->join('usuario', 'usuario.nUsuCodigo = venta.id_vendedor');
@@ -285,15 +285,20 @@ class facturacion_model extends CI_Model
                         'resumen_id' => $resumen_id
                     ))->result();
 
+
                 foreach ($resumen_detalles as $detalle) {
+                    $response_msg = 'El Comprobante numero ' . $detalle->documento_numero .
+                        ', ha sido aceptado por el resumen 
+                                RC-' . date('Ymd', strtotime($resumen->fecha)) . '-' . $resumen->correlativo;
+                    if ($codigo != '0') {
+                        $response_msg = $response['MENSAJE'];
+                    }
                     $this->db->where('id', $detalle->comprobante_id);
                     $this->db->update('facturacion', array(
                         'estado' => $estado,
-                        'nota' =>
-                            'El Comprobante numero ' . $detalle->documento_numero .
-                            ', ha sido aceptado por el resumen 
-                                RC-' . date('Ymd', strtotime($resumen->fecha)) . '-' . $resumen->correlativo,
-                        'hash_cdr' => isset($response['HASH_CDR']) ? $response['HASH_CDR'] : null
+                        'nota' => $response_msg,
+                        'hash_cdr' => isset($response['HASH_CDR']) ? $response['HASH_CDR'] : null,
+                        'fecha_cdr' => isset($response['FECHA_CDR']) ? $response['FECHA_CDR'] : date('Y-m-d H:i:s')
                     ));
                 }
 
@@ -409,7 +414,8 @@ class facturacion_model extends CI_Model
                 'sunat_codigo' => $response['CODIGO'],
                 'hash_cdr' => isset($response['HASH_CDR']) ? $response['HASH_CDR'] : null,
                 'nota' => $response['MENSAJE'],
-                'estado' => $estado
+                'estado' => $estado,
+                'fecha_cdr' => isset($response['FECHA_CDR']) ? $response['FECHA_CDR'] : date('Y-m-d H:i:s')
             ));
 
             return TRUE;
@@ -942,8 +948,8 @@ class facturacion_model extends CI_Model
         if ($facturacion->documento_tipo == '01' && ($facturacion->estado == 1 || $facturacion->estado == 3)) {
             // Si la factura esta en estado generado la emito para luego hacer su posterior comunicacion de baja
             if ($facturacion->estado == 1) {
-                if ($this->emitirXml($facturacion->id) !== FALSE) {
-
+                if ($this->emitirXml($facturacion->id) === FALSE) {
+                    return FALSE;
                 }
             }
 
@@ -996,28 +1002,31 @@ class facturacion_model extends CI_Model
 
                 return TRUE;
             } else {
+                if ($facturacion->estado == 4)
+                    return TRUE;
                 return FALSE;
             }
         }
     }
 
-    function anularVenta($venta_id, $numero, $motivo)
+    function notaCreditoVenta($nc_id)
     {
         $this->load->model('venta_new/venta_new_model');
-
-        $venta = $this->venta_new_model->get_venta_detalle($venta_id);
+        $nc = $this->db->get_where('notas_credito', array('id' => $nc_id))->row();
+        $nc_detalles = $this->db->get_where('notas_credito_detalle', array('notas_credito_id' => $nc_id))->result();
+        $venta = $this->venta_new_model->get_venta_detalle($nc->venta_id);
 
         $tipo_doc = '';
         $numero_comprobante = '';
         if ($venta->documento_id == 3) {
             $numero_comprobante = 'B' . $venta->serie . '-' . $venta->numero;
-            $numero = 'B' . $numero;
+            $numero = 'B' . $nc->serie . '-' . $nc->numero;
             $tipo_doc = TIPO_COMPROBANTE::$BOLETA;
         }
         if ($venta->documento_id == 1) {
             $numero_comprobante = 'F' . $venta->serie . '-' . $venta->numero;
             $tipo_doc = TIPO_COMPROBANTE::$FACTURA;
-            $numero = 'F' . $numero;
+            $numero = 'F' . $nc->serie . '-' . $nc->numero;
         }
 
         $tipo_identidad = '';
@@ -1042,35 +1051,37 @@ class facturacion_model extends CI_Model
         $total_gravadas = 0;
         $total_exoneradas = 0;
         $total_inafectas = 0;
+        $total_impuesto = 0;
 
-        foreach ($venta->detalles as $d) {
+        foreach ($nc_detalles as $nc_detalle) {
+
+            $d = $this->db->get_where('detalle_venta', array('id_detalle' => $nc_detalle->detalle_id))->row();
 
             $factor = (100 + $d->impuesto_porciento) / 100;
+            $subtotal = $venta->tipo_impuesto == 1 ? ($nc_detalle->cantidad * $nc_detalle->precio / $factor) : ($nc_detalle->cantidad * $nc_detalle->precio);
+
+            // Sumo los subtotales dependiendo su tipo de operacion
             if ($d->afectacion_impuesto == OP_GRAVABLE) {
+                $total_gravadas += $subtotal;
+
+                // Calculo el total de los impuestos y normalizo el precio al de venta
                 if ($venta->tipo_impuesto == 1) {
-                    $total_gravadas += $d->cantidad * $d->precio / $factor;
-                } else {
-                    $total_gravadas += $d->cantidad * $d->precio;
+                    $total_impuesto += ($nc_detalle->cantidad * $nc_detalle->precio) - (($nc_detalle->cantidad * $nc_detalle->precio) / $factor);
+                } elseif ($venta->tipo_impuesto == 2) {
+                    $total_impuesto += (($nc_detalle->cantidad * $nc_detalle->precio) * $factor) - ($nc_detalle->cantidad * $nc_detalle->precio);
                 }
             }
 
             if ($d->afectacion_impuesto == OP_EXONERADA) {
-                if ($venta->tipo_impuesto == 1) {
-                    $total_exoneradas += $d->cantidad * $d->precio / $factor;
-                } else {
-                    $total_exoneradas += $d->cantidad * $d->precio;
-                }
+                $total_exoneradas += $subtotal;
             }
 
             if ($d->afectacion_impuesto == OP_INAFECTA) {
-                if ($venta->tipo_impuesto == 1) {
-                    $total_inafectas += $d->cantidad * $d->precio / $factor;
-                } else {
-                    $total_inafectas += $d->cantidad * $d->precio;
-                }
+                $total_inafectas += $subtotal;
             }
         }
 
+        $subtotal = $total_gravadas + $total_exoneradas + $total_inafectas;
 
         $this->db->insert('facturacion', array(
             'local_id' => $venta->local_id,
@@ -1079,7 +1090,7 @@ class facturacion_model extends CI_Model
             'documento_numero' => $numero,
             'documento_mod_tipo' => $tipo_doc,
             'documento_mod_numero' => $numero_comprobante,
-            'documento_mod_motivo' => $motivo,
+            'documento_mod_motivo' => $nc->motivo_codigo,
             'cliente_tipo' => $tipo_identidad,
             'cliente_identificacion' => $venta->ruc,
             'cliente_nombre' => $venta->cliente_nombre,
@@ -1087,9 +1098,9 @@ class facturacion_model extends CI_Model
             'total_gravadas' => $total_gravadas * $cambio_dolar,
             'total_exoneradas' => $total_exoneradas * $cambio_dolar,
             'total_inafectas' => $total_inafectas * $cambio_dolar,
-            'subtotal' => $venta->subtotal * $cambio_dolar,
-            'impuesto' => $venta->impuesto * $cambio_dolar,
-            'total' => $venta->total * $cambio_dolar,
+            'subtotal' => $subtotal * $cambio_dolar,
+            'impuesto' => $total_impuesto * $cambio_dolar,
+            'total' => ($subtotal + $total_impuesto) * $cambio_dolar,
             'estado' => 0,
             'nota' => 'No enviado',
             'ref_id' => $venta->venta_id,
@@ -1097,20 +1108,25 @@ class facturacion_model extends CI_Model
 
         $facturacion_id = $this->db->insert_id();
 
-        foreach ($venta->detalles as $d) {
+        foreach ($nc_detalles as $nc_detalle) {
+
+            $d = $this->db
+                ->join('producto', 'producto.producto_id = detalle_venta.id_producto')
+                ->get_where('detalle_venta', array('id_detalle' => $nc_detalle->detalle_id))->row();
+            $unidad = $this->db->get_where('unidades', array('id_unidad' => $d->unidad_medida))->row();
 
             $impuesto = 0;
             if ($d->afectacion_impuesto == OP_GRAVABLE) {
                 $factor = (100 + $d->impuesto_porciento) / 100;
                 if ($venta->tipo_impuesto == 1) {
-                    $impuesto = ($d->cantidad * $d->precio) - (($d->cantidad * $d->precio) / $factor);
+                    $impuesto = ($nc_detalle->cantidad * $nc_detalle->precio) - (($nc_detalle->cantidad * $nc_detalle->precio) / $factor);
                 } elseif ($venta->tipo_impuesto == 2) {
-                    $impuesto = (($d->cantidad * $d->precio) * $factor) - ($d->cantidad * $d->precio);
-                    $d->precio += (($d->cantidad * $d->precio) * $factor) - ($d->cantidad * $d->precio);
+                    $impuesto = (($nc_detalle->cantidad * $nc_detalle->precio) * $factor) - ($nc_detalle->cantidad * $nc_detalle->precio);
+                    $nc_detalle->precio += (($nc_detalle->cantidad * $nc_detalle->precio) * $factor) - ($nc_detalle->cantidad * $nc_detalle->precio);
                 }
             }
 
-            if (valueOption('VALOR_COMPROBANTE', 'NOMBRE') == 'NOMBRE') {
+            if (valueOptionDB('VALOR_COMPROBANTE', 'NOMBRE') == 'NOMBRE') {
                 $producto_descripcion = $d->producto_nombre;
             } else {
                 $producto_descripcion = $d->producto_descripcion;
@@ -1123,173 +1139,9 @@ class facturacion_model extends CI_Model
                 'facturacion_id' => $facturacion_id,
                 'producto_codigo' => getCodigoValue($d->producto_id, $d->producto_codigo_interno),
                 'producto_descripcion' => $producto_descripcion,
-                'um' => $d->unidad_abr,
-                'cantidad' => $d->cantidad,
-                'precio' => $d->precio * $cambio_dolar,
-                'impuesto' => $impuesto * $cambio_dolar
-            ));
-        }
-
-        return $this->crearXml($facturacion_id);
-    }
-
-    function devolverVenta($venta_id, $devoluciones, $numero, $motivo)
-    {
-        $this->load->model('venta_new/venta_new_model');
-
-        $venta = $this->venta_new_model->get_venta_detalle($venta_id);
-
-        $tipo_doc = '';
-        $numero_comprobante = '';
-        if ($venta->documento_id == 3) {
-            $numero_comprobante = 'B' . $venta->serie . '-' . $venta->numero;
-            $numero = 'B' . $numero;
-            $tipo_doc = TIPO_COMPROBANTE::$BOLETA;
-        }
-        if ($venta->documento_id == 1) {
-            $numero_comprobante = 'F' . $venta->serie . '-' . $venta->numero;
-            $tipo_doc = TIPO_COMPROBANTE::$FACTURA;
-            $numero = 'F' . $numero;
-        }
-
-        $tipo_identidad = '';
-        if ($venta->cliente_tipo_identificacion == 1)
-            $tipo_identidad = TIPO_IDENTIDAD::$DNI;
-        if ($venta->cliente_tipo_identificacion == 2)
-            $tipo_identidad = TIPO_IDENTIDAD::$RUC;
-
-        $cambio_dolar = 1;
-        if ($venta->moneda_id != MONEDA_DEFECTO) {
-            $cambio = $this->get_tipo_cambio();
-            if ($cambio != null) {
-                $cambio_dolar = $cambio->venta;
-            } else {
-                return array(
-                    'respuesta' => 'error',
-                    'msg_validacion' => 'No se ha podido recuperar el cambio de dolar'
-                );
-            }
-        }
-
-        $total_gravadas = 0;
-        $total_exoneradas = 0;
-        $total_inafectas = 0;
-
-        foreach ($venta->detalles as $d) {
-            $producto = $this->db->get_where('producto', array('producto_id' => $d->producto_id))->row();
-            $factor = (100 + $d->impuesto_porciento) / 100;
-            if ($producto->producto_afectacion_impuesto == OP_GRAVABLE) {
-                if ($venta->tipo_impuesto == 1) {
-                    $total_gravadas += $d->cantidad * $d->precio / $factor;
-                } else {
-                    $total_gravadas += $d->cantidad * $d->precio;
-                }
-            }
-
-            if ($producto->producto_afectacion_impuesto == OP_EXONERADA) {
-                if ($venta->tipo_impuesto == 1) {
-                    $total_exoneradas += $d->cantidad * $d->precio / $factor;
-                } else {
-                    $total_exoneradas += $d->cantidad * $d->precio;
-                }
-            }
-
-            if ($producto->producto_afectacion_impuesto == OP_INAFECTA) {
-                if ($venta->tipo_impuesto == 1) {
-                    $total_inafectas += $d->cantidad * $d->precio / $factor;
-                } else {
-                    $total_inafectas += $d->cantidad * $d->precio;
-                }
-            }
-        }
-
-        $impuesto = 0;
-        $total = 0;
-        foreach ($devoluciones as $d) {
-            $total += $d->devolver * $d->precio;
-        }
-
-
-        if ($venta->tipo_impuesto == 1) {
-            foreach ($devoluciones as $d) {
-                $producto = $this->db->get_where('producto', array('producto_id' => $d->producto_id))->row();
-                if ($producto->producto_afectacion_impuesto == OP_GRAVABLE) {
-                    $factor = (100 + $d->impuesto_porciento) / 100;
-                    $impuesto += ($d->devolver * $d->precio) - (($d->devolver * $d->precio) / $factor);
-                }
-            }
-            $subtotal = $total - $impuesto;
-        } elseif ($venta->tipo_impuesto == 2) {
-            $subtotal = $total;
-            foreach ($devoluciones as $d) {
-                $producto = $this->db->get_where('producto', array('producto_id' => $d->producto_id))->row();
-                if ($producto->producto_afectacion_impuesto == OP_GRAVABLE) {
-                    $factor = (100 + $d->impuesto_porciento) / 100;
-                    $impuesto += (($d->devolver * $d->precio) * $factor) - ($d->devolver * $d->precio);
-                }
-            }
-            $total = $subtotal + $impuesto;
-        } else {
-            $subtotal = $total;
-        }
-
-
-        $this->db->insert('facturacion', array(
-            'local_id' => $venta->local_id,
-            'fecha' => date('Y-m-d'),
-            'documento_tipo' => TIPO_COMPROBANTE::$NOTA_CREDITO,
-            'documento_numero' => $numero,
-            'documento_mod_tipo' => $tipo_doc,
-            'documento_mod_numero' => $numero_comprobante,
-            'documento_mod_motivo' => $motivo,
-            'cliente_tipo' => $tipo_identidad,
-            'cliente_identificacion' => $venta->ruc,
-            'cliente_nombre' => $venta->cliente_nombre,
-            'cliente_direccion' => $venta->cliente_direccion,
-            'total_gravadas' => $total_gravadas * $cambio_dolar,
-            'total_exoneradas' => $total_exoneradas * $cambio_dolar,
-            'total_inafectas' => $total_inafectas * $cambio_dolar,
-            'subtotal' => $subtotal * $cambio_dolar,
-            'impuesto' => $impuesto * $cambio_dolar,
-            'total' => $total * $cambio_dolar,
-            'estado' => 0,
-            'nota' => 'No enviado',
-            'ref_id' => $venta->venta_id,
-        ));
-
-        $facturacion_id = $this->db->insert_id();
-
-        foreach ($devoluciones as $d) {
-
-            $impuesto = 0;
-            $factor = (100 + $d->impuesto_porciento) / 100;
-            if ($venta->tipo_impuesto == 1) {
-                $impuesto = ($d->devolver * $d->precio) - (($d->devolver * $d->precio) / $factor);
-            } elseif ($venta->tipo_impuesto == 2) {
-                $impuesto = (($d->devolver * $d->precio) * $factor) - ($d->devolver * $d->precio);
-                $d->precio += (($d->cantidad * $d->precio) * $factor) - ($d->cantidad * $d->precio);
-            }
-
-            $producto = $this->db->get_where('producto', array('producto_id' => $d->producto_id))->row();
-
-            //Viene de la configuracion de la venta item VALOR_COMPROBANTE
-            if (valueOption('VALOR_COMPROBANTE', 'NOMBRE') == 'NOMBRE') {
-                $producto_descripcion = $producto->producto_nombre;
-            } else {
-                $producto_descripcion = $producto->producto_descripcion;
-                if (empty($producto_descripcion)) {
-                    $producto_descripcion = $producto->producto_nombre;
-                }
-            }
-
-            $unidad = $this->db->get_where('unidades', array('id_unidad' => $d->unidad_id))->row();
-            $this->db->insert('facturacion_detalle', array(
-                'facturacion_id' => $facturacion_id,
-                'producto_codigo' => getCodigoValue($producto->producto_id, $producto->producto_codigo_interno),
-                'producto_descripcion' => $producto_descripcion,
                 'um' => $unidad->abreviatura,
-                'cantidad' => $d->devolver,
-                'precio' => $d->precio * $cambio_dolar,
+                'cantidad' => $nc_detalle->cantidad,
+                'precio' => $nc_detalle->precio * $cambio_dolar,
                 'impuesto' => $impuesto * $cambio_dolar
             ));
         }
