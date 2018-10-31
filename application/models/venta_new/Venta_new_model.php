@@ -167,6 +167,9 @@ class venta_new_model extends CI_Model
             $this->db->where('venta.venta_id', $where['venta_id']);
             return $this->db->get()->row();
         }
+        if (isset($where['id_documento']) && !empty($where['id_documento'])) {
+            $this->db->where('venta.id_documento', $where['id_documento']);
+        }
 
         if (isset($where['local_id']))
             $this->db->where('venta.local_id', $where['local_id']);
