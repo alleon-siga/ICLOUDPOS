@@ -124,12 +124,12 @@
 
     <a id="exportar_pdf"
        href="#"
-       class="btn  btn-default btn-lg" data-toggle="tooltip" title="Exportar a PDF"
+       class="btn  btn-danger btn-md" data-toggle="tooltip" title="Exportar a PDF"
        data-original-title="fa fa-file-pdf-o"><i class="fa fa-file-pdf-o fa-fw"></i></a>
 
     <a id="exportar_excel"
        href="#"
-       class="btn btn-default btn-lg" data-toggle="tooltip" title="Exportar a Excel"
+       class="btn btn-default btn-md" data-toggle="tooltip" title="Exportar a Excel"
        data-original-title="fa fa-file-excel-o"><i class="fa fa-file-excel-o fa-fw"></i></a>
 
 

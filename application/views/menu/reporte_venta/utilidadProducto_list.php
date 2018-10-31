@@ -150,7 +150,7 @@
                     <td class="<?= $clase ?>" style="text-align: right;"><?= $ingreso->venta_id ?></td>
                     <td class="<?= $clase ?>"><?= $ingreso->local_nombre ?></td>
                     <td class="<?= $clase ?>"><?= $ingreso->fecha ?></td>
-                    <td class="<?= $clase ?>"><?= $ingreso->producto_codigo_interno != "" ? $ingreso->producto_codigo_interno : $ingreso->producto_id ?></td>
+                    <td class="<?= $clase ?>"><?= valueOption('CODIGO_DEFAULT')== "INTERNO" ? $ingreso->producto_codigo_interno : $ingreso->producto_id ?></td>
                     <td class="<?= $clase ?>"><?= $ingreso->producto_nombre ?></td>
                     <td class="<?= $clase ?>"><?= $ingreso->nombre_unidad ?></td>
                     <td class="<?= $clase ?>" style="text-align: right;"><?= number_format($cantidad, 0) ?></td>

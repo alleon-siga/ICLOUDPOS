@@ -20,7 +20,7 @@
             <!-- Progress Bars Wizard Title -->
             <div class="row">
                 <div class="form-group">
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <?php if (isset($locales)): ?>
                             <label class="control-label panel-admin-text">Ubicaci&oacute;n</label>
                             <select id="venta_local" class="form-control filter-input">
@@ -36,7 +36,7 @@
 
                     </div>
 
-                    <div class="col-md-3" style="display: <?= $venta_action != 'caja' ? 'block' : 'none' ?>">
+                    <div class="col-md-2" style="display: <?= $venta_action != 'caja' ? 'block' : 'none' ?>">
                         <label class="control-label panel-admin-text">Fecha Venta</label>
                         <input type="text" id="date_range" class="form-control" readonly style="cursor: pointer;"
                                name="daterange" value="<?= date('d/m/Y') ?> - <?= date('d/m/Y') ?>"/>
@@ -64,7 +64,18 @@
                         </select>
                     </div>
 
-
+                    <div class="col-md-2" style="display: <?= $venta_action != 'caja' ? 'block' : 'none' ?>">
+                        <label class="control-label panel-admin-text">Documentos</label>
+                        <select name="documento_id" id="documento_id" class='cho form-control'>
+                            <option value="" selected="">TODOS</option>
+                            <?php foreach ($documentos as $documento): ?>
+                            <?php if($documento->ventas==1):?>
+                                <option value="<?= $documento->id_doc ?>"
+                                        data-simbolo="<?=  $documento->abr_doc ?>"><?=  $documento->des_doc ?></option>
+                                <?php endif;?>
+                                    <?php endforeach; ?>
+                        </select>
+                    </div>
                     <div class="col-md-1" style="display: none;">
                         <label class="control-label panel-admin-text">Estado:</label>
                     </div>
@@ -233,11 +244,12 @@
                         if ($('#venta_action').val() == 'caja') {
                             var local_id = $('#venta_local').val()
                             var estado = $('#venta_estado').val()
-                            var moneda_id = $('#moneda_id').val()
-
+                            var moneda_id = $('#moneda_id').val()                            
+                            var documento_id = $('#documento_id').val()
                             $.ajax({
                                 url: '<?= base_url() ?>venta_new/get_pendientes',
                                 data: {
+                                    'documento_id': documento_id,
                                     'local_id': local_id,
                                     'estado': estado,
                                     'moneda_id': moneda_id
@@ -275,7 +287,7 @@
 
                 function get_ventas() {
                     $('#historial_list').html($('#loading').html())
-
+                    var documento_id = $('#documento_id').val()
                     var local_id = $('#venta_local').val()
                     var estado = $('#venta_estado').val()
                     var fecha = $('#date_range').val()
@@ -285,6 +297,7 @@
                     $.ajax({
                         url: '<?= base_url() ?>venta_new/get_ventas/<?= $venta_action ?>',
                                     data: {
+                                        'documento_id':documento_id,
                                         'local_id': local_id,
                                         'fecha': fecha,
                                         'estado': estado,
