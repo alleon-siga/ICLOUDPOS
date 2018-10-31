@@ -254,6 +254,7 @@ class Emisor
                         'CODIGO' => $doc_cdr->getElementsByTagName('ResponseCode')->item(0)->nodeValue,
                         'MENSAJE' => $doc_cdr->getElementsByTagName('Description')->item(0)->nodeValue,
                         'HASH_CDR' => $doc_cdr->getElementsByTagName('DigestValue')->item(0)->nodeValue,
+                        'FECHA_CDR' => $doc_cdr->getElementsByTagName('ResponseDate')->item(0)->nodeValue . ' ' . $doc_cdr->getElementsByTagName('ResponseTime')->item(0)->nodeValue,
                     );
                 } else {
                     Logger::write('warning', '9999: El comprobante ' . $file_name . ' fue emitido pero no recibio respuesta.');
@@ -404,7 +405,7 @@ class Emisor
 
                 unlink($file . '.ZIP');
                 $name = explode('-', $file_name);
-                $name = $name[1].'-'.$name[2].'-'.$name[3];
+                $name = $name[1] . '-' . $name[2] . '-' . $name[3];
                 return array(
                     'CODIGO' => '0',
                     'MENSAJE' =>
@@ -578,6 +579,7 @@ class Emisor
                         'CODIGO' => $doc_cdr->getElementsByTagName('ResponseCode')->item(0)->nodeValue,
                         'MENSAJE' => $doc_cdr->getElementsByTagName('Description')->item(0)->nodeValue,
                         'HASH_CDR' => $doc_cdr->getElementsByTagName('DigestValue')->item(0)->nodeValue,
+                        'FECHA_CDR' => $doc_cdr->getElementsByTagName('ResponseDate')->item(0)->nodeValue . ' ' . $doc_cdr->getElementsByTagName('ResponseTime')->item(0)->nodeValue,
                     );
                 } else {
                     Logger::write('warning', '9999: El comprobante ' . $file_name . ' fue emitido pero no recibio respuesta.');
@@ -748,6 +750,7 @@ class Emisor
                         'CODIGO' => $doc_cdr->getElementsByTagName('ResponseCode')->item(0)->nodeValue,
                         'MENSAJE' => $doc_cdr->getElementsByTagName('Description')->item(0)->nodeValue,
                         'HASH_CDR' => $doc_cdr->getElementsByTagName('DigestValue')->item(0)->nodeValue,
+                        'FECHA_CDR' => $doc_cdr->getElementsByTagName('ResponseDate')->item(0)->nodeValue . ' ' . $doc_cdr->getElementsByTagName('ResponseTime')->item(0)->nodeValue,
                     );
                 } else {
                     Logger::write('warning', '9999: El comprobante ' . $file_name . ' fue emitido pero no recibio respuesta.');
