@@ -132,6 +132,8 @@ class Pedidos extends REST_Controller
 
         $fact_emisor = $this->db->get('facturacion_emisor')->row();
         $data['ruc'] = $fact_emisor->ruc;
+        $data['emp_nombre'] = $fact_emisor->razon_social;
+        $data['emp_direccion'] = $fact_emisor->direccion;
 
         $this->response($data, 200);
     }
@@ -226,6 +228,8 @@ class Pedidos extends REST_Controller
 
                     $fact_emisor = $this->db->get('facturacion_emisor')->row();
                     $data['ruc'] = $fact_emisor->ruc;
+                    $data['emp_nombre'] = $fact_emisor->razon_social;
+                    $data['emp_direccion'] = $fact_emisor->direccion;
                 }
 
             } else
