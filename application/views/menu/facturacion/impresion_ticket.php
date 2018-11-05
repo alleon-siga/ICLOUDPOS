@@ -207,7 +207,7 @@
 >>>>>>> ad81b41701507142cd5d696036f32a9d1c5c973b
             </tr>
             <tr>
-                <td><?= number_format($detalle->cantidad, 3) . " " . $detalle->um ?></td>
+                <td><?= number_format($detalle->cantidad, 0) . " " . $detalle->um ?></td>
                 <td style="text-align: right"><?= $emisor->moneda_simbolo . ' ' . number_format($detalle->precio, 2) ?></td>
                 <td style="text-align: right"><?= $emisor->moneda_simbolo . ' ' . number_format($detalle->cantidad * $detalle->precio, 2) ?></td>
             </tr>
