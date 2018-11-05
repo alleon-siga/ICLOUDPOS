@@ -228,18 +228,17 @@
         </tr>
         </thead>
         <tbody>
-<<<<<<< HEAD
-<?php foreach ($facturacion->detalles as $detalle): ?>
-                <tr class="td-data">
-                    <td><?= $detalle->producto_codigo ?></td>
-                    <td><?= number_format($detalle->cantidad, 0) ?></td>
-                    <td><?= $detalle->um ?></td>
-                    <td style="width: 50%;"><?= $detalle->producto_descripcion ?></td>
-                    <td style="white-space: nowrap; text-align: right;"><?= $emisor->moneda_simbolo ?> <?= number_format($detalle->precio, 2) ?></td>
-                    <td style="white-space: nowrap; text-align: right;"><?= $emisor->moneda_simbolo ?> <?= number_format($detalle->precio * $detalle->cantidad, 2) ?></td>
-                </tr>
-                    <?php endforeach; ?>
-=======
+        <<<<<<< HEAD
+        <?php foreach ($facturacion->detalles as $detalle): ?>
+            <tr class="td-data">
+                <td><?= $detalle->producto_codigo ?></td>
+                <td><?= number_format($detalle->cantidad, 0) ?></td>
+                <td><?= $detalle->um ?></td>
+                <td style="width: 50%;"><?= $detalle->producto_descripcion ?></td>
+                <td style="white-space: nowrap; text-align: right;"><?= $emisor->moneda_simbolo ?> <?= number_format($detalle->precio, 2) ?></td>
+                <td style="white-space: nowrap; text-align: right;"><?= $emisor->moneda_simbolo ?> <?= number_format($detalle->precio * $detalle->cantidad, 2) ?></td>
+            </tr>
+        <?php endforeach; ?>
         <?php foreach ($facturacion->detalles as $detalle): ?>
             <tr class="td-data">
                 <td><?= $detalle->producto_codigo ?></td>
@@ -250,9 +249,6 @@
                 <td style="white-space: nowrap; text-align: right;"><?= $emisor->moneda_simbolo ?> <?= number_format($detalle->precio * $detalle->cantidad, 2) ?></td>
             </tr>
         <?php endforeach; ?>
->>>>>>> ad81b41701507142cd5d696036f32a9d1c5c973b
-
-
         <tr>
             <td colspan="4" style="border-top: 1px solid #000;" rowspan="6">
                 <?php
