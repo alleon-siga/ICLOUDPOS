@@ -355,6 +355,13 @@ class facturacion extends MY_Controller
     {
 
         $data['facturacion'] = $this->facturacion_model->get_facturacion(array('id' => $id));
+        if ($data['facturacion']->documento_tipo == '07') {
+            $data['doc_afecta'] = $this->db->get_where('facturacion', array(
+                'documento_tipo' => $data['facturacion']->documento_mod_tipo,
+                'documento_numero' => $data['facturacion']->documento_mod_numero,
+                'ref_id' => $data['facturacion']->ref_id,
+            ))->row();
+        }
         $data['emisor'] = $this->facturacion_model->get_emisor();
         $this->load->view('menu/facturacion/impresion_ticket', $data);
     }
@@ -362,6 +369,13 @@ class facturacion extends MY_Controller
     function imprimir($id)
     {
         $data['facturacion'] = $this->facturacion_model->get_facturacion(array('id' => $id));
+        if ($data['facturacion']->documento_tipo == '07') {
+            $data['doc_afecta'] = $this->db->get_where('facturacion', array(
+                'documento_tipo' => $data['facturacion']->documento_mod_tipo,
+                'documento_numero' => $data['facturacion']->documento_mod_numero,
+                'ref_id' => $data['facturacion']->ref_id,
+            ))->row();
+        }
         $data['emisor'] = $this->facturacion_model->get_emisor();
 
 

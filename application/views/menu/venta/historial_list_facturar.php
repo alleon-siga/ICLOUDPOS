@@ -21,7 +21,7 @@
                     <hr class="hr-margin-5">
                     <div class="row">
                         <div class="col-md-4"><label class="control-label">Fecha Documento:</label></div>
-                        <div class="col-md-8"><?= date('m/d/Y') ?></div>
+                        <div class="col-md-8"><?= date('d/m/Y') ?></div>
                     </div>
                     <hr class="hr-margin-5">
                     <div class="row">

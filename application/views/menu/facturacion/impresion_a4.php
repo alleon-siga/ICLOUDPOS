@@ -18,6 +18,7 @@
         float: left;
         position: relative;
     }
+
     #header .col {
         margin: 0;
         padding: 0;
@@ -25,6 +26,7 @@
         float: left;
         position: relative;
     }
+
     #emisor_logo {
         height: 95px;
     }
@@ -145,10 +147,10 @@
                      src="<?= base_url('recursos/img/logo/' . valueOptionDB("EMPRESA_LOGO", 'logo.jpg')) ?>">
             </div>
             <div>
-                <div id="emisor_nombre_comercial"><?= $emisor->nombre_comercial!="-" && $emisor->nombre_comercial!=""?$emisor->nombre_comercial:"" ?></div>
-                <div id="emisor_razon_social"><?= $emisor->razon_social!="-" && $emisor->razon_social!=""?$emisor->razon_social:"" ?></div>
-                <div id="emisor_direccion"><?= $emisor->direccion!="-" && $emisor->direccion!=""?$emisor->direccion:"" ?></div>
-                <div id="emisor_telefono"><?= valueOption('EMPRESA_TELEFONO', '')!="-" && valueOption('EMPRESA_TELEFONO', '')!=""?valueOption('EMPRESA_TELEFONO', ''):""  ?></div>
+                <div id="emisor_nombre_comercial"><?= $emisor->nombre_comercial != "-" && $emisor->nombre_comercial != "" ? $emisor->nombre_comercial : "" ?></div>
+                <div id="emisor_razon_social"><?= $emisor->razon_social != "-" && $emisor->razon_social != "" ? $emisor->razon_social : "" ?></div>
+                <div id="emisor_direccion"><?= $emisor->direccion != "-" && $emisor->direccion != "" ? $emisor->direccion : "" ?></div>
+                <div id="emisor_telefono"><?= valueOption('EMPRESA_TELEFONO', '') != "-" && valueOption('EMPRESA_TELEFONO', '') != "" ? valueOption('EMPRESA_TELEFONO', '') : "" ?></div>
             </div>
         </div>
         <div class="col-caja">
@@ -169,7 +171,7 @@
                     ?>
                 </div>
                 <div id="numero_documento">
-<?= $facturacion->documento_numero_ceros ?>
+                    <?= $facturacion->documento_numero_ceros ?>
                 </div>
             </div>
         </div>
@@ -195,18 +197,20 @@
                 <th>Moneda:</th>
                 <td><?= $emisor->moneda_letra ?></td>
             </tr>
-<?php if ($facturacion->documento_tipo == '07' || $facturacion->documento_tipo == '08'): ?>
+            <?php if ($facturacion->documento_tipo == '07' || $facturacion->documento_tipo == '08'): ?>
                 <tr>
                     <th>Comprobante Afectado:</th>
-                    <td><?= $facturacion->documento_mod_numero_ceros ?></td>
+                    <td><?= $facturacion->documento_mod_numero_ceros ?>
+                        <?= isset($doc_afecta) ? ' (' . date('d/m/Y', strtotime($doc_afecta->fecha)) . ')' : '' ?>
+                    </td>
                     <th>Motivo:</th>
-                    <td><?= $emisor->motivo_nota ?></td>
+                    <td><?= $facturacion->motivo_nota ?></td>
                 </tr>
-<?php endif; ?>
-                <tr>
+            <?php endif; ?>
+            <tr>
                 <th>Vendedor:</th>
                 <td><?= $facturacion->username ?></td>
-<!--                <th>Forma de Pago:</th>
+                <!--                <th>Forma de Pago:</th>
                 <td><?= $emisor->moneda_letra ?></td>-->
             </tr>
         </table>
@@ -214,78 +218,79 @@
 
     <table id="producto_detalles" cellspacing="0" cellpadding="0">
         <thead>
-            <tr>
-                <th>C&oacute;digo</th>
-                <th>Cantidad</th>
-                <th>UM</th>
-                <th>Descripci&oacute;n</th>                
-                <th style="white-space: nowrap;">P.U.</th>
-                <th>Importe</th>
-            </tr>
+        <tr>
+            <th>C&oacute;digo</th>
+            <th>Cantidad</th>
+            <th>UM</th>
+            <th>Descripci&oacute;n</th>
+            <th style="white-space: nowrap;">P.U.</th>
+            <th>Importe</th>
+        </tr>
         </thead>
         <tbody>
-<?php foreach ($facturacion->detalles as $detalle): ?>
-                <tr class="td-data">
-                    <td><?= $detalle->producto_codigo ?></td>
-                    <td><?= number_format($detalle->cantidad, 3) ?></td>
-                    <td><?= $detalle->um ?></td>
-                    <td style="width: 50%;"><?= $detalle->producto_descripcion ?></td>
-                    <td style="white-space: nowrap; text-align: right;"><?= $emisor->moneda_simbolo ?> <?= number_format($detalle->precio, 2) ?></td>
-                    <td style="white-space: nowrap; text-align: right;"><?= $emisor->moneda_simbolo ?> <?= number_format($detalle->precio * $detalle->cantidad, 2) ?></td>
-                </tr>
-                    <?php endforeach; ?>
+        <?php foreach ($facturacion->detalles as $detalle): ?>
+            <tr class="td-data">
+                <td><?= $detalle->producto_codigo ?></td>
+                <td><?= number_format($detalle->cantidad, 3) ?></td>
+                <td><?= $detalle->um ?></td>
+                <td style="width: 50%;"><?= $detalle->producto_descripcion ?></td>
+                <td style="white-space: nowrap; text-align: right;"><?= $emisor->moneda_simbolo ?> <?= number_format($detalle->precio, 2) ?></td>
+                <td style="white-space: nowrap; text-align: right;"><?= $emisor->moneda_simbolo ?> <?= number_format($detalle->precio * $detalle->cantidad, 2) ?></td>
+            </tr>
+        <?php endforeach; ?>
 
-            
-            <tr>
-                <td colspan="4" style="border-top: 1px solid #000;" rowspan="6">
-                    <?php
-                    if ($facturacion->estado_comprobante == 3) {
-                        ?>
-                        <img src="recursos/img/anulado.png" style="margin-left: 15%;width: 300px;"> 
-                        <?php
-                    }
-                    ?>
-                 </td>
-                <th style="text-align: left;">Gravadas</th>
-                <th style="text-align: right;white-space: nowrap;"><?= $emisor->moneda_simbolo ?> <?= number_format($facturacion->total_gravadas, 2) ?></th>
-            </tr>
-            <tr>
-                <th style="text-align: left;">Inafectas</th>
-                <th style="text-align: right;white-space: nowrap;"><?= $emisor->moneda_simbolo ?> <?= number_format($facturacion->total_inafectas, 2) ?></th>
-            </tr>
-            <tr>
-                <th style="text-align: left;">Exoneradas</th>
-                <th style="text-align: right;white-space: nowrap;"><?= $emisor->moneda_simbolo ?> <?= number_format($facturacion->total_exoneradas, 2) ?></th>
-            </tr>
-            <tr>
-                <th style="text-align: left;">Gratuitas</th>
-                <th style="text-align: right;white-space: nowrap;"><?= $emisor->moneda_simbolo ?> <?= number_format(0, 2) ?></th>
-            </tr>
-            <tr>
-                <th style="text-align: left;">Descuento</th>
-                <th style="text-align: right;white-space: nowrap;"><?= $emisor->moneda_simbolo ?> <?= number_format(0, 2) ?></th>
-            </tr>
-            <tr>
-                <th style="text-align: left;">Subtotal</th>
-                <th style="text-align: right;white-space: nowrap;"><?= $emisor->moneda_simbolo ?> <?= number_format($facturacion->subtotal, 2) ?></th>
-            </tr>
-            <tr>
-                <td rowspan="2" colspan="4" style="border: 1px solid #000;">
-                    <?php
-                    $n = $facturacion->total;
-                    $aux = (string) $n;
-                    $decimal = substr($aux, strpos($aux, "."));
-                    ?>
-                    SON: <?= $facturacion->total_letra . ' ' . $emisor->moneda_letra . ' ' . str_replace('.', '', $decimal) . '/100' ?>
-                </td>
-                <th style="text-align: left;">IGV</th>
-                <th style="text-align: right;white-space: nowrap;"><?= $emisor->moneda_simbolo ?> <?= number_format($facturacion->impuesto, 2) ?></th>
-            </tr>
-            <tr>
 
-                <th style="text-align: left;">Total</th>
-                <th style="text-align: right;white-space: nowrap;"><?= $emisor->moneda_simbolo ?> <?= number_format($facturacion->total, 2) ?></th>
-            </tr>
+        <tr>
+            <td colspan="4" style="border-top: 1px solid #000;" rowspan="6">
+                <?php
+                if ($facturacion->estado_comprobante == 3) {
+                    ?>
+                    <img src="recursos/img/anulado.png" style="margin-left: 15%;width: 300px;">
+                    <?php
+                }
+                ?>
+                 
+            </td>
+            <th style="text-align: left;">Gravadas</th>
+            <th style="text-align: right;white-space: nowrap;"><?= $emisor->moneda_simbolo ?> <?= number_format($facturacion->total_gravadas, 2) ?></th>
+        </tr>
+        <tr>
+            <th style="text-align: left;">Inafectas</th>
+            <th style="text-align: right;white-space: nowrap;"><?= $emisor->moneda_simbolo ?> <?= number_format($facturacion->total_inafectas, 2) ?></th>
+        </tr>
+        <tr>
+            <th style="text-align: left;">Exoneradas</th>
+            <th style="text-align: right;white-space: nowrap;"><?= $emisor->moneda_simbolo ?> <?= number_format($facturacion->total_exoneradas, 2) ?></th>
+        </tr>
+        <tr>
+            <th style="text-align: left;">Gratuitas</th>
+            <th style="text-align: right;white-space: nowrap;"><?= $emisor->moneda_simbolo ?> <?= number_format(0, 2) ?></th>
+        </tr>
+        <tr>
+            <th style="text-align: left;">Descuento</th>
+            <th style="text-align: right;white-space: nowrap;"><?= $emisor->moneda_simbolo ?> <?= number_format(0, 2) ?></th>
+        </tr>
+        <tr>
+            <th style="text-align: left;">Subtotal</th>
+            <th style="text-align: right;white-space: nowrap;"><?= $emisor->moneda_simbolo ?> <?= number_format($facturacion->subtotal, 2) ?></th>
+        </tr>
+        <tr>
+            <td rowspan="2" colspan="4" style="border: 1px solid #000;">
+                <?php
+                $n = $facturacion->total;
+                $aux = (string)$n;
+                $decimal = substr($aux, strpos($aux, "."));
+                ?>
+                SON: <?= $facturacion->total_letra . ' ' . $emisor->moneda_letra . ' ' . str_replace('.', '', $decimal) . '/100' ?>
+            </td>
+            <th style="text-align: left;">IGV</th>
+            <th style="text-align: right;white-space: nowrap;"><?= $emisor->moneda_simbolo ?> <?= number_format($facturacion->impuesto, 2) ?></th>
+        </tr>
+        <tr>
+
+            <th style="text-align: left;">Total</th>
+            <th style="text-align: right;white-space: nowrap;"><?= $emisor->moneda_simbolo ?> <?= number_format($facturacion->total, 2) ?></th>
+        </tr>
         </tbody>
     </table>
 
