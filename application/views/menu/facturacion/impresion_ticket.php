@@ -120,7 +120,10 @@
             <td style="text-transform: uppercase;">
                 Identificaci&oacute;n: <?= $facturacion->cliente_identificacion ?></td>
         </tr>
-
+        <tr>
+            <td style="text-transform: uppercase;">
+                Direcci&oacute;n: <?= $facturacion->cliente_direccion ?></td>
+        </tr>
         <tr>
             <td style="text-transform: uppercase;">Guia de Remisi&oacute;n: <span>-</span></td>
         </tr>
