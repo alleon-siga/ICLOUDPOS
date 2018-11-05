@@ -194,7 +194,7 @@ class Factura extends Comprobante
                 $cabecera['TOTAL_EXONERADAS'],
                 $cabecera['CODIGO_MONEDA'],
                 '9997',
-                'EXONERADO',
+                'EXO',
                 'VAT',
                 'E'));
         }
@@ -206,7 +206,7 @@ class Factura extends Comprobante
                 $cabecera['TOTAL_INAFECTAS'],
                 $cabecera['CODIGO_MONEDA'],
                 '9998',
-                'INAFECTO',
+                'INA',
                 'FRE',
                 'O'));
         }

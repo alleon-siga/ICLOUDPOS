@@ -652,11 +652,11 @@ class facturacion_model extends CI_Model
             }
 
             if ($d->afectacion_impuesto == OP_EXONERADA) {
-                $total_exoneradas += $subtotal;
+                $total_exoneradas += ($d->cantidad * $d->precio);
             }
 
             if ($d->afectacion_impuesto == OP_INAFECTA) {
-                $total_inafectas += $subtotal;
+                $total_inafectas += ($d->cantidad * $d->precio);
             }
         }
 
@@ -700,7 +700,7 @@ class facturacion_model extends CI_Model
                     $impuesto = ($d->cantidad * $d->precio) - (($d->cantidad * $d->precio) / $factor);
                 } elseif ($venta->tipo_impuesto == 2) {
                     $impuesto = (($d->cantidad * $d->precio) * $factor) - ($d->cantidad * $d->precio);
-                    $d->precio += (($d->cantidad * $d->precio) * $factor) - ($d->cantidad * $d->precio);
+                    $d->precio += ((($d->cantidad * $d->precio) * $factor) - ($d->cantidad * $d->precio)) / $d->cantidad;
                 }
             }
 
@@ -778,34 +778,35 @@ class facturacion_model extends CI_Model
         $total_gravadas = 0;
         $total_exoneradas = 0;
         $total_inafectas = 0;
+        $total_impuesto = 0;
 
         foreach ($venta->detalles as $d) {
 
             $factor = (100 + $d->impuesto_porciento) / 100;
+            $subtotal = $venta->tipo_impuesto == 1 ? ($d->cantidad * $d->precio / $factor) : ($d->cantidad * $d->precio);
+
+            // Sumo los subtotales dependiendo su tipo de operacion
             if ($d->afectacion_impuesto == OP_GRAVABLE) {
+                $total_gravadas += $subtotal;
+
+                // Calculo el total de los impuestos y normalizo el precio al de venta
                 if ($venta->tipo_impuesto == 1) {
-                    $total_gravadas += $d->cantidad * $d->precio / $factor;
-                } else {
-                    $total_gravadas += $d->cantidad * $d->precio;
+                    $total_impuesto += ($d->cantidad * $d->precio) - (($d->cantidad * $d->precio) / $factor);
+                } elseif ($venta->tipo_impuesto == 2) {
+                    $total_impuesto += (($d->cantidad * $d->precio) * $factor) - ($d->cantidad * $d->precio);
                 }
             }
 
             if ($d->afectacion_impuesto == OP_EXONERADA) {
-                if ($venta->tipo_impuesto == 1) {
-                    $total_exoneradas += $d->cantidad * $d->precio / $factor;
-                } else {
-                    $total_exoneradas += $d->cantidad * $d->precio;
-                }
+                $total_exoneradas += ($d->cantidad * $d->precio);
             }
 
             if ($d->afectacion_impuesto == OP_INAFECTA) {
-                if ($venta->tipo_impuesto == 1) {
-                    $total_inafectas += $d->cantidad * $d->precio / $factor;
-                } else {
-                    $total_inafectas += $d->cantidad * $d->precio;
-                }
+                $total_inafectas += ($d->cantidad * $d->precio);
             }
         }
+
+        $subtotal = $total_gravadas + $total_exoneradas + $total_inafectas;
 
         $this->db->insert('facturacion', array(
             'local_id' => $venta->local_id,
@@ -822,9 +823,9 @@ class facturacion_model extends CI_Model
             'total_gravadas' => $total_gravadas * $cambio_dolar,
             'total_exoneradas' => $total_exoneradas * $cambio_dolar,
             'total_inafectas' => $total_inafectas * $cambio_dolar,
-            'subtotal' => $venta->subtotal * $cambio_dolar,
-            'impuesto' => $venta->impuesto * $cambio_dolar,
-            'total' => $venta->total * $cambio_dolar,
+            'subtotal' => $subtotal * $cambio_dolar,
+            'impuesto' => $total_impuesto * $cambio_dolar,
+            'total' => ($subtotal + $total_impuesto) * $cambio_dolar,
             'estado' => 0,
             'nota' => 'No enviado',
             'ref_id' => $venta->id_venta,
@@ -837,15 +838,26 @@ class facturacion_model extends CI_Model
 
         foreach ($venta->detalles as $d) {
 
+            $tipo_tributo = '10';
+            // Calculo el impuesto por producto
             $impuesto = 0;
             if ($d->afectacion_impuesto == OP_GRAVABLE) {
+                $tipo_tributo = '10';
                 $factor = (100 + $d->impuesto_porciento) / 100;
                 if ($venta->tipo_impuesto == 1) {
                     $impuesto = ($d->cantidad * $d->precio) - (($d->cantidad * $d->precio) / $factor);
                 } elseif ($venta->tipo_impuesto == 2) {
                     $impuesto = (($d->cantidad * $d->precio) * $factor) - ($d->cantidad * $d->precio);
-                    $d->precio += (($d->cantidad * $d->precio) * $factor) - ($d->cantidad * $d->precio);
+                    $d->precio += ((($d->cantidad * $d->precio) * $factor) - ($d->cantidad * $d->precio)) / $d->cantidad;
                 }
+            }
+
+            if ($d->afectacion_impuesto == OP_EXONERADA) {
+                $tipo_tributo = '20';
+            }
+
+            if ($d->afectacion_impuesto == OP_INAFECTA) {
+                $tipo_tributo = '30';
             }
 
             //Viene de la configuracion de la venta item VALOR_COMPROBANTE
@@ -862,10 +874,11 @@ class facturacion_model extends CI_Model
                 'facturacion_id' => $facturacion_id,
                 'producto_codigo' => getCodigoValue(sumCod($d->producto_id, 4), $d->producto_codigo_interno),
                 'producto_descripcion' => $producto_descripcion,
-                'um' => $d->unidad_abr,
                 'cantidad' => $d->cantidad,
                 'precio' => $d->precio * $cambio_dolar,
-                'impuesto' => $impuesto * $cambio_dolar
+                'impuesto' => $impuesto * $cambio_dolar,
+                'tipo_precio' => '01',
+                'tipo_tributo' => $tipo_tributo
             ));
         }
 
@@ -1020,13 +1033,13 @@ class facturacion_model extends CI_Model
         $numero_comprobante = '';
         if ($venta->documento_id == 3) {
             $numero_comprobante = 'B' . $venta->serie . '-' . $venta->numero;
-            $numero = 'B' . $nc->serie . '-' . $nc->numero;
+            $numero = 'B' . $nc->serie . '-' . intval($nc->numero);
             $tipo_doc = TIPO_COMPROBANTE::$BOLETA;
         }
         if ($venta->documento_id == 1) {
             $numero_comprobante = 'F' . $venta->serie . '-' . $venta->numero;
             $tipo_doc = TIPO_COMPROBANTE::$FACTURA;
-            $numero = 'F' . $nc->serie . '-' . $nc->numero;
+            $numero = 'F' . $nc->serie . '-' . intval($nc->numero);
         }
 
         $tipo_identidad = '';
@@ -1122,7 +1135,7 @@ class facturacion_model extends CI_Model
                     $impuesto = ($nc_detalle->cantidad * $nc_detalle->precio) - (($nc_detalle->cantidad * $nc_detalle->precio) / $factor);
                 } elseif ($venta->tipo_impuesto == 2) {
                     $impuesto = (($nc_detalle->cantidad * $nc_detalle->precio) * $factor) - ($nc_detalle->cantidad * $nc_detalle->precio);
-                    $nc_detalle->precio += (($nc_detalle->cantidad * $nc_detalle->precio) * $factor) - ($nc_detalle->cantidad * $nc_detalle->precio);
+                    $nc_detalle->precio += ((($nc_detalle->cantidad * $nc_detalle->precio) * $factor) - ($nc_detalle->cantidad * $nc_detalle->precio)) / $nc_detalle->cantidad;
                 }
             }
 

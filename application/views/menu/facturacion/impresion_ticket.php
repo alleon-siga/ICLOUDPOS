@@ -47,7 +47,7 @@
             ?>
             <tr>
                 <td style="text-transform: uppercase; text-align: left;">
-                Contacto: <?= valueOption('EMPRESA_CONTACTO', '') ?></td>
+                    Contacto: <?= valueOption('EMPRESA_CONTACTO', '') ?></td>
             </tr>
             <?php
         }
@@ -57,7 +57,7 @@
             ?>
             <tr>
                 <td style="text-transform: uppercase; text-align: left;">
-                T&eacute;lefono: <?= valueOption('EMPRESA_TELEFONO', '') ?></td>
+                    T&eacute;lefono: <?= valueOption('EMPRESA_TELEFONO', '') ?></td>
             </tr>
             <?php
         }
@@ -132,31 +132,42 @@
                 Moneda: <span><?= $emisor->moneda_letra ?></span>
             </td>
         </tr>
-<?php if ($facturacion->documento_tipo == '07' || $facturacion->documento_tipo == '08'): ?>
+        <?php if ($facturacion->documento_tipo == '07' || $facturacion->documento_tipo == '08'): ?>
             <tr>
                 <td style="text-transform: uppercase;">Comprobante Afectado:
-                    <span><?= $facturacion->documento_mod_numero_ceros ?></span></td>
+                    <span><?= $facturacion->documento_mod_numero_ceros ?>
+                    <?= isset($doc_afecta) ? ' (' . date('d/m/Y', strtotime($doc_afecta->fecha)) . ')' : '' ?></span>
+                </td>
             </tr>
             <tr>
                 <td style="text-transform: uppercase;">Motivo: <span><?= $facturacion->motivo_nota ?></span>
             </tr>
-    <?php endif; ?>
+        <?php endif; ?>
     </table>
-<?php
-if ($facturacion->estado_comprobante == 3) {
-    ?>
+    <?php
+    if ($facturacion->estado_comprobante == 3) {
+        ?>
         <center>
             <span style="text-align:center;">___________________________________________________</span><br>
             <span style="text-align:center;">TICKET ANULADO</span><br>
             <span style="text-align:center;">¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯</span>
         </center>
-    <?php
-}
-?>
+        <?php
+    }
+    ?>
 
     <table cellpadding="0" cellspacing="0">
         <tbody>
+        <tr>
+            <td style="border-bottom: 1px solid #000000; border-top: 1px solid #000000;">Cantidad</td>
+            <td style="border-bottom: 1px solid #000000; border-top: 1px solid #000000; text-align: right;">Precio</td>
+            <td style="border-bottom: 1px solid #000000; border-top: 1px solid #000000; text-align: right;">Subtotal
+            </td>
+        </tr>
+        <?php $i = 0; ?>
+        <?php foreach ($facturacion->detalles as $detalle): ?>
             <tr>
+<<<<<<< HEAD
                 <td style="border-bottom: 1px solid #000000; border-top: 1px solid #000000;">Cantidad</td>
                 <td style="border-bottom: 1px solid #000000; border-top: 1px solid #000000; text-align: right;">Precio</td>
                 <td style="border-bottom: 1px solid #000000; border-top: 1px solid #000000; text-align: right;">Subtotal
@@ -190,22 +201,49 @@ if ($facturacion->estado_comprobante == 3) {
             <tr>
                 <td colspan="2">Total a Pagar:</td>
                 <td style="text-align: right;"><?= $emisor->moneda_simbolo . ' ' . number_format($facturacion->total, 2) ?></td>
+=======
+                <td colspan="3"
+                    style="<?= $i++ != 0 ? 'border-top: 1px dashed #0b0b0b;' : '' ?>"><?= $detalle->producto_descripcion ?></td>
+>>>>>>> ad81b41701507142cd5d696036f32a9d1c5c973b
             </tr>
             <tr>
-                <td colspan="3">
-                    <hr>
-                </td>
+                <td><?= number_format($detalle->cantidad, 3) . " " . $detalle->um ?></td>
+                <td style="text-align: right"><?= $emisor->moneda_simbolo . ' ' . number_format($detalle->precio, 2) ?></td>
+                <td style="text-align: right"><?= $emisor->moneda_simbolo . ' ' . number_format($detalle->cantidad * $detalle->precio, 2) ?></td>
             </tr>
-            <!--        <tr>-->
-            <!--            <td colspan="2">Pagado:</td>-->
-            <!--            <td style="text-align: right;">-->
-            <? //= $venta->moneda_simbolo . ' ' . $venta->venta_pagado ?><!--</td>-->
-            <!--        </tr>-->
-            <!--        <tr>-->
-            <!--            <td colspan="2">Vuelto:</td>-->
-            <!--            <td style="text-align: right;">-->
-            <? //= $venta->moneda_simbolo . ' ' . $venta->venta_vuelto ?><!--</td>-->
-            <!--        </tr>-->
+        <?php endforeach; ?>
+        <tr>
+            <td colspan="3">
+                <hr style="color: #0b0b0b;">
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">Subtotal:</td>
+            <td style="text-align: right;"><?= $emisor->moneda_simbolo . ' ' . number_format($facturacion->subtotal, 2) ?></td>
+        </tr>
+        <tr>
+            <td colspan="2">Impuesto:</td>
+            <td style="text-align: right;"><?= $emisor->moneda_simbolo . ' ' . number_format($facturacion->impuesto, 2) ?></td>
+        </tr>
+        <tr>
+            <td colspan="2">Total a Pagar:</td>
+            <td style="text-align: right;"><?= $emisor->moneda_simbolo . ' ' . number_format($facturacion->total, 2) ?></td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                <hr>
+            </td>
+        </tr>
+        <!--        <tr>-->
+        <!--            <td colspan="2">Pagado:</td>-->
+        <!--            <td style="text-align: right;">-->
+        <? //= $venta->moneda_simbolo . ' ' . $venta->venta_pagado ?><!--</td>-->
+        <!--        </tr>-->
+        <!--        <tr>-->
+        <!--            <td colspan="2">Vuelto:</td>-->
+        <!--            <td style="text-align: right;">-->
+        <? //= $venta->moneda_simbolo . ' ' . $venta->venta_vuelto ?><!--</td>-->
+        <!--        </tr>-->
 
         </tbody>
 
@@ -214,7 +252,7 @@ if ($facturacion->estado_comprobante == 3) {
     <div>
         <?php
         $n = $facturacion->total;
-        $aux = (string) $n;
+        $aux = (string)$n;
         $decimal = substr($aux, strpos($aux, "."));
         ?>
         SON: <?= $facturacion->total_letra . ' ' . $emisor->moneda_letra . ' ' . str_replace('.', '', $decimal) . '/100' ?>
@@ -238,5 +276,5 @@ if ($facturacion->estado_comprobante == 3) {
         aqui: <?= base_url() . 'facturacion/consulta/' . md5($facturacion->id) ?></p>
 </div>
 <script>
-    this.print();
+  this.print()
 </script>

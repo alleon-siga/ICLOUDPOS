@@ -436,19 +436,21 @@ abstract class Comprobante
         $tt_percent = '18.00';
 
         // Exonerado
-        if($detalle['TIPO_TRIBUTO_IGV'] == '20'){
+        if ($detalle['TIPO_TRIBUTO_IGV'] == '20') {
             $tt_id = '9997';
-            $tt_name = 'EXONERADO';
+            $tt_name = 'EXO';
             $tt_type_code = 'VAT';
             $tt_category = 'E';
+            $tt_percent = '0.00';
         }
 
         // Inafecto
-        if($detalle['TIPO_TRIBUTO_IGV'] == '30'){
+        if ($detalle['TIPO_TRIBUTO_IGV'] == '30') {
             $tt_id = '9998';
-            $tt_name = 'INAFECTO';
+            $tt_name = 'INA';
             $tt_type_code = 'FRE';
             $tt_category = 'O';
+            $tt_percent = '0.00';
         }
 
         $tributo_categoria = $this->xml->createElement('cac:TaxCategory');
