@@ -29,6 +29,9 @@ class unidades_model extends CI_Model
         $this->db->where('producto_id', $producto_id);
         $this->db->where('orden', $orden_min->orden);
         $unidad = $this->db->get()->row();
+        if (!isset($unidad->um_number))
+            return $cantidad + $fraccion;
+
         return ($cantidad * $unidad->um_number) + $fraccion;
     }
 
@@ -171,10 +174,10 @@ class unidades_model extends CI_Model
             ->where('orden', $orden_max->orden)
             ->get('unidades_has_producto')->row();
 
-        if(count($minima_unidad)==0){
+        if (count($minima_unidad) == 0) {
             return "NO TIENE UNIDADES";
-        }else{
-            return $this->get_nombre_unidad($minima_unidad->um_id);    
+        } else {
+            return $this->get_nombre_unidad($minima_unidad->um_id);
         }
     }
 

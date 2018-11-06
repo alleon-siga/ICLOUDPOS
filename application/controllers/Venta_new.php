@@ -653,6 +653,14 @@ class venta_new extends MY_Controller
                         'ref_id' => $venta->venta_id
                     ))->row();
 
+                    // No se encontro ningun comprobante asociado a la venta
+                    if ($facturacion == null) {
+                        $data['success'] = 0;
+                        $data['msg'] = "No se encontro ningun comprobante asociado a la venta.";
+                        echo json_encode($data);
+                        return false;
+                    }
+
                     // TODO hacer las validaciones del limite de tiempo
 
                     // Las boletas solo pueden estar en estado generado

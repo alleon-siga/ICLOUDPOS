@@ -713,7 +713,7 @@ class cliente extends MY_Controller {
 
     //GET DATOS DNI
     function getDNI() {
-        require_once(APPPATH . 'libraries/consultadni/consultareniec.php');
+        require_once(APPPATH . 'libraries/consultaDNI/ConsultaReniec.php');
         $dni = $this->input->post('dni');
         $consulta = file_get_html('http://aplicaciones007.jne.gob.pe/srop_publico/Consulta/Afiliado/GetNombresCiudadano?DNI=' . $dni)->plaintext;
         $partes = explode("|", $consulta);

@@ -13,16 +13,25 @@
 
     #header .col-caja {
         margin: 0;
-        padding-left: 40%;
+        padding-left: 10%;
         width: 30%;
         float: left;
         position: relative;
     }
 
-    #header .col {
+    #header .col1 {
         margin: 0;
         padding: 0;
-        width: 30%;
+        width: 25%;
+        float: left;
+        position: relative;
+    }
+
+    #header .col2 {
+        font-weight: bold;
+        margin: 0;
+        padding: 0;
+        width: 35%;
         float: left;
         position: relative;
     }
@@ -54,11 +63,11 @@
 
     #emisor_nombre_comercial {
         padding-top: 5px;
-        font-size: 11px;
+        font-size: 16px;
     }
 
     #emisor_razon_social {
-        font-size: 11px;
+        font-size: 15px;
     }
 
     #emisor_telefono, #emisor_correo {
@@ -141,17 +150,20 @@
 
 <div id="body">
     <div id="header">
-        <div class="col" style="display: table; clear: both;">
+        <div class="col1" style="display: table; clear: both;">
             <div>
                 <img id="emisor_logo" align="middle"
                      src="<?= base_url('recursos/img/logo/' . valueOptionDB("EMPRESA_LOGO", 'logo.jpg')) ?>">
             </div>
-            <div>
-                <div id="emisor_nombre_comercial"><?= $emisor->nombre_comercial != "-" && $emisor->nombre_comercial != "" ? $emisor->nombre_comercial : "" ?></div>
-                <div id="emisor_razon_social"><?= $emisor->razon_social != "-" && $emisor->razon_social != "" ? $emisor->razon_social : "" ?></div>
-                <div id="emisor_direccion"><?= $emisor->direccion != "-" && $emisor->direccion != "" ? $emisor->direccion : "" ?></div>
-                <div id="emisor_telefono"><?= valueOption('EMPRESA_TELEFONO', '') != "-" && valueOption('EMPRESA_TELEFONO', '') != "" ? valueOption('EMPRESA_TELEFONO', '') : "" ?></div>
-            </div>
+        </div>
+
+        <div class="col2" style="text-align: center;">
+            <div id="emisor_nombre_comercial"><?= $emisor->nombre_comercial != "-" && $emisor->nombre_comercial != "" ? $emisor->nombre_comercial : "" ?></div>
+            <div id="emisor_razon_social"><?= $emisor->razon_social != "-" && $emisor->razon_social != "" ? $emisor->razon_social : "" ?></div>
+            <div id="emisor_direccion"><?= $emisor->direccion != "-" && $emisor->direccion != "" ? $emisor->direccion : "" ?></div>
+            <div id="emisor_telefono"><?= valueOption('EMPRESA_TELEFONO', '') != "-" && valueOption('EMPRESA_TELEFONO', '') != "" ? valueOption('EMPRESA_TELEFONO', '') : "" ?></div>
+            <br>
+            <div id="emisor_telefono">SUCURSAL: <?= $facturacion->local_nombre ?></div>
         </div>
         <div class="col-caja">
             <div style="border: 1px solid #000; padding-bottom: 15px; font-weight: bold;">
@@ -279,7 +291,7 @@
                 $aux = (string)$n;
                 $decimal = substr($aux, strpos($aux, "."));
                 ?>
-                SON: <?= $facturacion->total_letra . ' ' . $emisor->moneda_letra . ' ' . str_replace('.', '', $decimal) . '/100' ?>
+                SON: <?= $facturacion->total_letra . ' CON ' . str_replace('.', '', $decimal) . '/100' . ' ' . $emisor->moneda_letra ?>
             </td>
             <th style="text-align: left;">IGV</th>
             <th style="text-align: right;white-space: nowrap;"><?= $emisor->moneda_simbolo ?> <?= number_format($facturacion->impuesto, 2) ?></th>

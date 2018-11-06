@@ -82,7 +82,11 @@
             <?php
         }
         ?>
-
+        <tr>
+            <td style="text-transform: uppercase; text-align: left;">
+                Sucursal: <?= $facturacion->local_nombre ?>
+            </td>
+        </tr>
     </table>
     <hr>
     <table style="border: 0px;" cellpadding="0" cellspacing="0">
@@ -182,15 +186,35 @@
             </td>
         </tr>
         <tr>
+            <td colspan="2">Gravadas:</td>
+            <td style="text-align: right;"><?= $emisor->moneda_simbolo . ' ' . number_format($facturacion->total_gravadas, 2) ?></td>
+        </tr>
+        <tr>
+            <td colspan="2">Inafectas:</td>
+            <td style="text-align: right;"><?= $emisor->moneda_simbolo . ' ' . number_format($facturacion->total_inafectas, 2) ?></td>
+        </tr>
+        <tr>
+            <td colspan="2">Exoneradas:</td>
+            <td style="text-align: right;"><?= $emisor->moneda_simbolo . ' ' . number_format($facturacion->total_inafectas, 2) ?></td>
+        </tr>
+        <tr>
+            <td colspan="2">Gratuitas:</td>
+            <td style="text-align: right;"><?= $emisor->moneda_simbolo . ' ' . number_format(0, 2) ?></td>
+        </tr>
+        <tr>
+            <td colspan="2">Descuento:</td>
+            <td style="text-align: right;"><?= $emisor->moneda_simbolo . ' ' . number_format(0, 2) ?></td>
+        </tr>
+        <tr>
             <td colspan="2">Subtotal:</td>
             <td style="text-align: right;"><?= $emisor->moneda_simbolo . ' ' . number_format($facturacion->subtotal, 2) ?></td>
         </tr>
         <tr>
-            <td colspan="2">Impuesto:</td>
+            <td colspan="2">IGV:</td>
             <td style="text-align: right;"><?= $emisor->moneda_simbolo . ' ' . number_format($facturacion->impuesto, 2) ?></td>
         </tr>
         <tr>
-            <td colspan="2">Total a Pagar:</td>
+            <td colspan="2">Total:</td>
             <td style="text-align: right;"><?= $emisor->moneda_simbolo . ' ' . number_format($facturacion->total, 2) ?></td>
         </tr>
         <tr>
@@ -219,7 +243,7 @@
         $aux = (string)$n;
         $decimal = substr($aux, strpos($aux, "."));
         ?>
-        SON: <?= $facturacion->total_letra . ' ' . $emisor->moneda_letra . ' ' . str_replace('.', '', $decimal) . '/100' ?>
+        SON: <?= $facturacion->total_letra . ' CON ' . str_replace('.', '', $decimal) . '/100' . ' ' . $emisor->moneda_letra ?>
     </div>
     <table border="0" cellpadding="0" cellspacing="0" style="width: 100%;">
         <tr>
