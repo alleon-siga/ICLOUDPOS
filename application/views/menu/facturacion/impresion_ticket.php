@@ -136,7 +136,7 @@
             <tr>
                 <td style="text-transform: uppercase;">Comprobante Afectado:
                     <span><?= $facturacion->documento_mod_numero_ceros ?>
-                    <?= isset($doc_afecta) ? ' (' . date('d/m/Y', strtotime($doc_afecta->fecha)) . ')' : '' ?></span>
+                        <?= isset($doc_afecta) ? ' (' . date('d/m/Y', strtotime($doc_afecta->fecha)) . ')' : '' ?></span>
                 </td>
             </tr>
             <tr>
@@ -167,39 +167,6 @@
         <?php $i = 0; ?>
         <?php foreach ($facturacion->detalles as $detalle): ?>
             <tr>
-                <td style="border-bottom: 1px solid #000000; border-top: 1px solid #000000;">Cantidad</td>
-                <td style="border-bottom: 1px solid #000000; border-top: 1px solid #000000; text-align: right;">Precio</td>
-                <td style="border-bottom: 1px solid #000000; border-top: 1px solid #000000; text-align: right;">Subtotal
-                </td>
-            </tr>
-<?php $i = 0; ?>
-<?php foreach ($facturacion->detalles as $detalle): ?>
-                <tr>
-                    <td colspan="3"
-                        style="<?= $i++ != 0 ? 'border-top: 1px dashed #0b0b0b;' : '' ?>"><?= $detalle->producto_descripcion ?></td>
-                </tr>
-                <tr>
-                    <td><?= number_format($detalle->cantidad, 0) . " " . $detalle->um ?></td>
-                    <td style="text-align: right"><?= $emisor->moneda_simbolo . ' ' . number_format($detalle->precio, 2) ?></td>
-                    <td style="text-align: right"><?= $emisor->moneda_simbolo . ' ' . number_format($detalle->cantidad * $detalle->precio, 2) ?></td>
-                </tr>
-<?php endforeach; ?>
-            <tr>
-                <td colspan="3">
-                    <hr style="color: #0b0b0b;">
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">Subtotal:</td>
-                <td style="text-align: right;"><?= $emisor->moneda_simbolo . ' ' . number_format($facturacion->subtotal, 2) ?></td>
-            </tr>
-            <tr>
-                <td colspan="2">Impuesto:</td>
-                <td style="text-align: right;"><?= $emisor->moneda_simbolo . ' ' . number_format($facturacion->impuesto, 2) ?></td>
-            </tr>
-            <tr>
-                <td colspan="2">Total a Pagar:</td>
-                <td style="text-align: right;"><?= $emisor->moneda_simbolo . ' ' . number_format($facturacion->total, 2) ?></td>
                 <td colspan="3"
                     style="<?= $i++ != 0 ? 'border-top: 1px dashed #0b0b0b;' : '' ?>"><?= $detalle->producto_descripcion ?></td>
             </tr>

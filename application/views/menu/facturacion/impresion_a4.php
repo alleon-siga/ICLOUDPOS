@@ -231,16 +231,6 @@
         <?php foreach ($facturacion->detalles as $detalle): ?>
             <tr class="td-data">
                 <td><?= $detalle->producto_codigo ?></td>
-                <td><?= number_format($detalle->cantidad, 0) ?></td>
-                <td><?= $detalle->um ?></td>
-                <td style="width: 50%;"><?= $detalle->producto_descripcion ?></td>
-                <td style="white-space: nowrap; text-align: right;"><?= $emisor->moneda_simbolo ?> <?= number_format($detalle->precio, 2) ?></td>
-                <td style="white-space: nowrap; text-align: right;"><?= $emisor->moneda_simbolo ?> <?= number_format($detalle->precio * $detalle->cantidad, 2) ?></td>
-            </tr>
-        <?php endforeach; ?>
-        <?php foreach ($facturacion->detalles as $detalle): ?>
-            <tr class="td-data">
-                <td><?= $detalle->producto_codigo ?></td>
                 <td><?= number_format($detalle->cantidad, 3) ?></td>
                 <td><?= $detalle->um ?></td>
                 <td style="width: 50%;"><?= $detalle->producto_descripcion ?></td>
