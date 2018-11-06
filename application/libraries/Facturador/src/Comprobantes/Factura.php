@@ -54,9 +54,9 @@ class Factura extends Comprobante
          * 0108 => Factura Comprobante de Percepcion
          * 0110 => Factura Guia Remitente
          * */
+        $tipo_operacion = isset($cabecera['TIPO_OPERACION']) ? $cabecera['TIPO_OPERACION'] : "0101";
         $profile = $this->xml->createElement(
-            'cbc:ProfileID',
-            isset($cabecera['TIPO_OPERACION']) ? $cabecera['TIPO_OPERACION'] : "0101");
+            'cbc:ProfileID', $tipo_operacion);
         $profile->setAttribute('schemeName', "Tipo de Operacion");
         $profile->setAttribute('schemeAgencyName', "PE:SUNAT");
         $profile->setAttribute('schemeURI', "urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo51");
@@ -85,6 +85,7 @@ class Factura extends Comprobante
         $InvoiceTypeCode->setAttribute('name', "Tipo de Operacion");
         $InvoiceTypeCode->setAttribute('listSchemeURI', "urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo51");
         $root->appendChild($InvoiceTypeCode);
+
 
         // Tipo de Moneda
         // ISO 4217 - Currency
@@ -120,6 +121,42 @@ class Factura extends Comprobante
 
         //Datos del cliente
         $root->appendChild($this->createClienteXml($cabecera));
+
+        // Elementos necesarios para enviar una factura guia
+        /*
+         * En el caso de venta de bienes, se deberá indicar la dirección de la entrega de dichos
+         * bienes siempre que: Se trate de ventas itinerantes y no figure el punto de llegada en la
+         * guía de remisión – remitente que realice el traslado de los bienes.
+         * */
+        if ($tipo_operacion == '0105') {
+            $DeliveryTerms = $this->xml->createElement('cac:DeliveryTerms');
+
+            $DeliveryLocation = $this->xml->createElement('cac:DeliveryLocation');
+            $Address = $this->xml->createElement('cac:Address');
+            $Address->appendChild($this->xml->createElement('cbc:StreetName', $cabecera['GUIA_DIRECCION']));
+            $Address->appendChild($this->xml->createElement('cbc:CountrySubentity', $cabecera['GUIA_DEPARTAMENTO']));
+            $Address->appendChild($this->xml->createElement('cbc:CityName', $cabecera['GUIA_PROVINCIA']));
+            $Address->appendChild($this->xml->createElement('cbc:CountrySubentityCode', $cabecera['GUIA_UBIGEO']));
+            $Address->appendChild($this->xml->createElement('cbc:District', $cabecera['GUIA_DISTRITO']));
+            $pais = $this->xml->createElement('cac:Country');
+            $IdentificationCode = $this->xml->createElement('cbc:IdentificationCode', $cabecera['PAIS_CODIGO']);
+            $IdentificationCode->setAttribute('listID', 'ISO 3166-1');
+            $IdentificationCode->setAttribute('listAgencyName', 'United Nations Economic Commission for Europe');
+            $IdentificationCode->setAttribute('listName', 'Country');
+            $pais->appendChild($IdentificationCode);
+            $Address->appendChild($pais);
+            $DeliveryLocation->appendChild($Address);
+
+            $DeliveryTerms->appendChild($DeliveryLocation);
+
+            $root->appendChild($DeliveryTerms);
+        }
+
+        // En caso de una factura guia
+        if ($tipo_operacion == '0106') {
+
+        }
+
 
         /* DESCUENTO GLOBALES
          * ChargeIndicator: Dado que no es un cargo, se debe asignar el indicador a false
@@ -176,7 +213,7 @@ class Factura extends Comprobante
 
 
         // Total de operaciones gravadas
-        if (isset($cabecera['TOTAL_GRAVADAS']) && $cabecera['TOTAL_GRAVADAS'] > 0){
+        if (isset($cabecera['TOTAL_GRAVADAS']) && $cabecera['TOTAL_GRAVADAS'] > 0) {
             $TaxTotal->appendChild($this->createTributoXml(
                 $cabecera['TOTAL_TRIBUTO_IGV'],
                 $cabecera['TOTAL_GRAVADAS'],
@@ -188,7 +225,7 @@ class Factura extends Comprobante
         }
 
         //Total de operaciones exoneradas
-        if (isset($cabecera['TOTAL_EXONERADAS']) && $cabecera['TOTAL_EXONERADAS'] > 0){
+        if (isset($cabecera['TOTAL_EXONERADAS']) && $cabecera['TOTAL_EXONERADAS'] > 0) {
             $TaxTotal->appendChild($this->createTributoXml(
                 '0.00',
                 $cabecera['TOTAL_EXONERADAS'],
@@ -200,7 +237,7 @@ class Factura extends Comprobante
         }
 
         //Total de operaciones inafectas
-        if (isset($cabecera['TOTAL_INAFECTAS']) && $cabecera['TOTAL_INAFECTAS'] > 0){
+        if (isset($cabecera['TOTAL_INAFECTAS']) && $cabecera['TOTAL_INAFECTAS'] > 0) {
             $TaxTotal->appendChild($this->createTributoXml(
                 '0.00',
                 $cabecera['TOTAL_INAFECTAS'],
@@ -212,7 +249,7 @@ class Factura extends Comprobante
         }
 
         //Total de operaciones gratuitas
-        if (isset($cabecera['TOTAL_GRATUITAS']) && $cabecera['TOTAL_GRATUITAS'] > 0){
+        if (isset($cabecera['TOTAL_GRATUITAS']) && $cabecera['TOTAL_GRATUITAS'] > 0) {
             $igv = isset($cabecera['TOTAL_TRIBUTO_IGV']) && $cabecera['TOTAL_TRIBUTO_IGV'] > 0 ? $cabecera['TOTAL_TRIBUTO_IGV'] : 0;
             $TaxTotal->appendChild($this->createTributoXml(
                 number_format($igv, 2, '.', ''),

@@ -11,6 +11,8 @@ class facturacion_model extends CI_Model
         parent::__construct();
         require_once(APPPATH . 'libraries/Facturador/Facturador.php');
         require APPPATH . 'libraries/Numeroletra.php';
+
+        $this->load->model('venta_new/venta_new_model');
     }
 
     function get_facturacion($where = array())
@@ -293,6 +295,12 @@ class facturacion_model extends CI_Model
                     if ($codigo != '0') {
                         $response_msg = $response['MENSAJE'];
                     }
+
+                    if ($estado == 4) {
+                        $pre_fact = $this->db->get_where('facturacion', array('id' => $detalle->comprobante_id))->row();
+                        $this->venta_new_model->anular_venta_rechazada($pre_fact->ref_id);
+                    }
+
                     $this->db->where('id', $detalle->comprobante_id);
                     $this->db->update('facturacion', array(
                         'estado' => $estado,
@@ -349,6 +357,9 @@ class facturacion_model extends CI_Model
 
     function emitirXml($id)
     {
+
+
+        $this->db->trans_begin();
 
         $facturador = $this->getFacturador();
 
@@ -407,6 +418,8 @@ class facturacion_model extends CI_Model
                 $estado = 2;
             } else {
                 $estado = 4;
+
+                $this->venta_new_model->anular_venta_rechazada($pre_fact->ref_id);
             }
 
             $this->db->where('id', $id);
@@ -418,10 +431,18 @@ class facturacion_model extends CI_Model
                 'fecha_cdr' => isset($response['FECHA_CDR']) ? $response['FECHA_CDR'] : date('Y-m-d H:i:s')
             ));
 
-            return TRUE;
         } else {
-            return $this->getEstadoResumen($resumen->id);
+            $this->getEstadoResumen($resumen->id);
         }
+
+        $this->db->trans_complete();
+        if ($this->db->trans_status() === FALSE) {
+            $this->db->trans_rollback();
+            return FALSE;
+        }
+
+        $this->db->trans_commit();
+        return TRUE;
     }
 
     function crearXml($id)
@@ -595,7 +616,6 @@ class facturacion_model extends CI_Model
     function facturarVenta($venta_id)
     {
 
-        $this->load->model('venta_new/venta_new_model');
         $venta = $this->venta_new_model->get_venta_detalle($venta_id);
 
         $tipo_doc = '';
@@ -1024,7 +1044,6 @@ class facturacion_model extends CI_Model
 
     function notaCreditoVenta($nc_id)
     {
-        $this->load->model('venta_new/venta_new_model');
         $nc = $this->db->get_where('notas_credito', array('id' => $nc_id))->row();
         $nc_detalles = $this->db->get_where('notas_credito_detalle', array('notas_credito_id' => $nc_id))->result();
         $venta = $this->venta_new_model->get_venta_detalle($nc->venta_id);
@@ -1169,7 +1188,6 @@ class facturacion_model extends CI_Model
             return $this->crearBoletasMultiples($venta_id, $fecha_facturacion, $descuento);
         }
 
-        $this->load->model('venta_new/venta_new_model');
         $this->load->model('correlativos/correlativos_model');
         log_message('debug', 'Facturacion Electronica. Guardando venta ' . $venta_id);
         $venta = $this->venta_new_model->get_venta_detalle($venta_id);
@@ -1340,7 +1358,6 @@ class facturacion_model extends CI_Model
 
     function crearBoletasMultiples($venta_id, $fecha_facturacion, $descuento)
     {
-        $this->load->model('venta_new/venta_new_model');
         $this->load->model('correlativos/correlativos_model');
         $this->load->model('facturacion/picado_model');
         log_message('debug', 'Facturacion Electronica. Guardando venta ' . $venta_id);

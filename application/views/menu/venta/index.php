@@ -65,8 +65,8 @@
                             <?php foreach ($locales as $local): ?>
                                 <?php if ($local->tipo == 0): ?>
                                     <option <?= $local->local_id == $local->local_defecto ? 'selected="selected"' : '' ?>
-                                        value="<?= $local->local_id ?>"><?= $local->local_nombre ?></option>
-                                    <?php endif; ?>
+                                            value="<?= $local->local_id ?>"><?= $local->local_nombre ?></option>
+                                <?php endif; ?>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -76,12 +76,12 @@
                         <select name="cliente_id" id="cliente_id" class='form-control'>
                             <?php foreach ($clientes as $cliente): ?>
                                 <option
-                                    value="<?php echo $cliente['id_cliente']; ?>"
-                                    data-ruc="<?= $cliente['ruc'] ?>"
-                                    data-identificacion="<?= $cliente['identificacion'] ?>"
+                                        value="<?php echo $cliente['id_cliente']; ?>"
+                                        data-ruc="<?= $cliente['ruc'] ?>"
+                                        data-identificacion="<?= $cliente['identificacion'] ?>"
                                     <?= $cliente['id_cliente'] == 1 ? 'selected' : '' ?>
-                                    ><?php echo $cliente['razon_social']; ?></option>
-                                <?php endforeach; ?>
+                                ><?php echo $cliente['razon_social']; ?></option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                     <div class="col-md-1" style="padding-left: 0px;">
@@ -102,7 +102,7 @@
                         <div class="help-key badge label-success" style="display: none;">2</div>
                         <select name="local_id" id="local_id" class='form-control'>
                             <?php foreach ($locales as $local): ?>
-                                    <option <?= $local->local_id == $local->local_defecto ? 'selected="selected"' : '' ?>
+                                <option <?= $local->local_id == $local->local_defecto ? 'selected="selected"' : '' ?>
                                         value="<?= $local->local_id ?>"><?= $local->local_nombre ?></option>
                             <?php endforeach; ?>
                         </select>
@@ -209,8 +209,8 @@
                                     <select name="precio_id" id="precio_id" class='form-control'>
                                         <?php foreach ($precios as $precio): ?>
                                             <option <?= $precio['id_precio'] == 3 ? 'selected="selected"' : '' ?>
-                                                value="<?= $precio['id_precio'] ?>">
-                                                    <?= $precio['nombre_precio'] ?>
+                                                    value="<?= $precio['id_precio'] ?>">
+                                                <?= $precio['nombre_precio'] ?>
                                             </option>
                                         <?php endforeach; ?>
                                     </select>
@@ -250,7 +250,7 @@
                                            onkeydown="return soloDecimal4(this, event)" readonly>
                                     <a id="editar_pu" data-estado="0" href="#" class="input-group-addon"
                                        style="padding: 0px; min-width: 25px;"><i
-                                            class="fa fa-edit"></i></a>
+                                                class="fa fa-edit"></i></a>
                                 </div>
                                 <h6 id="precio_unitario_um"
                                     style="text-align: center; margin-bottom: 0; margin-top: 2px;"></h6>
@@ -308,8 +308,8 @@
                                 <input type="checkbox" id="tabla_vista"> <b>Mostrar Detalles</b>
                             </span>
                             <table
-                                class="table table-striped dataTable table-condensed table-bordered dataTable-noheader table-has-pover dataTable-nosort"
-                                data-nosort="0">
+                                    class="table table-striped dataTable table-condensed table-bordered dataTable-noheader table-has-pover dataTable-nosort"
+                                    data-nosort="0">
                                 <thead id="head_productos"></thead>
                                 <tbody id="body_productos"></tbody>
                             </table>
@@ -366,12 +366,12 @@
                         <select name="moneda_id" id="moneda_id" class='form-control'>
                             <?php foreach ($monedas as $moneda): ?>
                                 <option
-                                    data-tasa="<?php echo $moneda['tasa_soles'] ?>"
-                                    data-nombre="<?php echo $moneda['nombre'] ?>"
-                                    data-simbolo="<?php echo $moneda['simbolo'] ?>"
-                                    data-oper="<?php echo $moneda['ope_tasa'] ?>"
-                                    value="<?= $moneda['id_moneda'] ?>"><?= $moneda['nombre'] ?></option>
-                                <?php endforeach; ?>
+                                        data-tasa="<?php echo $moneda['tasa_soles'] ?>"
+                                        data-nombre="<?php echo $moneda['nombre'] ?>"
+                                        data-simbolo="<?php echo $moneda['simbolo'] ?>"
+                                        data-oper="<?php echo $moneda['ope_tasa'] ?>"
+                                        value="<?= $moneda['id_moneda'] ?>"><?= $moneda['nombre'] ?></option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                 </div>
@@ -389,7 +389,7 @@
                                    name="tasa" id="tasa" value="0.00"
                                    onkeydown="return soloDecimal4(this, event)">
                             <a id="refresh_tasa" href="#" class="input-group-addon" style="display: none;"><i
-                                    class="fa fa-refresh"></i></a>
+                                        class="fa fa-refresh"></i></a>
                         </div>
                     </div>
                 </div>
@@ -474,8 +474,8 @@
                         <select name="tipo_pago" id="tipo_pago" class='form-control'>
                             <?php foreach ($tipo_pagos as $pago): ?>
                                 <option
-                                    value="<?= $pago['id_condiciones'] ?>"><?= $pago['nombre_condiciones'] ?></option>
-                                <?php endforeach; ?>
+                                        value="<?= $pago['id_condiciones'] ?>"><?= $pago['nombre_condiciones'] ?></option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                 </div>
@@ -491,8 +491,8 @@
                         <select name="tipo_documento" id="tipo_documento" class="form-control">
                             <?php foreach ($tipo_documentos as $key => $value): ?>
                                 <option <?= $value->id_doc == $comprobantes_default->config_value ? 'selected="selected"' : '' ?>
-                                    value="<?= $value->id_doc ?>"><?= $value->des_doc ?></option>
-                                <?php endforeach; ?>
+                                        value="<?= $value->id_doc ?>"><?= $value->des_doc ?></option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                 </div>
@@ -509,8 +509,8 @@
                             <option value="">Seleccione</option>
                             <?php foreach ($comprobantes as $comprobante): ?>
                                 <option
-                                    value="<?= $comprobante->id ?>"><?= $comprobante->nombre ?></option>
-                                <?php endforeach; ?>
+                                        value="<?= $comprobante->id ?>"><?= $comprobante->nombre ?></option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                 </div>
@@ -663,7 +663,7 @@
     <div class="form-actions">
 
         <button class="btn" id="terminar_venta" type="button"><i
-                class="fa fa-save fa-3x text-info fa-fw"></i> <br>F6
+                    class="fa fa-save fa-3x text-info fa-fw"></i> <br>F6
             Guardar
         </button>
 
@@ -674,7 +674,7 @@
         <button type="button" class="btn" id="reiniciar_venta"><i class="fa fa-refresh fa-3x text-info fa-fw"></i><br>Reiniciar
         </button>
         <button class="btn" type="button" id="cancelar_venta"><i
-                class="fa fa-remove fa-3x text-warning fa-fw"></i><br>Cancelar
+                    class="fa fa-remove fa-3x text-warning fa-fw"></i><br>Cancelar
         </button>
     </div>
 
@@ -741,14 +741,14 @@
 
       <?php if($cotizacion != NULL):?>
 
-    cotizacion.local_id = <?= $cotizacion->local_id ?>
-      cotizacion.cliente_id = <?= $cotizacion->cliente_id ?>
-        cotizacion.documento_id = <?= $cotizacion->documento_id ?>
-          cotizacion.tipo_impuesto = <?= $cotizacion->tipo_impuesto ?>
-            cotizacion.condicion_id = <?= $cotizacion->condicion_id ?>
-              cotizacion.moneda_id = <?= $cotizacion->moneda_id ?>
-                cotizacion.moneda_tasa = <?= $cotizacion->moneda_tasa ?>
-                  cotizacion.detalles = []
+    cotizacion.local_id = '<?= $cotizacion->local_id ?>'
+    cotizacion.cliente_id = '<?= $cotizacion->cliente_id ?>'
+    cotizacion.documento_id = '<?= $cotizacion->documento_id ?>'
+    cotizacion.tipo_impuesto = '<?= $cotizacion->tipo_impuesto ?>'
+    cotizacion.condicion_id = '<?= $cotizacion->condicion_id ?>'
+    cotizacion.moneda_id = '<?= $cotizacion->moneda_id ?>'
+    cotizacion.moneda_tasa = '<?= $cotizacion->moneda_tasa ?>'
+    cotizacion.detalles = []
 
       <?php foreach ($cotizacion->detalles as $detalle):?>
     var temp = {

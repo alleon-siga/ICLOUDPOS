@@ -1468,6 +1468,145 @@ class venta_new_model extends CI_Model
         return $venta_id;
     }
 
+    // Anulo una venta que fue rechazada (2018-11-06) Antonio Martin
+    public function anular_venta_rechazada($venta_id, $id_usuario = false)
+    {
+        $venta = $this->get_venta_detalle($venta_id);
+
+        if ($venta->venta_estado != 'COMPLETADO')
+            return FALSE;
+
+        // Devuelvo las cantidades al inventario
+        foreach ($venta->detalles as $detalle) {
+
+            $old_cantidad = $this->db->get_where('producto_almacen', array(
+                'id_producto' => $detalle->producto_id,
+                'id_local' => $venta->local_id
+            ))->row();
+
+            $old_cantidad_min = $old_cantidad != NULL ? $this->unidades_model->convert_minimo_um($detalle->producto_id, $old_cantidad->cantidad, $old_cantidad->fraccion) : 0;
+            $cantidad_min = $this->unidades_model->convert_minimo_by_um($detalle->producto_id, $detalle->unidad_id, $detalle->cantidad);
+
+            $result = $this->unidades_model->get_cantidad_fraccion($detalle->producto_id, $old_cantidad_min + $cantidad_min);
+
+            // Actualizo el inventario
+            if ($old_cantidad != NULL) {
+                $this->db->where('id_producto', $detalle->producto_id);
+                $this->db->where('id_local', $venta->local_id);
+                $this->db->update('producto_almacen', array(
+                    'cantidad' => $result['cantidad'],
+                    'fraccion' => $result['fraccion']
+                ));
+            } else {
+                $this->db->insert('producto_almacen', array(
+                    'id_producto' => $detalle->producto_id,
+                    'id_local' => $venta->local_id,
+                    'cantidad' => $result['cantidad'],
+                    'fraccion' => $result['fraccion']
+                ));
+            }
+
+            $this->db->where('id_detalle', $detalle->detalle_id);
+            $this->db->update('detalle_venta', array('cantidad_devuelta' => $detalle->cantidad));
+
+        }
+
+        $this->db->where('venta_id', $venta_id);
+        $this->db->update('venta', array(
+            'venta_status' => 'ANULADO',
+            'motivo' => 'VENTA RECHAZADA'
+        ));
+
+        //Devuelvo el monto pagado de la venta
+        $total = $venta->total;
+
+        // En caso de ser venta al credito el total del saldo a devolver es la inicial mas el monto pagado
+        if ($venta->condicion_id == 2) {
+            $total = $venta->inicial > 0 ? $venta->inicial : 0;
+            $cobranzas = $this->db->select_sum('credito_cuotas_abono.monto_abono', 'total')
+                ->from('credito_cuotas_abono')
+                ->join('credito_cuotas', 'credito_cuotas.id_credito_cuota = credito_cuotas_abono.credito_cuota_id')
+                ->where('credito_cuotas.id_venta', $venta->venta_id)
+                ->get()->row();
+            $total += $cobranzas->total;
+        }
+
+        if ($total > 0) {
+            $caja_desglose = array(
+                'monto' => $total,
+                'tipo' => 'VENTA_RECHAZADA',
+                'IO' => 2,
+                'ref_id' => $venta_id,
+                'moneda_id' => $venta->moneda_id,
+                'local_id' => $venta->local_id,
+                'id_usuario' => $id_usuario == false ? $this->session->userdata('nUsuCodigo') : $id_usuario,
+                'ref_val' => 3
+            );
+
+            $cuenta = $this->db->select('caja_desglose.id')->from('caja_desglose')
+                ->join('caja', 'caja.id = caja_desglose.caja_id')
+                ->where('caja.moneda_id', $venta->moneda_id)
+                ->where('caja.local_id', $venta->local_id)
+                ->where('caja_desglose.principal', 1)
+                ->get()->row();
+
+            $caja_desglose['cuenta_id'] = $cuenta->id;
+            $this->cajas_model->save_pendiente($caja_desglose);
+        }
+
+
+        //Guardo registro en el Kardex
+        $cantidades = array();
+        foreach ($venta->detalles as $detalle) {
+            if (!isset($cantidades[$detalle->producto_id])) {
+
+                // Dependiendo del tipo de impuesto en la venta calculo el costo para guardar en el kardex
+                $precio_min = $this->unidades_model->get_maximo_costo($detalle->producto_id, $detalle->unidad_id, $detalle->precio);
+                $costo = $precio_min;
+                if ($detalle->afectacion_impuesto == 1 && $venta->tipo_impuesto == 1) {
+                    $costo = $costo / ((100 + $detalle->impuesto_porciento) / 100);
+                }
+
+                if ($venta->moneda_id != MONEDA_DEFECTO) {
+                    $costo = $costo * $venta->moneda_tasa;
+                }
+
+                $cantidades[$detalle->producto_id] = array(
+                    'cantidad' => 0,
+                    'costo' => $costo,
+                );
+            }
+
+            $cantidades[$detalle->producto_id]['cantidad'] += $this->unidades_model->convert_minimo_by_um(
+                $detalle->producto_id,
+                $detalle->unidad_id,
+                $detalle->cantidad
+            );
+        }
+
+        foreach ($cantidades as $key => $value) {
+
+            $values = array(
+                'local_id' => $venta->local_id,
+                'producto_id' => $key,
+                'cantidad' => $value['cantidad'] * -1,
+                'io' => 2,
+                'tipo' => $venta->documento_id,
+                'operacion' => 1,
+                'serie' => $venta->serie,
+                'numero' => sumCod($venta->numero, 8),
+                'ref_id' => $venta->venta_id,
+                'ref_val' => "RECHAZADO",
+                'usuario_id' => $id_usuario === FALSE ? $this->session->userdata('nUsuCodigo') : $id_usuario,
+                'costo' => $value['costo'],
+                'moneda_id' => $venta->moneda_id
+            );
+            $this->kardex_model->set_kardex($values);
+        }
+
+        return $venta_id;
+    }
+
     private function recalc_totales($venta_id)
     {
         $venta = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();

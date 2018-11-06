@@ -1,9 +1,10 @@
+<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+class credito_model extends CI_Model
+{
 
-class credito_model extends CI_Model {
-
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
     }
 
@@ -16,7 +17,8 @@ class credito_model extends CI_Model {
 
     /*el campo fecha_cancelado es la fecha en la que se paga toda la deuda*/
 
-    public function update($where,$data){
+    public function update($where, $data)
+    {
         $this->db->trans_start();
         $this->db->where($where);
         $this->db->update('credito', $data);
