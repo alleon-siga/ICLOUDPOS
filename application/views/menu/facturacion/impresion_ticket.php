@@ -167,7 +167,6 @@
         <?php $i = 0; ?>
         <?php foreach ($facturacion->detalles as $detalle): ?>
             <tr>
-<<<<<<< HEAD
                 <td style="border-bottom: 1px solid #000000; border-top: 1px solid #000000;">Cantidad</td>
                 <td style="border-bottom: 1px solid #000000; border-top: 1px solid #000000; text-align: right;">Precio</td>
                 <td style="border-bottom: 1px solid #000000; border-top: 1px solid #000000; text-align: right;">Subtotal

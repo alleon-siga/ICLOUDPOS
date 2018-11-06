@@ -228,7 +228,6 @@
         </tr>
         </thead>
         <tbody>
-        <<<<<<< HEAD
         <?php foreach ($facturacion->detalles as $detalle): ?>
             <tr class="td-data">
                 <td><?= $detalle->producto_codigo ?></td>
