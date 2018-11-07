@@ -149,27 +149,25 @@
 </style>
 
 <div id="body">
-    <div id="header">
-        <div class="col1" style="display: table; clear: both;">
-            <div>
+    <table border="0" cellspacing="0" cellpadding="0" style="width: 100%;">
+        <tr>
+            <td style="width: 20%; text-align: center;">
                 <img id="emisor_logo" align="middle"
-                     src="<?= base_url('recursos/img/logo/' . valueOptionDB("EMPRESA_LOGO", 'logo.jpg')) ?>">
-            </div>
-        </div>
-
-        <div class="col2" style="text-align: center;">
-            <div id="emisor_nombre_comercial"><?= $emisor->nombre_comercial != "-" && $emisor->nombre_comercial != "" ? $emisor->nombre_comercial : "" ?></div>
-            <div id="emisor_razon_social"><?= $emisor->razon_social != "-" && $emisor->razon_social != "" ? $emisor->razon_social : "" ?></div>
-            <div id="emisor_direccion"><?= $emisor->direccion != "-" && $emisor->direccion != "" ? $emisor->direccion : "" ?></div>
-            <div id="emisor_telefono"><?= valueOption('EMPRESA_TELEFONO', '') != "-" && valueOption('EMPRESA_TELEFONO', '') != "" ? valueOption('EMPRESA_TELEFONO', '') : "" ?></div>
-            <br>
-            <div id="emisor_telefono">SUCURSAL: <?= $facturacion->local_nombre ?></div>
-        </div>
-        <div class="col-caja">
-            <div style="border: 1px solid #000; padding-bottom: 15px; font-weight: bold;">
+                     src="<?= base_url('recursos/img/logo/'.valueOptionDB('EMPRESA_LOGO', 'logo.jpg')) ?>">
+            </td>
+            <td style="text-align: center; padding-right: 20px;">
+                <div id="emisor_nombre_comercial"><?= $emisor->nombre_comercial != "-" && $emisor->nombre_comercial != "" ? $emisor->nombre_comercial : "" ?></div>
+                <div id="emisor_razon_social"><?= $emisor->razon_social != "-" && $emisor->razon_social != "" ? $emisor->razon_social : "" ?></div>
+                <div id="emisor_direccion"><?= $emisor->direccion != "-" && $emisor->direccion != "" ? $emisor->direccion : "" ?></div>
+                <div id="emisor_telefono"><?= valueOption('EMPRESA_TELEFONO', '') != "-" && valueOption('EMPRESA_TELEFONO', '') != "" ? valueOption('EMPRESA_TELEFONO', '') : "" ?></div>
+                <br>
+                <div id="emisor_telefono">SUCURSAL: <?= $facturacion->local_nombre ?></div>
+            </td>
+            <td style="width: 35%; border: 1px solid #000; padding-bottom: 15px; padding-top: 15px; font-weight: bold; text-align: center;">
                 <div id="emisor_ruc">
                     R.U.C. <?= $emisor->ruc ?>
                 </div>
+                <br>
                 <div id="tipo_dcumento">
                     <?php
                     if ($facturacion->documento_tipo == '01')
@@ -182,12 +180,13 @@
                         echo 'NOTA DE D&Eacute;BITO ELECTR&Oacute;NICA';
                     ?>
                 </div>
+                <br>
                 <div id="numero_documento">
                     <?= $facturacion->documento_numero_ceros ?>
                 </div>
-            </div>
-        </div>
-    </div>
+            </td>
+        </tr>
+    </table>
 
     <div id="header_1">
         <table id="table_header" cellspacing="0" cellpadding="3">
