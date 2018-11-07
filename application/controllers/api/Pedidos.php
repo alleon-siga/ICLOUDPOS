@@ -129,6 +129,11 @@ class Pedidos extends REST_Controller
         $data['fecha_emision'] = $fact->fecha;
         $data['clie_tipo_ident'] = $fact->total > 700 ? $fact->cliente_tipo : "-";
         $data['clie_nro_doc'] = $fact->total > 700 ? $fact->cliente_identificacion : "-";
+        $data['gravadas'] = $fact->total_gravadas;
+        $data['exoneradas'] = $fact->total_exoneradas;
+        $data['inafectas'] = $fact->total_inafectas;
+        $data['subtotal'] = $fact->subtotal;
+        $data['impuesto'] = $fact->impuesto;
 
         $fact_emisor = $this->db->get('facturacion_emisor')->row();
         $data['ruc'] = $fact_emisor->ruc;
@@ -225,6 +230,11 @@ class Pedidos extends REST_Controller
                     $data['fecha_emision'] = $fact->fecha;
                     $data['clie_tipo_ident'] = $fact->total > 700 ? $fact->cliente_tipo : "-";
                     $data['clie_nro_doc'] = $fact->total > 700 ? $fact->cliente_identificacion : "-";
+                    $data['gravadas'] = $fact->total_gravadas;
+                    $data['exoneradas'] = $fact->total_exoneradas;
+                    $data['inafectas'] = $fact->total_inafectas;
+                    $data['subtotal'] = $fact->subtotal;
+                    $data['impuesto'] = $fact->impuesto;
 
                     $fact_emisor = $this->db->get('facturacion_emisor')->row();
                     $data['ruc'] = $fact_emisor->ruc;
