@@ -195,7 +195,7 @@
         </tr>
         <tr>
             <td colspan="2">Exoneradas:</td>
-            <td style="text-align: right;"><?= $emisor->moneda_simbolo . ' ' . number_format($facturacion->total_inafectas, 2) ?></td>
+            <td style="text-align: right;"><?= $emisor->moneda_simbolo . ' ' . number_format($facturacion->total_exoneradas, 2) ?></td>
         </tr>
         <tr>
             <td colspan="2">Gratuitas:</td>
