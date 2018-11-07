@@ -96,7 +96,7 @@ header("Expires: 0");
         <tfoot>
             <tr>
                 <td >Totales:</td>
-                <td colspan="7"></td>
+                <td colspan="8"></td>
                 <td style="text-align: right; white-space: nowrap;"><?= number_format($total_subtotal,2) ?></td>
                 <td style="text-align: right; white-space: nowrap;"><?= number_format($total_impuesto,2) ?></td>
                 <td style="text-align: right; white-space: nowrap;"><?= number_format($total_total,2) ?></td>

@@ -140,7 +140,7 @@ class facturacion_model extends CI_Model
     //Se Agrego el campo vfac..identificara de donde viene la venta
     function get_relacion_comprobantes($params)
     {
-        $this->db->select('f.fecha as "FecFacturacionElectr", v.fecha as "Fec_Venta", l.local_nombre as "local_nombre", v.venta_id,	
+        $this->db->select('f.fecha as "FecFacturacionElectr", v.fecha as "Fec_Venta", l.local_nombre as "local_nombre", v.venta_id,	f.id,
 	CASE 1 
 		WHEN f.documento_tipo = "01" THEN "FACTURA" 
 		WHEN f.documento_tipo = "03" THEN "BOLETA" 
@@ -167,7 +167,7 @@ class facturacion_model extends CI_Model
             $this->db->where('v.local_id', $params['local_id']);
         }
         if (!empty($params['fecha_ini']) && !empty($params['fecha_fin']) && !empty($params['fecha_flag'] == 1)) {
-            $this->db->where("DATE(v.fecha) >='" . $params['fecha_ini'] . "' AND DATE(v.fecha)<='" . $params['fecha_fin'] . "'");
+            $this->db->where("DATE(f.fecha) >='" . $params['fecha_ini'] . "' AND DATE(f.fecha)<='" . $params['fecha_fin'] . "'");
         }
         if (!empty($params['doc_id'] > 0)) {
             $this->db->where('f.documento_tipo', $params['doc_id']);
@@ -184,6 +184,7 @@ class facturacion_model extends CI_Model
 
         }
 
+        $this->db->order_by('f.fecha, f.id', 'ASC');
         $ventas = $this->db->get()->result();
 
         foreach ($ventas as $venta) {
