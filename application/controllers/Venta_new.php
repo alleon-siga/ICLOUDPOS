@@ -45,7 +45,7 @@ class venta_new extends MY_Controller
         $data['venta_action'] = $action;
         $data['monedas'] = $this->db->get_where('moneda', array('status_moneda' => 1))->result();
         $data['condiciones_pagos'] = $this->db->get_where('condiciones_pago', array('status_condiciones' => 1))->result();
-        $data['documentos']=$this->documentos_model->get_documentos();
+        $data['documentos'] = $this->documentos_model->get_documentos();
         $data['dialog_venta_contado'] = $this->load->view('menu/venta/dialog_venta_contado', array(
             'tarjetas' => $this->db->get('tarjeta_pago')->result(),
             'metodos' => $this->metodos_pago_model->get_all(),
@@ -74,7 +74,7 @@ class venta_new extends MY_Controller
 
         if ($action != 'caja') {
             $params = array(
-                'id_documento'=>$docuemnto_id,
+                'id_documento' => $docuemnto_id,
                 'local_id' => $local_id,
                 'estado' => $estado,
                 'condicion_id' => $condicion_pago_id,
@@ -83,7 +83,7 @@ class venta_new extends MY_Controller
             );
         } else {
             $params = array(
-                'id_documento'=>$docuemnto_id,
+                'id_documento' => $docuemnto_id,
                 'local_id' => $local_id,
                 'estado' => $estado
             );
@@ -93,7 +93,7 @@ class venta_new extends MY_Controller
         $params['usuarios_id'] = $this->input->post('usuarios_id');
         $data['moneda'] = $this->db->get_where('moneda', array('id_moneda' => $params['moneda_id']))->row();
         $data['ventas'] = $this->venta->get_ventas($params, $action);
-        
+
 
         $data['venta_totales'] = $this->venta->get_ventas_totales($params, $action);
 
@@ -382,6 +382,7 @@ class venta_new extends MY_Controller
         $venta['dni_garante'] = $this->input->post('caja_nombre');
         $venta['comprobante_id'] = $this->input->post('comprobante_id') != "" ? $this->input->post('comprobante_id') : 0;
         $venta['venta_nota'] = $this->input->post('venta_nota');
+        $venta['nro_guia'] = $this->input->post('nro_guia');
 
         $detalles_productos = json_decode($this->input->post('detalles_productos', true));
         $traspasos = json_decode($this->input->post('traspasos', true));
@@ -663,10 +664,10 @@ class venta_new extends MY_Controller
 
                     // TODO hacer las validaciones del limite de tiempo
 
-                    // Las boletas solo pueden estar en estado generado
-                    if ($venta->id_documento == 3 && $facturacion->estado != 1) {
+                    // Las boletas solo pueden estar en estado aceptado
+                    if ($venta->id_documento == 3 && $facturacion->estado != 3) {
                         $data['success'] = 0;
-                        $data['msg'] = "Solo puedes anular boletas generadas.";
+                        $data['msg'] = "Solo puedes anular boletas en estado aceptado.";
                         echo json_encode($data);
                         return false;
                     }
@@ -888,20 +889,20 @@ class venta_new extends MY_Controller
         }
 
         // Validaciones para la facturacion electronica
-        if (valueOptionDB('FACTURACION', 0) == 1){
+        if (valueOptionDB('FACTURACION', 0) == 1) {
             $facturacion = $this->db->get_where('facturacion', array(
                 'documento_tipo' => sumCod($venta->id_documento, 2),
                 'ref_id' => $venta->venta_id
             ))->row();
 
-            if($facturacion == null){
+            if ($facturacion == null) {
                 $data['success'] = 0;
                 $data['msg'] = "No se encontro ningun registro en facturacion electronica";
                 echo json_encode($data);
                 return false;
             }
 
-            if($facturacion->estado != 3){
+            if ($facturacion->estado != 3) {
                 $data['success'] = 0;
                 $data['msg'] = "No puede crear una nota de credito a un comprobante que no ha sido emitido";
                 echo json_encode($data);

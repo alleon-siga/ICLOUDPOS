@@ -361,12 +361,12 @@ class venta_new_model extends CI_Model
         }
 
         //Si es diferente a la nota de venta  creo el correlativo para la guia de remision
-        if ($iddoc != 6) {
-
-            $correlativo = $this->correlativos_model->get_correlativo($venta->local_id, 4);
-            $this->correlativos_model->sumar_correlativo($venta->local_id, 4);
-            $update_venta['nro_guia'] = $correlativo->correlativo;
-        }
+//        if ($iddoc != 6) {
+//
+//            $correlativo = $this->correlativos_model->get_correlativo($venta->local_id, 4);
+//            $this->correlativos_model->sumar_correlativo($venta->local_id, 4);
+//            $update_venta['nro_guia'] = $correlativo->correlativo;
+//        }
 
         $this->db->where('venta_id', $venta_id);
         $this->db->update('venta', $update_venta);
@@ -570,7 +570,8 @@ class venta_new_model extends CI_Model
             'tipo_impuesto' => $venta['tipo_impuesto'],
             'comprobante_id' => $venta['comprobante_id'],
             'nota' => $venta['venta_nota'],
-            'dni_garante' => $venta['dni_garante']
+            'dni_garante' => $venta['dni_garante'],
+            'nro_guia' => $venta['nro_guia']
         );
 
         if ($venta['venta_status'] == 'CAJA') {
@@ -707,7 +708,8 @@ class venta_new_model extends CI_Model
             'tipo_impuesto' => $venta['tipo_impuesto'],
             'comprobante_id' => $venta['comprobante_id'],
             'nota' => $venta['venta_nota'],
-            'dni_garante' => $venta['dni_garante']
+            'dni_garante' => $venta['dni_garante'],
+            'nro_guia' => $venta['nro_guia']
         );
 
         //inserto la venta

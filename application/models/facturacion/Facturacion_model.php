@@ -970,10 +970,16 @@ class facturacion_model extends CI_Model
             'ref_id' => $venta->venta_id
         ))->row();
 
-        // Si es una boleta no enviada le cambio el estado del comprobante para mandar una anulacion
-        if ($facturacion->documento_tipo == '03' && $facturacion->estado == 1) {
+        // Solo se pueden anular boletas emitidas y aceptadas
+        if ($facturacion->documento_tipo == '03' && $facturacion->estado == 3) {
             $this->db->where('id', $facturacion->id);
-            $this->db->update('facturacion', array('estado_comprobante' => 3));
+            $this->db->update('facturacion', array(
+                'estado' => 1,
+                'estado_comprobante' => 3,
+                'hash_cdr' => null,
+                'sunat_codigo' => 0,
+                'nota' => 'Este combrobante ha sido anulado'
+            ));
 
             return TRUE;
         }

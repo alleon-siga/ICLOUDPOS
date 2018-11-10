@@ -129,7 +129,7 @@
                 Direcci&oacute;n: <?= $facturacion->cliente_direccion ?></td>
         </tr>
         <tr>
-            <td style="text-transform: uppercase;">Guia de Remisi&oacute;n: <span>-</span></td>
+            <td style="text-transform: uppercase;">Guia de Remisi&oacute;n: <span><?= isset($venta) && $venta->nro_guia != null ? $venta->nro_guia : '-'?></span></td>
         </tr>
         <tr>
             <td style="text-transform: uppercase;">
