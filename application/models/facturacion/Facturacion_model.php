@@ -599,7 +599,8 @@ class facturacion_model extends CI_Model
             foreach ($boletas as $comprobante) {
                 $this->db->insert('facturacion_resumen_comprobantes', array(
                     'comprobante_id' => $comprobante->id,
-                    'resumen_id' => $resumen_id
+                    'resumen_id' => $resumen_id,
+                    'estado' => $comprobante->estado_comprobante
                 ));
 
                 $this->db->where('id', $comprobante->id);
