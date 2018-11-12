@@ -571,7 +571,7 @@ class venta_new_model extends CI_Model
             'comprobante_id' => $venta['comprobante_id'],
             'nota' => $venta['venta_nota'],
             'dni_garante' => $venta['dni_garante'],
-            'nro_guia' => $venta['nro_guia']
+            'nro_guia' => isset($venta['nro_guia']) ? $venta['nro_guia'] : null
         );
 
         if ($venta['venta_status'] == 'CAJA') {
@@ -709,7 +709,7 @@ class venta_new_model extends CI_Model
             'comprobante_id' => $venta['comprobante_id'],
             'nota' => $venta['venta_nota'],
             'dni_garante' => $venta['dni_garante'],
-            'nro_guia' => $venta['nro_guia']
+            'nro_guia' => isset($venta['nro_guia']) ? $venta['nro_guia'] : null
         );
 
         //inserto la venta
