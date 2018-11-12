@@ -12,6 +12,7 @@ class Pedidos extends REST_Controller
         $this->load->model('venta_new/venta_new_model', 'venta');
         $this->load->model('inventario/inventario_model');
         $this->load->model('usuario/usuario_api_model');
+        $this->load->model('correlativos/correlativos_model');
         $this->load->model('api/api_model', 'api');
 
         $this->very_auth();
@@ -110,6 +111,24 @@ class Pedidos extends REST_Controller
 
         } else {
             $data['last'] = array();
+            $this->response($data, 200);
+        }
+    }
+
+    public function next_corr_post()
+    {
+        $local_id = $this->input->post('local_id');
+        $doc_id = $this->input->post('doc_id');
+
+        $data = array();
+        $correlativo = $this->correlativos_model->get_correlativo($local_id, $doc_id);
+
+        if ($correlativo) {
+            $data['next_corr'] = $correlativo->serie . '-' . sumCod($correlativo->correlativo, 6);
+            $this->response($data, 200);
+
+        } else {
+            $data['next_corr'] = "";
             $this->response($data, 200);
         }
     }
@@ -248,6 +267,46 @@ class Pedidos extends REST_Controller
         } else {
             $data['success'] = '3';
             $data['sin_stock'] = json_encode($sin_stock);
+        }
+
+        $this->response($data, 200);
+    }
+
+    public function facturar_venta_post()
+    {
+        // Obtengo los parametros enviados
+        $venta_id = $this->input->post('venta_id');
+        $doc_id = $this->input->post('doc_id');
+        $id_usuario = $this->input->post('id_usuario');
+
+        // Valido que los parametros esten correctos
+        $venta_id = $venta_id != "" && is_numeric($venta_id) ? $venta_id : false;
+        $doc_id = $doc_id != "" && is_numeric($doc_id) && ($doc_id == 1 || $doc_id == 3 || $doc_id == 6) ? $doc_id : false;
+
+        $data['success'] = '1';
+        if ($venta_id == false || $doc_id == false) {
+            $data['success'] = '0';
+        }
+
+        // Comienzo el proceso de facturacion de la venta
+        $data['venta'] = $this->db->get_where('venta', array('venta_id' => $venta_id))->row();
+
+        // Hago validaciones de logica del negocio para evitar conflictos
+        if ($data['venta']->venta_status != 'COMPLETADO' || $data['venta']->serie != NULL || $data['venta']->numero != NULL) {
+            $data['success'] = '2';
+        }
+
+        if ($data['success'] == '1') {
+            $this->db->trans_begin();
+            $this->venta->facturar_venta($venta_id, $doc_id, $id_usuario);
+            $this->db->trans_complete();
+
+            if ($this->db->trans_status() === FALSE) {
+                $this->db->trans_rollback();
+
+                $data['success'] = '3';
+            }
+            $this->db->trans_commit();
         }
 
         $this->response($data, 200);
