@@ -355,6 +355,7 @@ class facturacion extends MY_Controller
     {
 
         $data['facturacion'] = $this->facturacion_model->get_facturacion(array('id' => $id));
+        $data['venta'] = $this->db->get_where('venta', array('venta_id' => $data['facturacion']->ref_id))->row();
         if ($data['facturacion']->documento_tipo == '07') {
             $data['doc_afecta'] = $this->db->get_where('facturacion', array(
                 'documento_tipo' => $data['facturacion']->documento_mod_tipo,
@@ -369,6 +370,7 @@ class facturacion extends MY_Controller
     function imprimir($id)
     {
         $data['facturacion'] = $this->facturacion_model->get_facturacion(array('id' => $id));
+        $data['venta'] = $this->db->get_where('venta', array('venta_id' => $data['facturacion']->ref_id))->row();
         if ($data['facturacion']->documento_tipo == '07') {
             $data['doc_afecta'] = $this->db->get_where('facturacion', array(
                 'documento_tipo' => $data['facturacion']->documento_mod_tipo,

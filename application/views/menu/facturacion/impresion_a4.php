@@ -200,7 +200,7 @@
                 <th>Identificaci&oacute;n:</th>
                 <td><?= $facturacion->cliente_identificacion ?></td>
                 <th>Guia de Remisi&oacute;n:</th>
-                <td>-</td>
+                <td><?= isset($venta) && $venta->nro_guia != null ? $venta->nro_guia : '-'?></td>
             </tr>
             <tr>
                 <th>Direcci&oacute;n:</th>

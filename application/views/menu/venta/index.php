@@ -497,6 +497,17 @@
                     </div>
                 </div>
 
+                <!--TIPO DE DOCUMENTO-->
+                <div class="row">
+                    <div class="col-md-5 label-title">
+                        <label class="control-label">Nro de Remision:</label>
+                    </div>
+
+                    <div class="col-md-7">
+                        <input type="text" name="nro_guia" id="nro_guia" class="form-control">
+                    </div>
+                </div>
+
                 <input type="hidden" id="COMPROBANTE" value="<?= valueOption('COMPROBANTE', 0) ?>">
                 <div class="row" style="display: <?= validOption('COMPROBANTE', '1') ? 'block' : 'none' ?>">
                     <div class="col-md-5 label-title">
