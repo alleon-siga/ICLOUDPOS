@@ -747,7 +747,10 @@ function validar_registro_existencia () {
 
 }
 
+
 function guardaringreso () {
+
+  console.log('ingreso');
   // console.log($('#frmCompra').serialize());
   // return false;
   /*esta funcion carga el modal que indica que esta procesando, y ejecuta la funcion de guardar*/
@@ -761,12 +764,13 @@ function guardaringreso () {
       show_msg('warning', 'Debe seleccionar una cuenta')
       return false
     }
-
-    accionGuardar()
+    $('.guardarPago').attr('disabled', 'disabled');
+    accionGuardar();
   }
   else {
-
-    accionGuardar()
+    $('.guardarPago').attr('disabled', 'disabled');
+    accionGuardar();
+  
   }
 
   // $('#botonconfirmar_save').addClass('disabled')

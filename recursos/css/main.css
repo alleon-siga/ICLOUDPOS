@@ -362,6 +362,11 @@ body {
 =================================================================
 */
 
+* {
+    font-family: 'Cabin', sans-serif !important;
+    font-weight: 300;
+}
+
 header.navbar-default,
 header.navbar-inverse {
     padding: 0;
@@ -419,9 +424,21 @@ header.navbar-inverse.navbar-fixed-bottom {
     color: #dddddd;
 }
 
+.sidebar-visible-lg .on-open-hide {
+    display: none;
+    position: absolute;
+    right: 0;    
+}
+
 .nav.navbar-nav-custom {
-    float: left;
+ 
     margin: 0;
+}
+
+
+.on-open-hide {
+        position: absolute;
+    right: 0;   
 }
 
 .nav.navbar-nav-custom > li {
@@ -576,13 +593,15 @@ a.sidebar-title:focus {
 
 .sidebar-brand i,
 .sidebar-title i {
-    font-size: 14px;
+    font-size: 19px;
     display: inline-block;
     width: 18px;
     text-align: center;
     margin-right: 10px;
     opacity: 0.5;
     filter: alpha(opacity=50);
+    position: relative;
+    top: -4px;
 }
 
 .sidebar-title i.pull-left {
@@ -618,10 +637,11 @@ a.sidebar-title:focus {
 }
 
 .sidebar-user-name {
-    font-size: 17px;
+    font-size: 16px;
     font-weight: 300;
     margin-top: 10px;
     line-height: 26px;
+    text-transform: capitalize;
 }
 
 .sidebar-user-links a {
@@ -640,7 +660,8 @@ a.sidebar-title:focus {
 }
 
 .sidebar-user-links a > i {
-    font-size: 14px;
+    font-size: 18px;
+    padding: 0 4px;
 }
 
 /* Sidebar Color Themes */
@@ -838,7 +859,8 @@ a.sidebar-title:focus {
 }
 
 .sidebar-nav a > .sidebar-nav-icon {
-    margin-right: 20px;
+    margin-right: 10px;
+    font-size: 18px !important;
 }
 
 .sidebar-nav a > .sidebar-nav-indicator {

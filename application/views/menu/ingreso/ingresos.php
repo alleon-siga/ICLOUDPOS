@@ -711,7 +711,7 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
 
             </div>
             <div class="modal-footer">
-                <button type="button" id="botonconfirmar_save" class="btn btn-primary" onclick="guardaringreso()">
+                <button type="button" id="botonconfirmar_save" class="btn btn-primary guardarPago" onclick="guardaringreso()">
                     F6 Confirmar
                 </button>
                 <button type="button" class="btn btn-danger" id="cerrar_confirmar" onclick="cerrar_confirmar()">
@@ -941,7 +941,7 @@ echo validation_errors('<div class="alert alert-danger alert-dismissable"">', "<
                 <br>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-primary" id="guardarPago_pagospendiente" onclick="guardaringreso()"><i
+                <button class="btn btn-primary guardarPago" id="guardarPago_pagospendiente" onclick="guardaringreso()"><i
                         class=""></i> Pagar Monto</button>
                 <a href="#" class="btn btn-danger" id="cerrar_pago_modal" onclick="$('#pago_modal').modal('hide');">Salir</a>
             </div>

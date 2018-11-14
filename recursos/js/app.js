@@ -224,6 +224,20 @@ var App = function () {
     };
 
     /* Sidebar Functionality */
+    var isOpenSidebar  = true;
+
+     var toggleHandBar = function() {
+          if (!isOpenSidebar) {
+           isOpenSidebar  = true;
+           setTimeout(function() { $('.on-open-hide').show(); }, 100);
+          }
+          else {
+            isOpenSidebar = false;
+            $('.on-open-hide').hide();
+          }
+     }
+
+
     var handleSidebar = function (mode, extra) {
         if (mode === 'init') {
             // Init sidebars scrolling (if we have a fixed header)
@@ -244,10 +258,11 @@ var App = function () {
                 });
         } else {
             var windowW = getWindowWidth();
-
             if (mode === 'toggle-sidebar') {
+
                 if (windowW > 991) { // Toggle main sidebar in large screens (> 991px)
                     page.toggleClass('sidebar-visible-lg');
+
 
                     if (page.hasClass('sidebar-visible-lg')) {
                         handleSidebar('close-sidebar-alt');

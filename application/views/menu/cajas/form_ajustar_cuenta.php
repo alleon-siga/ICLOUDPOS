@@ -254,14 +254,14 @@
         $('.input-datepicker').datepicker({weekStart: 1, format: 'dd-mm-yyyy'});
 
         local_change();
-
+        // AL_CAMBIO
         $("#tasa, #importe").on('keyup', function () {
             var moneda = $("#caja_id").attr('data-moneda_id');
             var tasa = isNaN(parseFloat($("#tasa").val())) ? 1 : parseFloat($("#tasa").val());
             var importe = isNaN(parseFloat($("#importe").val())) ? 0 : parseFloat($("#importe").val());
+            var type =  '<?=$type?>';
 
-            $("#subimporte").val(formatPrice(parseFloat(importe / tasa)));
-
+            $("#subimporte").val(formatPrice(parseFloat(type == '$' ? tasa * importe : importe / tasa)));
         });
 
         $("#tipo_ajuste").on('change', function () {

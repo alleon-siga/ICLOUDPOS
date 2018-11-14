@@ -51,10 +51,10 @@ $query_builder = TRUE;
 
 $db['default'] = array(
     'dsn' => '',
-    'hostname' => '10.1.1.3',
-    'username' => 'user',
-    'password' => 'password',
-    'database' => DATABASE_HOST != false ? DATABASE_HOST : 'innovaled',
+    'hostname' => 'localhost',
+    'username' => 'root',
+    'password' => 'nexus1108',
+    'database' => 'local',
     'dbdriver' => 'mysqli',
     'dbprefix' => '',
     'pconnect' => FALSE,

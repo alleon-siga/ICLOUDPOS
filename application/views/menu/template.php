@@ -737,16 +737,13 @@ $primary_nav = array(
 
 
 <!doctype html>
-<html lang="en">
+<html lang="es-PE">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
         <title><?= $info->nombre_empresa ?></title>
         <meta name="description" content="">
 
         <meta name="viewport" content="width=device-width">
-
-        <!-- Icons -->
-        <!-- The following icons can be replaced with your own, they are used by desktop and mobile browsers -->
         <link rel="shortcut icon" href="<?php echo $ruta ?>recursos/img/favicon.ico">
         <link rel="apple-touch-icon" href="<?php echo $ruta; ?>recursos/img/icon57.png" sizes="57x57">
         <link rel="apple-touch-icon" href="<?php echo $ruta; ?>recursos/img/icon72.png" sizes="72x72">
@@ -755,19 +752,11 @@ $primary_nav = array(
         <link rel="apple-touch-icon" href="<?php echo $ruta; ?>recursos/img/icon120.png" sizes="120x120">
         <link rel="apple-touch-icon" href="<?php echo $ruta; ?>recursos/img/icon144.png" sizes="144x144">
         <link rel="apple-touch-icon" href="<?php echo $ruta; ?>recursos/img/icon152.png" sizes="152x152">
-
-        <!-- END Icons -->
-        <!-- Stylesheets -->
-        <!-- Bootstrap is included in its original form, unaltered -->
+        <link href="https://fonts.googleapis.com/css?family=Cabin:400,500,600,700" rel="stylesheet">
         <link rel="stylesheet" href="<?php echo $ruta; ?>recursos/css/jquery-ui.css">
         <link rel="stylesheet" href="<?php echo $ruta; ?>recursos/css/bootstrap.min.css">
-        <!-- Related styles of various icon packs and plugins -->
         <link rel="stylesheet" href="<?php echo $ruta; ?>recursos/css/plugins.css">
-        <!-- The main stylesheet of this template. All Bootstrap overwrites are defined in here -->
         <link rel="stylesheet" href="<?php echo $ruta; ?>recursos/css/main.css">
-
-        <!-- Include a specific file here from css/themes/ folder to alter the default theme of the template -->
-
         <link id="theme-link" rel="stylesheet"
               href="<?php echo $ruta; ?>recursos/css/<?php
 if ($template['theme'] != "") {
@@ -775,9 +764,7 @@ if ($template['theme'] != "") {
 }
 ?>.css">
 
-        <!-- The themes stylesheet of this template (for using specific theme color in individual elements - must included last) -->
         <link rel="stylesheet" href="<?php echo $ruta; ?>recursos/css/themes.css">
-
         <link rel="stylesheet" href="<?php echo $ruta; ?>recursos/css/modified.css">
         <style>
 
@@ -790,7 +777,6 @@ if ($template['theme'] != "") {
                 white-space: nowrap;
             }
 
-            /* Esto es un arreglo a la fuerza pq al parecer los iconos de la pantalla principal se corrieron */
             .widget-icon .fa, .widget-icon .fi, .widget-icon .gi, .widget-icon .hi, .widget-icon .si {
                 line-height: 64px !important;
             }
@@ -807,16 +793,12 @@ if ($template['theme'] != "") {
 
         </style>
 
-        <!-- END Stylesheets -->
-
-        <!-- Modernizr (browser feature detection library) & Respond.js (Enable responsive CSS code on browsers that don't support it, eg IE8) -->
         <script src="<?php echo $ruta; ?>recursos/js/vendor/modernizr-2.7.1-respond-1.4.2.min.js"></script>
 
         <!-- Remember to include excanvas for IE8 chart support -->
         <!--[if IE 8]>
         <![endif]-->
 
-        <!-- Include Jquery library from Google's CDN but if something goes wrong get Jquery from local file (Remove 'http:' if you have SSL) -->
         <script src="<?php echo $ruta ?>recursos/js/vendor/jquery-1.11.1.min.js"></script>
 
         <!-- IMPORTANTE. SCRIPT PARA VALIDAR TODAS LAS PETICIONES AJAX DE JQUERY -->
@@ -1331,7 +1313,7 @@ if ($page_classes) {
                                </a>
                            </li>
                        </ul>-->
-                            <ul class="nav navbar-nav-custom pull-right hidden-xs">
+                            <ul class="nav navbar-nav-custom pull-right hidden-xs on-open-hide">
                                 <!-- Alternative Sidebar Toggle Button -->
                                 <!-- User Dropdown -->
                                 <li class="alertD" style="display: none">

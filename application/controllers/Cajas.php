@@ -105,7 +105,7 @@ class cajas extends MY_Controller
         }
     }
 
-    function caja_ajustar_form($caja_id, $id)
+    function caja_ajustar_form($caja_id, $id, $type)
     {
 
         $data['header_text'] = 'Ajustar Cuenta de Caja';
@@ -115,7 +115,7 @@ class cajas extends MY_Controller
         $data['caja_actual'] = $this->cajas_model->get($caja_id);
 
         $data['locales'] = $this->local_model->get_all();
-
+        $data['type'] = $type == 'dolares' ? '$' : 'S';
         $data['cajas'] = $this->db->join('moneda', 'moneda.id_moneda = caja.moneda_id')
             ->get_where('caja', array('estado' => 1))->result();
         $data['caja_cuentas'] = $this->db->get_where('caja_desglose', array('estado' => 1))->result();

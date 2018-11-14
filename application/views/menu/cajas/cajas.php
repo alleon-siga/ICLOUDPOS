@@ -118,13 +118,15 @@
                                     <?php else: ?>
                                         <a class="btn_ajustar_caja_cuenta btn btn-warning"
                                            data-caja_id="<?= $caja->id ?>"
-                                           data-id="<?= $desglose->id ?>">
+                                           data-id="<?= $desglose->id ?>"
+                                           data-type="<?= $caja->simbolo ?>">
                                             <i class="fa fa-exchange"></i>
                                         </a>
                                     <?php endif; ?>
 
                                     <a class="btn_detalle_caja_cuenta btn btn-default"
-                                       data-id="<?= $desglose->id ?>">
+                                       data-id="<?= $desglose->id ?>" 
+                                       data-type="<?= $caja->simbolo ?>">
                                         <i class="fa fa-search"></i>
                                     </a>
 
@@ -230,8 +232,10 @@
 
         $(".btn_ajustar_caja_cuenta").on('click', function () {
             $("#cargando_modal").modal("show");
+            var type =  $(this).attr('data-type') == '$' ? 'dolares' : 'soles';
+
             $.ajax({
-                url: '<?php echo base_url('cajas/caja_ajustar_form')?>' + '/' + $(this).attr('data-caja_id') + '/' + $(this).attr('data-id'),
+                url: '<?php echo base_url('cajas/caja_ajustar_form')?>' + '/' + $(this).attr('data-caja_id') + '/' + $(this).attr('data-id') + '/' + type ,
                 type: 'post',
                 success: function (data) {
                     $("#cargando_modal").modal("hide");

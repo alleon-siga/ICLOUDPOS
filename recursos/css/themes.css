@@ -12,6 +12,9 @@ THEME DEFAULT
 =================================================================
 */
 
+
+@import url('https://fonts.googleapis.com/css?family=Cabin:400,500,600,700');
+
 .themed-color-default {
     color: #1bbae1 !important;
 }
