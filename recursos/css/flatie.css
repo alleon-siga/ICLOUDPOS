@@ -34,7 +34,7 @@ table td
 
 table th
 {
-	background-color:#ccc !important;
+	background-color: #5781ab !important;
 	color:#fff !important;
 }
 
@@ -45,7 +45,12 @@ table th
 
 table tr:hover
 {
-	color:#55c862 !important;
+	color: #000000 !important;
+	font-weight: bold !important;
+}
+
+table tr:hover td {
+	font-weight: 500;
 }
 
 table tr.even {
@@ -184,7 +189,7 @@ blockquote,
 .pager > li.disabled > a:hover,
 .dropzone,
 ul.wysihtml5-toolbar a.btn.wysihtml5-command-active {
-    border-color: #ebf2f2 !important;
+    border-color: #dcdcdc !important;
 }
 
 .dataTables_wrapper > div {
@@ -412,7 +417,7 @@ div.tagsinput span.tag,
 .themed-background,
 .select2-results .select2-highlighted,
 .select2-container-multi .select2-choices .select2-search-choice {
-    background-color: #2F3C53;
+    background-color: #2a416c;
 }
 
 .timeline-list .active .timeline-icon,

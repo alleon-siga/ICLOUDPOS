@@ -1,34 +1,39 @@
 <?php
 
-if (!defined('BASEPATH'))
+if (!defined('BASEPATH')) {
     exit('No direct script access allowed');
+}
 
-class monedas extends MY_Controller {
+class monedas extends MY_Controller
+{
 
     private $monedas = array();
 
-    function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         if ($this->login_model->verify_session()) {
             $this->load->model('monedas/monedas_model');
-            $this->load->model('cajas/cajas_model');            
+            $this->load->model('cajas/cajas_model');
             $this->load->model('facturacion/facturacion_model');
         } else {
             redirect(base_url(), 'refresh');
         }
     }
 
-    function form($id = FALSE) {
+    public function form($id = false)
+    {
 
         $data = array();
-        if ($id != FALSE) {
+        if ($id != false) {
             $data['monedas'] = $this->monedas_model->get_by('id_moneda', $id);
             $data['moneda_defecto'] = $this->db->get_where('moneda', array('id_moneda' => MONEDA_DEFECTO))->row();
         }
         $this->load->view('menu/monedas/form', $data);
     }
 
-    function guardar() {
+    public function guardar()
+    {
 
         $id = $this->input->post('id');
 
@@ -52,7 +57,7 @@ class monedas extends MY_Controller {
             $resultado = $this->monedas_model->update($monedas);
         }
 
-        if ($resultado == TRUE) {
+        if ($resultado == true) {
             $json['success'] = 'Solicitud Procesada con exito';
         } else {
             $json['error'] = 'Ha ocurrido un error al procesar la solicitud';
@@ -66,17 +71,18 @@ class monedas extends MY_Controller {
         echo json_encode($json);
     }
 
-    function eliminar() {
+    public function eliminar()
+    {
         $id = $this->input->post('id');
 
         $moneda = array(
             'id_moneda' => $id,
-            'status_moneda' => 0
+            'status_moneda' => 0,
         );
 
         $data['resultado'] = $this->monedas_model->update_status($moneda);
 
-        if ($data['resultado'] != FALSE) {
+        if ($data['resultado'] != false) {
 
             $json['success'] = 'Se ha eliminado exitosamente';
         } else {
@@ -87,16 +93,17 @@ class monedas extends MY_Controller {
         echo json_encode($json);
     }
 
-    function index() {
+    public function index()
+    {
 
-        if ($this->session->flashdata('success') != FALSE) {
-            $data ['success'] = $this->session->flashdata('success');
+        if ($this->session->flashdata('success') != false) {
+            $data['success'] = $this->session->flashdata('success');
         }
-        if ($this->session->flashdata('error') != FALSE) {
-            $data ['error'] = $this->session->flashdata('error');
+        if ($this->session->flashdata('error') != false) {
+            $data['error'] = $this->session->flashdata('error');
         }
 
-//    	$data['monedas'] = $this->monedas_model->get_all();
+//        $data['monedas'] = $this->monedas_model->get_all();
         $data['monedas'] = $this->db->get('moneda')->result();
         $data['moneda_defecto'] = $this->db->get_where('moneda', array('id_moneda' => MONEDA_DEFECTO))->row();
         $dataCuerpo['cuerpo'] = $this->load->view('menu/monedas/monedas', $data, true);
@@ -109,7 +116,8 @@ class monedas extends MY_Controller {
     }
 
     //Se Obtiene el tipo de Cambio de Sunat (Carlos Camargo 26-10-2018)
-    function get_tipocambio() {
+    public function get_tipocambio()
+    {
         header('Content-Type: application/json');
 
         $data['cambio'] = $this->facturacion_model->get_tipo_cambio();

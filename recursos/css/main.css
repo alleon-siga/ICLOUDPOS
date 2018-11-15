@@ -363,7 +363,7 @@ body {
 */
 
 * {
-    font-family: 'Cabin', sans-serif !important;
+    font-family: 'Cabin', sans-serif;
     font-weight: 300;
 }
 
@@ -435,11 +435,18 @@ header.navbar-inverse.navbar-fixed-bottom {
     margin: 0;
 }
 
-
 .on-open-hide {
-        position: absolute;
+    position: absolute;
     right: 0;   
 }
+
+.on-open-hide li a:hover, .on-open-hide > .open a {
+    background: none !important;
+}
+
+ .on-open-hide > .open a {
+     color: inherit !important;
+ }
 
 .nav.navbar-nav-custom > li {
     min-height: 50px;
@@ -827,7 +834,7 @@ a.sidebar-title:focus {
 .sidebar-nav {
     list-style: none;
     margin: 0;
-    padding: 10px 0 0;
+    padding: 0;
 }
 
 .sidebar-nav .sidebar-header:first-child {
@@ -1088,7 +1095,7 @@ a.sidebar-title:focus {
 /* Blocks */
 .block {
     margin: 0 0 10px;
-    padding: 20px 15px 1px;
+    padding: 20px 15px 20px;
     background-color: #ffffff;
     border: 1px solid #dbe1e8;
 }
@@ -1483,14 +1490,14 @@ a.widget.widget-hover-effect4:active {
     display: none;
     position: fixed;
     bottom: 55px;
-    left: 5px;
+    right: 5px;
     border-radius: 3px;
-    padding: 0 12px;
+    padding: 3px 12px;
     font-size: 28px;
     text-align: center;
     color: #ffffff;
     background-color: #000000;
-    opacity: 0.1;
+    opacity: .5;
     filter: alpha(opacity=10);
 }
 
@@ -4060,8 +4067,8 @@ only screen and (min-device-pixel-ratio: 1.5) {
     width: 100%;
     margin-bottom: 15px;
     overflow-y: hidden;
+    margin-top: 20px;
     /* overflow-x: auto; */
-
 }
 #stock{
     font-size: 20px;

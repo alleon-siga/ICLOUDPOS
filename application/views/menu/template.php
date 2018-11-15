@@ -47,7 +47,7 @@ $template = array(
     // 'horizontal-menu'        for a horizontal menu in header
     // This option is just used for feature demostration and you can remove it if you like. You can keep or alter header's content in page_head.php
     'header_content' => 'horizontal-menu',
-    'active_page' => basename($_SERVER['PHP_SELF'])
+    'active_page' => basename($_SERVER['PHP_SELF']),
 );
 
 if ($this->session->userdata('tema')) {
@@ -60,7 +60,7 @@ $primary_nav = array(
         'name' => 'MENU PRINCIPAL',
         'url' => $ruta . 'principal',
         'icon' => 'fa fa-home',
-        'slug' => 'home'
+        'slug' => 'home',
     ),
     array(
         'name' => 'INVENTARIO',
@@ -70,43 +70,43 @@ $primary_nav = array(
                 'name' => 'Productos',
                 'url' => $ruta . 'producto',
                 'icon' => 'gi gi-barcode',
-                'slug' => 'productos'
+                'slug' => 'productos',
             ),
             array(
                 'name' => 'Stock Productos',
                 'url' => $ruta . 'producto/stock',
                 'icon' => 'fa fa-list',
-                'slug' => 'stock'
+                'slug' => 'stock',
             ),
             array(
                 'name' => 'Traspasos de Almacen',
                 'url' => $ruta . 'traspaso',
                 'icon' => 'fa fa-tasks',
-                'slug' => 'traspaso'
+                'slug' => 'traspaso',
             ),
             array(
                 'name' => 'Entradas & Salidas',
                 'url' => $ruta . 'ajuste',
                 'icon' => 'fa fa-exchange',
-                'slug' => 'ajusteinventario'
+                'slug' => 'ajusteinventario',
             ),
             array(
                 'name' => 'Stock & Precios',
                 'url' => $ruta . 'producto/listaprecios',
                 'icon' => 'fa fa-money',
-                'slug' => 'listaprecios'
+                'slug' => 'listaprecios',
             ),
             /* array(
-              'name' => 'Kardex',
-              'url' => $ruta . 'inventario/movimiento',
-              'icon' => 'fa fa-exchange',
-              'slug' => 'movimientoinventario'
-              ), */
+            'name' => 'Kardex',
+            'url' => $ruta . 'inventario/movimiento',
+            'icon' => 'fa fa-exchange',
+            'slug' => 'movimientoinventario'
+            ), */
             array(
                 'name' => 'Kardex',
                 'url' => $ruta . 'kardex',
                 'icon' => 'fa fa-exchange',
-                'slug' => 'movimientoinventario'
+                'slug' => 'movimientoinventario',
             ),
             array(
                 'name' => 'Categorizacion',
@@ -117,70 +117,70 @@ $primary_nav = array(
                         'name' => 'Marcas',
                         'url' => $ruta . 'marca',
                         'icon' => 'fa fa-certificate',
-                        'slug' => 'marcas'
+                        'slug' => 'marcas',
                     ),
                     array(
                         'name' => 'Grupos',
                         'url' => $ruta . 'grupo',
                         'icon' => 'fa fa-cubes',
-                        'slug' => 'gruposproductos'
+                        'slug' => 'gruposproductos',
                     ),
                     array(
                         'name' => 'Familias',
                         'url' => $ruta . 'familia',
                         'icon' => 'fa fa-laptop',
-                        'slug' => 'familias'
+                        'slug' => 'familias',
                     ),
                     array(
                         'name' => 'Lineas',
                         'url' => $ruta . 'linea',
                         'icon' => 'fa fa-th-large',
-                        'slug' => 'lineas'
+                        'slug' => 'lineas',
                     ),
                     array(
                         'name' => 'Categorias',
                         'url' => $ruta . 'categorias',
                         'icon' => 'fa fa-certificate',
-                        'slug' => 'categorias'
+                        'slug' => 'categorias',
                     ),
                 ),
             ),
             /*
-              array(
-              'name' => 'Existencias bajas',
-              'url' => $ruta . 'inventario/existencia_minima',
-              'icon' => 'fa fa-minus-square-o',
-              'slug' => 'exitenciaminima'
-              ),
-              array(
-              'name' => 'Existencias altas',
-              'url' => $ruta . 'inventario/existencia_alta',
-              'icon' => 'fa fa-sort-amount-asc',
-              'slug' => 'existenciasalta'
-              ),
+            array(
+            'name' => 'Existencias bajas',
+            'url' => $ruta . 'inventario/existencia_minima',
+            'icon' => 'fa fa-minus-square-o',
+            'slug' => 'exitenciaminima'
+            ),
+            array(
+            'name' => 'Existencias altas',
+            'url' => $ruta . 'inventario/existencia_alta',
+            'icon' => 'fa fa-sort-amount-asc',
+            'slug' => 'existenciasalta'
+            ),
              */
             array(
                 'name' => 'Ingreso Calzado',
                 'url' => $ruta . 'ingreso_calzado',
                 'icon' => 'fa fa-sort-amount-asc',
-                'slug' => 'ingresocalzado'
+                'slug' => 'ingresocalzado',
             ),
             array(
                 'name' => 'Plantilla Producto',
                 'url' => $ruta . 'plantilla',
                 'icon' => 'fa fa-sort-amount-asc',
-                'slug' => 'plantillaproducto'
+                'slug' => 'plantillaproducto',
             ),
             array(
                 'name' => 'Serie Calzado',
                 'url' => $ruta . 'seriescalzado',
                 'icon' => 'fa fa-sort-amount-asc',
-                'slug' => 'seriescalzado'
+                'slug' => 'seriescalzado',
             ), array(
                 'name' => 'Reporte Calzado',
                 'url' => $ruta . 'ingreso_calzado/reporte',
                 'icon' => 'fa fa-sort-amount-asc',
-                'slug' => 'reportecalzado'
+                'slug' => 'reportecalzado',
             ),
         ),
     ),
@@ -192,48 +192,48 @@ $primary_nav = array(
                 'name' => 'Registrar Compras',
                 'url' => $ruta . 'ingresos?costos=true',
                 'icon' => 'gi gi-cart_in',
-                'slug' => 'registraringreo'
+                'slug' => 'registraringreo',
             ),
             /* array(
-              'name' => 'Registro de existencia',
-              'slug' => 'registraringreo',
-              'icon' => 'fa fa-share',
-              'url' => $ruta . 'ingresos?costos=false',
-              ), */
+            'name' => 'Registro de existencia',
+            'slug' => 'registraringreo',
+            'icon' => 'fa fa-share',
+            'url' => $ruta . 'ingresos?costos=false',
+            ), */
             array(
                 'name' => 'Consultar Compras',
                 'url' => $ruta . 'ingresos/consultarCompras',
                 'icon' => 'gi gi-list',
-                'slug' => 'consultarcompras'
+                'slug' => 'consultarcompras',
             ),
             array(
                 'name' => 'Anulacion Compras',
                 'url' => $ruta . 'ingresos/devolucion',
                 'icon' => 'gi gi-unshare',
-                'slug' => 'devolucioningreso'
+                'slug' => 'devolucioningreso',
             ),
-        /*
-          array(
-          'name' => 'Facturar Compras',
-          'url' => $ruta . 'ingresos/consultar',
-          'icon' => 'gi gi-history',
-          'slug' => 'facturaringresos'
-          ),
+            /*
+            array(
+            'name' => 'Facturar Compras',
+            'url' => $ruta . 'ingresos/consultar',
+            'icon' => 'gi gi-history',
+            'slug' => 'facturaringresos'
+            ),
 
-          array(
-          'name' => 'Compras Calzado',
-          'url' => $ruta . '',
-          'icon' => 'gi gi-cart_in',
-          'slug' => 'compraszapatos'
-          ),
-         */
-        /* PREGUNTAR ACERCA DE ESTE FORMULARIO
-          array(
-          'name' => 'Opciones',
-          'url' => $ruta . 'ingreso/opciones',
-          'icon' => 'fa fa-cogs',
-          'slug' => 'opcioningreso'
-          ) */
+            array(
+            'name' => 'Compras Calzado',
+            'url' => $ruta . '',
+            'icon' => 'gi gi-cart_in',
+            'slug' => 'compraszapatos'
+            ),
+             */
+            /* PREGUNTAR ACERCA DE ESTE FORMULARIO
+        array(
+        'name' => 'Opciones',
+        'url' => $ruta . 'ingreso/opciones',
+        'icon' => 'fa fa-cogs',
+        'slug' => 'opcioningreso'
+        ) */
         ),
     ),
     array(
@@ -244,57 +244,57 @@ $primary_nav = array(
                 'name' => 'Realizar Venta',
                 'url' => $ruta . 'venta_new',
                 'icon' => 'fa fa-share',
-                'slug' => 'generarventa'
+                'slug' => 'generarventa',
             ),
             array(
                 'name' => 'Recarga',
                 'url' => $ruta . 'venta_new/recarga',
                 'icon' => 'fa fa-share',
-                'slug' => 'generarRecarga'
+                'slug' => 'generarRecarga',
             ),
             array(
                 'name' => 'Cobrar en Caja',
                 'url' => $ruta . 'venta_new/historial/caja',
                 'icon' => 'fa fa-share',
-                'slug' => 'cobraencaja'
+                'slug' => 'cobraencaja',
             ),
             array(
                 'name' => 'Cotizaciones',
                 'url' => $ruta . 'cotizar/historial',
                 'icon' => 'fa fa-share',
-                'slug' => 'cotizaciones'
+                'slug' => 'cotizaciones',
             ),
             array(
                 'name' => 'Registro de Ventas',
                 'url' => $ruta . 'venta_new/historial',
                 'icon' => 'fa fa-history',
-                'slug' => 'historialventas'
+                'slug' => 'historialventas',
             ),
             array(
                 'name' => 'Anular & Devolver',
                 'url' => $ruta . 'venta_new/historial/anular',
                 'icon' => 'gi gi-remove_2',
-                'slug' => 'anularventa'
+                'slug' => 'anularventa',
             ),
             array(
                 'name' => 'Ofertas',
                 'url' => $ruta . 'venta_new/ofertas',
                 'icon' => 'fa fa-money',
-                'slug' => 'generarventa'
+                'slug' => 'generarventa',
             ),
             array(
                 'name' => 'Comprobantes',
                 'url' => $ruta . 'comprobante',
                 'icon' => 'fa fa-cogs',
-                'slug' => 'comprobantes'
+                'slug' => 'comprobantes',
             ),
             array(
                 'name' => 'Configurar Venta',
                 'url' => $ruta . 'venta_new/opciones',
                 'icon' => 'fa fa-cogs',
-                'slug' => 'configurarventa'
+                'slug' => 'configurarventa',
             ),
-        )
+        ),
     ),
     array(
         'name' => 'FACTURACI&Oacute;N',
@@ -304,19 +304,19 @@ $primary_nav = array(
                 'name' => 'Comprobantes',
                 'url' => $ruta . 'facturacion/emision',
                 'icon' => 'fa fa-list',
-                'slug' => 'facturacion_comprobantes'
+                'slug' => 'facturacion_comprobantes',
             ),
             array(
                 'name' => 'Sistema de Emisi&oacute;n',
                 'url' => $ruta . 'facturacion/enviar',
                 'icon' => 'fa fa-mail-forward',
-                'slug' => 'facturacion_comprobantes'
+                'slug' => 'facturacion_comprobantes',
             ),
             array(
                 'name' => 'Notas de Pedido',
                 'url' => $ruta . 'facturacion/notas',
                 'icon' => 'fa fa-list',
-                'slug' => 'facturacion_comprobantes'
+                'slug' => 'facturacion_comprobantes',
             ),
             array(
                 'name' => 'Reportes',
@@ -327,23 +327,23 @@ $primary_nav = array(
                         'name' => 'Ventas Emitidas',
                         'url' => $ruta . 'facturacion/reporte_venta',
                         'icon' => 'gi gi-parents',
-                        'slug' => 'facturacion_comprobantes'
+                        'slug' => 'facturacion_comprobantes',
                     ),
                     array(
                         'name' => 'Relacion de Comprobantes',
                         'url' => $ruta . 'facturacion/relacion_comprobante',
                         'icon' => 'gi gi-parents',
-                        'slug' => 'facturacion_comprobantes'
-                    )
-                )
+                        'slug' => 'facturacion_comprobantes',
+                    ),
+                ),
             ),
             array(
                 'name' => 'Configurar Emisor',
                 'url' => $ruta . 'facturacion/emisor',
                 'icon' => 'fa fa-cogs',
-                'slug' => 'facturacion_emisor'
+                'slug' => 'facturacion_emisor',
             ),
-        )
+        ),
     ),
     array(
         'name' => 'CLIENTES',
@@ -353,47 +353,47 @@ $primary_nav = array(
                 'name' => 'Registrar Clientes',
                 'url' => $ruta . 'cliente',
                 'icon' => 'gi gi-parents',
-                'slug' => 'clientes'
+                'slug' => 'clientes',
             ),
             array(
                 'name' => 'Grupos de Clientes',
                 'url' => $ruta . 'clientesgrupos',
                 'icon' => 'fa fa-group',
-                'slug' => 'gruposcliente'
+                'slug' => 'gruposcliente',
             ),
             array(
                 'name' => 'Cuentas x Cobrar',
                 'url' => $ruta . 'venta/pagospendientes',
                 'icon' => 'fa fa-list',
-                'slug' => 'cuentasporcobrar'
+                'slug' => 'cuentasporcobrar',
             ),
             /*
-              array(
-              'name' => 'Estado de Cuenta',
-              'url' => $ruta . 'venta/estadocuenta',
-              'icon' => 'fa fa-list',
-              'slug' => 'estadocuenta'
-              ), */
+            array(
+            'name' => 'Estado de Cuenta',
+            'url' => $ruta . 'venta/estadocuenta',
+            'icon' => 'fa fa-list',
+            'slug' => 'estadocuenta'
+            ), */
             array(
                 'name' => 'Estado de Cuenta Cliente',
                 'url' => $ruta . 'reporte_ventas/cliente_estado',
                 'icon' => 'fa fa-pie-chart',
-                'slug' => 'estadocuenta'
+                'slug' => 'estadocuenta',
             ),
             array(
                 'name' => 'Calendario Cuentas',
                 'url' => $ruta . 'venta/calendarioCuentasCobrar',
                 'icon' => 'fa fa-calendar',
-                'slug' => 'calendarioCuentasCobrar'
-            )
+                'slug' => 'calendarioCuentasCobrar',
+            ),
 
-        /* array(
-          'name' => 'Cronograma Pago',
-          'url' => $ruta . 'venta/cronograma_pago',
-          'icon' => 'gi gi-calendar',
-          'slug' => 'cronogramapago'
-          ), */
-        )
+            /* array(
+        'name' => 'Cronograma Pago',
+        'url' => $ruta . 'venta/cronograma_pago',
+        'icon' => 'gi gi-calendar',
+        'slug' => 'cronogramapago'
+        ), */
+        ),
     ),
     array(
         'name' => 'PROVEEDORES',
@@ -403,21 +403,21 @@ $primary_nav = array(
                 'name' => 'Registrar Proveedores',
                 'url' => $ruta . 'proveedor',
                 'icon' => 'gi gi-vcard',
-                'slug' => 'proveedor'
+                'slug' => 'proveedor',
             ),
             array(
                 'name' => 'Cuentas x Pagar',
                 'url' => $ruta . 'proveedor/cuentas_por_pagar',
                 'icon' => 'fa fa-list',
-                'slug' => 'cuentasporpagar'
+                'slug' => 'cuentasporpagar',
             ),
             array(
                 'name' => 'Calendario Cuentas',
                 'url' => $ruta . 'proveedor/calendarioCuentasPagar',
                 'icon' => 'fa fa-calendar',
-                'slug' => 'calendarioCuentasPagar'
-            )
-        )
+                'slug' => 'calendarioCuentasPagar',
+            ),
+        ),
     ),
     array(
         'name' => 'CAJA Y BANCOS',
@@ -427,45 +427,45 @@ $primary_nav = array(
                 'name' => 'Caja y Bancos',
                 'url' => $ruta . 'cajas',
                 'icon' => 'fa fa-inbox',
-                'slug' => 'cajaybancos'
+                'slug' => 'cajaybancos',
             ),
             array(
                 'name' => 'Gastos',
                 'url' => $ruta . 'gastos',
                 'icon' => 'gi gi-unshare',
-                'slug' => 'gastos'
+                'slug' => 'gastos',
             ),
             /*
-              array(
-              'name' => 'Movimientos de caja',
-              'url' => $ruta . ' ',
-              'icon' => 'fa fa-list',
-              'slug' => 'movimientocajas'
-              ),
+            array(
+            'name' => 'Movimientos de caja',
+            'url' => $ruta . ' ',
+            'icon' => 'fa fa-list',
+            'slug' => 'movimientocajas'
+            ),
              */
             array(
                 'name' => 'Tipos de gasto',
                 'url' => $ruta . 'tiposdegasto',
                 'icon' => 'gi gi-parents',
-                'slug' => 'tiposgasto'
+                'slug' => 'tiposgasto',
             ),
             array(
                 'name' => 'Monedas',
                 'url' => $ruta . 'monedas',
                 'icon' => 'fa fa-money',
-                'slug' => 'regmonedas'
+                'slug' => 'regmonedas',
             ),
             array(
                 'name' => 'Bancos',
                 'url' => $ruta . 'banco',
                 'icon' => 'fa fa-laptop',
-                'slug' => 'bancos'
+                'slug' => 'bancos',
             ),
             array(
                 'name' => 'Cuadre de caja',
                 'url' => '#cuadre_caja',
                 'icon' => 'fa fa-money',
-                'slug' => 'cuadrecaja'
+                'slug' => 'cuadrecaja',
             ),
         ),
     ),
@@ -474,19 +474,19 @@ $primary_nav = array(
         'slug' => 'reportes',
         'sub' => array(
             /*
-              array(
-              'name' => 'Dias de Almacenaje',
-              'url' => $ruta . ' ',
-              'icon' => 'fa fa-bar-chart',
-              'slug' => 'diasalmacenaje'
-              ),
+            array(
+            'name' => 'Dias de Almacenaje',
+            'url' => $ruta . ' ',
+            'icon' => 'fa fa-bar-chart',
+            'slug' => 'diasalmacenaje'
+            ),
 
-              array(
-              'name' => 'Compras vs Ventas',
-              'url' => $ruta . 'venta/reporteUtilidades',
-              'icon' => 'fa fa-bar-chart',
-              'slug' => 'comprasvsventas'
-              ),
+            array(
+            'name' => 'Compras vs Ventas',
+            'url' => $ruta . 'venta/reporteUtilidades',
+            'icon' => 'fa fa-bar-chart',
+            'slug' => 'comprasvsventas'
+            ),
              */
             array(
                 'name' => 'Inventario',
@@ -496,34 +496,34 @@ $primary_nav = array(
                     array(
                         'name' => 'Valorización inventario',
                         'url' => $ruta . 'inventario/valorizacion_inventario',
-                        'slug' => 'valorizacioneinventario'
+                        'slug' => 'valorizacioneinventario',
                     ),
                     array(
                         'name' => 'Entradas & Salidas',
                         'url' => $ruta . 'ajuste/historial',
-                        'slug' => 'entradasysalidas'
+                        'slug' => 'entradasysalidas',
                     ),
                     array(
                         'name' => 'Stock y ventas',
                         'url' => $ruta . 'reporte/stockVentas',
-                        'slug' => 'stockventas'
+                        'slug' => 'stockventas',
                     ),
                     array(
                         'name' => 'Ingreso Detallado',
                         'url' => $ruta . 'ingresos/ingreso_detallado',
-                        'slug' => 'ingresodetallado'
+                        'slug' => 'ingresodetallado',
                     ),
                     array(
                         'name' => 'Kardex Valorizado',
                         'url' => $ruta . 'reporte/kardexValorizado',
-                        'slug' => 'kardexvalorizado'
+                        'slug' => 'kardexvalorizado',
                     ),
                     array(
                         'name' => 'Verificaci&oacute;n Inventario',
                         'url' => $ruta . 'reporte_inventario/verificaInventario',
-                        'slug' => 'verificainventario'
-                    )
-                )
+                        'slug' => 'verificainventario',
+                    ),
+                ),
             ),
             array(
                 'name' => 'Venta',
@@ -533,75 +533,75 @@ $primary_nav = array(
                     array(
                         'name' => 'Resumen de ventas',
                         'url' => $ruta . 'estadisticas',
-                        'slug' => 'resumenventas'
+                        'slug' => 'resumenventas',
                     ),
                     array(
                         'name' => 'Comision x Vendedor',
                         'url' => $ruta . 'reporte_ventas/comision',
-                        'slug' => 'comisionxvendedor'
+                        'slug' => 'comisionxvendedor',
                     ),
                     array(
                         'name' => 'Ventas x Comprobante',
                         'url' => $ruta . 'reporte_ventas/comprobante',
-                        'slug' => 'ventaxcomprobante'
+                        'slug' => 'ventaxcomprobante',
                     ),
                     array(
                         'name' => 'Productos + vendidos',
                         'url' => $ruta . 'reporte/productoVendido',
-                        'slug' => 'productovendido'
+                        'slug' => 'productovendido',
                     ),
                     array(
                         'name' => 'Ventas x sucursal',
                         'url' => $ruta . 'reporte/ventaSucursal',
-                        'slug' => 'ventaSucursal'
+                        'slug' => 'ventaSucursal',
                     ),
                     array(
                         'name' => 'Ventas x empleado',
                         'url' => $ruta . 'reporte/ventaEmpleado',
-                        'slug' => 'ventaEmpleado'
+                        'slug' => 'ventaEmpleado',
                     ),
                     array(
                         'name' => 'Margen de utilidad',
                         'url' => $ruta . 'reporte_ventas/margenUtilidad',
                         'icon' => 'fa fa-area-chart',
-                        'slug' => 'margenutilidad'
+                        'slug' => 'margenutilidad',
                     ),
                     array(
                         'name' => 'Utilidades por venta',
                         'url' => $ruta . 'reporte_ventas/utilidadProducto',
                         'icon' => 'fa fa-area-chart',
-                        'slug' => 'utilidadProducto'
+                        'slug' => 'utilidadProducto',
                     ),
                     array(
                         'name' => 'Hoja de colecta',
                         'url' => $ruta . 'reporte/hojaColecta',
                         'icon' => 'fa fa-area-chart',
-                        'slug' => 'hojaColecta'
+                        'slug' => 'hojaColecta',
                     ),
                     array(
                         'name' => 'Recargas del d&iacute;a',
                         'url' => $ruta . 'reporte/recargaDia',
                         'icon' => 'fa fa-area-chart',
-                        'slug' => 'recargaDia'
+                        'slug' => 'recargaDia',
                     ),
                     array(
                         'name' => 'Cobranza del d&iacute;a',
                         'url' => $ruta . 'reporte/recargaCobranza',
                         'icon' => 'fa fa-area-chart',
-                        'slug' => 'recargaCobranza'
+                        'slug' => 'recargaCobranza',
                     ),
                     array(
                         'name' => 'Cuentas por cobrar',
                         'url' => $ruta . 'reporte/recargaCuentasC',
                         'icon' => 'fa fa-area-chart',
-                        'slug' => 'recargaCuentasC'
+                        'slug' => 'recargaCuentasC',
                     ),
                     array(
                         'name' => 'Cr&eacute;dito Fiscal',
                         'url' => $ruta . 'reporte/creditoFiscal',
-                        'slug' => 'creditofiscal'
-                    )
-                )
+                        'slug' => 'creditofiscal',
+                    ),
+                ),
             ),
             array(
                 'name' => 'Compra',
@@ -611,9 +611,9 @@ $primary_nav = array(
                     array(
                         'name' => 'Pago a proveedores',
                         'url' => $ruta . 'reporte_compras/proveedor_estado',
-                        'slug' => 'pagoproveedores'
+                        'slug' => 'pagoproveedores',
                     ),
-                )
+                ),
             ),
             array(
                 'name' => 'Caja',
@@ -623,14 +623,14 @@ $primary_nav = array(
                     array(
                         'name' => 'Gastos del d&iacute;a',
                         'url' => $ruta . 'reporte_caja/gastosDia',
-                        'slug' => 'gastosDia'
+                        'slug' => 'gastosDia',
                     ),
                     array(
                         'name' => 'Estado de Resultados',
                         'url' => $ruta . 'reporte_caja/estadoResultado',
-                        'slug' => 'estadoresultado'
-                    )
-                )
+                        'slug' => 'estadoresultado',
+                    ),
+                ),
             ),
         ),
     ),
@@ -642,13 +642,13 @@ $primary_nav = array(
                 'name' => 'Configurar',
                 'url' => $ruta . 'opciones',
                 'icon' => 'fa fa-cogs',
-                'slug' => 'opcionesgenerales'
+                'slug' => 'opcionesgenerales',
             ),
             array(
                 'name' => 'Locales',
                 'url' => $ruta . 'local',
                 'icon' => 'gi gi-shop_window',
-                'slug' => 'locales'
+                'slug' => 'locales',
             ),
             array(
                 'name' => 'Usuarios',
@@ -658,16 +658,16 @@ $primary_nav = array(
                         'name' => 'Registrar Usuarios',
                         'url' => $ruta . 'usuario',
                         'icon' => 'fa fa-users',
-                        'slug' => 'usuarios'
+                        'slug' => 'usuarios',
                     ),
                     array(
                         'name' => 'Perfiles',
                         'url' => $ruta . 'usuariosgrupos',
                         'icon' => 'gi gi-parents',
-                        'slug' => 'gruposusuarios'
+                        'slug' => 'gruposusuarios',
                     ),
                 ),
-                'slug' => 'usuariospadre'
+                'slug' => 'usuariospadre',
             ),
             array(
                 'name' => 'Ubigeo',
@@ -677,62 +677,62 @@ $primary_nav = array(
                         'name' => 'Paises',
                         'url' => $ruta . 'pais',
                         'icon' => 'fa fa-users',
-                        'slug' => 'pais'
+                        'slug' => 'pais',
                     ),
                     array(
                         'name' => 'Departamento',
                         'url' => $ruta . 'estados',
                         'icon' => 'gi gi-shop_window',
-                        'slug' => 'estado'
+                        'slug' => 'estado',
                     ),
                     array(
                         'name' => 'Provincia',
                         'url' => $ruta . 'ciudad',
                         'icon' => 'gi gi-shop_window',
-                        'slug' => 'ciudad'
+                        'slug' => 'ciudad',
                     ),
                     array(
                         'name' => 'Distritos',
                         'url' => $ruta . 'distrito',
                         'icon' => 'gi gi-shop_window',
-                        'slug' => 'distrito'
-                    )
+                        'slug' => 'distrito',
+                    ),
                 ),
-                'slug' => 'region'
+                'slug' => 'region',
             ),
             array(
                 'name' => 'Impuestos',
                 'url' => $ruta . 'impuesto',
                 'icon' => 'fa fa-money',
-                'slug' => 'impuestos'
+                'slug' => 'impuestos',
             ),
             /* array(
-              'name' => 'Condiciones de Pago',
-              'url' => $ruta . 'condicionespago',
-              'icon' => 'fa fa-ticket',
-              'slug' => 'condicionespago'
-              ),
-              array(
-              'name' => 'Metodos de Pago',
-              'url' => $ruta . 'metodosdepago',
-              'icon' => 'fa fa-credit-card',
-              'slug' => 'metodospago'
-              ), */
+            'name' => 'Condiciones de Pago',
+            'url' => $ruta . 'condicionespago',
+            'icon' => 'fa fa-ticket',
+            'slug' => 'condicionespago'
+            ),
+            array(
+            'name' => 'Metodos de Pago',
+            'url' => $ruta . 'metodosdepago',
+            'icon' => 'fa fa-credit-card',
+            'slug' => 'metodospago'
+            ), */
             array(
                 'name' => 'Tipos de Precio',
                 'url' => $ruta . 'precio',
                 'icon' => 'fa fa-money',
-                'slug' => 'precios'
+                'slug' => 'precios',
             ),
             array(
                 'name' => 'Unidades de Medida',
                 'url' => $ruta . 'unidades',
                 'icon' => 'fa fa-list-ol',
-                'slug' => 'unidadesmedida'
-            )
-        )
+                'slug' => 'unidadesmedida',
+            ),
+        ),
     ),
-        )
+)
 ?>
 
 
@@ -740,7 +740,7 @@ $primary_nav = array(
 <html lang="es-PE">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-        <title><?= $info->nombre_empresa ?></title>
+        <title><?=$info->nombre_empresa?></title>
         <meta name="description" content="">
 
         <meta name="viewport" content="width=device-width">
@@ -789,7 +789,7 @@ if ($template['theme'] != "") {
                 font-family: "Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
                 font-weight: bold;
                 margin: 0;
-            }   
+            }
 
         </style>
 
@@ -827,7 +827,7 @@ if ($template['theme'] != "") {
             }
 
             /*$.ajaxSetup({
-             
+
              beforeSend: function (jqXHR) {
              XHR = jqXHR;
              checkLogin();
@@ -875,11 +875,11 @@ if ($template['theme'] != "") {
     </head>
 
     <body>
-<?php $md = get_moneda_defecto() ?>
-        <input type="hidden" id="MONEDA_DEFECTO_ID" value="<?= MONEDA_DEFECTO ?>">
-        <input type="hidden" id="MONEDA_DEFECTO_NOMBRE" value="<?= $md->nombre ?>">
-        <input type="hidden" id="MONEDA_DEFECTO_SIMBOLO" value="<?= $md->simbolo ?>">
-        <input type="hidden" id="IMPUESTO" value="<?= IMPUESTO ?>">
+<?php $md = get_moneda_defecto()?>
+        <input type="hidden" id="MONEDA_DEFECTO_ID" value="<?=MONEDA_DEFECTO?>">
+        <input type="hidden" id="MONEDA_DEFECTO_NOMBRE" value="<?=$md->nombre?>">
+        <input type="hidden" id="MONEDA_DEFECTO_SIMBOLO" value="<?=$md->simbolo?>">
+        <input type="hidden" id="IMPUESTO" value="<?=IMPUESTO?>">
 
         <div id="page-wrapper"<?php
 if ($template['page_preloader']) {
@@ -890,7 +890,7 @@ if ($template['page_preloader']) {
             <!-- Preloader functionality (initialized in js/app.js) - pageLoading() -->
             <!-- Used only if page preloader is enabled from inc/config (PHP version) or the class 'page-loading' is added in #page-wrapper element (HTML version) -->
             <div class="preloader themed-background">
-                <h1 class="push-top-bottom text-light text-center"><strong><?= $info->nombre_empresa ?></strong></h1>
+                <h1 class="push-top-bottom text-light text-center"><strong><?=$info->nombre_empresa?></strong></h1>
 
                 <div class="inner">
                     <h3 class="text-light visible-lt-ie9 visible-lt-ie10"><strong>Loading..</strong></h3>
@@ -904,26 +904,26 @@ if ($template['page_preloader']) {
             <!-- In the PHP version you can set the following options from inc/config file -->
             <!--
                 Available #page-container classes:
-        
+
                 '' (None)                                       for a full main and alternative sidebar hidden by default (> 991px)
-        
+
                 'sidebar-visible-lg'                            for a full main sidebar visible by default (> 991px)
                 'sidebar-partial'                               for a partial main sidebar which opens on mouse hover, hidden by default (> 991px)
                 'sidebar-partial sidebar-visible-lg'            for a partial main sidebar which opens on mouse hover, visible by default (> 991px)
-        
+
                 'sidebar-alt-visible-lg'                        for a full alternative sidebar visible by default (> 991px)
                 'sidebar-alt-partial'                           for a partial alternative sidebar which opens on mouse hover, hidden by default (> 991px)
                 'sidebar-alt-partial sidebar-alt-visible-lg'    for a partial alternative sidebar which opens on mouse hover, visible by default (> 991px)
-        
+
                 'sidebar-partial sidebar-alt-partial'           for both sidebars partial which open on mouse hover, hidden by default (> 991px)
-        
+
                 'sidebar-no-animations'                         add this as extra for disabling sidebar animations on large screens (> 991px) - Better performance with heavy pages!
-        
+
                 'style-alt'                                     for an alternative main style (without it: the default style)
                 'footer-fixed'                                  for a fixed footer (without it: a static footer)
-        
+
                 'disable-menu-autoscroll'                       add this to disable the main menu auto scrolling when opening a submenu
-        
+
                 'header-fixed-top'                              has to be added only if the class 'navbar-fixed-top' was added on header.navbar
                 'header-fixed-bottom'                           has to be added only if the class 'navbar-fixed-bottom' was added on header.navbar
             -->
@@ -986,20 +986,20 @@ if ($page_classes) {
                         <!-- Sidebar Content -->
                         <div class="sidebar-content">
                             <!-- Brand -->
-                            <a href="<?= $ruta ?>principal" class="sidebar-brand">
-                                <i class="gi gi-cart_out"></i><strong><?= $info->nombre_empresa ?></strong>
+                            <a href="<?=$ruta?>principal" class="sidebar-brand">
+                                <i class="gi gi-cart_out"></i><strong><?=$info->nombre_empresa?></strong>
                             </a>
                             <!-- END Brand -->
 
                             <!-- User Info -->
                             <div class="sidebar-section sidebar-user clearfix">
                                 <div class="sidebar-user-avatar">
-                                    <a href="<?= $ruta ?>principal">
-                                        <img src="<?php echo $ruta ?>recursos/img/logo/<?= $info->ruta_logo3 ?>"
+                                    <a href="<?=$ruta?>principal">
+                                        <img src="<?php echo $ruta ?>recursos/img/logo/<?=$info->ruta_logo3?>"
                                              alt="avatar">
                                     </a>
                                 </div>
-                                <div class="sidebar-user-name"><?= $this->session->userdata('username') ?></div>
+                                <div class="sidebar-user-name"><?=$this->session->userdata('username')?></div>
                                 <div class="sidebar-user-links">
                                     <!-- <a href="page_ready_user_profile.php" data-toggle="tooltip" data-placement="bottom"
                                         title="Profile"><i class="gi gi-user"></i></a>
@@ -1008,7 +1008,7 @@ if ($page_classes) {
                                     <!-- Opens the user settings modal that can be found at the bottom of each page (page_footer.php in PHP version) -->
                                     <a href="#modal-user-settings" data-toggle="modal" class="enable-tooltip"
                                        data-placement="bottom" title="Settings"><i class="gi gi-user"></i></a>
-                                    <a href="<?= $ruta ?>logout" data-toggle="tooltip" data-placement="bottom" title="Logout"><i
+                                    <a href="<?=$ruta?>logout" data-toggle="tooltip" data-placement="bottom" title="Logout"><i
                                             class="gi gi-exit"></i></a>
                                 </div>
                             </div>
@@ -1057,163 +1057,160 @@ if ($page_classes) {
                             <!-- END Theme Colors -->
 
 
-<?php if ($primary_nav) { ?>
+<?php if ($primary_nav) {?>
                                 <!-- Sidebar Navigation -->
                                 <ul class="sidebar-nav">
     <?php
-    foreach ($primary_nav as $key => $link) {
-        $link_class = '';
-        $li_active = '';
-        $menu_link = '';
+foreach ($primary_nav as $key => $link) {
+    $link_class = '';
+    $li_active = '';
+    $menu_link = '';
 
-        // Get 1st level link's vital info
-        $url = (isset($link['url']) && $link['url']) ? $link['url'] : '#';
-        $active = (isset($link['url']) && ($template['active_page'] == $link['url'])) ? ' active' : '';
-        $icon = (isset($link['icon']) && $link['icon']) ? '<i class="' . $link['icon'] . ' sidebar-nav-icon"></i>' : '';
-        $slug = (isset($link['slug']) && $link['slug']) ? $link['slug'] : '';
+    // Get 1st level link's vital info
+    $url = (isset($link['url']) && $link['url']) ? $link['url'] : '#';
+    $active = (isset($link['url']) && ($template['active_page'] == $link['url'])) ? ' active' : '';
+    $icon = (isset($link['icon']) && $link['icon']) ? '<i class="' . $link['icon'] . ' sidebar-nav-icon"></i>' : '';
+    $slug = (isset($link['slug']) && $link['slug']) ? $link['slug'] : '';
 
+    // Check if the link has a submenu
+    if (isset($link['sub']) && $link['sub']) {
+        // Since it has a submenu, we need to check if we have to add the class active
+        // to its parent li element (only if a 2nd or 3rd level link is active)
+        foreach ($link['sub'] as $sub_link) {
+            if (in_array($template['active_page'], $sub_link)) {
+                $li_active = ' class="active menulink"';
+                break;
+            }
 
-        // Check if the link has a submenu
-        if (isset($link['sub']) && $link['sub']) {
-            // Since it has a submenu, we need to check if we have to add the class active
-            // to its parent li element (only if a 2nd or 3rd level link is active)
-            foreach ($link['sub'] as $sub_link) {
-                if (in_array($template['active_page'], $sub_link)) {
-                    $li_active = ' class="active menulink"';
-                    break;
-                }
-
-                // 3rd level links
-                if (isset($sub_link['sub']) && $sub_link['sub']) {
-                    foreach ($sub_link['sub'] as $sub2_link) {
-                        if (in_array($template['active_page'], $sub2_link)) {
-                            $li_active = ' class="active menulink"';
-                            break;
-                        }
+            // 3rd level links
+            if (isset($sub_link['sub']) && $sub_link['sub']) {
+                foreach ($sub_link['sub'] as $sub2_link) {
+                    if (in_array($template['active_page'], $sub2_link)) {
+                        $li_active = ' class="active menulink"';
+                        break;
                     }
                 }
             }
-
-            $menu_link = 'sidebar-nav-menu';
         }
 
-        // Create the class attribute for our link
-        if ($menu_link || $active) {
-            $link_class = ' class="' . $menu_link . $active . '  "';
-        }
-        ?>
+        $menu_link = 'sidebar-nav-menu';
+    }
+
+    // Create the class attribute for our link
+    if ($menu_link || $active) {
+        $link_class = ' class="' . $menu_link . $active . '  "';
+    }
+    ?>
                                         <?php if ($url == 'header') { // if it is a header and not a link
-                                            if ($this->usuarios_grupos_model->user_has_perm($this->session->userdata('nUsuCodigo'), $slug)) {
-                                                ?>
+        if ($this->usuarios_grupos_model->user_has_perm($this->session->userdata('nUsuCodigo'), $slug)) {
+            ?>
 
                                                 <li class="sidebar-header">
                                                 <?php if (isset($link['opt']) && $link['opt']) { // If the header has options set ?>
                                                         <span
                                                             class="sidebar-header-options clearfix"><?php echo $link['opt']; ?></span>
-                                                <?php } ?>
+                                                <?php }?>
                                                     <span class="sidebar-header-title"><?php echo $link['name']; ?></span>
                                                 </li>
                                             <?php
-                                            }
-                                        } else { // If it is a link
-                                            if ($this->usuarios_grupos_model->user_has_perm($this->session->userdata('nUsuCodigo'), $slug) or $slug == 'home') {
-                                                ?>
+}
+    } else { // If it is a link
+        if ($this->usuarios_grupos_model->user_has_perm($this->session->userdata('nUsuCodigo'), $slug) or $slug == 'home') {
+            ?>
 
                                                 <li<?php echo $li_active; ?>>
                                                     <a href="<?php echo $url; ?>"<?php echo $link_class; ?>
                                                        class="menulink"><?php if (isset($link['sub']) && $link['sub']) { // if the link has a submenu ?>
                                                             <i class="fa fa-angle-left sidebar-nav-indicator "></i><?php }
-                            echo $icon . $link['name'];
-                                                ?></a>
+            echo $icon . $link['name'];
+            ?></a>
                                                 <?php if (isset($link['sub']) && $link['sub']) { // if the link has a submenu
-                                                    if ($this->usuarios_grupos_model->user_has_perm($this->session->userdata('nUsuCodigo'), $slug)) {
-                                                        ?>
+                if ($this->usuarios_grupos_model->user_has_perm($this->session->userdata('nUsuCodigo'), $slug)) {
+                    ?>
 
                                                             <ul>
                                                         <?php
-                                                        foreach ($link['sub'] as $sub_link) {
-                                                            $link_class = '';
-                                                            $li_active = '';
-                                                            $submenu_link = '';
+foreach ($link['sub'] as $sub_link) {
+                        $link_class = '';
+                        $li_active = '';
+                        $submenu_link = '';
 
+                        // Get 2nd level link's vital info
+                        $url = (isset($sub_link['url']) && $sub_link['url']) ? $sub_link['url'] : '#';
+                        $active = (isset($sub_link['url']) && ($template['active_page'] == $sub_link['url'])) ? ' active' : '';
+                        $slug = $sub_link['slug'];
+                        $icon = (isset($sub_link['icon']) && $sub_link['icon']) ? '<i class="' . $sub_link['icon'] . ' sidebar-nav-icon"></i>' : '';
 
-                                                            // Get 2nd level link's vital info
-                                                            $url = (isset($sub_link['url']) && $sub_link['url']) ? $sub_link['url'] : '#';
-                                                            $active = (isset($sub_link['url']) && ($template['active_page'] == $sub_link['url'])) ? ' active' : '';
-                                                            $slug = $sub_link['slug'];
-                                                            $icon = (isset($sub_link['icon']) && $sub_link['icon']) ? '<i class="' . $sub_link['icon'] . ' sidebar-nav-icon"></i>' : '';
+                        // Check if the link has a submenu
+                        if (isset($sub_link['sub']) && $sub_link['sub']) {
+                            // Since it has a submenu, we need to check if we have to add the class active
+                            // to its parent li element (only if a 3rd level link is active)
+                            foreach ($sub_link['sub'] as $sub2_link) {
+                                if (in_array($template['active_page'], $sub2_link)) {
+                                    $li_active = ' class="active menulink"';
+                                    break;
+                                }
+                            }
 
+                            $submenu_link = 'sidebar-nav-submenu';
+                        }
 
-                                                            // Check if the link has a submenu
-                                                            if (isset($sub_link['sub']) && $sub_link['sub']) {
-                                                                // Since it has a submenu, we need to check if we have to add the class active
-                                                                // to its parent li element (only if a 3rd level link is active)
-                                                                foreach ($sub_link['sub'] as $sub2_link) {
-                                                                    if (in_array($template['active_page'], $sub2_link)) {
-                                                                        $li_active = ' class="active menulink"';
-                                                                        break;
-                                                                    }
-                                                                }
+                        if ($submenu_link || $active) {
+                            $link_class = ' class="' . $submenu_link . $active . '"';
+                        }
 
-                                                                $submenu_link = 'sidebar-nav-submenu';
-                                                            }
-
-                                                            if ($submenu_link || $active) {
-                                                                $link_class = ' class="' . $submenu_link . $active . '"';
-                                                            }
-
-                                                            if ($this->usuarios_grupos_model->user_has_perm($this->session->userdata('nUsuCodigo'), $slug)) {
-                                                                ?>
+                        if ($this->usuarios_grupos_model->user_has_perm($this->session->userdata('nUsuCodigo'), $slug)) {
+                            ?>
                                                                         <li<?php echo $li_active; ?>>
 
 
                                                                             <a href="<?php echo $url; ?>"<?php echo $link_class; ?>
-                                                                               class="menulink" <?php if ($url == "#cuadre_caja_reporte") { ?>
+                                                                               class="menulink" <?php if ($url == "#cuadre_caja_reporte") {?>
 
                                                                                    data-toggle="modal"
-                                                                        <?php } ?> ><?php if (isset($sub_link['sub']) && $sub_link['sub']) { ?>
+                                                                        <?php }?> ><?php if (isset($sub_link['sub']) && $sub_link['sub']) {?>
                                                                                     <i class="fa fa-angle-left sidebar-nav-indicator"></i><?php }
-                                    echo $icon . $sub_link['name'];
-                                                                        ?></a>
+                            echo $icon . $sub_link['name'];
+                            ?></a>
                                                                         <?php if (isset($sub_link['sub']) && $sub_link['sub']) {
-                                                                            if ($this->usuarios_grupos_model->user_has_perm($this->session->userdata('nUsuCodigo'), $slug)) {
-                                                                                ?>
+                                if ($this->usuarios_grupos_model->user_has_perm($this->session->userdata('nUsuCodigo'), $slug)) {
+                                    ?>
                                                                                     <ul>
                                                                                 <?php
-                                                                                foreach ($sub_link['sub'] as $sub2_link) {
-                                                                                    // Get 3rd level link's vital info
-                                                                                    $url = (isset($sub2_link['url']) && $sub2_link['url']) ? $sub2_link['url'] : '#';
-                                                                                    $active = (isset($sub2_link['url']) && ($template['active_page'] == $sub2_link['url'])) ? ' class="active"' : '';
-                                                                                    if ($this->usuarios_grupos_model->user_has_perm($this->session->userdata('nUsuCodigo'), $sub2_link['slug'])) {
-                                                                                        ?>
+foreach ($sub_link['sub'] as $sub2_link) {
+                                        // Get 3rd level link's vital info
+                                        $url = (isset($sub2_link['url']) && $sub2_link['url']) ? $sub2_link['url'] : '#';
+                                        $active = (isset($sub2_link['url']) && ($template['active_page'] == $sub2_link['url'])) ? ' class="active"' : '';
+                                        if ($this->usuarios_grupos_model->user_has_perm($this->session->userdata('nUsuCodigo'), $sub2_link['slug'])) {
+                                            ?>
                                                                                                 <li>
                                                                                                     <a href="<?php echo $url; ?>"<?php echo $active ?>
                                                                                                        class="menulink"><?php echo $sub2_link['name']; ?></a>
                                                                                                 </li>
                                             <?php }
-                                        }
-                                        ?>
+                                    }
+                                    ?>
                                                                                     </ul>
                                                                                    <?php }
-                                                                               }
-                                                                               ?>
+                            }
+                            ?>
                                                                         </li>
                                                                         <?php }
-                                                                    }
-                                                                    ?>
+                    }
+                    ?>
                                                             </ul>
                                                                     <?php }
-                                                                }
-                                                                ?>
+            }
+            ?>
                                                 </li>
                 <?php
-            }
-        }
-        ?>
-                                                    <?php } ?>
+}
+    }
+    ?>
+                                                    <?php }?>
                                 </ul>
                                 <!-- END Sidebar Navigation -->
-                                            <?php } ?>
+                                            <?php }?>
 
 
                             <!-- END Sidebar Notifications -->
@@ -1230,35 +1227,32 @@ if ($page_classes) {
                     <!-- In the PHP version you can set the following options from inc/config file -->
                     <!--
                         Available header.navbar classes:
-        
+
                         'navbar-default'            for the default light header
                         'navbar-inverse'            for an alternative dark header
-        
+
                         'navbar-fixed-top'          for a top fixed header (fixed sidebars with scroll will be auto initialized, functionality can be found in js/app.js - handleSidebar())
                             'header-fixed-top'      has to be added on #page-container only if the class 'navbar-fixed-top' was added
-        
+
                         'navbar-fixed-bottom'       for a bottom fixed header (fixed sidebars with scroll will be auto initialized, functionality can be found in js/app.js - handleSidebar()))
                             'header-fixed-bottom'   has to be added on #page-container only if the class 'navbar-fixed-bottom' was added
                     -->
                     <header class="navbar<?php
-                                            if ($template['header_navbar']) {
-                                                echo ' ' . $template['header_navbar'];
-                                            }
-                                            ?><?php
-                                            if ($template['header']) {
-                                                echo ' ' . $template['header'];
-                                            }
-                                            ?>">
+if ($template['header_navbar']) {
+    echo ' ' . $template['header_navbar'];
+}
+?><?php
+if ($template['header']) {
+    echo ' ' . $template['header'];
+}
+?>">
 <?php if ($template['header_content'] == 'horizontal-menu') { // Horizontal Menu Header Content  ?>
-                            <!-- Navbar Header -->
                             <div class="navbar-header">
-                                <!-- Horizontal Menu Toggle + Alternative Sidebar Toggle Button, Visible only in small screens (< 768px) -->
                                 <ul class="nav navbar-nav-custom pull-right visible-xs">
                                     <li>
                                         <a href="javascript:void(0)" data-toggle="collapse"
                                            data-target="#horizontal-menu-collapse">Menu</a>
                                     </li>
-                                    <!-- User Dropdown -->
                                     <li class="dropdown">
                                         <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">
                                             <img src="<?php echo $ruta ?>recursos/img/placeholders/avatars/avatar2.jpg"
@@ -1266,32 +1260,22 @@ if ($page_classes) {
                                                  class="fa fa-angle-down"></i>
                                         </a>
                                         <ul class="dropdown-menu dropdown-custom dropdown-menu-right">
-
-
                                             <li>
-
-                                                <!-- Opens the user settings modal that can be found at the bottom of each page (page_footer.php in PHP version) -->
                                                 <a href="#modal-user-settings" data-toggle="modal">
                                                     <i class="fa fa-user fa-fw pull-right"></i>
                                                     Mi perfil
-                                                    <input type="hidden" value="<?= $ruta ?>" id="ruta_base">
+                                                    <input type="hidden" value="<?=$ruta?>" id="ruta_base">
                                                 </a>
                                             </li>
                                             <li class="divider"></li>
                                             <li>
-
-                                                <a href="<?= $ruta ?>logout"><i class="fa fa-ban fa-fw pull-right"></i> Cerrar
+                                                <a href="<?=$ruta?>logout"><i class="fa fa-ban fa-fw pull-right"></i> Cerrar
                                                     Sesión</a>
                                             </li>
 
                                         </ul>
                                     </li>
-                                    <!-- END User Dropdown -->
-
                                 </ul>
-                                <!-- END Horizontal Menu Toggle + Alternative Sidebar Toggle Button -->
-
-                                <!-- Main Sidebar Toggle Button -->
                                 <ul class="nav navbar-nav-custom">
                                     <li>
                                         <a href="javascript:void(0)" onclick="App.sidebar('toggle-sidebar')">
@@ -1299,20 +1283,7 @@ if ($page_classes) {
                                         </a>
                                     </li>
                                 </ul>
-                                <!-- END Main Sidebar Toggle Button -->
                             </div>
-                            <!-- END Navbar Header -->
-
-                            <!-- Alternative Sidebar Toggle Button, Visible only in large screens (> 767px) -->
-                            <!--<ul class="nav navbar-nav-custom pull-right hidden-xs">
-                                <li>
-                            <!-- If you do not want the main sidebar to open when the alternative sidebar is closed, just remove the second parameter: App.sidebar('toggle-sidebar-alt'); -->
-                            <!--   <a href="javascript:void(0)" onclick="App.sidebar('toggle-sidebar-alt', 'toggle-other');">
-                                   <i class="gi gi-share_alt"></i>
-                                   <span class="label label-primary label-indicator animation-floating">4</span>
-                               </a>
-                           </li>
-                       </ul>-->
                             <ul class="nav navbar-nav-custom pull-right hidden-xs on-open-hide">
                                 <!-- Alternative Sidebar Toggle Button -->
                                 <!-- User Dropdown -->
@@ -1367,7 +1338,7 @@ if ($page_classes) {
                                 </li>
                                 <li class="dropdown">
                                     <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">
-                                        <img src="<?php echo $ruta ?>recursos/img/logo/<?= $info->ruta_logo3 ?>"
+                                        <img src="<?php echo $ruta ?>recursos/img/logo/<?=$info->ruta_logo3?>"
                                              alt="avatar"> <i
                                              class="fa fa-angle-down"></i>
                                     </a>
@@ -1380,13 +1351,13 @@ if ($page_classes) {
                                             <a href="#modal-user-settings" data-toggle="modal">
                                                 <i class="fa fa-user fa-fw pull-right"></i>
                                                 Mi perfil
-                                                <input type="hidden" value="<?= $ruta ?>" id="ruta_base">
+                                                <input type="hidden" value="<?=$ruta?>" id="ruta_base">
                                             </a>
                                         </li>
                                         <li class="divider"></li>
                                         <li>
 
-                                            <a href="<?= $ruta ?>logout"><i class="fa fa-ban fa-fw pull-right"></i> Cerrar
+                                            <a href="<?=$ruta?>logout"><i class="fa fa-ban fa-fw pull-right"></i> Cerrar
                                                 Sesión</a>
                                         </li>
 
@@ -1402,26 +1373,26 @@ if ($page_classes) {
                             <!-- Horizontal Menu + Search -->
                             <div id="horizontal-menu-collapse" class="collapse navbar-collapse">
                                 <ul class="nav navbar-nav">
-    <?php if ($this->usuarios_grupos_model->user_has_perm($this->session->userdata('nUsuCodigo'), 'stock')) { ?>
+    <?php if ($this->usuarios_grupos_model->user_has_perm($this->session->userdata('nUsuCodigo'), 'stock')) {?>
 
                                         <li>
-                                            <a class="menulink" href="<?= $ruta ?>producto/stock">Stock Producto(F2)</a>
+                                            <a class="menulink" href="<?=$ruta?>producto/stock">Stock Producto(F2)</a>
                                         </li>
-    <?php } ?>
-    <?php if ($this->usuarios_grupos_model->user_has_perm($this->session->userdata('nUsuCodigo'), 'generarventa')) { ?>
+    <?php }?>
+    <?php if ($this->usuarios_grupos_model->user_has_perm($this->session->userdata('nUsuCodigo'), 'generarventa')) {?>
 
                                         <li>
-                                            <a class="menulink" href="<?= site_url('venta_new') ?>">Realizar Venta(F3)</a>
+                                            <a class="menulink" href="<?=site_url('venta_new')?>">Realizar Venta(F3)</a>
                                         </li>
 
                                         <li>
                                             <a class="menulink" id="id_menu_lista_precios"
-                                               href="<?= $ruta ?>producto/listaprecios">Stock & Precios(F4)</a>
+                                               href="<?=$ruta?>producto/listaprecios">Stock & Precios(F4)</a>
                                         </li>
 
                                         <?php if (isVentaActivo()): ?>
                                             <li>
-                                                <a class="menulink" href="<?= $ruta ?>venta_new/historial/caja">Ventas por
+                                                <a class="menulink" href="<?=$ruta?>venta_new/historial/caja">Ventas por
                                                     Cobrar <span
                                                         class="badge label-danger"
                                                         id="cobrar_top"><?php echo cantidad_ventas_cobrar() ?></span></a>
@@ -1451,32 +1422,32 @@ if ($page_classes) {
 
                                                 })
                                             </script>
-        <?php endif; ?>
-    <?php } ?>
-    <?php if ($this->usuarios_grupos_model->user_has_perm($this->session->userdata('nUsuCodigo'), 'cuentasporcobrar')) { ?>
+        <?php endif;?>
+    <?php }?>
+    <?php if ($this->usuarios_grupos_model->user_has_perm($this->session->userdata('nUsuCodigo'), 'cuentasporcobrar')) {?>
                                         <li>
-                                            <a class="menulink" href="<?= $ruta ?>venta/pagospendientes">Cuentas por Cobrar</a>
-                                        </li><?php } ?>
-    <?php if ($this->usuarios_grupos_model->user_has_perm($this->session->userdata('nUsuCodigo'), 'estadocuenta')) { ?>
+                                            <a class="menulink" href="<?=$ruta?>venta/pagospendientes">Cuentas por Cobrar</a>
+                                        </li><?php }?>
+    <?php if ($this->usuarios_grupos_model->user_has_perm($this->session->userdata('nUsuCodigo'), 'estadocuenta')) {?>
 
                                         <li>
-                                            <a class="menulink" href="<?= $ruta ?>reporte_ventas/cliente_estado">Estado de
+                                            <a class="menulink" href="<?=$ruta?>reporte_ventas/cliente_estado">Estado de
                                                 cuentas</a>
                                         </li>
-                                    <?php } ?>
-                                    <?php if ($this->usuarios_grupos_model->user_has_perm($this->session->userdata('nUsuCodigo'), 'cuadrecaja')) { ?>
+                                    <?php }?>
+                                    <?php if ($this->usuarios_grupos_model->user_has_perm($this->session->userdata('nUsuCodigo'), 'cuadrecaja')) {?>
 
                                         <li>
                                             <a class="menulink" href="#cuadre_caja" data-toggle="modal">Corte de Caja</a>
                                         </li>
-                                    <?php } ?>
-    <?php if ($this->usuarios_grupos_model->user_has_perm($this->session->userdata('nUsuCodigo'), 'cobraencaja')) { ?>
+                                    <?php }?>
+    <?php if ($this->usuarios_grupos_model->user_has_perm($this->session->userdata('nUsuCodigo'), 'cobraencaja')) {?>
 
                                         <li>
-                                            <a class="menulink" href="<?= $ruta ?>venta_new/historial/caja" data-toggle="modal">Cobrar
+                                            <a class="menulink" href="<?=$ruta?>venta_new/historial/caja" data-toggle="modal">Cobrar
                                                 en Caja</a>
                                         </li>
-                                    <?php } ?>
+                                    <?php }?>
                                 </ul>
                                 <!--  <form action="page_ready_search_results.php" class="navbar-form navbar-left" role="search">
                                       <div class="form-group">
@@ -1560,7 +1531,7 @@ if ($page_classes) {
 
                             </ul>
                             <!-- END Right Header Navigation -->
-<?php } ?>
+<?php }?>
                     </header>
                     <!-- END Header -->
 
@@ -1606,22 +1577,22 @@ if ($page_classes) {
 
                     <!-- Modal Body -->
                     <div class="modal-body">
-                        <form action="<?= $ruta ?>/usuario/registrar" method="post" id="modal-user-settings-form"
+                        <form action="<?=$ruta?>/usuario/registrar" method="post" id="modal-user-settings-form"
                               enctype="multipart/form-data"
                               class="form-horizontal form-bordered" onsubmit="return false">
                             <fieldset>
-                                <legend>Informaci&oacute;n: <?= $this->session->userdata('nombre_grupos_usuarios') ?></legend>
+                                <legend>Informaci&oacute;n: <?=$this->session->userdata('nombre_grupos_usuarios')?></legend>
                                 <div class="form-group">
                                     <label class="col-md-4 control-label">Username</label>
 
 
-                                    <input type="hidden" value="<?= $this->session->userdata('nUsuCodigo') ?>"
+                                    <input type="hidden" value="<?=$this->session->userdata('nUsuCodigo')?>"
                                            name="nUsuCodigo">
-                                    <input type="hidden" value="<?= $this->session->userdata('username') ?>" name="username"
+                                    <input type="hidden" value="<?=$this->session->userdata('username')?>" name="username"
                                            id="username">
 
                                     <div class="col-md-8">
-                                        <p class="form-control-static"><?= $this->session->userdata('username') ?></p>
+                                        <p class="form-control-static"><?=$this->session->userdata('username')?></p>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -1629,7 +1600,7 @@ if ($page_classes) {
 
                                     <div class="col-md-8">
                                         <input type="text" id="nombre" name="nombre"
-                                               class="form-control" value="<?= $this->session->userdata('nombre') ?>">
+                                               class="form-control" value="<?=$this->session->userdata('nombre')?>">
                                     </div>
                                 </div>
 
@@ -1722,9 +1693,9 @@ if ($page_classes) {
 if (!empty($locales)) {
     foreach ($locales as $local) {
         ?>
-                                                    <option value="<?= $local['int_local_id'] ?>" <?= $local['int_local_id'] == $this->session->userdata('id_local') ? 'selected' : '' ?>><?= $local['local_nombre'] ?></option>
+                                                    <option value="<?=$local['int_local_id']?>" <?=$local['int_local_id'] == $this->session->userdata('id_local') ? 'selected' : ''?>><?=$local['local_nombre']?></option>
         <?php
-    }
+}
 }
 ?>
                                         </select>
@@ -1732,7 +1703,7 @@ if (!empty($locales)) {
                                 </div>
 
                                 <div class="control-group row"
-                                     style="display: <?= ($this->session->userdata('grupo') != 2 && $this->session->userdata('grupo') != 9) ? 'none' : 'block' ?>">
+                                     style="display: <?=($this->session->userdata('grupo') != 2 && $this->session->userdata('grupo') != 9) ? 'none' : 'block'?>">
                                     <br>
                                     <div class="col-md-1"></div>
                                     <label for="fecha" class="control-label col-md-2">Usuarios:</label>
@@ -1742,12 +1713,12 @@ if (!empty($locales)) {
                                                 required="true">
                                             <?php if (!($this->session->userdata('grupo') != 2 && $this->session->userdata('grupo') != 9)): ?>
                                                 <option value="0">TODOS</option>
-<?php endif; ?>
-<?php if (!empty($usuarios)) { ?>
-    <?php foreach ($usuarios as $usuario) { ?>
-                                                    <option value="<?= $usuario->nUsuCodigo ?>"><?= $usuario->nombre ?></option>
-    <?php } ?>
-<?php } ?>
+<?php endif;?>
+<?php if (!empty($usuarios)) {?>
+    <?php foreach ($usuarios as $usuario) {?>
+                                                    <option value="<?=$usuario->nUsuCodigo?>"><?=$usuario->nombre?></option>
+    <?php }?>
+<?php }?>
                                         </select>
                                     </div>
                                 </div>
@@ -1762,12 +1733,12 @@ if (!empty($locales)) {
                                                 required="true">
                                             <option value="0">TODOS</option>
                                             <?php
-                                            if (!empty($monedas)) {
-                                                foreach ($monedas as $moneda) {
-                                                    ?>
-                                                    <option value="<?= $moneda->id_moneda ?>"><?= $moneda->nombre ?></option>
+if (!empty($monedas)) {
+    foreach ($monedas as $moneda) {
+        ?>
+                                                    <option value="<?=$moneda->id_moneda?>"><?=$moneda->nombre?></option>
         <?php
-    }
+}
 }
 ?>
                                         </select>
@@ -1805,9 +1776,9 @@ if (!empty($usuarios)) {
     if (count($usuarios) > 0) {
         foreach ($usuarios as $usuario) {
             ?>
-                                                <option value="<?= $usuario->nUsuCodigo ?>"><?= $usuario->username ?></option>
+                                                <option value="<?=$usuario->nUsuCodigo?>"><?=$usuario->username?></option>
             <?php
-        }
+}
     }
 }
 ?>
@@ -1887,7 +1858,7 @@ if (!empty($usuarios)) {
         </div>
 
 
-        <input type="hidden" id="base_url" value="<?= base_url() ?>">
+        <input type="hidden" id="base_url" value="<?=base_url()?>">
     </body>
 </html>
 <script>
@@ -2016,13 +1987,13 @@ if (!empty($usuarios)) {
         /*envio los datos a procesar*/
         $.ajax({
             type: 'POST',
-            url: '<?= $ruta ?>usuario/guardarsession',
+            url: '<?=$ruta?>usuario/guardarsession',
             dataType: 'json',
             data: {
                 'username': $('#username').val(),
                 'nombre': $('#nombre').val(),
                 'var_usuario_clave': $('#user-settings-password').val(),
-                'nUsuCodigo': '<?= $this->session->userdata('nUsuCodigo') ?>'
+                'nUsuCodigo': '<?=$this->session->userdata('nUsuCodigo')?>'
             },
             success: function (msj) {
 
@@ -2119,7 +2090,7 @@ if (!empty($usuarios)) {
         }
         $.ajax({
             type: 'POST',
-            url: '<?= $ruta ?>inicio/validar_singuardar',
+            url: '<?=$ruta?>inicio/validar_singuardar',
             data: {'pw': $('#clave_actual').val(), 'user': $('#username').val()},
             success: function (msj) {
                 if (msj == 'ok') {
@@ -2186,7 +2157,7 @@ if (!empty($usuarios)) {
                 $('#barloadermodal').modal('show')
 
                 $.ajax({
-                    url: '<?= $ruta ?>venta_new',
+                    url: '<?=$ruta?>venta_new',
                     success: function (data) {
 
                         if (data.error == undefined) {
@@ -2236,7 +2207,7 @@ if (!empty($usuarios)) {
                 $('#barloadermodal').modal('show')
 
                 $.ajax({
-                    url: '<?= $ruta ?>producto/stock',
+                    url: '<?=$ruta?>producto/stock',
                     success: function (data) {
 
                         if (data.error == undefined) {
@@ -2287,7 +2258,7 @@ if (!empty($usuarios)) {
                 $('#barloadermodal').modal('show')
 
                 $.ajax({
-                    url: '<?= $ruta ?>producto/listaprecios',
+                    url: '<?=$ruta?>producto/listaprecios',
                     success: function (data) {
 
                         App.sidebar('close-sidebar')
@@ -2352,7 +2323,7 @@ if (!empty($usuarios)) {
 
             $.ajax({
                 type: 'POST',
-                url: '<?= $ruta ?>usuario/guardarsession',
+                url: '<?=$ruta?>usuario/guardarsession',
                 data: $('#modal-user-settings-form').serialize(),
                 success: function (msj) {
 
@@ -2401,7 +2372,7 @@ if (!empty($usuarios)) {
 
     function tipocambiosunat() {
         $.ajax({
-            url: '<?= base_url() ?>monedas/get_tipocambio',
+            url: '<?=base_url()?>monedas/get_tipocambio',
             dataType: 'json',
             success: function (data) {
                 console.log(data)
