@@ -49,9 +49,9 @@
                 <li role="presentation">
                     <a href="#precios" data-toggle="tab">Unidades y Precios</a>
                 </li>
-                <li role="imagenes">
+                <!-- <li role="imagenes">
                     <a href="#imagenes" data-toggle="tab">Imagenes</a>
-                </li>
+                </li> -->
                 <!--<li role="presentation">
                     <a href="#imagenes" data-toggle="tab">Im&aacute;genes</a>
                 </li>-->
@@ -918,12 +918,10 @@
                                                             class='form-control unidad_select'
                                                             data-row="<?= $countunidad ?>"
                                                             >
-                                                                <?php foreach ($unidades as $unidad2):
-                                                                    ?>
-                                                            <option
-                                                                value='<?= $unidad2['id_unidad'] ?>' <?php if ($unidad2['id_unidad'] == $unidad['id_unidad']) echo 'selected' ?>><?= $unidad2['nombre_unidad'] ?></option>"
-
-        <?php endforeach ?></select>
+                                                                <?php foreach ($unidades as $unidad2): ?>
+                                                                  <option value='<?= $unidad2['id_unidad'] ?>' <?php if ($unidad2['id_unidad'] == $unidad['id_unidad']) echo 'selected' ?>><?= $unidad2['nombre_unidad'] ?></option>"
+                                                                 <?php endforeach ?>
+                                                    </select>
 
                                                 </td>
                                                 <td><input type="number" class="form-control unidades" required
@@ -1026,8 +1024,7 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="tab-pane" role="tabpanel" id="imagenes" role="tabpanel">
+                <!-- <div class="tab-pane" role="tabpanel" id="imagenes" role="tabpanel">
 
                     <div class="form-group" id="row1">
                         <div class="row">
@@ -1062,7 +1059,7 @@
                                 <div class="col-md-12">
 
                                     <?php if (isset($producto['producto_id'])): ?>
-    <?php $ruta_imagen = "uploads/" . $producto['producto_id'] . "/" ?>
+                                      <?php $ruta_imagen = "uploads/" . $producto['producto_id'] . "/" ?>
 
 
                                         <div class="row">
@@ -1097,11 +1094,7 @@
                                             }
                                             ?>
                                         </div>
-
-
-<?php endif; ?>
-
-
+                                        <?php endif; ?>
                                 </div>
                             </div>
                         </div>
@@ -1109,7 +1102,7 @@
                     </div>
 
 
-                </div>
+                </div> -->
 
 
             </div>
